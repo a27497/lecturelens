@@ -3,3 +3,4 @@
 *.sh -linguist-detectable
 backend/mvnw -linguist-detectable
 *.css -linguist-detectable
+*.html -linguist-detectable
