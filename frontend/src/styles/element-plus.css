@@ -1,0 +1,56 @@
+:root {
+  --el-color-primary: var(--color-brand);
+  --el-color-primary-light-3: #57917e;
+  --el-color-primary-light-5: #82ac9e;
+  --el-color-primary-light-7: #b7d0c7;
+  --el-color-primary-light-8: #d2e1dc;
+  --el-color-primary-light-9: var(--color-brand-soft);
+  --el-color-primary-dark-2: var(--color-brand-strong);
+  --el-border-radius-base: var(--radius-sm);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: #e8ece9;
+  --el-fill-color-light: var(--color-surface-subtle);
+  --el-text-color-primary: var(--color-ink);
+  --el-text-color-regular: var(--color-ink-soft);
+  --el-text-color-secondary: var(--color-ink-muted);
+}
+
+.el-button {
+  font-weight: 650;
+}
+
+.el-button--large {
+  min-height: 44px;
+  padding-inline: 20px;
+}
+
+.el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+}
+
+.el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--color-border-strong) inset;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 2px var(--color-brand) inset;
+}
+
+.el-alert {
+  border: 1px solid currentcolor;
+  border-radius: var(--radius-sm);
+}
+
+.el-progress-bar__outer {
+  background: #e7ebe8;
+}
+
+.el-radio-button__inner {
+  box-shadow: none !important;
+}
+
+@media (max-width: 640px) {
+  .el-button {
+    min-height: 42px;
+  }
+}

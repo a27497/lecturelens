@@ -1,0 +1,138 @@
+services:
+  mysql:
+    image: mysql:8.4
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change-me-root-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-courselingo}
+      MYSQL_USER: ${MYSQL_USERNAME:-courselingo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-change-me-mysql-password}
+    ports:
+      - "${MYSQL_HOST_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - courselingo-net
+
+  redis:
+    image: redis:8.8.0
+    command: ["sh", "-c", "redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\""]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me-redis-password}
+    ports:
+      - "${REDIS_HOST_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - courselingo-net
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-change-me-minio-root-user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-minio-root-password}
+    ports:
+      - "${MINIO_API_HOST_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - courselingo-net
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-change-me-minio-root-user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-minio-root-password}
+      MINIO_BUCKET_RAW: ${MINIO_BUCKET_RAW:-courselingo-raw}
+      MINIO_BUCKET_ARTIFACT: ${MINIO_BUCKET_ARTIFACT:-courselingo-artifact}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >
+        mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
+        mc mb --ignore-existing "local/$${MINIO_BUCKET_RAW}" &&
+        mc mb --ignore-existing "local/$${MINIO_BUCKET_ARTIFACT}"
+    networks:
+      - courselingo-net
+
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.3.4
+    command: sh mqnamesrv
+    ports:
+      - "${ROCKETMQ_NAMESRV_HOST_PORT:-19876}:9876"
+    networks:
+      - courselingo-net
+
+  rocketmq-store-init:
+    image: busybox:1.37.0
+    user: root
+    command:
+      - sh
+      - -c
+      - >
+        chown -R 3000:3000 /home/rocketmq/store &&
+        chmod -R u+rwX,g+rwX /home/rocketmq/store &&
+        echo "rocketmq store permissions initialized"
+    volumes:
+      - rocketmq_store:/home/rocketmq/store
+    networks:
+      - courselingo-net
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.3.4
+    command: >-
+      sh -ec 'sed "s/\"grpcServerPort\": 8081/\"grpcServerPort\": ${ROCKETMQ_PROXY_HOST_PORT:-8081}/"
+      /home/rocketmq/rocketmq-5.3.4/conf/rmq-proxy.json > /tmp/rmq-proxy.json;
+      exec sh mqbroker -n rocketmq-namesrv:9876 -c /home/rocketmq/conf/broker.conf --enable-proxy'
+    environment:
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+      JAVA_OPT_EXT: -Dcom.rocketmq.proxy.configPath=/tmp/rmq-proxy.json
+    depends_on:
+      rocketmq-store-init:
+        condition: service_completed_successfully
+      rocketmq-namesrv:
+        condition: service_started
+    ports:
+      - "${ROCKETMQ_BROKER_FAST_HOST_PORT:-10909}:10909"
+      - "${ROCKETMQ_BROKER_MAIN_HOST_PORT:-10911}:10911"
+      - "${ROCKETMQ_BROKER_HA_HOST_PORT:-10912}:10912"
+      - "${ROCKETMQ_PROXY_HOST_PORT:-8081}:${ROCKETMQ_PROXY_HOST_PORT:-8081}"
+    volumes:
+      - ./infra/rocketmq/broker.conf:/home/rocketmq/conf/broker.conf:ro
+      - ./infra/rocketmq/rmq-proxy.json:/home/rocketmq/rocketmq-5.3.4/conf/rmq-proxy.json:ro
+      - rocketmq_store:/home/rocketmq/store
+    networks:
+      - courselingo-net
+
+networks:
+  courselingo-net: {}
+
+volumes:
+  mysql_data: {}
+  redis_data: {}
+  minio_data: {}
+  rocketmq_store: {}

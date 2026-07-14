@@ -1,0 +1,8 @@
+{
+  "rocketMQClusterName": "DefaultCluster",
+  "namesrvAddr": "rocketmq-namesrv:9876",
+  "grpcServerPort": 8081,
+  "localServeAddr": "127.0.0.1",
+  "remotingAccessAddr": "127.0.0.1",
+  "useEndpointPortFromRequest": true
+}

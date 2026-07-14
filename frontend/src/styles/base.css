@@ -1,0 +1,96 @@
+:root {
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  font-family:
+    Inter, "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--color-canvas);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.page-container {
+  width: min(calc(100% - 48px), var(--content-width));
+  margin: 0 auto;
+}
+
+.page-container--narrow {
+  max-width: var(--content-narrow);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-brand);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text-link {
+  color: var(--color-brand-strong);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    width: min(calc(100% - 32px), var(--content-width));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

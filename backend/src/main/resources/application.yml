@@ -1,0 +1,291 @@
+spring:
+  application:
+    name: courselingo-backend
+  main:
+    log-startup-info: false
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  data:
+    redis:
+      repositories:
+        enabled: false
+  datasource:
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/courselingo?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${MYSQL_USERNAME:courselingo}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      initialization-fail-timeout: 0
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    baseline-on-migrate: false
+  servlet:
+    multipart:
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:16MB}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:18MB}
+
+server:
+  port: ${APP_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+  health:
+    db:
+      enabled: ${DB_HEALTH_ENABLED:false}
+  info:
+    env:
+      enabled: false
+  metrics:
+    tags:
+      application: courselingo-pro
+
+courselingo:
+  redis:
+    enabled: ${REDIS_ENABLED:false}
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    timeout-ms: ${REDIS_TIMEOUT_MS:2000}
+  security:
+    jwt:
+      access-secret: ${JWT_ACCESS_SECRET:dev-only-change-me-access-secret-at-least-32-characters}
+      access-expire-seconds: ${JWT_ACCESS_EXPIRE_SECONDS:3600}
+      refresh-expire-seconds: ${JWT_REFRESH_EXPIRE_SECONDS:2592000}
+  upload:
+    chunk-staging-dir: ${UPLOAD_CHUNK_STAGING_DIR:${java.io.tmpdir}/courselingo/chunks}
+    chunk-state:
+      redis-key-ttl-seconds: ${UPLOAD_CHUNK_STATE_REDIS_TTL_SECONDS:86400}
+  media:
+    playback:
+      token-ttl-minutes: ${MEDIA_PLAYBACK_TOKEN_TTL_MINUTES:15}
+    ffmpeg:
+      executable: ${FFMPEG_EXECUTABLE:ffmpeg}
+      audio-format: ${FFMPEG_AUDIO_FORMAT:wav}
+      sample-rate: ${FFMPEG_SAMPLE_RATE:16000}
+      channels: ${FFMPEG_CHANNELS:1}
+      timeout-seconds: ${FFMPEG_TIMEOUT_SECONDS:300}
+  vision:
+    keyframe:
+      enabled: ${COURSELINGO_VISION_KEYFRAME_ENABLED:true}
+      scan-interval-seconds: ${COURSELINGO_VISION_KEYFRAME_SCAN_INTERVAL_SECONDS:1}
+      thumbnail-width: ${COURSELINGO_VISION_KEYFRAME_THUMBNAIL_WIDTH:320}
+      periodic-anchor-seconds: ${COURSELINGO_VISION_KEYFRAME_PERIODIC_ANCHOR_SECONDS:60}
+      min-keyframe-gap-seconds: ${COURSELINGO_VISION_KEYFRAME_MIN_GAP_SECONDS:3}
+      max-keyframes-per-minute: ${COURSELINGO_VISION_KEYFRAME_MAX_PER_MINUTE:4}
+      max-keyframes-total: ${COURSELINGO_VISION_KEYFRAME_MAX_TOTAL:300}
+      scene-change-threshold: ${COURSELINGO_VISION_KEYFRAME_SCENE_CHANGE_THRESHOLD:0.08}
+      pixel-diff-threshold: ${COURSELINGO_VISION_KEYFRAME_PIXEL_DIFF_THRESHOLD:18}
+      output-format: ${COURSELINGO_VISION_KEYFRAME_OUTPUT_FORMAT:jpg}
+      timeout-seconds: ${COURSELINGO_VISION_KEYFRAME_TIMEOUT_SECONDS:600}
+    ocr:
+      enabled: ${COURSELINGO_VISION_OCR_ENABLED:false}
+      provider: ${COURSELINGO_VISION_OCR_PROVIDER:tesseract}
+      command: ${COURSELINGO_VISION_OCR_COMMAND:tesseract}
+      language: ${COURSELINGO_VISION_OCR_LANGUAGE:chi_sim+eng}
+      timeout-seconds: ${COURSELINGO_VISION_OCR_TIMEOUT_SECONDS:30}
+      max-text-length: ${COURSELINGO_VISION_OCR_MAX_TEXT_LENGTH:8000}
+      max-keyframes-per-task: ${COURSELINGO_VISION_OCR_MAX_KEYFRAMES_PER_TASK:120}
+      fail-task-on-error: ${COURSELINGO_VISION_OCR_FAIL_TASK_ON_ERROR:false}
+    analysis:
+      enabled: ${COURSELINGO_VISION_ANALYSIS_ENABLED:false}
+      provider: ${COURSELINGO_VISION_ANALYSIS_PROVIDER:openai-compatible-vision}
+      profile: ${COURSELINGO_VISION_ANALYSIS_PROFILE:qwen-vl}
+      max-frames-total: ${COURSELINGO_VISION_ANALYSIS_MAX_FRAMES_TOTAL:80}
+      max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_MAX_FRAMES_PER_MINUTE:2}
+      min-gap-seconds: ${COURSELINGO_VISION_ANALYSIS_MIN_GAP_SECONDS:10}
+      ocr-text-change-threshold: ${COURSELINGO_VISION_ANALYSIS_OCR_TEXT_CHANGE_THRESHOLD:0.35}
+      max-image-width: ${COURSELINGO_VISION_ANALYSIS_MAX_IMAGE_WIDTH:1024}
+      jpeg-quality: ${COURSELINGO_VISION_ANALYSIS_JPEG_QUALITY:0.8}
+      timeout: ${COURSELINGO_VISION_ANALYSIS_TIMEOUT:60s}
+      fail-task-on-error: ${COURSELINGO_VISION_ANALYSIS_FAIL_TASK_ON_ERROR:false}
+  fusion:
+    video-segment:
+      enabled: ${COURSELINGO_FUSION_VIDEO_SEGMENT_ENABLED:false}
+      window-seconds: ${COURSELINGO_FUSION_VIDEO_SEGMENT_WINDOW_SECONDS:60}
+      max-segments: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_SEGMENTS:300}
+      include-asr: ${COURSELINGO_FUSION_VIDEO_SEGMENT_INCLUDE_ASR:true}
+      include-ocr: ${COURSELINGO_FUSION_VIDEO_SEGMENT_INCLUDE_OCR:true}
+      include-vision: ${COURSELINGO_FUSION_VIDEO_SEGMENT_INCLUDE_VISION:true}
+      use-llm-summary: ${COURSELINGO_FUSION_VIDEO_SEGMENT_USE_LLM_SUMMARY:false}
+      llm-profile: ${COURSELINGO_FUSION_VIDEO_SEGMENT_LLM_PROFILE:deepseek-text}
+      fail-task-on-error: ${COURSELINGO_FUSION_VIDEO_SEGMENT_FAIL_TASK_ON_ERROR:false}
+      max-asr-chars-per-window: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_ASR_CHARS_PER_WINDOW:4000}
+      max-ocr-chars-per-window: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_OCR_CHARS_PER_WINDOW:2000}
+      max-visual-chars-per-window: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_VISUAL_CHARS_PER_WINDOW:2000}
+      max-keywords: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_KEYWORDS:12}
+  learning-package:
+    llm-timeout: ${COURSE_LINGO_LEARNING_PACKAGE_LLM_TIMEOUT:180s}
+  qa:
+    rate-limit-enabled: ${COURSELINGO_QA_RATE_LIMIT_ENABLED:true}
+    rate-limit-per-minute: ${COURSELINGO_QA_RATE_LIMIT_PER_MINUTE:10}
+    question-max-length: ${COURSELINGO_QA_QUESTION_MAX_LENGTH:500}
+    max-evidence-items: ${COURSELINGO_QA_MAX_EVIDENCE_ITEMS:8}
+    max-snippet-chars: ${COURSELINGO_QA_MAX_SNIPPET_CHARS:500}
+    llm-timeout: ${COURSELINGO_QA_LLM_TIMEOUT:60s}
+  chapter:
+    enabled: ${COURSELINGO_CHAPTER_ENABLED:true}
+    window-seconds: ${COURSELINGO_CHAPTER_WINDOW_SECONDS:240}
+    max-chapters: ${COURSELINGO_CHAPTER_MAX_CHAPTERS:20}
+    max-evidence-items: ${COURSELINGO_CHAPTER_MAX_EVIDENCE_ITEMS:24}
+    max-chars-per-window: ${COURSELINGO_CHAPTER_MAX_CHARS_PER_WINDOW:1200}
+    llm-timeout: ${COURSELINGO_CHAPTER_LLM_TIMEOUT:90s}
+  video-context:
+    enabled: ${COURSELINGO_VIDEO_CONTEXT_ENABLED:true}
+    chunk-window-seconds: ${COURSELINGO_VIDEO_CONTEXT_CHUNK_WINDOW_SECONDS:240}
+    max-chunks: ${COURSELINGO_VIDEO_CONTEXT_MAX_CHUNKS:120}
+    source-preview-chars: ${COURSELINGO_VIDEO_CONTEXT_SOURCE_PREVIEW_CHARS:1200}
+    translated-preview-chars: ${COURSELINGO_VIDEO_CONTEXT_TRANSLATED_PREVIEW_CHARS:1200}
+    summary-max-chars: ${COURSELINGO_VIDEO_CONTEXT_SUMMARY_MAX_CHARS:500}
+    keyword-max-count: ${COURSELINGO_VIDEO_CONTEXT_KEYWORD_MAX_COUNT:12}
+    evidence-max-items-per-chunk: ${COURSELINGO_VIDEO_CONTEXT_EVIDENCE_MAX_ITEMS_PER_CHUNK:8}
+  subtitle:
+    translation:
+      full-text:
+        enabled: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_ENABLED:true}
+        request-timeout: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_REQUEST_TIMEOUT:900s}
+        max-tokens: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_TOKENS:32768}
+        max-attempts: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_ATTEMPTS:1}
+        semantic-max-attempts: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SEMANTIC_MAX_ATTEMPTS:2}
+        max-source-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_SOURCE_SEGMENTS:1000}
+        batch-max-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_SEGMENTS:8}
+        batch-max-input-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_INPUT_CHARS:2500}
+        single-segment-split-enabled: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_SPLIT_ENABLED:true}
+        single-segment-max-piece-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MAX_PIECE_CHARS:600}
+        single-segment-min-piece-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MIN_PIECE_CHARS:80}
+        single-segment-max-depth: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MAX_DEPTH:6}
+  ai:
+    model-routing:
+      enabled: ${COURSELINGO_AI_MODEL_ROUTING_ENABLED:true}
+      routes:
+        translation-full-text: ${COURSELINGO_AI_MODEL_ROUTE_TRANSLATION_FULL_TEXT:deepseek-text}
+        subtitle-translation: ${COURSELINGO_AI_MODEL_ROUTE_SUBTITLE_TRANSLATION:deepseek-text}
+        learning-package: ${COURSELINGO_AI_MODEL_ROUTE_LEARNING_PACKAGE:deepseek-text}
+        course-qa: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_QA:deepseek-text}
+        course-chapter: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_CHAPTER:deepseek-text}
+        vision-frame-analysis: ${COURSELINGO_AI_MODEL_ROUTE_VISION_FRAME_ANALYSIS:qwen-vl}
+      profiles:
+        deepseek-text:
+          display-name: DeepSeek Text
+          provider-type: openai-compatible
+          base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${OPENAI_COMPATIBLE_MODEL:deepseek-ai/DeepSeek-V4-Pro}
+          api-key-env-name: OPENAI_COMPATIBLE_API_KEY
+          capabilities:
+            - TEXT_CHAT
+            - JSON_OUTPUT
+          temperature: ${OPENAI_COMPATIBLE_TEMPERATURE:0}
+          max-tokens: ${OPENAI_COMPATIBLE_MAX_TOKENS:32768}
+          timeout: ${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:900s}
+          max-attempts: ${OPENAI_COMPATIBLE_MAX_ATTEMPTS:1}
+          enabled: true
+        qwen-vl:
+          display-name: Qwen VL
+          provider-type: openai-compatible-vision
+          base-url: ${OPENAI_COMPATIBLE_VISION_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${OPENAI_COMPATIBLE_VISION_MODEL:Qwen/Qwen2.5-VL-7B-Instruct}
+          api-key-env-name: OPENAI_COMPATIBLE_VISION_API_KEY
+          capabilities:
+            - VISION
+            - JSON_OUTPUT
+          temperature: ${OPENAI_COMPATIBLE_VISION_TEMPERATURE:0}
+          max-tokens: ${OPENAI_COMPATIBLE_VISION_MAX_TOKENS:2048}
+          timeout: ${OPENAI_COMPATIBLE_VISION_REQUEST_TIMEOUT:60s}
+          max-attempts: ${OPENAI_COMPATIBLE_VISION_MAX_ATTEMPTS:1}
+          enabled: true
+    asr:
+      silicon-flow:
+        enabled: ${SILICONFLOW_ASR_ENABLED:false}
+        base-url: ${SILICONFLOW_ASR_BASE_URL:https://api.siliconflow.cn}
+        api-key: ${SILICONFLOW_API_KEY:}
+        model: ${SILICONFLOW_ASR_MODEL:FunAudioLLM/SenseVoiceSmall}
+        connect-timeout: ${SILICONFLOW_ASR_CONNECT_TIMEOUT:5s}
+        request-timeout: ${SILICONFLOW_ASR_REQUEST_TIMEOUT:180s}
+        max-audio-file-size: ${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}
+      chunking:
+        enabled: ${ASR_CHUNKING_ENABLED:true}
+        chunk-duration: ${ASR_CHUNK_DURATION:60s}
+        max-audio-file-size: ${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}
+        max-chunk-file-size: ${ASR_CHUNK_MAX_FILE_SIZE:4MB}
+        max-chunks: ${ASR_CHUNK_MAX_CHUNKS:180}
+        concurrency: ${ASR_CHUNK_CONCURRENCY:2}
+        max-concurrency: ${ASR_CHUNK_MAX_CONCURRENCY:4}
+      mock:
+        enabled: ${MOCK_ASR_ENABLED:false}
+        default-language: ${MOCK_ASR_DEFAULT_LANGUAGE:zh-CN}
+        default-text: ${MOCK_ASR_DEFAULT_TEXT:这是 mock ASR 转写结果，用于本地开发和测试。}
+        segment-duration-millis: ${MOCK_ASR_SEGMENT_DURATION_MILLIS:3000}
+    llm:
+      demo-mock:
+        enabled: ${DEMO_MOCK_LLM_ENABLED:false}
+      openai-compatible:
+        enabled: ${OPENAI_COMPATIBLE_ENABLED:false}
+        base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+        api-key: ${OPENAI_COMPATIBLE_API_KEY:}
+        model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen2.5-7B-Instruct}
+        connect-timeout: ${OPENAI_COMPATIBLE_CONNECT_TIMEOUT:5s}
+        request-timeout: ${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:60s}
+        temperature: ${OPENAI_COMPATIBLE_TEMPERATURE:0}
+        max-tokens: ${OPENAI_COMPATIBLE_MAX_TOKENS:4096}
+      langchain4j:
+        enabled: ${LANGCHAIN4J_OPENAI_ENABLED:false}
+        base-url: ${LANGCHAIN4J_OPENAI_BASE_URL:https://api.openai.com/v1}
+        api-key: ${LANGCHAIN4J_OPENAI_API_KEY:}
+        model: ${LANGCHAIN4J_OPENAI_MODEL:gpt-4o-mini}
+        connect-timeout: ${LANGCHAIN4J_OPENAI_CONNECT_TIMEOUT:5s}
+        request-timeout: ${LANGCHAIN4J_OPENAI_REQUEST_TIMEOUT:60s}
+        temperature: ${LANGCHAIN4J_OPENAI_TEMPERATURE:0.2}
+        max-tokens: ${LANGCHAIN4J_OPENAI_MAX_TOKENS:2048}
+  task:
+    runner:
+      workspace-dir: ${java.io.tmpdir}/courselingo/runner
+      pipeline:
+        enabled: ${COURSELINGO_TASK_RUNNER_PIPELINE_ENABLED:false}
+    progress:
+      redis-key-ttl-seconds: ${TASK_PROGRESS_REDIS_TTL_SECONDS:86400}
+    claim:
+      redis-key-ttl-seconds: ${TASK_CLAIM_REDIS_TTL_SECONDS:900}
+    rate-limit:
+      analysis:
+        enabled: ${ANALYSIS_RATE_LIMIT_ENABLED:true}
+        max-requests: ${ANALYSIS_RATE_LIMIT_MAX_REQUESTS:10}
+        window-seconds: ${ANALYSIS_RATE_LIMIT_WINDOW_SECONDS:60}
+    events:
+      sse-timeout-seconds: ${TASK_EVENTS_SSE_TIMEOUT_SECONDS:300}
+      heartbeat-interval-seconds: ${TASK_EVENTS_HEARTBEAT_INTERVAL_SECONDS:15}
+      poll-interval-millis: ${TASK_EVENTS_POLL_INTERVAL_MILLIS:1000}
+      worker-threads: ${TASK_EVENTS_WORKER_THREADS:2}
+  storage:
+    minio:
+      endpoint: ${STORAGE_MINIO_ENDPOINT:http://localhost:9000}
+      access-key: ${STORAGE_MINIO_ACCESS_KEY:minioadmin}
+      secret-key: ${STORAGE_MINIO_SECRET_KEY:minioadmin}
+      bucket: ${STORAGE_MINIO_BUCKET:courselingo}
+      region: ${STORAGE_MINIO_REGION:}
+  mq:
+    rocketmq:
+      name-server: ${ROCKETMQ_NAME_SERVER:127.0.0.1:19876}
+      endpoint: ${ROCKETMQ_ENDPOINT:127.0.0.1:8081}
+      producer-group: ${ROCKETMQ_PRODUCER_GROUP:courselingo-analysis-producer-group}
+      consumer-group: ${ROCKETMQ_CONSUMER_GROUP:courselingo-analysis-consumer-group}
+      analysis-topic: ${ROCKETMQ_ANALYSIS_TOPIC:courselingo-analysis-task}
+      send-timeout-ms: ${ROCKETMQ_SEND_TIMEOUT_MS:3000}
+      consume-timeout-ms: ${ROCKETMQ_CONSUME_TIMEOUT_MS:15000}
+      ssl-enabled: ${ROCKETMQ_SSL_ENABLED:false}
+      enabled: ${ROCKETMQ_ENABLED:false}
+  dispatch:
+    executor:
+      core-size: ${DISPATCH_EXECUTOR_CORE_SIZE:2}
+      max-size: ${DISPATCH_EXECUTOR_MAX_SIZE:4}
+      queue-capacity: ${DISPATCH_EXECUTOR_QUEUE_CAPACITY:32}
+      keep-alive-seconds: ${DISPATCH_EXECUTOR_KEEP_ALIVE_SECONDS:60}
+      task-timeout-seconds: ${DISPATCH_EXECUTOR_TASK_TIMEOUT_SECONDS:14400}
+      shutdown-timeout-seconds: ${DISPATCH_EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS:10}

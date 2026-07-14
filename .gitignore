@@ -1,0 +1,65 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# Node / Vue
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Environment variables and secrets
+.codex-run/
+.playwright-cli/
+.env
+.env.local
+.env.*
+!.env.example
+!.env.e2e.example
+!.env.demo.example
+!.env.real-ai.example
+.env.e2e.local
+*.local
+*.pem
+*.key
+*.p12
+*.jks
+
+# Logs
+logs/
+debug/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Uploads and generated files
+uploads/
+temp/
+tmp/
+/storage/
+artifacts/
+courselingo-pro-debug-bundle.zip
+.demo/
+*.srt
+*.vtt
+
+# Build artifacts
+build/
+out/
+release/
+
+# OS
+.DS_Store
+Thumbs.db

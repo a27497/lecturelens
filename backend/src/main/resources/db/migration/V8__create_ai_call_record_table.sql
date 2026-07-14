@@ -1,0 +1,42 @@
+CREATE TABLE IF NOT EXISTS ai_call_record (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    task_id VARCHAR(64) NOT NULL,
+    user_id BIGINT NOT NULL,
+    call_type VARCHAR(32) NOT NULL,
+    stage VARCHAR(64) NOT NULL,
+    provider VARCHAR(64) NOT NULL,
+    model VARCHAR(128) NULL,
+    status VARCHAR(32) NOT NULL,
+    started_at DATETIME(3) NOT NULL,
+    finished_at DATETIME(3) NULL,
+    duration_millis BIGINT NULL,
+    prompt_tokens INT NULL,
+    completion_tokens INT NULL,
+    total_tokens INT NULL,
+    input_units INT NULL,
+    output_units INT NULL,
+    request_fingerprint VARCHAR(128) NULL,
+    response_fingerprint VARCHAR(128) NULL,
+    error_code VARCHAR(64) NULL,
+    error_message VARCHAR(512) NULL,
+    retryable TINYINT(1) NULL,
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (id),
+    KEY idx_ai_call_record_task_user (task_id, user_id),
+    KEY idx_ai_call_record_user_created (user_id, created_at),
+    KEY idx_ai_call_record_task_stage (task_id, stage),
+    KEY idx_ai_call_record_status (status),
+    CONSTRAINT fk_ai_call_record_task_id
+        FOREIGN KEY (task_id) REFERENCES analysis_task (id)
+        ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT fk_ai_call_record_user_id
+        FOREIGN KEY (user_id) REFERENCES user_account (id)
+        ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT chk_ai_call_record_duration_non_negative CHECK (duration_millis IS NULL OR duration_millis >= 0),
+    CONSTRAINT chk_ai_call_record_prompt_tokens_non_negative CHECK (prompt_tokens IS NULL OR prompt_tokens >= 0),
+    CONSTRAINT chk_ai_call_record_completion_tokens_non_negative CHECK (completion_tokens IS NULL OR completion_tokens >= 0),
+    CONSTRAINT chk_ai_call_record_total_tokens_non_negative CHECK (total_tokens IS NULL OR total_tokens >= 0),
+    CONSTRAINT chk_ai_call_record_input_units_non_negative CHECK (input_units IS NULL OR input_units >= 0),
+    CONSTRAINT chk_ai_call_record_output_units_non_negative CHECK (output_units IS NULL OR output_units >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AI call record table';

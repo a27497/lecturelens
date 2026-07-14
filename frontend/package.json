@@ -1,0 +1,26 @@
+{
+  "name": "courselingo-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc -b"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "6.0.7",
+    "axios": "1.18.1",
+    "element-plus": "2.14.2",
+    "pinia": "3.0.4",
+    "spark-md5": "^3.0.2",
+    "vite": "8.1.0",
+    "vue": "3.5.39",
+    "vue-router": "5.1.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vue-tsc": "3.3.5"
+  }
+}
