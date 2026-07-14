@@ -1,0 +1,3 @@
+scripts/**/*.ps1 -linguist-detectable
+scripts/**/*.sh -linguist-detectable
+*.css -linguist-detectable
