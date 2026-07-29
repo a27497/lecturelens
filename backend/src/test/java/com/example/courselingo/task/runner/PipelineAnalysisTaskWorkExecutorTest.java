@@ -11,6 +11,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.progress.TaskProgressSnapshot;
 import com.example.courselingo.task.progress.TaskProgressSnapshotService;
@@ -80,17 +82,20 @@ class PipelineAnalysisTaskWorkExecutorTest {
     }
 
     @Test
-    void defaultProgressReporterSkipsSnapshotWhenMysqlUpdatesNoRows() {
+    void defaultProgressReporterStopsPipelineWhenTaskIsNoLongerRunning() {
         AnalysisTaskMapper taskMapper = mock(AnalysisTaskMapper.class);
         TaskProgressSnapshotService snapshotService = mock(TaskProgressSnapshotService.class);
         DefaultPipelineTaskProgressReporter reporter = defaultReporter(taskMapper, snapshotService);
         when(taskMapper.updateRunningProgressByIdAndUserId("task_1", 7L, 88, "GENERATE_ARTIFACTS"))
             .thenReturn(0);
 
-        assertThatCode(() -> reporter.stepStarted(
+        assertThatThrownBy(() -> reporter.stepStarted(
             PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS,
             new PipelineAnalysisTaskStepContext(context())
-        )).doesNotThrowAnyException();
+        ))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.TASK_INVALID_STATUS);
 
         verify(snapshotService, never()).save(any(TaskProgressSnapshot.class));
     }

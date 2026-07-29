@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskCommandServiceImpl implements TaskCommandService {
 
+    private static final int MAX_CANCEL_STATE_ATTEMPTS = 3;
     private static final Set<AnalysisTaskStatus> CANCELABLE_STATUSES = EnumSet.of(
         AnalysisTaskStatus.CREATED,
         AnalysisTaskStatus.QUEUED,
@@ -113,16 +114,35 @@ public class TaskCommandServiceImpl implements TaskCommandService {
             throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
         }
 
-        stateService.changeState(AnalysisTaskStateChangeCommand.builder()
-            .taskId(task.getId())
-            .userId(currentUser.userId())
-            .targetStatus(AnalysisTaskStatus.CANCELED)
-            .progressPercent(task.getProgressPercent())
-            .stage(null)
-            .build());
+        cancelStateWithConcurrentAdvanceRetry(task.getId(), currentUser.userId());
         sendMessage(AnalysisTaskMessageTag.ANALYSIS_CANCEL, task, "cancel");
 
         return new TaskCommandResponse(task.getId(), AnalysisTaskStatus.CANCELED.name());
+    }
+
+    private void cancelStateWithConcurrentAdvanceRetry(String taskId, Long userId) {
+        for (int attempt = 1; attempt <= MAX_CANCEL_STATE_ATTEMPTS; attempt++) {
+            try {
+                stateService.changeState(AnalysisTaskStateChangeCommand.builder()
+                    .taskId(taskId)
+                    .userId(userId)
+                    .targetStatus(AnalysisTaskStatus.CANCELED)
+                    .progressPercent(null)
+                    .stage(null)
+                    .build());
+                return;
+            } catch (BusinessException exception) {
+                if (exception.errorCode() != ErrorCode.TASK_INVALID_STATUS
+                    || attempt == MAX_CANCEL_STATE_ATTEMPTS) {
+                    throw exception;
+                }
+                AnalysisTask latestTask = loadOwnedTask(taskId, userId);
+                AnalysisTaskStatus latestStatus = AnalysisTaskStatus.fromDatabaseValue(latestTask.getStatus());
+                if (!CANCELABLE_STATUSES.contains(latestStatus)) {
+                    throw exception;
+                }
+            }
+        }
     }
 
     private AnalysisTask loadOwnedTask(String taskId, Long userId) {

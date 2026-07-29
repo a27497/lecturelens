@@ -13,10 +13,11 @@ class PipelineVisionAnalysisExecutionOrderTest {
 
         assertThat(ordered)
             .containsSubsequence(
-                PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS,
                 PipelineAnalysisTaskStepName.OCR_KEYFRAMES,
                 PipelineAnalysisTaskStepName.ANALYZE_KEYFRAMES,
                 PipelineAnalysisTaskStepName.FUSE_VIDEO_SEGMENTS,
+                PipelineAnalysisTaskStepName.GENERATE_LEARNING_PACKAGE,
+                PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS,
                 PipelineAnalysisTaskStepName.WRITE_AI_CALL_RECORD
             );
     }

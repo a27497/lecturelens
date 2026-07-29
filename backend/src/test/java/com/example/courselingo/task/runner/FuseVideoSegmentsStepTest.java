@@ -1,6 +1,7 @@
 package com.example.courselingo.task.runner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -78,6 +79,27 @@ class FuseVideoSegmentsStepTest {
         new FuseVideoSegmentsStep(service, properties, Mockito.mock(TaskLogMapper.class), clock()).execute(context());
 
         assertThat(captured).containsExactly("task_1", "42");
+    }
+
+    @Test
+    void visualOnlyRequiresAtLeastOnePersistedSemanticTimelineSegment() {
+        VideoSegmentProperties properties = new VideoSegmentProperties();
+        properties.setEnabled(true);
+        PipelineAnalysisTaskStepContext context = context();
+        context.setAsrBranchFailure(new PipelineAnalysisTaskStepException(
+            PipelineAnalysisTaskStepName.TRANSCRIBE,
+            new IllegalStateException("ASR unavailable")
+        ));
+        VideoSegmentFusionService service = (taskId, userId) -> new VideoSegmentFusionResult(0, 0, 0, 0);
+
+        assertThatThrownBy(() -> new FuseVideoSegmentsStep(
+            service,
+            properties,
+            Mockito.mock(TaskLogMapper.class),
+            clock()
+        ).execute(context))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("visual-only fusion produced no semantic timeline segments");
     }
 
     private static Clock clock() {

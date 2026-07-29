@@ -1,5 +1,7 @@
 package com.example.courselingo.vision.ocr;
 
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.storage.StorageService;
 import com.example.courselingo.vision.keyframe.VideoKeyframe;
@@ -65,6 +67,14 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
             throw new IllegalArgumentException("userId is required");
         }
         List<VideoKeyframe> keyframes = keyframeMapper.selectByTaskIdAndUserId(normalizedTaskId, userId);
+        List<VideoKeyframeOcr> existing = ocrMapper.selectByKeyframeIds(
+            normalizedTaskId,
+            userId,
+            keyframes.stream().map(VideoKeyframe::getId).toList()
+        );
+        if (!keyframes.isEmpty() && existing.size() == keyframes.size()) {
+            return summarize(existing);
+        }
         ocrMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
         int succeeded = 0;
         int empty = 0;
@@ -77,7 +87,9 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
             VideoKeyframeOcr row = index >= limit
                 ? skippedRow(keyframe)
                 : recognize(keyframe);
-            ocrMapper.insert(row);
+            if (ocrMapper.insert(row) != 1) {
+                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Keyframe OCR persistence failed");
+            }
             saved++;
             OcrStatus status = OcrStatus.valueOf(row.getStatus());
             switch (status) {
@@ -90,6 +102,30 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
             }
         }
         return new VideoKeyframeOcrScanResult(saved, succeeded, empty, failed, skipped);
+    }
+
+    private static VideoKeyframeOcrScanResult summarize(List<VideoKeyframeOcr> rows) {
+        int succeeded = 0;
+        int empty = 0;
+        int failed = 0;
+        int skipped = 0;
+        for (VideoKeyframeOcr row : rows) {
+            OcrStatus status;
+            try {
+                status = OcrStatus.valueOf(row.getStatus());
+            } catch (RuntimeException exception) {
+                status = OcrStatus.FAILED;
+            }
+            switch (status) {
+                case SUCCEEDED -> succeeded++;
+                case EMPTY -> empty++;
+                case FAILED -> failed++;
+                case SKIPPED -> skipped++;
+                default -> {
+                }
+            }
+        }
+        return new VideoKeyframeOcrScanResult(rows.size(), succeeded, empty, failed, skipped);
     }
 
     private VideoKeyframeOcr recognize(VideoKeyframe keyframe) {

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -270,6 +271,43 @@ class TaskCommandServiceTest {
         assertThat(messageCaptor.getValue().userId()).isEqualTo(42L);
         assertThat(messageCaptor.getValue().requestId()).isEqualTo("req_cancel");
         assertThat(messageCaptor.getValue().traceId()).isEqualTo("trace_cancel");
+    }
+
+    @Test
+    void cancelRetriesWhenTaskConcurrentlyAdvancesToAnotherCancelableStatus() {
+        AnalysisTask queued = task("task_cancel", 42L, AnalysisTaskStatus.QUEUED);
+        AnalysisTask running = task("task_cancel", 42L, AnalysisTaskStatus.RUNNING);
+        when(analysisTaskMapper.selectByIdAndUserId("task_cancel", 42L))
+            .thenReturn(queued, running);
+        doThrow(new BusinessException(ErrorCode.TASK_INVALID_STATUS))
+            .doNothing()
+            .when(stateService)
+            .changeState(any(AnalysisTaskStateChangeCommand.class));
+
+        TaskCommandResponse response = service.cancel("task_cancel", "Bearer access-token");
+
+        assertThat(response.status()).isEqualTo("CANCELED");
+        verify(stateService, times(2)).changeState(any(AnalysisTaskStateChangeCommand.class));
+        verify(messageProducer).send(eqTag(AnalysisTaskMessageTag.ANALYSIS_CANCEL), any());
+    }
+
+    @Test
+    void cancelDoesNotRetryAfterConcurrentAdvanceToTerminalStatus() {
+        AnalysisTask queued = task("task_cancel", 42L, AnalysisTaskStatus.QUEUED);
+        AnalysisTask succeeded = task("task_cancel", 42L, AnalysisTaskStatus.SUCCEEDED);
+        when(analysisTaskMapper.selectByIdAndUserId("task_cancel", 42L))
+            .thenReturn(queued, succeeded);
+        doThrow(new BusinessException(ErrorCode.TASK_INVALID_STATUS))
+            .when(stateService)
+            .changeState(any(AnalysisTaskStateChangeCommand.class));
+
+        assertThatThrownBy(() -> service.cancel("task_cancel", "Bearer access-token"))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.TASK_INVALID_STATUS);
+
+        verify(stateService).changeState(any(AnalysisTaskStateChangeCommand.class));
+        verify(messageProducer, never()).send(any(), any());
     }
 
     @ParameterizedTest

@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.artifact.service.JsonLearningPackageExporter;
+import com.example.courselingo.artifact.service.ArtifactMultimodalTimelineItem;
 import com.example.courselingo.common.exception.BusinessException;
+import com.example.courselingo.fusion.VideoSegmentSourceStatus;
 import com.example.courselingo.learning.dto.LearningPackageView;
 import com.example.courselingo.subtitle.dto.SubtitleSegmentView;
 import com.example.courselingo.subtitle.dto.SubtitleTranslationSegmentView;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class JsonLearningPackageExporterTest {
@@ -47,7 +50,8 @@ class JsonLearningPackageExporterTest {
             "taskId",
             "targetLanguage",
             "subtitles",
-            "learningPackage"
+            "learningPackage",
+            "multimodalTimeline"
         );
         assertThat(root.get("schemaVersion").asText()).isEqualTo("1.0");
         assertThat(root.get("taskId").asText()).isEqualTo("task_1");
@@ -76,6 +80,10 @@ class JsonLearningPackageExporterTest {
         assertThat(learningPackage.get("keyPoints").get(0).get("index").asInt()).isEqualTo(1);
         assertThat(learningPackage.get("glossary").get(0).get("term").asText()).isEqualTo("Term");
         assertThat(learningPackage.get("qa").get(0).get("question").asText()).isEqualTo("Question?");
+        assertThat(root.get("multimodalTimeline")).isNotEmpty();
+        assertThat(root.get("multimodalTimeline").get(0).get("asrText").asText()).isEqualTo("First source");
+        assertThat(root.get("multimodalTimeline").get(0).get("translatedText").asText())
+            .isEqualTo("First translation");
         assertThat(json)
             .doesNotContain("userId")
             .doesNotContain("objectKey")
@@ -97,7 +105,7 @@ class JsonLearningPackageExporterTest {
             validLearningPackage()
         ))
             .isInstanceOf(BusinessException.class)
-            .hasMessage("JSON source subtitles are required");
+            .hasMessage("JSON subtitle segments are inconsistent");
 
         String fallbackJson = exporter.export(
             "task_1",
@@ -177,6 +185,50 @@ class JsonLearningPackageExporterTest {
         assertThat(glossary.get(1).get("term").asText()).isEqualTo("API");
         assertThat(glossary.get(1).get("definition").asText()).isEmpty();
         assertThat(glossary.get(1).get("translation").asText()).isEqualTo("接口");
+    }
+
+    @Test
+    void exportsPersistedMultimodalTimelineInsteadOfSubtitleFallback() throws Exception {
+        String json = exporter.export(
+            "task_1",
+            "zh-CN",
+            List.of(source(0, 0, 60_000, "Source")),
+            List.of(),
+            validLearningPackage(),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0, 0L, 60_000L, "00:00:00 - 00:01:00", "ASR", "译文", "OCR title",
+                "A diagram", "Fused", List.of("diagram"), List.of(21L),
+                new VideoSegmentSourceStatus(Map.of("visual", "AVAILABLE"), Map.of("vlm", 1.0d), false), 0.9d
+            ))
+        );
+
+        JsonNode timeline = objectMapper.readTree(json).get("multimodalTimeline");
+        assertThat(timeline).hasSize(1);
+        assertThat(timeline.get(0).get("ocrText").asText()).isEqualTo("OCR title");
+        assertThat(timeline.get(0).get("visualSummary").asText()).isEqualTo("A diagram");
+        assertThat(timeline.get(0).get("evidenceKeyframeIds").get(0).asLong()).isEqualTo(21L);
+    }
+
+    @Test
+    void exportsVisualOnlyTimelineWithoutFabricatingSubtitles() throws Exception {
+        String json = exporter.export(
+            "task_1",
+            "zh-CN",
+            List.of(),
+            List.of(),
+            validLearningPackage(),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0, 0L, 60_000L, "00:00:00 - 00:01:00", "", "", "terminal output",
+                "Tests move from failed to successful", "Visual-only summary", List.of("tests"), List.of(21L),
+                new VideoSegmentSourceStatus(Map.of("visual", "AVAILABLE"), Map.of("vlm", 1.0d), true), 0.8d
+            ))
+        );
+
+        JsonNode root = objectMapper.readTree(json);
+        assertThat(root.get("subtitles")).isEmpty();
+        assertThat(root.get("multimodalTimeline")).hasSize(1);
+        assertThat(root.get("multimodalTimeline").get(0).get("visualSummary").asText())
+            .isEqualTo("Tests move from failed to successful");
     }
 
     private static LearningPackageView validLearningPackage() {

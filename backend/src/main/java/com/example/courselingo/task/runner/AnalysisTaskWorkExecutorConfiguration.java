@@ -3,6 +3,7 @@ package com.example.courselingo.task.runner;
 import com.example.courselingo.ai.asr.SpeechToTextProvider;
 import com.example.courselingo.ai.record.service.AiCallRecordService;
 import com.example.courselingo.artifact.service.JsonArtifactService;
+import com.example.courselingo.artifact.service.ArtifactFileService;
 import com.example.courselingo.artifact.service.MarkdownArtifactService;
 import com.example.courselingo.artifact.service.SrtArtifactService;
 import com.example.courselingo.artifact.service.VttArtifactService;
@@ -23,6 +24,7 @@ import com.example.courselingo.upload.mapper.UploadSessionMapper;
 import com.example.courselingo.upload.service.ChunkStagingPathResolver;
 import com.example.courselingo.vision.keyframe.VideoKeyframeProperties;
 import com.example.courselingo.vision.keyframe.VideoKeyframeScanService;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import com.example.courselingo.vision.analysis.VisionAnalysisProperties;
 import com.example.courselingo.vision.analysis.VisionAnalysisService;
 import com.example.courselingo.vision.ocr.VideoKeyframeOcrScanService;
@@ -50,6 +52,18 @@ import org.springframework.context.annotation.Configuration;
 public class AnalysisTaskWorkExecutorConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisTaskWorkExecutorConfiguration.class);
+    private static final int VISION_BRANCH_CONCURRENCY = 2;
+    private static final int VISION_BRANCH_QUEUE_CAPACITY = 8;
+
+    @Bean(destroyMethod = "close")
+    @ConditionalOnProperty(
+        prefix = "courselingo.task.runner.pipeline",
+        name = "enabled",
+        havingValue = "true"
+    )
+    VisionPipelineBranchCoordinator visionPipelineBranchCoordinator() {
+        return new VisionPipelineBranchCoordinator(VISION_BRANCH_CONCURRENCY, VISION_BRANCH_QUEUE_CAPACITY);
+    }
 
     @Bean
     ApplicationRunner asrChunkingConfigLogger(
@@ -99,12 +113,15 @@ public class AnalysisTaskWorkExecutorConfiguration {
         VttArtifactService vttArtifactService,
         MarkdownArtifactService markdownArtifactService,
         JsonArtifactService jsonArtifactService,
+        ArtifactFileService artifactFileService,
         AiCallRecordService aiCallRecordService,
         AnalysisTaskRunnerProperties runnerProperties,
         AsrChunkingProperties asrChunkingProperties,
         AudioDurationProbe audioDurationProbe,
         TaskProgressSnapshotService progressSnapshotService,
-        TaskClaimService taskClaimService
+        TaskClaimService taskClaimService,
+        VisionPipelineBranchCoordinator visionBranchCoordinator,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -115,7 +132,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 workspace,
                 videoKeyframeProperties,
                 taskLogMapper,
-                Clock.systemUTC()
+                Clock.systemUTC(),
+                visionBranchCoordinator
             ),
             new ExtractAudioStep(
                 ffmpegAudioExtractor,
@@ -134,14 +152,6 @@ public class AnalysisTaskWorkExecutorConfiguration {
             ),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),
-            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService),
-            new GenerateArtifactsStep(
-                analysisTaskMapper,
-                srtArtifactService,
-                vttArtifactService,
-                markdownArtifactService,
-                jsonArtifactService
-            ),
             new OcrKeyframesStep(
                 videoKeyframeOcrScanService,
                 visionOcrProperties,
@@ -152,7 +162,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 visionAnalysisService,
                 visionAnalysisProperties,
                 taskLogMapper,
-                Clock.systemUTC()
+                Clock.systemUTC(),
+                workspace
             ),
             new FuseVideoSegmentsStep(
                 videoSegmentFusionService,
@@ -160,13 +171,22 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 taskLogMapper,
                 Clock.systemUTC()
             ),
+            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService),
+            new GenerateArtifactsStep(
+                analysisTaskMapper,
+                srtArtifactService,
+                vttArtifactService,
+                markdownArtifactService,
+                jsonArtifactService,
+                artifactFileService
+            ),
             new WriteAiCallRecordStep(analysisTaskMapper, aiCallRecordService),
             new NoopPipelineAnalysisTaskStep(PipelineAnalysisTaskStepName.UPDATE_TASK_PROGRESS_STATUS)
         ), new DefaultPipelineTaskProgressReporter(
             analysisTaskMapper,
             progressSnapshotService,
             Clock.systemUTC()
-        ));
+        ), workspace, evidenceLifecycleService);
     }
 
     @Bean

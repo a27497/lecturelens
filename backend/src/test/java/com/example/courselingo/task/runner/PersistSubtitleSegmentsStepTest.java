@@ -84,6 +84,21 @@ class PersistSubtitleSegmentsStepTest {
         verify(analysisTaskMapper).selectByIdAndUserId("task_1", 7L);
     }
 
+    @Test
+    void visualOnlyDeletesStaleSourceSubtitlesWithoutRequiringAsrResult() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task());
+        PipelineAnalysisTaskStepContext context = context(7L);
+        context.setAsrBranchFailure(new PipelineAnalysisTaskStepException(
+            PipelineAnalysisTaskStepName.TRANSCRIBE,
+            new IllegalStateException("ASR unavailable")
+        ));
+
+        step.execute(context);
+
+        assertThat(persistenceService.deletedTaskId).isEqualTo("task_1");
+        assertThat(persistenceService.capturedCommand.get()).isNull();
+    }
+
     private static PipelineAnalysisTaskStepContext context(Long userId) {
         return new PipelineAnalysisTaskStepContext(
             new AnalysisTaskExecutionContext("task_1", "up_1", userId, "zh-CN", "req_1")
@@ -116,6 +131,7 @@ class PersistSubtitleSegmentsStepTest {
 
         private final AtomicReference<SaveTranscriptionSegmentsCommand> capturedCommand = new AtomicReference<>();
         private int savedCount;
+        private String deletedTaskId;
 
         @Override
         public int saveTranscriptionResult(SaveTranscriptionSegmentsCommand command) {
@@ -126,7 +142,8 @@ class PersistSubtitleSegmentsStepTest {
 
         @Override
         public int deleteByTaskId(String taskId, Long userId) {
-            throw new UnsupportedOperationException("not used");
+            deletedTaskId = taskId;
+            return 1;
         }
     }
 }

@@ -53,7 +53,7 @@ class CourseChapterEvidenceBuilderTest {
     }
 
     @Test
-    void buildUsesSubtitleTranslationAndAsrWithoutOcrOrFusedSummary() {
+    void buildUsesSubtitleTranslationAsrAndUsefulVisualEvidenceWithoutFusedDuplication() {
         when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
             subtitle(0, 0L, 60000L, "The teacher introduces language models.")
         ));
@@ -61,6 +61,7 @@ class CourseChapterEvidenceBuilderTest {
             .thenReturn(List.of(translation(0, 0L, 60000L, "老师介绍语言模型。")));
         VideoSegment videoSegment = videoSegment(0, 0L, 60000L, "Whatever the user types becomes input tokens.");
         videoSegment.setOcrText("画面文字包括：Vt — it 哥 gl");
+        videoSegment.setVisualSummary("A diagram explains the model pipeline");
         videoSegment.setFusedSummary("画面文字包括：{emcee ade");
         when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(videoSegment));
 
@@ -72,13 +73,14 @@ class CourseChapterEvidenceBuilderTest {
             .contains("字幕译文：老师介绍语言模型。")
             .contains("原文：The teacher introduces language models.")
             .contains("本段语音原文：Whatever the user types becomes input tokens.")
+            .contains("画面描述：A diagram explains the model pipeline")
             .doesNotContain("画面文字包括")
             .doesNotContain("{emcee")
             .doesNotContain("Vt");
     }
 
     @Test
-    void buildReturnsEmptyEvidenceWhenOnlyOcrOrVisualDataExists() {
+    void buildSupportsOcrOnlyAndVisualOnlyChapterEvidence() {
         VideoSegment videoSegment = videoSegment(0, 0L, 60000L, "");
         videoSegment.setOcrText("What is OpenCL?");
         videoSegment.setVisualSummary("Slide with a title");
@@ -89,7 +91,10 @@ class CourseChapterEvidenceBuilderTest {
 
         CourseChapterEvidenceBundle bundle = builder.build("task_1", 42L, "zh-CN");
 
-        assertThat(bundle.evidence()).isEmpty();
+        assertThat(bundle.evidence()).hasSize(1);
+        assertThat(bundle.evidence().getFirst().text())
+            .contains("画面文字：What is OpenCL?")
+            .contains("画面描述：Slide with a title");
     }
 
     @Test

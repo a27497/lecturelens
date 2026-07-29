@@ -42,7 +42,10 @@ public class FuseVideoSegmentsStep implements PipelineAnalysisTaskStep {
             return;
         }
         try {
-            videoSegmentFusionService.fuse(context.taskId(), context.userId());
+            var result = videoSegmentFusionService.fuse(context.taskId(), context.userId());
+            if (context.asrBranchFailed() && (result == null || result.saved() <= 0)) {
+                throw new IllegalStateException("visual-only fusion produced no semantic timeline segments");
+            }
         } catch (Exception exception) {
             writeWarning(context, exception);
             LOGGER.warn(
@@ -50,7 +53,7 @@ public class FuseVideoSegmentsStep implements PipelineAnalysisTaskStep {
                 SafeLogSanitizer.sanitize(context.taskId()),
                 exception.getClass().getSimpleName()
             );
-            if (properties.isFailTaskOnError()) {
+            if (properties.isFailTaskOnError() || context.asrBranchFailed()) {
                 throw exception;
             }
         }

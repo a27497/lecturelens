@@ -3,6 +3,7 @@ package com.example.courselingo.fusion;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +14,9 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.subtitle.domain.SubtitleSegment;
+import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
+import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.vision.analysis.VideoKeyframeAnalysis;
@@ -49,6 +52,9 @@ class VideoSegmentFusionServiceTest {
     private SubtitleSegmentMapper subtitleSegmentMapper;
 
     @Mock
+    private SubtitleTranslationSegmentMapper translationSegmentMapper;
+
+    @Mock
     private VideoKeyframeMapper keyframeMapper;
 
     @Mock
@@ -67,6 +73,8 @@ class VideoSegmentFusionServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(videoSegmentMapper.insert(org.mockito.ArgumentMatchers.any(VideoSegment.class)))
+            .thenReturn(1);
         properties = new VideoSegmentProperties();
         properties.setEnabled(true);
         properties.setWindowSeconds(60);
@@ -141,8 +149,53 @@ class VideoSegmentFusionServiceTest {
             .doesNotContain("secret");
         assertThat(saved.getStatus()).isEqualTo(VideoSegmentStatus.SUCCEEDED.name());
         assertThat(saved.getConfidence()).isGreaterThan(0.0);
+        assertThat(saved.getSourceStatusJson())
+            .contains("\"ocr\":\"AVAILABLE\"")
+            .contains("\"visual\":\"AVAILABLE\"")
+            .contains("\"timestamp\":\"VALID\"")
+            .contains("\"keyframeQuality\":0.8")
+            .contains("\"keyframeSourceTypes\":\"SCENE_CHANGE\"")
+            .contains("\"confidenceComponents\"");
         assertThat(saved.getCreatedAt()).isEqualTo(time());
         assertThat(saved.getUpdatedAt()).isEqualTo(time());
+    }
+
+    @Test
+    void rejectsUnacknowledgedVideoSegmentInsert() {
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L))
+            .thenReturn(List.of(subtitle(11L, 0, 0L, 1_000L, "source text")));
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(videoSegmentMapper.insert(org.mockito.ArgumentMatchers.any(VideoSegment.class))).thenReturn(0);
+
+        assertThatThrownBy(() -> service().fuse("task_1", 42L))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.COMMON_INTERNAL_ERROR);
+    }
+
+    @Test
+    void fusesTranslatedSubtitlesWithDeterministicOrderingAndDeduplication() {
+        AnalysisTask task = task("RUNNING");
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task);
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of(
+                translation(32L, 2, 20_000L, 30_000L, "译文二"),
+                translation(31L, 1, 10_000L, 20_000L, "译文一"),
+                translation(33L, 3, 30_000L, 40_000L, "译文二")
+            ));
+        ArgumentCaptor<VideoSegment> captor = ArgumentCaptor.forClass(VideoSegment.class);
+
+        VideoSegmentFusionResult result = translatedService().fuse("task_1", 42L);
+
+        assertThat(result.saved()).isEqualTo(1);
+        verify(videoSegmentMapper).insert(captor.capture());
+        VideoSegment saved = captor.getValue();
+        assertThat(saved.getTranslatedText()).isEqualTo("译文一 译文二");
+        assertThat(saved.getFusedSummary()).contains("字幕译文：译文一 译文二");
+        assertThat(saved.getEvidenceJson()).contains("\"translationSegmentIds\":[31,32,33]");
+        assertThat(saved.getSourceStatusJson()).contains("\"translation\":\"AVAILABLE\"");
     }
 
     @Test
@@ -399,12 +452,41 @@ class VideoSegmentFusionServiceTest {
         );
     }
 
+    private VideoSegmentFusionServiceImpl translatedService() {
+        return new VideoSegmentFusionServiceImpl(
+            videoSegmentMapper,
+            subtitleSegmentMapper,
+            translationSegmentMapper,
+            keyframeMapper,
+            ocrMapper,
+            analysisMapper,
+            properties,
+            new ObjectMapper(),
+            null,
+            analysisTaskMapper
+        );
+    }
+
     private static AnalysisTask task(String status) {
         AnalysisTask task = new AnalysisTask();
         task.setId("task_1");
         task.setUserId(42L);
+        task.setTargetLanguage("zh-CN");
         task.setStatus(status);
         return task;
+    }
+
+    private static SubtitleTranslationSegment translation(Long id, int index, long start, long end, String text) {
+        SubtitleTranslationSegment segment = new SubtitleTranslationSegment();
+        segment.setId(id);
+        segment.setTaskId("task_1");
+        segment.setUserId(42L);
+        segment.setSegmentIndex(index);
+        segment.setStartMillis(start);
+        segment.setEndMillis(end);
+        segment.setTargetLanguage("zh-CN");
+        segment.setTranslatedText(text);
+        return segment;
     }
 
     private static SubtitleSegment subtitle(Long id, int index, long start, long end, String text) {
@@ -429,6 +511,9 @@ class VideoSegmentFusionServiceTest {
         keyframe.setTimestampMillis(timestampMillis);
         keyframe.setTimeText("00:15.000");
         keyframe.setSelectReason(KeyframeSelectionReason.SCENE_CHANGE.name());
+        keyframe.setQualityScore(0.8d);
+        keyframe.setDegraded(false);
+        keyframe.setSourceType("SCENE_CHANGE");
         keyframe.setObjectKey("internal/object/key.jpg");
         return keyframe;
     }

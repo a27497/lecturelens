@@ -7,7 +7,8 @@ public record JsonArtifactPayload(
     String taskId,
     String targetLanguage,
     List<SubtitleItem> subtitles,
-    LearningPackageItem learningPackage
+    LearningPackageItem learningPackage,
+    List<MultimodalTimelineItem> multimodalTimeline
 ) {
 
     public record SubtitleItem(
@@ -44,6 +45,30 @@ public record JsonArtifactPayload(
     public record QaItem(
         String question,
         String answer
+    ) {
+    }
+
+    public record MultimodalTimelineItem(
+        Integer segmentIndex,
+        long startMillis,
+        long endMillis,
+        String timeText,
+        String asrText,
+        String translatedText,
+        String ocrText,
+        String visualSummary,
+        String fusedSummary,
+        List<String> keywords,
+        List<Long> evidenceKeyframeIds,
+        SourceStatusItem sourceStatus,
+        Double confidence
+    ) {
+    }
+
+    public record SourceStatusItem(
+        java.util.Map<String, String> sources,
+        java.util.Map<String, Double> confidenceComponents,
+        boolean degraded
     ) {
     }
 }

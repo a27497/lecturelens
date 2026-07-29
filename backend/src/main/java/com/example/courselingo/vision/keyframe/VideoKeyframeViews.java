@@ -64,7 +64,10 @@ public final class VideoKeyframeViews {
             keyframe.getSelectReason(),
             keyframe.getCreatedAt(),
             ocr,
-            visualAnalysis
+            visualAnalysis,
+            keyframe.getQualityScore(),
+            keyframe.getSourceType(),
+            keyframe.getDegraded()
         );
     }
 }

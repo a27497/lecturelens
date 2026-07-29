@@ -57,6 +57,11 @@ class HighValueKeyframeSelectorTest {
         VisionAnalysisProperties properties = new VisionAnalysisProperties();
         properties.setMaxFramesTotal(3);
         properties.setMaxFramesPerMinute(5);
+        properties.setSlideMaxFramesPerMinute(5);
+        properties.setCodeOrTerminalMaxFramesPerMinute(5);
+        properties.setVisualDemoMaxFramesPerMinute(5);
+        properties.setTalkingOrLowInformationMaxFramesPerMinute(5);
+        properties.setUnknownMaxFramesPerMinute(5);
         properties.setMinGapSeconds(0);
         properties.setOcrTextChangeThreshold(0.35);
 
@@ -75,6 +80,40 @@ class HighValueKeyframeSelectorTest {
         );
 
         assertThat(selected).extracting(VideoKeyframe::getId).containsExactly(1L, 3L);
+    }
+
+    @Test
+    void vlmBudgetRetainsTextFreeVisualDemoWhenGlobalBudgetAllowsIt() {
+        VisionAnalysisProperties properties = new VisionAnalysisProperties();
+        properties.setMaxFramesTotal(2);
+        properties.setMaxFramesPerMinute(4);
+        properties.setMinGapSeconds(0);
+
+        VideoKeyframe code = keyframe(1L, 5_000L, KeyframeSelectionReason.CONTENT_CHANGE);
+        code.setEdgeDensity(0.08d);
+        code.setChangeScore(0.4d);
+        code.setQualityScore(90.0d);
+        VideoKeyframe visual = keyframe(2L, 35_000L, KeyframeSelectionReason.CONTENT_CHANGE);
+        visual.setEdgeDensity(0.09d);
+        visual.setChangeScore(0.7d);
+        visual.setQualityScore(85.0d);
+        VideoKeyframe slide = keyframe(3L, 50_000L, KeyframeSelectionReason.SCENE_CHANGE);
+        slide.setEdgeDensity(0.02d);
+        slide.setChangeScore(0.3d);
+        slide.setQualityScore(95.0d);
+
+        List<VideoKeyframe> selected = new HighValueKeyframeSelector().select(
+            List.of(code, visual, slide),
+            List.of(
+                ocr(1L, "public class Demo { return value; }"),
+                ocr(2L, ""),
+                ocr(3L, "Architecture overview and deployment sequence")
+            ),
+            properties
+        );
+
+        assertThat(selected).extracting(VideoKeyframe::getId).contains(1L, 2L);
+        assertThat(selected).hasSize(2);
     }
 
     private static VideoKeyframe keyframe(Long id, Long timestampMillis, KeyframeSelectionReason reason) {

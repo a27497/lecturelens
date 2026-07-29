@@ -20,6 +20,7 @@ import com.example.courselingo.task.dto.TaskBatchDeleteRequest;
 import com.example.courselingo.task.dto.TaskBatchDeleteResponse;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -44,11 +45,19 @@ class TaskBatchDeleteServiceTest {
     @Mock
     private AnalysisTaskMapper analysisTaskMapper;
 
+    @Mock
+    private VideoKeyframeEvidenceLifecycleService evidenceLifecycleService;
+
     private TaskBatchDeleteServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new TaskBatchDeleteServiceImpl(currentUserService, analysisTaskMapper, CLOCK);
+        service = new TaskBatchDeleteServiceImpl(
+            currentUserService,
+            analysisTaskMapper,
+            CLOCK,
+            evidenceLifecycleService
+        );
         lenient().when(currentUserService.currentUser(null))
             .thenReturn(new CurrentUserResponse(42L, "redacted", "ACTIVE"));
     }
@@ -73,6 +82,7 @@ class TaskBatchDeleteServiceTest {
             java.util.Set.of("SUCCEEDED", "FAILED", "CANCELED"),
             LocalDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone())
         );
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_1", 42L);
     }
 
     @Test
@@ -139,6 +149,9 @@ class TaskBatchDeleteServiceTest {
 
         assertThat(response).isEqualTo(new TaskBatchDeleteResponse(3, 0));
         verify(analysisTaskMapper, never()).softDeleteByIdsAndUserId(anyList(), any(), anySet(), any());
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_1", 42L);
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_2", 42L);
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_3", 42L);
     }
 
     @Test
@@ -216,15 +229,35 @@ class TaskBatchDeleteServiceTest {
     }
 
     @Test
-    void serviceHasNoStorageMqOrAssociatedDataDeletionDependency() {
+    void evidenceCleanupFailureDoesNotRollBackTaskSoftDeletion() {
+        when(analysisTaskMapper.selectByIdsAndUserIdIncludingDeleted(List.of("task_1"), 42L))
+            .thenReturn(List.of(task("task_1", "SUCCEEDED")));
+        when(analysisTaskMapper.softDeleteByIdsAndUserId(anyList(), eq(42L), anySet(), any()))
+            .thenReturn(1);
+        doThrow(new IllegalStateException("MinIO unavailable"))
+            .when(evidenceLifecycleService).cleanupTaskEvidence("task_1", 42L);
+
+        TaskBatchDeleteResponse response = service.delete(
+            new TaskBatchDeleteRequest(List.of("task_1")),
+            null
+        );
+
+        assertThat(response).isEqualTo(new TaskBatchDeleteResponse(1, 1));
+    }
+
+    @Test
+    void serviceOnlyAddsScopedEvidenceLifecycleDependency() {
         assertThat(Arrays.stream(TaskBatchDeleteServiceImpl.class.getDeclaredFields())
             .map(field -> field.getType().getName())
-            .filter(name -> !name.equals("int") && !name.equals("java.util.Set"))
+            .filter(name -> !name.equals("int")
+                && !name.equals("java.util.Set")
+                && !name.equals("org.slf4j.Logger"))
             .toList())
             .containsExactlyInAnyOrder(
                 CurrentUserService.class.getName(),
                 AnalysisTaskMapper.class.getName(),
-                Clock.class.getName()
+                Clock.class.getName(),
+                VideoKeyframeEvidenceLifecycleService.class.getName()
             );
     }
 

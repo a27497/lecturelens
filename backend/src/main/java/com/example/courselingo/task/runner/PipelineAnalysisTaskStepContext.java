@@ -14,6 +14,11 @@ public final class PipelineAnalysisTaskStepContext {
     private Path uploadedSourcePath;
     private AudioExtractionResult audioExtractionResult;
     private SpeechToTextResult speechToTextResult;
+    private VisionPipelineBranchCoordinator.VisionPipelineBranchHandle visionBranchHandle;
+    private VisionPipelineBranchResult visionBranchResult;
+    private PipelineAnalysisTaskStepException asrBranchFailure;
+    private PipelineBranchStatus asrBranchStatus = PipelineBranchStatus.NOT_STARTED;
+    private PipelineBranchStatus visionBranchStatus = PipelineBranchStatus.NOT_STARTED;
     private final List<PipelineAiCallRecord> aiCallRecords = new ArrayList<>();
 
     PipelineAnalysisTaskStepContext(
@@ -102,6 +107,102 @@ public final class PipelineAnalysisTaskStepContext {
         );
     }
 
+    void setVisionBranchHandle(VisionPipelineBranchCoordinator.VisionPipelineBranchHandle visionBranchHandle) {
+        if (this.visionBranchHandle != null || visionBranchStatus != PipelineBranchStatus.NOT_STARTED) {
+            throw new IllegalStateException("vision preprocessing branch has already been started");
+        }
+        this.visionBranchHandle = visionBranchHandle;
+        this.visionBranchStatus = PipelineBranchStatus.RUNNING;
+    }
+
+    boolean hasVisionBranchHandle() {
+        return visionBranchHandle != null;
+    }
+
+    VisionPipelineBranchResult awaitVisionBranch() throws InterruptedException {
+        if (visionBranchHandle == null) {
+            throw new IllegalStateException("vision preprocessing branch was not submitted");
+        }
+        setVisionBranchResult(visionBranchHandle.await());
+        return visionBranchResult;
+    }
+
+    void cancelVisionBranchAndAwaitExit() {
+        if (visionBranchHandle != null) {
+            visionBranchHandle.cancelAndAwaitExit();
+            if (visionBranchStatus == PipelineBranchStatus.RUNNING) {
+                visionBranchStatus = PipelineBranchStatus.CANCELLED;
+            }
+        }
+    }
+
+    void setVisionBranchResult(VisionPipelineBranchResult visionBranchResult) {
+        this.visionBranchResult = visionBranchResult;
+        if (visionBranchResult == null) {
+            return;
+        }
+        this.visionBranchStatus = switch (visionBranchResult.status()) {
+            case SUCCEEDED -> PipelineBranchStatus.SUCCEEDED;
+            case CANCELLED -> PipelineBranchStatus.CANCELLED;
+            case FAILED, TIMED_OUT -> PipelineBranchStatus.FAILED;
+        };
+    }
+
+    boolean visionBranchSucceeded() {
+        return visionBranchResult != null && visionBranchResult.isSucceeded();
+    }
+
+    boolean visionBranchFailed() {
+        return visionBranchResult != null && !visionBranchResult.isSucceeded();
+    }
+
+    void markVisionBranchDegraded() {
+        if (visionBranchStatus == PipelineBranchStatus.SUCCEEDED
+            || visionBranchStatus == PipelineBranchStatus.FAILED) {
+            visionBranchStatus = PipelineBranchStatus.DEGRADED;
+        }
+    }
+
+    boolean hasUsableVisionEvidence() {
+        return visionBranchStatus == PipelineBranchStatus.SUCCEEDED
+            || visionBranchStatus == PipelineBranchStatus.DEGRADED;
+    }
+
+    PipelineBranchStatus visionBranchStatus() {
+        return visionBranchStatus;
+    }
+
+    void markAsrBranchRunning() {
+        if (asrBranchStatus == PipelineBranchStatus.NOT_STARTED) {
+            asrBranchStatus = PipelineBranchStatus.RUNNING;
+        }
+    }
+
+    void markAsrBranchSucceeded() {
+        if (asrBranchFailure == null) {
+            asrBranchStatus = PipelineBranchStatus.SUCCEEDED;
+        }
+    }
+
+    void setAsrBranchFailure(PipelineAnalysisTaskStepException asrBranchFailure) {
+        if (this.asrBranchFailure == null) {
+            this.asrBranchFailure = asrBranchFailure;
+            this.asrBranchStatus = PipelineBranchStatus.FAILED;
+        }
+    }
+
+    boolean asrBranchFailed() {
+        return asrBranchFailure != null;
+    }
+
+    PipelineAnalysisTaskStepException asrBranchFailure() {
+        return asrBranchFailure;
+    }
+
+    PipelineBranchStatus asrBranchStatus() {
+        return asrBranchStatus;
+    }
+
     void addAiCallRecord(PipelineAiCallRecord record) {
         if (record != null) {
             aiCallRecords.add(record);
@@ -133,6 +234,9 @@ public final class PipelineAnalysisTaskStepContext {
             + ", extractedAudioPath=[redacted]"
             + ", asrResultPresent=" + (speechToTextResult != null)
             + ", asrSegmentCount=" + asrSegmentCount()
+            + ", asrBranchStatus=" + asrBranchStatus
+            + ", visionBranchSubmitted=" + (visionBranchHandle != null)
+            + ", visionBranchStatus=" + visionBranchStatus
             + ", pendingAiCallRecordCount=" + aiCallRecords.size()
             + '}';
     }

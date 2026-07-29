@@ -39,6 +39,17 @@ public record FfmpegProperties(
         return audioFormat.toLowerCase();
     }
 
+    String ffprobeExecutable() {
+        String normalized = executable == null ? "" : executable.strip();
+        if (normalized.toLowerCase(java.util.Locale.ROOT).endsWith("ffmpeg.exe")) {
+            return normalized.substring(0, normalized.length() - "ffmpeg.exe".length()) + "ffprobe.exe";
+        }
+        if (normalized.toLowerCase(java.util.Locale.ROOT).endsWith("ffmpeg")) {
+            return normalized.substring(0, normalized.length() - "ffmpeg".length()) + "ffprobe";
+        }
+        return "ffprobe";
+    }
+
     private static boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

@@ -6,7 +6,9 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.subtitle.domain.SubtitleSegment;
+import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
+import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.model.AnalysisTaskStatus;
@@ -25,6 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +49,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
 
     private final VideoSegmentMapper videoSegmentMapper;
     private final SubtitleSegmentMapper subtitleSegmentMapper;
+    private final SubtitleTranslationSegmentMapper translationSegmentMapper;
     private final VideoKeyframeMapper keyframeMapper;
     private final VideoKeyframeOcrMapper ocrMapper;
     private final VideoKeyframeAnalysisMapper analysisMapper;
@@ -59,6 +64,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     public VideoSegmentFusionServiceImpl(
         VideoSegmentMapper videoSegmentMapper,
         SubtitleSegmentMapper subtitleSegmentMapper,
+        SubtitleTranslationSegmentMapper translationSegmentMapper,
         VideoKeyframeMapper keyframeMapper,
         VideoKeyframeOcrMapper ocrMapper,
         VideoKeyframeAnalysisMapper analysisMapper,
@@ -70,6 +76,59 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         this(
             videoSegmentMapper,
             subtitleSegmentMapper,
+            translationSegmentMapper,
+            keyframeMapper,
+            ocrMapper,
+            analysisMapper,
+            properties,
+            objectMapper,
+            Clock.systemUTC(),
+            currentUserService,
+            analysisTaskMapper
+        );
+    }
+
+    public VideoSegmentFusionServiceImpl(
+        VideoSegmentMapper videoSegmentMapper,
+        SubtitleSegmentMapper subtitleSegmentMapper,
+        SubtitleTranslationSegmentMapper translationSegmentMapper,
+        VideoKeyframeMapper keyframeMapper,
+        VideoKeyframeOcrMapper ocrMapper,
+        VideoKeyframeAnalysisMapper analysisMapper,
+        VideoSegmentProperties properties,
+        ObjectMapper objectMapper,
+        Clock clock
+    ) {
+        this(
+            videoSegmentMapper,
+            subtitleSegmentMapper,
+            translationSegmentMapper,
+            keyframeMapper,
+            ocrMapper,
+            analysisMapper,
+            properties,
+            objectMapper,
+            clock,
+            null,
+            null
+        );
+    }
+
+    public VideoSegmentFusionServiceImpl(
+        VideoSegmentMapper videoSegmentMapper,
+        SubtitleSegmentMapper subtitleSegmentMapper,
+        VideoKeyframeMapper keyframeMapper,
+        VideoKeyframeOcrMapper ocrMapper,
+        VideoKeyframeAnalysisMapper analysisMapper,
+        VideoSegmentProperties properties,
+        ObjectMapper objectMapper,
+        CurrentUserService currentUserService,
+        AnalysisTaskMapper analysisTaskMapper
+    ) {
+        this(
+            videoSegmentMapper,
+            subtitleSegmentMapper,
+            null,
             keyframeMapper,
             ocrMapper,
             analysisMapper,
@@ -94,6 +153,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         this(
             videoSegmentMapper,
             subtitleSegmentMapper,
+            null,
             keyframeMapper,
             ocrMapper,
             analysisMapper,
@@ -108,6 +168,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     private VideoSegmentFusionServiceImpl(
         VideoSegmentMapper videoSegmentMapper,
         SubtitleSegmentMapper subtitleSegmentMapper,
+        SubtitleTranslationSegmentMapper translationSegmentMapper,
         VideoKeyframeMapper keyframeMapper,
         VideoKeyframeOcrMapper ocrMapper,
         VideoKeyframeAnalysisMapper analysisMapper,
@@ -119,6 +180,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     ) {
         this.videoSegmentMapper = Objects.requireNonNull(videoSegmentMapper, "videoSegmentMapper is required");
         this.subtitleSegmentMapper = Objects.requireNonNull(subtitleSegmentMapper, "subtitleSegmentMapper is required");
+        this.translationSegmentMapper = translationSegmentMapper;
         this.keyframeMapper = Objects.requireNonNull(keyframeMapper, "keyframeMapper is required");
         this.ocrMapper = ocrMapper;
         this.analysisMapper = analysisMapper;
@@ -145,18 +207,19 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             throw new IllegalArgumentException("userId is required");
         }
         List<SubtitleSegment> subtitles = properties.isIncludeAsr()
-            ? subtitleSegmentMapper.selectByTaskIdAndUserId(normalizedTaskId, userId)
+            ? sortedSubtitles(subtitleSegmentMapper.selectByTaskIdAndUserId(normalizedTaskId, userId))
             : List.of();
-        List<VideoKeyframe> keyframes = keyframeMapper.selectByTaskIdAndUserId(normalizedTaskId, userId);
-        List<Long> keyframeIds = keyframes.stream().map(VideoKeyframe::getId).toList();
+        List<SubtitleTranslationSegment> translations = sortedTranslations(loadTranslations(normalizedTaskId, userId));
+        List<VideoKeyframe> keyframes = sortedKeyframes(keyframeMapper.selectByTaskIdAndUserId(normalizedTaskId, userId));
+        List<Long> keyframeIds = keyframes.stream().map(VideoKeyframe::getId).filter(Objects::nonNull).toList();
         List<VideoKeyframeOcr> ocrRows = properties.isIncludeOcr() && ocrMapper != null
-            ? ocrMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframeIds)
+            ? sortedOcrRows(ocrMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframeIds))
             : List.of();
         List<VideoKeyframeAnalysis> analysisRows = properties.isIncludeVision() && analysisMapper != null
-            ? analysisMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframeIds)
+            ? sortedAnalysisRows(analysisMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframeIds))
             : List.of();
         long windowMillis = Math.max(1L, properties.getWindowSeconds()) * 1000L;
-        long durationMillis = durationMillis(subtitles, keyframes, ocrRows, analysisRows, windowMillis);
+        long durationMillis = durationMillis(subtitles, translations, keyframes, ocrRows, analysisRows, windowMillis);
         videoSegmentMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
         if (durationMillis <= 0) {
             return new VideoSegmentFusionResult(0, 0, 0, 0);
@@ -178,6 +241,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
                 end,
                 end == durationMillis,
                 subtitles,
+                translations,
                 keyframes,
                 ocrRows,
                 analysisRows
@@ -186,7 +250,9 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
                 empty++;
                 continue;
             }
-            videoSegmentMapper.insert(toEntity(normalizedTaskId, userId, index, start, end, data, now));
+            if (videoSegmentMapper.insert(toEntity(normalizedTaskId, userId, index, start, end, data, now)) != 1) {
+                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Video segment persistence failed");
+            }
             saved++;
         }
         int skipped = Math.max(0, windows - boundedWindows);
@@ -245,6 +311,79 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             .toList();
     }
 
+    private List<SubtitleTranslationSegment> loadTranslations(String taskId, Long userId) {
+        if (translationSegmentMapper == null || analysisTaskMapper == null) {
+            return List.of();
+        }
+        AnalysisTask task = analysisTaskMapper.selectByIdAndUserId(taskId, userId);
+        if (task == null || task.getTargetLanguage() == null || task.getTargetLanguage().isBlank()) {
+            return List.of();
+        }
+        List<SubtitleTranslationSegment> rows = translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage(
+            taskId,
+            userId,
+            task.getTargetLanguage()
+        );
+        return rows == null ? List.of() : rows;
+    }
+
+    private static List<SubtitleSegment> sortedSubtitles(List<SubtitleSegment> rows) {
+        return safeList(rows).stream()
+            .filter(Objects::nonNull)
+            .sorted(Comparator
+                .comparing(SubtitleSegment::getStartMillis, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(SubtitleSegment::getSegmentIndex, Comparator.nullsLast(Integer::compareTo))
+                .thenComparing(SubtitleSegment::getId, Comparator.nullsLast(Long::compareTo)))
+            .toList();
+    }
+
+    private static List<SubtitleTranslationSegment> sortedTranslations(List<SubtitleTranslationSegment> rows) {
+        return safeList(rows).stream()
+            .filter(Objects::nonNull)
+            .sorted(Comparator
+                .comparing(SubtitleTranslationSegment::getStartMillis, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(SubtitleTranslationSegment::getSegmentIndex, Comparator.nullsLast(Integer::compareTo))
+                .thenComparing(SubtitleTranslationSegment::getId, Comparator.nullsLast(Long::compareTo)))
+            .toList();
+    }
+
+    private static List<VideoKeyframe> sortedKeyframes(List<VideoKeyframe> rows) {
+        return safeList(rows).stream()
+            .filter(Objects::nonNull)
+            .sorted(Comparator
+                .comparing(VideoKeyframe::getTimestampMillis, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoKeyframe::getId, Comparator.nullsLast(Long::compareTo)))
+            .toList();
+    }
+
+    private static List<VideoKeyframeOcr> sortedOcrRows(List<VideoKeyframeOcr> rows) {
+        return safeList(rows).stream()
+            .filter(Objects::nonNull)
+            .sorted(Comparator
+                .comparing(VideoKeyframeOcr::getTimestampMillis, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoKeyframeOcr::getKeyframeId, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoKeyframeOcr::getId, Comparator.nullsLast(Long::compareTo)))
+            .toList();
+    }
+
+    private static List<VideoKeyframeAnalysis> sortedAnalysisRows(List<VideoKeyframeAnalysis> rows) {
+        return safeList(rows).stream()
+            .filter(Objects::nonNull)
+            .sorted(Comparator
+                .comparing(VideoKeyframeAnalysis::getTimestampMillis, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoKeyframeAnalysis::getKeyframeId, Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoKeyframeAnalysis::getId, Comparator.nullsLast(Long::compareTo)))
+            .toList();
+    }
+
+    private static <T> List<T> safeList(List<T> rows) {
+        return rows == null ? List.of() : rows;
+    }
+
+    private static List<Long> distinctSortedIds(List<Long> ids) {
+        return safeList(ids).stream().filter(Objects::nonNull).distinct().sorted().toList();
+    }
+
     private VideoSegment toEntity(
         String taskId,
         Long userId,
@@ -262,11 +401,13 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         segment.setEndMillis(end);
         segment.setTimeText(formatWindow(start, end));
         segment.setAsrText(data.asrText());
+        segment.setTranslatedText(data.translatedText());
         segment.setOcrText(data.ocrText());
         segment.setVisualSummary(data.visualSummary());
         segment.setFusedSummary(fusedSummary(data));
         segment.setKeywordsJson(toJson(keywordExtractor.extract(data.combinedText(), properties.getMaxKeywords()), "[]"));
         segment.setEvidenceJson(toJson(data.evidence(), "{}"));
+        segment.setSourceStatusJson(toJson(data.sourceStatus(), "{}"));
         segment.setConfidence(confidence(data));
         segment.setStatus(VideoSegmentStatus.SUCCEEDED.name());
         segment.setCreatedAt(now);
@@ -279,6 +420,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         long end,
         boolean finalWindow,
         List<SubtitleSegment> subtitles,
+        List<SubtitleTranslationSegment> translations,
         List<VideoKeyframe> keyframes,
         List<VideoKeyframeOcr> ocrRows,
         List<VideoKeyframeAnalysis> analysisRows
@@ -286,20 +428,27 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         List<SubtitleSegment> subtitleHits = subtitles.stream()
             .filter(segment -> overlaps(segment.getStartMillis(), segment.getEndMillis(), start, end))
             .toList();
+        List<SubtitleTranslationSegment> translationHits = translations.stream()
+            .filter(segment -> overlaps(segment.getStartMillis(), segment.getEndMillis(), start, end))
+            .toList();
         List<VideoKeyframe> keyframeHits = keyframes.stream()
             .filter(keyframe -> inWindow(keyframe.getTimestampMillis(), start, end, finalWindow))
             .toList();
         Set<Long> keyframeIds = new LinkedHashSet<>();
         keyframeHits.stream().map(VideoKeyframe::getId).forEach(keyframeIds::add);
-        List<VideoKeyframeOcr> ocrHits = ocrRows.stream()
+        List<VideoKeyframeOcr> ocrWindowRows = ocrRows.stream()
             .filter(row -> inWindow(row.getTimestampMillis(), start, end, finalWindow))
+            .toList();
+        List<VideoKeyframeOcr> ocrHits = ocrWindowRows.stream()
             .filter(row -> OcrStatus.SUCCEEDED.name().equals(row.getStatus()))
             .filter(row -> row.getOcrText() != null && !row.getOcrText().isBlank())
             .filter(row -> OcrTextQualityEvaluator.isUseful(row.getOcrText(), row.getConfidence()))
             .toList();
         ocrHits.stream().map(VideoKeyframeOcr::getKeyframeId).forEach(keyframeIds::add);
-        List<VideoKeyframeAnalysis> analysisHits = analysisRows.stream()
+        List<VideoKeyframeAnalysis> analysisWindowRows = analysisRows.stream()
             .filter(row -> inWindow(row.getTimestampMillis(), start, end, finalWindow))
+            .toList();
+        List<VideoKeyframeAnalysis> analysisHits = analysisWindowRows.stream()
             .filter(row -> VisionAnalysisStatus.SUCCEEDED.name().equals(row.getStatus()))
             .filter(row -> row.getVisualSummary() != null && !row.getVisualSummary().isBlank())
             .toList();
@@ -307,6 +456,10 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
 
         String asrText = truncate(
             joinDistinct(subtitleHits.stream().map(SubtitleSegment::getText).toList()),
+            properties.getMaxAsrCharsPerWindow()
+        );
+        String translatedText = truncate(
+            joinDistinct(translationHits.stream().map(SubtitleTranslationSegment::getTranslatedText).toList()),
             properties.getMaxAsrCharsPerWindow()
         );
         String ocrText = truncate(
@@ -317,14 +470,31 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             joinDistinct(analysisHits.stream().map(VideoKeyframeAnalysis::getVisualSummary).toList()),
             properties.getMaxVisualCharsPerWindow()
         );
+        Map<String, Integer> sourceCounts = new LinkedHashMap<>();
+        sourceCounts.put("asr", subtitleHits.size());
+        sourceCounts.put("translation", translationHits.size());
+        sourceCounts.put("ocr", ocrHits.size());
+        sourceCounts.put("visual", analysisHits.size());
         VideoSegmentEvidence evidence = new VideoSegmentEvidence(
-            subtitleHits.stream().map(SubtitleSegment::getId).filter(Objects::nonNull).toList(),
-            keyframeIds.stream().filter(Objects::nonNull).toList(),
-            ocrHits.stream().map(VideoKeyframeOcr::getId).filter(Objects::nonNull).toList(),
-            analysisHits.stream().map(VideoKeyframeAnalysis::getId).filter(Objects::nonNull).toList(),
-            Map.of("asr", subtitleHits.size(), "ocr", ocrHits.size(), "visual", analysisHits.size())
+            distinctSortedIds(subtitleHits.stream().map(SubtitleSegment::getId).toList()),
+            distinctSortedIds(keyframeIds.stream().toList()),
+            distinctSortedIds(ocrHits.stream().map(VideoKeyframeOcr::getId).toList()),
+            distinctSortedIds(analysisHits.stream().map(VideoKeyframeAnalysis::getId).toList()),
+            sourceCounts,
+            distinctSortedIds(translationHits.stream().map(SubtitleTranslationSegment::getId).toList())
         );
-        return new WindowData(asrText, ocrText, visualSummary, evidence);
+        VideoSegmentSourceStatus sourceStatus = sourceStatus(
+            start,
+            end,
+            subtitleHits,
+            translationHits,
+            keyframeHits,
+            ocrWindowRows,
+            ocrHits,
+            analysisWindowRows,
+            analysisHits
+        );
+        return new WindowData(asrText, translatedText, ocrText, visualSummary, evidence, sourceStatus);
     }
 
     private VideoSegmentResponse toResponse(VideoSegment row) {
@@ -335,11 +505,13 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             row.getEndMillis(),
             row.getTimeText(),
             nullToEmpty(row.getAsrText()),
+            nullToEmpty(row.getTranslatedText()),
             nullToEmpty(row.getOcrText()),
             nullToEmpty(row.getVisualSummary()),
             nullToEmpty(row.getFusedSummary()),
             parseKeywords(row.getKeywordsJson()),
             parseEvidence(row.getEvidenceJson()),
+            parseSourceStatus(row.getSourceStatusJson()),
             nullToEmpty(row.getStatus()),
             row.getConfidence()
         );
@@ -347,6 +519,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
 
     private static boolean matchesKeyword(VideoSegmentResponse view, String keyword) {
         return contains(view.asrText(), keyword)
+            || contains(view.translatedText(), keyword)
             || contains(view.ocrText(), keyword)
             || contains(view.visualSummary(), keyword)
             || contains(view.fusedSummary(), keyword)
@@ -375,6 +548,16 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         }
     }
 
+    private VideoSegmentSourceStatus parseSourceStatus(String json) {
+        try {
+            return json == null || json.isBlank()
+                ? VideoSegmentSourceStatus.empty()
+                : objectMapper.readValue(json, VideoSegmentSourceStatus.class);
+        } catch (JsonProcessingException ignored) {
+            return VideoSegmentSourceStatus.empty();
+        }
+    }
+
     private static VideoSegmentEvidence emptyEvidence() {
         return new VideoSegmentEvidence(List.of(), List.of(), List.of(), List.of(), Map.of());
     }
@@ -392,6 +575,9 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         if (!data.asrText().isBlank()) {
             parts.add("\u672c\u6bb5\u4e3b\u8981\u8bb2\u89e3\uff1a" + snippet(data.asrText(), 180));
         }
+        if (!data.translatedText().isBlank()) {
+            parts.add("\u5b57\u5e55\u8bd1\u6587\uff1a" + snippet(data.translatedText(), 180));
+        }
         if (!data.ocrText().isBlank()) {
             parts.add("\u753b\u9762\u6587\u5b57\u5305\u62ec\uff1a" + snippet(data.ocrText(), 120));
         }
@@ -402,21 +588,176 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     }
 
     private static double confidence(WindowData data) {
-        int sources = 0;
-        if (!data.asrText().isBlank()) {
-            sources++;
+        Map<String, Double> components = data.sourceStatus().confidenceComponents();
+        double weighted = 0.0d;
+        double weights = 0.0d;
+        weighted += component(components, "asr", 0.30d);
+        weights += components.containsKey("asr") ? 0.30d : 0.0d;
+        weighted += component(components, "translation", 0.10d);
+        weights += components.containsKey("translation") ? 0.10d : 0.0d;
+        weighted += component(components, "ocr", 0.20d);
+        weights += components.containsKey("ocr") ? 0.20d : 0.0d;
+        weighted += component(components, "keyframeQuality", 0.15d);
+        weights += components.containsKey("keyframeQuality") ? 0.15d : 0.0d;
+        weighted += component(components, "vlm", 0.15d);
+        weights += components.containsKey("vlm") ? 0.15d : 0.0d;
+        weighted += component(components, "timestamp", 0.10d);
+        weights += components.containsKey("timestamp") ? 0.10d : 0.0d;
+        double score = weights <= 0.0d ? 0.0d : weighted / weights;
+        if (data.sourceStatus().degraded()) {
+            score *= 0.85d;
         }
-        if (!data.ocrText().isBlank()) {
-            sources++;
+        return Math.round(clamp(score) * 10_000.0d) / 10_000.0d;
+    }
+
+    private static double component(Map<String, Double> components, String key, double weight) {
+        Double value = components.get(key);
+        return value == null ? 0.0d : clamp(value) * weight;
+    }
+
+    private VideoSegmentSourceStatus sourceStatus(
+        long start,
+        long end,
+        List<SubtitleSegment> subtitleHits,
+        List<SubtitleTranslationSegment> translationHits,
+        List<VideoKeyframe> keyframeHits,
+        List<VideoKeyframeOcr> ocrWindowRows,
+        List<VideoKeyframeOcr> ocrHits,
+        List<VideoKeyframeAnalysis> analysisWindowRows,
+        List<VideoKeyframeAnalysis> analysisHits
+    ) {
+        Map<String, String> sources = new LinkedHashMap<>();
+        sources.put("asr", availability(properties.isIncludeAsr(), subtitleHits, subtitleHits));
+        sources.put("translation", translationSegmentMapper == null
+            ? "UNAVAILABLE"
+            : availability(true, translationHits, translationHits));
+        sources.put("ocr", rowAvailability(
+            properties.isIncludeOcr() && ocrMapper != null,
+            ocrWindowRows.stream().map(VideoKeyframeOcr::getStatus).toList(),
+            ocrHits
+        ));
+        sources.put("visual", rowAvailability(
+            properties.isIncludeVision() && analysisMapper != null,
+            analysisWindowRows.stream().map(VideoKeyframeAnalysis::getStatus).toList(),
+            analysisHits
+        ));
+        sources.put("keyframe", keyframeHits.isEmpty() ? "MISSING" : "AVAILABLE");
+
+        boolean timestampValid = end > start
+            && subtitleHits.stream().allMatch(row -> validRange(row.getStartMillis(), row.getEndMillis()))
+            && translationHits.stream().allMatch(row -> validRange(row.getStartMillis(), row.getEndMillis()))
+            && keyframeHits.stream().allMatch(row -> row.getTimestampMillis() != null && row.getTimestampMillis() >= 0L)
+            && ocrWindowRows.stream().allMatch(row -> row.getTimestampMillis() != null && row.getTimestampMillis() >= 0L)
+            && analysisWindowRows.stream().allMatch(row -> row.getTimestampMillis() != null && row.getTimestampMillis() >= 0L);
+        sources.put("timestamp", timestampValid ? "VALID" : "DEGRADED");
+        String keyframeSourceTypes = keyframeHits.stream()
+            .map(VideoKeyframe::getSourceType)
+            .map(VideoSegmentFusionServiceImpl::clean)
+            .filter(value -> !value.isBlank())
+            .distinct()
+            .sorted()
+            .reduce((left, right) -> left + "," + right)
+            .orElse("");
+        if (!keyframeSourceTypes.isBlank()) {
+            sources.put("keyframeSourceTypes", keyframeSourceTypes);
         }
-        if (!data.visualSummary().isBlank()) {
-            sources++;
+
+        Map<String, Double> components = new LinkedHashMap<>();
+        if (properties.isIncludeAsr()) {
+            components.put("asr", subtitleHits.isEmpty() ? 0.0d : 1.0d);
         }
-        return Math.min(0.9d, 0.5d + sources * 0.1d);
+        if (translationSegmentMapper != null) {
+            components.put("translation", translationHits.isEmpty() ? 0.0d : 1.0d);
+        }
+        if (properties.isIncludeOcr() && ocrMapper != null) {
+            components.put("ocr", averageOcrConfidence(ocrHits));
+        }
+        List<Double> qualityScores = keyframeHits.stream()
+            .map(VideoKeyframe::getQualityScore)
+            .filter(Objects::nonNull)
+            .toList();
+        if (!qualityScores.isEmpty()) {
+            components.put("keyframeQuality", average(qualityScores));
+        }
+        if (properties.isIncludeVision() && analysisMapper != null) {
+            components.put("vlm", analysisWindowRows.isEmpty()
+                ? 0.0d
+                : analysisHits.size() / (double) analysisWindowRows.size());
+        }
+        components.put("timestamp", timestampValid ? 1.0d : 0.25d);
+
+        boolean degraded = !timestampValid
+            || keyframeHits.stream().anyMatch(row -> Boolean.TRUE.equals(row.getDegraded()))
+            || ocrWindowRows.stream().anyMatch(row -> failed(row.getStatus()))
+            || analysisWindowRows.stream().anyMatch(row -> failed(row.getStatus()));
+        return new VideoSegmentSourceStatus(sources, components, degraded);
+    }
+
+    private static String availability(boolean enabled, List<?> attempted, List<?> succeeded) {
+        if (!enabled) {
+            return "DISABLED";
+        }
+        if (!succeeded.isEmpty()) {
+            return "AVAILABLE";
+        }
+        return attempted.isEmpty() ? "MISSING" : "FAILED";
+    }
+
+    private static String rowAvailability(boolean enabled, List<String> statuses, List<?> succeeded) {
+        if (!enabled) {
+            return "DISABLED";
+        }
+        if (!succeeded.isEmpty()) {
+            return "AVAILABLE";
+        }
+        if (statuses == null || statuses.isEmpty()) {
+            return "MISSING";
+        }
+        if (statuses.stream().filter(Objects::nonNull).allMatch(status -> status.equalsIgnoreCase("DISABLED"))) {
+            return "DISABLED";
+        }
+        if (statuses.stream().anyMatch(VideoSegmentFusionServiceImpl::failed)) {
+            return "FAILED";
+        }
+        if (statuses.stream().anyMatch(status -> status != null && status.equalsIgnoreCase("SKIPPED"))) {
+            return "SKIPPED";
+        }
+        return "EMPTY";
+    }
+
+    private static boolean failed(String status) {
+        return status != null && (status.equalsIgnoreCase("FAILED") || status.equalsIgnoreCase("ERROR"));
+    }
+
+    private static boolean validRange(Long start, Long end) {
+        return start != null && end != null && start >= 0L && end >= start;
+    }
+
+    private static double averageOcrConfidence(List<VideoKeyframeOcr> rows) {
+        if (rows.isEmpty()) {
+            return 0.0d;
+        }
+        List<Double> scores = rows.stream()
+            .map(VideoKeyframeOcr::getConfidence)
+            .filter(Objects::nonNull)
+            .toList();
+        return scores.isEmpty() ? 0.65d : average(scores);
+    }
+
+    private static double average(List<Double> values) {
+        return clamp(values.stream().mapToDouble(Double::doubleValue).average().orElse(0.0d));
+    }
+
+    private static double clamp(double value) {
+        if (!Double.isFinite(value)) {
+            return 0.0d;
+        }
+        return Math.max(0.0d, Math.min(value, 1.0d));
     }
 
     private static long durationMillis(
         List<SubtitleSegment> subtitles,
+        List<SubtitleTranslationSegment> translations,
         List<VideoKeyframe> keyframes,
         List<VideoKeyframeOcr> ocrRows,
         List<VideoKeyframeAnalysis> analysisRows,
@@ -424,6 +765,12 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     ) {
         long subtitleMax = subtitles.stream()
             .map(SubtitleSegment::getEndMillis)
+            .filter(Objects::nonNull)
+            .mapToLong(Long::longValue)
+            .max()
+            .orElse(0L);
+        long translationMax = translations.stream()
+            .map(SubtitleTranslationSegment::getEndMillis)
             .filter(Objects::nonNull)
             .mapToLong(Long::longValue)
             .max()
@@ -446,20 +793,22 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             .mapToLong(Long::longValue)
             .max()
             .orElse(0L);
-        long max = Math.max(Math.max(subtitleMax, keyframeMax), Math.max(ocrMax, analysisMax));
+        long max = Math.max(Math.max(Math.max(subtitleMax, translationMax), keyframeMax), Math.max(ocrMax, analysisMax));
         if (max > 0) {
             return max;
         }
-        return hasAnyEvidence(subtitles, keyframes, ocrRows, analysisRows) ? minimumEvidenceDurationMillis : 0L;
+        return hasAnyEvidence(subtitles, translations, keyframes, ocrRows, analysisRows) ? minimumEvidenceDurationMillis : 0L;
     }
 
     private static boolean hasAnyEvidence(
         List<SubtitleSegment> subtitles,
+        List<SubtitleTranslationSegment> translations,
         List<VideoKeyframe> keyframes,
         List<VideoKeyframeOcr> ocrRows,
         List<VideoKeyframeAnalysis> analysisRows
     ) {
         return subtitles.stream().anyMatch(segment -> segment.getText() != null && !segment.getText().isBlank())
+            || translations.stream().anyMatch(segment -> segment.getTranslatedText() != null && !segment.getTranslatedText().isBlank())
             || !keyframes.isEmpty()
             || ocrRows.stream().anyMatch(row -> row.getOcrText() != null && !row.getOcrText().isBlank())
             || analysisRows.stream().anyMatch(row -> row.getVisualSummary() != null && !row.getVisualSummary().isBlank());
@@ -530,16 +879,18 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
 
     private record WindowData(
         String asrText,
+        String translatedText,
         String ocrText,
         String visualSummary,
-        VideoSegmentEvidence evidence
+        VideoSegmentEvidence evidence,
+        VideoSegmentSourceStatus sourceStatus
     ) {
         boolean isEmpty() {
-            return asrText.isBlank() && ocrText.isBlank() && visualSummary.isBlank();
+            return asrText.isBlank() && translatedText.isBlank() && ocrText.isBlank() && visualSummary.isBlank();
         }
 
         String combinedText() {
-            return String.join("\n", asrText, ocrText, visualSummary);
+            return String.join("\n", asrText, translatedText, ocrText, visualSummary);
         }
     }
 }

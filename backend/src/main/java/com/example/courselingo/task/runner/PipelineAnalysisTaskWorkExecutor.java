@@ -1,5 +1,7 @@
 package com.example.courselingo.task.runner;
 
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +22,33 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
     private final List<PipelineAnalysisTaskStepName> stepNames;
     private final PipelineAnalysisTaskStep aiCallRecordStep;
     private final PipelineTaskProgressReporter progressReporter;
+    private final PipelineRunnerWorkspace workspace;
+    private final VideoKeyframeEvidenceLifecycleService evidenceLifecycleService;
 
     public PipelineAnalysisTaskWorkExecutor(List<PipelineAnalysisTaskStep> steps) {
-        this(steps, PipelineTaskProgressReporter.NOOP);
+        this(steps, PipelineTaskProgressReporter.NOOP, null, null);
     }
 
     public PipelineAnalysisTaskWorkExecutor(
         List<PipelineAnalysisTaskStep> steps,
         PipelineTaskProgressReporter progressReporter
+    ) {
+        this(steps, progressReporter, null, null);
+    }
+
+    PipelineAnalysisTaskWorkExecutor(
+        List<PipelineAnalysisTaskStep> steps,
+        PipelineTaskProgressReporter progressReporter,
+        PipelineRunnerWorkspace workspace
+    ) {
+        this(steps, progressReporter, workspace, null);
+    }
+
+    PipelineAnalysisTaskWorkExecutor(
+        List<PipelineAnalysisTaskStep> steps,
+        PipelineTaskProgressReporter progressReporter,
+        PipelineRunnerWorkspace workspace,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
         this.steps = normalizeSteps(steps);
         this.stepNames = this.steps.stream()
@@ -37,6 +59,8 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             .findFirst()
             .orElse(null);
         this.progressReporter = progressReporter == null ? PipelineTaskProgressReporter.NOOP : progressReporter;
+        this.workspace = workspace;
+        this.evidenceLifecycleService = evidenceLifecycleService;
     }
 
     public static PipelineAnalysisTaskWorkExecutor skeleton() {
@@ -59,58 +83,153 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             context,
             completed
         );
-        for (PipelineAnalysisTaskStep step : steps) {
-            long stepStartedNanos = System.nanoTime();
-            Instant startedAt = Instant.now();
-            progressReporter.stepStarted(step.name(), stepContext);
-            LOGGER.info(
-                "event=pipeline_step_started taskId={} stepName={} started={}",
-                SafeLogSanitizer.sanitize(context.taskId()),
-                step.name(),
-                startedAt
-            );
-            try {
-                step.execute(stepContext);
-                completed.add(step.name());
-                long durationMillis = elapsedMillis(stepStartedNanos);
-                Instant completedAt = Instant.now();
-                progressReporter.stepCompleted(step.name(), stepContext, durationMillis);
+        boolean completedSuccessfully = false;
+        try {
+            for (PipelineAnalysisTaskStep step : steps) {
+                if (step.name() == PipelineAnalysisTaskStepName.EXTRACT_AUDIO) {
+                    stepContext.markAsrBranchRunning();
+                }
+                long stepStartedNanos = System.nanoTime();
+                Instant startedAt = Instant.now();
+                progressReporter.stepStarted(step.name(), stepContext);
                 LOGGER.info(
-                    "event=pipeline_step_completed taskId={} stepName={} started={} completed={} durationMillis={}",
+                    "event=pipeline_step_started taskId={} stepName={} started={}",
                     SafeLogSanitizer.sanitize(context.taskId()),
                     step.name(),
-                    startedAt,
-                    completedAt,
-                    durationMillis
+                    startedAt
                 );
-            } catch (PipelineAnalysisTaskStepException exception) {
-                LOGGER.warn(
-                    "event=pipeline_step_failed taskId={} stepName={} started={} completed={} durationMillis={} errorType={}",
+                try {
+                    step.execute(stepContext);
+                    completed.add(step.name());
+                    if (step.name() == PipelineAnalysisTaskStepName.TRANSLATE_SUBTITLES
+                        && !stepContext.asrBranchFailed()) {
+                        stepContext.markAsrBranchSucceeded();
+                    }
+                    long durationMillis = elapsedMillis(stepStartedNanos);
+                    Instant completedAt = Instant.now();
+                    progressReporter.stepCompleted(step.name(), stepContext, durationMillis);
+                    LOGGER.info(
+                        "event=pipeline_step_completed taskId={} stepName={} started={} completed={} durationMillis={}",
+                        SafeLogSanitizer.sanitize(context.taskId()),
+                        step.name(),
+                        startedAt,
+                        completedAt,
+                        durationMillis
+                    );
+                } catch (PipelineAnalysisTaskStepException exception) {
+                    LOGGER.warn(
+                        "event=pipeline_step_failed taskId={} stepName={} started={} completed={} durationMillis={} errorType={}",
+                        SafeLogSanitizer.sanitize(context.taskId()),
+                        step.name(),
+                        startedAt,
+                        Instant.now(),
+                        elapsedMillis(stepStartedNanos),
+                        exception.getClass().getSimpleName()
+                    );
+                    if (canDegradeAsrBranch(step.name(), exception, stepContext)) {
+                        stepContext.setAsrBranchFailure(exception);
+                        continue;
+                    }
+                    flushPendingAiCallRecordsAfterFailure(step, stepContext, exception);
+                    throw exception;
+                } catch (RuntimeException exception) {
+                    LOGGER.warn(
+                        "event=pipeline_step_failed taskId={} stepName={} started={} completed={} durationMillis={} errorType={}",
+                        SafeLogSanitizer.sanitize(context.taskId()),
+                        step.name(),
+                        startedAt,
+                        Instant.now(),
+                        elapsedMillis(stepStartedNanos),
+                        exception.getClass().getSimpleName()
+                    );
+                    PipelineAnalysisTaskStepException wrapped = new PipelineAnalysisTaskStepException(
+                        step.name(),
+                        exception
+                    );
+                    if (canDegradeAsrBranch(step.name(), exception, stepContext)) {
+                        stepContext.setAsrBranchFailure(wrapped);
+                        continue;
+                    }
+                    flushPendingAiCallRecordsAfterFailure(step, stepContext, wrapped);
+                    throw wrapped;
+                }
+            }
+            if (stepContext.asrBranchFailed()) {
+                if (!stepContext.hasUsableVisionEvidence()) {
+                    throw new PipelineAnalysisTaskStepException(
+                        PipelineAnalysisTaskStepName.FUSE_VIDEO_SEGMENTS,
+                        new IllegalStateException("ASR and usable visual evidence are both unavailable")
+                    );
+                }
+                completedSuccessfully = true;
+                return AnalysisTaskWorkResult.degradedVisualOnly();
+            }
+            if (stepContext.visionBranchFailed()) {
+                completedSuccessfully = true;
+                return AnalysisTaskWorkResult.degradedAsrOnly();
+            }
+            completedSuccessfully = true;
+            return new AnalysisTaskWorkResult(true, null, null);
+        } finally {
+            stepContext.cancelVisionBranchAndAwaitExit();
+            if (!completedSuccessfully && evidenceLifecycleService != null) {
+                cleanupFailedTaskEvidence(stepContext);
+            }
+            if (workspace != null) {
+                boolean cleaned = workspace.cleanupTaskWorkspace(stepContext);
+                LOGGER.info(
+                    "event=pipeline_workspace_cleanup taskId={} success={}",
                     SafeLogSanitizer.sanitize(context.taskId()),
-                    step.name(),
-                    startedAt,
-                    Instant.now(),
-                    elapsedMillis(stepStartedNanos),
-                    exception.getClass().getSimpleName()
+                    cleaned
                 );
-                flushPendingAiCallRecordsAfterFailure(step, stepContext, exception);
-                throw exception;
-            } catch (RuntimeException exception) {
-                LOGGER.warn(
-                    "event=pipeline_step_failed taskId={} stepName={} started={} completed={} durationMillis={} errorType={}",
-                    SafeLogSanitizer.sanitize(context.taskId()),
-                    step.name(),
-                    startedAt,
-                    Instant.now(),
-                    elapsedMillis(stepStartedNanos),
-                    exception.getClass().getSimpleName()
-                );
-                PipelineAnalysisTaskStepException wrapped = new PipelineAnalysisTaskStepException(step.name(), exception);
-                flushPendingAiCallRecordsAfterFailure(step, stepContext, wrapped);
-                throw wrapped;
             }
         }
-        return new AnalysisTaskWorkResult(true, null, null);
+    }
+
+    private void cleanupFailedTaskEvidence(PipelineAnalysisTaskStepContext context) {
+        try {
+            int deleted = evidenceLifecycleService.cleanupTaskEvidence(context.taskId(), context.userId());
+            LOGGER.info(
+                "event=pipeline_failed_evidence_cleanup taskId={} deletedRows={}",
+                SafeLogSanitizer.sanitize(context.taskId()),
+                deleted
+            );
+        } catch (RuntimeException cleanupFailure) {
+            LOGGER.warn(
+                "event=pipeline_failed_evidence_cleanup_failed taskId={} errorType={}",
+                SafeLogSanitizer.sanitize(context.taskId()),
+                cleanupFailure.getClass().getSimpleName()
+            );
+        }
+    }
+
+    private static boolean canDegradeAsrBranch(
+        PipelineAnalysisTaskStepName stepName,
+        Throwable failure,
+        PipelineAnalysisTaskStepContext context
+    ) {
+        if (!context.hasVisionBranchHandle() || Thread.currentThread().isInterrupted() || isCancellation(failure)) {
+            return false;
+        }
+        return stepName == PipelineAnalysisTaskStepName.EXTRACT_AUDIO
+            || stepName == PipelineAnalysisTaskStepName.TRANSCRIBE
+            || stepName == PipelineAnalysisTaskStepName.PERSIST_SUBTITLES;
+    }
+
+    private static boolean isCancellation(Throwable failure) {
+        Set<Throwable> visited = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        Throwable current = failure;
+        while (current != null && visited.add(current)) {
+            if (current instanceof InterruptedException || current instanceof java.util.concurrent.CancellationException) {
+                return true;
+            }
+            if (current instanceof BusinessException businessException
+                && businessException.errorCode() == ErrorCode.TASK_INVALID_STATUS) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private static long elapsedMillis(long startedNanos) {

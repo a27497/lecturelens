@@ -6,7 +6,10 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.learning.dto.LearningPackageView;
 import com.example.courselingo.learning.service.LearningPackageQueryService;
+import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,15 +22,30 @@ public class MarkdownArtifactServiceImpl implements MarkdownArtifactService {
     private final LearningPackageQueryService learningPackageQueryService;
     private final ArtifactFileService artifactFileService;
     private final MarkdownLearningPackageFormatter formatter;
+    private final VideoSegmentMapper videoSegmentMapper;
+    private final ArtifactMultimodalTimelineBuilder timelineBuilder;
 
     public MarkdownArtifactServiceImpl(
         LearningPackageQueryService learningPackageQueryService,
         ArtifactFileService artifactFileService,
         MarkdownLearningPackageFormatter formatter
     ) {
+        this(learningPackageQueryService, artifactFileService, formatter, null, null);
+    }
+
+    @Autowired
+    public MarkdownArtifactServiceImpl(
+        LearningPackageQueryService learningPackageQueryService,
+        ArtifactFileService artifactFileService,
+        MarkdownLearningPackageFormatter formatter,
+        VideoSegmentMapper videoSegmentMapper,
+        ArtifactMultimodalTimelineBuilder timelineBuilder
+    ) {
         this.learningPackageQueryService = learningPackageQueryService;
         this.artifactFileService = artifactFileService;
         this.formatter = formatter;
+        this.videoSegmentMapper = videoSegmentMapper;
+        this.timelineBuilder = timelineBuilder;
     }
 
     @Override
@@ -36,7 +54,10 @@ public class MarkdownArtifactServiceImpl implements MarkdownArtifactService {
         LearningPackageView learningPackage = learningPackageQueryService
             .getByTaskAndLanguage(validated.taskId(), validated.userId(), validated.targetLanguage())
             .orElseThrow(() -> validationFailure("Markdown learning package is required"));
-        String content = formatter.format(learningPackage);
+        List<ArtifactMultimodalTimelineItem> timeline = videoSegmentMapper == null || timelineBuilder == null
+            ? List.of()
+            : timelineBuilder.build(videoSegmentMapper.selectByTaskIdAndUserId(validated.taskId(), validated.userId()));
+        String content = formatter.format(learningPackage, timeline);
         return artifactFileService.saveArtifactFile(new SaveArtifactFileCommand(
             validated.taskId(),
             validated.userId(),

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import com.example.courselingo.ai.record.service.AiCallRecordService;
 import com.example.courselingo.artifact.service.JsonArtifactService;
+import com.example.courselingo.artifact.service.ArtifactFileService;
 import com.example.courselingo.artifact.service.MarkdownArtifactService;
 import com.example.courselingo.artifact.service.SrtArtifactService;
 import com.example.courselingo.artifact.service.VttArtifactService;
@@ -29,6 +30,7 @@ import com.example.courselingo.upload.mapper.UploadSessionMapper;
 import com.example.courselingo.upload.service.ChunkStagingPathResolver;
 import com.example.courselingo.upload.service.ChunkStagingProperties;
 import com.example.courselingo.vision.keyframe.VideoKeyframeScanService;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import com.example.courselingo.vision.analysis.VisionAnalysisService;
 import com.example.courselingo.vision.ocr.VideoKeyframeOcrScanService;
 import java.nio.file.Path;
@@ -79,6 +81,9 @@ class AnalysisTaskWorkExecutorConfigurationTest {
             .withBean(VttArtifactService.class, () -> mock(VttArtifactService.class))
             .withBean(MarkdownArtifactService.class, () -> mock(MarkdownArtifactService.class))
             .withBean(JsonArtifactService.class, () -> mock(JsonArtifactService.class))
+            .withBean(ArtifactFileService.class, () -> mock(ArtifactFileService.class))
+            .withBean(VideoKeyframeEvidenceLifecycleService.class, () ->
+                mock(VideoKeyframeEvidenceLifecycleService.class))
             .withBean(TaskClaimService.class, NoopTaskClaimService::new)
             .withBean(TaskProgressSnapshotService.class, NoopTaskProgressSnapshotService::new)
             .run(context -> {

@@ -1,17 +1,22 @@
 package com.example.courselingo.vision.analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.example.courselingo.modelrouting.AiModelProfile;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.modelrouting.AiModelRoute;
 import com.example.courselingo.modelrouting.AiModelRouter;
 import com.example.courselingo.modelrouting.AiModelRoutingProperties;
 import com.example.courselingo.modelrouting.AiModelStage;
 import com.example.courselingo.modelrouting.ModelCapability;
+import com.example.courselingo.media.VideoFrameSampler;
 import com.example.courselingo.storage.StorageService;
 import com.example.courselingo.vision.analysis.mapper.VideoKeyframeAnalysisMapper;
 import com.example.courselingo.vision.keyframe.KeyframeSelectionReason;
@@ -23,6 +28,7 @@ import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -34,8 +40,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -53,6 +62,9 @@ class VisionAnalysisServiceTest {
 
     @Mock
     private VideoKeyframeAnalysisMapper analysisMapper;
+
+    @TempDir
+    private Path tempDir;
 
     private List<VideoKeyframeAnalysis> rows;
     private int deleteCalls;
@@ -75,6 +87,11 @@ class VisionAnalysisServiceTest {
         properties.setEnabled(true);
         properties.setMaxFramesTotal(2);
         properties.setMaxFramesPerMinute(2);
+        properties.setSlideMaxFramesPerMinute(2);
+        properties.setCodeOrTerminalMaxFramesPerMinute(2);
+        properties.setVisualDemoMaxFramesPerMinute(2);
+        properties.setTalkingOrLowInformationMaxFramesPerMinute(2);
+        properties.setUnknownMaxFramesPerMinute(2);
     }
 
     @Test
@@ -188,6 +205,91 @@ class VisionAnalysisServiceTest {
             .doesNotContain("keyframes/42")
             .doesNotContain("token")
             .doesNotContain("abc");
+    }
+
+    @Test
+    void rejectsUnacknowledgedAnalysisInsert() {
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L))
+            .thenReturn(List.of(keyframe(9L, 0L, KeyframeSelectionReason.SCENE_CHANGE)));
+        when(ocrMapper.selectByKeyframeIds("task_1", 42L, List.of(9L))).thenReturn(List.of());
+        when(analysisMapper.insert(any(VideoKeyframeAnalysis.class))).thenReturn(0);
+        VisionAnalysisService service = newService(new VisionModelProvider() {
+            @Override
+            public String providerName() {
+                return "fake-vision";
+            }
+
+            @Override
+            public VisionAnalysisResult analyze(VisionAnalysisRequest request) {
+                return VisionAnalysisResult.empty(providerName(), request.route().modelName(), 1L);
+            }
+        });
+
+        assertThatThrownBy(() -> service.scan("task_1", 42L))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.COMMON_INTERNAL_ERROR);
+    }
+
+    @Test
+    void pipelineScanReextractsHighResolutionFrameAndSuppliesBoundedSubtitleContext() {
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L))
+            .thenReturn(List.of(keyframe(9L, 12_345L, KeyframeSelectionReason.SCENE_CHANGE)));
+        when(ocrMapper.selectByKeyframeIds("task_1", 42L, List.of(9L)))
+            .thenReturn(List.of(ocr(9L, "Architecture diagram")));
+        AtomicInteger sampledWidth = new AtomicInteger();
+        AtomicReference<VisionAnalysisRequest> captured = new AtomicReference<>();
+        VideoFrameSampler sampler = (source, timestamp, output, maxWidth, timeout) -> {
+            sampledWidth.set(maxWidth);
+            try {
+                Files.createDirectories(output.getParent());
+                Files.writeString(output, "high-resolution-frame");
+                return output;
+            } catch (Exception exception) {
+                throw new IllegalStateException(exception);
+            }
+        };
+        VisionPromptContextBuilder contextBuilder = mock(VisionPromptContextBuilder.class);
+        when(contextBuilder.build("task_1", 42L, 12_345L, "zh-CN"))
+            .thenReturn("ASR [-30s,+30s]: source text Translation [-30s,+30s]: translated text");
+        VisionModelProvider provider = new VisionModelProvider() {
+            @Override
+            public String providerName() {
+                return "fake-vision";
+            }
+
+            @Override
+            public VisionAnalysisResult analyze(VisionAnalysisRequest request) {
+                captured.set(request);
+                assertThat(Files.exists(request.imagePath())).isTrue();
+                return VisionAnalysisResult.empty(providerName(), request.route().modelName(), 1L);
+            }
+        };
+        VisionAnalysisService service = new VisionAnalysisServiceImpl(
+            keyframeMapper,
+            ocrMapper,
+            analysisMapper,
+            new MemoryStorageService(),
+            provider,
+            new AiModelRouter(routingProperties()),
+            new HighValueKeyframeSelector(),
+            properties,
+            new ObjectMapper(),
+            CLOCK,
+            sampler,
+            contextBuilder
+        );
+        Path sourceVideo = tempDir.resolve("source.mp4");
+        Path workspace = tempDir.resolve("vision-workspace");
+
+        VisionAnalysisScanResult result = service.scan("task_1", 42L, sourceVideo, workspace, "zh-CN");
+
+        assertThat(result.saved()).isEqualTo(1);
+        assertThat(sampledWidth).hasValue(properties.getMaxImageWidth());
+        assertThat(captured.get().timestampMillis()).isEqualTo(12_345L);
+        assertThat(captured.get().ocrText()).isEqualTo("Architecture diagram");
+        assertThat(captured.get().promptContext()).contains("source text", "translated text");
+        assertThat(workspace.resolve("vlm-9")).doesNotExist();
     }
 
     private VisionAnalysisService newService(VisionModelProvider provider) {

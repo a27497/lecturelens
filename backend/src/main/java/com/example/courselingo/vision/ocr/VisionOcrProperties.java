@@ -10,8 +10,15 @@ public class VisionOcrProperties {
     private String command = "tesseract";
     private String language = "chi_sim+eng";
     private int timeoutSeconds = 30;
+    private int primaryPsm = 6;
+    private int fallbackPsm = 11;
+    private int oem = 1;
+    private int preprocessMaxWidth = 2000;
+    private boolean binarizationEnabled = false;
     private int maxTextLength = 8000;
-    private int maxKeyframesPerTask = 120;
+    private int maxKeyframesPerTask = 360;
+    private int concurrency = 2;
+    private int queueCapacity = 4;
     private boolean failTaskOnError = false;
 
     public boolean isEnabled() {
@@ -54,6 +61,46 @@ public class VisionOcrProperties {
         this.timeoutSeconds = timeoutSeconds;
     }
 
+    public int getPrimaryPsm() {
+        return Math.clamp(primaryPsm, 3, 13);
+    }
+
+    public void setPrimaryPsm(int primaryPsm) {
+        this.primaryPsm = primaryPsm;
+    }
+
+    public int getFallbackPsm() {
+        return Math.clamp(fallbackPsm, 3, 13);
+    }
+
+    public void setFallbackPsm(int fallbackPsm) {
+        this.fallbackPsm = fallbackPsm;
+    }
+
+    public int getOem() {
+        return Math.clamp(oem, 0, 3);
+    }
+
+    public void setOem(int oem) {
+        this.oem = oem;
+    }
+
+    public int getPreprocessMaxWidth() {
+        return Math.clamp(preprocessMaxWidth, 640, 3840);
+    }
+
+    public void setPreprocessMaxWidth(int preprocessMaxWidth) {
+        this.preprocessMaxWidth = preprocessMaxWidth;
+    }
+
+    public boolean isBinarizationEnabled() {
+        return binarizationEnabled;
+    }
+
+    public void setBinarizationEnabled(boolean binarizationEnabled) {
+        this.binarizationEnabled = binarizationEnabled;
+    }
+
     public int getMaxTextLength() {
         return Math.clamp(maxTextLength, 1, 50_000);
     }
@@ -68,6 +115,22 @@ public class VisionOcrProperties {
 
     public void setMaxKeyframesPerTask(int maxKeyframesPerTask) {
         this.maxKeyframesPerTask = maxKeyframesPerTask;
+    }
+
+    public int getConcurrency() {
+        return Math.clamp(concurrency, 1, 8);
+    }
+
+    public void setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
+    }
+
+    public int getQueueCapacity() {
+        return Math.clamp(queueCapacity, 1, 64);
+    }
+
+    public void setQueueCapacity(int queueCapacity) {
+        this.queueCapacity = queueCapacity;
     }
 
     public boolean isFailTaskOnError() {

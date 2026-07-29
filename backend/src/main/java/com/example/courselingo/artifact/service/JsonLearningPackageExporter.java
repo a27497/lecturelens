@@ -42,12 +42,24 @@ public class JsonLearningPackageExporter {
         List<SubtitleTranslationSegmentView> translatedSubtitles,
         LearningPackageView learningPackage
     ) {
+        return export(taskId, targetLanguage, sourceSubtitles, translatedSubtitles, learningPackage, List.of());
+    }
+
+    public String export(
+        String taskId,
+        String targetLanguage,
+        List<SubtitleSegmentView> sourceSubtitles,
+        List<SubtitleTranslationSegmentView> translatedSubtitles,
+        LearningPackageView learningPackage,
+        List<ArtifactMultimodalTimelineItem> multimodalTimeline
+    ) {
         JsonArtifactPayload payload = payload(
             taskId,
             targetLanguage,
             sourceSubtitles,
             translatedSubtitles,
-            learningPackage
+            learningPackage,
+            multimodalTimeline
         );
         try {
             return objectMapper.writeValueAsString(payload);
@@ -61,21 +73,122 @@ public class JsonLearningPackageExporter {
         String targetLanguage,
         List<SubtitleSegmentView> sourceSubtitles,
         List<SubtitleTranslationSegmentView> translatedSubtitles,
-        LearningPackageView learningPackage
+        LearningPackageView learningPackage,
+        List<ArtifactMultimodalTimelineItem> multimodalTimeline
     ) {
-        if (sourceSubtitles == null || sourceSubtitles.isEmpty()) {
-            throw validationFailure("JSON source subtitles are required");
-        }
         if (learningPackage == null) {
             throw validationFailure("JSON learning package is required");
+        }
+        List<JsonArtifactPayload.SubtitleItem> subtitleItems = subtitleItems(
+            sourceSubtitles == null ? List.of() : sourceSubtitles,
+            translatedSubtitles == null ? List.of() : translatedSubtitles
+        );
+        List<JsonArtifactPayload.MultimodalTimelineItem> timelineItems = timelineItems(
+            multimodalTimeline,
+            subtitleItems
+        );
+        if (subtitleItems.isEmpty() && timelineItems.isEmpty()) {
+            throw validationFailure("JSON course evidence is required");
         }
         return new JsonArtifactPayload(
             SCHEMA_VERSION,
             validateText(taskId),
             validateText(targetLanguage),
-            subtitleItems(sourceSubtitles, translatedSubtitles),
-            learningPackageItem(learningPackage)
+            subtitleItems,
+            learningPackageItem(learningPackage),
+            timelineItems
         );
+    }
+
+    private List<JsonArtifactPayload.MultimodalTimelineItem> timelineItems(
+        List<ArtifactMultimodalTimelineItem> timeline,
+        List<JsonArtifactPayload.SubtitleItem> subtitles
+    ) {
+        List<JsonArtifactPayload.MultimodalTimelineItem> result = (timeline == null ? List.<ArtifactMultimodalTimelineItem>of() : timeline)
+            .stream()
+            .filter(java.util.Objects::nonNull)
+            .sorted(Comparator
+                .comparingLong(ArtifactMultimodalTimelineItem::startMillis)
+                .thenComparing(item -> item.segmentIndex() == null ? Integer.MAX_VALUE : item.segmentIndex()))
+            .map(this::timelineItem)
+            .filter(this::hasTimelineEvidence)
+            .toList();
+        if (!result.isEmpty()) {
+            return result;
+        }
+        return subtitles.stream()
+            .map(item -> new JsonArtifactPayload.MultimodalTimelineItem(
+                item.index(),
+                item.startMillis(),
+                item.endMillis(),
+                formatRange(item.startMillis(), item.endMillis()),
+                item.sourceText(),
+                item.translatedText(),
+                "",
+                "",
+                "",
+                List.of(),
+                List.of(),
+                new JsonArtifactPayload.SourceStatusItem(
+                    fallbackSourceStatus(item),
+                    Map.of(),
+                    false
+                ),
+                null
+            ))
+            .toList();
+    }
+
+    private static Map<String, String> fallbackSourceStatus(JsonArtifactPayload.SubtitleItem item) {
+        Map<String, String> status = new java.util.LinkedHashMap<>();
+        status.put("asr", "AVAILABLE");
+        status.put("translation", item.translatedText().isBlank() ? "MISSING" : "AVAILABLE");
+        status.put("visual", "MISSING");
+        return java.util.Collections.unmodifiableMap(status);
+    }
+
+    private JsonArtifactPayload.MultimodalTimelineItem timelineItem(ArtifactMultimodalTimelineItem item) {
+        com.example.courselingo.fusion.VideoSegmentSourceStatus sourceStatus = item.sourceStatus();
+        return new JsonArtifactPayload.MultimodalTimelineItem(
+            item.segmentIndex(),
+            Math.max(0L, item.startMillis()),
+            Math.max(Math.max(0L, item.startMillis()), item.endMillis()),
+            optionalText(item.timeText()),
+            optionalText(item.asrText()),
+            optionalText(item.translatedText()),
+            optionalText(item.ocrText()),
+            optionalText(item.visualSummary()),
+            optionalText(item.fusedSummary()),
+            item.keywords().stream().map(this::optionalText).filter(value -> !value.isBlank()).distinct().toList(),
+            item.evidenceKeyframeIds().stream().filter(java.util.Objects::nonNull).distinct().sorted().toList(),
+            new JsonArtifactPayload.SourceStatusItem(
+                sourceStatus.sources(),
+                sourceStatus.confidenceComponents(),
+                sourceStatus.degraded()
+            ),
+            item.confidence() == null || !Double.isFinite(item.confidence())
+                ? null
+                : Math.max(0.0d, Math.min(item.confidence(), 1.0d))
+        );
+    }
+
+    private boolean hasTimelineEvidence(JsonArtifactPayload.MultimodalTimelineItem item) {
+        return !item.asrText().isBlank()
+            || !item.translatedText().isBlank()
+            || !item.ocrText().isBlank()
+            || !item.visualSummary().isBlank()
+            || !item.fusedSummary().isBlank()
+            || !item.keywords().isEmpty()
+            || !item.evidenceKeyframeIds().isEmpty();
+    }
+
+    private static String formatRange(long startMillis, long endMillis) {
+        return formatTime(startMillis) + " - " + formatTime(endMillis);
+    }
+
+    private static String formatTime(long millis) {
+        long seconds = Math.max(0L, millis / 1000L);
+        return "%02d:%02d:%02d".formatted(seconds / 3600L, (seconds % 3600L) / 60L, seconds % 60L);
     }
 
     private List<JsonArtifactPayload.SubtitleItem> subtitleItems(

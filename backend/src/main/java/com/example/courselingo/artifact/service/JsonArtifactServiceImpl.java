@@ -6,12 +6,14 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.learning.dto.LearningPackageView;
 import com.example.courselingo.learning.service.LearningPackageQueryService;
+import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.subtitle.dto.SubtitleSegmentView;
 import com.example.courselingo.subtitle.dto.SubtitleTranslationSegmentView;
 import com.example.courselingo.subtitle.service.SubtitleSegmentQueryService;
 import com.example.courselingo.subtitle.service.SubtitleTranslationQueryService;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +28,8 @@ public class JsonArtifactServiceImpl implements JsonArtifactService {
     private final LearningPackageQueryService learningPackageQueryService;
     private final ArtifactFileService artifactFileService;
     private final JsonLearningPackageExporter exporter;
+    private final VideoSegmentMapper videoSegmentMapper;
+    private final ArtifactMultimodalTimelineBuilder timelineBuilder;
 
     public JsonArtifactServiceImpl(
         SubtitleSegmentQueryService sourceSubtitleQueryService,
@@ -34,11 +38,34 @@ public class JsonArtifactServiceImpl implements JsonArtifactService {
         ArtifactFileService artifactFileService,
         JsonLearningPackageExporter exporter
     ) {
+        this(
+            sourceSubtitleQueryService,
+            translatedSubtitleQueryService,
+            learningPackageQueryService,
+            artifactFileService,
+            exporter,
+            null,
+            null
+        );
+    }
+
+    @Autowired
+    public JsonArtifactServiceImpl(
+        SubtitleSegmentQueryService sourceSubtitleQueryService,
+        SubtitleTranslationQueryService translatedSubtitleQueryService,
+        LearningPackageQueryService learningPackageQueryService,
+        ArtifactFileService artifactFileService,
+        JsonLearningPackageExporter exporter,
+        VideoSegmentMapper videoSegmentMapper,
+        ArtifactMultimodalTimelineBuilder timelineBuilder
+    ) {
         this.sourceSubtitleQueryService = sourceSubtitleQueryService;
         this.translatedSubtitleQueryService = translatedSubtitleQueryService;
         this.learningPackageQueryService = learningPackageQueryService;
         this.artifactFileService = artifactFileService;
         this.exporter = exporter;
+        this.videoSegmentMapper = videoSegmentMapper;
+        this.timelineBuilder = timelineBuilder;
     }
 
     @Override
@@ -51,12 +78,16 @@ public class JsonArtifactServiceImpl implements JsonArtifactService {
         LearningPackageView learningPackage = learningPackageQueryService
             .getByTaskAndLanguage(validated.taskId(), validated.userId(), validated.targetLanguage())
             .orElseThrow(() -> validationFailure("JSON learning package is required"));
+        List<ArtifactMultimodalTimelineItem> timeline = videoSegmentMapper == null || timelineBuilder == null
+            ? List.of()
+            : timelineBuilder.build(videoSegmentMapper.selectByTaskIdAndUserId(validated.taskId(), validated.userId()));
         String content = exporter.export(
             validated.taskId(),
             validated.targetLanguage(),
             sourceSubtitles,
             translatedSubtitles,
-            learningPackage
+            learningPackage,
+            timeline
         );
         return artifactFileService.saveArtifactFile(new SaveArtifactFileCommand(
             validated.taskId(),

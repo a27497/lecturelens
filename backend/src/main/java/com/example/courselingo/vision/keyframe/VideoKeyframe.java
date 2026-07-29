@@ -45,6 +45,30 @@ public class VideoKeyframe {
     @TableField("size_bytes")
     private Long sizeBytes;
 
+    @TableField("quality_score")
+    private Double qualityScore;
+
+    @TableField("sharpness_score")
+    private Double sharpnessScore;
+
+    @TableField("brightness_mean")
+    private Double brightnessMean;
+
+    @TableField("brightness_variance")
+    private Double brightnessVariance;
+
+    @TableField("edge_density")
+    private Double edgeDensity;
+
+    @TableField("perceptual_hash")
+    private String perceptualHash;
+
+    @TableField("degraded")
+    private Boolean degraded;
+
+    @TableField("source_type")
+    private String sourceType;
+
     @TableField("created_at")
     private LocalDateTime createdAt;
 
@@ -145,6 +169,70 @@ public class VideoKeyframe {
 
     public void setSizeBytes(Long sizeBytes) {
         this.sizeBytes = sizeBytes;
+    }
+
+    public Double getQualityScore() {
+        return qualityScore;
+    }
+
+    public void setQualityScore(Double qualityScore) {
+        this.qualityScore = qualityScore;
+    }
+
+    public Double getSharpnessScore() {
+        return sharpnessScore;
+    }
+
+    public void setSharpnessScore(Double sharpnessScore) {
+        this.sharpnessScore = sharpnessScore;
+    }
+
+    public Double getBrightnessMean() {
+        return brightnessMean;
+    }
+
+    public void setBrightnessMean(Double brightnessMean) {
+        this.brightnessMean = brightnessMean;
+    }
+
+    public Double getBrightnessVariance() {
+        return brightnessVariance;
+    }
+
+    public void setBrightnessVariance(Double brightnessVariance) {
+        this.brightnessVariance = brightnessVariance;
+    }
+
+    public Double getEdgeDensity() {
+        return edgeDensity;
+    }
+
+    public void setEdgeDensity(Double edgeDensity) {
+        this.edgeDensity = edgeDensity;
+    }
+
+    public String getPerceptualHash() {
+        return perceptualHash;
+    }
+
+    public void setPerceptualHash(String perceptualHash) {
+        this.perceptualHash = perceptualHash;
+    }
+
+    public Boolean getDegraded() {
+        return degraded;
+    }
+
+    public void setDegraded(Boolean degraded) {
+        this.degraded = degraded;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 
     public LocalDateTime getCreatedAt() {

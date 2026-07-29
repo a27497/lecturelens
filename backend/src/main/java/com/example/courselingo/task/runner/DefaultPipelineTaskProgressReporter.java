@@ -1,5 +1,7 @@
 package com.example.courselingo.task.runner;
 
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.progress.TaskProgressSnapshot;
@@ -71,6 +73,9 @@ final class DefaultPipelineTaskProgressReporter implements PipelineTaskProgressR
                 SafeLogSanitizer.sanitize(currentStage),
                 updated
             );
+            if (updated == 0) {
+                throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
+            }
             return;
         }
         try {
@@ -102,11 +107,11 @@ final class DefaultPipelineTaskProgressReporter implements PipelineTaskProgressR
             case TRANSCRIBE -> 20;
             case PERSIST_SUBTITLES -> 55;
             case TRANSLATE_SUBTITLES -> 60;
-            case GENERATE_LEARNING_PACKAGE -> 72;
+            case OCR_KEYFRAMES -> 72;
+            case ANALYZE_KEYFRAMES -> 76;
+            case FUSE_VIDEO_SEGMENTS -> 80;
+            case GENERATE_LEARNING_PACKAGE -> 82;
             case GENERATE_ARTIFACTS -> 88;
-            case OCR_KEYFRAMES -> 95;
-            case ANALYZE_KEYFRAMES -> 97;
-            case FUSE_VIDEO_SEGMENTS -> 98;
             case WRITE_AI_CALL_RECORD -> 98;
             case UPDATE_TASK_PROGRESS_STATUS -> 98;
         };
@@ -121,11 +126,11 @@ final class DefaultPipelineTaskProgressReporter implements PipelineTaskProgressR
             case TRANSCRIBE -> 55;
             case PERSIST_SUBTITLES -> 60;
             case TRANSLATE_SUBTITLES -> 72;
+            case OCR_KEYFRAMES -> 76;
+            case ANALYZE_KEYFRAMES -> 80;
+            case FUSE_VIDEO_SEGMENTS -> 82;
             case GENERATE_LEARNING_PACKAGE -> 88;
             case GENERATE_ARTIFACTS -> 95;
-            case OCR_KEYFRAMES -> 97;
-            case ANALYZE_KEYFRAMES -> 98;
-            case FUSE_VIDEO_SEGMENTS -> 98;
             case WRITE_AI_CALL_RECORD -> 98;
             case UPDATE_TASK_PROGRESS_STATUS -> 99;
         };

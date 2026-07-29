@@ -223,6 +223,21 @@ npm run build
 
 欢迎通过分支和 Pull Request 提交范围清晰、可验证的改进。提交前请运行相关检查并确认没有密钥、大视频或生成目录。具体约定见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
+## 自适应课程画面理解与离线评测
+
+视觉 R1 先用低成本检测流扫描完整时间轴，再按场景变化与周期锚点规划候选，在候选附近寻找清晰稳定的高清帧；只有最终证据图会持久化。最终预算先保证时间覆盖，再保留代码/终端、视觉演示和幻灯片的高质量代表帧，避免无文字图表仅因 OCR 较少而全部落选。OCR 与 VLM 均有独立预算且默认可降级，无密钥 Demo 不发外部视觉请求。设计、生命周期、预算、安全边界和取舍见 [Adaptive Video Understanding R1](docs/ADAPTIVE_VIDEO_UNDERSTANDING_R1.md)。
+
+本地可用完全合成的 126 秒课程视频比较 `legacy`、`scene-anchor` 和 `adaptive` 三种策略。脚本仅使用 Python 标准库和本机 FFmpeg/FFprobe，默认把生成物写到系统临时目录：
+
+```powershell
+python .\scripts\vision\generate_synthetic_course_video.py --output "$env:TEMP\lecturelens-course.mp4" --manifest "$env:TEMP\lecturelens-course-scenarios.json"
+python .\scripts\vision\evaluate_adaptive_video.py "$env:TEMP\lecturelens-course.mp4" --scenario-manifest "$env:TEMP\lecturelens-course-scenarios.json" --output "$env:TEMP\lecturelens-vision-report.json"
+```
+
+生产链路使用有界 FFmpeg 批量采样（默认每批 12 个时间戳）、公平的 OCR 前预算（每 60 秒普通 2 帧、密集内容变化 4 帧、低信息 1 帧，全任务 360 帧）和专用 Tesseract 执行器（2 个工作线程、队列容量 4）。最终证据仍限制为 240 帧；无视觉模型密钥时不会发起收费视觉请求。
+
+评测不调用网络或收费 AI；如果本机没有 Tesseract，JSON 会明确输出 OCR `available=false` 和 `valid_frame_count=null`。媒体、帧和报告均为本地产物，不应提交到仓库。
+
 ## License
 
 本项目使用 [MIT License](LICENSE)。

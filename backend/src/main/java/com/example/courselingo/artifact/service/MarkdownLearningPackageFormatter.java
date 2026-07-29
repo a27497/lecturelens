@@ -30,6 +30,18 @@ public class MarkdownLearningPackageFormatter {
     }
 
     public String format(LearningPackageView view) {
+        return format(view, List.of(), false);
+    }
+
+    public String format(LearningPackageView view, List<ArtifactMultimodalTimelineItem> timeline) {
+        return format(view, timeline, true);
+    }
+
+    private String format(
+        LearningPackageView view,
+        List<ArtifactMultimodalTimelineItem> timeline,
+        boolean includeTimeline
+    ) {
         if (view == null) {
             throw validationFailure("Markdown learning package is required");
         }
@@ -96,7 +108,48 @@ public class MarkdownLearningPackageFormatter {
                 }
             }
         }
+        if (includeTimeline) {
+            appendTimeline(builder, timeline);
+        }
         return builder.toString();
+    }
+
+    private void appendTimeline(StringBuilder builder, List<ArtifactMultimodalTimelineItem> timeline) {
+        builder.append("\n## 多模态时间线\n\n");
+        if (timeline == null || timeline.isEmpty()) {
+            builder.append("- 暂无可用的多模态时间线证据（旧任务兼容）\n");
+            return;
+        }
+        for (ArtifactMultimodalTimelineItem item : timeline) {
+            if (item == null) {
+                continue;
+            }
+            builder.append("- [")
+                .append(optionalText(item.timeText(), "Markdown timeline content is invalid"))
+                .append("]");
+            appendTimelineField(builder, "ASR", item.asrText());
+            appendTimelineField(builder, "字幕译文", item.translatedText());
+            appendTimelineField(builder, "OCR", item.ocrText());
+            appendTimelineField(builder, "画面", item.visualSummary());
+            appendTimelineField(builder, "融合摘要", item.fusedSummary());
+            if (!item.keywords().isEmpty()) {
+                appendTimelineField(builder, "关键词", String.join("、", item.keywords()));
+            }
+            if (!item.evidenceKeyframeIds().isEmpty()) {
+                builder.append("；证据关键帧=").append(item.evidenceKeyframeIds());
+            }
+            if (item.confidence() != null && Double.isFinite(item.confidence())) {
+                builder.append("；置信度=").append("%.4f".formatted(Math.max(0.0d, Math.min(item.confidence(), 1.0d))));
+            }
+            builder.append('\n');
+        }
+    }
+
+    private void appendTimelineField(StringBuilder builder, String label, String value) {
+        String normalized = optionalText(value, "Markdown timeline content is invalid");
+        if (!normalized.isBlank()) {
+            builder.append("；").append(label).append('=').append(normalized);
+        }
     }
 
     private <T> List<T> readJson(String json, TypeReference<List<T>> typeReference) {

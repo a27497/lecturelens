@@ -39,7 +39,9 @@ final class GenerateLearningPackageStep implements PipelineAnalysisTaskStep {
         if (analysisTaskMapper.selectByIdAndUserId(context.taskId(), context.userId()) == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
-        String sourceLanguage = context.requireSpeechToTextResult().language();
+        String sourceLanguage = context.asrBranchFailed()
+            ? context.targetLanguage()
+            : context.requireSpeechToTextResult().language();
         long startedNanos = System.nanoTime();
         try {
             LearningPackageAiCallResult result = learningPackageService.generateLearningPackageWithAiCallRecord(

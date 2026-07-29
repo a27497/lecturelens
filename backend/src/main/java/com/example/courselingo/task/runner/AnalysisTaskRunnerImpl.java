@@ -18,6 +18,7 @@ import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.model.AnalysisTaskStage;
 import com.example.courselingo.task.model.AnalysisTaskStatus;
 import com.example.courselingo.task.service.AnalysisTaskStateService;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -43,6 +44,7 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
     private final BoundedTaskExecutor boundedTaskExecutor;
     private final TaskClaimService taskClaimService;
     private final BusinessMetrics businessMetrics;
+    private final VideoKeyframeEvidenceLifecycleService evidenceLifecycleService;
 
     @Autowired
     public AnalysisTaskRunnerImpl(
@@ -51,7 +53,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
         AnalysisTaskWorkExecutor workExecutor,
         BoundedTaskExecutor boundedTaskExecutor,
         TaskClaimService taskClaimService,
-        BusinessMetrics businessMetrics
+        BusinessMetrics businessMetrics,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
         this.analysisTaskMapper = analysisTaskMapper;
         this.stateService = stateService;
@@ -59,6 +62,7 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
         this.boundedTaskExecutor = boundedTaskExecutor;
         this.taskClaimService = taskClaimService;
         this.businessMetrics = businessMetrics == null ? BusinessMetrics.noop() : businessMetrics;
+        this.evidenceLifecycleService = evidenceLifecycleService;
     }
 
     public AnalysisTaskRunnerImpl(
@@ -68,13 +72,25 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
         BoundedTaskExecutor boundedTaskExecutor,
         TaskClaimService taskClaimService
     ) {
+        this(analysisTaskMapper, stateService, workExecutor, boundedTaskExecutor, taskClaimService, null);
+    }
+
+    public AnalysisTaskRunnerImpl(
+        AnalysisTaskMapper analysisTaskMapper,
+        AnalysisTaskStateService stateService,
+        AnalysisTaskWorkExecutor workExecutor,
+        BoundedTaskExecutor boundedTaskExecutor,
+        TaskClaimService taskClaimService,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
+    ) {
         this(
             analysisTaskMapper,
             stateService,
             workExecutor,
             boundedTaskExecutor,
             taskClaimService,
-            BusinessMetrics.noop()
+            BusinessMetrics.noop(),
+            evidenceLifecycleService
         );
     }
 
@@ -141,15 +157,21 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 logRunnerBoundary("runner_cancel_requested", message, "start");
                 AnalysisTask task = loadAndValidate(message);
                 AnalysisTaskStatus status = AnalysisTaskStatus.fromDatabaseValue(task.getStatus());
-                if (status == AnalysisTaskStatus.SUCCEEDED
-                    || status == AnalysisTaskStatus.FAILED
-                    || status == AnalysisTaskStatus.CANCELED) {
+                if (status == AnalysisTaskStatus.CANCELED) {
+                    cleanupCanceledEvidence(message);
+                    taskClaimService.release(message.taskId(), message.requestId());
+                    logRunnerBoundary("runner_cancel_completed", message, "success");
+                    outcome = "success";
+                    return;
+                }
+                if (status == AnalysisTaskStatus.SUCCEEDED || status == AnalysisTaskStatus.FAILED) {
                     throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
                 }
 
                 changeState(message, AnalysisTaskStatus.CANCELED, task.getProgressPercent(), AnalysisTaskStage.FAILED,
                     null, null);
                 taskClaimService.release(message.taskId(), message.requestId());
+                cleanupCanceledEvidence(message);
                 logRunnerBoundary("runner_cancel_completed", message, "success");
                 outcome = "success";
             } finally {
@@ -199,6 +221,10 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 () -> workExecutor.execute(context)
             );
         } catch (Exception exception) {
+            if (isCanceled(message)) {
+                cleanupCanceledEvidence(message);
+                return;
+            }
             if (isRetryableExecutorException(exception)) {
                 throw exception;
             }
@@ -206,6 +232,11 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             changeState(message, AnalysisTaskStatus.FAILED, null, failureStage(exception, sanitized),
                 ErrorCode.TASK_RUNNER_EXECUTION_FAILED.code(), sanitized);
             throw new BusinessException(ErrorCode.TASK_RUNNER_EXECUTION_FAILED, sanitized, exception);
+        }
+
+        if (isCanceled(message)) {
+            cleanupCanceledEvidence(message);
+            return;
         }
 
         if (result == null || !result.success()) {
@@ -219,6 +250,27 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
         }
 
         changeState(message, AnalysisTaskStatus.SUCCEEDED, 100, AnalysisTaskStage.DONE, null, null);
+    }
+
+    private boolean isCanceled(AnalysisTaskMessage message) {
+        AnalysisTask current = analysisTaskMapper.selectByIdAndUserId(message.taskId(), message.userId());
+        return current != null
+            && AnalysisTaskStatus.fromDatabaseValue(current.getStatus()) == AnalysisTaskStatus.CANCELED;
+    }
+
+    private void cleanupCanceledEvidence(AnalysisTaskMessage message) {
+        if (evidenceLifecycleService == null) {
+            return;
+        }
+        try {
+            evidenceLifecycleService.cleanupTaskEvidence(message.taskId(), message.userId());
+        } catch (RuntimeException exception) {
+            log.warn(
+                "event=runner_canceled_evidence_cleanup_failed taskId={} errorType={}",
+                SafeLogSanitizer.sanitize(message.taskId()),
+                exception.getClass().getSimpleName()
+            );
+        }
     }
 
     private static AnalysisTaskStage failureStage(Exception exception, String errorMessage) {

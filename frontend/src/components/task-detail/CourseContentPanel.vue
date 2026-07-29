@@ -1,23 +1,28 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
+import CourseVisualEvidencePanel from "./CourseVisualEvidencePanel.vue";
 import type { AnalysisTaskStatus } from "../../types/task";
 import type { ResultTranslationSegment, TaskResultResponse } from "../../types/result";
 import { copyTextToClipboard } from "../../utils/clipboard";
 import { formatMillisRange } from "../../utils/time";
 
-type ContentView = "translated" | "source" | "timeline";
+type ContentView = "translated" | "source" | "timeline" | "visual";
 const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null }>();
-defineEmits<{ seek: [startTimeMillis: number] }>();
+const emit = defineEmits<{ seek: [startTimeMillis: number] }>();
 
 const activeView = ref<ContentView>("translated");
 const keyword = ref("");
 const defaultedTaskId = ref("");
-const views: Array<{ value: ContentView; label: string }> = [
+const baseViews: Array<{ value: ContentView; label: string }> = [
   { value: "translated", label: "中文译文" },
   { value: "source", label: "原文" },
   { value: "timeline", label: "时间轴" },
 ];
+const hasVisualEvidence = computed(() => (props.result?.keyframes?.length ?? 0) > 0);
+const views = computed(() => hasVisualEvidence.value
+  ? [...baseViews, { value: "visual" as const, label: "画面证据" }]
+  : baseViews);
 const sourceText = computed(() => props.result?.sourceFullText?.trim() || (props.result?.subtitles ?? []).map((item) => item.sourceText).filter(Boolean).join("\n\n"));
 const translatedText = computed(() => props.result?.translatedFullText?.trim() || "");
 const translationByIndex = computed(() => {
@@ -39,11 +44,17 @@ watch(() => props.taskId, () => {
   defaultedTaskId.value = "";
 }, { immediate: true });
 
-watch([() => props.taskId, translatedText, sourceText], ([currentTaskId, translated, source]) => {
-  if (defaultedTaskId.value === currentTaskId || (!translated && !source)) return;
-  activeView.value = translated ? "translated" : "source";
+watch([() => props.taskId, translatedText, sourceText, hasVisualEvidence], ([currentTaskId, translated, source, visual]) => {
+  if (defaultedTaskId.value === currentTaskId || (!translated && !source && !visual)) return;
+  activeView.value = translated ? "translated" : source ? "source" : "visual";
   defaultedTaskId.value = currentTaskId;
 }, { immediate: true });
+
+watch(hasVisualEvidence, (hasEvidence) => {
+  if (!hasEvidence && activeView.value === "visual") {
+    activeView.value = translatedText.value ? "translated" : "source";
+  }
+});
 
 async function copy(text: string, label: string) {
   if (!text) { ElMessage.warning(`${label}暂无可复制内容`); return; }
@@ -75,7 +86,7 @@ function emptyText(pending: string): string {
       <div v-if="sourceText" class="reading-copy">{{ sourceText }}</div>
       <el-empty v-else :description="emptyText('原文生成中')" />
     </article>
-    <section v-else class="timeline-view" aria-label="课程时间轴">
+    <section v-else-if="activeView === 'timeline'" class="timeline-view" aria-label="课程时间轴">
       <div class="timeline-search"><el-input v-model="keyword" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
       <el-alert v-if="hasFullTextOnlyTranslation" :closable="false" title="当前为全文翻译模式，时间轴仅展示原文；中文全文请切换到“中文译文”。" type="info" show-icon />
       <el-empty v-if="rows.length === 0" :description="emptyText('时间轴生成中')" />
@@ -84,10 +95,17 @@ function emptyText(pending: string): string {
         <article v-for="row in filteredRows" :key="row.segmentIndex" class="timeline-row">
           <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span>#{{ row.segmentIndex }}</span></div>
           <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : '译文生成中') }}</p></div>
-          <el-button size="small" plain @click="$emit('seek', row.startMillis)">跳到视频</el-button>
+          <el-button size="small" plain @click="emit('seek', row.startMillis)">跳到视频</el-button>
         </article>
       </div>
     </section>
+    <CourseVisualEvidencePanel
+      v-else-if="hasVisualEvidence && result"
+      :task-id="taskId"
+      :keyframes="result.keyframes"
+      :video-segments="result.videoSegments"
+      @seek="emit('seek', $event)"
+    />
   </section>
 </template>
 
