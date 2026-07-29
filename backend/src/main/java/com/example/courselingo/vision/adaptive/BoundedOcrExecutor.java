@@ -22,6 +22,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +73,8 @@ public final class BoundedOcrExecutor {
 
         int concurrency = properties.getConcurrency();
         int queueCapacity = properties.getQueueCapacity();
+        long timeoutNanos = effectiveTimeout(overallTimeout).toNanos();
+        long deadline = System.nanoTime() + timeoutNanos;
         AtomicInteger threadSequence = new AtomicInteger();
         ThreadFactory threadFactory = runnable -> {
             Thread thread = new Thread(runnable, "courselingo-ocr-" + threadSequence.incrementAndGet());
@@ -84,7 +88,7 @@ public final class BoundedOcrExecutor {
             TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<>(queueCapacity),
             threadFactory,
-            new ThreadPoolExecutor.AbortPolicy()
+            new DeadlineBlockingPolicy(deadline)
         );
         CompletionService<Outcome<T>> completion = new ExecutorCompletionService<>(executor);
         Map<Future<Outcome<T>>, Job<T>> active = new HashMap<>();
@@ -97,15 +101,26 @@ public final class BoundedOcrExecutor {
         int completed = 0;
         AtomicInteger attempted = new AtomicInteger();
         List<Outcome<T>> outcomes = new ArrayList<>(jobs.size());
-        long timeoutNanos = effectiveTimeout(overallTimeout).toNanos();
-        long deadline = System.nanoTime() + timeoutNanos;
         try {
             while (completed < jobs.size()) {
                 ensureNotInterrupted();
                 while (submitted < jobs.size() && active.size() < inFlightLimit) {
-                    Job<T> job = jobs.get(submitted++);
-                    Future<Outcome<T>> future = completion.submit(() -> recognize(job, provider, properties, attempted));
+                    Job<T> job = jobs.get(submitted);
+                    Future<Outcome<T>> future;
+                    try {
+                        future = completion.submit(() -> recognize(job, provider, properties, attempted));
+                    } catch (RejectedExecutionException rejection) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            throw new InterruptedException("OCR work was cancelled");
+                        }
+                        throw new BusinessException(
+                            ErrorCode.TASK_EXECUTOR_TIMEOUT,
+                            "OCR frame budget timed out while waiting for queue capacity",
+                            rejection
+                        );
+                    }
                     active.put(future, job);
+                    submitted++;
                 }
                 long remaining = deadline - System.nanoTime();
                 if (remaining <= 0L) {
@@ -181,6 +196,39 @@ public final class BoundedOcrExecutor {
 
     private static Duration effectiveTimeout(Duration timeout) {
         return timeout == null || timeout.isZero() || timeout.isNegative() ? Duration.ofMinutes(30) : timeout;
+    }
+
+    /**
+     * Applies backpressure without exceeding the configured executor queue. A completed future can become visible
+     * to {@link ExecutorCompletionService} a few instructions before its worker frees the queue slot; blocking that
+     * brief hand-off closes the rejection race while the shared overall deadline still bounds the wait.
+     */
+    private static final class DeadlineBlockingPolicy implements RejectedExecutionHandler {
+
+        private final long deadline;
+
+        private DeadlineBlockingPolicy(long deadline) {
+            this.deadline = deadline;
+        }
+
+        @Override
+        public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
+            if (executor.isShutdown()) {
+                throw new RejectedExecutionException("OCR executor is shut down");
+            }
+            long remaining = deadline - System.nanoTime();
+            if (remaining <= 0L) {
+                throw new RejectedExecutionException("OCR queue wait timed out");
+            }
+            try {
+                if (!executor.getQueue().offer(task, remaining, TimeUnit.NANOSECONDS)) {
+                    throw new RejectedExecutionException("OCR queue wait timed out");
+                }
+            } catch (InterruptedException interruption) {
+                Thread.currentThread().interrupt();
+                throw new RejectedExecutionException("OCR queue wait was interrupted", interruption);
+            }
+        }
     }
 
     private static void ensureNotInterrupted() throws InterruptedException {
