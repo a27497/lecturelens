@@ -1,6 +1,7 @@
 package com.example.courselingo.task.runner;
 
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -46,17 +47,33 @@ public class PipelineRunnerWorkspace {
     }
 
     boolean cleanupTaskWorkspace(PipelineAnalysisTaskStepContext context) {
-        Path taskWorkspace = taskWorkspace(context);
-        if (!Files.exists(taskWorkspace)) {
-            return true;
-        }
-        try (var paths = Files.walk(taskWorkspace)) {
-            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
-                Files.deleteIfExists(path);
+        Path requestWorkspace = taskWorkspace(context);
+        Path taskDirectory = requestWorkspace.getParent();
+        Path userDirectory = taskDirectory == null ? null : taskDirectory.getParent();
+        try {
+            if (Files.exists(requestWorkspace)) {
+                try (var paths = Files.walk(requestWorkspace)) {
+                    for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                        Files.deleteIfExists(path);
+                    }
+                }
             }
+            deleteIfEmpty(taskDirectory);
+            deleteIfEmpty(userDirectory);
             return true;
         } catch (IOException exception) {
             return false;
+        }
+    }
+
+    private static void deleteIfEmpty(Path directory) throws IOException {
+        if (directory == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(directory);
+        } catch (DirectoryNotEmptyException ignored) {
+            // Another request or task still owns content below this scoped parent.
         }
     }
 

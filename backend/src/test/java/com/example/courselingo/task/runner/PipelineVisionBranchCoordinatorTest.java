@@ -206,6 +206,9 @@ class PipelineVisionBranchCoordinatorTest {
                 .isInstanceOf(PipelineAnalysisTaskStepException.class);
             assertThat(workspaceExistedAtBranchExit).isTrue();
             assertThat(keyframeDirectory).doesNotExist();
+            assertThat(keyframeDirectory.getParent()).doesNotExist();
+            assertThat(keyframeDirectory.getParent().getParent()).doesNotExist();
+            assertThat(keyframeDirectory.getParent().getParent().getParent()).doesNotExist();
         }
     }
 
