@@ -16,7 +16,9 @@ public class VisionOcrProperties {
     private int preprocessMaxWidth = 2000;
     private boolean binarizationEnabled = false;
     private int maxTextLength = 8000;
-    private int maxKeyframesPerTask = 120;
+    private int maxKeyframesPerTask = 360;
+    private int concurrency = 2;
+    private int queueCapacity = 4;
     private boolean failTaskOnError = false;
 
     public boolean isEnabled() {
@@ -113,6 +115,22 @@ public class VisionOcrProperties {
 
     public void setMaxKeyframesPerTask(int maxKeyframesPerTask) {
         this.maxKeyframesPerTask = maxKeyframesPerTask;
+    }
+
+    public int getConcurrency() {
+        return Math.clamp(concurrency, 1, 8);
+    }
+
+    public void setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
+    }
+
+    public int getQueueCapacity() {
+        return Math.clamp(queueCapacity, 1, 64);
+    }
+
+    public void setQueueCapacity(int queueCapacity) {
+        this.queueCapacity = queueCapacity;
     }
 
     public boolean isFailTaskOnError() {

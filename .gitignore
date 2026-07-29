@@ -59,6 +59,8 @@ courselingo-pro-debug-bundle.zip
 build/
 out/
 release/
+__pycache__/
+*.py[cod]
 
 # OS
 .DS_Store

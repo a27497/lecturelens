@@ -7,6 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.example.courselingo.media.SceneDetectionPoint;
+import com.example.courselingo.media.VideoFrameBatchResult;
+import com.example.courselingo.media.VideoFrameBatchSampler;
+import com.example.courselingo.media.VideoFrameSample;
 import com.example.courselingo.media.VideoFrameSampler;
 import com.example.courselingo.media.VideoMetadata;
 import com.example.courselingo.storage.StorageService;
@@ -37,6 +40,140 @@ class AdaptiveVideoKeyframeScanServiceTest {
 
     @TempDir
     private Path tempDir;
+
+    @Test
+    void productionBatchPathUsesFarFewerMediaProcessesThanSampleRequests() throws Exception {
+        Path source = Files.writeString(tempDir.resolve("batch-course.mp4"), "fake");
+        Path workspace = tempDir.resolve("batch-work");
+        VideoKeyframeMapper keyframeMapper = mock(VideoKeyframeMapper.class);
+        when(keyframeMapper.selectExistingForTask("task_batch", 42L)).thenReturn(List.of());
+        AtomicLong ids = new AtomicLong();
+        org.mockito.Mockito.doAnswer(invocation -> {
+            invocation.getArgument(0, VideoKeyframe.class).setId(ids.incrementAndGet());
+            return 1;
+        }).when(keyframeMapper).insert(any(VideoKeyframe.class));
+        AtomicInteger mediaProcesses = new AtomicInteger();
+        VideoFrameBatchSampler batchSampler = (video, requests, width, timeout) -> {
+            mediaProcesses.incrementAndGet();
+            List<VideoFrameSample> samples = requests.stream().map(request -> {
+                Path sampled = colorfulSampler().sample(
+                    video, request.timestampMillis(), request.outputImage(), width, timeout
+                );
+                return new VideoFrameSample(request.timestampMillis(), sampled);
+            }).toList();
+            return new VideoFrameBatchResult(requests.size(), samples, 0, 1);
+        };
+        VideoKeyframeProperties properties = properties();
+        properties.setFrameSamplingBatchSize(12);
+        VideoKeyframeScanServiceImpl service = new VideoKeyframeScanServiceImpl(
+            keyframeMapper,
+            storageCapturing(new ArrayList<>()),
+            properties,
+            (path, timeout) -> new VideoMetadata(125_000L, 1280, 720, 12.0d, "h264", true, 0),
+            (path, dir, width, threshold, timeout) -> List.of(new SceneDetectionPoint(61_000L, 0.8d)),
+            colorfulSampler(),
+            batchSampler,
+            null,
+            null,
+            new VisionOcrProperties(),
+            null,
+            Clock.systemUTC()
+        );
+
+        VideoKeyframeScanResult result = service.scan(new VideoKeyframeScanCommand(
+            "task_batch", 42L, source, workspace
+        ));
+
+        assertThat(result.sampleRequestCount()).isGreaterThan(12);
+        assertThat(result.ffmpegProcessCount()).isEqualTo(mediaProcesses.get());
+        assertThat(result.ffmpegProcessCount()).isLessThan(result.sampleRequestCount());
+        assertThat(result.sampleBatchCount()).isEqualTo(result.ffmpegProcessCount());
+        assertThat(workspace).doesNotExist();
+    }
+
+    @Test
+    void highInformationVisualDemoCanReachFinalBudgetWithoutAnOcrCall() throws Exception {
+        Path source = Files.writeString(tempDir.resolve("visual-demo.mp4"), "fake");
+        Path workspace = tempDir.resolve("visual-demo-work");
+        VideoKeyframeMapper keyframeMapper = mock(VideoKeyframeMapper.class);
+        VideoKeyframeOcrMapper ocrMapper = mock(VideoKeyframeOcrMapper.class);
+        when(keyframeMapper.selectExistingForTask("task_visual", 42L)).thenReturn(List.of());
+        AtomicLong ids = new AtomicLong();
+        org.mockito.Mockito.doAnswer(invocation -> {
+            invocation.getArgument(0, VideoKeyframe.class).setId(ids.incrementAndGet());
+            return 1;
+        }).when(keyframeMapper).insert(any(VideoKeyframe.class));
+        when(ocrMapper.insert(any(VideoKeyframeOcr.class))).thenReturn(1);
+        VisionOcrProperties ocrProperties = new VisionOcrProperties();
+        ocrProperties.setEnabled(true);
+        AtomicInteger ocrCalls = new AtomicInteger();
+        OcrProvider ocr = request -> {
+            ocrCalls.incrementAndGet();
+            return OcrResult.empty("fake", "eng", 1L);
+        };
+        VideoKeyframeScanServiceImpl service = new VideoKeyframeScanServiceImpl(
+            keyframeMapper,
+            storageCapturing(new ArrayList<>()),
+            properties(),
+            (path, timeout) -> new VideoMetadata(30_000L, 1280, 720, 12.0d, "h264", true, 0),
+            (path, dir, width, threshold, timeout) -> List.of(new SceneDetectionPoint(10_000L, 0.9d)),
+            checkerboardSampler(),
+            ocr,
+            ocrMapper,
+            ocrProperties,
+            (Clock) null
+        );
+
+        VideoKeyframeScanResult result = service.scan(new VideoKeyframeScanCommand(
+            "task_visual", 42L, source, workspace
+        ));
+
+        assertThat(result.savedKeyframeCount()).isGreaterThan(ocrCalls.get());
+        assertThat(result.ocrPlannedCount()).isEqualTo(ocrCalls.get());
+        assertThat(result.ocrAttemptedCount()).isEqualTo(ocrCalls.get());
+        assertThat(result.ocrEmptyCount()).isEqualTo(ocrCalls.get());
+        assertThat(workspace).doesNotExist();
+    }
+
+    @Test
+    void byteIdenticalHighQualityFramesAreRemovedBeforeOcr() throws Exception {
+        Path source = Files.writeString(tempDir.resolve("exact-repeat.mp4"), "fake");
+        VideoKeyframeMapper keyframeMapper = mock(VideoKeyframeMapper.class);
+        when(keyframeMapper.selectExistingForTask("task_exact", 42L)).thenReturn(List.of());
+        org.mockito.Mockito.doAnswer(invocation -> {
+            invocation.getArgument(0, VideoKeyframe.class).setId(1L);
+            return 1;
+        }).when(keyframeMapper).insert(any(VideoKeyframe.class));
+        VideoKeyframeOcrMapper ocrMapper = mock(VideoKeyframeOcrMapper.class);
+        when(ocrMapper.insert(any(VideoKeyframeOcr.class))).thenReturn(1);
+        VisionOcrProperties ocrProperties = new VisionOcrProperties();
+        ocrProperties.setEnabled(true);
+        AtomicInteger ocrCalls = new AtomicInteger();
+        VideoKeyframeScanServiceImpl service = new VideoKeyframeScanServiceImpl(
+            keyframeMapper,
+            storageCapturing(new ArrayList<>()),
+            properties(),
+            (path, timeout) -> new VideoMetadata(30_000L, 1280, 720, 12.0d, "h264", true, 0),
+            (path, dir, width, threshold, timeout) -> List.of(),
+            checkerboardSampler(false),
+            request -> {
+                ocrCalls.incrementAndGet();
+                return OcrResult.empty("fake", "eng", 1L);
+            },
+            ocrMapper,
+            ocrProperties,
+            (Clock) null
+        );
+
+        VideoKeyframeScanResult result = service.scan(new VideoKeyframeScanCommand(
+            "task_exact", 42L, source, tempDir.resolve("exact-work")
+        ));
+
+        assertThat(result.stableFrameCount()).isGreaterThan(1);
+        assertThat(result.duplicateRejectedCount()).isGreaterThan(0);
+        assertThat(ocrCalls.get()).isOne();
+        assertThat(result.ocrAttemptedCount()).isOne();
+    }
 
     @Test
     void ocrUsesTemporaryHighResolutionPngAndOnlyEvidenceImagesArePersisted() throws Exception {
@@ -409,6 +546,35 @@ class AdaptiveVideoKeyframeScanServiceTest {
                 graphics.setColor(Color.BLACK);
                 graphics.drawString("Static course architecture", 80, 100);
                 graphics.fillRect(500 + (int) (timestamp % 11), 500, 3, 3);
+                graphics.dispose();
+                Files.createDirectories(output.getParent());
+                ImageIO.write(image, "png", output.toFile());
+                return output;
+            } catch (Exception exception) {
+                throw new IllegalStateException(exception);
+            }
+        };
+    }
+
+    private static VideoFrameSampler checkerboardSampler() {
+        return checkerboardSampler(true);
+    }
+
+    private static VideoFrameSampler checkerboardSampler(boolean variesByTimestamp) {
+        return (source, timestamp, output, width, timeout) -> {
+            try {
+                BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+                var graphics = image.createGraphics();
+                for (int y = 0; y < 720; y += 24) {
+                    for (int x = 0; x < 1280; x += 24) {
+                        graphics.setColor(((x + y) / 24) % 2 == 0 ? Color.WHITE : new Color(25, 90, 180));
+                        graphics.fillRect(x, y, 24, 24);
+                    }
+                }
+                if (variesByTimestamp) {
+                    graphics.setColor(new Color((int) (timestamp % 180L) + 50, 30, 60));
+                    graphics.fillRect(96, 96, 72, 72);
+                }
                 graphics.dispose();
                 Files.createDirectories(output.getParent());
                 ImageIO.write(image, "png", output.toFile());

@@ -43,6 +43,16 @@ class AdaptiveVideoMediaIntegrationTest {
             .scan(video, scanWorkspace, 480, 0.20d, Duration.ofSeconds(30));
         Path frame = new FfmpegVideoFrameSampler(properties, executor)
             .sample(video, 2_500L, tempDir.resolve("sample.png"), 480, Duration.ofSeconds(20));
+        VideoFrameBatchResult batch = new FfmpegVideoFrameBatchSampler(properties, executor).sample(
+            video,
+            List.of(
+                new VideoFrameSampleRequest(500L, tempDir.resolve("batch-0500.png")),
+                new VideoFrameSampleRequest(2_500L, tempDir.resolve("batch-2500.png")),
+                new VideoFrameSampleRequest(3_500L, tempDir.resolve("batch-3500.png"))
+            ),
+            480,
+            Duration.ofSeconds(30)
+        );
         BufferedImage image = ImageIO.read(frame.toFile());
 
         assertThat(metadata.hasVideoStream()).isTrue();
@@ -53,6 +63,10 @@ class AdaptiveVideoMediaIntegrationTest {
         assertThat(scenes).anyMatch(point -> point.timestampMillis() >= 1_800L && point.timestampMillis() <= 2_200L);
         assertThat(image).isNotNull();
         assertThat(image.getWidth()).isEqualTo(480);
+        assertThat(batch.ffmpegProcessCount()).isOne();
+        assertThat(batch.succeededCount()).isEqualTo(3);
+        assertThat(batch.failedCount()).isZero();
+        assertThat(batch.samples()).allSatisfy(sample -> assertThat(sample.imagePath()).isNotEmptyFile());
         assertThat(Files.exists(scanWorkspace.resolve("scene-metadata.log"))).isFalse();
     }
 

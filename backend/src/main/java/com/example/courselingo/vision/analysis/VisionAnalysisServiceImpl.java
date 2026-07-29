@@ -23,12 +23,16 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VisionAnalysisServiceImpl implements VisionAnalysisService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisionAnalysisServiceImpl.class);
 
     private final VideoKeyframeMapper keyframeMapper;
     private final VideoKeyframeOcrMapper ocrMapper;
@@ -194,6 +198,10 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             }
         }
         int skipped = Math.max(0, keyframes.size() - selected.size());
+        LOGGER.info(
+            "event=adaptive_vlm_completed availableKeyframes={} vlmPlanned={} vlmAttempted={} vlmSucceeded={} vlmEmpty={} vlmFailed={} vlmSkipped={}",
+            keyframes.size(), selected.size(), saved, succeeded, empty, failed, skipped
+        );
         return new VisionAnalysisScanResult(saved, succeeded, empty, failed, skipped);
     }
 

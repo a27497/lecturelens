@@ -19,6 +19,11 @@ public class VideoKeyframeProperties {
     private int longVideoThresholdMinutes = 120;
     private int windowSeconds = 60;
     private int maxCandidatesPerWindow = 6;
+    private int preOcrMaxFramesPerWindow = 2;
+    private int preOcrContentChangeMaxFramesPerWindow = 4;
+    private int preOcrLowInformationMaxFramesPerWindow = 1;
+    private int preOcrMaxFramesTotal = 360;
+    private int frameSamplingBatchSize = 12;
     private List<Double> nearbySampleOffsetsSeconds = new ArrayList<>(List.of(-0.2d, 0.4d, 0.9d, 1.4d));
     private int analysisMaxWidth = 1600;
     private int evidenceMaxWidth = 960;
@@ -134,6 +139,46 @@ public class VideoKeyframeProperties {
 
     public void setMaxCandidatesPerWindow(int maxCandidatesPerWindow) {
         this.maxCandidatesPerWindow = maxCandidatesPerWindow;
+    }
+
+    public int getPreOcrMaxFramesPerWindow() {
+        return Math.clamp(preOcrMaxFramesPerWindow, 1, 12);
+    }
+
+    public void setPreOcrMaxFramesPerWindow(int value) {
+        this.preOcrMaxFramesPerWindow = value;
+    }
+
+    public int getPreOcrContentChangeMaxFramesPerWindow() {
+        return Math.clamp(preOcrContentChangeMaxFramesPerWindow, getPreOcrMaxFramesPerWindow(), 24);
+    }
+
+    public void setPreOcrContentChangeMaxFramesPerWindow(int value) {
+        this.preOcrContentChangeMaxFramesPerWindow = value;
+    }
+
+    public int getPreOcrLowInformationMaxFramesPerWindow() {
+        return Math.clamp(preOcrLowInformationMaxFramesPerWindow, 1, getPreOcrMaxFramesPerWindow());
+    }
+
+    public void setPreOcrLowInformationMaxFramesPerWindow(int value) {
+        this.preOcrLowInformationMaxFramesPerWindow = value;
+    }
+
+    public int getPreOcrMaxFramesTotal() {
+        return Math.clamp(preOcrMaxFramesTotal, 1, 2_000);
+    }
+
+    public void setPreOcrMaxFramesTotal(int value) {
+        this.preOcrMaxFramesTotal = value;
+    }
+
+    public int getFrameSamplingBatchSize() {
+        return Math.clamp(frameSamplingBatchSize, 1, 64);
+    }
+
+    public void setFrameSamplingBatchSize(int value) {
+        this.frameSamplingBatchSize = value;
     }
 
     public List<Double> getNearbySampleOffsetsSeconds() {
@@ -395,7 +440,7 @@ public class VideoKeyframeProperties {
     }
 
     public int maxSourceFramesTotal() {
-        return Math.max(getMaxKeyframesTotal(), Math.min(3_000, getMaxKeyframesTotal() * 10));
+        return Math.max(getMaxKeyframesTotal(), Math.min(3_000, getPreOcrMaxFramesTotal() * 3));
     }
 
     private static double unit(double value) {

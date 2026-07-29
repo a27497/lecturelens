@@ -167,6 +167,64 @@ def sample(
     )
 
 
+def sample_batch(
+    ffmpeg: str,
+    video: Path,
+    requests: list[tuple[float, Path]],
+    max_width: int,
+    batch_size: int = 12,
+) -> tuple[list[Frame], dict[str, int]]:
+    """Materialize PNG and grayscale analysis data with one FFmpeg process per bounded batch."""
+    frames: list[Frame] = []
+    process_count = 0
+    failed = 0
+    for start in range(0, len(requests), batch_size):
+        batch = requests[start : start + batch_size]
+        args = [ffmpeg, "-y", "-hide_banner", "-nostats", "-loglevel", "error"]
+        normalized: list[tuple[float, Path, Path]] = []
+        for request_index, (timestamp, output) in enumerate(batch):
+            timestamp = max(0.0, timestamp)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            pgm = output.with_suffix(f".{request_index}.pgm")
+            normalized.append((timestamp, output, pgm))
+            args += ["-ss", f"{timestamp:.3f}", "-i", str(video)]
+        for input_index, (_, output, pgm) in enumerate(normalized):
+            args += [
+                "-map", f"{input_index}:v:0", "-frames:v", "1",
+                "-vf", f"scale='min({max_width},iw)':-2", "-compression_level", "3", str(output),
+                "-map", f"{input_index}:v:0", "-frames:v", "1",
+                "-vf", f"scale='min({max_width},iw)':-2,format=gray", "-f", "image2", "-c:v", "pgm", str(pgm),
+            ]
+        process_count += 1
+        result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180, check=False)
+        if result.returncode != 0 and not any(output.is_file() for _, output, _ in normalized):
+            tail = result.stderr.decode("utf-8", "replace").splitlines()[-8:]
+            raise RuntimeError("batch sample failed\n" + "\n".join(tail))
+        for timestamp, output, pgm in normalized:
+            if not output.is_file() or not pgm.is_file():
+                failed += 1
+                output.unlink(missing_ok=True)
+                pgm.unlink(missing_ok=True)
+                continue
+            width, height, pixels = parse_pgm(pgm.read_bytes())
+            pgm.unlink(missing_ok=True)
+            mean = statistics.fmean(pixels)
+            variance = statistics.pvariance(pixels)
+            frames.append(Frame(
+                timestamp, pixels, width, height, mean, variance,
+                laplacian_variance(pixels, width, height), edge_density(pixels, width, height),
+                mean < 18.0, mean > 245.0 and variance < 8.0,
+                dhash(pixels, width, height), output,
+            ))
+    return frames, {
+        "sample_batches": process_count,
+        "ffmpeg_process_count": process_count,
+        "sample_requests": len(requests),
+        "sample_succeeded": len(frames),
+        "sample_failed": failed,
+    }
+
+
 def directory_size(path: Path) -> int:
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
 
@@ -432,6 +490,68 @@ def frame_priority(frame: Frame) -> float:
     return quality_score(frame) + CONTENT_VALUE_BONUS[classify_content(frame)]
 
 
+def pre_ocr_limit(
+    prepared: list[tuple[Frame, str]], maximum: int = 360
+) -> tuple[list[tuple[Frame, str]], list[tuple[Frame, str]], list[tuple[Frame, str]]]:
+    windows: dict[int, list[tuple[Frame, str]]] = {}
+    for item in sorted(prepared, key=lambda value: value[0].timestamp):
+        windows.setdefault(int(item[0].timestamp // 60), []).append(item)
+    visual_only: list[tuple[Frame, str]] = []
+    ocr_windows: dict[int, list[tuple[Frame, str]]] = {}
+    limits: dict[int, int] = {}
+    source_rank = {
+        "CONTENT_CHANGE": 6, "SCENE_CHANGE": 5, "START": 4, "END": 4,
+        "PERIODIC_ANCHOR": 3, "WINDOW_COVERAGE": 2,
+    }
+    for window, values in windows.items():
+        values.sort(key=lambda item: (-source_rank[item[1]], -frame_priority(item[0]), item[0].timestamp))
+        visual = next((item for item in values if (
+            item[1] == "SCENE_CHANGE" and item[0].edge_density >= 0.07 and item[0].variance >= 120
+        )), None)
+        if visual is not None:
+            visual_only.append(visual)
+        remaining = [item for item in values if item is not visual]
+        if not remaining:
+            continue
+        ocr_windows[window] = remaining
+        dense = sum(source == "CONTENT_CHANGE" for _, source in remaining) >= 2
+        low_information = all(
+            frame.edge_density < 0.012 and source in {"PERIODIC_ANCHOR", "WINDOW_COVERAGE"}
+            for frame, source in remaining
+        )
+        limits[window] = min(len(remaining), 1 if low_information else 4 if dense else 2)
+
+    selected: list[tuple[Frame, str]] = []
+    round_index = 0
+    while len(selected) < maximum:
+        eligible = [
+            (window, values) for window, values in ocr_windows.items()
+            if round_index < limits[window] and round_index < len(values)
+        ]
+        if not eligible:
+            break
+        slots = min(maximum - len(selected), len(eligible))
+        if round_index:
+            eligible.sort(key=lambda item: (
+                not any(source == "CONTENT_CHANGE" for _, source in item[1]), item[0]
+            ))
+        if slots == len(eligible):
+            chosen = eligible
+        elif slots == 1:
+            chosen = [eligible[len(eligible) // 2]]
+        else:
+            chosen = [eligible[round(index * (len(eligible) - 1) / (slots - 1))] for index in range(slots)]
+        selected += [values[round_index] for _, values in chosen]
+        round_index += 1
+    retained_ids = {id(item[0]) for item in selected + visual_only}
+    rejected = [item for item in prepared if id(item[0]) not in retained_ids]
+    return (
+        sorted(selected, key=lambda item: item[0].timestamp),
+        sorted(visual_only, key=lambda item: item[0].timestamp),
+        rejected,
+    )
+
+
 def coverage(timestamps: list[float], duration: float) -> dict:
     if not timestamps or duration <= 0:
         return {"timeline_span_ratio": 0.0, "window_coverage_ratio": 0.0, "max_gap_seconds": None}
@@ -465,25 +585,56 @@ def persist(ffmpeg: str, video: Path, frames: list[Frame], directory: Path) -> i
 
 def ocr_metrics(tesseract: str | None, frames: list[Frame]) -> dict:
     if not tesseract:
-        return {"available": False, "attempted_frame_count": 0, "valid_frame_count": None}
+        return {
+            "available": False, "planned_frame_count": len(frames), "attempted_frame_count": 0,
+            "succeeded_frame_count": 0, "empty_frame_count": 0, "failed_frame_count": 0,
+            "valid_frame_count": None,
+        }
     valid = 0
+    succeeded = 0
+    empty = 0
+    failed = 0
+    attempted = 0
     for frame in frames:
-        result = subprocess.run(
-            [tesseract, str(frame.path), "stdout", "-l", "eng", "--oem", "1", "--psm", "6"],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False,
-        )
-        text = result.stdout.decode("utf-8", "replace") if result.returncode == 0 else ""
-        if len(re.sub(r"[^A-Za-z0-9]", "", text)) >= 8:
-            valid += 1
-    return {"available": True, "attempted_frame_count": len(frames), "valid_frame_count": valid}
+        attempted += 1
+        try:
+            result = subprocess.run(
+                [tesseract, str(frame.path), "stdout", "-l", "eng", "--oem", "1", "--psm", "6"],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False,
+            )
+            if result.returncode != 0:
+                failed += 1
+                continue
+            text = result.stdout.decode("utf-8", "replace")
+            if re.search(r"[A-Za-z0-9]", text):
+                succeeded += 1
+            else:
+                empty += 1
+            if len(re.sub(r"[^A-Za-z0-9]", "", text)) >= 8:
+                valid += 1
+        except (subprocess.TimeoutExpired, OSError):
+            failed += 1
+    return {
+        "available": True, "planned_frame_count": len(frames), "attempted_frame_count": attempted,
+        "succeeded_frame_count": succeeded, "empty_frame_count": empty,
+        "failed_frame_count": failed, "valid_frame_count": valid,
+    }
 
 
 def summarize(
     name: str, candidate_timestamps: list[float], samples: list[Frame], final: list[Frame], duplicate_count: int,
     duration: float, elapsed: float, peak: int, persisted_bytes: int, tesseract: str | None,
+    *, ocr_frames: list[Frame] | None = None, runtime_metrics: dict[str, int] | None = None,
+    stable_frame_count: int | None = None, pre_ocr_rejected_count: int = 0,
+    ocr_result: dict | None = None,
 ) -> dict:
     content_types = {name: sum(classify_content(frame) == name for frame in final) for name in CONTENT_BUDGETS}
     vlm_frames = fair_content_limit(final, VLM_BUDGETS, 80)
+    runtime = runtime_metrics or {
+        "sample_batches": len(samples), "ffmpeg_process_count": len(samples) * 2,
+        "sample_requests": len(samples), "sample_succeeded": len(samples), "sample_failed": 0,
+    }
+    ocr = ocr_result or ocr_metrics(tesseract, final if ocr_frames is None else ocr_frames)
     return {
         "strategy": name,
         "candidate_timestamp_count": len(candidate_timestamps),
@@ -493,12 +644,16 @@ def summarize(
         "blurred_sample_count": sum(frame.sharpness < 80.0 for frame in samples),
         "black_sample_count": sum(frame.black for frame in samples),
         "duplicate_rejected_or_observed_count": duplicate_count,
+        **runtime,
+        "stable_frame_count": len(final) if stable_frame_count is None else stable_frame_count,
+        "pre_ocr_rejected_count": pre_ocr_rejected_count,
+        "final_keyframe_count": len(final),
         "content_type_counts": content_types,
         "time_coverage": {
             "candidates": coverage(candidate_timestamps, duration),
             "final_frames": coverage([frame.timestamp for frame in final], duration),
         },
-        "ocr": ocr_metrics(tesseract, final),
+        "ocr": ocr,
         "vlm_plan": {
             "network_calls_made": 0,
             "planned_frame_count": len(vlm_frames),
@@ -508,6 +663,8 @@ def summarize(
             "max_frames_total": 80,
         },
         "elapsed_seconds": round(elapsed, 3),
+        "ffmpeg_processes_per_minute": round(runtime["ffmpeg_process_count"] / max(duration / 60.0, 1e-9), 3),
+        "ocr_calls_per_minute": round(ocr["attempted_frame_count"] / max(duration / 60.0, 1e-9), 3),
         "temp_peak_bytes_approx": peak,
         "persisted_bytes": persisted_bytes,
     }
@@ -575,50 +732,86 @@ def adaptive(
     directory = root / "adaptive"
     directory.mkdir()
     bounded = bound_adaptive_candidates(planned, duration)
-    samples: list[Frame] = []
-    prepared: list[tuple[Frame, str]] = []
+    requests: list[tuple[float, Path]] = []
+    outputs_by_candidate: list[list[Path]] = []
     for index, item in enumerate(bounded):
-        nearby: list[Frame] = []
+        candidate_outputs: list[Path] = []
+        timestamps: list[float] = []
         for offset_index, offset in enumerate((-0.2, 0.4, 0.9, 1.4)):
             timestamp = min(max(0.0, item[0] + offset), max(0.0, duration - 0.25))
-            if any(abs(timestamp - old.timestamp) < 0.001 for old in nearby):
+            if any(abs(timestamp - old) < 0.001 for old in timestamps):
                 continue
-            frame = sample(ffmpeg, video, timestamp, 1600, directory / f"candidate-{index:04d}-{offset_index}.png", "png")
-            nearby.append(frame)
-            samples.append(frame)
+            timestamps.append(timestamp)
+            output = directory / f"candidate-{index:04d}-{offset_index}.png"
+            candidate_outputs.append(output)
+            requests.append((timestamp, output))
+        outputs_by_candidate.append(candidate_outputs)
+    samples, runtime_metrics = sample_batch(ffmpeg, video, requests, 1600, 12)
+    peak = directory_size(directory)
+    by_output = {frame.path: frame for frame in samples}
+    prepared: list[tuple[Frame, str]] = []
+    for index, item in enumerate(bounded):
+        nearby = [by_output[path] for path in outputs_by_candidate[index] if path in by_output]
         strict = [frame for frame in nearby if not frame.black and not frame.blank and frame.sharpness >= 80]
         relaxed = [frame for frame in nearby if not frame.black and not frame.blank]
         eligible = strict or (relaxed if item[1] in {"START", "END", "PERIODIC_ANCHOR"} else [])
         if item[1] in {"SCENE_CHANGE", "CONTENT_CHANGE"}:
             eligible = [frame for frame in eligible if frame.timestamp >= item[0]]
         if eligible:
-            prepared.append((max(eligible, key=lambda frame: (
+            retained = max(eligible, key=lambda frame: (
                 quality_score(frame),
                 frame.timestamp >= item[0] if item[1] in {"SCENE_CHANGE", "CONTENT_CHANGE"} else True,
                 -abs(frame.timestamp - item[0]),
-            )), item[1]))
-    final: list[Frame] = []
+            ))
+            prepared.append((retained, item[1]))
+            for frame in nearby:
+                if frame is not retained:
+                    frame.path.unlink(missing_ok=True)
+        else:
+            for frame in nearby:
+                frame.path.unlink(missing_ok=True)
+    distinct: list[tuple[Frame, str]] = []
     duplicates = 0
     for frame, source in prepared:
         exact_repeat = any(
             abs(frame.timestamp - old.timestamp) <= 120 and hamming(frame.dhash, old.dhash) == 0
-            for old in final
+            for old, _ in distinct
         )
         near_repeat_in_window = any(
             int(frame.timestamp // 60) == int(old.timestamp // 60)
             and hamming(frame.dhash, old.dhash) <= 5
-            for old in final
+            for old, _ in distinct
         )
-        if exact_repeat or (
+        protected_change = source in {"SCENE_CHANGE", "CONTENT_CHANGE"} and all(
+            abs(frame.timestamp - old.timestamp) >= 3 for old, _ in distinct
+        )
+        if (exact_repeat and not protected_change) or (
             near_repeat_in_window and source not in {"SCENE_CHANGE", "CONTENT_CHANGE"}
         ):
             duplicates += 1
+            frame.path.unlink(missing_ok=True)
         else:
-            final.append(frame)
-    final = fair_content_limit(final, CONTENT_BUDGETS, 240)
+            distinct.append((frame, source))
+    ocr_prepared, visual_only, pre_ocr_rejected = pre_ocr_limit(distinct, 360)
+    for frame, _ in pre_ocr_rejected:
+        frame.path.unlink(missing_ok=True)
+    ocr_frames = [frame for frame, _ in ocr_prepared]
+    ocr_result = ocr_metrics(tesseract, ocr_frames)
+    retained = [frame for frame, _ in ocr_prepared + visual_only]
+    final = fair_content_limit(retained, CONTENT_BUDGETS, 240)
+    final_ids = {id(frame) for frame in final}
+    for frame in retained:
+        if id(frame) not in final_ids:
+            frame.path.unlink(missing_ok=True)
     persisted_bytes = persist(ffmpeg, video, final, directory)
-    peak = directory_size(directory)
-    return summarize("adaptive", [item[0] for item in planned], samples, final, duplicates, duration, time.perf_counter() - started, peak, persisted_bytes, tesseract)
+    peak = max(peak, directory_size(directory))
+    return summarize(
+        "adaptive", [item[0] for item in planned], samples, final, duplicates, duration,
+        time.perf_counter() - started, peak, persisted_bytes, tesseract,
+        ocr_frames=ocr_frames, runtime_metrics=runtime_metrics,
+        stable_frame_count=len(prepared), pre_ocr_rejected_count=len(pre_ocr_rejected),
+        ocr_result=ocr_result,
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -629,6 +822,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ffprobe", default="ffprobe")
     parser.add_argument("--keep-workdir", action="store_true", help="Keep sampled media for debugging (default: delete)")
     parser.add_argument("--scenario-manifest", type=Path, help="Optional synthetic scenario manifest")
+    parser.add_argument(
+        "--adaptive-only",
+        action="store_true",
+        help="Run only the optimized strategy; original costs remain a theoretical model (recommended for long media)",
+    )
     return parser.parse_args()
 
 
@@ -648,10 +846,11 @@ def main() -> int:
     temporary = Path(tempfile.mkdtemp(prefix="lecturelens-vision-eval-"))
     tesseract = shutil.which("tesseract")
     try:
-        strategies = [
+        optimized = adaptive(ffmpeg, video, metadata["duration_seconds"], adaptive_planned, temporary, tesseract)
+        strategies = [optimized] if args.adaptive_only else [
             legacy(ffmpeg, video, metadata["duration_seconds"], temporary, tesseract),
             scene_anchor(ffmpeg, video, metadata["duration_seconds"], scene_planned, temporary, tesseract),
-            adaptive(ffmpeg, video, metadata["duration_seconds"], adaptive_planned, temporary, tesseract),
+            optimized,
         ]
         if args.scenario_manifest:
             manifest = json.loads(args.scenario_manifest.expanduser().resolve().read_text(encoding="utf-8"))
@@ -684,6 +883,26 @@ def main() -> int:
                 "black_mean": 18.0, "dhash_distance": 5,
             },
             "ocr_availability": {"tesseract": bool(tesseract), "executable": tesseract},
+            "resource_model": {
+                "original_theoretical": {
+                    "planned_candidates": len(adaptive_planned),
+                    "neighbor_samples_per_candidate": 4,
+                    "ffmpeg_process_count": len(adaptive_planned) * 4,
+                    "ocr_call_count": len(adaptive_planned),
+                },
+                "optimized_actual": {
+                    "sample_batches": strategies[-1]["sample_batches"],
+                    "ffmpeg_process_count": strategies[-1]["ffmpeg_process_count"],
+                    "sample_requests": strategies[-1]["sample_requests"],
+                    "sample_succeeded": strategies[-1]["sample_succeeded"],
+                    "sample_failed": strategies[-1]["sample_failed"],
+                    "ocr_call_count": strategies[-1]["ocr"]["attempted_frame_count"],
+                    "ffmpeg_processes_per_minute": strategies[-1]["ffmpeg_processes_per_minute"],
+                    "ocr_calls_per_minute": strategies[-1]["ocr_calls_per_minute"],
+                    "time_coverage": strategies[-1]["time_coverage"]["final_frames"],
+                    "temp_peak_bytes_approx": strategies[-1]["temp_peak_bytes_approx"],
+                },
+            },
             "temp_peak_note": "Approximation from actual files in the strategy workspace; excludes OS/process buffers and PGM pipes.",
             "strategies": strategies,
         }

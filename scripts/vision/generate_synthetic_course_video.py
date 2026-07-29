@@ -234,7 +234,12 @@ def encode_black(ffmpeg: str, output: Path, duration: float) -> None:
     ])
 
 
-def build(output: Path, ffmpeg: str, manifest: Path | None = None) -> None:
+def build(
+    output: Path,
+    ffmpeg: str,
+    manifest: Path | None = None,
+    target_duration_seconds: float | None = None,
+) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="lecturelens-synthetic-assets-") as temporary:
         work = Path(temporary)
@@ -297,18 +302,47 @@ def build(output: Path, ffmpeg: str, manifest: Path | None = None) -> None:
         ])
         # A deterministic silent track exercises the real FFmpeg audio branch
         # while keeping ASR evaluation local and provider-independent.
+        target_duration = target_duration_seconds if target_duration_seconds and target_duration_seconds > 0 else timeline_seconds
+        base_output = output if target_duration <= timeline_seconds + 0.001 else work / "base-course.mp4"
         run([
             ffmpeg, "-y", "-hide_banner", "-loglevel", "error",
             "-i", str(video_only),
             "-f", "lavfi", "-i", "anullsrc=channel_layout=mono:sample_rate=16000",
             "-map", "0:v:0", "-map", "1:a:0", "-t", f"{timeline_seconds:.3f}",
             "-c:v", "copy", "-c:a", "aac", "-b:a", "32k", "-shortest",
-            "-movflags", "+faststart", str(output),
+            "-movflags", "+faststart", str(base_output),
         ])
+        if base_output != output:
+            run([
+                ffmpeg, "-y", "-hide_banner", "-loglevel", "error",
+                "-stream_loop", "-1", "-i", str(base_output), "-t", f"{target_duration:.3f}",
+                "-map", "0:v:0", "-map", "0:a:0", "-c", "copy", "-movflags", "+faststart", str(output),
+            ])
         if manifest is not None:
+            base_scenarios = list(scenarios)
+            if target_duration > timeline_seconds + 0.001:
+                scenarios = []
+                cycle = 0
+                while cycle * timeline_seconds < target_duration:
+                    offset = cycle * timeline_seconds
+                    for scenario in base_scenarios:
+                        start = offset + float(scenario["start_seconds"])
+                        if start >= target_duration:
+                            break
+                        scenarios.append({
+                            "name": f"{scenario['name']}-cycle-{cycle + 1}",
+                            "start_seconds": start,
+                            "end_seconds": min(target_duration, offset + float(scenario["end_seconds"])),
+                        })
+                    cycle += 1
             manifest.parent.mkdir(parents=True, exist_ok=True)
             manifest.write_text(
-                json.dumps({"schema_version": 1, "video": str(output), "scenarios": scenarios}, indent=2) + "\n",
+                json.dumps({
+                    "schema_version": 1,
+                    "video": str(output),
+                    "duration_seconds": target_duration,
+                    "scenarios": scenarios,
+                }, indent=2) + "\n",
                 encoding="utf-8",
             )
 
@@ -319,6 +353,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, default=default, help="Output MP4 (default: system temp directory)")
     parser.add_argument("--manifest", type=Path, help="Optional JSON scenario manifest for offline evaluation")
     parser.add_argument("--ffmpeg", default="ffmpeg", help="FFmpeg executable")
+    parser.add_argument(
+        "--target-duration-seconds",
+        type=float,
+        help="Repeat the deterministic 126-second scenario cycle to this duration (for example 1200)",
+    )
     return parser.parse_args()
 
 
@@ -329,7 +368,7 @@ def main() -> int:
         raise SystemExit(f"FFmpeg executable not found: {args.ffmpeg}")
     output = args.output.expanduser().resolve()
     manifest = args.manifest.expanduser().resolve() if args.manifest else None
-    build(output, executable, manifest)
+    build(output, executable, manifest, args.target_duration_seconds)
     print(output)
     if manifest:
         print(manifest)

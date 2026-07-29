@@ -234,6 +234,8 @@ python .\scripts\vision\generate_synthetic_course_video.py --output "$env:TEMP\l
 python .\scripts\vision\evaluate_adaptive_video.py "$env:TEMP\lecturelens-course.mp4" --scenario-manifest "$env:TEMP\lecturelens-course-scenarios.json" --output "$env:TEMP\lecturelens-vision-report.json"
 ```
 
+生产链路使用有界 FFmpeg 批量采样（默认每批 12 个时间戳）、公平的 OCR 前预算（每 60 秒普通 2 帧、密集内容变化 4 帧、低信息 1 帧，全任务 360 帧）和专用 Tesseract 执行器（2 个工作线程、队列容量 4）。最终证据仍限制为 240 帧；无视觉模型密钥时不会发起收费视觉请求。
+
 评测不调用网络或收费 AI；如果本机没有 Tesseract，JSON 会明确输出 OCR `available=false` 和 `valid_frame_count=null`。媒体、帧和报告均为本地产物，不应提交到仓库。
 
 ## License

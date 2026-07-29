@@ -479,7 +479,10 @@ RESULT-UX-R1 只增强前端任务详情结果页体验，不改变 D16 结果�
 
 VISION-R1 adds a low-cost visual channel before OCR/VLM. When the explicit pipeline executor is enabled, `EXTRACT_KEYFRAMES` runs after `RESOLVE_UPLOADED_SOURCE` and before `EXTRACT_AUDIO`.
 
-- The step uses FFmpeg to extract bounded low-resolution JPEG thumbnails, then computes frame changes in Java with `ImageIO`; it does not call OCR, VLM, fusion, course QA, embedding, or any visual model.
+- The adaptive path is `scene scan -> candidate plan -> bounded batch sampling -> stable/quality selection -> image-only filtering -> pre-OCR budget -> bounded OCR -> OCR-aware dedup/classification -> final evidence budget`. One FFmpeg process serves up to `COURSELINGO_VISION_KEYFRAME_SAMPLING_BATCH_SIZE=12` exact millisecond requests; partial output failure does not discard successful siblings.
+- Black, blank, severely blurred, exact-duplicate, and redundant near-hash frames are removed before OCR. Similar `CONTENT_CHANGE`/`SCENE_CHANGE` evidence is protected so progressive code and terminal updates survive.
+- The pre-OCR allocator defaults to a 60-second window, 2 normal frames per window, 4 for dense content-change windows, 1 for low-information windows, and 360 total. It allocates a first temporal-coverage round before extra dense-change slots. High-information visual demonstrations may remain as visual-only evidence without consuming an OCR call.
+- OCR uses a dedicated executor (`COURSELINGO_VISION_OCR_CONCURRENCY=2`, queue capacity `4`), never the common fork-join pool. Submission, queueing, and total work are bounded; interruption cancels queued/running work and the Tesseract/FFmpeg process executors terminate process trees.
 - `courselingo.vision.keyframe.enabled=false` skips the step without changing the ASR/LLM path.
 - Keyframe scan failures are isolated: the step writes a sanitized `WARN` task log and continues to audio extraction, ASR, translation, learning package generation, artifacts, and AI call record writing.
 - `VideoKeyframeScanService` deletes old keyframes for the same `taskId + userId` before inserting new rows, and `video_keyframe.uk_video_keyframe_task_frame` prevents duplicate frame records.
@@ -500,7 +503,7 @@ Failure semantics:
 
 Public APIs return a nested safe `ocr` view on keyframe metadata. They never return `objectKey`, local temporary paths, provider stderr, tokens, API keys, raw prompts, raw responses, or OCR process command lines.
 - Thumbnail files are stored through the existing `StorageService` abstraction. The database stores internal `object_key`, but keyframe list APIs and task results return only safe metadata and an authenticated image API path.
-- Temporary frame extraction directories live under the runner workspace and are deleted in a `finally` block. Source frame extraction is capped by `maxSourceFramesTotal`, derived from `maxKeyframesTotal`, to avoid unbounded disk growth.
+- Temporary frame extraction directories live under the runner workspace and are deleted in a `finally` block. Rejected pre-OCR images are deleted immediately, successful OCR preprocessing directories are deleted per frame, and only final 960px evidence is persisted.
 - Frontend task detail fetches keyframe images as authenticated blobs and revokes object URLs when the task changes or the page unloads.
 
 ## VLM-R1 keyframe visual analysis

@@ -10,10 +10,22 @@ public record VideoKeyframeScanResult(
     int ocrSucceededCount,
     int ocrEmptyCount,
     int ocrFailedCount,
-    long durationMillis
+    long durationMillis,
+    int sampleBatchCount,
+    int ffmpegProcessCount,
+    int sampleRequestCount,
+    int sampleSucceededCount,
+    int sampleFailedCount,
+    int stableFrameCount,
+    int preOcrRejectedCount,
+    int ocrPlannedCount,
+    int ocrAttemptedCount,
+    int finalKeyframeCount,
+    int vlmPlannedCount
 ) {
 
     public VideoKeyframeScanResult(int savedKeyframeCount) {
-        this(savedKeyframeCount, 0, 0, 0, 0, 0, 0, 0, 0, 0L);
+        this(savedKeyframeCount, 0, 0, 0, 0, 0, 0, 0, 0, 0L, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            savedKeyframeCount, savedKeyframeCount);
     }
 }

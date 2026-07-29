@@ -4,26 +4,24 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.media.SceneDetectionPoint;
+import com.example.courselingo.media.SingleFrameVideoFrameBatchSampler;
+import com.example.courselingo.media.VideoFrameBatchSampler;
 import com.example.courselingo.media.VideoFrameSampler;
 import com.example.courselingo.media.VideoMetadata;
 import com.example.courselingo.media.VideoMetadataProbe;
 import com.example.courselingo.media.VideoSceneScanner;
 import com.example.courselingo.storage.StorageService;
 import com.example.courselingo.vision.adaptive.CandidateTimestampPlanner;
+import com.example.courselingo.vision.adaptive.AdaptiveFramePreparationPipeline;
 import com.example.courselingo.vision.adaptive.ImageQualityAnalysis;
-import com.example.courselingo.vision.adaptive.ImageQualityAnalyzer;
-import com.example.courselingo.vision.adaptive.OcrImagePreprocessor;
-import com.example.courselingo.vision.adaptive.OcrPreprocessingResult;
 import com.example.courselingo.vision.adaptive.OcrTextDeduplicator;
 import com.example.courselingo.vision.adaptive.PerceptualHashDeduplicator;
 import com.example.courselingo.vision.adaptive.SceneCandidate;
-import com.example.courselingo.vision.adaptive.StableFrameSelector;
 import com.example.courselingo.vision.adaptive.ContentAdaptiveFrameBudgetAllocator;
 import com.example.courselingo.vision.adaptive.VideoContentClassifier;
 import com.example.courselingo.vision.adaptive.VideoContentType;
 import com.example.courselingo.vision.keyframe.mapper.VideoKeyframeMapper;
 import com.example.courselingo.vision.ocr.OcrProvider;
-import com.example.courselingo.vision.ocr.OcrRequest;
 import com.example.courselingo.vision.ocr.OcrResult;
 import com.example.courselingo.vision.ocr.OcrStatus;
 import com.example.courselingo.vision.ocr.VideoKeyframeOcr;
@@ -42,7 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +58,7 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
     private final VideoKeyframeProperties properties;
     private final VideoMetadataProbe metadataProbe;
     private final VideoSceneScanner sceneScanner;
-    private final VideoFrameSampler frameSampler;
+    private final VideoFrameBatchSampler frameBatchSampler;
     private final OcrProvider ocrProvider;
     private final VideoKeyframeOcrMapper ocrMapper;
     private final VisionOcrProperties ocrProperties;
@@ -77,6 +74,7 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         VideoMetadataProbe metadataProbe,
         VideoSceneScanner sceneScanner,
         VideoFrameSampler frameSampler,
+        VideoFrameBatchSampler frameBatchSampler,
         OcrProvider ocrProvider,
         VideoKeyframeOcrMapper ocrMapper,
         VisionOcrProperties ocrProperties,
@@ -89,6 +87,7 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             metadataProbe,
             sceneScanner,
             frameSampler,
+            frameBatchSampler,
             ocrProvider,
             ocrMapper,
             ocrProperties,
@@ -116,6 +115,7 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             metadataProbe,
             sceneScanner,
             frameSampler,
+            new SingleFrameVideoFrameBatchSampler(frameSampler),
             ocrProvider,
             ocrMapper,
             ocrProperties,
@@ -137,12 +137,42 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
         Clock clock
     ) {
+        this(
+            mapper,
+            storageService,
+            properties,
+            metadataProbe,
+            sceneScanner,
+            frameSampler,
+            new SingleFrameVideoFrameBatchSampler(frameSampler),
+            ocrProvider,
+            ocrMapper,
+            ocrProperties,
+            evidenceLifecycleService,
+            clock
+        );
+    }
+
+    VideoKeyframeScanServiceImpl(
+        VideoKeyframeMapper mapper,
+        StorageService storageService,
+        VideoKeyframeProperties properties,
+        VideoMetadataProbe metadataProbe,
+        VideoSceneScanner sceneScanner,
+        VideoFrameSampler frameSampler,
+        VideoFrameBatchSampler frameBatchSampler,
+        OcrProvider ocrProvider,
+        VideoKeyframeOcrMapper ocrMapper,
+        VisionOcrProperties ocrProperties,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
+        Clock clock
+    ) {
         this.mapper = mapper;
         this.storageService = storageService;
         this.properties = properties == null ? new VideoKeyframeProperties() : properties;
         this.metadataProbe = metadataProbe;
         this.sceneScanner = sceneScanner;
-        this.frameSampler = frameSampler;
+        this.frameBatchSampler = frameBatchSampler;
         this.ocrProvider = ocrProvider;
         this.ocrMapper = ocrMapper;
         this.ocrProperties = ocrProperties == null ? new VisionOcrProperties() : ocrProperties;
@@ -187,7 +217,21 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             );
             stats.candidates = planned.size();
             List<SceneCandidate> bounded = boundedCandidates(planned, metadata.durationMillis());
-            List<PreparedFrame> prepared = prepareFrames(command, outputDirectory, metadata, bounded, stats);
+            AdaptiveFramePreparationPipeline.Result preparation = new AdaptiveFramePreparationPipeline(
+                properties,
+                frameBatchSampler,
+                ocrProvider,
+                ocrProperties
+            ).prepare(command.sourceVideo(), outputDirectory, metadata.durationMillis(), bounded);
+            stats.merge(preparation.statistics());
+            List<PreparedFrame> prepared = preparation.frames().stream().map(frame -> new PreparedFrame(
+                frame.candidate(),
+                frame.timestampMillis(),
+                frame.imagePath(),
+                frame.quality(),
+                frame.relaxed(),
+                frame.ocr()
+            )).toList();
             List<PreparedFrame> deduplicated = deduplicate(prepared, stats);
             List<PreparedFrame> selected = applyContentAdaptiveBudget(deduplicated);
 
@@ -197,16 +241,25 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             }
             long durationMillis = Duration.ofNanos(System.nanoTime() - startedNanos).toMillis();
             LOGGER.info(
-                "event=adaptive_vision_completed candidates={} samples={} blurredRejected={} blackRejected={} duplicateRejected={} keyframes={} ocrSucceeded={} ocrEmpty={} ocrFailed={} durationMillis={} cleanup=scheduled",
+                "event=adaptive_vision_completed plannedCandidates={} sampleBatches={} ffmpegProcessCount={} sampleRequests={} sampleSucceeded={} sampleFailed={} stableFrames={} blurredRejected={} blackRejected={} duplicateRejected={} preOcrRejected={} ocrPlanned={} ocrAttempted={} ocrSucceeded={} ocrEmpty={} ocrFailed={} finalKeyframes={} vlmPlanned={} durationMillis={} cleanup=scheduled",
                 stats.candidates,
+                stats.sampleBatches,
+                stats.ffmpegProcessCount,
+                stats.sampleRequests,
                 stats.samples,
+                stats.sampleFailed,
+                stats.stableFrames,
                 stats.blurredRejected,
                 stats.blackRejected,
                 stats.duplicateRejected,
-                selected.size(),
+                stats.preOcrRejected,
+                stats.ocrPlanned,
+                stats.ocrAttempted,
                 stats.ocrSucceeded,
                 stats.ocrEmpty,
                 stats.ocrFailed,
+                selected.size(),
+                selected.size(),
                 durationMillis
             );
             return stats.result(selected.size(), durationMillis);
@@ -220,169 +273,6 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         } finally {
             boolean cleaned = deleteDirectoryBestEffort(outputDirectory);
             LOGGER.info("event=adaptive_vision_workspace_cleanup success={}", cleaned);
-        }
-    }
-
-    private List<PreparedFrame> prepareFrames(
-        VideoKeyframeScanCommand command,
-        Path outputDirectory,
-        VideoMetadata metadata,
-        List<SceneCandidate> candidates,
-        MutableStats stats
-    ) {
-        ImageQualityAnalyzer analyzer = qualityAnalyzer();
-        StableFrameSelector selector = stableFrameSelector(analyzer);
-        OcrImagePreprocessor preprocessor = new OcrImagePreprocessor();
-        List<PreparedFrame> result = new ArrayList<>();
-        for (int candidateIndex = 0; candidateIndex < candidates.size(); candidateIndex++) {
-            ensureNotInterrupted();
-            SceneCandidate candidate = candidates.get(candidateIndex);
-            List<SampleFile> sampleFiles = new ArrayList<>();
-            for (double timestamp : selector.sampleTimestamps(
-                candidate.timestampSeconds(),
-                metadata.durationMillis() / 1000.0d
-            )) {
-                Path output = outputDirectory.resolve(
-                    "candidate-%04d-%03d.png".formatted(candidateIndex, sampleFiles.size())
-                );
-                try {
-                    Path sampled = frameSampler.sample(
-                        command.sourceVideo(),
-                        Math.round(timestamp * 1000.0d),
-                        output,
-                        properties.getAnalysisMaxWidth(),
-                        Duration.ofSeconds(Math.min(45L, properties.getTimeoutSeconds()))
-                    );
-                    BufferedImage image = ImageIO.read(sampled.toFile());
-                    if (image != null) {
-                        sampleFiles.add(new SampleFile(timestamp, sampled, image));
-                        stats.samples++;
-                    }
-                } catch (RuntimeException | IOException exception) {
-                    if (Thread.currentThread().isInterrupted()) {
-                        throw exception instanceof RuntimeException runtime
-                            ? runtime
-                            : new BusinessException(ErrorCode.MEDIA_FFMPEG_FAILED, "Frame sampling was interrupted", exception);
-                    }
-                }
-            }
-            List<StableFrameSelector.FrameSample> samples = sampleFiles.stream()
-                .map(sample -> new StableFrameSelector.FrameSample(sample.timestampSeconds(), sample.image()))
-                .toList();
-            Optional<StableFrameSelector.SelectedStableFrame> selected = selector.select(candidate, samples);
-            if (selected.isEmpty()) {
-                if (!samples.isEmpty() && samples.stream().allMatch(sample -> analyzer.analyze(sample.image()).black())) {
-                    stats.blackRejected++;
-                } else {
-                    stats.blurredRejected++;
-                }
-                deleteSampleFiles(sampleFiles, null);
-                continue;
-            }
-            StableFrameSelector.SelectedStableFrame stable = selected.get();
-            Path original = sampleFiles.stream()
-                .filter(sample -> Math.abs(sample.timestampSeconds() - stable.timestampSeconds()) < 0.0005d)
-                .map(SampleFile::path)
-                .findFirst()
-                .orElseThrow();
-            Path ocrDirectory = outputDirectory.resolve("ocr-" + candidateIndex);
-            Path ocrSource = sampleOcrSourceIfNeeded(
-                command,
-                outputDirectory,
-                stable.timestampSeconds(),
-                candidateIndex,
-                original,
-                stats
-            );
-            OcrResult ocrResult = recognize(ocrSource, ocrDirectory, preprocessor);
-            countOcr(ocrResult, stats);
-            result.add(new PreparedFrame(
-                candidate,
-                Math.round(stable.timestampSeconds() * 1000.0d),
-                original,
-                stable.quality(),
-                stable.relaxed(),
-                ocrResult
-            ));
-            deleteSampleFiles(sampleFiles, original);
-            if (!ocrSource.equals(original)) {
-                deleteFileBestEffort(ocrSource);
-            }
-            deleteDirectoryBestEffort(ocrDirectory);
-        }
-        return result;
-    }
-
-    private Path sampleOcrSourceIfNeeded(
-        VideoKeyframeScanCommand command,
-        Path outputDirectory,
-        double timestampSeconds,
-        int candidateIndex,
-        Path analysisSource,
-        MutableStats stats
-    ) {
-        if (!ocrProperties.isEnabled()
-            || ocrProvider == null
-            || ocrProperties.getPreprocessMaxWidth() <= properties.getAnalysisMaxWidth()) {
-            return analysisSource;
-        }
-        Path output = outputDirectory.resolve("candidate-%04d-ocr.png".formatted(candidateIndex));
-        try {
-            Path sampled = frameSampler.sample(
-                command.sourceVideo(),
-                Math.round(timestampSeconds * 1000.0d),
-                output,
-                ocrProperties.getPreprocessMaxWidth(),
-                Duration.ofSeconds(Math.min(45L, properties.getTimeoutSeconds()))
-            );
-            stats.samples++;
-            return sampled;
-        } catch (RuntimeException exception) {
-            if (Thread.currentThread().isInterrupted()) {
-                throw exception;
-            }
-            deleteFileBestEffort(output);
-            return analysisSource;
-        }
-    }
-
-    private OcrResult recognize(Path original, Path ocrDirectory, OcrImagePreprocessor preprocessor) {
-        if (!ocrProperties.isEnabled() || ocrProvider == null) {
-            return new OcrResult(
-                OcrStatus.DISABLED,
-                "",
-                null,
-                ocrProperties.getProvider(),
-                ocrProperties.getLanguage(),
-                0L,
-                null,
-                null
-            );
-        }
-        try {
-            OcrPreprocessingResult images = preprocessor.preprocess(
-                original,
-                ocrDirectory,
-                new OcrImagePreprocessor.Options(
-                    ocrProperties.getPreprocessMaxWidth(),
-                    1.5d,
-                    1.25d,
-                    0.18d,
-                    ocrProperties.isBinarizationEnabled()
-                )
-            );
-            return ocrProvider.recognize(new OcrRequest(images.enhancedImage()));
-        } catch (RuntimeException exception) {
-            return new OcrResult(
-                OcrStatus.FAILED,
-                "",
-                null,
-                ocrProperties.getProvider(),
-                ocrProperties.getLanguage(),
-                null,
-                "OCR_FRAME_FAILED",
-                SafeLogSanitizer.sanitizeAndLimit(exception.getMessage())
-            );
         }
     }
 
@@ -423,6 +313,16 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             && previous.quality().contentFingerprint().equals(candidate.quality().contentFingerprint())
             && Math.abs(previous.timestampMillis() - candidate.timestampMillis()) <= 120_000L
         ) {
+            if (filesIdentical(previous.imagePath(), candidate.imagePath())) {
+                return true;
+            }
+            boolean detectedChange = candidate.candidate().source() == SceneCandidate.Source.SCENE_CHANGE
+                || candidate.candidate().source() == SceneCandidate.Source.CONTENT_CHANGE;
+            if (detectedChange
+                && Math.abs(previous.timestampMillis() - candidate.timestampMillis())
+                    >= properties.getMinKeyframeGapSeconds() * 1_000L) {
+                return false;
+            }
             return true;
         }
         if (previous.timestampMillis() / windowMillis != candidate.timestampMillis() / windowMillis) {
@@ -697,28 +597,6 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         ));
     }
 
-    private ImageQualityAnalyzer qualityAnalyzer() {
-        return new ImageQualityAnalyzer(new ImageQualityAnalyzer.Config(
-            256,
-            properties.getBlackBrightnessThreshold(),
-            80.0d,
-            properties.getBlankVarianceThreshold(),
-            0.006d,
-            28.0d,
-            Math.max(100.0d, properties.getSharpnessThreshold() * 15.0d)
-        ));
-    }
-
-    private StableFrameSelector stableFrameSelector(ImageQualityAnalyzer analyzer) {
-        return new StableFrameSelector(new StableFrameSelector.Config(
-            properties.getNearbySampleOffsetsSeconds(),
-            properties.getSharpnessThreshold(),
-            0.002d,
-            28.0d,
-            0.35d
-        ), analyzer);
-    }
-
     private void removeExisting(String taskId, Long userId) {
         if (evidenceLifecycleService != null) {
             evidenceLifecycleService.cleanupTaskEvidence(taskId, userId);
@@ -743,7 +621,8 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
     }
 
     private void requireAdaptiveDependencies() {
-        if (mapper == null || storageService == null || metadataProbe == null || sceneScanner == null || frameSampler == null) {
+        if (mapper == null || storageService == null || metadataProbe == null || sceneScanner == null
+            || frameBatchSampler == null) {
             throw new BusinessException(ErrorCode.MEDIA_CONFIGURATION_INVALID, "Adaptive video components are unavailable");
         }
     }
@@ -814,30 +693,6 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         return success[0];
     }
 
-    private static void countOcr(OcrResult result, MutableStats stats) {
-        OcrStatus status = result == null || result.status() == null ? OcrStatus.FAILED : result.status();
-        switch (status) {
-            case SUCCEEDED -> stats.ocrSucceeded++;
-            case EMPTY -> stats.ocrEmpty++;
-            case FAILED -> stats.ocrFailed++;
-            default -> {
-            }
-        }
-    }
-
-    private static void deleteSampleFiles(List<SampleFile> samples, Path retained) {
-        for (SampleFile sample : samples) {
-            if (retained != null && retained.equals(sample.path())) {
-                continue;
-            }
-            try {
-                Files.deleteIfExists(sample.path());
-            } catch (IOException ignored) {
-                // The guarded task-workspace cleanup provides a final retry.
-            }
-        }
-    }
-
     private static void deleteFileBestEffort(Path path) {
         if (path == null) {
             return;
@@ -849,7 +704,14 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
         }
     }
 
-    private record SampleFile(double timestampSeconds, Path path, BufferedImage image) {
+    private static boolean filesIdentical(Path first, Path second) {
+        try {
+            return first != null && second != null
+                && Files.size(first) == Files.size(second)
+                && Files.mismatch(first, second) == -1L;
+        } catch (IOException ignored) {
+            return false;
+        }
     }
 
     private record PreparedFrame(
@@ -865,12 +727,38 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
     private static final class MutableStats {
         private int candidates;
         private int samples;
+        private int sampleBatches;
+        private int ffmpegProcessCount;
+        private int sampleRequests;
+        private int sampleFailed;
+        private int stableFrames;
         private int blurredRejected;
         private int blackRejected;
         private int duplicateRejected;
+        private int preOcrRejected;
+        private int ocrPlanned;
+        private int ocrAttempted;
         private int ocrSucceeded;
         private int ocrEmpty;
         private int ocrFailed;
+
+        private void merge(AdaptiveFramePreparationPipeline.Statistics source) {
+            sampleBatches += source.sampleBatches();
+            ffmpegProcessCount += source.ffmpegProcessCount();
+            sampleRequests += source.sampleRequests();
+            samples += source.sampleSucceeded();
+            sampleFailed += source.sampleFailed();
+            stableFrames += source.stableFrames();
+            blurredRejected += source.blurredRejected();
+            blackRejected += source.blackRejected();
+            duplicateRejected += source.imageDuplicateRejected();
+            preOcrRejected += source.preOcrRejected();
+            ocrPlanned += source.ocrPlanned();
+            ocrAttempted += source.ocrAttempted();
+            ocrSucceeded += source.ocrSucceeded();
+            ocrEmpty += source.ocrEmpty();
+            ocrFailed += source.ocrFailed();
+        }
 
         private VideoKeyframeScanResult result(int saved, long durationMillis) {
             return new VideoKeyframeScanResult(
@@ -883,7 +771,18 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
                 ocrSucceeded,
                 ocrEmpty,
                 ocrFailed,
-                durationMillis
+                durationMillis,
+                sampleBatches,
+                ffmpegProcessCount,
+                sampleRequests,
+                samples,
+                sampleFailed,
+                stableFrames,
+                preOcrRejected,
+                ocrPlanned,
+                ocrAttempted,
+                saved,
+                saved
             );
         }
     }
