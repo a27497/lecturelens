@@ -1,5 +1,7 @@
 package com.example.courselingo.task.runner;
 
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.progress.TaskProgressSnapshot;
@@ -71,6 +73,9 @@ final class DefaultPipelineTaskProgressReporter implements PipelineTaskProgressR
                 SafeLogSanitizer.sanitize(currentStage),
                 updated
             );
+            if (updated == 0) {
+                throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
+            }
             return;
         }
         try {

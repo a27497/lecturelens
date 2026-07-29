@@ -65,7 +65,7 @@ class AnalysisTaskStateServiceTest {
     void runningTransitionSetsStartedAtWhenMissingAndWritesTaskLog() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.QUEUED, null, null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.RUNNING, 20, AnalysisTaskStage.ASR));
 
@@ -77,6 +77,7 @@ class AnalysisTaskStateServiceTest {
         assertThat(updated.getCurrentStage()).isEqualTo("ASR");
         assertThat(updated.getStartedAt()).isEqualTo(now());
         assertThat(updated.getFinishedAt()).isNull();
+        verify(analysisTaskMapper).updateStateByIdAndUserId(updated, AnalysisTaskStatus.QUEUED.name());
 
         TaskLog log = captureInsertedLog();
         assertThat(log.getTaskId()).isEqualTo("task_1");
@@ -99,7 +100,7 @@ class AnalysisTaskStateServiceTest {
     void succeededTransitionAcceptsProgress100AndSetsFinishedAt() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.RUNNING, now().minusMinutes(5), null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.SUCCEEDED, 100, AnalysisTaskStage.DONE));
 
@@ -121,7 +122,7 @@ class AnalysisTaskStateServiceTest {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.QUEUED, null, null);
         task.setProgressPercent(35);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.RUNNING, null, AnalysisTaskStage.ASR));
 
@@ -157,7 +158,7 @@ class AnalysisTaskStateServiceTest {
             .isEqualTo(ErrorCode.COMMON_VALIDATION_FAILED);
 
         verify(analysisTaskMapper, never()).selectByIdAndUserId(any(), any());
-        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any());
+        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any(), any());
         verify(taskLogMapper, never()).insert(any(TaskLog.class));
     }
 
@@ -172,7 +173,7 @@ class AnalysisTaskStateServiceTest {
             .extracting("errorCode")
             .isEqualTo(ErrorCode.TASK_INVALID_STATUS);
 
-        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any());
+        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any(), any());
         verify(taskLogMapper, never()).insert(any(TaskLog.class));
     }
 
@@ -189,7 +190,7 @@ class AnalysisTaskStateServiceTest {
                 assertThat(exception.getMessage()).doesNotContain("99");
             });
 
-        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any());
+        verify(analysisTaskMapper, never()).updateStateByIdAndUserId(any(), any());
         verify(taskLogMapper, never()).insert(any(TaskLog.class));
     }
 
@@ -197,7 +198,7 @@ class AnalysisTaskStateServiceTest {
     void stateUpdateIsScopedByTaskIdAndUserId() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.QUEUED, null, null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.RUNNING, 10, AnalysisTaskStage.ASR));
 
@@ -211,13 +212,13 @@ class AnalysisTaskStateServiceTest {
     void failedOwnerScopedUpdateFailsIfNoRowWasUpdated() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.QUEUED, null, null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(0);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(0);
 
         assertThatThrownBy(() ->
             stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.RUNNING, 20, AnalysisTaskStage.ASR)))
             .isInstanceOf(BusinessException.class)
             .extracting("errorCode")
-            .isEqualTo(ErrorCode.TASK_NOT_FOUND);
+            .isEqualTo(ErrorCode.TASK_INVALID_STATUS);
 
         verify(taskLogMapper, never()).insert(any(TaskLog.class));
     }
@@ -226,7 +227,7 @@ class AnalysisTaskStateServiceTest {
     void sanitizesTaskLogAndStoredErrorMessage() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.RUNNING, now().minusMinutes(5), null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(AnalysisTaskStateChangeCommand.builder()
             .taskId("task_1")
@@ -262,7 +263,7 @@ class AnalysisTaskStateServiceTest {
     void redisSnapshotFailureDoesNotRollbackMysqlStateUpdate() {
         AnalysisTask task = task("task_1", 7L, AnalysisTaskStatus.QUEUED, null, null);
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
         org.mockito.Mockito.doThrow(new IllegalStateException("redis unavailable"))
             .when(progressSnapshotService).save(any(TaskProgressSnapshot.class));
 
@@ -276,7 +277,7 @@ class AnalysisTaskStateServiceTest {
     private void assertTerminalFinishedAt(AnalysisTaskStatus targetStatus) {
         AnalysisTask task = task("task_" + targetStatus.name(), 7L, AnalysisTaskStatus.RUNNING, now().minusMinutes(5), null);
         when(analysisTaskMapper.selectByIdAndUserId(task.getId(), 7L)).thenReturn(task);
-        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenReturn(1);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
 
         stateService.changeState(command(task.getId(), 7L, targetStatus, 50, AnalysisTaskStage.FAILED));
 
@@ -285,7 +286,7 @@ class AnalysisTaskStateServiceTest {
 
     private AnalysisTask captureUpdatedTask() {
         ArgumentCaptor<AnalysisTask> captor = ArgumentCaptor.forClass(AnalysisTask.class);
-        verify(analysisTaskMapper).updateStateByIdAndUserId(captor.capture());
+        verify(analysisTaskMapper).updateStateByIdAndUserId(captor.capture(), any());
         return captor.getValue();
     }
 

@@ -49,11 +49,12 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
         return count == null ? 0L : count;
     }
 
-    default int updateStateByIdAndUserId(AnalysisTask task) {
+    default int updateStateByIdAndUserId(AnalysisTask task, String expectedStatus) {
         return update(Wrappers.<AnalysisTask>lambdaUpdate()
             .eq(AnalysisTask::getId, task.getId())
             .eq(AnalysisTask::getUserId, task.getUserId())
             .isNull(AnalysisTask::getDeletedAt)
+            .eq(AnalysisTask::getStatus, expectedStatus)
             .set(AnalysisTask::getStatus, task.getStatus())
             .set(AnalysisTask::getProgressPercent, task.getProgressPercent())
             .set(AnalysisTask::getCurrentStage, task.getCurrentStage())

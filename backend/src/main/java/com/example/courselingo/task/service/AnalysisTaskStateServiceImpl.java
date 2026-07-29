@@ -121,9 +121,9 @@ public class AnalysisTaskStateServiceImpl implements AnalysisTaskStateService {
             task.setFinishedAt(now);
         }
 
-        int updated = analysisTaskMapper.updateStateByIdAndUserId(task);
+        int updated = analysisTaskMapper.updateStateByIdAndUserId(task, currentStatus.name());
         if (updated != 1) {
-            throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+            throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
         }
 
         taskLogMapper.insert(buildTaskLog(command, currentStatus, targetStatus, sanitizedErrorMessage, now));

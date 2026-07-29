@@ -79,7 +79,7 @@ class PipelineAnalysisTaskRunnerFailureTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenAnswer(invocation -> {
+        lenient().when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenAnswer(invocation -> {
             AnalysisTask task = invocation.getArgument(0, AnalysisTask.class);
             stateChanges.add(AnalysisTaskStateChangeCommand.builder()
                 .taskId(task.getId())

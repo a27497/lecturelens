@@ -35,6 +35,7 @@ import com.example.courselingo.task.runner.PipelineAnalysisTaskStepName;
 import com.example.courselingo.task.progress.NoopTaskProgressSnapshotService;
 import com.example.courselingo.task.service.AnalysisTaskStateMachine;
 import com.example.courselingo.task.service.AnalysisTaskStateServiceImpl;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -71,6 +72,9 @@ class AnalysisTaskRunnerTest {
     @Mock
     private TaskClaimService taskClaimService;
 
+    @Mock
+    private VideoKeyframeEvidenceLifecycleService evidenceLifecycleService;
+
     private AnalysisTaskRunner runner;
     private List<CapturedTaskState> updatedStates;
 
@@ -91,9 +95,10 @@ class AnalysisTaskRunnerTest {
             stateService,
             executor,
             boundedTaskExecutor,
-            taskClaimService
+            taskClaimService,
+            evidenceLifecycleService
         );
-        lenient().when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class))).thenAnswer(invocation -> {
+        lenient().when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenAnswer(invocation -> {
             AnalysisTask task = invocation.getArgument(0, AnalysisTask.class);
             updatedStates.add(new CapturedTaskState(
                 task.getStatus(),
@@ -412,6 +417,36 @@ class AnalysisTaskRunnerTest {
             .isInstanceOf(BusinessException.class)
             .extracting("errorCode")
             .isEqualTo(ErrorCode.TASK_INVALID_STATUS);
+    }
+
+    @Test
+    void cancelTreatsAlreadyCanceledMessageAsIdempotentAndCleansEvidence() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L))
+            .thenReturn(task(AnalysisTaskStatus.CANCELED));
+
+        runner.cancel(message());
+
+        assertThat(capturedUpdatedTasks()).isEmpty();
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_1", 7L);
+        verify(taskClaimService).release("task_1", "req_1");
+    }
+
+    @Test
+    void runKeepsCanceledStateAndCleansEvidenceWhenPipelineObservesCancellation() {
+        AnalysisTask task = task(AnalysisTaskStatus.QUEUED);
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task);
+        when(executor.execute(any())).thenAnswer(invocation -> {
+            task.setStatus(AnalysisTaskStatus.CANCELED.name());
+            throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
+        });
+
+        runner.run(message());
+
+        assertThat(capturedUpdatedTasks())
+            .extracting(CapturedTaskState::status)
+            .containsExactly("RUNNING");
+        verify(evidenceLifecycleService).cleanupTaskEvidence("task_1", 7L);
+        verify(taskClaimService).release("task_1", "req_1");
     }
 
     @Test
