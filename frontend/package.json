@@ -23,7 +23,7 @@
   "devDependencies": {
     "@vue/test-utils": "^2.4.11",
     "happy-dom": "^20.11.1",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "vitest": "^4.1.10",
     "vue-tsc": "3.3.5"
   }
