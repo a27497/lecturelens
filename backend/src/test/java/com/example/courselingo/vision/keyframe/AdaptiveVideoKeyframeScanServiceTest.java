@@ -27,6 +27,7 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
@@ -221,6 +222,69 @@ class AdaptiveVideoKeyframeScanServiceTest {
         ));
 
         assertThat(result.savedKeyframeCount()).isGreaterThanOrEqualTo(2);
+        assertThat(workspace).doesNotExist();
+    }
+
+    @Test
+    void progressiveCodeContentKeepsEachDetectedChangeWithinBudget() throws Exception {
+        Path source = Files.writeString(tempDir.resolve("progressive-code.mp4"), "fake");
+        Path workspace = tempDir.resolve("progressive-code-work");
+        VideoKeyframeMapper keyframeMapper = mock(VideoKeyframeMapper.class);
+        when(keyframeMapper.selectExistingForTask("task_code", 42L)).thenReturn(List.of());
+        AtomicLong ids = new AtomicLong(1L);
+        List<Long> persistedTimestamps = new ArrayList<>();
+        org.mockito.Mockito.doAnswer(invocation -> {
+            VideoKeyframe keyframe = invocation.getArgument(0, VideoKeyframe.class);
+            keyframe.setId(ids.getAndIncrement());
+            persistedTimestamps.add(keyframe.getTimestampMillis());
+            return 1;
+        }).when(keyframeMapper).insert(any(VideoKeyframe.class));
+        VideoKeyframeOcrMapper ocrMapper = mock(VideoKeyframeOcrMapper.class);
+        when(ocrMapper.insert(any(VideoKeyframeOcr.class))).thenReturn(1);
+        VisionOcrProperties ocrProperties = new VisionOcrProperties();
+        ocrProperties.setEnabled(true);
+        AtomicInteger ocrCall = new AtomicInteger();
+        OcrProvider ocr = request -> {
+            int line = ocrCall.incrementAndGet();
+            return new OcrResult(
+                OcrStatus.SUCCEEDED,
+                "public class Pipeline { static void step" + line + "() { return; } }",
+                0.95d,
+                "fake",
+                "chi_sim+eng",
+                1L,
+                null,
+                null
+            );
+        };
+        VideoKeyframeProperties properties = properties();
+        properties.setMaxKeyframesTotal(4);
+        properties.setCodeOrTerminalMaxFramesPerMinute(4);
+        VideoKeyframeScanServiceImpl service = new VideoKeyframeScanServiceImpl(
+            keyframeMapper,
+            storageCapturing(new ArrayList<>()),
+            properties,
+            (path, timeout) -> new VideoMetadata(59_000L, 1280, 720, 12.0d, "h264", true, 0),
+            (path, dir, width, threshold, timeout) -> List.of(
+                new SceneDetectionPoint(22_000L, 0.08d),
+                new SceneDetectionPoint(34_000L, 0.09d),
+                new SceneDetectionPoint(46_000L, 0.10d)
+            ),
+            colorfulSampler(),
+            ocr,
+            ocrMapper,
+            ocrProperties,
+            (Clock) null
+        );
+
+        VideoKeyframeScanResult result = service.scan(new VideoKeyframeScanCommand(
+            "task_code", 42L, source, workspace
+        ));
+
+        assertThat(result.savedKeyframeCount()).isEqualTo(4);
+        assertThat(persistedTimestamps).anyMatch(timestamp -> timestamp >= 22_000L && timestamp < 34_000L);
+        assertThat(persistedTimestamps).anyMatch(timestamp -> timestamp >= 34_000L && timestamp < 46_000L);
+        assertThat(persistedTimestamps).anyMatch(timestamp -> timestamp >= 46_000L && timestamp < 59_000L);
         assertThat(workspace).doesNotExist();
     }
 

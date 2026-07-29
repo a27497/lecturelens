@@ -134,13 +134,13 @@ def code_screen(stage: int) -> Canvas:
     image.rect(0, 0, WIDTH, 62, (44, 52, 66))
     image.text(40, 17, "ADAPTIVE VIDEO PIPELINE", 4, (219, 226, 238))
     code = [
-        "01  PROBE VIDEO METADATA",
-        "02  SCAN FULL TIMELINE",
-        "03  PLAN SCENE + ANCHORS",
-        "04  SAMPLE STABLE FRAMES",
+        "01  PUBLIC CLASS PIPELINE",
+        "02  STATIC VOID PROBE VIDEO",
+        "03  IF VIDEO RETURN METADATA",
+        "04  FOR FRAME SCAN TIMELINE",
         "05  FILTER BLUR + BLACK",
         "06  DEDUP IMAGE + OCR",
-        "07  PERSIST EVIDENCE",
+        "07  RETURN COURSE EVIDENCE",
     ]
     colors = [(111, 198, 255), (198, 149, 255), (139, 233, 168)]
     for index, line in enumerate(code[: max(1, min(len(code), stage))]):
@@ -290,9 +290,20 @@ def build(output: Path, ffmpeg: str, manifest: Path | None = None) -> None:
 
         concat_file = work / "concat.txt"
         concat_file.write_text("".join(f"file '{path.as_posix()}'\n" for path in segments), encoding="utf-8")
+        video_only = work / "video-only.mp4"
         run([
             ffmpeg, "-y", "-hide_banner", "-loglevel", "error", "-f", "concat", "-safe", "0",
-            "-i", str(concat_file), "-c", "copy", "-movflags", "+faststart", str(output),
+            "-i", str(concat_file), "-c", "copy", str(video_only),
+        ])
+        # A deterministic silent track exercises the real FFmpeg audio branch
+        # while keeping ASR evaluation local and provider-independent.
+        run([
+            ffmpeg, "-y", "-hide_banner", "-loglevel", "error",
+            "-i", str(video_only),
+            "-f", "lavfi", "-i", "anullsrc=channel_layout=mono:sample_rate=16000",
+            "-map", "0:v:0", "-map", "1:a:0", "-t", f"{timeline_seconds:.3f}",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "32k", "-shortest",
+            "-movflags", "+faststart", str(output),
         ])
         if manifest is not None:
             manifest.parent.mkdir(parents=True, exist_ok=True)
