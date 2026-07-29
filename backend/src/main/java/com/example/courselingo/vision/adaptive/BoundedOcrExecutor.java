@@ -154,10 +154,16 @@ public final class BoundedOcrExecutor {
         } finally {
             active.keySet().forEach(future -> future.cancel(true));
             executor.shutdownNow();
+            boolean restoreInterrupt = Thread.interrupted();
             try {
                 executor.awaitTermination(2, TimeUnit.SECONDS);
             } catch (InterruptedException interruption) {
-                Thread.currentThread().interrupt();
+                restoreInterrupt = true;
+                executor.shutdownNow();
+            } finally {
+                if (restoreInterrupt) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
