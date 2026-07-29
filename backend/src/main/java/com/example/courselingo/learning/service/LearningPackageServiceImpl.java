@@ -7,6 +7,8 @@ import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
+import com.example.courselingo.fusion.VideoSegment;
+import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.learning.domain.LearningPackage;
 import com.example.courselingo.learning.dto.KeyPointItem;
 import com.example.courselingo.learning.mapper.LearningPackageMapper;
@@ -52,6 +54,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     private final SubtitleTranslationSegmentMapper translationMapper;
     private final TaskFullTextResultMapper fullTextResultMapper;
     private final LearningPackageMapper learningPackageMapper;
+    private final VideoSegmentMapper videoSegmentMapper;
     private final Supplier<LlmProvider> llmProviderSupplier;
     private final Clock clock;
     private final LearningPackageResponseParser parser;
@@ -64,6 +67,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         SubtitleTranslationSegmentMapper translationMapper,
         TaskFullTextResultMapper fullTextResultMapper,
         LearningPackageMapper learningPackageMapper,
+        VideoSegmentMapper videoSegmentMapper,
         ObjectProvider<LlmProvider> llmProviderProvider,
         ObjectProvider<AiModelRoutedLlmRequestFactory> routedRequestFactoryProvider,
         LearningPackageResponseParser parser,
@@ -74,6 +78,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             translationMapper,
             fullTextResultMapper,
             learningPackageMapper,
+            videoSegmentMapper,
             llmProviderProvider::getIfAvailable,
             Clock.systemUTC(),
             parser,
@@ -95,6 +100,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             translationMapper,
             null,
             learningPackageMapper,
+            null,
             () -> llmProvider,
             clock,
             parser,
@@ -112,7 +118,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LearningPackageResponseParser parser,
         LearningPackageProperties properties
     ) {
-        this(sourceMapper, translationMapper, null, learningPackageMapper, () -> llmProvider, clock, parser, properties, null);
+        this(sourceMapper, translationMapper, null, learningPackageMapper, null, () -> llmProvider, clock, parser, properties, null);
     }
 
     public LearningPackageServiceImpl(
@@ -130,6 +136,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             translationMapper,
             null,
             learningPackageMapper,
+            null,
             () -> llmProvider,
             clock,
             parser,
@@ -138,11 +145,12 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         );
     }
 
-    private LearningPackageServiceImpl(
+    LearningPackageServiceImpl(
         SubtitleSegmentMapper sourceMapper,
         SubtitleTranslationSegmentMapper translationMapper,
         TaskFullTextResultMapper fullTextResultMapper,
         LearningPackageMapper learningPackageMapper,
+        VideoSegmentMapper videoSegmentMapper,
         Supplier<LlmProvider> llmProviderSupplier,
         Clock clock,
         LearningPackageResponseParser parser,
@@ -153,6 +161,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         this.translationMapper = translationMapper;
         this.fullTextResultMapper = fullTextResultMapper;
         this.learningPackageMapper = learningPackageMapper;
+        this.videoSegmentMapper = videoSegmentMapper;
         this.llmProviderSupplier = llmProviderSupplier;
         this.clock = clock == null ? Clock.systemUTC() : clock;
         this.parser = parser == null ? new LearningPackageResponseParser() : parser;
@@ -170,15 +179,18 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     @Transactional
     public LearningPackageAiCallResult generateLearningPackageWithAiCallRecord(GenerateLearningPackageCommand command) {
         ValidatedLearningPackageCommand validated = LearningPackageValidators.validateCommand(command);
-        List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated);
-        TaskFullTextResult fullTextResult = loadFullTextResult(validated);
-        List<SubtitleTranslationSegment> translationSegments = fullTextResult == null
-            ? loadAndValidateTranslationSegments(validated, sourceSegments)
-            : List.of();
+        List<VideoSegment> multimodalSegments = loadMultimodalSegments(validated);
+        boolean hasVisualEvidence = hasSemanticVisualEvidence(multimodalSegments);
+        List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated, hasVisualEvidence);
+        boolean visualOnly = sourceSegments.isEmpty();
+        TaskFullTextResult fullTextResult = visualOnly ? null : loadFullTextResult(validated);
+        List<SubtitleTranslationSegment> translationSegments = visualOnly || fullTextResult != null
+            ? List.of()
+            : loadAndValidateTranslationSegments(validated, sourceSegments);
         LlmProvider llmProvider = resolveLlmProvider();
         LlmResult result = fullTextResult == null
-            ? generateLearningPackage(llmProvider, validated, sourceSegments, translationSegments)
-            : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult);
+            ? generateLearningPackage(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
+            : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);
         String provider = normalizeProvider(firstNonBlank(result.provider(), llmProvider.providerName()));
         LearningPackageResponseParser.ParsedLearningPackage parsed;
         try {
@@ -189,8 +201,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             }
             logRecoverableContentFailure(validated, result, provider, ex, "start");
             LlmResult retryResult = fullTextResult == null
-                ? generateLearningPackageRetry(llmProvider, validated, sourceSegments, translationSegments)
-                : generateLearningPackageRetryFromFullText(llmProvider, validated, fullTextResult);
+                ? generateLearningPackageRetry(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
+                : generateLearningPackageRetryFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);
             String retryProvider = normalizeProvider(firstNonBlank(retryResult.provider(), provider));
             try {
                 parsed = parser.parse(retryResult.content());
@@ -202,7 +214,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                 }
                 logRecoverableContentFailure(validated, retryResult, retryProvider, retryException, "fallback");
                 parsed = fullTextResult == null
-                    ? buildFallbackPackage(sourceSegments, translationSegments)
+                    ? (visualOnly
+                        ? buildFallbackPackageFromMultimodal(multimodalSegments)
+                        : buildFallbackPackage(sourceSegments, translationSegments))
                     : buildFallbackPackageFromFullText(fullTextResult);
                 result = retryResult;
                 provider = retryProvider;
@@ -227,7 +241,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             result.usage().promptTokens(),
             result.usage().completionTokens(),
             result.usage().totalTokens(),
-            fullTextResult == null ? sourceSegments.size() + translationSegments.size() : 1,
+            visualOnly
+                ? multimodalSegments.size()
+                : (fullTextResult == null ? sourceSegments.size() + translationSegments.size() : 1),
             inserted,
             null,
             null
@@ -244,9 +260,15 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         );
     }
 
-    private List<SubtitleSegment> loadAndValidateSourceSegments(ValidatedLearningPackageCommand command) {
+    private List<SubtitleSegment> loadAndValidateSourceSegments(
+        ValidatedLearningPackageCommand command,
+        boolean visualOnlyAllowed
+    ) {
         List<SubtitleSegment> sourceSegments = sourceMapper.selectByTaskIdAndUserId(command.taskId(), command.userId());
         if (sourceSegments == null || sourceSegments.isEmpty()) {
+            if (visualOnlyAllowed) {
+                return List.of();
+            }
             throw validationFailure("Source subtitle segments are required");
         }
         if (fullTextResultMapper == null && sourceSegments.size() > MAX_SEGMENTS) {
@@ -257,6 +279,17 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             validateSourceSegment(segment, command, indexes);
         }
         return sourceSegments;
+    }
+
+    private static boolean hasSemanticVisualEvidence(List<VideoSegment> segments) {
+        return segments != null && segments.stream()
+            .filter(java.util.Objects::nonNull)
+            .anyMatch(segment -> !text(segment.getOcrText()).isBlank()
+                || !text(segment.getVisualSummary()).isBlank());
+    }
+
+    private static String text(String value) {
+        return value == null ? "" : value.strip();
     }
 
     private TaskFullTextResult loadFullTextResult(ValidatedLearningPackageCommand command) {
@@ -274,6 +307,23 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         validateText(result.getSourceFullText(), "Full source text is invalid");
         validateText(result.getTranslatedFullText(), "Full translated text is invalid");
         return result;
+    }
+
+    private List<VideoSegment> loadMultimodalSegments(ValidatedLearningPackageCommand command) {
+        if (videoSegmentMapper == null) {
+            return List.of();
+        }
+        List<VideoSegment> rows = videoSegmentMapper.selectByTaskIdAndUserId(command.taskId(), command.userId());
+        if (rows == null || rows.isEmpty()) {
+            return List.of();
+        }
+        return rows.stream()
+            .filter(java.util.Objects::nonNull)
+            .sorted(java.util.Comparator
+                .comparing(VideoSegment::getStartMillis, java.util.Comparator.nullsLast(Long::compareTo))
+                .thenComparing(VideoSegment::getSegmentIndex, java.util.Comparator.nullsLast(Integer::compareTo))
+                .thenComparing(VideoSegment::getId, java.util.Comparator.nullsLast(Long::compareTo)))
+            .toList();
     }
 
     private List<SubtitleTranslationSegment> loadAndValidateTranslationSegments(
@@ -359,7 +409,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
         List<SubtitleSegment> sourceSegments,
-        List<SubtitleTranslationSegment> translationSegments
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments
     ) {
         try {
             LlmRequest request = routeRequest(
@@ -367,6 +418,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     sourceSegments,
                     translationSegments,
+                    multimodalSegments,
                     properties.llmTimeout()
                 )
             );
@@ -390,7 +442,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
         List<SubtitleSegment> sourceSegments,
-        List<SubtitleTranslationSegment> translationSegments
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments
     ) {
         try {
             LlmRequest request = routeRequest(
@@ -398,6 +451,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     sourceSegments,
                     translationSegments,
+                    multimodalSegments,
                     properties.llmTimeout()
                 )
             );
@@ -420,7 +474,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     private LlmResult generateLearningPackageFromFullText(
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
-        TaskFullTextResult fullTextResult
+        TaskFullTextResult fullTextResult,
+        List<VideoSegment> multimodalSegments
     ) {
         try {
             LlmRequest request = routeRequest(
@@ -428,6 +483,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
+                    multimodalSegments,
                     properties.llmTimeout()
                 )
             );
@@ -450,7 +506,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     private LlmResult generateLearningPackageRetryFromFullText(
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
-        TaskFullTextResult fullTextResult
+        TaskFullTextResult fullTextResult,
+        List<VideoSegment> multimodalSegments
     ) {
         try {
             LlmRequest request = routeRequest(
@@ -458,6 +515,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
+                    multimodalSegments,
                     properties.llmTimeout()
                 )
             );
@@ -533,6 +591,38 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         return new LearningPackageResponseParser.ParsedLearningPackage(
             "Learning Package",
             summary,
+            writeJson(keyPoints),
+            "[]",
+            "[]"
+        );
+    }
+
+    private static LearningPackageResponseParser.ParsedLearningPackage buildFallbackPackageFromMultimodal(
+        List<VideoSegment> multimodalSegments
+    ) {
+        String evidence = multimodalSegments.stream()
+            .map(segment -> firstNonBlank(segment.getVisualSummary(), segment.getOcrText()))
+            .filter(value -> value != null && !value.isBlank())
+            .collect(Collectors.joining(" "));
+        List<String> sentences = extractSentences(evidence);
+        String summary = sentences.stream().limit(2).collect(Collectors.joining(" ")).strip();
+        if (summary.isBlank()) {
+            summary = "Visual evidence was extracted from the uploaded course video.";
+        }
+        List<KeyPointItem> keyPoints = new ArrayList<>();
+        int index = 1;
+        for (String sentence : sentences) {
+            String point = stripTerminalPunctuation(limitText(sentence, FALLBACK_KEY_POINT_LIMIT));
+            if (!point.isBlank()) {
+                keyPoints.add(new KeyPointItem(index++, point));
+            }
+            if (keyPoints.size() == 3) {
+                break;
+            }
+        }
+        return new LearningPackageResponseParser.ParsedLearningPackage(
+            "Visual Learning Package",
+            limitText(summary, FALLBACK_SUMMARY_LIMIT),
             writeJson(keyPoints),
             "[]",
             "[]"

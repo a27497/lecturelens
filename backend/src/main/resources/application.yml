@@ -76,22 +76,54 @@ courselingo:
   vision:
     keyframe:
       enabled: ${COURSELINGO_VISION_KEYFRAME_ENABLED:true}
-      scan-interval-seconds: ${COURSELINGO_VISION_KEYFRAME_SCAN_INTERVAL_SECONDS:1}
-      thumbnail-width: ${COURSELINGO_VISION_KEYFRAME_THUMBNAIL_WIDTH:320}
-      periodic-anchor-seconds: ${COURSELINGO_VISION_KEYFRAME_PERIODIC_ANCHOR_SECONDS:60}
+      detection-width: ${COURSELINGO_VISION_KEYFRAME_DETECTION_WIDTH:480}
+      short-video-anchor-seconds: ${COURSELINGO_VISION_KEYFRAME_SHORT_ANCHOR_SECONDS:30}
+      medium-video-anchor-seconds: ${COURSELINGO_VISION_KEYFRAME_MEDIUM_ANCHOR_SECONDS:45}
+      long-video-anchor-seconds: ${COURSELINGO_VISION_KEYFRAME_LONG_ANCHOR_SECONDS:60}
+      medium-video-threshold-minutes: ${COURSELINGO_VISION_KEYFRAME_MEDIUM_THRESHOLD_MINUTES:60}
+      long-video-threshold-minutes: ${COURSELINGO_VISION_KEYFRAME_LONG_THRESHOLD_MINUTES:120}
+      window-seconds: ${COURSELINGO_VISION_KEYFRAME_WINDOW_SECONDS:60}
+      max-candidates-per-window: ${COURSELINGO_VISION_KEYFRAME_MAX_CANDIDATES_PER_WINDOW:6}
+      nearby-sample-offsets-seconds: ${COURSELINGO_VISION_KEYFRAME_SAMPLE_OFFSETS:-0.2,0.4,0.9,1.4}
+      analysis-max-width: ${COURSELINGO_VISION_KEYFRAME_ANALYSIS_MAX_WIDTH:1600}
+      evidence-max-width: ${COURSELINGO_VISION_KEYFRAME_EVIDENCE_MAX_WIDTH:960}
+      thumbnail-width: ${COURSELINGO_VISION_KEYFRAME_EVIDENCE_MAX_WIDTH:960}
+      sharpness-threshold: ${COURSELINGO_VISION_KEYFRAME_SHARPNESS_THRESHOLD:80}
+      black-brightness-threshold: ${COURSELINGO_VISION_KEYFRAME_BLACK_BRIGHTNESS_THRESHOLD:18}
+      blank-variance-threshold: ${COURSELINGO_VISION_KEYFRAME_BLANK_VARIANCE_THRESHOLD:8}
+      blank-brightness-threshold: ${COURSELINGO_VISION_KEYFRAME_BLANK_BRIGHTNESS_THRESHOLD:245}
+      perceptual-hash-distance: ${COURSELINGO_VISION_KEYFRAME_HASH_DISTANCE:5}
       min-keyframe-gap-seconds: ${COURSELINGO_VISION_KEYFRAME_MIN_GAP_SECONDS:3}
       max-keyframes-per-minute: ${COURSELINGO_VISION_KEYFRAME_MAX_PER_MINUTE:4}
-      max-keyframes-total: ${COURSELINGO_VISION_KEYFRAME_MAX_TOTAL:300}
-      scene-change-threshold: ${COURSELINGO_VISION_KEYFRAME_SCENE_CHANGE_THRESHOLD:0.08}
+      slide-max-frames-per-minute: ${COURSELINGO_VISION_KEYFRAME_SLIDE_MAX_PER_MINUTE:2}
+      code-or-terminal-max-frames-per-minute: ${COURSELINGO_VISION_KEYFRAME_CODE_MAX_PER_MINUTE:4}
+      visual-demo-max-frames-per-minute: ${COURSELINGO_VISION_KEYFRAME_DEMO_MAX_PER_MINUTE:3}
+      talking-or-low-information-max-frames-per-minute: ${COURSELINGO_VISION_KEYFRAME_TALKING_MAX_PER_MINUTE:1}
+      unknown-max-frames-per-minute: ${COURSELINGO_VISION_KEYFRAME_UNKNOWN_MAX_PER_MINUTE:2}
+      content-slide-minimum-text-characters: ${COURSELINGO_VISION_CONTENT_SLIDE_MIN_TEXT:24}
+      content-low-information-maximum-text-characters: ${COURSELINGO_VISION_CONTENT_LOW_INFO_MAX_TEXT:12}
+      content-code-symbol-ratio-threshold: ${COURSELINGO_VISION_CONTENT_CODE_SYMBOL_RATIO:0.08}
+      content-visual-edge-density-threshold: ${COURSELINGO_VISION_CONTENT_EDGE_DENSITY:0.035}
+      content-visual-scene-score-threshold: ${COURSELINGO_VISION_CONTENT_SCENE_SCORE:0.45}
+      code-ocr-change-threshold: ${COURSELINGO_VISION_CODE_OCR_CHANGE_THRESHOLD:0.06}
+      max-keyframes-total: ${COURSELINGO_VISION_KEYFRAME_MAX_TOTAL:240}
+      scene-change-threshold: ${COURSELINGO_VISION_KEYFRAME_SCENE_CHANGE_THRESHOLD:0.30}
+      content-change-threshold: ${COURSELINGO_VISION_KEYFRAME_CONTENT_CHANGE_THRESHOLD:0.005}
       pixel-diff-threshold: ${COURSELINGO_VISION_KEYFRAME_PIXEL_DIFF_THRESHOLD:18}
       output-format: ${COURSELINGO_VISION_KEYFRAME_OUTPUT_FORMAT:jpg}
-      timeout-seconds: ${COURSELINGO_VISION_KEYFRAME_TIMEOUT_SECONDS:600}
+      timeout-seconds: ${COURSELINGO_VISION_KEYFRAME_TIMEOUT_SECONDS:1800}
+      branch-timeout-seconds: ${COURSELINGO_VISION_BRANCH_TIMEOUT_SECONDS:3600}
     ocr:
       enabled: ${COURSELINGO_VISION_OCR_ENABLED:false}
       provider: ${COURSELINGO_VISION_OCR_PROVIDER:tesseract}
       command: ${COURSELINGO_VISION_OCR_COMMAND:tesseract}
       language: ${COURSELINGO_VISION_OCR_LANGUAGE:chi_sim+eng}
       timeout-seconds: ${COURSELINGO_VISION_OCR_TIMEOUT_SECONDS:30}
+      primary-psm: ${COURSELINGO_VISION_OCR_PRIMARY_PSM:6}
+      fallback-psm: ${COURSELINGO_VISION_OCR_FALLBACK_PSM:11}
+      oem: ${COURSELINGO_VISION_OCR_OEM:1}
+      preprocess-max-width: ${COURSELINGO_VISION_OCR_PREPROCESS_MAX_WIDTH:2000}
+      binarization-enabled: ${COURSELINGO_VISION_OCR_BINARIZATION_ENABLED:false}
       max-text-length: ${COURSELINGO_VISION_OCR_MAX_TEXT_LENGTH:8000}
       max-keyframes-per-task: ${COURSELINGO_VISION_OCR_MAX_KEYFRAMES_PER_TASK:120}
       fail-task-on-error: ${COURSELINGO_VISION_OCR_FAIL_TASK_ON_ERROR:false}
@@ -100,10 +132,21 @@ courselingo:
       provider: ${COURSELINGO_VISION_ANALYSIS_PROVIDER:openai-compatible-vision}
       profile: ${COURSELINGO_VISION_ANALYSIS_PROFILE:qwen-vl}
       max-frames-total: ${COURSELINGO_VISION_ANALYSIS_MAX_FRAMES_TOTAL:80}
-      max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_MAX_FRAMES_PER_MINUTE:2}
+      max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_MAX_FRAMES_PER_MINUTE:4}
+      slide-max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_SLIDE_MAX_PER_MINUTE:1}
+      code-or-terminal-max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_CODE_MAX_PER_MINUTE:2}
+      visual-demo-max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_DEMO_MAX_PER_MINUTE:2}
+      talking-or-low-information-max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_TALKING_MAX_PER_MINUTE:1}
+      unknown-max-frames-per-minute: ${COURSELINGO_VISION_ANALYSIS_UNKNOWN_MAX_PER_MINUTE:1}
+      content-slide-minimum-text-characters: ${COURSELINGO_VISION_ANALYSIS_SLIDE_MIN_TEXT:24}
+      content-low-information-maximum-text-characters: ${COURSELINGO_VISION_ANALYSIS_LOW_INFO_MAX_TEXT:12}
+      content-code-symbol-ratio-threshold: ${COURSELINGO_VISION_ANALYSIS_CODE_SYMBOL_RATIO:0.08}
+      content-visual-edge-density-threshold: ${COURSELINGO_VISION_ANALYSIS_EDGE_DENSITY:0.035}
+      content-visual-scene-score-threshold: ${COURSELINGO_VISION_ANALYSIS_SCENE_SCORE:0.45}
+      code-ocr-change-threshold: ${COURSELINGO_VISION_ANALYSIS_CODE_OCR_CHANGE_THRESHOLD:0.06}
       min-gap-seconds: ${COURSELINGO_VISION_ANALYSIS_MIN_GAP_SECONDS:10}
       ocr-text-change-threshold: ${COURSELINGO_VISION_ANALYSIS_OCR_TEXT_CHANGE_THRESHOLD:0.35}
-      max-image-width: ${COURSELINGO_VISION_ANALYSIS_MAX_IMAGE_WIDTH:1024}
+      max-image-width: ${COURSELINGO_VISION_ANALYSIS_MAX_IMAGE_WIDTH:1600}
       jpeg-quality: ${COURSELINGO_VISION_ANALYSIS_JPEG_QUALITY:0.8}
       timeout: ${COURSELINGO_VISION_ANALYSIS_TIMEOUT:60s}
       fail-task-on-error: ${COURSELINGO_VISION_ANALYSIS_FAIL_TASK_ON_ERROR:false}

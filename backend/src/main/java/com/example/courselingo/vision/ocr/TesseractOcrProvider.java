@@ -30,45 +30,75 @@ public class TesseractOcrProvider implements OcrProvider {
         Instant startedAt = Instant.now();
         Path imageFile = request.imageFile();
         Duration timeout = Duration.ofSeconds(properties.getTimeoutSeconds());
-        List<String> command = List.of(
-            properties.getCommand(),
-            imageFile.toString(),
-            "stdout",
-            "-l",
-            properties.getLanguage(),
-            "--psm",
-            "6",
-            "tsv"
-        );
         try {
-            OcrProcessResult result = processExecutor.execute(command, timeout);
-            long durationMillis = Duration.between(startedAt, Instant.now()).toMillis();
-            if (result.timedOut()) {
-                return failed("OCR_TIMEOUT", "OCR timed out", imageFile, durationMillis);
+            OcrResult primary = execute(imageFile, properties.getPrimaryPsm(), timeout, startedAt);
+            if (primary.status() == OcrStatus.FAILED || OcrTextQualityEvaluator.isUseful(primary.text(), primary.confidence())) {
+                return primary;
             }
-            if (result.exitCode() != 0) {
-                return failed("OCR_PROVIDER_FAILED", result.stderr(), imageFile, durationMillis);
+            Duration remaining = remainingTimeout(startedAt, timeout);
+            if (remaining.isZero()) {
+                return primary;
             }
-            ParsedTsv parsed = parseTsv(result.stdout());
-            if (parsed.text().isBlank()) {
-                return OcrResult.empty(PROVIDER, properties.getLanguage(), durationMillis);
-            }
-            return new OcrResult(
-                OcrStatus.SUCCEEDED,
-                parsed.text(),
-                parsed.confidence(),
-                PROVIDER,
-                properties.getLanguage(),
-                durationMillis,
-                null,
-                null
-            );
+            OcrResult fallback = execute(imageFile, properties.getFallbackPsm(), remaining, startedAt);
+            return qualityScore(fallback) > qualityScore(primary) ? fallback : primary;
         } catch (IOException exception) {
             return failed("OCR_PROVIDER_UNAVAILABLE", exception.getMessage(), imageFile, elapsed(startedAt));
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             return failed("OCR_INTERRUPTED", exception.getMessage(), imageFile, elapsed(startedAt));
         }
+    }
+
+    private OcrResult execute(Path imageFile, int psm, Duration timeout, Instant startedAt)
+        throws IOException, InterruptedException {
+        OcrProcessResult result = processExecutor.execute(command(imageFile, psm), timeout);
+        long durationMillis = Duration.between(startedAt, Instant.now()).toMillis();
+        if (result.timedOut()) {
+            return failed("OCR_TIMEOUT", "OCR timed out", imageFile, durationMillis);
+        }
+        if (result.exitCode() != 0) {
+            return failed("OCR_PROVIDER_FAILED", result.stderr(), imageFile, durationMillis);
+        }
+        ParsedTsv parsed = parseTsv(result.stdout());
+        if (parsed.text().isBlank()) {
+            return OcrResult.empty(PROVIDER, properties.getLanguage(), durationMillis);
+        }
+        return new OcrResult(
+            OcrStatus.SUCCEEDED,
+            parsed.text(),
+            parsed.confidence(),
+            PROVIDER,
+            properties.getLanguage(),
+            durationMillis,
+            null,
+            null
+        );
+    }
+
+    private List<String> command(Path imageFile, int psm) {
+        return List.of(
+            properties.getCommand(),
+            imageFile.toString(),
+            "stdout",
+            "-l",
+            properties.getLanguage(),
+            "--oem",
+            String.valueOf(properties.getOem()),
+            "--psm",
+            String.valueOf(psm),
+            "tsv"
+        );
+    }
+
+    private static double qualityScore(OcrResult result) {
+        if (result == null || result.status() != OcrStatus.SUCCEEDED) {
+            return 0.0d;
+        }
+        String text = result.text() == null ? "" : result.text();
+        long usefulCharacters = text.codePoints().filter(Character::isLetterOrDigit).count();
+        double confidence = result.confidence() == null ? 0.35d : result.confidence();
+        double usefulBonus = OcrTextQualityEvaluator.isUseful(text, result.confidence()) ? 1.0d : 0.0d;
+        return usefulBonus + confidence + Math.min(1.0d, usefulCharacters / 100.0d);
     }
 
     private static ParsedTsv parseTsv(String stdout) {
@@ -161,6 +191,11 @@ public class TesseractOcrProvider implements OcrProvider {
 
     private static long elapsed(Instant startedAt) {
         return Duration.between(startedAt, Instant.now()).toMillis();
+    }
+
+    private static Duration remainingTimeout(Instant startedAt, Duration budget) {
+        Duration remaining = budget.minus(Duration.between(startedAt, Instant.now()));
+        return remaining.isNegative() || remaining.isZero() ? Duration.ZERO : remaining;
     }
 
     private record ParsedTsv(String text, Double confidence) {

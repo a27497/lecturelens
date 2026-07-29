@@ -7,6 +7,7 @@ import com.example.courselingo.subtitle.domain.SubtitleSegment;
 import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
+import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ public class CourseQaEvidenceRetriever {
     private static final int MAX_SNIPPET = 500;
     private static final String SEGMENT_ASR_PREFIX = "\u672c\u6bb5\u4e3b\u8981\u8bb2\u89e3\uff1a";
     private static final String COURSE_QA_ASR_PREFIX = "\u672c\u6bb5\u8bed\u97f3\u539f\u6587\uff1a";
+    private static final String SEGMENT_TRANSLATION_PREFIX = "\u5b57\u5e55\u8bd1\u6587\uff1a";
     private static final String SEGMENT_OCR_PREFIX = "\u753b\u9762\u6587\u5b57\u5305\u62ec\uff1a";
     private static final String SEGMENT_VISUAL_PREFIX = "\u753b\u9762\u663e\u793a\uff1a";
     private static final String SEGMENT_SUMMARY_DELIMITER = "\uff1b";
@@ -89,7 +91,10 @@ public class CourseQaEvidenceRetriever {
         }
         return candidates.stream()
             .filter(candidate -> candidate.score() > 0.0d)
-            .sorted((left, right) -> Double.compare(right.score(), left.score()))
+            .sorted(java.util.Comparator.comparingDouble(Candidate::score).reversed()
+                .thenComparing(candidate -> nullableLong(candidate.item().startTimeMillis()))
+                .thenComparing(candidate -> cleanText(candidate.item().sourceType()))
+                .thenComparing(candidate -> cleanText(candidate.item().sourceId())))
             .limit(MAX_CANDIDATES)
             .map(Candidate::item)
             .filter(CourseQaEvidenceRetriever::hasEvidenceText)
@@ -110,7 +115,7 @@ public class CourseQaEvidenceRetriever {
     ) {
         String snippet = videoSegmentSnippet(row);
         double score = score(
-            String.join(" ", snippet, row.getAsrText(), row.getVisualSummary(), String.join(" ", parseKeywords(row.getKeywordsJson()))),
+            String.join(" ", snippet, String.join(" ", parseKeywords(row.getKeywordsJson()))),
             tokens,
             row.getStartMillis(),
             row.getEndMillis(),
@@ -137,17 +142,40 @@ public class CourseQaEvidenceRetriever {
         if (hasStructuredAsr) {
             parts.add(COURSE_QA_ASR_PREFIX + asrText);
         }
+        String translatedText = cleanText(row.getTranslatedText());
+        boolean hasStructuredTranslation = !translatedText.isBlank();
+        if (hasStructuredTranslation) {
+            parts.add(SEGMENT_TRANSLATION_PREFIX + translatedText);
+        }
+        String ocrText = cleanOcrText(row.getOcrText());
+        boolean hasStructuredOcr = usefulOcr(ocrText);
+        if (hasStructuredOcr) {
+            parts.add(SEGMENT_OCR_PREFIX + ocrText);
+        }
         String visualSummary = cleanText(row.getVisualSummary());
+        boolean hasStructuredVisual = !visualSummary.isBlank();
         if (!visualSummary.isBlank()) {
             parts.add(SEGMENT_VISUAL_PREFIX + visualSummary);
         }
-        cleanVideoSegmentFusedSummaryParts(row.getFusedSummary(), !hasStructuredAsr).stream()
+        cleanVideoSegmentFusedSummaryParts(
+            row.getFusedSummary(),
+            !hasStructuredAsr,
+            !hasStructuredTranslation,
+            !hasStructuredOcr,
+            !hasStructuredVisual
+        ).stream()
             .filter(part -> !parts.contains(part))
             .forEach(parts::add);
         return String.join(SEGMENT_SUMMARY_DELIMITER, parts);
     }
 
-    private static List<String> cleanVideoSegmentFusedSummaryParts(String summary, boolean includeAsr) {
+    private static List<String> cleanVideoSegmentFusedSummaryParts(
+        String summary,
+        boolean includeAsr,
+        boolean includeTranslation,
+        boolean includeOcr,
+        boolean includeVisual
+    ) {
         if (summary == null || summary.isBlank()) {
             return List.of();
         }
@@ -167,8 +195,21 @@ public class CourseQaEvidenceRetriever {
                 if (includeAsr && !asrText.isBlank()) {
                     parts.add(COURSE_QA_ASR_PREFIX + asrText);
                 }
+            } else if (part.startsWith(SEGMENT_TRANSLATION_PREFIX)) {
+                String translatedText = part.substring(SEGMENT_TRANSLATION_PREFIX.length()).strip();
+                if (includeTranslation && !translatedText.isBlank()) {
+                    parts.add(SEGMENT_TRANSLATION_PREFIX + translatedText);
+                }
             } else if (part.startsWith(SEGMENT_OCR_PREFIX)) {
-                continue;
+                String ocrText = part.substring(SEGMENT_OCR_PREFIX.length()).strip();
+                if (includeOcr && usefulOcr(ocrText)) {
+                    parts.add(SEGMENT_OCR_PREFIX + ocrText);
+                }
+            } else if (part.startsWith(SEGMENT_VISUAL_PREFIX)) {
+                String visualText = part.substring(SEGMENT_VISUAL_PREFIX.length()).strip();
+                if (includeVisual && !visualText.isBlank()) {
+                    parts.add(SEGMENT_VISUAL_PREFIX + visualText);
+                }
             } else {
                 parts.add(part);
             }
@@ -178,6 +219,25 @@ public class CourseQaEvidenceRetriever {
 
     private static String cleanText(String value) {
         return value == null ? "" : value.replaceAll("\\s+", " ").strip();
+    }
+
+    private static boolean usefulOcr(String value) {
+        String cleaned = cleanOcrText(value);
+        return !cleaned.isBlank() && OcrTextQualityEvaluator.isUseful(cleaned, null);
+    }
+
+    private static String cleanOcrText(String value) {
+        String cleaned = cleanText(value);
+        for (String prefix : List.of(SEGMENT_OCR_PREFIX, "画面文字：")) {
+            if (cleaned.startsWith(prefix)) {
+                return cleanText(cleaned.substring(prefix.length()));
+            }
+        }
+        return cleaned;
+    }
+
+    private static long nullableLong(Long value) {
+        return value == null ? Long.MAX_VALUE : value;
     }
 
     private Candidate subtitleCandidate(

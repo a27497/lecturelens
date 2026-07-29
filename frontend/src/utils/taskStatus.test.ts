@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import {
   getTaskStatusGroup,
   getTaskStatusLabel,
@@ -5,42 +6,35 @@ import {
   isRetryableTaskStatus,
   isRunningTaskStatus,
   shortenTaskId,
-} from "./taskStatus.ts";
+} from "./taskStatus";
 
-function assertEqual<T>(actual: T, expected: T, message: string) {
-  if (actual !== expected) {
-    throw new Error(`${message}: expected ${String(expected)}, got ${String(actual)}`);
-  }
-}
+describe("task status helpers", () => {
+  it("groups running and terminal task statuses", () => {
+    expect(getTaskStatusGroup("CREATED")).toBe("RUNNING");
+    expect(getTaskStatusGroup("QUEUED")).toBe("RUNNING");
+    expect(getTaskStatusGroup("RUNNING")).toBe("RUNNING");
+    expect(getTaskStatusGroup("RETRYING")).toBe("RUNNING");
+    expect(getTaskStatusGroup("SUCCEEDED")).toBe("SUCCEEDED");
+    expect(getTaskStatusGroup("FAILED")).toBe("FAILED");
+    expect(getTaskStatusGroup("CANCELED")).toBe("CANCELED");
+  });
 
-function assertTrue(actual: boolean, message: string) {
-  assertEqual(actual, true, message);
-}
+  it("identifies refreshable and retryable statuses", () => {
+    expect(isRunningTaskStatus("RUNNING")).toBe(true);
+    expect(isRunningTaskStatus("QUEUED")).toBe(true);
+    expect(isRunningTaskStatus("SUCCEEDED")).toBe(false);
+    expect(isRetryableTaskStatus("FAILED")).toBe(true);
+    expect(isRetryableTaskStatus("CANCELED")).toBe(true);
+    expect(isRetryableTaskStatus("RUNNING")).toBe(false);
+  });
 
-function assertFalse(actual: boolean, message: string) {
-  assertEqual(actual, false, message);
-}
-
-assertEqual(getTaskStatusGroup("CREATED"), "RUNNING", "CREATED should be grouped as running");
-assertEqual(getTaskStatusGroup("QUEUED"), "RUNNING", "QUEUED should be grouped as running");
-assertEqual(getTaskStatusGroup("RUNNING"), "RUNNING", "RUNNING should be grouped as running");
-assertEqual(getTaskStatusGroup("RETRYING"), "RUNNING", "RETRYING should be grouped as running");
-assertEqual(getTaskStatusGroup("SUCCEEDED"), "SUCCEEDED", "SUCCEEDED should be completed");
-assertEqual(getTaskStatusGroup("FAILED"), "FAILED", "FAILED should be failed");
-assertEqual(getTaskStatusGroup("CANCELED"), "CANCELED", "CANCELED should be canceled");
-
-assertTrue(isRunningTaskStatus("RUNNING"), "RUNNING should auto-refresh");
-assertTrue(isRunningTaskStatus("QUEUED"), "QUEUED should auto-refresh");
-assertFalse(isRunningTaskStatus("SUCCEEDED"), "SUCCEEDED should not auto-refresh");
-assertTrue(isRetryableTaskStatus("FAILED"), "FAILED should be retryable");
-assertTrue(isRetryableTaskStatus("CANCELED"), "CANCELED should be retryable");
-assertFalse(isRetryableTaskStatus("RUNNING"), "RUNNING should not be retryable");
-
-assertEqual(getTaskStatusLabel("QUEUED"), "排队中", "QUEUED label");
-assertEqual(getTaskStatusLabel("RUNNING"), "处理中", "RUNNING label");
-assertEqual(getTaskStatusLabel("FAILED"), "处理失败", "FAILED label");
-assertEqual(getTaskStatusTagType("FAILED"), "danger", "FAILED tag");
-assertEqual(getTaskStatusTagType("SUCCEEDED"), "success", "SUCCEEDED tag");
-
-assertEqual(shortenTaskId("task_3367abcdef9a54"), "task_3367...9a54", "long task id should be shortened");
-assertEqual(shortenTaskId("task_short"), "task_short", "short task id should remain readable");
+  it("returns readable labels and task identifiers", () => {
+    expect(getTaskStatusLabel("QUEUED")).toBe("排队中");
+    expect(getTaskStatusLabel("RUNNING")).toBe("处理中");
+    expect(getTaskStatusLabel("FAILED")).toBe("处理失败");
+    expect(getTaskStatusTagType("FAILED")).toBe("danger");
+    expect(getTaskStatusTagType("SUCCEEDED")).toBe("success");
+    expect(shortenTaskId("task_3367abcdef9a54")).toBe("task_3367...9a54");
+    expect(shortenTaskId("task_short")).toBe("task_short");
+  });
+});

@@ -99,7 +99,7 @@ class JsonArtifactServiceTest {
 
         assertThatThrownBy(() -> service.generateJsonArtifact(new GenerateJsonArtifactCommand("task_1", 42L, "zh-CN")))
             .isInstanceOf(BusinessException.class)
-            .hasMessage("JSON source subtitles are required");
+            .hasMessage("JSON subtitle segments are inconsistent");
         assertThat(artifactFileService.commands).isEmpty();
 
         sourceQueryService.views = List.of(source("task_1", 0, 0, 1_000, "Source"));

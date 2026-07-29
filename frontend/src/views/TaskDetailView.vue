@@ -50,6 +50,7 @@ const subtitleStatus = ref<SubtitleStatus>("none");
 const subtitleMessage = ref("");
 const subtitleRequestVersion = ref(0);
 const commandVersion = ref(0);
+const completedResultReloadTaskId = ref("");
 
 const taskId = computed(() => {
   const value = route.params.taskId;
@@ -76,7 +77,15 @@ watch(taskId, (nextTaskId) => {
   void refreshTaskPlayback(nextTaskId);
   void refreshTaskEmbeddedSubtitles(nextTaskId);
   activeWorkspace.value = "overview";
+  completedResultReloadTaskId.value = "";
 }, { immediate: true });
+
+watch(() => task.value?.status, (status) => {
+  const currentTaskId = taskId.value.trim();
+  if (status !== "SUCCEEDED" || !currentTaskId || completedResultReloadTaskId.value === currentTaskId) return;
+  completedResultReloadTaskId.value = currentTaskId;
+  void taskResultStore.load(currentTaskId);
+});
 
 onBeforeUnmount(() => {
   taskEventsStore.disconnect();

@@ -8,19 +8,21 @@ import org.junit.jupiter.api.Test;
 class PipelineOcrExecutionOrderTest {
 
     @Test
-    void ocrRunsAfterArtifactsAndBeforeAiCallRecord() {
+    void ocrRunsAfterTranslationAndBeforeVisionAnalysis() {
         List<PipelineAnalysisTaskStepName> ordered = PipelineAnalysisTaskStepName.ordered();
 
         assertThat(ordered)
             .containsSubsequence(
-                PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS,
+                PipelineAnalysisTaskStepName.TRANSLATE_SUBTITLES,
                 PipelineAnalysisTaskStepName.OCR_KEYFRAMES,
                 PipelineAnalysisTaskStepName.ANALYZE_KEYFRAMES,
                 PipelineAnalysisTaskStepName.FUSE_VIDEO_SEGMENTS,
+                PipelineAnalysisTaskStepName.GENERATE_LEARNING_PACKAGE,
+                PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS,
                 PipelineAnalysisTaskStepName.WRITE_AI_CALL_RECORD
             );
         assertThat(ordered.indexOf(PipelineAnalysisTaskStepName.OCR_KEYFRAMES))
-            .isGreaterThan(ordered.indexOf(PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS));
+            .isGreaterThan(ordered.indexOf(PipelineAnalysisTaskStepName.TRANSLATE_SUBTITLES));
         assertThat(ordered.indexOf(PipelineAnalysisTaskStepName.OCR_KEYFRAMES))
             .isLessThan(ordered.indexOf(PipelineAnalysisTaskStepName.WRITE_AI_CALL_RECORD));
     }

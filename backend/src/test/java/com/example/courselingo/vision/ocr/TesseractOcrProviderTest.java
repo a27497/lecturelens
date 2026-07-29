@@ -39,6 +39,8 @@ class TesseractOcrProviderTest {
             "stdout",
             "-l",
             "chi_sim+eng",
+            "--oem",
+            "1",
             "--psm",
             "6",
             "tsv"
@@ -85,6 +87,44 @@ class TesseractOcrProviderTest {
             .doesNotContain("abc");
     }
 
+    @Test
+    void usefulPrimaryResultDoesNotInvokeFallbackPsm() {
+        RecordingExecutor executor = new RecordingExecutor(tsv("93.0", "Course architecture overview"));
+
+        OcrResult result = new TesseractOcrProvider(new VisionOcrProperties(), executor)
+            .recognize(new OcrRequest(Path.of("frame.png")));
+
+        assertThat(result.status()).isEqualTo(OcrStatus.SUCCEEDED);
+        assertThat(executor.commands).hasSize(1);
+        assertThat(executor.commands.getFirst()).containsSubsequence("--psm", "6");
+    }
+
+    @Test
+    void weakPrimaryInvokesFallbackOnceAndKeepsHigherQualityResult() {
+        SequenceExecutor executor = new SequenceExecutor(
+            tsv("12.0", "??"),
+            tsv("96.0", "public static void main")
+        );
+
+        OcrResult result = new TesseractOcrProvider(new VisionOcrProperties(), executor)
+            .recognize(new OcrRequest(Path.of("frame.png")));
+
+        assertThat(executor.commands).hasSize(2);
+        assertThat(executor.commands.get(0)).containsSubsequence("--psm", "6");
+        assertThat(executor.commands.get(1)).containsSubsequence("--psm", "11");
+        assertThat(result.text()).isEqualTo("public static void main");
+        assertThat(result.confidence()).isEqualTo(0.96d);
+    }
+
+    private static OcrProcessResult tsv(String confidence, String text) {
+        return new OcrProcessResult(
+            0,
+            "level\tconf\ttext\n5\t" + confidence + "\t" + text + "\n",
+            "",
+            false
+        );
+    }
+
     private static final class RecordingExecutor implements OcrProcessExecutor {
 
         private final OcrProcessResult result;
@@ -100,6 +140,22 @@ class TesseractOcrProviderTest {
             commands.add(List.copyOf(command));
             timeouts.add(timeout);
             return result;
+        }
+    }
+
+    private static final class SequenceExecutor implements OcrProcessExecutor {
+
+        private final java.util.ArrayDeque<OcrProcessResult> results;
+        private final List<List<String>> commands = new ArrayList<>();
+
+        private SequenceExecutor(OcrProcessResult... results) {
+            this.results = new java.util.ArrayDeque<>(List.of(results));
+        }
+
+        @Override
+        public OcrProcessResult execute(List<String> command, Duration timeout) {
+            commands.add(List.copyOf(command));
+            return results.removeFirst();
         }
     }
 }

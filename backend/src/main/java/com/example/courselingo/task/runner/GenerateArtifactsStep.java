@@ -8,6 +8,8 @@ import com.example.courselingo.artifact.service.JsonArtifactService;
 import com.example.courselingo.artifact.service.MarkdownArtifactService;
 import com.example.courselingo.artifact.service.SrtArtifactService;
 import com.example.courselingo.artifact.service.VttArtifactService;
+import com.example.courselingo.artifact.service.ArtifactFileService;
+import com.example.courselingo.artifact.domain.ArtifactType;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
@@ -28,6 +30,7 @@ final class GenerateArtifactsStep implements PipelineAnalysisTaskStep {
     private final VttArtifactService vttArtifactService;
     private final MarkdownArtifactService markdownArtifactService;
     private final JsonArtifactService jsonArtifactService;
+    private final ArtifactFileService artifactFileService;
 
     GenerateArtifactsStep(
         AnalysisTaskMapper analysisTaskMapper,
@@ -35,6 +38,24 @@ final class GenerateArtifactsStep implements PipelineAnalysisTaskStep {
         VttArtifactService vttArtifactService,
         MarkdownArtifactService markdownArtifactService,
         JsonArtifactService jsonArtifactService
+    ) {
+        this(
+            analysisTaskMapper,
+            srtArtifactService,
+            vttArtifactService,
+            markdownArtifactService,
+            jsonArtifactService,
+            null
+        );
+    }
+
+    GenerateArtifactsStep(
+        AnalysisTaskMapper analysisTaskMapper,
+        SrtArtifactService srtArtifactService,
+        VttArtifactService vttArtifactService,
+        MarkdownArtifactService markdownArtifactService,
+        JsonArtifactService jsonArtifactService,
+        ArtifactFileService artifactFileService
     ) {
         this.analysisTaskMapper = Objects.requireNonNull(
             analysisTaskMapper,
@@ -56,6 +77,7 @@ final class GenerateArtifactsStep implements PipelineAnalysisTaskStep {
             jsonArtifactService,
             "JSON artifact service is required"
         );
+        this.artifactFileService = artifactFileService;
     }
 
     @Override
@@ -76,18 +98,24 @@ final class GenerateArtifactsStep implements PipelineAnalysisTaskStep {
             SafeLogSanitizer.sanitize(context.taskId()),
             SafeLogSanitizer.sanitize(targetLanguage)
         );
-        srtArtifactService.generateSrtArtifact(new GenerateSrtArtifactCommand(
-            context.taskId(),
-            context.userId(),
-            targetLanguage
-        ));
-        generatedTypes.add("SRT");
-        vttArtifactService.generateVttArtifact(new GenerateVttArtifactCommand(
-            context.taskId(),
-            context.userId(),
-            targetLanguage
-        ));
-        generatedTypes.add("VTT");
+        if (context.asrBranchFailed()) {
+            removeSubtitleArtifacts(context, targetLanguage);
+            generatedTypes.add("SRT_SKIPPED");
+            generatedTypes.add("VTT_SKIPPED");
+        } else {
+            srtArtifactService.generateSrtArtifact(new GenerateSrtArtifactCommand(
+                context.taskId(),
+                context.userId(),
+                targetLanguage
+            ));
+            generatedTypes.add("SRT");
+            vttArtifactService.generateVttArtifact(new GenerateVttArtifactCommand(
+                context.taskId(),
+                context.userId(),
+                targetLanguage
+            ));
+            generatedTypes.add("VTT");
+        }
         markdownArtifactService.generateMarkdownArtifact(new GenerateMarkdownArtifactCommand(
             context.taskId(),
             context.userId(),
@@ -106,5 +134,13 @@ final class GenerateArtifactsStep implements PipelineAnalysisTaskStep {
             generatedTypes,
             Duration.ofNanos(System.nanoTime() - startedNanos).toMillis()
         );
+    }
+
+    private void removeSubtitleArtifacts(PipelineAnalysisTaskStepContext context, String targetLanguage) {
+        if (artifactFileService == null) {
+            return;
+        }
+        artifactFileService.deleteArtifact(context.taskId(), context.userId(), ArtifactType.SRT, targetLanguage);
+        artifactFileService.deleteArtifact(context.taskId(), context.userId(), ArtifactType.VTT, targetLanguage);
     }
 }

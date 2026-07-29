@@ -1,6 +1,9 @@
 package com.example.courselingo.task.runner;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 public class PipelineRunnerWorkspace {
@@ -28,11 +31,33 @@ public class PipelineRunnerWorkspace {
             .normalize();
     }
 
+    public Path visionAnalysisDirectory(PipelineAnalysisTaskStepContext context) {
+        return taskWorkspace(context)
+            .resolve("vision-analysis")
+            .toAbsolutePath()
+            .normalize();
+    }
+
     public Path asrChunksOutputDirectory(PipelineAnalysisTaskStepContext context) {
         return taskWorkspace(context)
             .resolve("asr-chunks")
             .toAbsolutePath()
             .normalize();
+    }
+
+    boolean cleanupTaskWorkspace(PipelineAnalysisTaskStepContext context) {
+        Path taskWorkspace = taskWorkspace(context);
+        if (!Files.exists(taskWorkspace)) {
+            return true;
+        }
+        try (var paths = Files.walk(taskWorkspace)) {
+            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                Files.deleteIfExists(path);
+            }
+            return true;
+        } catch (IOException exception) {
+            return false;
+        }
     }
 
     private Path taskWorkspace(PipelineAnalysisTaskStepContext context) {

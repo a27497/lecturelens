@@ -112,7 +112,7 @@ class CourseQaEvidenceRetrieverTest {
     }
 
     @Test
-    void retrieveDropsReliableHistoricalOcrInFusedSummary() {
+    void retrieveKeepsReliableHistoricalOcrInFusedSummary() {
         when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
             videoSegment(
                 10L,
@@ -131,8 +131,7 @@ class CourseQaEvidenceRetrieverTest {
         assertThat(evidence).isNotEmpty();
         assertThat(evidence.getFirst().snippet())
             .contains("本段语音原文：The slide introduces language models")
-            .doesNotContain("画面文字包括")
-            .doesNotContain("Large Language Models for the curious beginner");
+            .contains("画面文字包括：Large Language Models for the curious beginner");
     }
 
     @Test
@@ -163,7 +162,7 @@ class CourseQaEvidenceRetrieverTest {
     }
 
     @Test
-    void retrieveDropsReliableStructuredOcrInVideoSegmentEvidence() {
+    void retrieveKeepsReliableStructuredOcrInVideoSegmentEvidence() {
         when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
             videoSegmentWithOcr(
                 10L,
@@ -183,12 +182,11 @@ class CourseQaEvidenceRetrieverTest {
         assertThat(evidence).isNotEmpty();
         assertThat(evidence.getFirst().snippet())
             .contains("本段语音原文：The lesson introduces model parameters")
-            .doesNotContain("画面文字包括")
-            .doesNotContain("Parameter Weight");
+            .contains("画面文字包括：Parameter Weight");
     }
 
     @Test
-    void retrieveDropsOcrOnlyEvidence() {
+    void retrieveMatchesOcrOnlyEvidence() {
         when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
             videoSegmentWithOcr(
                 10L,
@@ -205,7 +203,23 @@ class CourseQaEvidenceRetrieverTest {
             .thenReturn(List.of());
         List<CourseQaEvidenceItem> evidence = retriever.retrieve("task_1", 42L, "zh-CN", "OpenCL");
 
-        assertThat(evidence).isEmpty();
+        assertThat(evidence).hasSize(1);
+        assertThat(evidence.getFirst().snippet()).contains("画面文字包括：What is OpenCL?");
+    }
+
+    @Test
+    void retrieveMatchesVisualOnlyEvidence() {
+        VideoSegment segment = videoSegment(10L, 0, 0L, 60000L, "", "");
+        segment.setVisualSummary("A dependency graph connects gateway and worker nodes");
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(segment));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve("task_1", 42L, "zh-CN", "dependency graph");
+
+        assertThat(evidence).hasSize(1);
+        assertThat(evidence.getFirst().snippet()).contains("画面显示：A dependency graph connects gateway and worker nodes");
     }
 
     @Test

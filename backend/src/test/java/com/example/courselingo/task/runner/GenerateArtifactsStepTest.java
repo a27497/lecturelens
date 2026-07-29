@@ -11,6 +11,8 @@ import com.example.courselingo.artifact.service.GenerateJsonArtifactCommand;
 import com.example.courselingo.artifact.service.GenerateMarkdownArtifactCommand;
 import com.example.courselingo.artifact.service.GenerateSrtArtifactCommand;
 import com.example.courselingo.artifact.service.GenerateVttArtifactCommand;
+import com.example.courselingo.artifact.domain.ArtifactType;
+import com.example.courselingo.artifact.service.ArtifactFileService;
 import com.example.courselingo.artifact.service.JsonArtifactService;
 import com.example.courselingo.artifact.service.MarkdownArtifactService;
 import com.example.courselingo.artifact.service.SrtArtifactService;
@@ -44,6 +46,9 @@ class GenerateArtifactsStepTest {
     @Mock
     private JsonArtifactService jsonArtifactService;
 
+    @Mock
+    private ArtifactFileService artifactFileService;
+
     private GenerateArtifactsStep step;
 
     @BeforeEach
@@ -53,7 +58,8 @@ class GenerateArtifactsStepTest {
             srtArtifactService,
             vttArtifactService,
             markdownArtifactService,
-            jsonArtifactService
+            jsonArtifactService,
+            artifactFileService
         );
     }
 
@@ -98,6 +104,25 @@ class GenerateArtifactsStepTest {
         verify(vttArtifactService, never()).generateVttArtifact(any());
         verify(markdownArtifactService, never()).generateMarkdownArtifact(any());
         verify(jsonArtifactService, never()).generateJsonArtifact(any());
+    }
+
+    @Test
+    void visualOnlyDeletesStaleSubtitleArtifactsAndGeneratesMarkdownAndJson() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task());
+        PipelineAnalysisTaskStepContext context = context(7L);
+        context.setAsrBranchFailure(new PipelineAnalysisTaskStepException(
+            PipelineAnalysisTaskStepName.TRANSCRIBE,
+            new IllegalStateException("ASR unavailable")
+        ));
+
+        step.execute(context);
+
+        verify(srtArtifactService, never()).generateSrtArtifact(any());
+        verify(vttArtifactService, never()).generateVttArtifact(any());
+        verify(artifactFileService).deleteArtifact("task_1", 7L, ArtifactType.SRT, "zh-CN");
+        verify(artifactFileService).deleteArtifact("task_1", 7L, ArtifactType.VTT, "zh-CN");
+        verify(markdownArtifactService).generateMarkdownArtifact(any());
+        verify(jsonArtifactService).generateJsonArtifact(any());
     }
 
     private static PipelineAnalysisTaskStepContext context(Long userId) {

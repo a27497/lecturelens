@@ -24,6 +24,7 @@ defineEmits<{
 
 const currentTime = ref(0);
 const videoRef = ref<HTMLVideoElement | null>(null);
+const pendingSeekSeconds = ref<number | null>(null);
 const subtitleCues = computed(() => parseVttCues(props.subtitleText || ""));
 const activeSubtitleText = computed(() => {
   const cue = subtitleCues.value.find(
@@ -65,11 +66,22 @@ function updateCurrentTime(event: Event) {
 }
 
 function seekTo(seconds: number) {
-  if (!videoRef.value || Number.isNaN(seconds) || seconds < 0) {
-    return;
-  }
-  videoRef.value.currentTime = seconds;
-  void videoRef.value.play().catch(() => undefined);
+  if (!Number.isFinite(seconds) || seconds < 0) return;
+  pendingSeekSeconds.value = seconds;
+  if (videoRef.value && videoRef.value.readyState > 0) applyPendingSeek();
+}
+
+function handleLoadedMetadata(event: Event) {
+  updateCurrentTime(event);
+  applyPendingSeek();
+}
+
+function applyPendingSeek() {
+  if (!videoRef.value || pendingSeekSeconds.value === null) return;
+  videoRef.value.currentTime = pendingSeekSeconds.value;
+  pendingSeekSeconds.value = null;
+  const playResult = videoRef.value.play();
+  if (playResult) void playResult.catch(() => undefined);
 }
 
 defineExpose({
@@ -105,7 +117,7 @@ defineExpose({
       :src="playbackUrl"
       controls
       preload="metadata"
-      @loadedmetadata="updateCurrentTime"
+      @loadedmetadata="handleLoadedMetadata"
       @seeked="updateCurrentTime"
       @timeupdate="updateCurrentTime"
     >

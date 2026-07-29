@@ -1,11 +1,15 @@
 package com.example.courselingo.vision.ocr;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.example.courselingo.storage.StorageService;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.vision.keyframe.KeyframeSelectionReason;
 import com.example.courselingo.vision.keyframe.VideoKeyframe;
 import com.example.courselingo.vision.keyframe.mapper.VideoKeyframeMapper;
@@ -46,7 +50,7 @@ class VideoKeyframeOcrServiceTest {
     void setUp() {
         rows = new ArrayList<>();
         deleteCalls = 0;
-        doAnswer(invocation -> {
+        lenient().doAnswer(invocation -> {
             rows.add(invocation.getArgument(0, VideoKeyframeOcr.class));
             return 1;
         }).when(ocrMapper).insert(any(VideoKeyframeOcr.class));
@@ -93,6 +97,19 @@ class VideoKeyframeOcrServiceTest {
                 .doesNotContain("keyframes/42")
                 .doesNotContain("localPath");
         });
+    }
+
+    @Test
+    void rejectsUnacknowledgedOcrInsert() {
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L))
+            .thenReturn(List.of(keyframe(9L, 0L)));
+        when(ocrMapper.insert(any(VideoKeyframeOcr.class))).thenReturn(0);
+        service = newService(request -> OcrResult.empty("tesseract", "chi_sim+eng", 1L));
+
+        assertThatThrownBy(() -> service.scan("task_1", 42L))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.COMMON_INTERNAL_ERROR);
     }
 
     @Test

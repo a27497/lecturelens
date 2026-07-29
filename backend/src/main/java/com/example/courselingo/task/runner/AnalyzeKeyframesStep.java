@@ -18,6 +18,7 @@ public class AnalyzeKeyframesStep implements PipelineAnalysisTaskStep {
     private final VisionAnalysisProperties properties;
     private final TaskLogMapper taskLogMapper;
     private final Clock clock;
+    private final PipelineRunnerWorkspace workspace;
 
     public AnalyzeKeyframesStep(
         VisionAnalysisService visionAnalysisService,
@@ -25,10 +26,21 @@ public class AnalyzeKeyframesStep implements PipelineAnalysisTaskStep {
         TaskLogMapper taskLogMapper,
         Clock clock
     ) {
+        this(visionAnalysisService, properties, taskLogMapper, clock, null);
+    }
+
+    public AnalyzeKeyframesStep(
+        VisionAnalysisService visionAnalysisService,
+        VisionAnalysisProperties properties,
+        TaskLogMapper taskLogMapper,
+        Clock clock,
+        PipelineRunnerWorkspace workspace
+    ) {
         this.visionAnalysisService = visionAnalysisService;
         this.properties = properties == null ? new VisionAnalysisProperties() : properties;
         this.taskLogMapper = taskLogMapper;
         this.clock = clock == null ? Clock.systemUTC() : clock;
+        this.workspace = workspace;
     }
 
     @Override
@@ -42,8 +54,19 @@ public class AnalyzeKeyframesStep implements PipelineAnalysisTaskStep {
             return;
         }
         try {
-            visionAnalysisService.scan(context.taskId(), context.userId());
+            if (workspace == null) {
+                visionAnalysisService.scan(context.taskId(), context.userId());
+            } else {
+                visionAnalysisService.scan(
+                    context.taskId(),
+                    context.userId(),
+                    context.requireUploadedSourcePath(),
+                    workspace.visionAnalysisDirectory(context),
+                    context.targetLanguage()
+                );
+            }
         } catch (Exception exception) {
+            context.markVisionBranchDegraded();
             writeWarning(context, exception);
             LOGGER.warn(
                 "event=keyframe_visual_analysis_skipped taskId={} errorType={}",

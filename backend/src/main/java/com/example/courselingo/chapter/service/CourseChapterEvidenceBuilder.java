@@ -9,6 +9,7 @@ import com.example.courselingo.subtitle.domain.SubtitleSegment;
 import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
+import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -62,11 +63,35 @@ public class CourseChapterEvidenceBuilder {
             if (!asrText.isBlank()) {
                 units.add(new TextUnit(start(segment.getStartMillis()), end(segment.getStartMillis(), segment.getEndMillis()), "本段语音原文：" + asrText));
             }
+            String ocrText = cleanOcrText(segment.getOcrText());
+            if (!ocrText.isBlank() && OcrTextQualityEvaluator.isUseful(ocrText, null)) {
+                units.add(new TextUnit(
+                    start(segment.getStartMillis()),
+                    end(segment.getStartMillis(), segment.getEndMillis()),
+                    "画面文字：" + ocrText
+                ));
+            }
+            String visualSummary = cleanText(segment.getVisualSummary());
+            if (!visualSummary.isBlank()) {
+                units.add(new TextUnit(
+                    start(segment.getStartMillis()),
+                    end(segment.getStartMillis(), segment.getEndMillis()),
+                    "画面描述：" + visualSummary
+                ));
+            }
         }
         units = units.stream()
             .filter(unit -> unit.endMillis() > unit.startMillis())
             .sorted(Comparator.comparingLong(TextUnit::startMillis).thenComparingLong(TextUnit::endMillis))
-            .toList();
+            .collect(java.util.stream.Collectors.collectingAndThen(
+                java.util.stream.Collectors.toMap(
+                    unit -> new TextUnitKey(unit.startMillis(), unit.endMillis(), unit.text()),
+                    unit -> unit,
+                    (left, right) -> left,
+                    LinkedHashMap::new
+                ),
+                map -> List.copyOf(map.values())
+            ));
         return new CourseChapterEvidenceBundle(toWindows(units), globalContext(taskId, userId, targetLanguage));
     }
 
@@ -145,6 +170,16 @@ public class CourseChapterEvidenceBuilder {
         return value == null ? "" : value.replaceAll("\\s+", " ").strip();
     }
 
+    private static String cleanOcrText(String value) {
+        String cleaned = cleanText(value);
+        for (String prefix : List.of("画面文字包括：", "画面文字：")) {
+            if (cleaned.startsWith(prefix)) {
+                return cleanText(cleaned.substring(prefix.length()));
+            }
+        }
+        return cleaned;
+    }
+
     private static String truncate(String value, int limit) {
         String cleaned = cleanText(value);
         return cleaned.length() <= limit ? cleaned : cleaned.substring(0, limit);
@@ -163,5 +198,8 @@ public class CourseChapterEvidenceBuilder {
     }
 
     private record TextUnit(long startMillis, long endMillis, String text) {
+    }
+
+    private record TextUnitKey(long startMillis, long endMillis, String text) {
     }
 }

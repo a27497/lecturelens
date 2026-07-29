@@ -38,12 +38,19 @@ public class OcrKeyframesStep implements PipelineAnalysisTaskStep {
 
     @Override
     public void execute(PipelineAnalysisTaskStepContext context) {
+        if (context.hasVisionBranchHandle()) {
+            awaitAdaptiveVisionBranch(context);
+            return;
+        }
         if (!properties.isEnabled()) {
+            failWhenBothBranchesAreUnavailable(context, null);
             return;
         }
         try {
             ocrScanService.scan(context.taskId(), context.userId());
+            context.setVisionBranchResult(VisionPipelineBranchResult.succeeded());
         } catch (Exception exception) {
+            context.setVisionBranchResult(VisionPipelineBranchResult.failed(exception));
             writeWarning(context, exception);
             LOGGER.warn(
                 "event=keyframe_ocr_skipped taskId={} errorType={}",
@@ -53,7 +60,55 @@ public class OcrKeyframesStep implements PipelineAnalysisTaskStep {
             if (properties.isFailTaskOnError()) {
                 throw exception;
             }
+            failWhenBothBranchesAreUnavailable(context, exception);
         }
+    }
+
+    private void awaitAdaptiveVisionBranch(PipelineAnalysisTaskStepContext context) {
+        VisionPipelineBranchResult result;
+        try {
+            result = context.awaitVisionBranch();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("vision preprocessing wait was interrupted", exception);
+        }
+        if (result.isSucceeded()) {
+            return;
+        }
+        Exception warning = result.failure() instanceof Exception exception
+            ? exception
+            : new IllegalStateException("vision preprocessing branch failed");
+        writeWarning(context, warning);
+        LOGGER.warn(
+            "event=vision_preprocessing_degraded taskId={} status={} errorType={}",
+            SafeLogSanitizer.sanitize(context.taskId()),
+            result.status(),
+            warning.getClass().getSimpleName()
+        );
+        if (!context.asrBranchFailed()) {
+            context.markVisionBranchDegraded();
+        }
+        failWhenBothBranchesAreUnavailable(context, warning);
+    }
+
+    private static void failWhenBothBranchesAreUnavailable(
+        PipelineAnalysisTaskStepContext context,
+        Exception visionFailure
+    ) {
+        if (!context.asrBranchFailed()) {
+            return;
+        }
+        context.setVisionBranchResult(VisionPipelineBranchResult.failed(
+            visionFailure == null ? new IllegalStateException("visual evidence is unavailable") : visionFailure
+        ));
+        IllegalStateException bothFailed = new IllegalStateException(
+            "ASR and vision preprocessing branches both failed",
+            context.asrBranchFailure()
+        );
+        if (visionFailure != null) {
+            bothFailed.addSuppressed(visionFailure);
+        }
+        throw bothFailed;
     }
 
     private void writeWarning(PipelineAnalysisTaskStepContext context, Exception exception) {

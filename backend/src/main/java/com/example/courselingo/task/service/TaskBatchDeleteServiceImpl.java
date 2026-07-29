@@ -16,10 +16,15 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.courselingo.common.logging.SafeLogSanitizer;
+import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskBatchDeleteServiceImpl.class);
     private static final int MAX_BATCH_SIZE = 100;
     private static final int MAX_TASK_ID_LENGTH = 64;
     private static final Set<String> DELETABLE_STATUSES = Set.of("SUCCEEDED", "FAILED", "CANCELED");
@@ -27,13 +32,15 @@ public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
     private final CurrentUserService currentUserService;
     private final AnalysisTaskMapper analysisTaskMapper;
     private final Clock clock;
+    private final VideoKeyframeEvidenceLifecycleService evidenceLifecycleService;
 
     @Autowired
     public TaskBatchDeleteServiceImpl(
         CurrentUserService currentUserService,
-        AnalysisTaskMapper analysisTaskMapper
+        AnalysisTaskMapper analysisTaskMapper,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
-        this(currentUserService, analysisTaskMapper, Clock.systemDefaultZone());
+        this(currentUserService, analysisTaskMapper, Clock.systemDefaultZone(), evidenceLifecycleService);
     }
 
     TaskBatchDeleteServiceImpl(
@@ -41,9 +48,19 @@ public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
         AnalysisTaskMapper analysisTaskMapper,
         Clock clock
     ) {
+        this(currentUserService, analysisTaskMapper, clock, null);
+    }
+
+    TaskBatchDeleteServiceImpl(
+        CurrentUserService currentUserService,
+        AnalysisTaskMapper analysisTaskMapper,
+        Clock clock,
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
+    ) {
         this.currentUserService = currentUserService;
         this.analysisTaskMapper = analysisTaskMapper;
         this.clock = clock;
+        this.evidenceLifecycleService = evidenceLifecycleService;
     }
 
     @Override
@@ -66,6 +83,7 @@ public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
             throw new BusinessException(ErrorCode.TASK_DELETE_NOT_ALLOWED);
         }
         if (activeTasks.isEmpty()) {
+            cleanupEvidence(tasks, currentUser.userId());
             return new TaskBatchDeleteResponse(taskIds.size(), 0);
         }
 
@@ -80,7 +98,25 @@ public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
         if (deletedCount != activeTaskIds.size()) {
             throw new BusinessException(ErrorCode.TASK_DELETE_NOT_ALLOWED);
         }
+        cleanupEvidence(activeTasks, currentUser.userId());
         return new TaskBatchDeleteResponse(taskIds.size(), deletedCount);
+    }
+
+    private void cleanupEvidence(List<AnalysisTask> tasks, Long userId) {
+        if (evidenceLifecycleService == null) {
+            return;
+        }
+        for (AnalysisTask task : tasks) {
+            try {
+                evidenceLifecycleService.cleanupTaskEvidence(task.getId(), userId);
+            } catch (RuntimeException exception) {
+                LOGGER.warn(
+                    "event=deleted_task_evidence_cleanup_failed taskId={} errorType={}",
+                    SafeLogSanitizer.sanitize(task.getId()),
+                    exception.getClass().getSimpleName()
+                );
+            }
+        }
     }
 
     private static List<String> normalizeTaskIds(TaskBatchDeleteRequest request) {

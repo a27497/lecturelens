@@ -4,10 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.artifact.service.MarkdownLearningPackageFormatter;
+import com.example.courselingo.artifact.service.ArtifactMultimodalTimelineItem;
 import com.example.courselingo.common.exception.BusinessException;
+import com.example.courselingo.fusion.VideoSegmentSourceStatus;
 import com.example.courselingo.learning.dto.LearningPackageView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class MarkdownLearningPackageFormatterTest {
@@ -54,6 +58,35 @@ class MarkdownLearningPackageFormatterTest {
         assertThat(markdown)
             .contains("## \u672f\u8bed\u8868\n\n\u6682\u65e0\u672f\u8bed\n\n")
             .contains("## \u95ee\u7b54\n\n\u6682\u65e0\u95ee\u7b54\n");
+    }
+
+    @Test
+    void formatsNonEmptyMultimodalTimelineWithEvidenceKeyframes() {
+        String markdown = formatter.format(
+            learningPackage("Course Title", "Course summary", "[{\"index\":1,\"text\":\"Point\"}]", "[]", "[]"),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0,
+                0L,
+                60_000L,
+                "00:00:00 - 00:01:00",
+                "spoken explanation",
+                "字幕译文",
+                "Parameter Weight",
+                "A chart compares parameters",
+                "",
+                List.of("parameter"),
+                List.of(21L),
+                new VideoSegmentSourceStatus(Map.of("visual", "AVAILABLE"), Map.of("vlm", 1.0d), false),
+                0.91d
+            ))
+        );
+
+        assertThat(markdown)
+            .contains("## 多模态时间线")
+            .contains("OCR=Parameter Weight")
+            .contains("画面=A chart compares parameters")
+            .contains("证据关键帧=[21]")
+            .contains("置信度=0.9100");
     }
 
     @Test

@@ -39,6 +39,14 @@ final class TranslateSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
         if (analysisTaskMapper.selectByIdAndUserId(context.taskId(), context.userId()) == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
+        if (context.asrBranchFailed()) {
+            subtitleTranslationService.deleteTranslations(
+                context.taskId(),
+                context.userId(),
+                context.targetLanguage()
+            );
+            return;
+        }
         String sourceLanguage = context.requireSpeechToTextResult().language();
         long startedNanos = System.nanoTime();
         try {

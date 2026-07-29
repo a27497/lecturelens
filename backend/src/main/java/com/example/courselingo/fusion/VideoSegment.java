@@ -33,6 +33,9 @@ public class VideoSegment {
     @TableField("asr_text")
     private String asrText;
 
+    @TableField("translated_text")
+    private String translatedText;
+
     @TableField("ocr_text")
     private String ocrText;
 
@@ -47,6 +50,9 @@ public class VideoSegment {
 
     @TableField("evidence_json")
     private String evidenceJson;
+
+    @TableField("source_status_json")
+    private String sourceStatusJson;
 
     @TableField("confidence")
     private Double confidence;
@@ -124,6 +130,14 @@ public class VideoSegment {
         this.asrText = asrText;
     }
 
+    public String getTranslatedText() {
+        return translatedText;
+    }
+
+    public void setTranslatedText(String translatedText) {
+        this.translatedText = translatedText;
+    }
+
     public String getOcrText() {
         return ocrText;
     }
@@ -162,6 +176,14 @@ public class VideoSegment {
 
     public void setEvidenceJson(String evidenceJson) {
         this.evidenceJson = evidenceJson;
+    }
+
+    public String getSourceStatusJson() {
+        return sourceStatusJson;
+    }
+
+    public void setSourceStatusJson(String sourceStatusJson) {
+        this.sourceStatusJson = sourceStatusJson;
     }
 
     public Double getConfidence() {

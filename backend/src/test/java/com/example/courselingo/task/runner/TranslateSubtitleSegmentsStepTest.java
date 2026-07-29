@@ -216,6 +216,21 @@ class TranslateSubtitleSegmentsStepTest {
         verify(subtitleTranslationService, never()).translateTaskSubtitlesWithAiCallRecord(any());
     }
 
+    @Test
+    void visualOnlyDeletesStaleTranslationsWithoutCallingLlm() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task());
+        PipelineAnalysisTaskStepContext context = context(7L);
+        context.setAsrBranchFailure(new PipelineAnalysisTaskStepException(
+            PipelineAnalysisTaskStepName.TRANSCRIBE,
+            new IllegalStateException("ASR unavailable")
+        ));
+
+        step.execute(context);
+
+        verify(subtitleTranslationService).deleteTranslations("task_1", 7L, "zh-CN");
+        verify(subtitleTranslationService, never()).translateTaskSubtitlesWithAiCallRecord(any());
+    }
+
     private static PipelineAnalysisTaskStepContext contextWithAsrResult(Long userId) {
         PipelineAnalysisTaskStepContext context = context(userId);
         context.setSpeechToTextResult(new SpeechToTextResult(

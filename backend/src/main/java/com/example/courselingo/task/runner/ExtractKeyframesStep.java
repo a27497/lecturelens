@@ -23,6 +23,7 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
     private final VideoKeyframeProperties properties;
     private final TaskLogMapper taskLogMapper;
     private final Clock clock;
+    private final VisionPipelineBranchCoordinator branchCoordinator;
 
     public ExtractKeyframesStep(
         VideoKeyframeScanService keyframeScanService,
@@ -31,11 +32,23 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
         TaskLogMapper taskLogMapper,
         Clock clock
     ) {
+        this(keyframeScanService, workspace, properties, taskLogMapper, clock, null);
+    }
+
+    ExtractKeyframesStep(
+        VideoKeyframeScanService keyframeScanService,
+        PipelineRunnerWorkspace workspace,
+        VideoKeyframeProperties properties,
+        TaskLogMapper taskLogMapper,
+        Clock clock,
+        VisionPipelineBranchCoordinator branchCoordinator
+    ) {
         this.keyframeScanService = keyframeScanService;
         this.workspace = workspace;
         this.properties = properties == null ? new VideoKeyframeProperties() : properties;
         this.taskLogMapper = taskLogMapper;
         this.clock = clock == null ? Clock.systemUTC() : clock;
+        this.branchCoordinator = branchCoordinator;
     }
 
     @Override
@@ -46,6 +59,24 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
     @Override
     public void execute(PipelineAnalysisTaskStepContext context) {
         if (!properties.isEnabled()) {
+            return;
+        }
+        if (branchCoordinator != null) {
+            Path sourcePath = context.requireUploadedSourcePath();
+            Path outputDirectory = workspace.keyframeOutputDirectory(context);
+            context.setVisionBranchHandle(branchCoordinator.submit(() -> {
+                ensureOutputDirectory(outputDirectory);
+                var result = keyframeScanService.scan(new VideoKeyframeScanCommand(
+                    context.taskId(),
+                    context.userId(),
+                    sourcePath,
+                    outputDirectory
+                ));
+                if (result == null || result.savedKeyframeCount() <= 0) {
+                    throw new IllegalStateException("vision preprocessing produced no usable keyframes");
+                }
+                return null;
+            }, properties.branchTimeout()));
             return;
         }
         try {

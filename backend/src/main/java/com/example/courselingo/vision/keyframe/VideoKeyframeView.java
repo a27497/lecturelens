@@ -14,8 +14,38 @@ public record VideoKeyframeView(
     String selectReason,
     LocalDateTime createdAt,
     VideoKeyframeOcrView ocr,
-    VideoKeyframeAnalysisView visualAnalysis
+    VideoKeyframeAnalysisView visualAnalysis,
+    Double qualityScore,
+    String sourceType,
+    Boolean degraded
 ) {
+    public VideoKeyframeView(
+        Long frameId,
+        Long timestampMillis,
+        String timeText,
+        String imageUrl,
+        Double changeScore,
+        String selectReason,
+        LocalDateTime createdAt,
+        VideoKeyframeOcrView ocr,
+        VideoKeyframeAnalysisView visualAnalysis
+    ) {
+        this(
+            frameId,
+            timestampMillis,
+            timeText,
+            imageUrl,
+            changeScore,
+            selectReason,
+            createdAt,
+            ocr,
+            visualAnalysis,
+            null,
+            null,
+            null
+        );
+    }
+
     public VideoKeyframeView(
         Long frameId,
         Long timestampMillis,
@@ -35,7 +65,10 @@ public record VideoKeyframeView(
             selectReason,
             createdAt,
             ocr,
-            VideoKeyframeAnalysisViews.missing(false)
+            VideoKeyframeAnalysisViews.missing(false),
+            null,
+            null,
+            null
         );
     }
 }
