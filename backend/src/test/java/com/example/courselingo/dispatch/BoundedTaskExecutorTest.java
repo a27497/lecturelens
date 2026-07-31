@@ -183,7 +183,7 @@ class BoundedTaskExecutorTest {
     void cancelInterruptsRunningTaskAndRemovesItFromRegistry() throws Exception {
         executor = newExecutor(1, 1, 1, 30);
         CountDownLatch started = new CountDownLatch(1);
-        AtomicBoolean interrupted = new AtomicBoolean(false);
+        CountDownLatch interrupted = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
         Thread caller = new Thread(() -> {
             try {
@@ -192,7 +192,7 @@ class BoundedTaskExecutorTest {
                     try {
                         Thread.sleep(30_000L);
                     } catch (InterruptedException exception) {
-                        interrupted.set(true);
+                        interrupted.countDown();
                         throw exception;
                     }
                     return null;
@@ -205,10 +205,10 @@ class BoundedTaskExecutorTest {
         assertThat(started.await(1, TimeUnit.SECONDS)).isTrue();
 
         assertThat(executor.cancel("task_cancel")).isTrue();
+        assertThat(interrupted.await(2, TimeUnit.SECONDS)).isTrue();
         caller.join(2_000L);
 
         assertThat(caller.isAlive()).isFalse();
-        assertThat(interrupted).isTrue();
         assertThat(failure.get()).isInstanceOf(BusinessException.class);
         assertThat(executor.cancel("task_cancel")).isFalse();
     }
