@@ -47,6 +47,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -242,7 +245,8 @@ class SubtitleTranslationServiceTest {
         verify(fullTextResultMapper).insert(fullTextCaptor.capture());
         assertThat(fullTextCaptor.getValue().getTranslatedFullText())
             .isEqualTo("这是 Spring Boot 课程介绍\n\n接下来讲解 Docker 部署");
-        assertThat(result.duration()).isEqualTo(Duration.ofMillis(18));
+        assertThat(result.duration()).isPositive();
+        assertThat(result.providerDuration()).isEqualTo(Duration.ofMillis(18));
         assertThat(result.promptTokens()).isEqualTo(16);
         assertThat(result.completionTokens()).isEqualTo(13);
         assertThat(result.totalTokens()).isEqualTo(29);
@@ -1025,7 +1029,8 @@ class SubtitleTranslationServiceTest {
 
         SubtitleTranslationAiCallResult result = translationService.translateTaskSubtitlesWithAiCallRecord(command());
 
-        assertThat(result.duration()).isEqualTo(Duration.ofMillis(12));
+        assertThat(result.duration()).isPositive();
+        assertThat(result.providerDuration()).isEqualTo(Duration.ofMillis(12));
         assertThat(result.promptTokens()).isEqualTo(16);
         assertThat(result.completionTokens()).isEqualTo(9);
         assertThat(result.totalTokens()).isEqualTo(25);
@@ -1241,6 +1246,138 @@ class SubtitleTranslationServiceTest {
     }
 
     @Test
+    void chineseDominantTranslationMayContainBoundedEnglishTechnicalProse() {
+        translationService = fullTextTranslationService();
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 4000, "Explain service discovery and configuration with Spring Cloud.")
+        ));
+        when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
+        when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
+        fakeLlmProvider.nextContents(alignedJson(
+            "\u8fd9\u4e00\u8282\u8be6\u7ec6\u8bb2\u89e3\u5fae\u670d\u52a1\u4e2d\u7684\u670d\u52a1\u53d1\u73b0\u3001\u914d\u7f6e\u7ba1\u7406\u3001\u8d1f\u8f7d\u5747\u8861\u548c\u6545\u969c\u6062\u590d\u3002Spring Cloud provides centralized configuration. \u7136\u540e\u7ed3\u5408\u5b9e\u4f8b\u8bf4\u660e\u7ec4\u4ef6\u4e4b\u95f4\u7684\u534f\u4f5c\u65b9\u5f0f\u3002"
+        ));
+
+        SubtitleTranslationAiCallResult result = translationService.translateTaskSubtitlesWithAiCallRecord(command());
+
+        assertThat(result.savedCount()).isEqualTo(1);
+        assertThat(fakeLlmProvider.requests).hasSize(1);
+    }
+
+    @Test
+    void fullTextModeRunsIndependentBatchesWithBoundedConcurrencyBeforeAtomicPersistence() {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        FullText fullText = new FullText();
+        fullText.setEnabled(true);
+        fullText.setBatchMaxSegments(1);
+        fullText.setBatchConcurrency(4);
+        properties.setFullText(fullText);
+        AtomicInteger active = new AtomicInteger();
+        AtomicInteger maxActive = new AtomicInteger();
+        LlmProvider concurrentProvider = new LlmProvider() {
+            @Override
+            public LlmResult generate(LlmRequest request) {
+                int current = active.incrementAndGet();
+                maxActive.accumulateAndGet(current, Math::max);
+                try {
+                    Thread.sleep(80L);
+                    int count = ((Number) request.metadata().get("sourceSegmentCount")).intValue();
+                    String[] translated = IntStream.range(0, count)
+                        .mapToObj(index -> "并行译文" + index)
+                        .toArray(String[]::new);
+                    return llmResult(alignedJson(translated), "stop", 4, 2, 1);
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new LlmProviderException("interrupted");
+                } finally {
+                    active.decrementAndGet();
+                }
+            }
+
+            @Override
+            public String providerName() {
+                return "concurrent-test";
+            }
+        };
+        translationService = new SubtitleTranslationServiceImpl(
+            sourceMapper,
+            translationMapper,
+            fullTextResultMapper,
+            concurrentProvider,
+            FIXED_CLOCK,
+            new SubtitleTranslationResponseParser(),
+            properties
+        );
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 900, "zero"),
+            sourceSegment(1, 1000, 1900, "one"),
+            sourceSegment(2, 2000, 2900, "two"),
+            sourceSegment(3, 3000, 3900, "three")
+        ));
+        when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
+        when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
+
+        SubtitleTranslationAiCallResult result = translationService.translateTaskSubtitlesWithAiCallRecord(command());
+
+        assertThat(result.savedCount()).isEqualTo(4);
+        assertThat(maxActive.get()).isGreaterThan(1).isLessThanOrEqualTo(4);
+        assertThat(captureInsertedSegments(4)).extracting(SubtitleTranslationSegment::getSegmentIndex)
+            .containsExactly(0, 1, 2, 3);
+    }
+
+    @Test
+    void fullTextModeTotalDeadlineInterruptsProviderAndDoesNotPersistPartialOutput() {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        FullText fullText = new FullText();
+        fullText.setEnabled(true);
+        fullText.setTotalTimeout(Duration.ofMillis(50));
+        properties.setFullText(fullText);
+        AtomicBoolean interrupted = new AtomicBoolean(false);
+        LlmProvider slowProvider = new LlmProvider() {
+            @Override
+            public LlmResult generate(LlmRequest request) {
+                try {
+                    Thread.sleep(5_000L);
+                    return llmResult(alignedJson("不应保存"), "stop", 1, 1, 1);
+                } catch (InterruptedException exception) {
+                    interrupted.set(true);
+                    Thread.currentThread().interrupt();
+                    throw new LlmProviderException("interrupted");
+                }
+            }
+
+            @Override
+            public String providerName() {
+                return "slow-test";
+            }
+        };
+        translationService = new SubtitleTranslationServiceImpl(
+            sourceMapper,
+            translationMapper,
+            fullTextResultMapper,
+            slowProvider,
+            FIXED_CLOCK,
+            new SubtitleTranslationResponseParser(),
+            properties
+        );
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 900, "hello")
+        ));
+
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.AI_PROVIDER_TIMEOUT);
+
+        long interruptDeadline = System.nanoTime() + Duration.ofSeconds(1).toNanos();
+        while (!interrupted.get() && System.nanoTime() < interruptDeadline) {
+            Thread.onSpinWait();
+        }
+        assertThat(interrupted).isTrue();
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
+    }
+
+    @Test
     void fullTextModeUsesSafeDefaultsForInvalidConfigValues() {
         SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
         FullText fullText = new FullText();
@@ -1264,8 +1401,8 @@ class SubtitleTranslationServiceTest {
 
         assertThat(fakeLlmProvider.requests).hasSize(1);
         LlmRequest request = fakeLlmProvider.requests.getFirst();
-        assertThat(request.timeout()).isEqualTo(Duration.ofSeconds(900));
-        assertThat(request.maxTokens()).isEqualTo(32_768);
+        assertThat(request.timeout()).isEqualTo(Duration.ofSeconds(120));
+        assertThat(request.maxTokens()).isEqualTo(1024);
         assertThat(request.metadata()).containsEntry("sourceSegmentCount", 1);
     }
 
@@ -1588,7 +1725,7 @@ class SubtitleTranslationServiceTest {
             .satisfies(error -> {
                 assertThat(((BusinessException) error).errorCode()).isEqualTo(ErrorCode.AI_PROVIDER_FAILED);
                 assertSafe(error.getMessage());
-                assertThat(error.getMessage()).isEqualTo("Subtitle translation provider failed");
+                assertThat(error.getMessage()).isEqualTo("翻译服务调用失败，请稍后重试。");
             });
         verify(translationMapper, never()).deleteByTaskIdUserIdAndTargetLanguage(any(), any(), any());
     }

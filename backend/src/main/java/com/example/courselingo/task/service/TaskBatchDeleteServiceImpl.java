@@ -40,7 +40,7 @@ public class TaskBatchDeleteServiceImpl implements TaskBatchDeleteService {
         AnalysisTaskMapper analysisTaskMapper,
         VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
-        this(currentUserService, analysisTaskMapper, Clock.systemDefaultZone(), evidenceLifecycleService);
+        this(currentUserService, analysisTaskMapper, Clock.systemUTC(), evidenceLifecycleService);
     }
 
     TaskBatchDeleteServiceImpl(

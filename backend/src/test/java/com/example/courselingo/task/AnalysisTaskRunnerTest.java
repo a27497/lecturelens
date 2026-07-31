@@ -427,6 +427,7 @@ class AnalysisTaskRunnerTest {
         runner.cancel(message());
 
         assertThat(capturedUpdatedTasks()).isEmpty();
+        verify(boundedTaskExecutor).cancel("task_1");
         verify(evidenceLifecycleService).cleanupTaskEvidence("task_1", 7L);
         verify(taskClaimService).release("task_1", "req_1");
     }

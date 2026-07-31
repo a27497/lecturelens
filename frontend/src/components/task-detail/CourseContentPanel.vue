@@ -37,6 +37,25 @@ const filteredRows = computed(() => {
   return rows.value.filter((row) => row.sourceText.toLowerCase().includes(value) || (row.translation?.translatedText || "").toLowerCase().includes(value));
 });
 const hasFullTextOnlyTranslation = computed(() => translatedText.value.length > 0 && (props.result?.translations.length ?? 0) === 0);
+const translationStatus = computed(() => props.result?.translationStatus || "NOT_STARTED");
+const translationEmptyText = computed(() => {
+  switch (translationStatus.value) {
+    case "RUNNING": return "中文译文生成中";
+    case "FAILED": return props.result?.translationErrorSummary || "译文生成失败";
+    case "CANCELED": return "已取消，未生成译文";
+    case "SKIPPED": return "本次任务未生成译文";
+    default: return "译文未生成";
+  }
+});
+const segmentTranslationEmptyText = computed(() => {
+  switch (translationStatus.value) {
+    case "RUNNING": return "译文生成中";
+    case "FAILED": return "译文生成失败";
+    case "CANCELED": return "已取消，未生成译文";
+    case "SKIPPED": return "本次任务未生成译文";
+    default: return "译文未生成";
+  }
+});
 
 watch(() => props.taskId, () => {
   activeView.value = "translated";
@@ -77,9 +96,9 @@ function emptyText(pending: string): string {
     </nav>
 
     <article v-if="activeView === 'translated'" class="reading-view">
-      <div class="reading-view__header"><h3>中文译文</h3><el-button size="small" @click="copy(translatedText, '中文译文')">复制译文</el-button></div>
+      <div class="reading-view__header"><h3>中文译文</h3><el-button :disabled="!translatedText" size="small" @click="copy(translatedText, '中文译文')">复制译文</el-button></div>
       <div v-if="translatedText" class="reading-copy">{{ translatedText }}</div>
-      <el-empty v-else :description="emptyText('中文译文生成中')" />
+      <el-empty v-else :description="translationEmptyText" />
     </article>
     <article v-else-if="activeView === 'source'" class="reading-view">
       <div class="reading-view__header"><h3>原文</h3><el-button size="small" @click="copy(sourceText, '原文')">复制原文</el-button></div>
@@ -94,7 +113,7 @@ function emptyText(pending: string): string {
       <div v-else class="timeline-list">
         <article v-for="row in filteredRows" :key="row.segmentIndex" class="timeline-row">
           <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span>#{{ row.segmentIndex }}</span></div>
-          <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : '译文生成中') }}</p></div>
+          <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : segmentTranslationEmptyText) }}</p></div>
           <el-button size="small" plain @click="emit('seek', row.startMillis)">跳到视频</el-button>
         </article>
       </div>

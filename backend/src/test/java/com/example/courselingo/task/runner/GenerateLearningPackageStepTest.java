@@ -127,7 +127,7 @@ class GenerateLearningPackageStepTest {
             assertThat(record.callType()).isEqualTo(AiCallType.LLM);
             assertThat(record.stage()).isEqualTo(AiCallStage.LEARNING_PACKAGE);
             assertThat(record.provider()).isEqualTo("learning-package-service");
-            assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED");
+            assertThat(record.errorCode()).isEqualTo("UNKNOWN");
             assertThat(record.errorMessage()).doesNotContainIgnoringCase("secret");
             assertThat(record.errorMessage()).doesNotContain("C:\\secret");
         });
@@ -161,10 +161,9 @@ class GenerateLearningPackageStepTest {
         assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
             assertThat(record.provider()).isEqualTo("openai-compatible");
             assertThat(record.model()).isEqualTo("Qwen/Qwen3-8B");
-            assertThat(record.errorCode()).isEqualTo("MALFORMED_RESPONSE");
+            assertThat(record.errorCode()).isEqualTo("OUTPUT_INVALID");
             assertThat(record.retryable()).isFalse();
-            assertThat(record.errorMessage()).contains("uploadId=up_1");
-            assertThat(record.errorMessage()).contains("MALFORMED_RESPONSE");
+            assertThat(record.errorMessage()).contains("category=OUTPUT_INVALID");
         });
     }
 

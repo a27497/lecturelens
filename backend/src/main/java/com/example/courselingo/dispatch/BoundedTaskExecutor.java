@@ -7,4 +7,6 @@ public interface BoundedTaskExecutor {
     <T> T submitAndWait(String taskId, String requestId, Callable<T> callable);
 
     void execute(String taskId, String requestId, Runnable runnable);
+
+    boolean cancel(String taskId);
 }

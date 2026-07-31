@@ -19,6 +19,8 @@ export function normalizeTaskResult(result: TaskResultResponse | null | undefine
   if (!result) return null;
   return {
     ...result,
+    translationStatus: result.translationStatus || ((result.translations?.length ?? 0) > 0 ? "SUCCEEDED" : "NOT_STARTED"),
+    translationErrorSummary: result.translationErrorSummary || null,
     sourceParagraphs: result.sourceParagraphs ?? [],
     subtitles: result.subtitles ?? [],
     translations: result.translations ?? [],

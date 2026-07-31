@@ -11,7 +11,10 @@ public class CourseChapterProperties {
     private int maxChapters = 20;
     private int maxEvidenceItems = 24;
     private int maxCharsPerWindow = 1200;
-    private Duration llmTimeout = Duration.ofSeconds(90);
+    private int maxPromptChars = 24000;
+    private int maxTokens = 4096;
+    private int maxAttempts = 3;
+    private Duration llmTimeout = Duration.ofSeconds(60);
 
     public boolean isEnabled() {
         return enabled;
@@ -59,7 +62,31 @@ public class CourseChapterProperties {
 
     public void setLlmTimeout(Duration llmTimeout) {
         this.llmTimeout = llmTimeout == null || llmTimeout.isZero() || llmTimeout.isNegative()
-            ? Duration.ofSeconds(90)
-            : llmTimeout;
+            ? Duration.ofSeconds(60)
+            : llmTimeout.compareTo(Duration.ofSeconds(60)) > 0 ? Duration.ofSeconds(60) : llmTimeout;
+    }
+
+    public int getMaxPromptChars() {
+        return maxPromptChars;
+    }
+
+    public void setMaxPromptChars(int maxPromptChars) {
+        this.maxPromptChars = Math.max(4000, Math.min(maxPromptChars, 24000));
+    }
+
+    public int getMaxTokens() {
+        return maxTokens;
+    }
+
+    public void setMaxTokens(int maxTokens) {
+        this.maxTokens = Math.max(512, Math.min(maxTokens, 4096));
+    }
+
+    public int getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    public void setMaxAttempts(int maxAttempts) {
+        this.maxAttempts = Math.max(1, Math.min(maxAttempts, 3));
     }
 }

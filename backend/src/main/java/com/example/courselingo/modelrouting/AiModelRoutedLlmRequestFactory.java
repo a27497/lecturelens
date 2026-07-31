@@ -33,10 +33,10 @@ public class AiModelRoutedLlmRequestFactory {
             request.requestId(),
             request.taskId(),
             request.messages(),
-            route.timeout() == null ? request.timeout() : route.timeout(),
-            route.temperature() == null ? request.temperature() : route.temperature(),
-            route.maxTokens() == null ? request.maxTokens() : route.maxTokens(),
-            route.maxAttempts() == null ? request.maxAttempts() : route.maxAttempts(),
+            request.timeout() == null ? route.timeout() : request.timeout(),
+            request.temperature() == null ? route.temperature() : request.temperature(),
+            request.maxTokens() == null ? route.maxTokens() : request.maxTokens(),
+            request.maxAttempts() == null ? route.maxAttempts() : request.maxAttempts(),
             metadata,
             request.responseFormat()
         );

@@ -10,6 +10,12 @@ public record CreateAnalysisTaskRequest(
 
     @NotBlank(message = "targetLanguage cannot be blank")
     @Size(max = 32, message = "targetLanguage length cannot exceed 32")
-    String targetLanguage
+    String targetLanguage,
+
+    @Size(max = 32, message = "sourceLanguage length cannot exceed 32")
+    String sourceLanguage
 ) {
+    public CreateAnalysisTaskRequest(String uploadId, String targetLanguage) {
+        this(uploadId, targetLanguage, "auto");
+    }
 }

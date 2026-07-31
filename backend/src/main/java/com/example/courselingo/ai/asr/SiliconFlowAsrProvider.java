@@ -89,6 +89,8 @@ public class SiliconFlowAsrProvider implements SpeechToTextProvider {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("model", settings.model());
         metadata.put("segmentTimingSource", "provider_not_available");
+        metadata.put("requestedLanguage", request.language());
+        metadata.put("providerLanguageHintSupported", false);
         traceId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
 
         return new SpeechToTextResult(

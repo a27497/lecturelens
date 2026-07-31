@@ -362,6 +362,32 @@ class TaskResultServiceTest {
         verify(aiCallRecordService, never()).listByTask("task_missing", 42L);
     }
 
+    @Test
+    void failedTranslationReturnsExplicitTerminalStatusAndSafeSummaryWhileKeepingSource() {
+        AnalysisTask failed = task("task_failed", 42L);
+        failed.setStatus(AnalysisTaskStatus.FAILED.name());
+        failed.setCurrentStage("TRANSLATE_SUBTITLES");
+        when(analysisTaskMapper.selectByIdAndUserId("task_failed", 42L)).thenReturn(failed);
+        when(subtitleSegmentQueryService.listByTaskId("task_failed", 42L)).thenReturn(List.of(
+            new SubtitleSegmentView("task_failed", 0, 0L, 1000L, "en", "Spring Boot", "embedded-subtitle", time(1), time(2))
+        ));
+        when(subtitleTranslationQueryService.listTranslations("task_failed", 42L, "zh-CN")).thenReturn(List.of());
+        when(learningPackageQueryService.getByTaskAndLanguage("task_failed", 42L, "zh-CN")).thenReturn(Optional.empty());
+        when(artifactFileQueryService.listByTaskId("task_failed", 42L)).thenReturn(List.of());
+        when(aiCallRecordService.listByTask("task_failed", 42L)).thenReturn(List.of(new AiCallRecordView(
+            8L, "task_failed", AiCallType.LLM, AiCallStage.TRANSLATION, "openai-compatible", "qwen",
+            AiCallRecordStatus.FAILED, time(1), time(2), 1286L, null, null, null, 1, 0,
+            null, null, "INVALID_REQUEST", "provider raw body must not be exposed", false, time(1), time(2)
+        )));
+
+        TaskResultResponse response = service.getResult("task_failed", "Bearer access-token");
+
+        assertThat(response.translationStatus()).isEqualTo(com.example.courselingo.result.dto.TranslationStatus.FAILED);
+        assertThat(response.translationErrorSummary()).contains("INVALID_REQUEST").doesNotContain("raw body");
+        assertThat(response.sourceFullText()).contains("Spring Boot");
+        assertThat(response.translations()).isEmpty();
+    }
+
     private static AnalysisTask task(String taskId, Long userId) {
         AnalysisTask task = new AnalysisTask();
         task.setId(taskId);

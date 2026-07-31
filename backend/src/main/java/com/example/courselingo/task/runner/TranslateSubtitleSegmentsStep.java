@@ -59,12 +59,15 @@ final class TranslateSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
                     context.requestId()
                 )
             );
-            context.addAiCallRecord(PipelineAiCallRecord.succeeded(
+            context.addAiCallRecord(PipelineAiCallRecord.succeededWithMetrics(
                 AiCallType.LLM,
                 AiCallStage.TRANSLATION,
                 result.provider(),
                 result.model(),
                 durationMillis(result.duration(), startedNanos),
+                result.providerDuration() == null ? null : result.providerDuration().toMillis(),
+                result.batchCount(),
+                result.retryCount(),
                 result.promptTokens(),
                 result.completionTokens(),
                 result.totalTokens(),
@@ -96,7 +99,7 @@ final class TranslateSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
     }
 
     private static Long durationMillis(java.time.Duration duration, long startedNanos) {
-        if (duration == null || duration.isNegative()) {
+        if (duration == null || duration.isZero() || duration.isNegative()) {
             return elapsedMillis(startedNanos);
         }
         return duration.toMillis();

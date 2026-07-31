@@ -143,6 +143,8 @@ export interface ResultAiCallRecord {
 export interface TaskResultResponse {
   taskId: string;
   targetLanguage: string;
+  translationStatus: "NOT_STARTED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "SKIPPED" | "CANCELED";
+  translationErrorSummary: string | null;
   sourceFullText: string;
   sourceParagraphs: string[];
   translatedFullText: string;

@@ -8,7 +8,7 @@ import org.springframework.util.unit.DataSize;
 public class SiliconFlowAsrProperties {
 
     public static final String DEFAULT_BASE_URL = "https://api.siliconflow.cn";
-    public static final String DEFAULT_MODEL = "FunAudioLLM/SenseVoiceSmall";
+    public static final String DEFAULT_MODEL = "";
 
     private boolean enabled;
     private String baseUrl = DEFAULT_BASE_URL;

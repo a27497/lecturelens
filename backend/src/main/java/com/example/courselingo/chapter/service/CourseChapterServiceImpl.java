@@ -1,10 +1,14 @@
 package com.example.courselingo.chapter.service;
 
 import com.example.courselingo.ai.llm.LlmProvider;
+import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
+import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
 import com.example.courselingo.ai.llm.LlmRequest;
 import com.example.courselingo.ai.llm.LlmResponseFormat;
 import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmUsage;
+import com.example.courselingo.ai.llm.LlmStageException;
+import com.example.courselingo.ai.llm.LlmStructuredOutputExecutor;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
 import com.example.courselingo.ai.record.dto.AiCallRecordView;
@@ -137,34 +141,72 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course chapter provider is not configured");
         }
         AiCallRecordView started = startAiCall(task, bundle.evidence().size());
+        long startedNanos = System.nanoTime();
         try {
+            List<com.example.courselingo.ai.llm.LlmMessage> messages = CourseChapterPromptFactory.buildMessages(
+                bundle.evidence(), bundle.globalContext(), properties.getMaxChapters(), properties.getMaxPromptChars()
+            );
             LlmRequest request = new LlmRequest(
                 "chapter_" + UUID.randomUUID(),
                 task.getId(),
-                CourseChapterPromptFactory.buildMessages(bundle.evidence(), bundle.globalContext(), properties.getMaxChapters()),
+                messages,
                 properties.getLlmTimeout(),
                 0.0d,
-                4096,
-                1,
+                properties.getMaxTokens(),
+                properties.getMaxAttempts(),
                 Map.of("stage", AiModelStage.COURSE_CHAPTER.name(), "targetLanguage", task.getTargetLanguage()),
                 LlmResponseFormat.JSON_OBJECT
             );
             LlmRequest routed = routedRequestFactory == null ? request : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, request);
-            LlmResult result = llmProvider.generate(routed);
-            List<CourseChapterResponseParser.ParsedCourseChapter> parsed = parser.parse(
-                result.content(),
-                bundle.evidence(),
-                properties.getMaxChapters()
-            );
+            LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
+            List<CourseChapterResponseParser.ParsedCourseChapter> parsed;
+            try {
+                parsed = parser.parse(result.content(), bundle.evidence(), properties.getMaxChapters());
+            } catch (BusinessException firstParseFailure) {
+                LlmRequest repair = new LlmRequest(
+                    "chapter_repair_" + UUID.randomUUID(),
+                    task.getId(),
+                    CourseChapterPromptFactory.buildRepairMessages(messages),
+                    properties.getLlmTimeout(),
+                    0.0d, properties.getMaxTokens(), 1,
+                    Map.of("stage", AiModelStage.COURSE_CHAPTER.name(), "repair", true),
+                    LlmResponseFormat.JSON_OBJECT
+                );
+                LlmRequest routedRepair = routedRequestFactory == null
+                    ? repair
+                    : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, repair);
+                LlmResult repaired = LlmStructuredOutputExecutor.execute(llmProvider, routedRepair);
+                parsed = parser.parse(repaired.content(), bundle.evidence(), properties.getMaxChapters());
+                result = withDuration(repaired, result.duration().plus(repaired.duration()));
+            }
             List<CourseChapter> rows = persistSuccess(task, parsed, bundle.evidence(), usage(result));
             completeAiCall(started, task, result, bundle.evidence().size(), rows.size());
             return rows.stream().map(this::toResponse).toList();
         } catch (RuntimeException exception) {
-            failAiCall(started, task, exception);
-            throw exception instanceof BusinessException
-                ? exception
-                : new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course chapter provider failed");
+            LlmStageException safeFailure = toStageFailure(exception);
+            failAiCall(started, task, safeFailure, elapsedMillis(startedNanos));
+            throw safeFailure;
         }
+    }
+
+    private static LlmResult withDuration(LlmResult result, java.time.Duration duration) {
+        return new LlmResult(
+            result.provider(), result.model(), result.content(), result.finishReason(), result.usage(), duration, result.metadata()
+        );
+    }
+
+    private static LlmStageException toStageFailure(RuntimeException exception) {
+        if (exception instanceof LlmStageException stageException) {
+            return stageException;
+        }
+        if (exception instanceof BusinessException && exception.getCause() == null) {
+            return new LlmStageException(
+                AiModelStage.COURSE_CHAPTER.name(),
+                new LlmProviderFailureDetails(LlmProviderFailureCategory.OUTPUT_INVALID, null, null, false),
+                exception
+            );
+        }
+        return new LlmStageException(AiModelStage.COURSE_CHAPTER.name(), exception);
     }
 
     private AnalysisTask requireOwnedTask(String taskId, String authorizationHeader) {
@@ -253,7 +295,12 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         ));
     }
 
-    private void failAiCall(AiCallRecordView started, AnalysisTask task, RuntimeException exception) {
+    private void failAiCall(
+        AiCallRecordView started,
+        AnalysisTask task,
+        LlmStageException exception,
+        long durationMillis
+    ) {
         if (started == null || started.id() == null) {
             return;
         }
@@ -261,13 +308,17 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             started.id(),
             task.getId(),
             task.getUserId(),
-            null,
-            exception instanceof BusinessException businessException ? businessException.errorCode().code() : "AI_PROVIDER_FAILED",
-            sanitizer.sanitizeErrorMessage(exception.getMessage()),
-            true,
+            durationMillis,
+            exception.apiDetails().errorCode(),
+            exception.safeDiagnosticSummary(),
+            exception.details().retryable(),
             null,
             null
         ));
+    }
+
+    private static long elapsedMillis(long startedNanos) {
+        return Math.max(1L, java.time.Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
     }
 
     private CourseChapterResponse toResponse(CourseChapter row) {

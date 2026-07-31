@@ -68,7 +68,10 @@ final class WriteAiCallRecordStep implements PipelineAnalysisTaskStep {
                     record.inputUnits(),
                     record.outputUnits(),
                     record.requestFingerprint(),
-                    record.responseFingerprint()
+                    record.responseFingerprint(),
+                    record.providerDurationMillis(),
+                    record.batchCount(),
+                    record.retryCount()
                 ));
             } else {
                 aiCallRecordService.failCall(new FailAiCallRecordCommand(

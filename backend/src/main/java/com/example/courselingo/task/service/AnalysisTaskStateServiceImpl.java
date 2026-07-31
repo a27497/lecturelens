@@ -52,7 +52,7 @@ public class AnalysisTaskStateServiceImpl implements AnalysisTaskStateService {
             analysisTaskMapper,
             taskLogMapper,
             stateMachine,
-            Clock.systemDefaultZone(),
+            Clock.systemUTC(),
             progressSnapshotService,
             businessMetrics
         );

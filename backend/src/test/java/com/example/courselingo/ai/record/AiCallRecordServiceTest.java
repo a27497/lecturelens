@@ -101,6 +101,9 @@ class AiCallRecordServiceTest {
         assertThat(updated.getStatus()).isEqualTo("SUCCEEDED");
         assertThat(updated.getFinishedAt()).isEqualTo(now());
         assertThat(updated.getDurationMillis()).isEqualTo(2500L);
+        assertThat(updated.getProviderDurationMillis()).isEqualTo(4100L);
+        assertThat(updated.getBatchCount()).isEqualTo(4);
+        assertThat(updated.getRetryCount()).isEqualTo(2);
         assertThat(updated.getPromptTokens()).isEqualTo(10);
         assertThat(updated.getCompletionTokens()).isEqualTo(20);
         assertThat(updated.getTotalTokens()).isEqualTo(30);
@@ -109,6 +112,7 @@ class AiCallRecordServiceTest {
         assertThat(updated.getRequestFingerprint()).isEqualTo("a".repeat(64));
         assertThat(updated.getResponseFingerprint()).isEqualTo("b".repeat(64));
         assertThat(view.status()).isEqualTo(AiCallRecordStatus.SUCCEEDED);
+        assertThat(view.providerDurationMillis()).isEqualTo(4100L);
         verify(mapper).selectByIdTaskIdAndUserId(100L, "task_1", 42L);
         verify(mapper, never()).selectByIdTaskIdAndUserId(100L, "task_1", 43L);
     }
@@ -329,7 +333,10 @@ class AiCallRecordServiceTest {
             128,
             64,
             "a".repeat(64),
-            "b".repeat(64)
+            "b".repeat(64),
+            4100L,
+            4,
+            2
         );
     }
 

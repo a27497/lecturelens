@@ -42,6 +42,15 @@ public class AiCallRecord {
     @TableField("duration_millis")
     private Long durationMillis;
 
+    @TableField("provider_duration_millis")
+    private Long providerDurationMillis;
+
+    @TableField("batch_count")
+    private Integer batchCount;
+
+    @TableField("retry_count")
+    private Integer retryCount;
+
     @TableField("prompt_tokens")
     private Integer promptTokens;
 
@@ -164,6 +173,30 @@ public class AiCallRecord {
 
     public void setDurationMillis(Long durationMillis) {
         this.durationMillis = durationMillis;
+    }
+
+    public Long getProviderDurationMillis() {
+        return providerDurationMillis;
+    }
+
+    public void setProviderDurationMillis(Long providerDurationMillis) {
+        this.providerDurationMillis = providerDurationMillis;
+    }
+
+    public Integer getBatchCount() {
+        return batchCount;
+    }
+
+    public void setBatchCount(Integer batchCount) {
+        this.batchCount = batchCount;
+    }
+
+    public Integer getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(Integer retryCount) {
+        this.retryCount = retryCount;
     }
 
     public Integer getPromptTokens() {

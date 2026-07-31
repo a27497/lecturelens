@@ -116,6 +116,7 @@ class TaskCommandServiceTest {
         verify(taskCreationService).create(requestCaptor.capture(), org.mockito.ArgumentMatchers.eq("Bearer access-token"));
         assertThat(requestCaptor.getValue().uploadId()).isEqualTo("up_1");
         assertThat(requestCaptor.getValue().targetLanguage()).isEqualTo("zh-CN");
+        assertThat(requestCaptor.getValue().sourceLanguage()).isNull();
 
         verify(analysisTaskMapper, never()).updateRetryingByIdAndUserId(any(AnalysisTask.class));
         verify(messageProducer, never()).send(eqTag(AnalysisTaskMessageTag.ANALYSIS_RETRY), any());

@@ -131,7 +131,7 @@ class TranslateSubtitleSegmentsStepTest {
         assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
             assertThat(record.stage()).isEqualTo(AiCallStage.TRANSLATION);
             assertThat(record.success()).isFalse();
-            assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED");
+            assertThat(record.errorCode()).isEqualTo("OUTPUT_INVALID");
             assertThat(record.errorMessage()).contains("TARGET_LANGUAGE_MISMATCH");
             assertThat(record.errorMessage()).doesNotContainIgnoringCase("prompt", "response", "token");
         });
@@ -152,7 +152,7 @@ class TranslateSubtitleSegmentsStepTest {
             assertThat(record.callType()).isEqualTo(AiCallType.LLM);
             assertThat(record.stage()).isEqualTo(AiCallStage.TRANSLATION);
             assertThat(record.provider()).isEqualTo("subtitle-translation-service");
-            assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED");
+            assertThat(record.errorCode()).isEqualTo("UNKNOWN");
             assertThat(record.errorMessage()).doesNotContainIgnoringCase("token");
             assertThat(record.errorMessage()).doesNotContain("C:\\secret");
         });
@@ -186,9 +186,9 @@ class TranslateSubtitleSegmentsStepTest {
         assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
             assertThat(record.provider()).isEqualTo("openai-compatible");
             assertThat(record.model()).isEqualTo("Qwen/Qwen3-8B");
-            assertThat(record.errorCode()).isEqualTo("PROVIDER_RATE_LIMIT");
+            assertThat(record.errorCode()).isEqualTo("RATE_LIMIT");
             assertThat(record.retryable()).isTrue();
-            assertThat(record.errorMessage()).contains("uploadId=up_1");
+            assertThat(record.errorMessage()).contains("category=RATE_LIMIT");
             assertThat(record.errorMessage()).contains("httpStatus=429");
         });
     }

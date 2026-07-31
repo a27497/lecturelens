@@ -279,10 +279,10 @@ public class JsonLearningPackageExporter {
 
     private String validateText(String value) {
         String normalized = normalizeText(value);
-        if (normalized.isBlank() || ArtifactSensitiveDataValidator.containsSensitiveData(normalized)) {
+        if (normalized.isBlank()) {
             throw validationFailure("JSON artifact content is invalid");
         }
-        return normalized;
+        return ArtifactSensitiveDataValidator.redactSensitiveData(normalized);
     }
 
     private OptionalGlossaryItem optionalGlossaryItem(GlossaryItem item) {
@@ -300,10 +300,7 @@ public class JsonLearningPackageExporter {
 
     private String optionalText(String value) {
         String normalized = normalizeText(value);
-        if (!normalized.isBlank() && ArtifactSensitiveDataValidator.containsSensitiveData(normalized)) {
-            throw validationFailure("JSON artifact content is invalid");
-        }
-        return normalized;
+        return ArtifactSensitiveDataValidator.redactSensitiveData(normalized);
     }
 
     private String normalizeText(String value) {

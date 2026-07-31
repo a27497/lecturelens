@@ -62,7 +62,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
             messageProducer,
             stateService,
             taskCreationService,
-            Clock.systemDefaultZone()
+            Clock.systemUTC()
         );
     }
 
@@ -94,7 +94,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         }
 
         CreateAnalysisTaskResponse created = taskCreationService.create(
-            new CreateAnalysisTaskRequest(task.getUploadId(), task.getTargetLanguage()),
+            new CreateAnalysisTaskRequest(task.getUploadId(), task.getTargetLanguage(), task.getSourceLanguage()),
             authorizationHeader
         );
         return new TaskRetryResponse(
@@ -181,6 +181,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
             task.getId(),
             task.getUploadId(),
             task.getUserId(),
+            task.getSourceLanguage(),
             task.getTargetLanguage(),
             tracingContext.requestId(),
             tracingContext.traceId(),

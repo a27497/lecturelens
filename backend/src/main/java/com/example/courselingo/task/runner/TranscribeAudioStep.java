@@ -6,6 +6,7 @@ import com.example.courselingo.ai.asr.SpeechToTextResult;
 import com.example.courselingo.ai.asr.SiliconFlowAsrException;
 import com.example.courselingo.ai.asr.SpeechToTextProviderException;
 import com.example.courselingo.ai.asr.TranscribedSegment;
+import com.example.courselingo.ai.asr.AsrTextNormalizer;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
 import com.example.courselingo.common.error.ErrorCode;
@@ -16,6 +17,9 @@ import com.example.courselingo.media.AudioChunker;
 import com.example.courselingo.media.AudioDurationProbe;
 import com.example.courselingo.media.AudioExtractionResult;
 import com.example.courselingo.media.JavaSoundAudioDurationProbe;
+import com.example.courselingo.media.EmbeddedSubtitleTranscript;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractor;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptProperties;
 import com.example.courselingo.task.claim.NoopTaskClaimService;
 import com.example.courselingo.task.claim.TaskClaimService;
 import com.example.courselingo.task.entity.AnalysisTask;
@@ -82,6 +86,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     private final TaskProgressSnapshotService progressSnapshotService;
     private final TaskClaimService taskClaimService;
     private final ChunkCompletionObserver chunkCompletionObserver;
+    private final EmbeddedSubtitleTranscriptExtractor embeddedSubtitleExtractor;
+    private final EmbeddedSubtitleTranscriptProperties transcriptProperties;
 
     TranscribeAudioStep(SpeechToTextProvider speechToTextProvider) {
         this(speechToTextProvider, null, new AsrChunkingProperties(), null, null);
@@ -196,6 +202,34 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         ChunkCompletionObserver chunkCompletionObserver,
         AudioDurationProbe audioDurationProbe
     ) {
+        this(
+            speechToTextProvider,
+            audioChunker,
+            chunkingProperties,
+            workspace,
+            analysisTaskMapper,
+            progressSnapshotService,
+            taskClaimService,
+            chunkCompletionObserver,
+            audioDurationProbe,
+            null,
+            new EmbeddedSubtitleTranscriptProperties()
+        );
+    }
+
+    TranscribeAudioStep(
+        SpeechToTextProvider speechToTextProvider,
+        AudioChunker audioChunker,
+        AsrChunkingProperties chunkingProperties,
+        PipelineRunnerWorkspace workspace,
+        AnalysisTaskMapper analysisTaskMapper,
+        TaskProgressSnapshotService progressSnapshotService,
+        TaskClaimService taskClaimService,
+        ChunkCompletionObserver chunkCompletionObserver,
+        AudioDurationProbe audioDurationProbe,
+        EmbeddedSubtitleTranscriptExtractor embeddedSubtitleExtractor,
+        EmbeddedSubtitleTranscriptProperties transcriptProperties
+    ) {
         this.speechToTextProvider = Objects.requireNonNull(
             speechToTextProvider,
             "speech to text provider is required"
@@ -212,6 +246,10 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         this.chunkCompletionObserver = chunkCompletionObserver == null
             ? NOOP_CHUNK_COMPLETION_OBSERVER
             : chunkCompletionObserver;
+        this.embeddedSubtitleExtractor = embeddedSubtitleExtractor;
+        this.transcriptProperties = transcriptProperties == null
+            ? new EmbeddedSubtitleTranscriptProperties()
+            : transcriptProperties;
     }
 
     @Override
@@ -235,7 +273,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 AiCallStage.TRANSCRIPTION,
                 firstNonBlank(result.provider(), speechToTextProvider.providerName()),
                 null,
-                durationMillis(result.duration(), startedNanos),
+                elapsedMillis(startedNanos),
                 null,
                 null,
                 null,
@@ -266,6 +304,31 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         AudioExtractionResult audio,
         long authoritativeAudioDurationMillis
     ) {
+        if (embeddedSubtitleExtractor != null && transcriptProperties.embeddedSubtitleFirst()) {
+            java.util.Optional<EmbeddedSubtitleTranscript> embedded = context.uploadedSourcePath()
+                .flatMap(path -> embeddedSubtitleExtractor.extract(
+                    path, context.sourceLanguage(), authoritativeAudioDurationMillis
+                ));
+            if (embedded.isPresent()) {
+                EmbeddedSubtitleTranscript transcript = embedded.get();
+                List<TranscribedSegment> normalized = AsrTextNormalizer.normalizeAndDeduplicate(
+                    transcript.segments(), transcript.language()
+                );
+                return new SpeechToTextResult(
+                    "embedded-subtitle",
+                    transcript.language(),
+                    buildFullText(normalized),
+                    normalized,
+                    Duration.ZERO,
+                    authoritativeAudioDurationMillis,
+                    Map.of(
+                        "transcriptSource", "EMBEDDED_SUBTITLE",
+                        "coverage", transcript.coverage(),
+                        "streamIndex", transcript.streamIndex()
+                    )
+                );
+            }
+        }
         Path audioFile = audio.audioFile();
         long audioSizeBytes = readFileSize(audioFile, "ASR audio file size cannot be read");
         long maxAudioSizeBytes = chunkingProperties.effectiveMaxAudioFileSizeBytes();
@@ -435,20 +498,41 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             );
             updateAsrProgress(context, nextCompleted, totalChunks, chunkNumber);
             refreshClaim(context, "chunk-complete");
-            return new ChunkTranscriptionResult(zeroBasedChunkIndex, chunk.offsetMillis(), chunkResult);
+            Duration measured = Duration.ofNanos(Math.max(0L, System.nanoTime() - chunkStartedNanos));
+            return new ChunkTranscriptionResult(
+                zeroBasedChunkIndex,
+                chunk.offsetMillis(),
+                withMeasuredDuration(chunkResult, measured)
+            );
         } catch (RuntimeException exception) {
             throw sanitizedChunkFailure(context, chunkNumber, totalChunks, exception);
         }
     }
 
     private SpeechToTextResult transcribeOne(Path audioFile, PipelineAnalysisTaskStepContext context) {
-        return speechToTextProvider.transcribe(new SpeechToTextRequest(
+        long startedNanos = System.nanoTime();
+        SpeechToTextResult result = speechToTextProvider.transcribe(new SpeechToTextRequest(
             audioFile,
-            context.targetLanguage(),
+            normalizeSourceLanguage(context.sourceLanguage()),
             context.requestId(),
             context.taskId(),
             DEFAULT_ASR_TIMEOUT
         ));
+        SpeechToTextResult measured = withMeasuredDuration(
+            result,
+            Duration.ofNanos(Math.max(0L, System.nanoTime() - startedNanos))
+        );
+        java.util.Map<String, Object> metadata = new java.util.LinkedHashMap<>(measured.metadata());
+        metadata.put("transcriptSource", "ASR");
+        return new SpeechToTextResult(
+            measured.provider(),
+            measured.language(),
+            measured.fullText(),
+            measured.segments(),
+            measured.duration(),
+            measured.audioDurationMillis(),
+            metadata
+        );
     }
 
     private SpeechToTextResult transcribeChunkWithRetry(
@@ -641,6 +725,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         int timelineClampedSegmentCount = 0;
         int timelineDroppedSegmentCount = 0;
         String provider = speechToTextProvider.providerName();
+        String language = context.sourceLanguage();
         for (int chunkIndex = 0; chunkIndex < results.size(); chunkIndex++) {
             SpeechToTextResult result = results.get(chunkIndex);
             AudioChunk chunk = chunks.get(chunkIndex);
@@ -648,6 +733,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 throw new IllegalStateException("ASR chunk result is required");
             }
             provider = firstNonBlank(result.provider(), provider);
+            language = firstNonBlank(result.language(), language);
             totalDuration = totalDuration.plus(result.duration());
             List<TranscribedSegment> chunkSegments = result.segments() == null ? List.of() : result.segments();
             long chunkStartMillis = chunk.offsetMillis();
@@ -689,6 +775,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 ));
             }
         }
+        segments = new ArrayList<>(AsrTextNormalizer.normalizeAndDeduplicate(segments, context.sourceLanguage()));
         if (segments.isEmpty()) {
             throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "ASR produced no valid timeline segments");
         }
@@ -704,12 +791,17 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         );
         return new SpeechToTextResult(
             provider,
-            context.targetLanguage(),
+            language,
             fullText,
             segments,
             totalDuration,
             authoritativeAudioDurationMillis,
-            Map.of("chunkCount", chunks.size(), "chunkDurationSeconds", chunkingProperties.getChunkDuration().toSeconds())
+            Map.of(
+                "chunkCount", chunks.size(),
+                "chunkDurationSeconds", chunkingProperties.getChunkDuration().toSeconds(),
+                "cumulativeProviderDurationMillis", totalDuration.toMillis(),
+                "transcriptSource", "ASR"
+            )
         );
     }
 
@@ -794,6 +886,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             dropped,
             1
         );
+        bounded = AsrTextNormalizer.normalizeAndDeduplicate(bounded, context.sourceLanguage());
         return new SpeechToTextResult(
             result.provider(),
             result.language(),
@@ -803,6 +896,30 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             authoritativeAudioDurationMillis,
             result.metadata()
         );
+    }
+
+    private static SpeechToTextResult withMeasuredDuration(SpeechToTextResult result, Duration measured) {
+        Duration duration = result.duration() == null || result.duration().isZero() || result.duration().isNegative()
+            ? Duration.ofMillis(Math.max(1L, measured == null ? 0L : measured.toMillis()))
+            : result.duration();
+        return new SpeechToTextResult(
+            result.provider(), result.language(), result.fullText(), result.segments(), duration,
+            result.audioDurationMillis(), result.metadata()
+        );
+    }
+
+    private static String normalizeSourceLanguage(String language) {
+        if (language == null || language.isBlank()) {
+            return "auto";
+        }
+        String normalized = language.strip().replace('_', '-').toLowerCase(Locale.ROOT);
+        if (normalized.equals("en") || normalized.startsWith("en-")) {
+            return normalized;
+        }
+        if (normalized.equals("zh") || normalized.startsWith("zh-")) {
+            return normalized;
+        }
+        return "auto";
     }
 
     TranscribeAudioStep(
@@ -971,14 +1088,14 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     }
 
     private static Long durationMillis(Duration duration, long startedNanos) {
-        if (duration == null || duration.isNegative()) {
+        if (duration == null || duration.isZero() || duration.isNegative()) {
             return elapsedMillis(startedNanos);
         }
         return duration.toMillis();
     }
 
     private static long elapsedMillis(long startedNanos) {
-        return Duration.ofNanos(System.nanoTime() - startedNanos).toMillis();
+        return Math.max(1L, Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
     }
 
     private static Integer millisToSeconds(long millis) {

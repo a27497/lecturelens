@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class AiModelRoutingProperties {
 
     private boolean enabled = true;
+    private String defaultTextModel;
     private Map<AiModelStage, String> routes = new LinkedHashMap<>();
     private Map<String, AiModelProfile> profiles = new LinkedHashMap<>();
 
@@ -17,6 +18,14 @@ public class AiModelRoutingProperties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getDefaultTextModel() {
+        return defaultTextModel;
+    }
+
+    public void setDefaultTextModel(String defaultTextModel) {
+        this.defaultTextModel = defaultTextModel;
     }
 
     public Map<AiModelStage, String> getRoutes() {

@@ -10,9 +10,43 @@ public record ResultAiCallRecord(
     String model,
     String status,
     Long durationMillis,
+    Long providerDurationMillis,
+    Integer batchCount,
+    Integer retryCount,
     Integer promptTokens,
     Integer completionTokens,
     Integer totalTokens,
     LocalDateTime createdAt
 ) {
+
+    public ResultAiCallRecord(
+        Long id,
+        String callType,
+        String stage,
+        String provider,
+        String model,
+        String status,
+        Long durationMillis,
+        Integer promptTokens,
+        Integer completionTokens,
+        Integer totalTokens,
+        LocalDateTime createdAt
+    ) {
+        this(
+            id,
+            callType,
+            stage,
+            provider,
+            model,
+            status,
+            durationMillis,
+            null,
+            null,
+            null,
+            promptTokens,
+            completionTokens,
+            totalTokens,
+            createdAt
+        );
+    }
 }

@@ -179,8 +179,9 @@ public class EmbeddedSubtitleServiceImpl implements EmbeddedSubtitleService {
             if (!Files.isRegularFile(cacheFile) || Files.size(cacheFile) == 0) {
                 extractWebVtt(source, streamIndex, cacheFile);
             }
+            byte[] normalized = normalizeWebVtt(Files.readAllBytes(cacheFile));
             return new EmbeddedSubtitleFileResponse(
-                Files.readAllBytes(cacheFile),
+                normalized,
                 "text/vtt;charset=utf-8",
                 "embedded-subtitle-" + streamIndex + ".vtt"
             );
@@ -204,19 +205,31 @@ public class EmbeddedSubtitleServiceImpl implements EmbeddedSubtitleService {
                     "0:" + streamIndex,
                     "-c:s",
                     "webvtt",
+                    "-f",
+                    "webvtt",
                     tempFile.toString()
                 ),
                 ffmpegProperties.timeout()
             );
+            if (result.timedOut() || result.exitCode() != 0 || !Files.isRegularFile(tempFile)
+                || Files.size(tempFile) == 0L) {
+                throw new BusinessException(ErrorCode.MEDIA_SUBTITLE_EXTRACTION_FAILED);
+            }
+            Files.move(tempFile, cacheFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new BusinessException(ErrorCode.MEDIA_SUBTITLE_EXTRACTION_FAILED, exception);
-        }
-        if (result.timedOut() || result.exitCode() != 0 || !Files.isRegularFile(tempFile)) {
+        } finally {
             Files.deleteIfExists(tempFile);
-            throw new BusinessException(ErrorCode.MEDIA_SUBTITLE_EXTRACTION_FAILED);
         }
-        Files.move(tempFile, cacheFile, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private static byte[] normalizeWebVtt(byte[] bytes) {
+        String value = new String(bytes == null ? new byte[0] : bytes, java.nio.charset.StandardCharsets.UTF_8)
+            .replace("\uFEFF", "")
+            .replace("\r\n", "\n")
+            .replace('\r', '\n');
+        return value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 
     private List<EmbeddedSubtitleTrackResponse> parseTracks(String stdout) {

@@ -1,5 +1,6 @@
 package com.example.courselingo.vision.analysis;
 
+import com.example.courselingo.ai.llm.OpenAiCompatibleRequestOptionsAdapter;
 import com.example.courselingo.ai.llm.JavaHttpOpenAiCompatibleLlmClient;
 import com.example.courselingo.ai.llm.OpenAiCompatibleChatCompletionRequest;
 import com.example.courselingo.ai.llm.OpenAiCompatibleClientResponse;
@@ -102,7 +103,7 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
                 model,
                 elapsedMillis(started),
                 "VISION_PROVIDER_FAILED",
-                safeFailureMessage(exception)
+                "Vision provider request failed"
             );
             for (int attempt = 2; attempt <= maxAttempts; attempt++) {
                 try {
@@ -126,7 +127,7 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
                         model,
                         elapsedMillis(started),
                         "VISION_PROVIDER_FAILED",
-                        safeFailureMessage(retryException)
+                        "Vision provider request failed"
                     );
                 }
             }
@@ -143,11 +144,6 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
 
     private static boolean retryableStatus(int statusCode) {
         return statusCode == 429 || statusCode >= 500;
-    }
-
-    private static String safeFailureMessage(Exception exception) {
-        String message = exception.getMessage();
-        return message == null || message.isBlank() ? "Vision provider request failed" : message;
     }
 
     OpenAiCompatibleChatCompletionRequest toClientRequest(VisionAnalysisRequest request) throws Exception {
@@ -188,6 +184,7 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
         body.put("temperature", request.route().temperature() == null ? 0.0d : request.route().temperature());
         body.put("max_tokens", request.route().maxTokens() == null ? 1024 : request.route().maxTokens());
         body.put("response_format", Map.of("type", "json_object"));
+        OpenAiCompatibleRequestOptionsAdapter.apply(body, request.route().modelName());
         body.put("stream", false);
         return objectMapper.writeValueAsString(body);
     }
@@ -303,6 +300,12 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
         String scheme = baseUri.getScheme();
         if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
             throw new IllegalArgumentException("base URL must use http or https");
+        }
+        if (baseUri.getHost() == null || baseUri.getHost().isBlank()) {
+            throw new IllegalArgumentException("base URL host is required");
+        }
+        if (baseUri.getRawUserInfo() != null) {
+            throw new IllegalArgumentException("base URL must not contain credentials");
         }
         String basePath = baseUri.getRawPath();
         if (basePath == null || basePath.isBlank() || "/".equals(basePath)) {

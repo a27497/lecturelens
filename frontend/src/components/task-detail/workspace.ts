@@ -1,10 +1,20 @@
 import type { TaskEventPayload } from "../../types/task";
+import { formatApiTimestamp } from "../../utils/time";
 
 export type CourseWorkspace = "overview" | "content" | "study" | "qa" | "files" | "technical";
 
 export function courseStageText(stage: string, status?: TaskEventPayload["status"]): string {
-  if (status === "FAILED" && (stage === "GENERATE_ARTIFACTS" || stage === "WRITE_AI_CALL_RECORD")) {
-    return "生成下载文件失败";
+  if (status === "CANCELED") {
+    return "已取消";
+  }
+  if (status === "SUCCEEDED") {
+    return "已完成";
+  }
+  if (status === "FAILED") {
+    if (stage === "GENERATE_ARTIFACTS" || stage === "WRITE_AI_CALL_RECORD") {
+      return "生成下载文件失败";
+    }
+    return "处理失败";
   }
   switch (stage) {
     case "VALIDATE_TASK":
@@ -56,9 +66,7 @@ export function readableTaskError(message: string): string {
 }
 
 export function formatWorkspaceTime(value: string | null | undefined): string {
-  if (!value) return "暂无";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+  return formatApiTimestamp(value);
 }
 
 export function connectionText(status: string): string {

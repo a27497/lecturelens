@@ -24,6 +24,11 @@ jobs:
           cache: maven
           cache-dependency-path: backend/pom.xml
 
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+
       - name: Make Maven Wrapper executable
         working-directory: backend
         run: chmod +x ./mvnw

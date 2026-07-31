@@ -149,6 +149,36 @@ public class OpenAiCompatibleLlmException extends LlmProviderException {
         return Optional.ofNullable(rootCauseMessage);
     }
 
+    public LlmProviderFailureDetails failureDetails() {
+        LlmProviderFailureDetails classified = LlmProviderFailureClassifier.classify(statusCode, responseBodySummary, this);
+        if (classified.category() != LlmProviderFailureCategory.UNKNOWN) {
+            return classified;
+        }
+        LlmProviderFailureCategory fallbackCategory = switch (failureType) {
+            case TIMEOUT -> LlmProviderFailureCategory.TIMEOUT;
+            case CONNECTION_ERROR -> LlmProviderFailureCategory.NETWORK;
+            case PROVIDER_RATE_LIMIT -> LlmProviderFailureCategory.RATE_LIMIT;
+            case PROVIDER_AUTH_FAILED -> LlmProviderFailureCategory.AUTHENTICATION;
+            case EMPTY_RESPONSE, MALFORMED_RESPONSE, JSON_PARSE_ERROR, UNEXPECTED_SCHEMA ->
+                LlmProviderFailureCategory.OUTPUT_INVALID;
+            case HTTP_ERROR -> LlmProviderFailureCategory.UNKNOWN;
+        };
+        return new LlmProviderFailureDetails(
+            fallbackCategory,
+            classified.httpStatus(),
+            classified.providerErrorCode(),
+            retryable
+        );
+    }
+
+    public LlmProviderFailureCategory failureCategory() {
+        return failureDetails().category();
+    }
+
+    public Optional<String> providerErrorCode() {
+        return Optional.ofNullable(failureDetails().providerErrorCode());
+    }
+
     private static LlmProviderFailureType classifyStatus(Integer statusCode) {
         if (statusCode != null && (statusCode == 401 || statusCode == 403)) {
             return LlmProviderFailureType.PROVIDER_AUTH_FAILED;

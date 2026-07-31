@@ -90,6 +90,70 @@ class MarkdownLearningPackageFormatterTest {
     }
 
     @Test
+    void redactsSensitiveTimelineFragmentsWithoutRejectingTechnicalProse() {
+        String markdown = formatter.format(
+            learningPackage("Course Title", "Course summary", "[{\"index\":1,\"text\":\"Point\"}]", "[]", "[]"),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0,
+                0L,
+                60_000L,
+                "00:00:00 - 00:01:00",
+                "token abc123 and token authentication",
+                "translated text",
+                "C:\\Users\\demo\\secret.md",
+                "visual summary",
+                "",
+                List.of(),
+                List.of(),
+                new VideoSegmentSourceStatus(Map.of(), Map.of(), false),
+                0.8d
+            ))
+        );
+
+        assertThat(markdown)
+            .contains("[redacted] and token authentication")
+            .contains("C:\\Users\\demo\\secret.md")
+            .doesNotContain("abc123");
+    }
+
+    @Test
+    void redactsCompletePemPrivateKeyBlockFromTimelineWhilePreservingCourseText() {
+        String courseText = "\u8bfe\u7a0b\u793a\u4f8b\u5f00\u59cb\n"
+            + "-----BEGIN PRIVATE KEY-----\n"
+            + "FAKE_PRIVATE_KEY_BODY_FOR_TESTING_ONLY\n"
+            + "SECOND_FAKE_LINE\n"
+            + "-----END PRIVATE KEY-----\n"
+            + "\u8bfe\u7a0b\u793a\u4f8b\u7ed3\u675f";
+        String markdown = formatter.format(
+            learningPackage("Course Title", "Course summary", "[{\"index\":1,\"text\":\"Point\"}]", "[]", "[]"),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0,
+                0L,
+                60_000L,
+                "00:00:00 - 00:01:00",
+                courseText,
+                "",
+                "",
+                "",
+                "",
+                List.of(),
+                List.of(),
+                new VideoSegmentSourceStatus(Map.of(), Map.of(), false),
+                0.8d
+            ))
+        );
+
+        assertThat(markdown)
+            .contains("\u8bfe\u7a0b\u793a\u4f8b\u5f00\u59cb", "[redacted]", "\u8bfe\u7a0b\u793a\u4f8b\u7ed3\u675f")
+            .doesNotContain(
+                "BEGIN PRIVATE KEY",
+                "END PRIVATE KEY",
+                "FAKE_PRIVATE_KEY_BODY_FOR_TESTING_ONLY",
+                "SECOND_FAKE_LINE"
+            );
+    }
+
+    @Test
     void escapesTablePipesAndNormalizesControlCharacters() {
         String markdown = formatter.format(learningPackage(
             "Course\u0000 Title",
@@ -145,8 +209,8 @@ class MarkdownLearningPackageFormatterTest {
         assertSanitizedFailure("secret abc123");
         assertSanitizedFailure("api key abc123");
         assertSanitizedFailure("Authorization Bearer abc123");
-        assertSanitizedFailure("C:\\Users\\demo\\secret.md");
-        assertSanitizedFailure("/home/demo/secret.md");
+        assertSanitizedFailure("C:\\Users\\alice\\secret.md");
+        assertSanitizedFailure("/home/alice/secret.md");
     }
 
     private void assertSanitizedFailure(String sensitiveText) {

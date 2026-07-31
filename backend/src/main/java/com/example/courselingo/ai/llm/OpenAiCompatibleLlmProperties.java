@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class OpenAiCompatibleLlmProperties {
 
     public static final String DEFAULT_BASE_URL = "https://api.siliconflow.cn/v1";
-    public static final String DEFAULT_MODEL = "Qwen/Qwen2.5-7B-Instruct";
+    public static final String DEFAULT_MODEL = "";
 
     private boolean enabled;
     private String baseUrl = DEFAULT_BASE_URL;

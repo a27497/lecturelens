@@ -24,6 +24,7 @@ const route = useRoute();
 const router = useRouter();
 const TARGET_LANGUAGE_VALUE = "zh-CN";
 const TARGET_LANGUAGE_LABEL = "简体中文";
+const sourceLanguage = ref<"auto" | "en" | "en-us" | "en-gb" | "zh" | "zh-cn" | "zh-tw">("en");
 const createTaskLoading = ref(false);
 const createTaskError = ref("");
 const playbackUrl = ref("");
@@ -244,7 +245,7 @@ async function createTask() {
   createTaskLoading.value = true;
   createTaskError.value = "";
   try {
-    const task = await createAnalysisTask({ uploadId, targetLanguage: language });
+    const task = await createAnalysisTask({ uploadId, targetLanguage: language, sourceLanguage: sourceLanguage.value });
     ElMessage.success("处理任务已创建，正在打开详情。");
     await router.push(`/tasks/${encodeURIComponent(task.taskId)}`);
   } catch (error) {
@@ -377,6 +378,11 @@ async function createTask() {
             <TermHelp term="课程处理" />
           </p>
         </div>
+        <el-select v-model="sourceLanguage" aria-label="原视频语言" style="width: 160px">
+          <el-option label="英文" value="en" />
+          <el-option label="中文" value="zh" />
+          <el-option label="自动检测" value="auto" />
+        </el-select>
         <el-button :loading="createTaskLoading" type="primary" size="large" @click="createTask">
           开始处理
         </el-button>

@@ -12,7 +12,7 @@ public class VideoSegmentProperties {
     private boolean includeOcr = true;
     private boolean includeVision = true;
     private boolean useLlmSummary = false;
-    private String llmProfile = "deepseek-text";
+    private String llmProfile = "fusion-text";
     private boolean failTaskOnError = false;
     private int maxAsrCharsPerWindow = 4000;
     private int maxOcrCharsPerWindow = 2000;
@@ -80,7 +80,7 @@ public class VideoSegmentProperties {
     }
 
     public void setLlmProfile(String llmProfile) {
-        this.llmProfile = llmProfile == null || llmProfile.isBlank() ? "deepseek-text" : llmProfile.strip();
+        this.llmProfile = llmProfile == null || llmProfile.isBlank() ? "fusion-text" : llmProfile.strip();
     }
 
     public boolean isFailTaskOnError() {

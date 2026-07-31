@@ -4,8 +4,8 @@ import type { ApiResponse } from "../types/task";
 import type { CourseChapterResponse } from "../types/chapter";
 import { isTimeoutError, toUserFriendlyError } from "../utils/errorMessage";
 
-export const COURSE_CHAPTER_REQUEST_TIMEOUT_MS = 120_000;
-const COURSE_CHAPTER_TIMEOUT_MESSAGE = "课程章节生成时间较长，本次请求可能仍在后台完成。请稍后刷新任务页或重试。";
+export const COURSE_CHAPTER_REQUEST_TIMEOUT_MS = 70_000;
+const COURSE_CHAPTER_TIMEOUT_MESSAGE = "课程章节生成请求已超时，本次请求已结束，请稍后重试。";
 
 function unwrap<T>(response: ApiResponse<T>): T {
   return response.data;

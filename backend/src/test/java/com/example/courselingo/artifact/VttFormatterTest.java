@@ -85,8 +85,8 @@ class VttFormatterTest {
         assertSanitizedFailure("token abc123");
         assertSanitizedFailure("secret abc123");
         assertSanitizedFailure("api key abc123");
-        assertSanitizedFailure("C:\\Users\\demo\\secret.vtt");
-        assertSanitizedFailure("/home/demo/secret.vtt");
+        assertSanitizedFailure("C:\\Users\\alice\\private-course\\secret.vtt");
+        assertSanitizedFailure("/home/alice/private-course/secret.vtt");
     }
 
     private void assertSanitizedFailure(String text) {

@@ -80,6 +80,7 @@ export interface TaskListResponse {
 export interface CreateAnalysisTaskRequest {
   uploadId: string;
   targetLanguage: string;
+  sourceLanguage?: "auto" | "en" | "en-us" | "en-gb" | "zh" | "zh-cn" | "zh-tw";
 }
 
 export interface CreateAnalysisTaskResponse {

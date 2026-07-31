@@ -4,6 +4,7 @@ import com.example.courselingo.auth.dto.CurrentUserResponse;
 import com.example.courselingo.auth.service.CurrentUserService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
+import com.example.courselingo.common.time.UtcTimestamps;
 import com.example.courselingo.task.dto.TaskDetailResponse;
 import com.example.courselingo.task.dto.TaskListQuery;
 import com.example.courselingo.task.dto.TaskListResponse;
@@ -113,10 +114,10 @@ public class TaskQueryServiceImpl implements TaskQueryService {
             sanitizeErrorMessage(task.getErrorMessage()),
             task.getRetryCount(),
             task.getMaxRetryCount(),
-            task.getCreatedAt(),
-            task.getUpdatedAt(),
-            task.getStartedAt(),
-            task.getFinishedAt()
+            UtcTimestamps.toInstant(task.getCreatedAt()),
+            UtcTimestamps.updatedAt(task.getCreatedAt(), task.getUpdatedAt()),
+            UtcTimestamps.toInstant(task.getStartedAt()),
+            UtcTimestamps.toInstant(task.getFinishedAt())
         );
     }
 
@@ -132,10 +133,10 @@ public class TaskQueryServiceImpl implements TaskQueryService {
             sanitizeErrorMessage(task.getErrorMessage()),
             task.getRetryCount(),
             task.getMaxRetryCount(),
-            task.getCreatedAt(),
-            task.getUpdatedAt(),
-            task.getStartedAt(),
-            task.getFinishedAt()
+            UtcTimestamps.toInstant(task.getCreatedAt()),
+            UtcTimestamps.updatedAt(task.getCreatedAt(), task.getUpdatedAt()),
+            UtcTimestamps.toInstant(task.getStartedAt()),
+            UtcTimestamps.toInstant(task.getFinishedAt())
         );
     }
 

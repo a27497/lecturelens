@@ -7,6 +7,8 @@ import com.example.courselingo.vision.keyframe.VideoKeyframeView;
 public record TaskResultResponse(
     String taskId,
     String targetLanguage,
+    TranslationStatus translationStatus,
+    String translationErrorSummary,
     String sourceFullText,
     List<String> sourceParagraphs,
     String translatedFullText,
@@ -18,4 +20,25 @@ public record TaskResultResponse(
     List<VideoSegmentResponse> videoSegments,
     List<ResultAiCallRecord> aiCallRecords
 ) {
+    public TaskResultResponse(
+        String taskId,
+        String targetLanguage,
+        String sourceFullText,
+        List<String> sourceParagraphs,
+        String translatedFullText,
+        List<ResultSubtitleSegment> subtitles,
+        List<ResultTranslationSegment> translations,
+        ResultLearningPackage learningPackage,
+        List<ResultArtifactFile> artifacts,
+        List<VideoKeyframeView> keyframes,
+        List<VideoSegmentResponse> videoSegments,
+        List<ResultAiCallRecord> aiCallRecords
+    ) {
+        this(
+            taskId, targetLanguage,
+            translations == null || translations.isEmpty() ? TranslationStatus.NOT_STARTED : TranslationStatus.SUCCEEDED,
+            null, sourceFullText, sourceParagraphs, translatedFullText, subtitles, translations, learningPackage,
+            artifacts, keyframes, videoSegments, aiCallRecords
+        );
+    }
 }

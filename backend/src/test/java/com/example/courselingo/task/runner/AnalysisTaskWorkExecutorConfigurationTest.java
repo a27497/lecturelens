@@ -17,6 +17,7 @@ import com.example.courselingo.media.AudioExtractionResult;
 import com.example.courselingo.media.AudioChunker;
 import com.example.courselingo.media.AudioDurationProbe;
 import com.example.courselingo.media.FfmpegAudioExtractor;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractor;
 import com.example.courselingo.subtitle.service.SubtitleSegmentPersistenceService;
 import com.example.courselingo.subtitle.service.SubtitleTranslationService;
 import com.example.courselingo.storage.StorageService;
@@ -73,6 +74,7 @@ class AnalysisTaskWorkExecutorConfigurationTest {
             .withBean(AudioChunker.class, () -> mock(AudioChunker.class))
             .withBean(AudioDurationProbe.class, () -> ignored -> 1_000L)
             .withBean(SpeechToTextProvider.class, () -> mock(SpeechToTextProvider.class))
+            .withBean(EmbeddedSubtitleTranscriptExtractor.class, () -> mock(EmbeddedSubtitleTranscriptExtractor.class))
             .withBean(SubtitleSegmentPersistenceService.class, () -> mock(SubtitleSegmentPersistenceService.class))
             .withBean(SubtitleTranslationService.class, () -> mock(SubtitleTranslationService.class))
             .withBean(LearningPackageService.class, () -> mock(LearningPackageService.class))

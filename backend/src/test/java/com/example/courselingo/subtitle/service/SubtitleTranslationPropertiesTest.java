@@ -11,6 +11,8 @@ class SubtitleTranslationPropertiesTest {
         SubtitleTranslationProperties.FullText fullText = new SubtitleTranslationProperties.FullText();
 
         assertThat(fullText.getSemanticMaxAttempts()).isEqualTo(2);
+        assertThat(fullText.getMaxSourceSegments()).isEqualTo(10_000);
+        assertThat(fullText.getBatchMaxInputChars()).isEqualTo(1_000);
 
         fullText.setSemanticMaxAttempts(1);
         assertThat(fullText.getSemanticMaxAttempts()).isEqualTo(1);
@@ -40,8 +42,10 @@ class SubtitleTranslationPropertiesTest {
 
         fullText.setMaxAttempts(4);
         fullText.setSemanticMaxAttempts(2);
+        fullText.setBatchConcurrency(99);
 
-        assertThat(fullText.getMaxAttempts()).isEqualTo(4);
+        assertThat(fullText.getMaxAttempts()).isEqualTo(3);
         assertThat(fullText.getSemanticMaxAttempts()).isEqualTo(2);
+        assertThat(fullText.getBatchConcurrency()).isEqualTo(4);
     }
 }

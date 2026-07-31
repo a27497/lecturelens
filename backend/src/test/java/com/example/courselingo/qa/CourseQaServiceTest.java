@@ -29,6 +29,7 @@ import com.example.courselingo.qa.dto.CourseQaEvidenceItem;
 import com.example.courselingo.qa.dto.CourseQaResponse;
 import com.example.courselingo.qa.mapper.CourseQaRecordMapper;
 import com.example.courselingo.qa.service.CourseQaEvidenceRetriever;
+import com.example.courselingo.qa.service.CourseQaProperties;
 import com.example.courselingo.qa.service.CourseQaRateLimitResult;
 import com.example.courselingo.qa.service.CourseQaRateLimitService;
 import com.example.courselingo.qa.service.CourseQaResponseParser;
@@ -43,6 +44,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -213,6 +215,53 @@ class CourseQaServiceTest {
         assertThat(llmProvider.requests).hasSize(1);
         assertThat(llmProvider.requests.getFirst().metadata()).containsEntry("stage", "COURSE_QA");
         verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
+    }
+
+    @Test
+    void askCapsAndDeduplicatesEvidenceAtEightItems() {
+        when(currentUserService.currentUser("Bearer demo"))
+            .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
+        when(rateLimitService.checkAndConsume(42L)).thenReturn(CourseQaRateLimitResult.allowed(10, 9));
+        List<CourseQaEvidenceItem> many = IntStream.range(0, 12)
+            .mapToObj(index -> new CourseQaEvidenceItem(
+                "SUBTITLE", Integer.toString(index), index * 1000L, (index + 1L) * 1000L,
+                "00:00:0" + index, "Spring Boot evidence " + index, "课程证据 " + index, 0.9d
+            ))
+            .toList();
+        when(evidenceRetriever.retrieve("task_1", 42L, "zh-CN", "Spring Boot")).thenReturn(many);
+        when(recordMapper.insert(any(CourseQaRecord.class))).thenAnswer(invocation -> {
+            invocation.getArgument(0, CourseQaRecord.class).setId(105L);
+            return 1;
+        });
+        when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
+
+        service.ask("task_1", "Bearer demo", new CourseQaAskRequest("Spring Boot"));
+
+        ArgumentCaptor<StartAiCallRecordCommand> start = ArgumentCaptor.forClass(StartAiCallRecordCommand.class);
+        verify(aiCallRecordService).startCall(start.capture());
+        assertThat(start.getValue().inputUnits()).isEqualTo(8);
+        assertThat(llmProvider.requests.getFirst().metadata()).containsEntry("stage", "COURSE_QA");
+        assertThat(llmProvider.requests.getFirst().maxTokens()).isEqualTo(768);
+        assertThat(llmProvider.requests.getFirst().maxAttempts()).isEqualTo(1);
+        assertThat(llmProvider.requests.getFirst().timeout()).isEqualTo(Duration.ofSeconds(45));
+    }
+
+    @Test
+    void qaConfigurationCannotExceedFixedBudgets() {
+        CourseQaProperties properties = new CourseQaProperties();
+
+        properties.setMaxEvidenceItems(100);
+        properties.setMaxPromptChars(100_000);
+        properties.setMaxTokens(100_000);
+        properties.setMaxAttempts(100);
+        properties.setLlmTimeout(Duration.ofMinutes(5));
+
+        assertThat(properties.getMaxEvidenceItems()).isEqualTo(8);
+        assertThat(properties.getMaxPromptChars()).isEqualTo(12_000);
+        assertThat(properties.getMaxTokens()).isEqualTo(1_024);
+        assertThat(properties.getMaxAttempts()).isEqualTo(1);
+        assertThat(properties.getLlmTimeout()).isEqualTo(Duration.ofSeconds(45));
     }
 
     @Test

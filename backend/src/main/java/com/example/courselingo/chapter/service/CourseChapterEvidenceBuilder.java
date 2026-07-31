@@ -102,9 +102,9 @@ public class CourseChapterEvidenceBuilder {
         long windowMillis = properties.getWindowSeconds() * 1000L;
         long firstStart = Math.max(0L, units.getFirst().startMillis());
         long lastEnd = units.stream().mapToLong(TextUnit::endMillis).max().orElse(firstStart);
-        List<CourseChapterEvidenceItem> evidence = new ArrayList<>();
+        List<CourseChapterEvidenceItem> candidates = new ArrayList<>();
         int index = 0;
-        for (long start = firstStart; start < lastEnd && evidence.size() < properties.getMaxEvidenceItems(); start += windowMillis) {
+        for (long start = firstStart; start < lastEnd; start += windowMillis) {
             long windowStart = start;
             long windowEnd = Math.min(windowStart + windowMillis, lastEnd);
             String text = units.stream()
@@ -113,10 +113,39 @@ public class CourseChapterEvidenceBuilder {
                 .reduce("", (left, right) -> appendLimited(left, right, properties.getMaxCharsPerWindow()));
             text = cleanText(text);
             if (!text.isBlank()) {
-                evidence.add(new CourseChapterEvidenceItem(index++, windowStart, windowEnd, formatRange(windowStart, windowEnd), text));
+                candidates.add(new CourseChapterEvidenceItem(index++, windowStart, windowEnd, formatRange(windowStart, windowEnd), text));
             }
         }
-        return evidence;
+        return evenlySample(candidates, properties.getMaxEvidenceItems());
+    }
+
+    private static List<CourseChapterEvidenceItem> evenlySample(
+        List<CourseChapterEvidenceItem> candidates,
+        int maxItems
+    ) {
+        if (candidates.size() <= maxItems) {
+            return reindex(candidates);
+        }
+        if (maxItems <= 1) {
+            return reindex(List.of(candidates.get(candidates.size() / 2)));
+        }
+        List<CourseChapterEvidenceItem> sampled = new ArrayList<>(maxItems);
+        for (int i = 0; i < maxItems; i++) {
+            int sourceIndex = (int) Math.round(i * (candidates.size() - 1.0d) / (maxItems - 1.0d));
+            sampled.add(candidates.get(sourceIndex));
+        }
+        return reindex(sampled);
+    }
+
+    private static List<CourseChapterEvidenceItem> reindex(List<CourseChapterEvidenceItem> items) {
+        List<CourseChapterEvidenceItem> result = new ArrayList<>(items.size());
+        for (int i = 0; i < items.size(); i++) {
+            CourseChapterEvidenceItem item = items.get(i);
+            result.add(new CourseChapterEvidenceItem(
+                i, item.startTimeMillis(), item.endTimeMillis(), item.timeText(), item.text()
+            ));
+        }
+        return List.copyOf(result);
     }
 
     private String globalContext(String taskId, Long userId, String targetLanguage) {

@@ -67,7 +67,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             stateService,
             messageProducer,
             taskLogMapper,
-            Clock.systemDefaultZone(),
+            Clock.systemUTC(),
             businessMetrics
         );
     }
@@ -121,6 +121,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
     public CreateAnalysisTaskResponse create(CreateAnalysisTaskRequest request, String authorizationHeader) {
         String uploadId = normalizeUploadId(request);
         String targetLanguage = normalizeTargetLanguage(request);
+        String sourceLanguage = normalizeSourceLanguage(request);
         CurrentUserResponse currentUser = currentUserService.currentUser(authorizationHeader);
 
         UploadSession uploadSession = uploadSessionMapper.selectByIdAndUserId(uploadId, currentUser.userId());
@@ -136,7 +137,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             throw new BusinessException(ErrorCode.TASK_RATE_LIMITED);
         }
 
-        AnalysisTask task = buildCreatedTask(uploadId, currentUser.userId(), targetLanguage);
+        AnalysisTask task = buildCreatedTask(uploadId, currentUser.userId(), sourceLanguage, targetLanguage);
         int inserted = analysisTaskMapper.insert(task);
         if (inserted != 1) {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR);
@@ -182,12 +183,25 @@ public class TaskCreationServiceImpl implements TaskCreationService {
         return targetLanguage;
     }
 
-    private AnalysisTask buildCreatedTask(String uploadId, Long userId, String targetLanguage) {
+    private String normalizeSourceLanguage(CreateAnalysisTaskRequest request) {
+        String value = request == null ? null : request.sourceLanguage();
+        if (value == null || value.isBlank()) {
+            return "auto";
+        }
+        String normalized = value.strip().replace('_', '-').toLowerCase(java.util.Locale.ROOT);
+        if (!Set.of("auto", "en", "en-us", "en-gb", "zh", "zh-cn", "zh-tw").contains(normalized)) {
+            throw new BusinessException(ErrorCode.COMMON_VALIDATION_FAILED, "Unsupported source language");
+        }
+        return normalized;
+    }
+
+    private AnalysisTask buildCreatedTask(String uploadId, Long userId, String sourceLanguage, String targetLanguage) {
         LocalDateTime now = LocalDateTime.ofInstant(clock.instant(), clock.getZone());
         AnalysisTask task = new AnalysisTask();
         task.setId("task_" + UUID.randomUUID().toString().replace("-", ""));
         task.setUserId(userId);
         task.setUploadId(uploadId);
+        task.setSourceLanguage(sourceLanguage);
         task.setTargetLanguage(targetLanguage);
         task.setStatus(AnalysisTaskStatus.CREATED.name());
         task.setProgressPercent(0);
@@ -214,6 +228,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             task.getId(),
             task.getUploadId(),
             task.getUserId(),
+            task.getSourceLanguage(),
             task.getTargetLanguage(),
             tracingContext.requestId(),
             tracingContext.traceId(),
