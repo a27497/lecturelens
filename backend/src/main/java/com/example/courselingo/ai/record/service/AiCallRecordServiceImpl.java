@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -37,7 +38,7 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AiCallRecordView startCall(StartAiCallRecordCommand command) {
         ValidatedStartAiCallRecordCommand validated = AiCallRecordValidators.validateStart(command, sanitizer);
         LocalDateTime now = now();
@@ -66,7 +67,7 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
         ValidatedCompleteAiCallRecordCommand validated = AiCallRecordValidators.validateComplete(command, sanitizer);
         AiCallRecord existing = findOwnedRecord(validated.recordId(), validated.taskId(), validated.userId());
         AiCallRecord update = new AiCallRecord();
-        update.setStatus(AiCallRecordStatus.SUCCEEDED.name());
+        update.setStatus(completionStatus(existing, validated).name());
         update.setFinishedAt(now());
         update.setDurationMillis(validated.durationMillis());
         update.setProviderDurationMillis(validated.providerDurationMillis());
@@ -89,7 +90,7 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AiCallRecordView failCall(FailAiCallRecordCommand command) {
         ValidatedFailAiCallRecordCommand validated = AiCallRecordValidators.validateFail(command, sanitizer);
         AiCallRecord existing = findOwnedRecord(validated.recordId(), validated.taskId(), validated.userId());
@@ -149,6 +150,20 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
         target.setErrorMessage(source.getErrorMessage());
         target.setRetryable(source.getRetryable());
         target.setUpdatedAt(source.getUpdatedAt());
+    }
+
+    private static AiCallRecordStatus completionStatus(
+        AiCallRecord existing,
+        ValidatedCompleteAiCallRecordCommand command
+    ) {
+        if (AiCallType.VLM.name().equals(existing.getCallType())
+            && AiCallStage.VISION_ANALYSIS.name().equals(existing.getStage())
+            && command.inputUnits() != null
+            && command.outputUnits() != null
+            && command.outputUnits() < command.inputUnits()) {
+            return AiCallRecordStatus.PARTIAL_SUCCESS;
+        }
+        return AiCallRecordStatus.SUCCEEDED;
     }
 
     private static AiCallRecordView toView(AiCallRecord record) {

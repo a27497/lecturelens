@@ -171,7 +171,12 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
         String originalText = result.text() == null ? "" : result.text().strip();
         OcrStatus status = result.status() == null ? OcrStatus.FAILED : result.status();
         boolean usefulText = status == OcrStatus.SUCCEEDED
-            && OcrTextQualityEvaluator.isUseful(originalText, result.confidence());
+            && OcrTextQualityEvaluator.isUseful(
+                originalText,
+                result.confidence(),
+                result.languageHint(),
+                ""
+            );
         String safeText = usefulText ? truncate(originalText, properties.getMaxTextLength()) : "";
         OcrStatus persistedStatus = status == OcrStatus.SUCCEEDED && !usefulText ? OcrStatus.EMPTY : status;
         VideoKeyframeOcr row = new VideoKeyframeOcr();

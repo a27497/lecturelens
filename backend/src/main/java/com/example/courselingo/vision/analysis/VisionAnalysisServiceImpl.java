@@ -1,5 +1,12 @@
 package com.example.courselingo.vision.analysis;
 
+import com.example.courselingo.ai.record.domain.AiCallStage;
+import com.example.courselingo.ai.record.domain.AiCallType;
+import com.example.courselingo.ai.record.dto.AiCallRecordView;
+import com.example.courselingo.ai.record.dto.CompleteAiCallRecordCommand;
+import com.example.courselingo.ai.record.dto.FailAiCallRecordCommand;
+import com.example.courselingo.ai.record.dto.StartAiCallRecordCommand;
+import com.example.courselingo.ai.record.service.AiCallRecordService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
@@ -12,6 +19,7 @@ import com.example.courselingo.vision.analysis.mapper.VideoKeyframeAnalysisMappe
 import com.example.courselingo.vision.keyframe.VideoKeyframe;
 import com.example.courselingo.vision.keyframe.mapper.VideoKeyframeMapper;
 import com.example.courselingo.vision.ocr.VideoKeyframeOcr;
+import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -46,6 +54,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
     private final Clock clock;
     private final VideoFrameSampler frameSampler;
     private final VisionPromptContextBuilder promptContextBuilder;
+    private final AiCallRecordService aiCallRecordService;
 
     @Autowired
     public VisionAnalysisServiceImpl(
@@ -58,7 +67,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         HighValueKeyframeSelector selector,
         VisionAnalysisProperties properties,
         VideoFrameSampler frameSampler,
-        VisionPromptContextBuilder promptContextBuilder
+        VisionPromptContextBuilder promptContextBuilder,
+        AiCallRecordService aiCallRecordService
     ) {
         this(
             keyframeMapper,
@@ -72,7 +82,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             new ObjectMapper(),
             Clock.systemUTC(),
             frameSampler,
-            promptContextBuilder
+            promptContextBuilder,
+            aiCallRecordService
         );
     }
 
@@ -100,6 +111,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             objectMapper,
             clock,
             null,
+            null,
             null
         );
     }
@@ -118,6 +130,27 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         VideoFrameSampler frameSampler,
         VisionPromptContextBuilder promptContextBuilder
     ) {
+        this(
+            keyframeMapper, ocrMapper, analysisMapper, storageService, provider, aiModelRouter, selector,
+            properties, objectMapper, clock, frameSampler, promptContextBuilder, null
+        );
+    }
+
+    VisionAnalysisServiceImpl(
+        VideoKeyframeMapper keyframeMapper,
+        VideoKeyframeOcrMapper ocrMapper,
+        VideoKeyframeAnalysisMapper analysisMapper,
+        StorageService storageService,
+        VisionModelProvider provider,
+        AiModelRouter aiModelRouter,
+        HighValueKeyframeSelector selector,
+        VisionAnalysisProperties properties,
+        ObjectMapper objectMapper,
+        Clock clock,
+        VideoFrameSampler frameSampler,
+        VisionPromptContextBuilder promptContextBuilder,
+        AiCallRecordService aiCallRecordService
+    ) {
         this.keyframeMapper = keyframeMapper;
         this.ocrMapper = ocrMapper;
         this.analysisMapper = analysisMapper;
@@ -130,6 +163,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         this.clock = clock == null ? Clock.systemUTC() : clock;
         this.frameSampler = frameSampler;
         this.promptContextBuilder = promptContextBuilder;
+        this.aiCallRecordService = aiCallRecordService;
     }
 
     @Override
@@ -170,42 +204,58 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             : ocrMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframes.stream().map(VideoKeyframe::getId).toList());
         List<VideoKeyframe> selected = selector.select(keyframes, ocrRows, properties);
         AiModelRoute route = aiModelRouter.route(AiModelStage.VISION_FRAME_ANALYSIS);
-        analysisMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
+        AiCallRecordView call = startAiCall(normalizedTaskId, userId, selected.size(), route);
+        long scanStartedNanos = System.nanoTime();
         int saved = 0;
         int succeeded = 0;
         int empty = 0;
         int failed = 0;
-        for (VideoKeyframe keyframe : selected) {
-            VideoKeyframeAnalysis row = analyze(
-                keyframe,
-                ocrRows,
-                route,
-                sourceVideo,
-                analysisWorkspace,
-                targetLanguage
-            );
-            if (analysisMapper.insert(row) != 1) {
-                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Visual analysis persistence failed");
-            }
-            saved++;
-            VisionAnalysisStatus status = VisionAnalysisStatus.valueOf(row.getStatus());
-            switch (status) {
-                case SUCCEEDED -> succeeded++;
-                case EMPTY -> empty++;
-                case FAILED -> failed++;
-                default -> {
+        int providerCalls = 0;
+        long providerDurationMillis = 0L;
+        try {
+            analysisMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
+            for (VideoKeyframe keyframe : selected) {
+                AnalysisOutcome outcome = analyze(
+                    keyframe,
+                    ocrRows,
+                    route,
+                    sourceVideo,
+                    analysisWorkspace,
+                    targetLanguage
+                );
+                VideoKeyframeAnalysis row = outcome.row();
+                if (outcome.providerCalled()) providerCalls++;
+                if (outcome.providerCalled() && row.getDurationMillis() != null) {
+                    providerDurationMillis += Math.max(0L, row.getDurationMillis());
+                }
+                if (analysisMapper.insert(row) != 1) {
+                    throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Visual analysis persistence failed");
+                }
+                saved++;
+                VisionAnalysisStatus status = VisionAnalysisStatus.valueOf(row.getStatus());
+                switch (status) {
+                    case SUCCEEDED -> succeeded++;
+                    case EMPTY -> empty++;
+                    case FAILED -> failed++;
+                    default -> { }
                 }
             }
+            int skipped = Math.max(0, keyframes.size() - selected.size());
+            long wallDurationMillis = elapsedMillis(scanStartedNanos);
+            completeAiCall(call, normalizedTaskId, userId, wallDurationMillis, providerDurationMillis,
+                providerCalls, selected.size(), succeeded + empty);
+            LOGGER.info(
+                "event=adaptive_vlm_completed availableKeyframes={} vlmPlanned={} vlmAttempted={} vlmSucceeded={} vlmEmpty={} vlmFailed={} vlmSkipped={}",
+                keyframes.size(), selected.size(), saved, succeeded, empty, failed, skipped
+            );
+            return new VisionAnalysisScanResult(saved, succeeded, empty, failed, skipped);
+        } catch (RuntimeException exception) {
+            failAiCall(call, normalizedTaskId, userId, elapsedMillis(scanStartedNanos), exception);
+            throw exception;
         }
-        int skipped = Math.max(0, keyframes.size() - selected.size());
-        LOGGER.info(
-            "event=adaptive_vlm_completed availableKeyframes={} vlmPlanned={} vlmAttempted={} vlmSucceeded={} vlmEmpty={} vlmFailed={} vlmSkipped={}",
-            keyframes.size(), selected.size(), saved, succeeded, empty, failed, skipped
-        );
-        return new VisionAnalysisScanResult(saved, succeeded, empty, failed, skipped);
     }
 
-    private VideoKeyframeAnalysis analyze(
+    private AnalysisOutcome analyze(
         VideoKeyframe keyframe,
         Collection<VideoKeyframeOcr> ocrRows,
         AiModelRoute route,
@@ -214,6 +264,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         String targetLanguage
     ) {
         Path tempDirectory = null;
+        boolean providerCalled = false;
         try {
             tempDirectory = analysisWorkspace == null
                 ? Files.createTempDirectory("courselingo-vlm-")
@@ -221,8 +272,11 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             Path imageFile = temporaryAnalysisImage(keyframe, sourceVideo, tempDirectory);
             String ocrText = ocrRows.stream()
                 .filter(row -> keyframe.getId().equals(row.getKeyframeId()))
+                .filter(row -> "SUCCEEDED".equals(row.getStatus()))
+                .filter(row -> OcrTextQualityEvaluator.isUseful(
+                    row.getOcrText(), row.getConfidence(), row.getLanguageHint(), ""
+                ))
                 .map(VideoKeyframeOcr::getOcrText)
-                .filter(text -> text != null && !text.isBlank())
                 .findFirst()
                 .orElse("");
             String promptContext = promptContextBuilder == null
@@ -233,6 +287,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
                     keyframe.getTimestampMillis() == null ? 0L : keyframe.getTimestampMillis(),
                     targetLanguage
                 );
+            providerCalled = true;
             VisionAnalysisResult result = provider.analyze(new VisionAnalysisRequest(
                 keyframe.getTaskId(),
                 keyframe.getId(),
@@ -242,18 +297,59 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
                 promptContext,
                 route
             ));
-            return toRow(keyframe, result);
+            return new AnalysisOutcome(toRow(keyframe, result), true);
         } catch (Exception exception) {
-            return toRow(keyframe, VisionAnalysisResult.failed(
+            return new AnalysisOutcome(toRow(keyframe, VisionAnalysisResult.failed(
                 provider.providerName(),
                 route == null ? "" : route.modelName(),
                 null,
                 "VISION_FRAME_FAILED",
                 SafeLogSanitizer.sanitizeAndLimit(exception.getMessage())
-            ));
+            )), providerCalled);
         } finally {
             deleteDirectoryBestEffort(tempDirectory);
         }
+    }
+
+    private AiCallRecordView startAiCall(String taskId, Long userId, int inputUnits, AiModelRoute route) {
+        if (aiCallRecordService == null) return null;
+        return aiCallRecordService.startCall(new StartAiCallRecordCommand(
+            taskId, userId, AiCallType.VLM, AiCallStage.VISION_ANALYSIS,
+            nonBlank(provider.providerName(), "vision"), route == null ? "" : nonBlank(route.modelName(), ""),
+            null, inputUnits
+        ));
+    }
+
+    private void completeAiCall(
+        AiCallRecordView call,
+        String taskId,
+        Long userId,
+        long wallDurationMillis,
+        long providerDurationMillis,
+        int providerCalls,
+        int inputUnits,
+        int outputUnits
+    ) {
+        if (call == null || call.id() == null) return;
+        aiCallRecordService.completeCall(new CompleteAiCallRecordCommand(
+            call.id(), taskId, userId, wallDurationMillis, null, null, null,
+            inputUnits, outputUnits, null, null, providerDurationMillis, providerCalls, 0
+        ));
+    }
+
+    private void failAiCall(AiCallRecordView call, String taskId, Long userId, long durationMillis, RuntimeException ex) {
+        if (call == null || call.id() == null) return;
+        aiCallRecordService.failCall(new FailAiCallRecordCommand(
+            call.id(), taskId, userId, durationMillis, "VISION_ANALYSIS_FAILED",
+            SafeLogSanitizer.sanitizeAndLimit(ex.getMessage()), false, null, null
+        ));
+    }
+
+    private static long elapsedMillis(long startedNanos) {
+        return Math.max(1L, java.time.Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
+    }
+
+    private record AnalysisOutcome(VideoKeyframeAnalysis row, boolean providerCalled) {
     }
 
     private Path temporaryAnalysisImage(VideoKeyframe keyframe, Path sourceVideo, Path tempDirectory) throws IOException {

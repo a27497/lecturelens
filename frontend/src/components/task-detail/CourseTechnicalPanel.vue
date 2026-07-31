@@ -49,10 +49,14 @@ watch(() => props.taskId, () => {
       <h3 id="calls-title">模型调用记录</h3>
       <el-empty v-if="!result?.aiCallRecords.length" description="暂无模型调用记录" />
       <div v-else class="call-list">
-        <article v-for="record in result.aiCallRecords" :key="record.id">
-          <div><strong>{{ record.stage }}</strong><el-tag size="small" effect="plain">{{ record.status }}</el-tag></div>
+        <article v-for="(record, index) in result.aiCallRecords" :key="record.id ?? `${record.stage}-${index}`">
+          <div><strong>{{ record.stage === 'VISION_ANALYSIS' ? '视觉分析' : record.stage }}</strong><el-tag size="small" effect="plain">{{ record.status }}</el-tag></div>
           <span>{{ record.callType }}</span><span>{{ record.provider }}<template v-if="record.model"> / {{ record.model }}</template></span>
-          <small>{{ record.durationMillis === null ? '暂无耗时' : `${record.durationMillis} ms` }} · {{ record.totalTokens === null ? '暂无 token' : `${record.totalTokens} tokens` }}</small>
+          <template v-if="record.stage === 'VISION_ANALYSIS'">
+            <small>调用次数：{{ record.batchCount ?? 0 }} · 成功：{{ record.outputUnits ?? 0 }}</small>
+            <small>Provider 累计耗时：{{ record.providerDurationMillis ?? 0 }} ms · 总墙钟耗时：{{ record.durationMillis ?? 0 }} ms</small>
+          </template>
+          <small v-else>{{ record.durationMillis === null ? '暂无耗时' : `${record.durationMillis} ms` }} · {{ record.totalTokens === null ? '暂无 token' : `${record.totalTokens} tokens` }}</small>
         </article>
       </div>
     </section>

@@ -21,6 +21,7 @@ const props = defineProps<{
   playbackExpiresAt: string;
   subtitleTrackUrl: string;
   subtitleText: string;
+  subtitleLanguage: string;
   subtitleStatus: SubtitleStatus;
   subtitleMessage: string;
 }>();
@@ -54,6 +55,7 @@ defineExpose({ seekTo });
       subtitle-label="原视频字幕"
       :subtitle-track-url="subtitleTrackUrl"
       :subtitle-text="subtitleText"
+      :subtitle-language="subtitleLanguage"
       :subtitle-status="subtitleStatus"
       :subtitle-message="subtitleMessage"
       @refresh="$emit('refreshVideo')"

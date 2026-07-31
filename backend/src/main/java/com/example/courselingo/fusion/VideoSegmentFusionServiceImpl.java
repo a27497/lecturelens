@@ -442,7 +442,9 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
         List<VideoKeyframeOcr> ocrHits = ocrWindowRows.stream()
             .filter(row -> OcrStatus.SUCCEEDED.name().equals(row.getStatus()))
             .filter(row -> row.getOcrText() != null && !row.getOcrText().isBlank())
-            .filter(row -> OcrTextQualityEvaluator.isUseful(row.getOcrText(), row.getConfidence()))
+            .filter(row -> OcrTextQualityEvaluator.isUseful(
+                row.getOcrText(), row.getConfidence(), row.getLanguageHint(), ""
+            ))
             .toList();
         ocrHits.stream().map(VideoKeyframeOcr::getKeyframeId).forEach(keyframeIds::add);
         List<VideoKeyframeAnalysis> analysisWindowRows = analysisRows.stream()
@@ -498,6 +500,8 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
     }
 
     private VideoSegmentResponse toResponse(VideoSegment row) {
+        String persistedOcr = nullToEmpty(row.getOcrText());
+        boolean usefulOcr = OcrTextQualityEvaluator.isUseful(persistedOcr, null);
         return new VideoSegmentResponse(
             row.getId(),
             row.getSegmentIndex(),
@@ -506,9 +510,11 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             row.getTimeText(),
             nullToEmpty(row.getAsrText()),
             nullToEmpty(row.getTranslatedText()),
-            nullToEmpty(row.getOcrText()),
+            usefulOcr ? persistedOcr : "",
             nullToEmpty(row.getVisualSummary()),
-            nullToEmpty(row.getFusedSummary()),
+            usefulOcr
+                ? nullToEmpty(row.getFusedSummary())
+                : OcrTextQualityEvaluator.withoutOcrEvidenceClause(row.getFusedSummary()),
             parseKeywords(row.getKeywordsJson()),
             parseEvidence(row.getEvidenceJson()),
             parseSourceStatus(row.getSourceStatusJson()),

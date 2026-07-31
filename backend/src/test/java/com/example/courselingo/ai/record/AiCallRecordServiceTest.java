@@ -38,6 +38,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 @ExtendWith(MockitoExtension.class)
 class AiCallRecordServiceTest {
@@ -118,6 +119,30 @@ class AiCallRecordServiceTest {
     }
 
     @Test
+    void completeVisionBatchMarksPartialSuccessWhenSomeFramesFailed() {
+        AiCallRecord existing = record(100L, "task_1", 42L, AiCallRecordStatus.STARTED);
+        existing.setCallType(AiCallType.VLM.name());
+        existing.setStage(AiCallStage.VISION_ANALYSIS.name());
+        when(mapper.selectByIdTaskIdAndUserId(100L, "task_1", 42L)).thenReturn(existing);
+        when(mapper.updateByIdTaskIdAndUserId(
+            any(AiCallRecord.class),
+            org.mockito.Mockito.eq(100L),
+            org.mockito.Mockito.eq("task_1"),
+            org.mockito.Mockito.eq(42L)
+        )).thenReturn(1);
+
+        AiCallRecordView view = service.completeCall(new CompleteAiCallRecordCommand(
+            100L, "task_1", 42L, 25L, null, null, null,
+            5, 4, null, null, 20L, 5, 0
+        ));
+
+        assertThat(captureUpdated().getStatus()).isEqualTo("PARTIAL_SUCCESS");
+        assertThat(view.status()).isEqualTo(AiCallRecordStatus.PARTIAL_SUCCESS);
+        assertThat(view.batchCount()).isEqualTo(5);
+        assertThat(view.outputUnits()).isEqualTo(4);
+    }
+
+    @Test
     void failCallUpdatesOnlyCurrentOwnerRecordAndSanitizesErrorMessage() {
         AiCallRecord existing = record(100L, "task_1", 42L, AiCallRecordStatus.STARTED);
         when(mapper.selectByIdTaskIdAndUserId(100L, "task_1", 42L)).thenReturn(existing);
@@ -165,6 +190,39 @@ class AiCallRecordServiceTest {
             .extracting(RecordComponent::getName)
             .doesNotContain("userId");
         verify(mapper).selectByTaskIdAndUserId("task_1", 42L);
+    }
+
+    @Test
+    void legacyCallTypesStagesAndStatusesStillParseAfterAddingVisionValues() {
+        List<AiCallRecord> rows = new java.util.ArrayList<>();
+        long id = 200L;
+        for (AiCallType type : List.of(AiCallType.ASR, AiCallType.LLM)) {
+            for (AiCallStage stage : List.of(
+                AiCallStage.TRANSCRIPTION,
+                AiCallStage.TRANSLATION,
+                AiCallStage.LEARNING_PACKAGE,
+                AiCallStage.COURSE_QA,
+                AiCallStage.COURSE_CHAPTER
+            )) {
+                AiCallRecord row = record(id++, "task_legacy", 42L, AiCallRecordStatus.SUCCEEDED);
+                row.setCallType(type.name());
+                row.setStage(stage.name());
+                rows.add(row);
+            }
+        }
+        when(mapper.selectByTaskIdAndUserId("task_legacy", 42L)).thenReturn(rows);
+
+        List<AiCallRecordView> views = service.listByTask("task_legacy", 42L);
+
+        assertThat(views).hasSize(10);
+        assertThat(views).extracting(AiCallRecordView::callType).contains(AiCallType.ASR, AiCallType.LLM);
+        assertThat(views).extracting(AiCallRecordView::stage).contains(
+            AiCallStage.TRANSCRIPTION,
+            AiCallStage.TRANSLATION,
+            AiCallStage.LEARNING_PACKAGE,
+            AiCallStage.COURSE_QA,
+            AiCallStage.COURSE_CHAPTER
+        );
     }
 
     @Test
@@ -273,11 +331,11 @@ class AiCallRecordServiceTest {
     @Test
     void aiCallRecordServiceUsesTransactionsButDoesNotCallExternalProvidersRunnerMqOrApi() throws Exception {
         assertThat(AiCallRecordServiceImpl.class.getMethod("startCall", StartAiCallRecordCommand.class)
-            .getAnnotation(Transactional.class)).isNotNull();
+            .getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
         assertThat(AiCallRecordServiceImpl.class.getMethod("completeCall", CompleteAiCallRecordCommand.class)
             .getAnnotation(Transactional.class)).isNotNull();
         assertThat(AiCallRecordServiceImpl.class.getMethod("failCall", FailAiCallRecordCommand.class)
-            .getAnnotation(Transactional.class)).isNotNull();
+            .getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
 
         String source = readJavaSources("src/main/java/com/example/courselingo/ai/record");
         assertThat(source)

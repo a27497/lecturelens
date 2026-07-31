@@ -165,6 +165,7 @@ record PipelineAiCallRecord(
     private static String safeProvider(String provider, AiCallType callType, AiCallStage stage) {
         String fallback = switch (callType) {
             case ASR -> "asr-provider";
+            case VLM -> "vision-provider";
             case LLM -> stage == AiCallStage.LEARNING_PACKAGE
                 ? "learning-package-service"
                 : "subtitle-translation-service";

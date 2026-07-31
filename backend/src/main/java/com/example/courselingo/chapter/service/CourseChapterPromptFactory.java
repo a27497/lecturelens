@@ -51,6 +51,10 @@ public final class CourseChapterPromptFactory {
         int maxChars
     ) {
         StringBuilder builder = new StringBuilder();
+        builder.append("Cover the complete timeline from the first evidence item through the last. ")
+            .append("Every chapter must cite at least one evidence index; cite the first and last evidence items. ")
+            .append("Keep chapters ordered, non-overlapping, and without a gap longer than one evidence window. ")
+            .append("Long courses must not be summarized only at the beginning. Use no outside knowledge.\n");
         builder.append("请基于以下课程时间窗口生成课程章节，最多 ").append(maxChapters).append(" 章。\n");
         builder.append("输出格式：{\"chapters\":[{\"title\":\"...\",\"summary\":\"...\",\"startTimeMillis\":0,\"endTimeMillis\":180000,\"keywords\":[\"...\"],\"evidenceIndexes\":[0]}]}\n");
         if (globalContext != null && !globalContext.isBlank()) {
@@ -90,6 +94,30 @@ public final class CourseChapterPromptFactory {
         repaired.add(new LlmMessage(
             LlmRole.USER,
             "上一次输出未通过结构校验。请重新生成完整 JSON object，严格遵守既定 schema、证据索引和时间边界；不要输出解释、Markdown 或代码围栏。"
+        ));
+        return List.copyOf(repaired);
+    }
+
+    public static List<LlmMessage> buildRepairMessages(
+        List<LlmMessage> originalMessages,
+        CourseChapterCoverageReport report
+    ) {
+        List<LlmMessage> safe = originalMessages == null ? List.of() : originalMessages;
+        CourseChapterCoverageReport safeReport = report == null
+            ? CourseChapterCoverageReport.structuralFailure("structured output is invalid")
+            : report;
+        java.util.ArrayList<LlmMessage> repaired = new java.util.ArrayList<>(safe);
+        repaired.add(new LlmMessage(
+            LlmRole.USER,
+            "The previous output failed chapter coverage validation. Regenerate the complete JSON object. "
+                + "timelineCoverage=" + safeReport.timelineCoverageRatio()
+                + ", evidenceCoverage=" + safeReport.evidenceCoverageRatio()
+                + ", missingEvidenceIndexes=" + safeReport.missingEvidenceIndexes()
+                + ", missingTimeRanges=" + safeReport.missingTimeRanges()
+                + ", chaptersWithoutEvidence=" + safeReport.chaptersWithoutEvidence()
+                + ", maxGapMillis=" + safeReport.maxGapMillis()
+                + ", violations=" + safeReport.violations()
+                + ". Return JSON only; do not include Markdown, explanations, or provider output."
         ));
         return List.copyOf(repaired);
     }

@@ -22,12 +22,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public void handleAsyncRequestNotUsable(AsyncRequestNotUsableException exception) {
+        log.debug("event=client_stream_disconnected exceptionType={}", exception.getClass().getSimpleName());
+    }
 
     @ExceptionHandler(LlmStageException.class)
     public ResponseEntity<ApiResponse<AiServiceErrorDetails>> handleLlmStageException(LlmStageException exception) {

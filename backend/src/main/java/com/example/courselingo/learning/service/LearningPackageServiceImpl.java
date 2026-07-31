@@ -20,6 +20,7 @@ import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
 import com.example.courselingo.subtitle.mapper.TaskFullTextResultMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
+import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
@@ -187,25 +188,44 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         List<SubtitleTranslationSegment> translationSegments = visualOnly || fullTextResult != null
             ? List.of()
             : loadAndValidateTranslationSegments(validated, sourceSegments);
+        LearningPackageQualityProfile qualityProfile = LearningPackageQualityProfile.from(
+            sourceSegments, multimodalSegments, properties
+        );
         LlmProvider llmProvider = resolveLlmProvider();
         LlmResult result = fullTextResult == null
             ? generateLearningPackage(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
             : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);
         String provider = normalizeProvider(firstNonBlank(result.provider(), llmProvider.providerName()));
-        LearningPackageResponseParser.ParsedLearningPackage parsed;
+        LearningPackageResponseParser.ParsedLearningPackage parsed = null;
+        LearningPackageQualityReport qualityReport;
         try {
-            parsed = parser.parse(result.content());
+            parsed = parser.parse(result.content(), validated.targetLanguage());
+            qualityReport = LearningPackageQualityValidator.validate(parsed, qualityProfile, validated.targetLanguage());
         } catch (RuntimeException ex) {
             if (!isRecoverableLearningPackageContentFailure(ex)) {
                 throw ex;
             }
             logRecoverableContentFailure(validated, result, provider, ex, "start");
+            qualityReport = LearningPackageQualityReport.parseFailure("structured output could not be parsed");
+        }
+        if (!qualityReport.valid()) {
+            log.warn(
+                "event=learning_package_quality_repair_requested taskId={} tier={} deficits={}",
+                SafeLogSanitizer.sanitize(validated.taskId()), qualityProfile.tier(), qualityReport.promptText()
+            );
             LlmResult retryResult = fullTextResult == null
-                ? generateLearningPackageRetry(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
-                : generateLearningPackageRetryFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);
+                ? generateLearningPackageRetry(
+                    llmProvider, validated, sourceSegments, translationSegments, multimodalSegments, qualityReport
+                )
+                : generateLearningPackageRetryFromFullText(
+                    llmProvider, validated, fullTextResult, multimodalSegments, qualityReport
+                );
             String retryProvider = normalizeProvider(firstNonBlank(retryResult.provider(), provider));
             try {
-                parsed = parser.parse(retryResult.content());
+                parsed = parser.parse(retryResult.content(), validated.targetLanguage());
+                qualityReport = LearningPackageQualityValidator.validate(
+                    parsed, qualityProfile, validated.targetLanguage()
+                );
                 result = retryResult;
                 provider = retryProvider;
             } catch (RuntimeException retryException) {
@@ -213,15 +233,24 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     throw retryException;
                 }
                 logRecoverableContentFailure(validated, retryResult, retryProvider, retryException, "fallback");
-                parsed = fullTextResult == null
-                    ? (visualOnly
-                        ? buildFallbackPackageFromMultimodal(multimodalSegments)
-                        : buildFallbackPackage(sourceSegments, translationSegments))
-                    : buildFallbackPackageFromFullText(fullTextResult);
+                qualityReport = LearningPackageQualityReport.parseFailure("repair output could not be parsed");
                 result = retryResult;
                 provider = retryProvider;
-                logFallbackUsed(validated, provider, result.model(), fallbackReason(retryException));
             }
+        }
+        if (!qualityReport.valid()) {
+            parsed = LearningPackageFallbackFactory.build(
+                fallbackEvidence(fullTextResult, sourceSegments, translationSegments, multimodalSegments),
+                validated.targetLanguage(),
+                qualityProfile
+            );
+            LearningPackageQualityReport fallbackReport = LearningPackageQualityValidator.validate(
+                parsed, qualityProfile, validated.targetLanguage()
+            );
+            if (!fallbackReport.valid()) {
+                throw validationFailure("Learning package deterministic fallback failed quality validation");
+            }
+            logFallbackUsed(validated, provider, result.model(), "validation_failed");
         }
 
         learningPackageMapper.deleteByTaskIdUserIdAndTargetLanguage(
@@ -419,7 +448,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     sourceSegments,
                     translationSegments,
                     multimodalSegments,
-                    properties.llmTimeout()
+                    properties.llmTimeout(),
+                    properties
                 )
             );
             return generateWithDiagnostics(
@@ -443,17 +473,19 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         ValidatedLearningPackageCommand command,
         List<SubtitleSegment> sourceSegments,
         List<SubtitleTranslationSegment> translationSegments,
-        List<VideoSegment> multimodalSegments
+        List<VideoSegment> multimodalSegments,
+        LearningPackageQualityReport qualityReport
     ) {
         try {
             LlmRequest request = routeRequest(
-                LearningPackagePromptFactory.buildRetry(
+                LearningPackagePromptFactory.withQualityRepair(LearningPackagePromptFactory.buildRetry(
                     command,
                     sourceSegments,
                     translationSegments,
                     multimodalSegments,
-                    properties.llmTimeout()
-                )
+                    properties.llmTimeout(),
+                    properties
+                ), qualityReport)
             );
             return generateWithDiagnostics(
                 llmProvider,
@@ -484,7 +516,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
                     multimodalSegments,
-                    properties.llmTimeout()
+                    properties.llmTimeout(),
+                    properties
                 )
             );
             return generateWithDiagnostics(
@@ -507,17 +540,19 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
         TaskFullTextResult fullTextResult,
-        List<VideoSegment> multimodalSegments
+        List<VideoSegment> multimodalSegments,
+        LearningPackageQualityReport qualityReport
     ) {
         try {
             LlmRequest request = routeRequest(
-                LearningPackagePromptFactory.buildRetryFromFullText(
+                LearningPackagePromptFactory.withQualityRepair(LearningPackagePromptFactory.buildRetryFromFullText(
                     command,
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
                     multimodalSegments,
-                    properties.llmTimeout()
-                )
+                    properties.llmTimeout(),
+                    properties
+                ), qualityReport)
             );
             return generateWithDiagnostics(
                 llmProvider,
@@ -646,6 +681,28 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             .filter(text -> text != null && !text.isBlank())
             .collect(Collectors.joining(" "))
             .strip();
+    }
+
+    private static String fallbackEvidence(
+        TaskFullTextResult fullTextResult,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments
+    ) {
+        if (fullTextResult != null) {
+            String translated = fullTextResult.getTranslatedFullText();
+            return translated == null || translated.isBlank() ? fullTextResult.getSourceFullText() : translated;
+        }
+        String transcript = preferredFallbackText(sourceSegments, translationSegments);
+        if (transcript != null && !transcript.isBlank()) return transcript;
+        return multimodalSegments.stream()
+            .map(segment -> {
+                String visual = segment.getVisualSummary();
+                if (visual != null && !visual.isBlank()) return visual;
+                return OcrTextQualityEvaluator.isUseful(segment.getOcrText(), null) ? segment.getOcrText() : "";
+            })
+            .filter(value -> value != null && !value.isBlank())
+            .collect(Collectors.joining(" "));
     }
 
     private static List<String> extractSentences(String text) {

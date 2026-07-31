@@ -34,7 +34,7 @@ public final class VideoKeyframeViews {
         if (keyframes == null || keyframes.isEmpty()) {
             return List.of();
         }
-        Map<Long, VideoKeyframeOcrView> ocrViews = VideoKeyframeOcrViews.byKeyframeId(ocrRows);
+        Map<Long, VideoKeyframeOcrView> ocrViews = VideoKeyframeOcrViews.byKeyframeId(ocrRows, analysisRows);
         Function<Long, VideoKeyframeOcrView> ocrResolver = VideoKeyframeOcrViews.resolver(ocrViews, ocrEnabled);
         Map<Long, VideoKeyframeAnalysisView> analysisViews = VideoKeyframeAnalysisViews.byKeyframeId(analysisRows);
         Function<Long, VideoKeyframeAnalysisView> analysisResolver = VideoKeyframeAnalysisViews.resolver(

@@ -22,7 +22,8 @@ class LearningPackagePromptFactoryTest {
             List.of(source()),
             List.of(translation()),
             timeline,
-            Duration.ofSeconds(30)
+            Duration.ofSeconds(30),
+            new LearningPackageProperties()
         );
 
         String prompt = request.messages().get(1).content();
@@ -46,13 +47,29 @@ class LearningPackagePromptFactoryTest {
             List.of(source()),
             List.of(translation()),
             List.of(segment),
-            Duration.ofSeconds(30)
+            Duration.ofSeconds(30),
+            new LearningPackageProperties()
         );
 
         assertThat(request.messages().get(1).content())
             .contains("\"mode\":\"TRANSCRIPT_ONLY\"")
             .contains("spoken frame 0")
             .doesNotContain("\"visualSummary\"");
+    }
+
+    @Test
+    void promptUsesTheSameConfiguredCourseTierAsValidation() {
+        LearningPackageProperties properties = new LearningPackageProperties();
+        properties.setLongCourseMinutes(12);
+        List<VideoSegment> timeline = IntStream.range(0, 6).mapToObj(this::segment).toList();
+        timeline.getLast().setEndMillis(15 * 60_000L);
+
+        LlmRequest request = LearningPackagePromptFactory.build(
+            command(), List.of(source()), List.of(translation()), timeline,
+            Duration.ofSeconds(30), properties
+        );
+
+        assertThat(request.messages().get(1).content()).contains("Quality requirements: tier=LONG");
     }
 
     private VideoSegment segment(int index) {

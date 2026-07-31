@@ -37,6 +37,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseChapterServiceImpl implements CourseChapterService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourseChapterServiceImpl.class);
 
     private static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<>() {
     };
@@ -159,14 +163,22 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             );
             LlmRequest routed = routedRequestFactory == null ? request : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, request);
             LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
-            List<CourseChapterResponseParser.ParsedCourseChapter> parsed;
+            boolean repairAttempted = false;
+            boolean fallbackUsed = false;
+            List<CourseChapterResponseParser.ParsedCourseChapter> parsed = List.of();
+            CourseChapterCoverageReport coverage;
             try {
                 parsed = parser.parse(result.content(), bundle.evidence(), properties.getMaxChapters());
+                coverage = CourseChapterCoverageValidator.validate(parsed, bundle.evidence(), properties);
             } catch (BusinessException firstParseFailure) {
+                coverage = CourseChapterCoverageReport.structuralFailure("structured output is invalid");
+            }
+            if (!coverage.valid()) {
+                repairAttempted = true;
                 LlmRequest repair = new LlmRequest(
                     "chapter_repair_" + UUID.randomUUID(),
                     task.getId(),
-                    CourseChapterPromptFactory.buildRepairMessages(messages),
+                    CourseChapterPromptFactory.buildRepairMessages(messages, coverage),
                     properties.getLlmTimeout(),
                     0.0d, properties.getMaxTokens(), 1,
                     Map.of("stage", AiModelStage.COURSE_CHAPTER.name(), "repair", true),
@@ -176,9 +188,33 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                     ? repair
                     : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, repair);
                 LlmResult repaired = LlmStructuredOutputExecutor.execute(llmProvider, routedRepair);
-                parsed = parser.parse(repaired.content(), bundle.evidence(), properties.getMaxChapters());
+                try {
+                    parsed = parser.parse(repaired.content(), bundle.evidence(), properties.getMaxChapters());
+                    coverage = CourseChapterCoverageValidator.validate(parsed, bundle.evidence(), properties);
+                } catch (BusinessException ignored) {
+                    coverage = CourseChapterCoverageReport.structuralFailure("repair output is invalid");
+                }
                 result = withDuration(repaired, result.duration().plus(repaired.duration()));
             }
+            if (!coverage.valid()) {
+                fallbackUsed = true;
+                parsed = CourseChapterFallbackFactory.build(bundle.evidence(), task.getTargetLanguage(), properties);
+                coverage = CourseChapterCoverageValidator.validate(parsed, bundle.evidence(), properties);
+            }
+            if (!coverage.valid()) {
+                throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course chapter coverage validation failed");
+            }
+            LOGGER.info(
+                "event=course_chapter_generation_validated repairAttempted={} fallbackUsed={} chapterCount={} "
+                    + "evidenceCount={} timelineCoverage={} evidenceCoverage={} maxGapMillis={}",
+                repairAttempted,
+                fallbackUsed,
+                parsed.size(),
+                bundle.evidence().size(),
+                coverage.timelineCoverageRatio(),
+                coverage.evidenceCoverageRatio(),
+                coverage.maxGapMillis()
+            );
             List<CourseChapter> rows = persistSuccess(task, parsed, bundle.evidence(), usage(result));
             completeAiCall(started, task, result, bundle.evidence().size(), rows.size());
             return rows.stream().map(this::toResponse).toList();

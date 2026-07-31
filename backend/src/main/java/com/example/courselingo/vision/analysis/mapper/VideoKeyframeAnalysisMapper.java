@@ -10,6 +10,14 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface VideoKeyframeAnalysisMapper extends BaseMapper<VideoKeyframeAnalysis> {
 
+    default List<VideoKeyframeAnalysis> selectByTaskIdAndUserId(String taskId, Long userId) {
+        return selectList(Wrappers.<VideoKeyframeAnalysis>lambdaQuery()
+            .eq(VideoKeyframeAnalysis::getTaskId, taskId)
+            .eq(VideoKeyframeAnalysis::getUserId, userId)
+            .orderByAsc(VideoKeyframeAnalysis::getCreatedAt)
+            .orderByAsc(VideoKeyframeAnalysis::getId));
+    }
+
     default List<VideoKeyframeAnalysis> selectByKeyframeIds(String taskId, Long userId, Collection<Long> keyframeIds) {
         if (keyframeIds == null || keyframeIds.isEmpty()) {
             return List.of();

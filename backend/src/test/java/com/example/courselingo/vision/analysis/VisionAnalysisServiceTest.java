@@ -7,6 +7,15 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
+import com.example.courselingo.ai.record.domain.AiCallRecordStatus;
+import com.example.courselingo.ai.record.domain.AiCallStage;
+import com.example.courselingo.ai.record.domain.AiCallType;
+import com.example.courselingo.ai.record.dto.AiCallRecordView;
+import com.example.courselingo.ai.record.dto.CompleteAiCallRecordCommand;
+import com.example.courselingo.ai.record.dto.StartAiCallRecordCommand;
+import com.example.courselingo.ai.record.service.AiCallRecordService;
 
 import com.example.courselingo.modelrouting.AiModelProfile;
 import com.example.courselingo.common.error.ErrorCode;
@@ -47,6 +56,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -290,6 +300,48 @@ class VisionAnalysisServiceTest {
         assertThat(captured.get().ocrText()).isEqualTo("Architecture diagram");
         assertThat(captured.get().promptContext()).contains("source text", "translated text");
         assertThat(workspace.resolve("vlm-9")).doesNotExist();
+    }
+
+    @Test
+    void scanCreatesOneAggregatedVisionAiCallRecord() {
+        when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L))
+            .thenReturn(List.of(keyframe(9L, 12_345L, KeyframeSelectionReason.SCENE_CHANGE)));
+        when(ocrMapper.selectByKeyframeIds("task_1", 42L, List.of(9L))).thenReturn(List.of());
+        AiCallRecordService records = mock(AiCallRecordService.class);
+        when(records.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedVisionCall());
+        VisionModelProvider provider = new VisionModelProvider() {
+            @Override public String providerName() { return "fake-vision"; }
+            @Override public VisionAnalysisResult analyze(VisionAnalysisRequest request) {
+                return VisionAnalysisResult.empty("fake-vision", "qwen-vl", 17L);
+            }
+        };
+        VisionAnalysisService service = new VisionAnalysisServiceImpl(
+            keyframeMapper, ocrMapper, analysisMapper, new MemoryStorageService(), provider,
+            new AiModelRouter(routingProperties()), new HighValueKeyframeSelector(), properties,
+            new ObjectMapper(), CLOCK, null, null, records
+        );
+
+        service.scan("task_1", 42L);
+
+        ArgumentCaptor<StartAiCallRecordCommand> start = ArgumentCaptor.forClass(StartAiCallRecordCommand.class);
+        verify(records).startCall(start.capture());
+        assertThat(start.getValue().callType()).isEqualTo(AiCallType.VLM);
+        assertThat(start.getValue().stage()).isEqualTo(AiCallStage.VISION_ANALYSIS);
+        ArgumentCaptor<CompleteAiCallRecordCommand> complete = ArgumentCaptor.forClass(CompleteAiCallRecordCommand.class);
+        verify(records).completeCall(complete.capture());
+        assertThat(complete.getValue().batchCount()).isEqualTo(1);
+        assertThat(complete.getValue().providerDurationMillis()).isEqualTo(17L);
+        assertThat(complete.getValue().inputUnits()).isEqualTo(1);
+        assertThat(complete.getValue().outputUnits()).isEqualTo(1);
+    }
+
+    private static AiCallRecordView startedVisionCall() {
+        LocalDateTime now = LocalDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone());
+        return new AiCallRecordView(
+            99L, "task_1", AiCallType.VLM, AiCallStage.VISION_ANALYSIS, "fake-vision", "qwen-vl",
+            AiCallRecordStatus.STARTED, now, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, now, now
+        );
     }
 
     private VisionAnalysisService newService(VisionModelProvider provider) {

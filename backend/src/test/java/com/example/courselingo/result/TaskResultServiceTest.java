@@ -2,6 +2,7 @@ package com.example.courselingo.result;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -168,6 +169,115 @@ class TaskResultServiceTest {
             .doesNotContain("objectKey")
             .doesNotContain("localPath")
             .doesNotContain("secret");
+    }
+
+    @Test
+    void historicalVisionRowsProduceOneReadOnlyAggregateWithoutDuplicates() {
+        TaskResultServiceImpl resultService = new TaskResultServiceImpl(
+            currentUserService, analysisTaskMapper, subtitleSegmentQueryService, subtitleTranslationQueryService,
+            null, learningPackageQueryService, artifactFileQueryService, aiCallRecordService,
+            null, null, new VisionOcrProperties(), analysisMapper, new VisionAnalysisProperties(), null,
+            new ObjectMapper()
+        );
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task("task_1", 42L));
+        when(subtitleSegmentQueryService.listByTaskId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleTranslationQueryService.listTranslations("task_1", 42L, "zh-CN")).thenReturn(List.of());
+        when(learningPackageQueryService.getByTaskAndLanguage("task_1", 42L, "zh-CN")).thenReturn(Optional.empty());
+        when(artifactFileQueryService.listByTaskId("task_1", 42L)).thenReturn(List.of());
+        when(aiCallRecordService.listByTask("task_1", 42L)).thenReturn(List.of());
+        VideoKeyframeAnalysis first = analysisRow(1L, VisionAnalysisStatus.SUCCEEDED, "PPT", "slide");
+        first.setProvider("openai-compatible-vision");
+        first.setModel("fictional-vl-model");
+        first.setDurationMillis(11L);
+        first.setCreatedAt(LocalDateTime.of(2026, 7, 1, 10, 0));
+        first.setUpdatedAt(first.getCreatedAt());
+        VideoKeyframeAnalysis second = analysisRow(2L, VisionAnalysisStatus.EMPTY, "OTHER", "");
+        second.setProvider(first.getProvider());
+        second.setModel(first.getModel());
+        second.setDurationMillis(13L);
+        second.setCreatedAt(first.getCreatedAt().plusSeconds(1));
+        second.setUpdatedAt(second.getCreatedAt());
+        when(analysisMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(first, second));
+
+        TaskResultResponse result = resultService.getResult("task_1", "Bearer access-token");
+
+        assertThat(result.aiCallRecords()).singleElement().satisfies(record -> {
+            assertThat(record.id()).isNull();
+            assertThat(record.callType()).isEqualTo("VLM");
+            assertThat(record.stage()).isEqualTo("VISION_ANALYSIS");
+            assertThat(record.batchCount()).isEqualTo(2);
+            assertThat(record.outputUnits()).isEqualTo(2);
+            assertThat(record.providerDurationMillis()).isEqualTo(24L);
+        });
+        verify(aiCallRecordService, never()).startCall(org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void historicalVisionAggregateReportsPartialMixedResultsDeterministically() {
+        TaskResultServiceImpl resultService = new TaskResultServiceImpl(
+            currentUserService, analysisTaskMapper, subtitleSegmentQueryService, subtitleTranslationQueryService,
+            null, learningPackageQueryService, artifactFileQueryService, aiCallRecordService,
+            null, null, new VisionOcrProperties(), analysisMapper, new VisionAnalysisProperties(), null,
+            new ObjectMapper()
+        );
+        stubEmptyResultDependencies();
+        VideoKeyframeAnalysis succeeded = analysisRow(1L, VisionAnalysisStatus.SUCCEEDED, "PPT", "slide");
+        succeeded.setProvider("provider-a");
+        succeeded.setModel("model-z");
+        succeeded.setDurationMillis(11L);
+        succeeded.setCreatedAt(LocalDateTime.of(2026, 7, 1, 10, 0));
+        succeeded.setUpdatedAt(succeeded.getCreatedAt());
+        VideoKeyframeAnalysis failed = analysisRow(2L, VisionAnalysisStatus.FAILED, "OTHER", "");
+        failed.setProvider("provider-b");
+        failed.setModel("model-a");
+        failed.setDurationMillis(13L);
+        failed.setCreatedAt(succeeded.getCreatedAt().plusSeconds(1));
+        failed.setUpdatedAt(failed.getCreatedAt());
+        when(analysisMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(succeeded, failed));
+
+        TaskResultResponse result = resultService.getResult("task_1", "Bearer access-token");
+
+        assertThat(result.aiCallRecords()).singleElement().satisfies(record -> {
+            assertThat(record.id()).isNull();
+            assertThat(record.provider()).isEqualTo("mixed");
+            assertThat(record.model()).isEqualTo("mixed");
+            assertThat(record.status()).isEqualTo("PARTIAL_SUCCESS");
+            assertThat(record.batchCount()).isEqualTo(2);
+            assertThat(record.outputUnits()).isEqualTo(1);
+            assertThat(record.providerDurationMillis()).isEqualTo(24L);
+        });
+        verify(aiCallRecordService, never()).startCall(org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void persistedVisionAggregateSuppressesHistoricalReadOnlyAggregate() {
+        TaskResultServiceImpl resultService = new TaskResultServiceImpl(
+            currentUserService, analysisTaskMapper, subtitleSegmentQueryService, subtitleTranslationQueryService,
+            null, learningPackageQueryService, artifactFileQueryService, aiCallRecordService,
+            null, null, new VisionOcrProperties(), analysisMapper, new VisionAnalysisProperties(), null,
+            new ObjectMapper()
+        );
+        stubEmptyResultDependencies();
+        when(aiCallRecordService.listByTask("task_1", 42L)).thenReturn(List.of(new AiCallRecordView(
+            77L, "task_1", AiCallType.VLM, AiCallStage.VISION_ANALYSIS, "provider", "model",
+            AiCallRecordStatus.SUCCEEDED, time(1), time(2), 20L, 17L, 2, 0,
+            null, null, null, 2, 2, null, null, null, null, null, time(1), time(2)
+        )));
+
+        TaskResultResponse result = resultService.getResult("task_1", "Bearer access-token");
+
+        assertThat(result.aiCallRecords()).singleElement().satisfies(record -> assertThat(record.id()).isEqualTo(77L));
+        verify(analysisMapper, never()).selectByTaskIdAndUserId(any(), any());
+    }
+
+    private void stubEmptyResultDependencies() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task("task_1", 42L));
+        when(subtitleSegmentQueryService.listByTaskId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleTranslationQueryService.listTranslations("task_1", 42L, "zh-CN")).thenReturn(List.of());
+        when(learningPackageQueryService.getByTaskAndLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(Optional.empty());
+        when(artifactFileQueryService.listByTaskId("task_1", 42L)).thenReturn(List.of());
+        when(aiCallRecordService.listByTask("task_1", 42L)).thenReturn(List.of());
     }
 
     @Test
