@@ -5,5 +5,6 @@ public enum AiCallStage {
     TRANSLATION,
     LEARNING_PACKAGE,
     COURSE_QA,
-    COURSE_CHAPTER
+    COURSE_CHAPTER,
+    VISION_ANALYSIS
 }

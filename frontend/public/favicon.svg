@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="LectureLens">
+  <rect width="64" height="64" rx="14" fill="#173f35"/>
+  <path d="M18 15v29h19v6H12V15z" fill="#f5f0df"/>
+  <circle cx="42" cy="27" r="10" fill="none" stroke="#d6a75c" stroke-width="5"/>
+  <path d="m49 34 8 8" stroke="#d6a75c" stroke-width="5" stroke-linecap="round"/>
+</svg>

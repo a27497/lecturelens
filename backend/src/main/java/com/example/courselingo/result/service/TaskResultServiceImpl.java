@@ -35,6 +35,7 @@ import com.example.courselingo.vision.keyframe.VideoKeyframeView;
 import com.example.courselingo.vision.keyframe.VideoKeyframeViews;
 import com.example.courselingo.vision.keyframe.mapper.VideoKeyframeMapper;
 import com.example.courselingo.vision.analysis.VisionAnalysisProperties;
+import com.example.courselingo.vision.analysis.VideoKeyframeAnalysis;
 import com.example.courselingo.vision.analysis.mapper.VideoKeyframeAnalysisMapper;
 import com.example.courselingo.vision.ocr.VisionOcrProperties;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
@@ -42,6 +43,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -191,6 +193,10 @@ public class TaskResultServiceImpl implements TaskResultService {
         List<SubtitleTranslationSegmentView> translations = subtitleTranslationQueryService
             .listTranslations(normalizedTaskId, userId, targetLanguage);
         List<AiCallRecordView> aiCalls = aiCallRecordService.listByTask(normalizedTaskId, userId);
+        List<ResultAiCallRecord> resultAiCalls = new java.util.ArrayList<>(aiCalls.stream()
+            .map(TaskResultServiceImpl::toAiCallRecord)
+            .toList());
+        appendHistoricalVisionRecord(resultAiCalls, aiCalls, normalizedTaskId, userId);
         TranslationStatus translationStatus = translationStatus(task, fullText, translations, aiCalls);
         return new TaskResultResponse(
             normalizedTaskId,
@@ -214,9 +220,7 @@ public class TaskResultServiceImpl implements TaskResultService {
                 .toList(),
             keyframes(normalizedTaskId, userId),
             videoSegments(normalizedTaskId, userId),
-            aiCalls.stream()
-                .map(TaskResultServiceImpl::toAiCallRecord)
-                .toList()
+            List.copyOf(resultAiCalls)
         );
     }
 
@@ -323,8 +327,61 @@ public class TaskResultServiceImpl implements TaskResultService {
             view.promptTokens(),
             view.completionTokens(),
             view.totalTokens(),
+            view.inputUnits(),
+            view.outputUnits(),
             view.createdAt()
         );
+    }
+
+    private void appendHistoricalVisionRecord(
+        List<ResultAiCallRecord> destination,
+        List<AiCallRecordView> persistedCalls,
+        String taskId,
+        Long userId
+    ) {
+        boolean persisted = persistedCalls.stream().anyMatch(call ->
+            call.stage() == com.example.courselingo.ai.record.domain.AiCallStage.VISION_ANALYSIS
+        );
+        if (persisted || keyframeAnalysisMapper == null) return;
+        List<VideoKeyframeAnalysis> rows = keyframeAnalysisMapper.selectByTaskIdAndUserId(taskId, userId);
+        if (rows.isEmpty()) return;
+        long providerDuration = rows.stream().map(VideoKeyframeAnalysis::getDurationMillis)
+            .filter(java.util.Objects::nonNull).mapToLong(Long::longValue).sum();
+        int completed = (int) rows.stream().filter(row ->
+            "SUCCEEDED".equals(row.getStatus()) || "EMPTY".equals(row.getStatus())
+        ).count();
+        java.time.LocalDateTime earliest = rows.stream().map(VideoKeyframeAnalysis::getCreatedAt)
+            .filter(java.util.Objects::nonNull).min(java.time.LocalDateTime::compareTo).orElse(null);
+        java.time.LocalDateTime latest = rows.stream().map(VideoKeyframeAnalysis::getUpdatedAt)
+            .filter(java.util.Objects::nonNull).max(java.time.LocalDateTime::compareTo).orElse(earliest);
+        long wallDuration = earliest == null || latest == null
+            ? providerDuration
+            : Math.max(providerDuration, Duration.between(earliest, latest).toMillis());
+        destination.add(new ResultAiCallRecord(
+            null,
+            "VLM",
+            "VISION_ANALYSIS",
+            commonValue(rows.stream().map(VideoKeyframeAnalysis::getProvider).toList()),
+            commonValue(rows.stream().map(VideoKeyframeAnalysis::getModel).toList()),
+            completed < rows.size() ? "PARTIAL_SUCCESS" : "SUCCEEDED",
+            wallDuration,
+            providerDuration,
+            rows.size(),
+            0,
+            null,
+            null,
+            null,
+            rows.size(),
+            completed,
+            earliest
+        ));
+    }
+
+    private static String commonValue(List<String> values) {
+        List<String> normalized = values.stream().filter(value -> value != null && !value.isBlank())
+            .map(String::strip).distinct().toList();
+        if (normalized.isEmpty()) return "vision";
+        return normalized.size() == 1 ? normalized.getFirst() : "mixed";
     }
 
     private List<VideoKeyframeView> keyframes(String taskId, Long userId) {

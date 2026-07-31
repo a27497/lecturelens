@@ -24,6 +24,7 @@ import { useTaskEventsStore } from "../stores/taskEvents";
 import { useTaskResultStore } from "../stores/taskResult";
 import type { TaskDetailResponse } from "../types/task";
 import { isRetryableTaskStatus } from "../utils/taskStatus";
+import { normalizeSubtitleLanguage } from "../utils/subtitleLanguage";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 type VideoAsideExpose = { seekTo: (seconds: number) => void };
@@ -46,6 +47,7 @@ const playbackError = ref("");
 const playbackRequestVersion = ref(0);
 const subtitleTrackUrl = ref("");
 const subtitleText = ref("");
+const subtitleLanguage = ref("und");
 const subtitleStatus = ref<SubtitleStatus>("none");
 const subtitleMessage = ref("");
 const subtitleRequestVersion = ref(0);
@@ -181,6 +183,7 @@ function revokeSubtitleUrl() {
 function clearTaskEmbeddedSubtitles(status: SubtitleStatus = "none") {
   subtitleRequestVersion.value += 1;
   subtitleText.value = "";
+  subtitleLanguage.value = "und";
   subtitleStatus.value = status;
   subtitleMessage.value = "";
   revokeSubtitleUrl();
@@ -194,12 +197,15 @@ async function refreshTaskEmbeddedSubtitles(currentTaskId: string) {
   subtitleStatus.value = "loading";
   subtitleMessage.value = "";
   subtitleText.value = "";
+  subtitleLanguage.value = "und";
   revokeSubtitleUrl();
   try {
     const probe = await probeTaskEmbeddedSubtitles(normalizedTaskId);
     if (version !== subtitleRequestVersion.value) return;
     if (probe.status === "NOT_FOUND" || probe.selectedStreamIndex === null) { subtitleStatus.value = "not_found"; return; }
     if (probe.status === "UNSUPPORTED") { subtitleStatus.value = "unsupported"; return; }
+    const selectedTrack = probe.tracks.find((track) => track.streamIndex === probe.selectedStreamIndex);
+    subtitleLanguage.value = normalizeSubtitleLanguage(selectedTrack?.language);
     const vttText = await downloadTaskEmbeddedSubtitle(normalizedTaskId, probe.selectedStreamIndex);
     if (version !== subtitleRequestVersion.value) return;
     subtitleText.value = vttText;
@@ -210,6 +216,7 @@ async function refreshTaskEmbeddedSubtitles(currentTaskId: string) {
     subtitleStatus.value = "failed";
     subtitleMessage.value = toReadableEmbeddedSubtitleError(error);
     subtitleText.value = "";
+    subtitleLanguage.value = "und";
     revokeSubtitleUrl();
   }
 }
@@ -311,6 +318,7 @@ async function confirmRetryTask() {
             :playback-expires-at="playbackExpiresAt"
             :subtitle-track-url="subtitleTrackUrl"
             :subtitle-text="subtitleText"
+            :subtitle-language="subtitleLanguage"
             :subtitle-status="subtitleStatus"
             :subtitle-message="subtitleMessage"
             @refresh-video="refreshTaskVideo"

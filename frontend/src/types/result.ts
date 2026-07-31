@@ -127,16 +127,21 @@ export interface ResultVideoSegment {
 }
 
 export interface ResultAiCallRecord {
-  id: number;
+  id: number | null;
   callType: string;
   stage: string;
   provider: string;
   model: string | null;
   status: string;
   durationMillis: number | null;
+  providerDurationMillis: number | null;
+  batchCount: number | null;
+  retryCount: number | null;
   promptTokens: number | null;
   completionTokens: number | null;
   totalTokens: number | null;
+  inputUnits: number | null;
+  outputUnits: number | null;
   createdAt: string;
 }
 

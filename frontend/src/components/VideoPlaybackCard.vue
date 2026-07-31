@@ -15,6 +15,7 @@ const props = defineProps<{
   subtitleTrackUrl?: string;
   subtitleLabel?: string;
   subtitleText?: string;
+  subtitleLanguage?: string;
   subtitleStatus?: SubtitleStatus;
   subtitleMessage?: string;
 }>();
@@ -24,6 +25,7 @@ defineEmits<{
 }>();
 
 const currentTime = ref(0);
+const videoErrorMessage = ref("");
 const videoRef = ref<HTMLVideoElement | null>(null);
 const pendingSeekSeconds = ref<number | null>(null);
 const subtitleCues = computed(() => parseVttCues(props.subtitleText || ""));
@@ -59,6 +61,7 @@ watch(
   () => props.playbackUrl,
   () => {
     currentTime.value = 0;
+    videoErrorMessage.value = "";
   },
 );
 
@@ -73,8 +76,30 @@ function seekTo(seconds: number) {
 }
 
 function handleLoadedMetadata(event: Event) {
+  videoErrorMessage.value = "";
   updateCurrentTime(event);
   applyPendingSeek();
+}
+
+function clearVideoError() {
+  videoErrorMessage.value = "";
+}
+
+function handleVideoError(event: Event) {
+  const error = (event.currentTarget as HTMLVideoElement).error;
+  if (!error || error.code === 1) {
+    videoErrorMessage.value = "";
+    return;
+  }
+  if (error.code === 2) {
+    videoErrorMessage.value = "视频网络或播放链接异常，请刷新后重试。";
+  } else if (error.code === 3) {
+    videoErrorMessage.value = "浏览器无法解码该视频。";
+  } else if (error.code === 4) {
+    videoErrorMessage.value = "浏览器不支持该视频编码或格式。";
+  } else {
+    videoErrorMessage.value = "视频播放失败，请刷新后重试。";
+  }
 }
 
 function applyPendingSeek() {
@@ -110,6 +135,14 @@ defineExpose({
       type="warning"
     />
 
+    <el-alert
+      v-if="videoErrorMessage"
+      :closable="false"
+      :title="videoErrorMessage"
+      show-icon
+      type="warning"
+    />
+
     <div v-if="playbackUrl" class="video-card__player-shell">
       <video
       v-if="playbackUrl"
@@ -119,6 +152,8 @@ defineExpose({
       controls
       preload="metadata"
       @loadedmetadata="handleLoadedMetadata"
+      @canplay="clearVideoError"
+      @error="handleVideoError"
       @seeked="updateCurrentTime"
       @timeupdate="updateCurrentTime"
     >
@@ -126,11 +161,10 @@ defineExpose({
           v-if="subtitleTrackUrl"
           kind="subtitles"
           :src="subtitleTrackUrl"
-          srclang="zh-CN"
+          :srclang="subtitleLanguage || 'und'"
           :label="resolvedSubtitleLabel"
           default
         />
-        当前浏览器可能不支持该视频编码，建议上传 H.264 MP4 或 WebM。
       </video>
       <div v-if="activeSubtitleText" class="video-card__subtitle-overlay" aria-live="polite">
         {{ activeSubtitleText }}

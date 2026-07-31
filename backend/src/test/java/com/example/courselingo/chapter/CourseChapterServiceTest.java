@@ -195,21 +195,26 @@ class CourseChapterServiceTest {
     }
 
     @Test
-    void generateRecordsAiFailureAndKeepsExistingRowsWhenJsonCannotBeParsed() {
+    void generateUsesDeterministicFallbackWhenPrimaryAndRepairJsonCannotBeParsed() {
         whenOwnedTask();
         when(evidenceBuilder.build("task_1", 42L, "zh-CN")).thenReturn(new CourseChapterEvidenceBundle(List.of(
             new CourseChapterEvidenceItem(0, 0L, 240000L, "00:00:00 - 00:04:00", "本段语音原文：Intro")
         ), ""));
         when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
+        when(chapterMapper.insert(any(CourseChapter.class))).thenAnswer(invocation -> {
+            invocation.getArgument(0, CourseChapter.class).setId(1L);
+            return 1;
+        });
         llmProvider.content = "not-json";
 
-        assertThatThrownBy(() -> service.generate("task_1", "Bearer demo"))
-            .isInstanceOf(BusinessException.class)
-            .extracting("errorCode")
-            .isEqualTo(ErrorCode.AI_PROVIDER_FAILED);
+        List<CourseChapterResponse> response = service.generate("task_1", "Bearer demo");
 
-        verify(chapterMapper, never()).deleteByTaskIdAndUserId(any(), any());
-        verify(aiCallRecordService).failCall(any(FailAiCallRecordCommand.class));
+        assertThat(response).singleElement().satisfies(chapter ->
+            assertThat(chapter.evidence()).hasSize(1)
+        );
+        assertThat(llmProvider.requests).hasSize(2);
+        verify(chapterMapper).deleteByTaskIdAndUserId("task_1", 42L);
+        verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
     }
 
     private void whenOwnedTask() {

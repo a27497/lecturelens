@@ -3,6 +3,7 @@ package com.example.courselingo.artifact.service;
 import com.example.courselingo.fusion.VideoSegment;
 import com.example.courselingo.fusion.VideoSegmentEvidence;
 import com.example.courselingo.fusion.VideoSegmentSourceStatus;
+import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Comparator;
@@ -59,6 +60,9 @@ public class ArtifactMultimodalTimelineBuilder {
             VideoSegmentSourceStatus.class,
             VideoSegmentSourceStatus.empty()
         );
+        String persistedOcr = clean(segment.getOcrText());
+        boolean usefulOcr = OcrTextQualityEvaluator.isUseful(persistedOcr, null);
+        String fusedSummary = clean(segment.getFusedSummary());
         return new ArtifactMultimodalTimelineItem(
             segment.getSegmentIndex(),
             start,
@@ -66,9 +70,9 @@ public class ArtifactMultimodalTimelineBuilder {
             firstNonBlank(segment.getTimeText(), formatRange(start, end)),
             clean(segment.getAsrText()),
             clean(segment.getTranslatedText()),
-            clean(segment.getOcrText()),
+            usefulOcr ? persistedOcr : "",
             clean(segment.getVisualSummary()),
-            clean(segment.getFusedSummary()),
+            usefulOcr ? fusedSummary : clean(OcrTextQualityEvaluator.withoutOcrEvidenceClause(fusedSummary)),
             parseStrings(segment.getKeywordsJson()),
             evidence == null ? List.of() : evidence.keyframeIds(),
             sourceStatus,

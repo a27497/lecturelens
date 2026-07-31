@@ -15,6 +15,9 @@ public class CourseChapterProperties {
     private int maxTokens = 4096;
     private int maxAttempts = 3;
     private Duration llmTimeout = Duration.ofSeconds(60);
+    private double minTimelineCoverage = 0.90d;
+    private double minEvidenceCoverage = 0.80d;
+    private int longTimelineSeconds = 600;
 
     public boolean isEnabled() {
         return enabled;
@@ -88,5 +91,23 @@ public class CourseChapterProperties {
 
     public void setMaxAttempts(int maxAttempts) {
         this.maxAttempts = Math.max(1, Math.min(maxAttempts, 3));
+    }
+
+    public double getMinTimelineCoverage() { return minTimelineCoverage; }
+
+    public void setMinTimelineCoverage(double value) {
+        minTimelineCoverage = Math.max(0.5d, Math.min(value, 1.0d));
+    }
+
+    public double getMinEvidenceCoverage() { return minEvidenceCoverage; }
+
+    public void setMinEvidenceCoverage(double value) {
+        minEvidenceCoverage = Math.max(0.5d, Math.min(value, 1.0d));
+    }
+
+    public int getLongTimelineSeconds() { return longTimelineSeconds; }
+
+    public void setLongTimelineSeconds(int value) {
+        longTimelineSeconds = Math.max(60, Math.min(value, 3600));
     }
 }

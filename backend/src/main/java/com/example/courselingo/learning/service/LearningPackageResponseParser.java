@@ -33,11 +33,25 @@ public class LearningPackageResponseParser {
     }
 
     public ParsedLearningPackage parse(String content) {
+        return parseInternal(content, "en");
+    }
+
+    public ParsedLearningPackage parse(String content, String targetLanguage) {
+        ParsedLearningPackage parsed = parse(content);
+        if (defaultTitle(targetLanguage).equals("课程学习资料") && DEFAULT_TITLE.equals(parsed.title())) {
+            return new ParsedLearningPackage(
+                "课程学习资料", parsed.summary(), parsed.keyPointsJson(), parsed.glossaryJson(), parsed.qaJson()
+            );
+        }
+        return parsed;
+    }
+
+    private ParsedLearningPackage parseInternal(String content, String targetLanguage) {
         if (content == null || content.isBlank()) {
             throw validationFailure("EMPTY_RESPONSE Learning package response is invalid");
         }
         JsonNode root = readRoot(content);
-        String title = readOptionalText(root, "Learning package title is invalid", DEFAULT_TITLE, "title");
+        String title = readOptionalText(root, "Learning package title is invalid", defaultTitle(targetLanguage), "title");
         if (title.length() > MAX_TITLE_LENGTH) {
             throw validationFailure("Learning package title is invalid");
         }
@@ -52,6 +66,12 @@ public class LearningPackageResponseParser {
             writeJson(glossary),
             writeJson(qa)
         );
+    }
+
+    private static String defaultTitle(String targetLanguage) {
+        return targetLanguage != null && targetLanguage.toLowerCase(java.util.Locale.ROOT).startsWith("zh")
+            ? "课程学习资料"
+            : DEFAULT_TITLE;
     }
 
     private JsonNode readRoot(String content) {

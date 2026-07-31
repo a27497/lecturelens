@@ -497,7 +497,7 @@ function formatTime(value: string | null): string {
     <SectionPanel class="course-library">
       <div class="task-list-toolbar">
         <el-radio-group v-model="activeGroup" :disabled="deleting" class="task-list-toolbar__filters">
-          <el-radio-button v-for="filter in TASK_FILTERS" :key="filter.value" :label="filter.value">
+          <el-radio-button v-for="filter in TASK_FILTERS" :key="filter.value" :value="filter.value">
             {{ filter.label }} {{ filterCounts[filter.value] }}
           </el-radio-button>
         </el-radio-group>

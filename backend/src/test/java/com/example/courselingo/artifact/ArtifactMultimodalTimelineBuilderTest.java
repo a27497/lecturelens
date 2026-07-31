@@ -26,6 +26,39 @@ class ArtifactMultimodalTimelineBuilderTest {
             .containsExactly("repeated evidence", "later unique evidence");
     }
 
+    @Test
+    void rejectsHistoricalOcrNoiseFromDirectAndFusedExportEvidence() {
+        VideoSegment segment = segment(0, 0L, "Architecture diagram remains useful");
+        segment.setOcrText("Readable prefix \uFFFD fictional corrupted OCR body");
+        segment.setFusedSummary(
+            "本段主要讲解：microservices；画面文字包括：Readable prefix \uFFFD fictional corrupted OCR body；"
+                + "画面显示：Architecture diagram remains useful"
+        );
+
+        var timeline = new ArtifactMultimodalTimelineBuilder(new ObjectMapper()).build(List.of(segment));
+
+        assertThat(timeline).singleElement().satisfies(item -> {
+            assertThat(item.ocrText()).isEmpty();
+            assertThat(item.fusedSummary())
+                .contains("microservices", "Architecture diagram remains useful")
+                .doesNotContain("corrupted OCR body", "画面文字包括");
+        });
+    }
+
+    @Test
+    void preservesUsefulTechnicalOcrInExportEvidence() {
+        VideoSegment segment = segment(0, 0L, "Terminal demo");
+        segment.setOcrText("docker compose up -d");
+        segment.setFusedSummary("画面文字包括：docker compose up -d；画面显示：Terminal demo");
+
+        var timeline = new ArtifactMultimodalTimelineBuilder(new ObjectMapper()).build(List.of(segment));
+
+        assertThat(timeline).singleElement().satisfies(item -> {
+            assertThat(item.ocrText()).isEqualTo("docker compose up -d");
+            assertThat(item.fusedSummary()).contains("docker compose up -d");
+        });
+    }
+
     private VideoSegment segment(int index, long startMillis, String visualSummary) {
         VideoSegment segment = new VideoSegment();
         segment.setId((long) index + 1L);

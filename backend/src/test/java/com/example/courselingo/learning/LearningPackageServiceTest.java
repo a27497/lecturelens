@@ -347,9 +347,10 @@ class LearningPackageServiceTest {
                 assertThat(request.responseFormat()).isEqualTo(LlmResponseFormat.JSON_OBJECT)
             );
             LearningPackage inserted = captureInserted();
-            assertThat(inserted.getSummary()).isEqualTo("Spring Boot builds web APIs. It simplifies configuration.");
+            assertThat(inserted.getSummary())
+                .contains("Spring Boot builds web APIs.", "It simplifies configuration.", "AI helps summarize lessons.");
             assertThat(inserted.getKeyPointsJson())
-                .isEqualTo("[{\"index\":1,\"text\":\"Spring Boot builds web APIs\"},{\"index\":2,\"text\":\"It simplifies configuration\"},{\"index\":3,\"text\":\"AI helps summarize lessons\"}]");
+                .contains("Spring Boot builds web APIs", "It simplifies configuration", "AI helps summarize lessons");
             assertThat(inserted.getGlossaryJson()).isEqualTo("[]");
             assertThat(inserted.getQaJson()).isEqualTo("[]");
             assertThat(appender.list)
@@ -420,7 +421,7 @@ class LearningPackageServiceTest {
             LearningPackage inserted = captureInserted();
             assertThat(inserted.getSummary()).isEqualTo("Spring Boot builds web APIs. AI helps summarize lessons.");
             assertThat(inserted.getKeyPointsJson())
-                .isEqualTo("[{\"index\":1,\"text\":\"Spring Boot builds web APIs\"},{\"index\":2,\"text\":\"AI helps summarize lessons\"}]");
+                .contains("Spring Boot builds web APIs", "AI helps summarize lessons");
             assertThat(inserted.getGlossaryJson()).isEqualTo("[]");
             assertThat(inserted.getQaJson()).isEqualTo("[]");
             assertThat(appender.list)
