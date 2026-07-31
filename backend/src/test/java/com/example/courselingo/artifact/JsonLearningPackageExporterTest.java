@@ -159,6 +159,35 @@ class JsonLearningPackageExporterTest {
     }
 
     @Test
+    void redactsCompletePemPrivateKeyBlockWhilePreservingValidJson() throws Exception {
+        String courseText = "\u8bfe\u7a0b\u793a\u4f8b\u5f00\u59cb\n"
+            + "-----BEGIN PRIVATE KEY-----\n"
+            + "FAKE_PRIVATE_KEY_BODY_FOR_TESTING_ONLY\n"
+            + "SECOND_FAKE_LINE\n"
+            + "-----END PRIVATE KEY-----\n"
+            + "\u8bfe\u7a0b\u793a\u4f8b\u7ed3\u675f";
+
+        String json = exporter.export(
+            "task_1",
+            "zh-CN",
+            List.of(source(0, 0, 1_000, courseText)),
+            List.of(),
+            validLearningPackage()
+        );
+
+        JsonNode root = objectMapper.readTree(json);
+        assertThat(root.get("subtitles").get(0).get("sourceText").asText())
+            .contains("\u8bfe\u7a0b\u793a\u4f8b\u5f00\u59cb", "[redacted]", "\u8bfe\u7a0b\u793a\u4f8b\u7ed3\u675f");
+        assertThat(json)
+            .doesNotContain(
+                "BEGIN PRIVATE KEY",
+                "END PRIVATE KEY",
+                "FAKE_PRIVATE_KEY_BODY_FOR_TESTING_ONLY",
+                "SECOND_FAKE_LINE"
+            );
+    }
+
+    @Test
     void exportsJsonWhenGlossaryTranslationIsMissingAndSkipsFullyEmptyGlossaryItems() throws Exception {
         String json = exporter.export(
             "task_1",
