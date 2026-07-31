@@ -6,6 +6,8 @@ import com.example.courselingo.common.tracing.TracingContextHolder;
 import jakarta.annotation.PreDestroy;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
@@ -28,6 +30,7 @@ public class ThreadPoolBoundedTaskExecutor implements BoundedTaskExecutor {
     private final BoundedTaskExecutorProperties properties;
     private final ArrayBlockingQueue<Runnable> workQueue;
     private final ThreadPoolExecutor delegate;
+    private final ConcurrentHashMap<String, Future<?>> activeTasks = new ConcurrentHashMap<>();
 
     public ThreadPoolBoundedTaskExecutor(BoundedTaskExecutorProperties properties) {
         validate(properties);
@@ -55,6 +58,7 @@ public class ThreadPoolBoundedTaskExecutor implements BoundedTaskExecutor {
         Future<T> future;
         try {
             future = delegate.submit(TracingContextHolder.wrapCurrent(callable));
+            activeTasks.put(taskId, future);
         } catch (RejectedExecutionException exception) {
             throw new BusinessException(ErrorCode.TASK_EXECUTOR_BUSY);
         }
@@ -65,10 +69,15 @@ public class ThreadPoolBoundedTaskExecutor implements BoundedTaskExecutor {
             future.cancel(true);
             throw new BusinessException(ErrorCode.TASK_EXECUTOR_TIMEOUT);
         } catch (InterruptedException exception) {
+            future.cancel(true);
             Thread.currentThread().interrupt();
             throw new BusinessException(ErrorCode.TASK_EXECUTOR_FAILED);
+        } catch (CancellationException exception) {
+            throw new BusinessException(ErrorCode.TASK_EXECUTOR_FAILED, "Task execution was canceled");
         } catch (java.util.concurrent.ExecutionException exception) {
             throw wrapExecutionException(exception.getCause());
+        } finally {
+            activeTasks.remove(taskId, future);
         }
     }
 
@@ -78,6 +87,15 @@ public class ThreadPoolBoundedTaskExecutor implements BoundedTaskExecutor {
             runnable.run();
             return null;
         });
+    }
+
+    @Override
+    public boolean cancel(String taskId) {
+        if (isBlank(taskId)) {
+            return false;
+        }
+        Future<?> future = activeTasks.get(taskId);
+        return future != null && future.cancel(true);
     }
 
     @PreDestroy

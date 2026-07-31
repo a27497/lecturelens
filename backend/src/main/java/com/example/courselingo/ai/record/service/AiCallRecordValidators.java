@@ -57,7 +57,10 @@ final class AiCallRecordValidators {
             validateNonNegative(command.inputUnits()),
             validateNonNegative(command.outputUnits()),
             validateFingerprint(command.requestFingerprint(), sanitizer),
-            validateFingerprint(command.responseFingerprint(), sanitizer)
+            validateFingerprint(command.responseFingerprint(), sanitizer),
+            validateNonNegative(command.providerDurationMillis()),
+            validateNonNegative(command.batchCount()),
+            validateNonNegative(command.retryCount())
         );
     }
 

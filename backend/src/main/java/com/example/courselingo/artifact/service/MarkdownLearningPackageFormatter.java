@@ -125,7 +125,7 @@ public class MarkdownLearningPackageFormatter {
                 continue;
             }
             builder.append("- [")
-                .append(optionalText(item.timeText(), "Markdown timeline content is invalid"))
+                .append(sanitizedTimelineText(item.timeText()))
                 .append("]");
             appendTimelineField(builder, "ASR", item.asrText());
             appendTimelineField(builder, "字幕译文", item.translatedText());
@@ -146,10 +146,14 @@ public class MarkdownLearningPackageFormatter {
     }
 
     private void appendTimelineField(StringBuilder builder, String label, String value) {
-        String normalized = optionalText(value, "Markdown timeline content is invalid");
+        String normalized = sanitizedTimelineText(value);
         if (!normalized.isBlank()) {
             builder.append("；").append(label).append('=').append(normalized);
         }
+    }
+
+    private String sanitizedTimelineText(String value) {
+        return ArtifactSensitiveDataValidator.redactSensitiveData(normalizeText(value));
     }
 
     private <T> List<T> readJson(String json, TypeReference<List<T>> typeReference) {

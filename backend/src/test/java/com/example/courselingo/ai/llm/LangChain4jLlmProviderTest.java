@@ -45,7 +45,7 @@ class LangChain4jLlmProviderTest {
         assertThat(((UserMessage) sent.messages().get(1)).singleText()).isEqualTo("user content");
         assertThat(sent.messages().get(2)).isInstanceOf(AiMessage.class);
         assertThat(((AiMessage) sent.messages().get(2)).text()).isEqualTo("assistant content");
-        assertThat(sent.model()).isEqualTo("gpt-4o-mini");
+        assertThat(sent.model()).isEqualTo("test-chat-model");
         assertThat(sent.timeout()).isEqualTo(Duration.ofSeconds(30));
         assertThat(sent.temperature()).isEqualTo(0.4);
         assertThat(sent.maxTokens()).isEqualTo(512);
@@ -204,7 +204,7 @@ class LangChain4jLlmProviderTest {
 
         LlmResult result = provider.generate(validRequest());
 
-        assertThat(result.model()).isEqualTo("gpt-4o-mini");
+        assertThat(result.model()).isEqualTo("test-chat-model");
         assertThat(result.finishReason()).isEqualTo("UNKNOWN");
         assertThat(result.usage()).isEqualTo(new LlmUsage(null, null, null));
         assertThat(result.metadata()).isEmpty();
@@ -337,6 +337,7 @@ class LangChain4jLlmProviderTest {
     private LangChain4jLlmProperties properties() {
         LangChain4jLlmProperties properties = new LangChain4jLlmProperties();
         properties.setApiKey("test-api-key");
+        properties.setModel("test-chat-model");
         return properties;
     }
 

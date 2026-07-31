@@ -111,6 +111,7 @@ class TaskCreationServiceTest {
         assertThat(inserted.getId()).startsWith("task_");
         assertThat(inserted.getUserId()).isEqualTo(42L);
         assertThat(inserted.getUploadId()).isEqualTo("up_1");
+        assertThat(inserted.getSourceLanguage()).isEqualTo("auto");
         assertThat(inserted.getTargetLanguage()).isEqualTo("zh-CN");
         assertThat(inserted.getStatus()).isEqualTo("CREATED");
         assertThat(inserted.getProgressPercent()).isZero();
@@ -134,6 +135,7 @@ class TaskCreationServiceTest {
         assertThat(message.taskId()).isEqualTo(inserted.getId());
         assertThat(message.uploadId()).isEqualTo("up_1");
         assertThat(message.userId()).isEqualTo(42L);
+        assertThat(message.sourceLanguage()).isEqualTo("auto");
         assertThat(message.targetLanguage()).isEqualTo("zh-CN");
         assertThat(message.requestId()).isEqualTo("req_create");
         assertThat(message.traceId()).isEqualTo("trace_create");
@@ -240,6 +242,19 @@ class TaskCreationServiceTest {
     void targetLanguageTooLongFailsBeforeAuthLookup() {
         assertThatThrownBy(() ->
             service.create(new CreateAnalysisTaskRequest("up_1", "x".repeat(33)), "Bearer access-token"))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.COMMON_VALIDATION_FAILED);
+
+        verify(currentUserService, never()).currentUser(any());
+    }
+
+    @Test
+    void unsupportedSourceLanguageFailsBeforeAuthLookup() {
+        assertThatThrownBy(() -> service.create(
+            new CreateAnalysisTaskRequest("up_1", "zh-CN", "unsupported-language"),
+            "Bearer access-token"
+        ))
             .isInstanceOf(BusinessException.class)
             .extracting("errorCode")
             .isEqualTo(ErrorCode.COMMON_VALIDATION_FAILED);

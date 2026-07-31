@@ -90,6 +90,33 @@ class MarkdownLearningPackageFormatterTest {
     }
 
     @Test
+    void redactsSensitiveTimelineFragmentsWithoutRejectingTechnicalProse() {
+        String markdown = formatter.format(
+            learningPackage("Course Title", "Course summary", "[{\"index\":1,\"text\":\"Point\"}]", "[]", "[]"),
+            List.of(new ArtifactMultimodalTimelineItem(
+                0,
+                0L,
+                60_000L,
+                "00:00:00 - 00:01:00",
+                "token abc123 and token authentication",
+                "translated text",
+                "C:\\Users\\demo\\secret.md",
+                "visual summary",
+                "",
+                List.of(),
+                List.of(),
+                new VideoSegmentSourceStatus(Map.of(), Map.of(), false),
+                0.8d
+            ))
+        );
+
+        assertThat(markdown)
+            .contains("[redacted] and token authentication")
+            .contains("C:\\Users\\demo\\secret.md")
+            .doesNotContain("abc123");
+    }
+
+    @Test
     void escapesTablePipesAndNormalizesControlCharacters() {
         String markdown = formatter.format(learningPackage(
             "Course\u0000 Title",
@@ -145,8 +172,8 @@ class MarkdownLearningPackageFormatterTest {
         assertSanitizedFailure("secret abc123");
         assertSanitizedFailure("api key abc123");
         assertSanitizedFailure("Authorization Bearer abc123");
-        assertSanitizedFailure("C:\\Users\\demo\\secret.md");
-        assertSanitizedFailure("/home/demo/secret.md");
+        assertSanitizedFailure("C:\\Users\\alice\\secret.md");
+        assertSanitizedFailure("/home/alice/secret.md");
     }
 
     private void assertSanitizedFailure(String sensitiveText) {

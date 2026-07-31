@@ -31,6 +31,13 @@ const ERROR_CODE_MESSAGES: Record<string, string> = {
 interface ErrorResponseData {
   code?: unknown;
   message?: unknown;
+  data?: {
+    errorCode?: unknown;
+    errorCategory?: unknown;
+    retryable?: unknown;
+    stage?: unknown;
+    userMessage?: unknown;
+  };
 }
 
 interface ErrorResponse {
@@ -98,9 +105,24 @@ function safeBackendMessage(error: unknown): string | undefined {
   return /[\u4e00-\u9fff]/.test(trimmed) ? trimmed : undefined;
 }
 
+function safeAiUserMessage(error: unknown): string | undefined {
+  const message = asResponse(error)?.data?.data?.userMessage;
+  if (typeof message !== "string") return undefined;
+  const trimmed = message.trim();
+  if (!trimmed || trimmed.length > 300 || /exception|stack|trace|error:|at\s+\S+\(/i.test(trimmed)) {
+    return undefined;
+  }
+  return /[\u4e00-\u9fff]/.test(trimmed) ? trimmed : undefined;
+}
+
 export function toUserFriendlyError(error: unknown, fallback = DEFAULT_ERROR_MESSAGE): string {
   if (error instanceof AccessTokenMissingError) {
     return AUTH_EXPIRED_MESSAGE;
+  }
+
+  const aiMessage = safeAiUserMessage(error);
+  if (aiMessage) {
+    return aiMessage;
   }
 
   const code = apiErrorCode(error);

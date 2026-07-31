@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class CourseQaEvidenceRetriever {
 
     private static final int MAX_CANDIDATES = 100;
     private static final int MAX_EVIDENCE = 8;
+    private static final int MAX_OVERVIEW_EVIDENCE = 6;
+    private static final int MAX_TIME_EVIDENCE = 4;
     private static final int MAX_SNIPPET = 500;
     private static final String SEGMENT_ASR_PREFIX = "\u672c\u6bb5\u4e3b\u8981\u8bb2\u89e3\uff1a";
     private static final String COURSE_QA_ASR_PREFIX = "\u672c\u6bb5\u8bed\u97f3\u539f\u6587\uff1a";
@@ -36,6 +39,14 @@ public class CourseQaEvidenceRetriever {
     private static final String SEGMENT_SUMMARY_DELIMITER = "\uff1b";
     private static final Pattern SEGMENT_SUMMARY_SPLITTER = Pattern.compile("[\uff1b;\\r\\n]+");
     private static final Pattern CLOCK_TIME = Pattern.compile("\\b(?:(\\d{1,2}):)?(\\d{1,2}):(\\d{2})\\b");
+    private static final Pattern NATURAL_MINUTE = Pattern.compile(
+        "(?<!\\d)(\\d{1,3})\\s*分钟(?:\\s*(?:附近|左右|前后))?"
+    );
+    private static final Pattern OVERVIEW_INTENT = Pattern.compile(
+        "(?:主要讲了什么|主要内容|课程概述|课程总结|总结这节|概括这节|what\\s+is\\s+this\\s+(?:course|lesson)\\s+about)",
+        Pattern.CASE_INSENSITIVE
+    );
+    private static final Pattern COMPARABLE_TOKEN = Pattern.compile("[\\p{IsHan}]{2}|[a-z0-9+#._-]{2,}");
     private static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<>() {
     };
 
@@ -79,6 +90,7 @@ public class CourseQaEvidenceRetriever {
     public List<CourseQaEvidenceItem> retrieve(String taskId, Long userId, String targetLanguage, String question) {
         List<String> tokens = queryTermExtractor.extract(question);
         Optional<TimeWindow> timeWindow = parseTimeWindow(question);
+        boolean overview = timeWindow.isEmpty() && tokens.isEmpty() && isOverviewQuestion(question);
         List<Candidate> candidates = new ArrayList<>();
         for (VideoSegment row : videoSegmentMapper.selectByTaskIdAndUserId(taskId, userId)) {
             candidates.add(videoSegmentCandidate(row, tokens, timeWindow));
@@ -89,18 +101,19 @@ public class CourseQaEvidenceRetriever {
         for (SubtitleSegment row : subtitleSegmentMapper.selectByTaskIdAndUserId(taskId, userId)) {
             candidates.add(subtitleCandidate(row, translations.get(row.getSegmentIndex()), tokens, timeWindow));
         }
-        return candidates.stream()
-            .filter(candidate -> candidate.score() > 0.0d)
+        List<Candidate> ranked = candidates.stream()
+            .filter(candidate -> overview || candidate.score() > 0.0d)
             .sorted(java.util.Comparator.comparingDouble(Candidate::score).reversed()
                 .thenComparing(candidate -> nullableLong(candidate.item().startTimeMillis()))
                 .thenComparing(candidate -> cleanText(candidate.item().sourceType()))
                 .thenComparing(candidate -> cleanText(candidate.item().sourceId())))
             .limit(MAX_CANDIDATES)
-            .map(Candidate::item)
-            .filter(CourseQaEvidenceRetriever::hasEvidenceText)
-            .filter(new LinkedHashSet<>()::add)
-            .limit(MAX_EVIDENCE)
             .toList();
+        if (overview) {
+            return evenlyDistributedOverview(ranked);
+        }
+        int limit = timeWindow.isPresent() ? MAX_TIME_EVIDENCE : MAX_EVIDENCE;
+        return semanticallyDistinct(ranked.stream().map(Candidate::item).toList(), limit);
     }
 
     private static boolean hasEvidenceText(CourseQaEvidenceItem item) {
@@ -296,7 +309,8 @@ public class CourseQaEvidenceRetriever {
     }
 
     private Optional<TimeWindow> parseTimeWindow(String question) {
-        Matcher matcher = CLOCK_TIME.matcher(question == null ? "" : question);
+        String safeQuestion = question == null ? "" : question;
+        Matcher matcher = CLOCK_TIME.matcher(safeQuestion);
         List<Long> times = new ArrayList<>();
         while (matcher.find()) {
             long hours = matcher.group(1) == null ? 0L : Long.parseLong(matcher.group(1));
@@ -304,12 +318,123 @@ public class CourseQaEvidenceRetriever {
             long seconds = Long.parseLong(matcher.group(3));
             times.add((hours * 3600L + minutes * 60L + seconds) * 1000L);
         }
-        if (times.isEmpty()) {
+        if (!times.isEmpty()) {
+            long start = times.getFirst();
+            long end;
+            if (times.size() > 1) {
+                end = times.get(1);
+            } else if (containsNearbyWord(safeQuestion)) {
+                return Optional.of(new TimeWindow(Math.max(0L, start - 60_000L), start + 60_000L));
+            } else {
+                end = start + 60_000L;
+            }
+            return Optional.of(new TimeWindow(Math.min(start, end), Math.max(start, end)));
+        }
+        Matcher naturalMinute = NATURAL_MINUTE.matcher(safeQuestion);
+        if (!naturalMinute.find()) {
             return Optional.empty();
         }
-        long start = times.getFirst();
-        long end = times.size() > 1 ? times.get(1) : start + 60000L;
-        return Optional.of(new TimeWindow(Math.min(start, end), Math.max(start, end)));
+        long center = Long.parseLong(naturalMinute.group(1)) * 60_000L;
+        return Optional.of(new TimeWindow(Math.max(0L, center - 60_000L), center + 60_000L));
+    }
+
+    private static boolean containsNearbyWord(String question) {
+        return question.contains("附近") || question.contains("左右") || question.contains("前后");
+    }
+
+    private static boolean isOverviewQuestion(String question) {
+        return OVERVIEW_INTENT.matcher(question == null ? "" : question).find();
+    }
+
+    private static List<CourseQaEvidenceItem> evenlyDistributedOverview(List<Candidate> ranked) {
+        List<CourseQaEvidenceItem> preferred = ranked.stream()
+            .map(Candidate::item)
+            .filter(CourseQaEvidenceRetriever::hasEvidenceText)
+            .filter(item -> "VIDEO_SEGMENT".equals(item.sourceType()))
+            .sorted(java.util.Comparator.comparingLong(item -> nullableLong(item.startTimeMillis())))
+            .toList();
+        if (preferred.isEmpty()) {
+            preferred = ranked.stream()
+                .map(Candidate::item)
+                .filter(CourseQaEvidenceRetriever::hasEvidenceText)
+                .sorted(java.util.Comparator.comparingLong(item -> nullableLong(item.startTimeMillis())))
+                .toList();
+        }
+        List<CourseQaEvidenceItem> sampled = new ArrayList<>();
+        int target = Math.min(MAX_OVERVIEW_EVIDENCE, preferred.size());
+        for (int index = 0; index < target; index++) {
+            int sourceIndex = target == 1
+                ? 0
+                : (int) Math.round(index * (preferred.size() - 1.0d) / (target - 1.0d));
+            CourseQaEvidenceItem item = preferred.get(sourceIndex);
+            if (sampled.stream().noneMatch(existing -> semanticallySimilar(existing, item))) {
+                sampled.add(item);
+            }
+        }
+        return List.copyOf(sampled);
+    }
+
+    private static List<CourseQaEvidenceItem> semanticallyDistinct(
+        List<CourseQaEvidenceItem> ranked,
+        int limit
+    ) {
+        List<CourseQaEvidenceItem> selected = new ArrayList<>();
+        for (CourseQaEvidenceItem item : ranked) {
+            if (!hasEvidenceText(item) || selected.stream().anyMatch(existing -> semanticallySimilar(existing, item))) {
+                continue;
+            }
+            selected.add(item);
+            if (selected.size() >= limit) {
+                break;
+            }
+        }
+        return List.copyOf(selected);
+    }
+
+    private static boolean semanticallySimilar(CourseQaEvidenceItem left, CourseQaEvidenceItem right) {
+        if (!overlaps(
+            left.startTimeMillis(),
+            left.endTimeMillis(),
+            right.startTimeMillis() == null ? 0L : right.startTimeMillis(),
+            right.endTimeMillis() == null
+                ? (right.startTimeMillis() == null ? 0L : right.startTimeMillis())
+                : right.endTimeMillis()
+        )) {
+            return false;
+        }
+        String leftText = comparableText(left);
+        String rightText = comparableText(right);
+        if (leftText.isBlank() || rightText.isBlank()) {
+            return false;
+        }
+        int shorter = Math.min(leftText.length(), rightText.length());
+        if (shorter >= 20 && (leftText.contains(rightText) || rightText.contains(leftText))) {
+            return true;
+        }
+        Set<String> leftTokens = comparableTokens(leftText);
+        Set<String> rightTokens = comparableTokens(rightText);
+        if (leftTokens.isEmpty() || rightTokens.isEmpty()) {
+            return leftText.equals(rightText);
+        }
+        long intersection = leftTokens.stream().filter(rightTokens::contains).count();
+        double containment = intersection / (double) Math.min(leftTokens.size(), rightTokens.size());
+        return containment >= 0.8d;
+    }
+
+    private static String comparableText(CourseQaEvidenceItem item) {
+        return normalize(firstNonBlank(item.translatedSnippet(), item.snippet()))
+            .replaceAll("(?:本段语音原文|字幕译文|画面文字包括|画面显示)[:：]", " ")
+            .replaceAll("[^\\p{IsHan}a-z0-9+#._-]+", " ")
+            .strip();
+    }
+
+    private static Set<String> comparableTokens(String text) {
+        LinkedHashSet<String> tokens = new LinkedHashSet<>();
+        Matcher matcher = COMPARABLE_TOKEN.matcher(text);
+        while (matcher.find()) {
+            tokens.add(matcher.group());
+        }
+        return tokens;
     }
 
     private List<String> parseKeywords(String json) {

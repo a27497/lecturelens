@@ -45,10 +45,42 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
     @Override
     public LlmResult generate(LlmRequest request) {
         LlmRequestValidator.validate(request);
+        try {
+            return generateOnce(request);
+        } catch (OpenAiCompatibleLlmException exception) {
+            if (request.responseFormat() != LlmResponseFormat.JSON_OBJECT
+                || exception.failureCategory() != LlmProviderFailureCategory.UNSUPPORTED_RESPONSE_FORMAT) {
+                throw exception;
+            }
+            log.warn(
+                "event=llm_structured_output_fallback taskId={} category={} httpStatus={} responseFormatUsed={} nextResponseFormat={}",
+                SafeDiagnosticText.value(request.taskId()),
+                exception.failureCategory(),
+                exception.statusCode().orElse(null),
+                LlmResponseFormat.JSON_OBJECT,
+                LlmResponseFormat.TEXT
+            );
+            LlmResult fallback = generateOnce(withResponseFormat(request, LlmResponseFormat.TEXT));
+            Map<String, Object> metadata = new HashMap<>(fallback.metadata());
+            metadata.put("structuredOutputFallback", true);
+            metadata.put("responseFormatUsed", LlmResponseFormat.TEXT.name());
+            return new LlmResult(
+                fallback.provider(), fallback.model(), fallback.content(), fallback.finishReason(),
+                fallback.usage(), fallback.duration(), metadata
+            );
+        }
+    }
+
+    private LlmResult generateOnce(LlmRequest request) {
         ValidatedSettings settings = validateSettings(request);
-        OpenAiCompatibleClientResponse response = callClient(request, settings);
-        handleErrorStatus(response, settings);
-        return mapSuccessResponse(response, settings, request.responseFormat());
+        AttemptedResponse attempted = callClient(request, settings);
+        handleErrorStatus(attempted.response(), settings);
+        return mapSuccessResponse(
+            attempted.response(),
+            settings,
+            request.responseFormat(),
+            attempted.retryCount()
+        );
     }
 
     @Override
@@ -61,7 +93,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         return properties == null ? "" : textOrDefault(properties.getModel(), "");
     }
 
-    private OpenAiCompatibleClientResponse callClient(LlmRequest request, ValidatedSettings settings) {
+    private AttemptedResponse callClient(LlmRequest request, ValidatedSettings settings) {
         OpenAiCompatibleChatCompletionRequest clientRequest = new OpenAiCompatibleChatCompletionRequest(
             settings.uri(),
             Map.of("Authorization", "Bearer " + settings.apiKey()),
@@ -76,13 +108,15 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                 OpenAiCompatibleClientResponse response = client.complete(clientRequest);
                 if (isRetryableStatus(response.statusCode()) && attempt < maxAttempts) {
                     logRetry(request, settings, attempt, maxAttempts, response, null);
+                    waitBeforeRetry(response, attempt);
                     continue;
                 }
-                return response;
+                return new AttemptedResponse(response, attempt - 1);
             } catch (OpenAiCompatibleLlmException exception) {
                 OpenAiCompatibleLlmException diagnostic = withSettings(request, settings, exception);
                 if (diagnostic.retryable() && attempt < maxAttempts) {
                     logRetry(request, settings, attempt, maxAttempts, null, diagnostic);
+                    waitBeforeRetry(null, attempt);
                     continue;
                 }
                 throw diagnostic;
@@ -90,6 +124,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                 OpenAiCompatibleLlmException diagnostic = connectionError(request, settings, exception);
                 if (attempt < maxAttempts) {
                     logRetry(request, settings, attempt, maxAttempts, null, diagnostic);
+                    waitBeforeRetry(null, attempt);
                     continue;
                 }
                 throw diagnostic;
@@ -114,9 +149,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         if (request.responseFormat() == LlmResponseFormat.JSON_OBJECT) {
             body.put("response_format", Map.of("type", "json_object"));
         }
-        if ("qwen/qwen3-8b".equals(settings.model().toLowerCase(Locale.ROOT))) {
-            body.put("enable_thinking", false);
-        }
+        OpenAiCompatibleRequestOptionsAdapter.apply(body, settings.model());
         body.put("stream", false);
         try {
             return objectMapper.writeValueAsString(body);
@@ -141,7 +174,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
     private LlmResult mapSuccessResponse(
         OpenAiCompatibleClientResponse response,
         ValidatedSettings settings,
-        LlmResponseFormat responseFormat
+        LlmResponseFormat responseFormat,
+        int retryCount
     ) {
         OpenAiCompatibleChatCompletionResponse payload;
         try {
@@ -196,6 +230,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
 
         Map<String, Object> metadata = new HashMap<>();
         traceId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
+        metadata.put("providerRetryCount", Math.max(0, retryCount));
 
         return new LlmResult(
             providerName(),
@@ -214,11 +249,13 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             return;
         }
-        boolean retryable = isRetryableStatus(response.statusCode());
+        LlmProviderFailureDetails details = LlmProviderFailureClassifier.classify(
+            response.statusCode(), response.body(), null
+        );
         throw responseException(
             "OpenAI-compatible LLM request failed",
             failureType(response.statusCode()),
-            retryable,
+            details.retryable(),
             response,
             settings,
             null
@@ -283,8 +320,11 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
                 throw invalid("base URL must use http or https");
             }
-            if (baseUri.getRawAuthority() == null || baseUri.getRawAuthority().isBlank()) {
+            if (baseUri.getHost() == null || baseUri.getHost().isBlank()) {
                 throw invalid("base URL host is required");
+            }
+            if (baseUri.getRawUserInfo() != null) {
+                throw invalid("base URL must not contain credentials");
             }
             String basePath = baseUri.getRawPath();
             if (basePath == null || basePath.isBlank() || "/".equals(basePath)) {
@@ -324,7 +364,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
     }
 
     private static boolean isRetryableStatus(int statusCode) {
-        return statusCode == 429 || statusCode >= 500;
+        return statusCode == 408 || statusCode == 429 || statusCode >= 500;
     }
 
     private static LlmProviderFailureType failureType(int statusCode) {
@@ -485,23 +525,18 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         String extractedContentSummary,
         Throwable cause
     ) {
-        return String.format(
-            Locale.ROOT,
-            "%s type=%s taskId=%s provider=%s model=%s endpoint=%s httpStatus=%s elapsedMs=%s providerTraceId=%s responseBody=%s extractedContent=%s exceptionClass=%s rootCause=%s",
-            message,
-            failureType,
-            request == null ? "" : request.taskId(),
-            PROVIDER_NAME,
-            settings == null ? "" : settings.model(),
-            settings == null ? "" : settings.uri(),
-            statusCode == null ? "" : statusCode,
-            elapsedMs(response) == null ? "" : elapsedMs(response),
-            response == null ? "" : traceIdOrNull(response),
-            responseSummary == null ? "" : responseSummary,
-            extractedContentSummary == null ? "" : extractedContentSummary,
-            cause == null ? "" : cause.getClass().getName(),
-            rootCauseMessage(cause) == null ? "" : rootCauseMessage(cause)
-        );
+        String providerBody = response == null ? responseSummary : response.body();
+        LlmProviderFailureDetails details = LlmProviderFailureClassifier.classify(statusCode, providerBody, cause);
+        if (failureType == LlmProviderFailureType.MALFORMED_RESPONSE
+            || failureType == LlmProviderFailureType.EMPTY_RESPONSE
+            || failureType == LlmProviderFailureType.UNEXPECTED_SCHEMA
+            || failureType == LlmProviderFailureType.JSON_PARSE_ERROR) {
+            details = new LlmProviderFailureDetails(
+                LlmProviderFailureCategory.OUTPUT_INVALID, statusCode, details.providerErrorCode(), false
+            );
+        }
+        return LlmErrorSanitizer.sanitize(message) + " " + details.safeSummary()
+            + ";elapsedMs=" + (elapsedMs(response) == null ? "" : elapsedMs(response));
     }
 
     private static void logRetry(
@@ -516,22 +551,67 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             ? failureType(response.statusCode())
             : exception.failureType();
         Integer status = exception == null ? Integer.valueOf(response.statusCode()) : exception.statusCode().orElse(null);
+        LlmProviderFailureDetails details = exception == null
+            ? LlmProviderFailureClassifier.classify(response.statusCode(), response.body(), null)
+            : exception.failureDetails();
         log.warn(
-            "event=llm_provider_retry taskId={} provider={} model={} endpoint={} failureType={} httpStatus={} attempt={} maxAttempts={} elapsedMs={} providerTraceId={} responseBody={} exceptionClass={} rootCause={}",
-            request.taskId(),
+            "event=llm_provider_retry taskId={} provider={} model={} category={} httpStatus={} providerErrorCode={} retryable={} attempt={} maxAttempts={} elapsedMs={}",
+            SafeDiagnosticText.value(request.taskId()),
             providerNameStatic(),
-            settings.model(),
-            settings.uri(),
-            type,
+            SafeDiagnosticText.value(settings.model()),
+            details.category(),
             status == null ? "" : status,
+            details.providerErrorCode(),
+            details.retryable(),
             attempt,
             maxAttempts,
-            exception == null ? elapsedMs(response) : exception.elapsedMs().orElse(null),
-            exception == null ? traceIdOrNull(response) : exception.providerTraceId().orElse(null),
-            exception == null ? summary(response.body()) : exception.responseBodySummary().orElse(null),
-            exception == null ? "" : exception.exceptionClass().orElse(exception.getClass().getName()),
-            exception == null ? "" : exception.rootCauseMessage().orElse(null)
+            exception == null ? elapsedMs(response) : exception.elapsedMs().orElse(null)
         );
+    }
+
+    private static LlmRequest withResponseFormat(LlmRequest request, LlmResponseFormat responseFormat) {
+        return new LlmRequest(
+            request.requestId(), request.taskId(), request.messages(), request.timeout(), request.temperature(),
+            request.maxTokens(), request.maxAttempts(), request.metadata(), responseFormat
+        );
+    }
+
+    private static void waitBeforeRetry(OpenAiCompatibleClientResponse response, int failedAttempt) {
+        long delayMillis = retryAfterMillis(response).orElse(Math.min(2_000L, 200L << Math.max(0, failedAttempt - 1)));
+        try {
+            Thread.sleep(Math.max(0L, delayMillis));
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new OpenAiCompatibleLlmException("OpenAI-compatible LLM retry was interrupted", false, exception);
+        }
+    }
+
+    private static Optional<Long> retryAfterMillis(OpenAiCompatibleClientResponse response) {
+        if (response == null || response.headers() == null) {
+            return Optional.empty();
+        }
+        return response.headers().entrySet().stream()
+            .filter(entry -> "retry-after".equalsIgnoreCase(entry.getKey()))
+            .flatMap(entry -> entry.getValue().stream())
+            .map(String::strip)
+            .map(value -> {
+                try {
+                    return Math.min(5_000L, Math.max(0L, Long.parseLong(value) * 1000L));
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            })
+            .filter(java.util.Objects::nonNull)
+            .findFirst();
+    }
+
+    private static final class SafeDiagnosticText {
+        private SafeDiagnosticText() {
+        }
+
+        private static String value(String text) {
+            return text == null ? "" : LlmErrorSanitizer.sanitize(text);
+        }
     }
 
     private static String providerNameStatic() {
@@ -585,5 +665,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         Double temperature,
         Integer maxTokens
     ) {
+    }
+
+    private record AttemptedResponse(OpenAiCompatibleClientResponse response, int retryCount) {
     }
 }

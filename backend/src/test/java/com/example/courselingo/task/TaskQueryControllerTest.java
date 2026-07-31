@@ -19,7 +19,7 @@ import com.example.courselingo.task.dto.TaskListQuery;
 import com.example.courselingo.task.dto.TaskListResponse;
 import com.example.courselingo.task.dto.TaskSummaryResponse;
 import com.example.courselingo.task.service.TaskQueryService;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -116,8 +116,8 @@ class TaskQueryControllerTest {
             .andExpect(jsonPath("$.data.errorMessage").doesNotExist())
             .andExpect(jsonPath("$.data.retryCount").value(0))
             .andExpect(jsonPath("$.data.maxRetryCount").value(3))
-            .andExpect(jsonPath("$.data.createdAt").exists())
-            .andExpect(jsonPath("$.data.updatedAt").exists())
+            .andExpect(jsonPath("$.data.createdAt").value("2026-06-27T10:00:00Z"))
+            .andExpect(jsonPath("$.data.updatedAt").value("2026-06-27T10:01:00Z"))
             .andExpect(jsonPath("$.data.startedAt").exists())
             .andExpect(jsonPath("$.data.finishedAt").doesNotExist())
             .andExpect(content().string(not(containsString("userId"))))
@@ -183,9 +183,9 @@ class TaskQueryControllerTest {
             null,
             0,
             3,
-            LocalDateTime.of(2026, 6, 27, 10, 0),
-            LocalDateTime.of(2026, 6, 27, 10, 1),
-            LocalDateTime.of(2026, 6, 27, 10, 1),
+            Instant.parse("2026-06-27T10:00:00Z"),
+            Instant.parse("2026-06-27T10:01:00Z"),
+            Instant.parse("2026-06-27T10:01:00Z"),
             null
         );
     }
@@ -202,9 +202,9 @@ class TaskQueryControllerTest {
             null,
             0,
             3,
-            LocalDateTime.of(2026, 6, 27, 10, 0),
-            LocalDateTime.of(2026, 6, 27, 10, 1),
-            LocalDateTime.of(2026, 6, 27, 10, 1),
+            Instant.parse("2026-06-27T10:00:00Z"),
+            Instant.parse("2026-06-27T10:01:00Z"),
+            Instant.parse("2026-06-27T10:01:00Z"),
             null
         );
     }

@@ -16,7 +16,7 @@ public class CourseQaQueryTermExtractor {
     private static final List<String> CHINESE_BOUNDARY_TERMS = List.of(
         "这节课程", "这节课", "本节课程", "本节", "课程", "视频", "内容",
         "为什么", "如何", "什么", "请问", "这个", "哪里", "哪儿", "哪个", "老师",
-        "讲解", "介绍", "讲了", "使用",
+        "讲解", "介绍", "讲了", "使用", "主要", "概述", "总结", "附近", "左右", "前后", "分钟",
         "这节", "的是", "是在", "以及", "是否", "是", "的", "在", "中", "与", "和", "吗", "呢"
     );
     private static final Set<String> ENGLISH_BOUNDARY_TERMS = Set.of(

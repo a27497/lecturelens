@@ -15,6 +15,7 @@ import SectionPanel from "../components/ui/SectionPanel.vue";
 import StatusBadge from "../components/ui/StatusBadge.vue";
 import type { TaskSummaryResponse } from "../types/task";
 import { toUserFriendlyError } from "../utils/errorMessage";
+import { formatApiTimestamp, parseApiTimestamp } from "../utils/time";
 import {
   getTaskStatusGroup,
   isRetryableTaskStatus,
@@ -436,8 +437,8 @@ function courseTitle(task: TaskSummaryResponse): string {
   if (!task.createdAt) {
     return "课程视频";
   }
-  const date = new Date(task.createdAt);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseApiTimestamp(task.createdAt);
+  if (!date) {
     return "课程视频";
   }
   return `课程视频 · ${date.toLocaleDateString(undefined, { month: "long", day: "numeric" })}`;
@@ -476,14 +477,7 @@ function readableFailure(task: TaskSummaryResponse): string {
 }
 
 function formatTime(value: string | null): string {
-  if (!value) {
-    return "暂无";
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return date.toLocaleString();
+  return formatApiTimestamp(value);
 }
 </script>
 

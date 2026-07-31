@@ -21,6 +21,7 @@ import com.example.courselingo.result.dto.ResultLearningPackage;
 import com.example.courselingo.result.dto.ResultSubtitleSegment;
 import com.example.courselingo.result.dto.ResultTranslationSegment;
 import com.example.courselingo.result.dto.TaskResultResponse;
+import com.example.courselingo.result.dto.TranslationStatus;
 import com.example.courselingo.subtitle.dto.SubtitleSegmentView;
 import com.example.courselingo.subtitle.dto.TaskFullTextResultView;
 import com.example.courselingo.subtitle.dto.SubtitleTranslationSegmentView;
@@ -187,16 +188,22 @@ public class TaskResultServiceImpl implements TaskResultService {
             ? null
             : fullTextResultQueryService.getByTaskAndLanguage(normalizedTaskId, userId, targetLanguage).orElse(null);
         String sourceFullText = firstNonBlank(fullText == null ? null : fullText.sourceFullText(), buildSourceFullText(subtitles));
+        List<SubtitleTranslationSegmentView> translations = subtitleTranslationQueryService
+            .listTranslations(normalizedTaskId, userId, targetLanguage);
+        List<AiCallRecordView> aiCalls = aiCallRecordService.listByTask(normalizedTaskId, userId);
+        TranslationStatus translationStatus = translationStatus(task, fullText, translations, aiCalls);
         return new TaskResultResponse(
             normalizedTaskId,
             targetLanguage,
+            translationStatus,
+            translationErrorSummary(translationStatus, aiCalls),
             sourceFullText,
             sourceParagraphs(sourceFullText),
             fullText == null ? "" : nullToEmpty(fullText.translatedFullText()),
             subtitles.stream()
                 .map(TaskResultServiceImpl::toSubtitle)
                 .toList(),
-            subtitleTranslationQueryService.listTranslations(normalizedTaskId, userId, targetLanguage).stream()
+            translations.stream()
                 .map(TaskResultServiceImpl::toTranslation)
                 .toList(),
             learningPackageQueryService.getByTaskAndLanguage(normalizedTaskId, userId, targetLanguage)
@@ -207,10 +214,54 @@ public class TaskResultServiceImpl implements TaskResultService {
                 .toList(),
             keyframes(normalizedTaskId, userId),
             videoSegments(normalizedTaskId, userId),
-            aiCallRecordService.listByTask(normalizedTaskId, userId).stream()
+            aiCalls.stream()
                 .map(TaskResultServiceImpl::toAiCallRecord)
                 .toList()
         );
+    }
+
+    private static TranslationStatus translationStatus(
+        AnalysisTask task,
+        TaskFullTextResultView fullText,
+        List<SubtitleTranslationSegmentView> translations,
+        List<AiCallRecordView> aiCalls
+    ) {
+        if ((translations != null && !translations.isEmpty())
+            || (fullText != null && fullText.translatedFullText() != null && !fullText.translatedFullText().isBlank())) {
+            return TranslationStatus.SUCCEEDED;
+        }
+        String status = task.getStatus() == null ? "" : task.getStatus();
+        if ("CANCELED".equals(status)) {
+            return TranslationStatus.CANCELED;
+        }
+        boolean translationFailed = aiCalls != null && aiCalls.stream().anyMatch(call ->
+            call.stage() == com.example.courselingo.ai.record.domain.AiCallStage.TRANSLATION
+                && call.status() == com.example.courselingo.ai.record.domain.AiCallRecordStatus.FAILED
+        );
+        if (translationFailed || ("FAILED".equals(status) && isTranslationStage(task.getCurrentStage()))) {
+            return TranslationStatus.FAILED;
+        }
+        if ("CREATED".equals(status) || "QUEUED".equals(status) || "RUNNING".equals(status) || "RETRYING".equals(status)) {
+            return TranslationStatus.RUNNING;
+        }
+        return "SUCCEEDED".equals(status) ? TranslationStatus.SKIPPED : TranslationStatus.NOT_STARTED;
+    }
+
+    private static boolean isTranslationStage(String stage) {
+        return stage != null && (stage.equals("TRANSLATE") || stage.equals("TRANSLATING")
+            || stage.equals("TRANSLATE_SUBTITLES"));
+    }
+
+    private static String translationErrorSummary(TranslationStatus status, List<AiCallRecordView> calls) {
+        if (status != TranslationStatus.FAILED) {
+            return null;
+        }
+        return calls == null ? "翻译生成失败，请重新处理任务。" : calls.stream()
+            .filter(call -> call.stage() == com.example.courselingo.ai.record.domain.AiCallStage.TRANSLATION)
+            .filter(call -> call.status() == com.example.courselingo.ai.record.domain.AiCallRecordStatus.FAILED)
+            .findFirst()
+            .map(call -> "翻译生成失败（" + (call.errorCode() == null ? "UNKNOWN" : call.errorCode()) + "），请重新处理任务。")
+            .orElse("翻译生成失败，请重新处理任务。");
     }
 
     private static ResultSubtitleSegment toSubtitle(SubtitleSegmentView view) {
@@ -266,6 +317,9 @@ public class TaskResultServiceImpl implements TaskResultService {
             view.model(),
             view.status().name(),
             view.durationMillis(),
+            view.providerDurationMillis(),
+            view.batchCount(),
+            view.retryCount(),
             view.promptTokens(),
             view.completionTokens(),
             view.totalTokens(),

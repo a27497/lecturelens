@@ -146,17 +146,16 @@ class JsonLearningPackageExporterTest {
             .isInstanceOf(BusinessException.class)
             .hasMessage("JSON learning package content is invalid");
 
-        assertThatThrownBy(() -> exporter.export(
+        String sanitizedJson = exporter.export(
             "task_1",
             "zh-CN",
-            List.of(source(0, 0, 1_000, "token abc123")),
+            List.of(source(0, 0, 1_000, "token abc123 and token authentication")),
             List.of(translation(0, 0, 1_000, "Translated")),
             validLearningPackage()
-        ))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("JSON artifact content is invalid")
-            .satisfies(error -> assertThat(error.getMessage().toLowerCase())
-                .doesNotContain("token", "secret", "api key", "authorization", "c:\\"));
+        );
+        assertThat(sanitizedJson)
+            .contains("[redacted] and token authentication")
+            .doesNotContain("abc123");
     }
 
     @Test

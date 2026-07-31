@@ -11,6 +11,9 @@ record ValidatedCompleteAiCallRecordCommand(
     Integer inputUnits,
     Integer outputUnits,
     String requestFingerprint,
-    String responseFingerprint
+    String responseFingerprint,
+    Long providerDurationMillis,
+    Integer batchCount,
+    Integer retryCount
 ) {
 }

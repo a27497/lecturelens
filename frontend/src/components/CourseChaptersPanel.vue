@@ -61,6 +61,9 @@ async function generateChapters() {
     const nextChapters = await generateCourseChapters(currentTaskId);
     if (version !== requestVersion.value || props.taskId !== currentTaskId) return;
     chapters.value = nextChapters;
+    if (nextChapters.length === 0) {
+      errorMessage.value = "课程证据不足，暂时无法生成章节。";
+    }
   } catch (error) {
     if (version === requestVersion.value && props.taskId === currentTaskId) errorMessage.value = toReadableCourseChapterError(error);
   } finally {

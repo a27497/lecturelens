@@ -25,6 +25,7 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.infrastructure.RefreshTokenProperties;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +103,7 @@ class RefreshTokenServiceTest {
         assertThat(saved.getTokenHash()).isEqualTo(hashService.sha256Hex(refreshToken));
         assertThat(saved.getTokenHash()).isNotEqualTo(refreshToken);
         assertThat(saved.getRevokedAt()).isNull();
-        assertThat(saved.getExpiresAt()).isAfter(LocalDateTime.now().plusSeconds(2591000L));
+        assertThat(saved.getExpiresAt()).isAfter(LocalDateTime.now(ZoneOffset.UTC).plusSeconds(2591000L));
     }
 
     @Test
@@ -132,7 +133,7 @@ class RefreshTokenServiceTest {
     @Test
     void repeatedUseOfRevokedRefreshTokenFails() {
         RefreshToken oldToken = activeRefreshToken(1L, "old-refresh-token");
-        oldToken.setRevokedAt(LocalDateTime.now());
+        oldToken.setRevokedAt(LocalDateTime.now(ZoneOffset.UTC));
         when(refreshTokenMapper.selectOne(anyRefreshTokenWrapper())).thenReturn(oldToken);
 
         assertThatThrownBy(() -> refreshTokenService.refresh(new RefreshRequest("old-refresh-token")))
@@ -156,7 +157,7 @@ class RefreshTokenServiceTest {
     @Test
     void refreshRejectsExpiredToken() {
         RefreshToken oldToken = activeRefreshToken(1L, "old-refresh-token");
-        oldToken.setExpiresAt(LocalDateTime.now().minusSeconds(1));
+        oldToken.setExpiresAt(LocalDateTime.now(ZoneOffset.UTC).minusSeconds(1));
         when(refreshTokenMapper.selectOne(anyRefreshTokenWrapper())).thenReturn(oldToken);
 
         assertThatThrownBy(() -> refreshTokenService.refresh(new RefreshRequest("old-refresh-token")))

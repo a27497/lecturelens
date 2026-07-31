@@ -111,10 +111,10 @@ class AiModelRouterTest {
 
         LlmRequest routed = factory.apply(AiModelStage.LEARNING_PACKAGE, request());
 
-        assertThat(routed.timeout()).isEqualTo(Duration.ofSeconds(900));
-        assertThat(routed.temperature()).isEqualTo(0.0d);
-        assertThat(routed.maxTokens()).isEqualTo(32768);
-        assertThat(routed.maxAttempts()).isEqualTo(1);
+        assertThat(routed.timeout()).isEqualTo(Duration.ofSeconds(30));
+        assertThat(routed.temperature()).isEqualTo(0.7d);
+        assertThat(routed.maxTokens()).isEqualTo(512);
+        assertThat(routed.maxAttempts()).isEqualTo(2);
         assertThat(routed.metadata())
             .containsEntry(AiModelRoutedLlmRequestFactory.METADATA_STAGE, "LEARNING_PACKAGE")
             .containsEntry(AiModelRoutedLlmRequestFactory.METADATA_PROFILE_CODE, "deepseek-text")
@@ -133,6 +133,40 @@ class AiModelRouterTest {
         LlmRequest routed = factory.apply(AiModelStage.LEARNING_PACKAGE, request);
 
         assertThat(routed).isSameAs(request);
+    }
+
+    @Test
+    void blankTextStageModelFallsBackToConfiguredGeneralTextModel() {
+        AiModelRoutingProperties properties = properties();
+        properties.setDefaultTextModel("general-text-model");
+        properties.getProfiles().get("deepseek-text").setModelName(" ");
+
+        AiModelRoute route = new AiModelRouter(properties).route(AiModelStage.COURSE_QA);
+
+        assertThat(route.modelName()).isEqualTo("general-text-model");
+    }
+
+    @Test
+    void blankVisionModelNeverFallsBackToGeneralTextModel() {
+        AiModelRoutingProperties properties = properties();
+        properties.setDefaultTextModel("general-text-model");
+        Map<AiModelStage, String> routes = new java.util.LinkedHashMap<>(properties.getRoutes());
+        routes.put(AiModelStage.VISION_FRAME_ANALYSIS, "vision");
+        properties.setRoutes(routes);
+        AiModelProfile vision = new AiModelProfile();
+        vision.setProviderType("openai-compatible-vision");
+        vision.setBaseUrl("https://vision.example.invalid/v1");
+        vision.setModelName(" ");
+        vision.setApiKeyEnvName("VISION_API_KEY");
+        vision.setCapabilities(EnumSet.of(ModelCapability.VISION, ModelCapability.JSON_OUTPUT));
+        Map<String, AiModelProfile> profiles = new java.util.LinkedHashMap<>(properties.getProfiles());
+        profiles.put("vision", vision);
+        properties.setProfiles(profiles);
+        AiModelRouter router = new AiModelRouter(properties);
+
+        assertThatThrownBy(() -> router.route(AiModelStage.VISION_FRAME_ANALYSIS))
+            .isInstanceOf(ModelRoutingException.class)
+            .hasMessageContaining("model name is required");
     }
 
     private static AiModelRoutingProperties properties() {

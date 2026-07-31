@@ -46,13 +46,13 @@ public class AiModelRouter {
         }
     }
 
-    private static void validateProfile(AiModelStage stage, String profileCode, AiModelProfile profile) {
+    private void validateProfile(AiModelStage stage, String profileCode, AiModelProfile profile) {
         if (!profile.isEnabled()) {
             throw new ModelRoutingException("AI model profile is disabled: " + profileCode + " stage=" + stage.name());
         }
         requireText(profile.getProviderType(), "provider type", profileCode, stage);
         requireText(profile.getBaseUrl(), "base URL", profileCode, stage);
-        requireText(profile.getModelName(), "model name", profileCode, stage);
+        requireText(effectiveModelName(stage, profile), "model name", profileCode, stage);
         requireText(profile.getApiKeyEnvName(), "API key env name", profileCode, stage);
         validateCapabilities(stage, profileCode, profile.getCapabilities());
         validateTuning(profileCode, stage, profile);
@@ -89,14 +89,14 @@ public class AiModelRouter {
         }
     }
 
-    private static AiModelRoute toRoute(AiModelStage stage, String profileCode, AiModelProfile profile) {
+    private AiModelRoute toRoute(AiModelStage stage, String profileCode, AiModelProfile profile) {
         return new AiModelRoute(
             stage,
             profileCode,
             clean(profile.getDisplayName()),
             clean(profile.getProviderType()).toLowerCase(Locale.ROOT),
             clean(profile.getBaseUrl()),
-            clean(profile.getModelName()),
+            effectiveModelName(stage, profile),
             clean(profile.getApiKeyEnvName()),
             profile.getCapabilities(),
             profile.getTemperature(),
@@ -104,6 +104,17 @@ public class AiModelRouter {
             profile.getTimeout(),
             profile.getMaxAttempts()
         );
+    }
+
+    private String effectiveModelName(AiModelStage stage, AiModelProfile profile) {
+        String configured = clean(profile.getModelName());
+        if (configured != null) {
+            return configured;
+        }
+        if (stage.requiredCapabilities().contains(ModelCapability.TEXT_CHAT)) {
+            return clean(properties.getDefaultTextModel());
+        }
+        return null;
     }
 
     private static String requireText(String value, String field, String profileCode, AiModelStage stage) {

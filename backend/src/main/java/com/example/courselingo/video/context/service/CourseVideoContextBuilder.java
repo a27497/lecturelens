@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -202,7 +203,7 @@ public class CourseVideoContextBuilder {
             chunkCount,
             source.learningPackage() != null,
             source.videoSegments().stream().anyMatch(segment -> !isBlank(segment.getAsrText())),
-            LocalDateTime.now(),
+            LocalDateTime.now(ZoneOffset.UTC),
             chapters,
             globalSummary,
             globalKeywords

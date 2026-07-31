@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class LangChain4jLlmProperties {
 
     public static final String DEFAULT_BASE_URL = "https://api.openai.com/v1";
-    public static final String DEFAULT_MODEL = "gpt-4o-mini";
+    public static final String DEFAULT_MODEL = "";
 
     private boolean enabled;
     private String baseUrl = DEFAULT_BASE_URL;

@@ -11,6 +11,9 @@ record PipelineAiCallRecord(
     String model,
     boolean success,
     Long durationMillis,
+    Long providerDurationMillis,
+    Integer batchCount,
+    Integer retryCount,
     Integer promptTokens,
     Integer completionTokens,
     Integer totalTokens,
@@ -46,6 +49,49 @@ record PipelineAiCallRecord(
             safeOptional(model),
             true,
             nonNegative(durationMillis),
+            null,
+            null,
+            null,
+            nonNegative(promptTokens),
+            nonNegative(completionTokens),
+            nonNegative(totalTokens),
+            nonNegative(inputUnits),
+            nonNegative(outputUnits),
+            null,
+            null,
+            null,
+            safeOptional(requestFingerprint),
+            safeOptional(responseFingerprint)
+        );
+    }
+
+    static PipelineAiCallRecord succeededWithMetrics(
+        AiCallType callType,
+        AiCallStage stage,
+        String provider,
+        String model,
+        Long durationMillis,
+        Long providerDurationMillis,
+        Integer batchCount,
+        Integer retryCount,
+        Integer promptTokens,
+        Integer completionTokens,
+        Integer totalTokens,
+        Integer inputUnits,
+        Integer outputUnits,
+        String requestFingerprint,
+        String responseFingerprint
+    ) {
+        return new PipelineAiCallRecord(
+            callType,
+            stage,
+            safeProvider(provider, callType, stage),
+            safeOptional(model),
+            true,
+            nonNegative(durationMillis),
+            nonNegative(providerDurationMillis),
+            nonNegative(batchCount),
+            nonNegative(retryCount),
             nonNegative(promptTokens),
             nonNegative(completionTokens),
             nonNegative(totalTokens),
@@ -83,6 +129,9 @@ record PipelineAiCallRecord(
             null,
             null,
             null,
+            null,
+            null,
+            null,
             safeOptional(errorCode),
             SANITIZER.sanitizeErrorMessage(errorMessage),
             retryable,
@@ -100,6 +149,9 @@ record PipelineAiCallRecord(
             + ", model=" + model
             + ", success=" + success
             + ", durationMillis=" + durationMillis
+            + ", providerDurationMillis=" + providerDurationMillis
+            + ", batchCount=" + batchCount
+            + ", retryCount=" + retryCount
             + ", promptTokens=" + promptTokens
             + ", completionTokens=" + completionTokens
             + ", totalTokens=" + totalTokens

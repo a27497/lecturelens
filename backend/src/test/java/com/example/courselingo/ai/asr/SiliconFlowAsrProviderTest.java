@@ -43,7 +43,7 @@ class SiliconFlowAsrProviderTest {
         assertThat(sent.uri()).isEqualTo(URI.create("https://api.siliconflow.cn/v1/audio/transcriptions"));
         assertThat(sent.audioFile()).isEqualTo(audioFile);
         assertThat(sent.fileFieldName()).isEqualTo("file");
-        assertThat(sent.formFields()).containsEntry("model", "FunAudioLLM/SenseVoiceSmall");
+        assertThat(sent.formFields()).containsEntry("model", "test-asr-model");
         assertThat(sent.headers()).containsEntry("Authorization", "Bearer test-api-key");
         assertThat(sent.timeout()).isEqualTo(Duration.ofSeconds(180));
     }
@@ -270,6 +270,7 @@ class SiliconFlowAsrProviderTest {
     private SiliconFlowAsrProperties properties() {
         SiliconFlowAsrProperties properties = new SiliconFlowAsrProperties();
         properties.setApiKey("test-api-key");
+        properties.setModel("test-asr-model");
         return properties;
     }
 

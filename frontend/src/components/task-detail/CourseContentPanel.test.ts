@@ -5,6 +5,32 @@ import CourseVisualEvidencePanel from "./CourseVisualEvidencePanel.vue";
 import type { ResultKeyframe, TaskResultResponse } from "../../types/result";
 
 describe("CourseContentPanel visual evidence", () => {
+  it("shows a terminal translation failure instead of per-segment loading", async () => {
+    const failed = result([]);
+    failed.translatedFullText = "";
+    failed.translationStatus = "FAILED";
+    failed.translationErrorSummary = "翻译生成失败，请重新处理任务。";
+    failed.subtitles = [{ segmentIndex: 0, startMillis: 0, endMillis: 1000, language: "en", sourceText: "hello" }];
+
+    const wrapper = shallowMount(CourseContentPanel, {
+      props: { taskId: "task_failed", status: "FAILED", result: failed },
+      global: {
+        stubs: {
+          "el-empty": { props: ["description"], template: "<div>{{ description }}</div>" },
+        },
+      },
+    });
+
+    const translatedTab = wrapper.findAll("button").find((button) => button.text() === "中文译文");
+    await translatedTab!.trigger("click");
+    expect(wrapper.text()).toContain("翻译生成失败，请重新处理任务。");
+    expect(wrapper.text()).not.toContain("译文生成中");
+    const timelineTab = wrapper.findAll("button").find((button) => button.text() === "时间轴");
+    await timelineTab!.trigger("click");
+    expect(wrapper.text()).toContain("译文生成失败");
+    expect(wrapper.text()).toContain("hello");
+  });
+
   it("does not show an empty visual evidence tab for a legacy task", () => {
     const wrapper = shallowMount(CourseContentPanel, {
       props: { taskId: "legacy_task", status: "SUCCEEDED", result: result([]) },
@@ -56,6 +82,8 @@ function result(keyframes: ResultKeyframe[]): TaskResultResponse {
     sourceFullText: "Course source",
     sourceParagraphs: ["Course source"],
     translatedFullText: "课程译文",
+    translationStatus: "SUCCEEDED",
+    translationErrorSummary: null,
     subtitles: [],
     translations: [],
     learningPackage: null,

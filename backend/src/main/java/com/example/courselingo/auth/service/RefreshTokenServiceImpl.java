@@ -11,6 +11,7 @@ import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.infrastructure.RefreshTokenProperties;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public String issue(UserAccount userAccount) {
         String rawToken = tokenGenerator.generate();
-        RefreshToken refreshToken = buildRefreshToken(userAccount.getId(), rawToken, LocalDateTime.now());
+        RefreshToken refreshToken = buildRefreshToken(userAccount.getId(), rawToken, LocalDateTime.now(ZoneOffset.UTC));
         refreshTokenMapper.insert(refreshToken);
         return rawToken;
     }
@@ -55,7 +56,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public LoginResponse refresh(RefreshRequest request) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         RefreshToken existingToken = findByRawToken(request.refreshToken());
         if (existingToken == null) {
             throw new BusinessException(ErrorCode.AUTH_REFRESH_TOKEN_INVALID);

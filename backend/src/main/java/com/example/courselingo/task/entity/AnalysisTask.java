@@ -21,6 +21,9 @@ public class AnalysisTask {
     @TableField("target_language")
     private String targetLanguage;
 
+    @TableField("source_language")
+    private String sourceLanguage;
+
     @TableField("status")
     private String status;
 
@@ -87,6 +90,14 @@ public class AnalysisTask {
 
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;
+    }
+
+    public String getSourceLanguage() {
+        return sourceLanguage;
+    }
+
+    public void setSourceLanguage(String sourceLanguage) {
+        this.sourceLanguage = sourceLanguage;
     }
 
     public String getStatus() {

@@ -13,6 +13,8 @@ import com.example.courselingo.learning.service.LearningPackageService;
 import com.example.courselingo.media.AudioChunker;
 import com.example.courselingo.media.AudioDurationProbe;
 import com.example.courselingo.media.FfmpegAudioExtractor;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractor;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptProperties;
 import com.example.courselingo.subtitle.service.SubtitleSegmentPersistenceService;
 import com.example.courselingo.subtitle.service.SubtitleTranslationService;
 import com.example.courselingo.storage.StorageService;
@@ -47,6 +49,7 @@ import org.springframework.context.annotation.Configuration;
     VideoKeyframeProperties.class,
     VisionOcrProperties.class,
     VisionAnalysisProperties.class,
+    EmbeddedSubtitleTranscriptProperties.class,
     VideoSegmentProperties.class
 })
 public class AnalysisTaskWorkExecutorConfiguration {
@@ -120,6 +123,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
         AudioDurationProbe audioDurationProbe,
         TaskProgressSnapshotService progressSnapshotService,
         TaskClaimService taskClaimService,
+        EmbeddedSubtitleTranscriptExtractor embeddedSubtitleTranscriptExtractor,
+        EmbeddedSubtitleTranscriptProperties embeddedSubtitleTranscriptProperties,
         VisionPipelineBranchCoordinator visionBranchCoordinator,
         VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
     ) {
@@ -148,7 +153,9 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 progressSnapshotService,
                 taskClaimService,
                 ignored -> { },
-                audioDurationProbe
+                audioDurationProbe,
+                embeddedSubtitleTranscriptExtractor,
+                embeddedSubtitleTranscriptProperties
             ),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),

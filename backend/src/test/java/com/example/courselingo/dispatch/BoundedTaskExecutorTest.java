@@ -179,6 +179,40 @@ class BoundedTaskExecutorTest {
             .isEqualTo(ErrorCode.TASK_EXECUTOR_TIMEOUT);
     }
 
+    @Test
+    void cancelInterruptsRunningTaskAndRemovesItFromRegistry() throws Exception {
+        executor = newExecutor(1, 1, 1, 30);
+        CountDownLatch started = new CountDownLatch(1);
+        AtomicBoolean interrupted = new AtomicBoolean(false);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread caller = new Thread(() -> {
+            try {
+                executor.submitAndWait("task_cancel", "req_cancel", () -> {
+                    started.countDown();
+                    try {
+                        Thread.sleep(30_000L);
+                    } catch (InterruptedException exception) {
+                        interrupted.set(true);
+                        throw exception;
+                    }
+                    return null;
+                });
+            } catch (Throwable exception) {
+                failure.set(exception);
+            }
+        });
+        caller.start();
+        assertThat(started.await(1, TimeUnit.SECONDS)).isTrue();
+
+        assertThat(executor.cancel("task_cancel")).isTrue();
+        caller.join(2_000L);
+
+        assertThat(caller.isAlive()).isFalse();
+        assertThat(interrupted).isTrue();
+        assertThat(failure.get()).isInstanceOf(BusinessException.class);
+        assertThat(executor.cancel("task_cancel")).isFalse();
+    }
+
     private ThreadPoolBoundedTaskExecutor newExecutor(
         int coreSize,
         int maxSize,

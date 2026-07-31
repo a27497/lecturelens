@@ -156,6 +156,7 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             try {
                 logRunnerBoundary("runner_cancel_requested", message, "start");
                 AnalysisTask task = loadAndValidate(message);
+                boundedTaskExecutor.cancel(message.taskId());
                 AnalysisTaskStatus status = AnalysisTaskStatus.fromDatabaseValue(task.getStatus());
                 if (status == AnalysisTaskStatus.CANCELED) {
                     cleanupCanceledEvidence(message);
@@ -209,6 +210,7 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             message.taskId(),
             message.uploadId(),
             message.userId(),
+            message.sourceLanguage(),
             message.targetLanguage(),
             message.requestId()
         );

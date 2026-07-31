@@ -69,6 +69,9 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
         update.setStatus(AiCallRecordStatus.SUCCEEDED.name());
         update.setFinishedAt(now());
         update.setDurationMillis(validated.durationMillis());
+        update.setProviderDurationMillis(validated.providerDurationMillis());
+        update.setBatchCount(validated.batchCount());
+        update.setRetryCount(validated.retryCount());
         update.setPromptTokens(validated.promptTokens());
         update.setCompletionTokens(validated.completionTokens());
         update.setTotalTokens(validated.totalTokens());
@@ -132,6 +135,9 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
         target.setStatus(source.getStatus());
         target.setFinishedAt(source.getFinishedAt());
         target.setDurationMillis(source.getDurationMillis());
+        target.setProviderDurationMillis(source.getProviderDurationMillis());
+        target.setBatchCount(source.getBatchCount());
+        target.setRetryCount(source.getRetryCount());
         target.setPromptTokens(source.getPromptTokens());
         target.setCompletionTokens(source.getCompletionTokens());
         target.setTotalTokens(source.getTotalTokens());
@@ -157,6 +163,9 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
             record.getStartedAt(),
             record.getFinishedAt(),
             record.getDurationMillis(),
+            record.getProviderDurationMillis(),
+            record.getBatchCount(),
+            record.getRetryCount(),
             record.getPromptTokens(),
             record.getCompletionTokens(),
             record.getTotalTokens(),

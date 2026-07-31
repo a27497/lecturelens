@@ -115,7 +115,7 @@ export const useTaskEventsStore = defineStore("taskEvents", {
         return;
       }
 
-      if (message.data) {
+      if (message.data && !this.shouldKeepTerminalTask(message.data)) {
         this.task = message.data;
       }
 
@@ -123,6 +123,14 @@ export const useTaskEventsStore = defineStore("taskEvents", {
         this.connectionStatus = "closed";
         this.closeCurrentConnection();
       }
+    },
+
+    shouldKeepTerminalTask(next: TaskEventPayload): boolean {
+      return Boolean(
+        this.task
+        && TERMINAL_STATUSES.has(this.task.status)
+        && !TERMINAL_STATUSES.has(next.status),
+      );
     },
 
     closeCurrentConnection() {

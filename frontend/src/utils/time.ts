@@ -20,10 +20,25 @@ export function formatDurationBetween(startValue?: string | null, endValue?: str
   if (!startValue || !endValue) {
     return "暂无";
   }
-  const start = new Date(startValue).getTime();
-  const end = new Date(endValue).getTime();
+  const start = parseApiTimestamp(startValue)?.getTime() ?? Number.NaN;
+  const end = parseApiTimestamp(endValue)?.getTime() ?? Number.NaN;
   if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
     return "暂无";
   }
   return formatSecondsToClock((end - start) / 1000);
+}
+
+export function parseApiTimestamp(value?: string | null): Date | null {
+  if (!value) return null;
+  const normalized = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value.trim())
+    ? value.trim()
+    : `${value.trim()}Z`;
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function formatApiTimestamp(value?: string | null): string {
+  if (!value) return "暂无";
+  const parsed = parseApiTimestamp(value);
+  return parsed ? parsed.toLocaleString() : value;
 }

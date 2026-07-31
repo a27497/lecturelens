@@ -1,9 +1,13 @@
 package com.example.courselingo.qa.service;
 
 import com.example.courselingo.ai.llm.LlmProvider;
+import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
+import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
 import com.example.courselingo.ai.llm.LlmRequest;
 import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmResponseFormat;
+import com.example.courselingo.ai.llm.LlmStageException;
+import com.example.courselingo.ai.llm.LlmStructuredOutputExecutor;
 import com.example.courselingo.ai.llm.LlmUsage;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
@@ -17,6 +21,7 @@ import com.example.courselingo.auth.dto.CurrentUserResponse;
 import com.example.courselingo.auth.service.CurrentUserService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
+import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 import com.example.courselingo.modelrouting.AiModelStage;
 import com.example.courselingo.qa.domain.CourseQaRecord;
@@ -36,12 +41,15 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.ObjectProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseQaServiceImpl implements CourseQaService {
 
+    private static final Logger log = LoggerFactory.getLogger(CourseQaServiceImpl.class);
     private final CurrentUserService currentUserService;
     private final AnalysisTaskMapper analysisTaskMapper;
     private final CourseQaEvidenceRetriever evidenceRetriever;
@@ -167,7 +175,10 @@ public class CourseQaServiceImpl implements CourseQaService {
             currentUser.userId(),
             task.getTargetLanguage(),
             question
-        ));
+        )).stream()
+            .distinct()
+            .limit(properties.getMaxEvidenceItems())
+            .toList();
         if (evidence.isEmpty()) {
             CourseQaRecord record = saveRecord(
                 normalizedTaskId,
@@ -205,22 +216,30 @@ public class CourseQaServiceImpl implements CourseQaService {
         }
 
         AiCallRecordView started = startAiCall(normalizedTaskId, currentUser.userId(), evidence.size());
+        long startedNanos = System.nanoTime();
         try {
+            List<com.example.courselingo.ai.llm.LlmMessage> messages = CourseQaPromptFactory.buildMessages(
+                question,
+                evidence,
+                properties.getMaxPromptChars(),
+                properties.getMaxSnippetChars()
+            );
+            int promptChars = CourseQaPromptFactory.promptChars(messages);
             LlmRequest requestForProvider = new LlmRequest(
                 "qa_" + UUID.randomUUID(),
                 normalizedTaskId,
-                CourseQaPromptFactory.buildMessages(question, evidence),
+                messages,
                 properties.getLlmTimeout(),
                 0.0d,
-                2048,
-                1,
+                properties.getMaxTokens(),
+                properties.getMaxAttempts(),
                 Map.of("stage", AiModelStage.COURSE_QA.name(), "targetLanguage", task.getTargetLanguage()),
                 LlmResponseFormat.JSON_OBJECT
             );
             LlmRequest routed = routedRequestFactory == null
                 ? requestForProvider
                 : routedRequestFactory.apply(AiModelStage.COURSE_QA, requestForProvider);
-            LlmResult result = llmProvider.generate(routed);
+            LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
             CourseQaResponseParser.ParsedCourseQaResponse parsed = parser.parse(result.content(), evidence.size());
             List<CourseQaEvidenceItem> cited = evidenceSanitizer.sanitize(citedEvidence(evidence, parsed.citedEvidenceIndexes()));
             String answer = cited.isEmpty() ? CourseQaMessages.INSUFFICIENT_EVIDENCE : parsed.answer();
@@ -238,9 +257,18 @@ public class CourseQaServiceImpl implements CourseQaService {
                 null
             );
             completeAiCall(started, normalizedTaskId, currentUser.userId(), result, evidence.size(), answer.length());
+            log.info(
+                "event=course_qa_completed taskId={} evidenceCount={} promptChars={} providerDurationMillis={} totalDurationMillis={}",
+                SafeLogSanitizer.sanitize(normalizedTaskId),
+                evidence.size(),
+                promptChars,
+                result.duration().toMillis(),
+                elapsedMillis(startedNanos)
+            );
             return new CourseQaResponse(String.valueOf(record.getId()), answer, cited, usage);
         } catch (RuntimeException exception) {
-            failAiCall(started, normalizedTaskId, currentUser.userId(), exception);
+            LlmStageException safeFailure = toStageFailure(exception);
+            failAiCall(started, normalizedTaskId, currentUser.userId(), safeFailure, elapsedMillis(startedNanos));
             saveRecord(
                 normalizedTaskId,
                 currentUser.userId(),
@@ -249,14 +277,33 @@ public class CourseQaServiceImpl implements CourseQaService {
                 evidence,
                 "FAILED",
                 null,
-                "AI_PROVIDER_FAILED",
-                sanitizer.sanitizeErrorMessage(exception.getMessage()),
+                safeFailure.apiDetails().errorCode(),
+                safeFailure.safeDiagnosticSummary(),
                 null
             );
-            throw exception instanceof BusinessException
-                ? exception
-                : new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course QA provider failed");
+            log.warn(
+                "event=course_qa_failed taskId={} evidenceCount={} totalDurationMillis={} errorCode={}",
+                SafeLogSanitizer.sanitize(normalizedTaskId),
+                evidence.size(),
+                elapsedMillis(startedNanos),
+                safeFailure.apiDetails().errorCode()
+            );
+            throw safeFailure;
         }
+    }
+
+    private static LlmStageException toStageFailure(RuntimeException exception) {
+        if (exception instanceof LlmStageException stageException) {
+            return stageException;
+        }
+        if (exception instanceof BusinessException && exception.getCause() == null) {
+            return new LlmStageException(
+                AiModelStage.COURSE_QA.name(),
+                new LlmProviderFailureDetails(LlmProviderFailureCategory.OUTPUT_INVALID, null, null, false),
+                exception
+            );
+        }
+        return new LlmStageException(AiModelStage.COURSE_QA.name(), exception);
     }
 
     private CourseQaRecord saveRecord(
@@ -339,7 +386,13 @@ public class CourseQaServiceImpl implements CourseQaService {
         ));
     }
 
-    private void failAiCall(AiCallRecordView started, String taskId, Long userId, RuntimeException exception) {
+    private void failAiCall(
+        AiCallRecordView started,
+        String taskId,
+        Long userId,
+        LlmStageException exception,
+        long durationMillis
+    ) {
         if (started == null || started.id() == null) {
             return;
         }
@@ -347,13 +400,17 @@ public class CourseQaServiceImpl implements CourseQaService {
             started.id(),
             taskId,
             userId,
-            null,
-            exception instanceof BusinessException businessException ? businessException.errorCode().code() : "AI_PROVIDER_FAILED",
-            sanitizer.sanitizeErrorMessage(exception.getMessage()),
-            true,
+            durationMillis,
+            exception.apiDetails().errorCode(),
+            exception.safeDiagnosticSummary(),
+            exception.details().retryable(),
             null,
             null
         ));
+    }
+
+    private static long elapsedMillis(long startedNanos) {
+        return Math.max(1L, Duration.ofNanos(System.nanoTime() - startedNanos).toMillis());
     }
 
     private CourseQaUsage usage(LlmResult result) {

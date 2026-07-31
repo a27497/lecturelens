@@ -370,6 +370,75 @@ class CourseQaEvidenceRetrieverTest {
         );
     }
 
+    @Test
+    void retrieveOverviewSamplesTheWholeTimelineWithoutGenericKeywordBias() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(
+            IntStream.range(0, 10)
+                .mapToObj(index -> videoSegment(
+                    (long) index + 1,
+                    index,
+                    index * 60_000L,
+                    (index + 1L) * 60_000L,
+                    "course topic " + index,
+                    0.8d
+                ))
+                .toList()
+        );
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve(
+            "task_1",
+            42L,
+            "zh-CN",
+            "这节课程主要讲了什么？"
+        );
+
+        assertThat(evidence).hasSize(6);
+        assertThat(evidence.getFirst().startTimeMillis()).isZero();
+        assertThat(evidence.getLast().endTimeMillis()).isEqualTo(600_000L);
+    }
+
+    @Test
+    void retrieveUnderstandsNaturalMinuteAndUsesNarrowNearbyWindow() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            videoSegment(1L, 0, 0L, 60_000L, "course introduction", 0.9d),
+            videoSegment(2L, 9, 540_000L, 600_000L, "service discovery", 0.8d),
+            videoSegment(3L, 10, 600_000L, 660_000L, "API Gateway", 0.8d),
+            videoSegment(4L, 12, 720_000L, 780_000L, "Docker Compose", 0.9d)
+        ));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve(
+            "task_1",
+            42L,
+            "zh-CN",
+            "10 分钟附近讲了什么？"
+        );
+
+        assertThat(evidence).extracting(CourseQaEvidenceItem::startTimeMillis)
+            .containsExactly(540_000L, 600_000L);
+    }
+
+    @Test
+    void retrieveDeduplicatesOverlappingSemanticallyEquivalentSources() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            videoSegment(1L, 0, 0L, 60_000L, "Spring Boot configures the Java backend API", 0.9d)
+        ));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(2L, 0, 1_000L, 20_000L, "Spring Boot configures the Java backend API")
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        assertThat(retriever.retrieve("task_1", 42L, "zh-CN", "Spring Boot"))
+            .singleElement()
+            .satisfies(item -> assertThat(item.sourceType()).isEqualTo("VIDEO_SEGMENT"));
+    }
+
     private static VideoSegment videoSegment(Long id, int index, long start, long end, String text, double confidence) {
         return videoSegment(id, index, start, end, text, text, confidence);
     }

@@ -10,6 +10,12 @@ class CourseQaQueryTermExtractorTest {
     private final CourseQaQueryTermExtractor extractor = new CourseQaQueryTermExtractor();
 
     @Test
+    void genericOverviewAndNaturalMinuteWordsDoNotBecomeSearchTerms() {
+        assertThat(extractor.extract("这节课程主要讲了什么？")).isEmpty();
+        assertThat(extractor.extract("10 分钟附近讲了什么？")).isEmpty();
+    }
+
+    @Test
     void extractsEnglishAndTechnicalIdentifiersWithoutLosingIdentifierCharacters() {
         assertThat(extractor.extract("Transformer")).containsExactly("transformer");
         assertThat(extractor.extract("Spring Boot")).containsExactly("spring boot");

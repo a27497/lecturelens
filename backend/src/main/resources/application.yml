@@ -1,4 +1,6 @@
 spring:
+  jackson:
+    time-zone: UTC
   application:
     name: courselingo-backend
   main:
@@ -166,7 +168,7 @@ courselingo:
       include-ocr: ${COURSELINGO_FUSION_VIDEO_SEGMENT_INCLUDE_OCR:true}
       include-vision: ${COURSELINGO_FUSION_VIDEO_SEGMENT_INCLUDE_VISION:true}
       use-llm-summary: ${COURSELINGO_FUSION_VIDEO_SEGMENT_USE_LLM_SUMMARY:false}
-      llm-profile: ${COURSELINGO_FUSION_VIDEO_SEGMENT_LLM_PROFILE:deepseek-text}
+      llm-profile: ${COURSELINGO_FUSION_VIDEO_SEGMENT_LLM_PROFILE:fusion-text}
       fail-task-on-error: ${COURSELINGO_FUSION_VIDEO_SEGMENT_FAIL_TASK_ON_ERROR:false}
       max-asr-chars-per-window: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_ASR_CHARS_PER_WINDOW:4000}
       max-ocr-chars-per-window: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_OCR_CHARS_PER_WINDOW:2000}
@@ -179,15 +181,21 @@ courselingo:
     rate-limit-per-minute: ${COURSELINGO_QA_RATE_LIMIT_PER_MINUTE:10}
     question-max-length: ${COURSELINGO_QA_QUESTION_MAX_LENGTH:500}
     max-evidence-items: ${COURSELINGO_QA_MAX_EVIDENCE_ITEMS:8}
-    max-snippet-chars: ${COURSELINGO_QA_MAX_SNIPPET_CHARS:500}
-    llm-timeout: ${COURSELINGO_QA_LLM_TIMEOUT:60s}
+    max-snippet-chars: ${COURSELINGO_QA_MAX_SNIPPET_CHARS:360}
+    max-prompt-chars: ${COURSELINGO_QA_MAX_PROMPT_CHARS:8000}
+    max-tokens: ${COURSELINGO_QA_MAX_TOKENS:768}
+    max-attempts: ${COURSELINGO_QA_MAX_ATTEMPTS:1}
+    llm-timeout: ${COURSELINGO_QA_LLM_TIMEOUT:45s}
   chapter:
     enabled: ${COURSELINGO_CHAPTER_ENABLED:true}
     window-seconds: ${COURSELINGO_CHAPTER_WINDOW_SECONDS:240}
     max-chapters: ${COURSELINGO_CHAPTER_MAX_CHAPTERS:20}
     max-evidence-items: ${COURSELINGO_CHAPTER_MAX_EVIDENCE_ITEMS:24}
     max-chars-per-window: ${COURSELINGO_CHAPTER_MAX_CHARS_PER_WINDOW:1200}
-    llm-timeout: ${COURSELINGO_CHAPTER_LLM_TIMEOUT:90s}
+    max-prompt-chars: ${COURSELINGO_CHAPTER_MAX_PROMPT_CHARS:24000}
+    max-tokens: ${COURSELINGO_CHAPTER_MAX_TOKENS:4096}
+    max-attempts: ${COURSELINGO_CHAPTER_MAX_ATTEMPTS:3}
+    llm-timeout: ${COURSELINGO_CHAPTER_LLM_TIMEOUT:60s}
   video-context:
     enabled: ${COURSELINGO_VIDEO_CONTEXT_ENABLED:true}
     chunk-window-seconds: ${COURSELINGO_VIDEO_CONTEXT_CHUNK_WINDOW_SECONDS:240}
@@ -201,13 +209,15 @@ courselingo:
     translation:
       full-text:
         enabled: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_ENABLED:true}
-        request-timeout: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_REQUEST_TIMEOUT:900s}
-        max-tokens: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_TOKENS:32768}
-        max-attempts: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_ATTEMPTS:1}
+        request-timeout: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_REQUEST_TIMEOUT:120s}
+        total-timeout: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_TOTAL_TIMEOUT:15m}
+        max-tokens: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_TOKENS:1024}
+        max-attempts: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_ATTEMPTS:3}
         semantic-max-attempts: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SEMANTIC_MAX_ATTEMPTS:2}
-        max-source-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_SOURCE_SEGMENTS:1000}
-        batch-max-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_SEGMENTS:8}
-        batch-max-input-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_INPUT_CHARS:2500}
+        max-source-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_MAX_SOURCE_SEGMENTS:10000}
+        batch-max-segments: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_SEGMENTS:20}
+        batch-max-input-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_MAX_INPUT_CHARS:1000}
+        batch-concurrency: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_CONCURRENCY:4}
         single-segment-split-enabled: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_SPLIT_ENABLED:true}
         single-segment-max-piece-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MAX_PIECE_CHARS:600}
         single-segment-min-piece-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MIN_PIECE_CHARS:80}
@@ -215,27 +225,85 @@ courselingo:
   ai:
     model-routing:
       enabled: ${COURSELINGO_AI_MODEL_ROUTING_ENABLED:true}
+      default-text-model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}
       routes:
-        translation-full-text: ${COURSELINGO_AI_MODEL_ROUTE_TRANSLATION_FULL_TEXT:deepseek-text}
-        subtitle-translation: ${COURSELINGO_AI_MODEL_ROUTE_SUBTITLE_TRANSLATION:deepseek-text}
-        learning-package: ${COURSELINGO_AI_MODEL_ROUTE_LEARNING_PACKAGE:deepseek-text}
-        course-qa: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_QA:deepseek-text}
-        course-chapter: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_CHAPTER:deepseek-text}
+        translation-full-text: ${COURSELINGO_AI_MODEL_ROUTE_TRANSLATION_FULL_TEXT:translation-text}
+        subtitle-translation: ${COURSELINGO_AI_MODEL_ROUTE_SUBTITLE_TRANSLATION:translation-text}
+        learning-package: ${COURSELINGO_AI_MODEL_ROUTE_LEARNING_PACKAGE:learning-text}
+        course-qa: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_QA:qa-text}
+        course-chapter: ${COURSELINGO_AI_MODEL_ROUTE_COURSE_CHAPTER:chapter-text}
+        fusion-summary: ${COURSELINGO_AI_MODEL_ROUTE_FUSION_SUMMARY:fusion-text}
         vision-frame-analysis: ${COURSELINGO_AI_MODEL_ROUTE_VISION_FRAME_ANALYSIS:qwen-vl}
       profiles:
-        deepseek-text:
-          display-name: DeepSeek Text
+        translation-text:
+          display-name: Translation Text
           provider-type: openai-compatible
           base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
-          model-name: ${OPENAI_COMPATIBLE_MODEL:deepseek-ai/DeepSeek-V4-Pro}
+          model-name: ${COURSELINGO_AI_MODEL_TRANSLATION:${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}}
           api-key-env-name: OPENAI_COMPATIBLE_API_KEY
           capabilities:
             - TEXT_CHAT
             - JSON_OUTPUT
-          temperature: ${OPENAI_COMPATIBLE_TEMPERATURE:0}
-          max-tokens: ${OPENAI_COMPATIBLE_MAX_TOKENS:32768}
-          timeout: ${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:900s}
-          max-attempts: ${OPENAI_COMPATIBLE_MAX_ATTEMPTS:1}
+          temperature: ${COURSELINGO_AI_TRANSLATION_TEMPERATURE:${OPENAI_COMPATIBLE_TEMPERATURE:0}}
+          max-tokens: ${COURSELINGO_AI_TRANSLATION_MAX_TOKENS:${OPENAI_COMPATIBLE_MAX_TOKENS:4096}}
+          timeout: ${COURSELINGO_AI_TRANSLATION_TIMEOUT:${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:120s}}
+          max-attempts: ${COURSELINGO_AI_TRANSLATION_MAX_ATTEMPTS:${OPENAI_COMPATIBLE_MAX_ATTEMPTS:3}}
+          enabled: true
+        learning-text:
+          display-name: Learning Text
+          provider-type: openai-compatible
+          base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${COURSELINGO_AI_MODEL_LEARNING_PACKAGE:${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}}
+          api-key-env-name: OPENAI_COMPATIBLE_API_KEY
+          capabilities:
+            - TEXT_CHAT
+            - JSON_OUTPUT
+          temperature: ${COURSELINGO_AI_LEARNING_TEMPERATURE:${OPENAI_COMPATIBLE_TEMPERATURE:0}}
+          max-tokens: ${COURSELINGO_AI_LEARNING_MAX_TOKENS:${OPENAI_COMPATIBLE_MAX_TOKENS:4096}}
+          timeout: ${COURSELINGO_AI_LEARNING_TIMEOUT:${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:180s}}
+          max-attempts: ${COURSELINGO_AI_LEARNING_MAX_ATTEMPTS:${OPENAI_COMPATIBLE_MAX_ATTEMPTS:3}}
+          enabled: true
+        qa-text:
+          display-name: Course QA Text
+          provider-type: openai-compatible
+          base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${COURSELINGO_AI_MODEL_QA:${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}}
+          api-key-env-name: OPENAI_COMPATIBLE_API_KEY
+          capabilities:
+            - TEXT_CHAT
+            - JSON_OUTPUT
+          temperature: ${COURSELINGO_AI_QA_TEMPERATURE:0}
+          max-tokens: ${COURSELINGO_AI_QA_MAX_TOKENS:768}
+          timeout: ${COURSELINGO_AI_QA_TIMEOUT:45s}
+          max-attempts: ${COURSELINGO_AI_QA_MAX_ATTEMPTS:1}
+          enabled: true
+        chapter-text:
+          display-name: Course Chapter Text
+          provider-type: openai-compatible
+          base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${COURSELINGO_AI_MODEL_CHAPTER:${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}}
+          api-key-env-name: OPENAI_COMPATIBLE_API_KEY
+          capabilities:
+            - TEXT_CHAT
+            - JSON_OUTPUT
+          temperature: ${COURSELINGO_AI_CHAPTER_TEMPERATURE:0}
+          max-tokens: ${COURSELINGO_AI_CHAPTER_MAX_TOKENS:4096}
+          timeout: ${COURSELINGO_AI_CHAPTER_TIMEOUT:60s}
+          max-attempts: ${COURSELINGO_AI_CHAPTER_MAX_ATTEMPTS:3}
+          enabled: true
+        fusion-text:
+          display-name: Fusion Summary Text
+          provider-type: openai-compatible
+          base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
+          model-name: ${COURSELINGO_AI_MODEL_FUSION:${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}}
+          api-key-env-name: OPENAI_COMPATIBLE_API_KEY
+          capabilities:
+            - TEXT_CHAT
+            - JSON_OUTPUT
+          temperature: ${COURSELINGO_AI_FUSION_TEMPERATURE:0}
+          max-tokens: ${COURSELINGO_AI_FUSION_MAX_TOKENS:2048}
+          timeout: ${COURSELINGO_AI_FUSION_TIMEOUT:60s}
+          max-attempts: ${COURSELINGO_AI_FUSION_MAX_ATTEMPTS:2}
           enabled: true
         qwen-vl:
           display-name: Qwen VL
@@ -268,6 +336,12 @@ courselingo:
         max-chunks: ${ASR_CHUNK_MAX_CHUNKS:180}
         concurrency: ${ASR_CHUNK_CONCURRENCY:2}
         max-concurrency: ${ASR_CHUNK_MAX_CONCURRENCY:4}
+      transcript:
+        strategy: ${COURSELINGO_ASR_TRANSCRIPT_STRATEGY:EMBEDDED_SUBTITLE_FIRST}
+        minimum-coverage: ${COURSELINGO_ASR_EMBEDDED_SUBTITLE_MINIMUM_COVERAGE:0.80}
+        minimum-cues: ${COURSELINGO_ASR_EMBEDDED_SUBTITLE_MINIMUM_CUES:2}
+        maximum-cues: ${COURSELINGO_ASR_EMBEDDED_SUBTITLE_MAXIMUM_CUES:10000}
+        segment-duration: ${COURSELINGO_ASR_EMBEDDED_SUBTITLE_SEGMENT_DURATION:60s}
       mock:
         enabled: ${MOCK_ASR_ENABLED:false}
         default-language: ${MOCK_ASR_DEFAULT_LANGUAGE:zh-CN}
@@ -280,7 +354,7 @@ courselingo:
         enabled: ${OPENAI_COMPATIBLE_ENABLED:false}
         base-url: ${OPENAI_COMPATIBLE_BASE_URL:https://api.siliconflow.cn/v1}
         api-key: ${OPENAI_COMPATIBLE_API_KEY:}
-        model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen2.5-7B-Instruct}
+        model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}
         connect-timeout: ${OPENAI_COMPATIBLE_CONNECT_TIMEOUT:5s}
         request-timeout: ${OPENAI_COMPATIBLE_REQUEST_TIMEOUT:60s}
         temperature: ${OPENAI_COMPATIBLE_TEMPERATURE:0}

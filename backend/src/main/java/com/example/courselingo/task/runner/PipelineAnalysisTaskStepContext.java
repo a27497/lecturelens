@@ -57,6 +57,10 @@ public final class PipelineAnalysisTaskStepContext {
         return taskContext.targetLanguage();
     }
 
+    public String sourceLanguage() {
+        return taskContext.sourceLanguage();
+    }
+
     public String requestId() {
         return taskContext.requestId();
     }

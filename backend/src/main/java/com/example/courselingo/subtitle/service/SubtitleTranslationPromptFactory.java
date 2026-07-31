@@ -180,7 +180,11 @@ final class SubtitleTranslationPromptFactory {
             .append(languageDisplayName(command.sourceLanguage()))
             .append(" to ")
             .append(languageDisplayName(command.targetLanguage()))
-            .append(". Input JSON: {\"segments\":[");
+            .append(". Return exactly ")
+            .append(sourceSegments.size())
+            .append(" output items using every batch-local index from 0 through ")
+            .append(sourceSegments.size() - 1)
+            .append(" exactly once. Input JSON: {\"segments\":[");
         for (int index = 0; index < sourceSegments.size(); index++) {
             SubtitleSegment segment = sourceSegments.get(index);
             if (index > 0) {

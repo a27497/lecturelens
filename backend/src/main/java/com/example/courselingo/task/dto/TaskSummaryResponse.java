@@ -1,7 +1,7 @@
 package com.example.courselingo.task.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record TaskSummaryResponse(
@@ -15,9 +15,9 @@ public record TaskSummaryResponse(
     String errorMessage,
     Integer retryCount,
     Integer maxRetryCount,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt,
-    LocalDateTime startedAt,
-    LocalDateTime finishedAt
+    Instant createdAt,
+    Instant updatedAt,
+    Instant startedAt,
+    Instant finishedAt
 ) {
 }

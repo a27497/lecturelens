@@ -135,6 +135,22 @@ class AnalysisTaskStateServiceTest {
     }
 
     @Test
+    void canceledTransitionKeepsFinalTwentyTwoPercentProgressWhenNoProgressIsProvided() {
+        AnalysisTask task = task("task_cancel_22", 7L, AnalysisTaskStatus.RUNNING, now().minusMinutes(2), null);
+        task.setProgressPercent(22);
+        when(analysisTaskMapper.selectByIdAndUserId("task_cancel_22", 7L)).thenReturn(task);
+        when(analysisTaskMapper.updateStateByIdAndUserId(any(AnalysisTask.class), any())).thenReturn(1);
+
+        stateService.changeState(command("task_cancel_22", 7L, AnalysisTaskStatus.CANCELED, null, null));
+
+        AnalysisTask updated = captureUpdatedTask();
+        assertThat(updated.getStatus()).isEqualTo("CANCELED");
+        assertThat(updated.getProgressPercent()).isEqualTo(22);
+        assertThat(updated.getCurrentStage()).isNull();
+        assertThat(captureSavedSnapshot().progressPercent()).isEqualTo(22);
+    }
+
+    @Test
     void rejectsProgressOutsideRange() {
         assertThatThrownBy(() ->
             stateService.changeState(command("task_1", 7L, AnalysisTaskStatus.RUNNING, -1, AnalysisTaskStage.ASR)))

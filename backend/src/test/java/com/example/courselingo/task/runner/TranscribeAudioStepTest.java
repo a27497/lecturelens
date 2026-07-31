@@ -15,6 +15,9 @@ import com.example.courselingo.media.AudioChunk;
 import com.example.courselingo.media.AudioChunker;
 import com.example.courselingo.media.AudioDurationProbe;
 import com.example.courselingo.media.AudioExtractionResult;
+import com.example.courselingo.media.EmbeddedSubtitleTranscript;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractor;
+import com.example.courselingo.media.EmbeddedSubtitleTranscriptProperties;
 import com.example.courselingo.task.claim.TaskClaimResult;
 import com.example.courselingo.task.claim.TaskClaimService;
 import com.example.courselingo.task.entity.AnalysisTask;
@@ -250,16 +253,19 @@ class TranscribeAudioStepTest {
         new TranscribeAudioStep(provider, authoritativeDuration(1_200L)).execute(context);
 
         assertThat(capturedRequest.get().audioFile()).isEqualTo(audioFile);
-        assertThat(capturedRequest.get().language()).isEqualTo("zh-CN");
+        assertThat(capturedRequest.get().language()).isEqualTo("zh-cn");
         assertThat(capturedRequest.get().taskId()).isEqualTo("task_1");
         assertThat(capturedRequest.get().requestId()).isEqualTo("req_1");
         assertThat(capturedRequest.get().timeout()).isPositive();
-        assertThat(context.speechToTextResult()).contains(result);
+        assertThat(context.requireSpeechToTextResult().fullText()).isEqualTo(result.fullText());
+        assertThat(context.requireSpeechToTextResult().metadata())
+            .containsEntry("safe", "metadata")
+            .containsEntry("transcriptSource", "ASR");
         assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
             assertThat(record.callType()).isEqualTo(AiCallType.ASR);
             assertThat(record.stage()).isEqualTo(AiCallStage.TRANSCRIPTION);
             assertThat(record.provider()).isEqualTo("fake-asr");
-            assertThat(record.durationMillis()).isEqualTo(10L);
+            assertThat(record.durationMillis()).isPositive();
             assertThat(record.inputUnits()).isEqualTo(2);
             assertThat(record.outputUnits()).isEqualTo(1);
             assertThat(record.errorMessage()).isNull();
@@ -503,7 +509,133 @@ class TranscribeAudioStepTest {
             .satisfies(error -> {
                 assertThat(error.getMessage()).doesNotContainIgnoringCase(sensitiveWord("to", "ken"));
                 assertThat(error.getMessage()).doesNotContainIgnoringCase(sensitiveWord("api ", "key"));
-            });
+        });
+    }
+
+    @Test
+    void sourceLanguageIsPassedToAsrAndMeasuredWallClockReplacesZeroProviderDuration() throws Exception {
+        Path audioFile = Files.writeString(tempDir.resolve("slow.wav"), "audio");
+        AtomicReference<SpeechToTextRequest> captured = new AtomicReference<>();
+        SpeechToTextProvider slowProvider = new SpeechToTextProvider() {
+            @Override
+            public SpeechToTextResult transcribe(SpeechToTextRequest request) {
+                captured.set(request);
+                try {
+                    Thread.sleep(20L);
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(exception);
+                }
+                return new SpeechToTextResult(
+                    "fake-asr", "en", "Spring Boot",
+                    List.of(new TranscribedSegment(0, 0, 1000, "Spring Boot")),
+                    Duration.ZERO, 1200L, Map.of()
+                );
+            }
+
+            @Override
+            public String providerName() {
+                return "fake-asr";
+            }
+        };
+        PipelineAnalysisTaskStepContext context = new PipelineAnalysisTaskStepContext(
+            new AnalysisTaskExecutionContext("task_1", "up_1", 7L, "en-US", "zh-CN", "req_1")
+        );
+        context.setAudioExtractionResult(new AudioExtractionResult(audioFile, "wav", 16000, 1));
+
+        new TranscribeAudioStep(slowProvider, authoritativeDuration(1200L)).execute(context);
+
+        assertThat(captured.get().language()).isEqualTo("en-us");
+        assertThat(context.requireSpeechToTextResult().language()).isEqualTo("en");
+        assertThat(context.requireSpeechToTextResult().metadata()).containsEntry("transcriptSource", "ASR");
+        assertThat(context.requireSpeechToTextResult().duration()).isGreaterThanOrEqualTo(Duration.ofMillis(20));
+        assertThat(context.pendingAiCallRecords().getFirst().durationMillis()).isGreaterThanOrEqualTo(20L);
+    }
+
+    @Test
+    void validEmbeddedSubtitleIsPreferredAndAsrIsSkipped() throws Exception {
+        Path video = Files.writeString(tempDir.resolve("source.mp4"), "video");
+        Path audio = Files.writeString(tempDir.resolve("source.wav"), "audio");
+        SpeechToTextProvider asr = mock(SpeechToTextProvider.class);
+        when(asr.providerName()).thenReturn("fake-asr");
+        EmbeddedSubtitleTranscriptExtractor extractor = mock(EmbeddedSubtitleTranscriptExtractor.class);
+        when(extractor.extract(video, "en", 10_000L)).thenReturn(Optional.of(new EmbeddedSubtitleTranscript(
+            "en",
+            List.of(
+                new TranscribedSegment(0, 0, 4000, "Spring Boot"),
+                new TranscribedSegment(1, 4000, 9000, "API Gateway")
+            ),
+            0.9d,
+            3
+        )));
+        PipelineAnalysisTaskStepContext context = new PipelineAnalysisTaskStepContext(
+            new AnalysisTaskExecutionContext("task_1", "up_1", 7L, "en", "zh-CN", "req_1")
+        );
+        context.setUploadedSourcePath(video);
+        context.setAudioExtractionResult(new AudioExtractionResult(audio, "wav", 16000, 1));
+
+        new TranscribeAudioStep(
+            asr, null, new AsrChunkingProperties(), null, null,
+            null, null, ignored -> { },
+            authoritativeDuration(10_000L), extractor, new EmbeddedSubtitleTranscriptProperties()
+        ).execute(context);
+
+        verify(asr, never()).transcribe(any());
+        assertThat(context.requireSpeechToTextResult().provider()).isEqualTo("embedded-subtitle");
+        assertThat(context.requireSpeechToTextResult().metadata()).containsEntry("transcriptSource", "EMBEDDED_SUBTITLE");
+    }
+
+    @Test
+    void failedAsrRecordsElapsedWallClockTime() throws Exception {
+        Path audio = Files.writeString(tempDir.resolve("failed-slow.wav"), "audio");
+        SpeechToTextProvider provider = new SpeechToTextProvider() {
+            @Override
+            public SpeechToTextResult transcribe(SpeechToTextRequest request) {
+                try {
+                    Thread.sleep(20L);
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                }
+                throw new SiliconFlowAsrException("safe provider failure", false);
+            }
+
+            @Override
+            public String providerName() {
+                return "fake-asr";
+            }
+        };
+        PipelineAnalysisTaskStepContext context = context();
+        context.setAudioExtractionResult(new AudioExtractionResult(audio, "wav", 16000, 1));
+
+        assertThatThrownBy(() -> new TranscribeAudioStep(provider, authoritativeDuration(1200L)).execute(context))
+            .isInstanceOf(SiliconFlowAsrException.class);
+        assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
+            assertThat(record.durationMillis()).isGreaterThanOrEqualTo(20L);
+            assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED");
+        });
+    }
+
+    @Test
+    void invalidEmbeddedSubtitleFallsBackToAsr() throws Exception {
+        Path video = Files.writeString(tempDir.resolve("source-fallback.mp4"), "video");
+        Path audio = Files.writeString(tempDir.resolve("source-fallback.wav"), "audio");
+        AtomicReference<SpeechToTextRequest> captured = new AtomicReference<>();
+        EmbeddedSubtitleTranscriptExtractor extractor = mock(EmbeddedSubtitleTranscriptExtractor.class);
+        when(extractor.extract(video, "en", 1200L)).thenReturn(Optional.empty());
+        PipelineAnalysisTaskStepContext context = new PipelineAnalysisTaskStepContext(
+            new AnalysisTaskExecutionContext("task_1", "up_1", 7L, "en", "zh-CN", "req_1")
+        );
+        context.setUploadedSourcePath(video);
+        context.setAudioExtractionResult(new AudioExtractionResult(audio, "wav", 16000, 1));
+
+        new TranscribeAudioStep(
+            new FakeSpeechToTextProvider(captured, result()), null, new AsrChunkingProperties(), null, null,
+            null, null, ignored -> { },
+            authoritativeDuration(1200L), extractor, new EmbeddedSubtitleTranscriptProperties()
+        ).execute(context);
+
+        assertThat(captured.get()).isNotNull();
+        assertThat(context.requireSpeechToTextResult().provider()).isEqualTo("fake-asr");
     }
 
     @Test
@@ -827,7 +959,7 @@ class TranscribeAudioStepTest {
 
     private static PipelineAnalysisTaskStepContext context() {
         return new PipelineAnalysisTaskStepContext(
-            new AnalysisTaskExecutionContext("task_1", "up_1", 7L, "zh-CN", "req_1")
+            new AnalysisTaskExecutionContext("task_1", "up_1", 7L, "zh-CN", "zh-CN", "req_1")
         );
     }
 

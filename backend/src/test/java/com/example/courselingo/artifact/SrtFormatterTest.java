@@ -86,8 +86,8 @@ class SrtFormatterTest {
         assertSanitizedFailure("token abc123");
         assertSanitizedFailure("secret abc123");
         assertSanitizedFailure("api key abc123");
-        assertSanitizedFailure("C:\\Users\\demo\\secret.srt");
-        assertSanitizedFailure("/home/demo/secret.srt");
+        assertSanitizedFailure("C:\\Users\\alice\\private-course\\secret.srt");
+        assertSanitizedFailure("/home/alice/private-course/secret.srt");
     }
 
     private void assertSanitizedFailure(String text) {

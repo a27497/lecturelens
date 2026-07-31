@@ -39,7 +39,7 @@ class OpenAiCompatibleLlmProviderTest {
         assertThat(sent.headers()).containsEntry("Authorization", "Bearer test-api-key");
         assertThat(sent.timeout()).isEqualTo(Duration.ofSeconds(30));
         assertThat(sent.body())
-            .contains("\"model\":\"Qwen/Qwen2.5-7B-Instruct\"")
+            .contains("\"model\":\"test-chat-model\"")
             .contains("\"messages\"")
             .contains("\"role\":\"system\"")
             .contains("\"role\":\"user\"")
@@ -109,7 +109,7 @@ class OpenAiCompatibleLlmProviderTest {
         OpenAiCompatibleChatCompletionRequest sent = client.singleRequest();
         assertThat(sent.uri()).isEqualTo(URI.create("https://api.siliconflow.cn/v1/chat/completions"));
         assertThat(sent.body())
-            .contains("\"model\":\"Qwen/Qwen2.5-7B-Instruct\"")
+            .contains("\"model\":\"test-chat-model\"")
             .contains("\"temperature\":0.0")
             .contains("\"max_tokens\":4096")
             .contains("\"response_format\":{\"type\":\"json_object\"}");
@@ -170,7 +170,8 @@ class OpenAiCompatibleLlmProviderTest {
     @ParameterizedTest
     @CsvSource({
         "'',base URL is required",
-        "ftp://api.openai.com,base URL must use http or https"
+        "ftp://api.openai.com,base URL must use http or https",
+        "https://user:password@api.openai.com/v1,base URL must not contain credentials"
     })
     void invalidBaseUrlFailsBeforeClientCall(String baseUrl, String expectedMessage) {
         OpenAiCompatibleLlmProperties properties = properties();
@@ -573,6 +574,7 @@ class OpenAiCompatibleLlmProviderTest {
             .satisfies(error -> {
                 OpenAiCompatibleLlmException exception = (OpenAiCompatibleLlmException) error;
                 assertThat(exception.failureType()).isEqualTo(LlmProviderFailureType.CONNECTION_ERROR);
+                assertThat(exception.failureCategory()).isEqualTo(LlmProviderFailureCategory.NETWORK);
                 assertThat(exception.retryable()).isTrue();
                 assertSanitized(error.getMessage());
             });
@@ -607,6 +609,71 @@ class OpenAiCompatibleLlmProviderTest {
         LlmResult result = provider.generate(validRequest());
 
         assertThat(result.content()).isEqualTo("hello");
+        assertThat(client.requests()).hasSize(2);
+    }
+
+    @Test
+    void unsupportedJsonObjectFallsBackExactlyOnceWithoutResponseFormat() {
+        SequencedClient client = new SequencedClient(
+            new OpenAiCompatibleClientResponse(
+                400,
+                "{\"error\":{\"code\":\"unsupported_parameter\",\"message\":\"response_format json_object is not supported\"}}",
+                Map.of(),
+                Duration.ofMillis(2)
+            ),
+            chatCompletion("{\"answer\":\"兼容成功\"}")
+        );
+        OpenAiCompatibleLlmProvider provider = newProvider(properties(), client);
+
+        LlmResult result = provider.generate(validRequest());
+
+        assertThat(client.requests()).hasSize(2);
+        assertThat(client.requests().get(0).body()).contains("response_format", "json_object");
+        assertThat(client.requests().get(1).body()).doesNotContain("response_format", "json_object");
+        assertThat(result.metadata())
+            .containsEntry("structuredOutputFallback", true)
+            .containsEntry("responseFormatUsed", "TEXT");
+    }
+
+    @Test
+    void authenticationFailureIsNeverRetried() {
+        SequencedClient client = new SequencedClient(new OpenAiCompatibleClientResponse(
+            401, "{\"error\":{\"code\":\"unauthorized\"}}", Map.of(), Duration.ofMillis(1)
+        ));
+
+        assertThatThrownBy(() -> newProvider(properties(), client).generate(requestWithAttempts(3)))
+            .isInstanceOf(OpenAiCompatibleLlmException.class)
+            .satisfies(error -> assertThat(((OpenAiCompatibleLlmException) error).failureCategory())
+                .isEqualTo(LlmProviderFailureCategory.AUTHENTICATION));
+        assertThat(client.requests()).hasSize(1);
+    }
+
+    @Test
+    void rateLimitAndServerFailuresUseBoundedAttempts() {
+        SequencedClient rateLimited = new SequencedClient(new OpenAiCompatibleClientResponse(
+            429, "{\"error\":{\"code\":\"rate_limited\"}}", Map.of("Retry-After", List.of("0")), Duration.ofMillis(1)
+        ));
+        SequencedClient serverError = new SequencedClient(new OpenAiCompatibleClientResponse(
+            503, "{\"error\":{\"code\":\"temporarily_unavailable\"}}", Map.of(), Duration.ofMillis(1)
+        ));
+
+        assertThatThrownBy(() -> newProvider(properties(), rateLimited).generate(requestWithAttempts(3)))
+            .isInstanceOf(OpenAiCompatibleLlmException.class);
+        assertThatThrownBy(() -> newProvider(properties(), serverError).generate(requestWithAttempts(3)))
+            .isInstanceOf(OpenAiCompatibleLlmException.class);
+
+        assertThat(rateLimited.requests()).hasSize(3);
+        assertThat(serverError.requests()).hasSize(3);
+    }
+
+    @Test
+    void requestTimeoutStatusIsRetriedWithinConfiguredAttempts() {
+        SequencedClient client = new SequencedClient(
+            new OpenAiCompatibleClientResponse(408, "{\"error\":\"timeout\"}", Map.of(), Duration.ofMillis(1)),
+            ok("hello")
+        );
+
+        assertThat(newProvider(properties(), client).generate(requestWithAttempts(2)).content()).isEqualTo("hello");
         assertThat(client.requests()).hasSize(2);
     }
 
@@ -674,6 +741,7 @@ class OpenAiCompatibleLlmProviderTest {
     private OpenAiCompatibleLlmProperties properties() {
         OpenAiCompatibleLlmProperties properties = new OpenAiCompatibleLlmProperties();
         properties.setApiKey("test-api-key");
+        properties.setModel("test-chat-model");
         return properties;
     }
 
@@ -701,6 +769,14 @@ class OpenAiCompatibleLlmProviderTest {
             null,
             null,
             Map.of("safe", true)
+        );
+    }
+
+    private LlmRequest requestWithAttempts(int maxAttempts) {
+        LlmRequest request = validRequest();
+        return new LlmRequest(
+            request.requestId(), request.taskId(), request.messages(), request.timeout(), request.temperature(),
+            request.maxTokens(), maxAttempts, request.metadata(), request.responseFormat()
         );
     }
 

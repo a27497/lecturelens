@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { parseVttCues } from "../utils/vtt";
+import { formatApiTimestamp } from "../utils/time";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 
@@ -144,7 +145,7 @@ defineExpose({
     </p>
 
     <p v-if="expiresAt" class="video-card__expiry">
-      播放链接有效期至 {{ new Date(expiresAt).toLocaleString() }}
+      播放链接有效期至 {{ formatApiTimestamp(expiresAt) }}
     </p>
   </section>
 </template>
