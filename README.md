@@ -18,7 +18,7 @@
 
 ## 项目预览
 
-> 以下截图使用本地 Mock Pipeline 和合成数据，不包含真实账号、视频或服务信息。
+> 以下截图使用合成测试数据生成，不包含真实账号、私人视频、API Key 或服务地址。
 
 ### 课程阅读工作区
 
@@ -41,7 +41,7 @@
 
 ## 项目定位
 
-LectureLens 面向课程录屏、讲座和网课视频，将媒体整理为时间轴原文、翻译、章节、学习资料、课程问答与下载制品。用户可在同一页面播放视频、阅读内容并跳转到证据时间；耗时步骤由异步 Pipeline 执行，同时提供无密钥 Demo 和由使用者自行配置凭据的真实 AI 模式。
+LectureLens 面向课程录屏、讲座和网课视频，将媒体整理为时间轴原文、翻译、章节、学习资料、课程问答与下载制品。项目由使用者本地部署并配置自己的基础设施密码和 AI Provider 凭据；系统优先利用视频内嵌字幕，在字幕缺失或覆盖不足时调用 SiliconFlow ASR，并可按需启用 OCR 与视觉模型，不依赖作者托管服务器或共享密钥。
 
 ## 核心能力
 
@@ -86,7 +86,7 @@ Evidence     timestamp / keyframe
 - **身份与资源边界**：JWT access/refresh rotation，Refresh Token 哈希存储；上传、任务、播放、证据和制品下载统一执行 Owner Scope。
 - **失败可追踪**：AI 调用记录区分成功、部分成功和失败；外层业务事务失败时仍可保存调用失败记录，章节、视觉分析和学习资料采用原子替换。
 - **前端恢复**：SSE 收到终态后只刷新一次任务详情；正常媒体 Range 断流不再被记录为内部错误。
-- **敏感信息控制**：Credential Leak Detector 区分课程术语 `token` 与真实凭据；日志和 API 不暴露对象存储 key、本地路径、密钥、Prompt 或原始响应，Demo 与真实 AI 登录行为明确隔离。
+- **敏感信息控制**：Credential Leak Detector 区分课程术语 `token` 与真实凭据；日志和 API 不暴露对象存储 key、本地路径、密钥、Prompt 或原始响应，登录页不预填账号或密码，Provider 凭据只从部署者本地环境变量读取。
 
 ## 真实长视频验证
 
@@ -118,31 +118,28 @@ flowchart TB
     API --> MQ["RocketMQ"]
     API <--> MySQL["MySQL<br/>业务事实"]
     MQ --> Runner["有界 Analysis Runner"]
-    Runner --> Mode{"Provider 模式"}
-    Mode --> Demo["Demo Provider<br/>Mock ASR / Mock LLM"]
-    Mode --> Real["真实 Provider<br/>SiliconFlow ASR / OpenAI-compatible LLM·VLM"]
     Runner --> FFmpeg["FFmpeg / FFprobe"]
     FFmpeg --> Subtitle{"字幕来源"}
     Subtitle --> Embedded["内嵌字幕"]
-    Subtitle --> ASR["ASR"]
+    Subtitle --> ASR["SiliconFlow ASR"]
     FFmpeg --> Frames["关键帧规划"]
-    Frames --> OCR["OCR"]
-    Frames --> VLM["VLM"]
-    Demo -.-> ASR
-    Demo -.-> Translate["字幕翻译"]
-    Real -.-> ASR
-    Real -.-> Translate
-    Real -.-> VLM
-    Embedded --> Translate
+    Frames --> OCR["可选 OCR"]
+    Frames --> VLM["可选 OpenAI-compatible VLM"]
+    Embedded --> Translate["字幕翻译"]
     ASR --> Translate
-    Embedded --> Fusion["多模态时间线融合"]
-    ASR --> Fusion
-    Translate --> Fusion
+    Translate --> Fusion["多模态时间线融合"]
     OCR --> Fusion
     VLM --> Fusion
-    Fusion --> Learning["章节 · 学习资料 · 课程问答"]
-    Learning --> Export["SRT · VTT · Markdown · JSON"]
+    Fusion --> Chapter["章节"]
+    Fusion --> Learning["学习资料"]
+    Chapter --> Export["SRT · VTT · Markdown · JSON"]
+    Learning --> Export
+    Chapter --> MySQL
     Learning --> MySQL
+    Web --> QA["按需课程问答"]
+    QA --> Evidence["已保存课程证据"]
+    Evidence --> QA
+    QA --> MySQL
     Export --> MinIO
     Runner <--> Redis["Redis<br/>claim · 短期进度"]
     Runner --> MySQL
@@ -150,7 +147,7 @@ flowchart TB
     SSE --> Web
 ```
 
-Demo Provider 与真实 Provider 复用同一业务 Pipeline。MySQL 是最终事实来源，Redis 只承担短期协调和进度，MinIO 保存媒体与制品，SSE 将进度和终态传回前端。
+MySQL 是最终业务事实来源，Redis 只承担 claim、短期协调与进度，MinIO 保存上传媒体和生成制品，SSE 将任务进度与终态传回前端。课程问答在任务完成后由用户按需发起，不阻塞章节、学习资料和导出制品的生成。
 
 ## 技术栈
 
@@ -164,53 +161,266 @@ Demo Provider 与真实 Provider 复用同一业务 Pipeline。MySQL 是最终�
 | 测试与工程 | JUnit 5、Mockito、AssertJ、Vitest 4.1、vue-tsc、GitHub Actions、Dependabot | 自动化回归、类型检查、构建和依赖更新检查 |
 | 本地编排 | Docker Compose v2 | 启动 MySQL、Redis、MinIO 与 RocketMQ |
 
-## 快速开始
-
-无密钥 Demo 使用确定性本地 Provider，但会经过真实的上传、RocketMQ、Runner、FFmpeg、持久化和制品链路。
+## 安装与使用
 
 ### 环境要求
 
-- Java 21、Node.js 24 LTS、npm
+- Java 21、Node.js 24 LTS、npm 和 Git
 - Docker Desktop 或 Docker Engine，以及 Docker Compose v2
-- 可在终端调用的 FFmpeg；OCR 仅在启用对应能力时需要 Tesseract
+- 可在终端调用的 FFmpeg 与 FFprobe
+- Tesseract OCR（可选；不启用 OCR 时无需安装）
+- 使用者自己的第三方 AI Provider 凭据；相关调用费用由使用者承担
 
-### 1. 启动基础设施
+### 1. 克隆仓库
 
-```powershell
-Copy-Item .env.demo.example .env.demo.local
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\check-prerequisites.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\start-infrastructure.ps1
+PowerShell、Linux 和 macOS 均可使用：
+
+```bash
+git clone https://github.com/a27497/lecturelens.git
+cd lecturelens
 ```
 
-### 2. 启动后端
+### 2. 创建本地配置
+
+Windows PowerShell：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\start-backend.ps1
+Copy-Item .env.real-ai.example .env
 ```
 
-### 3. 启动前端
+Linux/macOS：
+
+```bash
+cp .env.real-ai.example .env
+```
+
+`.env` 已被 Git 忽略。不得把填写后的 `.env` 提交到仓库，也不要粘贴到 Issue、日志或截图中。
+
+### 3. 填写基础设施与 AI 配置
+
+完整模板见 [.env.real-ai.example](.env.real-ai.example)，请按以下类别检查必要变量，不要直接沿用任何 `change-me-*` 值。
+
+#### 基础设施
+
+```text
+MYSQL_ROOT_PASSWORD
+MYSQL_USERNAME
+MYSQL_PASSWORD
+REDIS_PASSWORD
+MINIO_ROOT_USER
+MINIO_ROOT_PASSWORD
+STORAGE_MINIO_ACCESS_KEY
+STORAGE_MINIO_SECRET_KEY
+JWT_ACCESS_SECRET
+```
+
+所有默认 `change-me-*` 值都必须更换；`JWT_ACCESS_SECRET` 至少使用 32 个字符的随机字符串。`STORAGE_MINIO_ACCESS_KEY` 与 `STORAGE_MINIO_SECRET_KEY` 必须分别和 Compose 使用的 `MINIO_ROOT_USER` 与 `MINIO_ROOT_PASSWORD` 保持一致。
+
+#### 端口对应关系
+
+| Docker Host Port | 后端连接配置 |
+| --- | --- |
+| `MYSQL_HOST_PORT` | `MYSQL_JDBC_URL` 中的 MySQL 端口 |
+| `REDIS_HOST_PORT` | `REDIS_PORT` |
+| `MINIO_API_HOST_PORT` | `STORAGE_MINIO_ENDPOINT` |
+| `ROCKETMQ_NAMESRV_HOST_PORT` | `ROCKETMQ_NAME_SERVER` |
+| `ROCKETMQ_PROXY_HOST_PORT` | `ROCKETMQ_ENDPOINT` |
+
+修改容器 Host Port 时，必须同步修改右侧后端连接配置。只修改 Host Port 会导致容器正常启动，但后端仍连接旧端口。MinIO Console 端口不用于后端连接；普通使用者通常也不需要修改 RocketMQ Broker 的 `10909`、`10911`、`10912` 端口。
+
+#### ASR
+
+```dotenv
+SILICONFLOW_ASR_ENABLED=true
+SILICONFLOW_API_KEY=your-own-key
+SILICONFLOW_ASR_BASE_URL=https://api.siliconflow.cn
+SILICONFLOW_ASR_MODEL=FunAudioLLM/SenseVoiceSmall
+COURSELINGO_ASR_TRANSCRIPT_STRATEGY=EMBEDDED_SUBTITLE_FIRST
+```
+
+系统默认优先使用覆盖充分的内嵌字幕，只有没有合格字幕时才调用外部 ASR。因此，没有出现 ASR 调用记录不一定代表配置失败。
+
+#### LLM
+
+```dotenv
+OPENAI_COMPATIBLE_ENABLED=true
+OPENAI_COMPATIBLE_API_KEY=your-own-key
+OPENAI_COMPATIBLE_BASE_URL=https://your-provider.example/v1
+OPENAI_COMPATIBLE_MODEL=your-model
+```
+
+Provider 必须兼容 OpenAI Chat Completions 接口，不限定某一个商业平台。翻译、学习资料、章节、问答和融合模型可分别通过模板中的以下变量覆盖：
+
+```text
+COURSELINGO_AI_MODEL_TRANSLATION
+COURSELINGO_AI_MODEL_LEARNING_PACKAGE
+COURSELINGO_AI_MODEL_CHAPTER
+COURSELINGO_AI_MODEL_QA
+COURSELINGO_AI_MODEL_FUSION
+```
+
+#### VLM
+
+启用视觉模型时：
+
+```dotenv
+COURSELINGO_VISION_ANALYSIS_ENABLED=true
+OPENAI_COMPATIBLE_VISION_API_KEY=your-own-key
+OPENAI_COMPATIBLE_VISION_BASE_URL=https://your-provider.example/v1
+OPENAI_COMPATIBLE_VISION_MODEL=your-vision-model
+```
+
+视觉 Provider 必须支持 OpenAI-compatible 多模态请求；Vision Base URL 可以和文本 LLM 相同，也可以不同，Vision Model 必须填写 Provider 实际开放的视觉模型，不要假设文本模型一定支持图片输入。[`.env.real-ai.example`](.env.real-ai.example) 提供项目真实长视频回归使用过的配置示例；如果模型被 Provider 下架，请替换为当前可用的视觉模型。
+
+不使用视觉模型时：
+
+```dotenv
+COURSELINGO_VISION_ANALYSIS_ENABLED=false
+```
+
+关闭 VLM 不影响基础字幕、翻译、学习资料和导出链路；关键帧和 OCR 由独立配置控制。
+
+#### OCR
+
+启用本地 OCR 时：
+
+```dotenv
+COURSELINGO_VISION_OCR_ENABLED=true
+COURSELINGO_VISION_OCR_COMMAND=tesseract
+COURSELINGO_VISION_OCR_LANGUAGE=chi_sim+eng
+```
+
+不使用 OCR 时：
+
+```dotenv
+COURSELINGO_VISION_OCR_ENABLED=false
+```
+
+### 4. 启动基础设施
+
+在仓库根目录执行：
+
+```powershell
+docker compose --env-file .env up -d
+docker compose --env-file .env ps
+```
+
+Compose 会启动 MySQL、Redis、MinIO、RocketMQ NameServer 以及 RocketMQ Broker / Proxy，并初始化 MinIO bucket。确认服务状态正常后再启动后端。
+
+### 5. 启动后端
+
+#### Windows PowerShell
+
+在仓库根目录执行以下进程级环境变量加载方式：
+
+```powershell
+foreach ($line in [IO.File]::ReadLines((Resolve-Path ".env"))) {
+    $trimmed = $line.Trim()
+
+    if (-not $trimmed -or $trimmed.StartsWith("#")) {
+        continue
+    }
+
+    $parts = $trimmed -split "=", 2
+
+    if ($parts.Count -ne 2) {
+        throw "Invalid .env entry: $trimmed"
+    }
+
+    $name = $parts[0].Trim()
+    $value = $parts[1].Trim()
+
+    if ($name -notmatch "^[A-Za-z_][A-Za-z0-9_]*$") {
+        throw "Invalid environment variable name: $name"
+    }
+
+    [Environment]::SetEnvironmentVariable($name, $value, "Process")
+}
+
+Set-Location backend
+.\mvnw.cmd spring-boot:run
+```
+
+变量只加载到当前 PowerShell 进程，不会修改系统或用户级环境变量。后端终端必须保持运行。
+
+#### Linux/macOS Bash
+
+不要直接执行 `source .env`，因为 JDBC URL 等值中可能包含 `&`。在仓库根目录逐行安全加载：
+
+```bash
+while IFS= read -r line || [ -n "$line" ]; do
+  line="${line%$'\r'}"
+
+  if [ -z "$line" ] || [[ "$line" == \#* ]]; then
+    continue
+  fi
+
+  key="${line%%=*}"
+  value="${line#*=}"
+
+  if [[ ! "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+    echo "Invalid environment variable name: $key" >&2
+    exit 1
+  fi
+
+  export "$key=$value"
+done < .env
+
+cd backend
+./mvnw spring-boot:run
+```
+
+访问 `http://localhost:8080/actuator/health` 检查后端，预期状态为 `UP`。
+
+### 6. 启动前端
+
+在另一个终端、仓库根目录执行：
 
 ```powershell
 npm --prefix frontend ci
 npm --prefix frontend run dev
 ```
 
-### 4. 生成并上传示例视频
+访问 `http://localhost:5173`。开发服务器会把 API 与健康检查请求代理到本地 `8080` 端口。
+
+### 7. 注册并创建分析任务
+
+首次使用：
+
+1. 打开前端并注册本地账号。
+2. 登录后进入“上传课程”。
+3. 选择本地课程视频。
+4. 等待分片上传和媒体校验完成。
+5. 选择源语言与目标语言。
+6. 创建分析任务。
+7. 在任务详情页查看实时进度。
+8. 完成后查看原文、翻译、章节、学习资料、问答和视觉证据。
+9. 下载 SRT、VTT、Markdown 或 JSON。
+
+视频自带覆盖充分的字幕时，系统可能直接使用内嵌字幕；没有合格字幕时才会调用 ASR。OCR 和 VLM 是否产生结果取决于本地配置，处理时间与第三方费用取决于视频长度、模型和网络环境。
+
+### 8. 停止服务
+
+在前端和后端终端按 `Ctrl+C`，然后在仓库根目录停止中间件：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo\generate-sample-video.ps1
+docker compose --env-file .env down
 ```
 
-访问 `http://localhost:5173`，注册本地测试账号并上传 `.demo/lecturelens-sample.mp4`。完整 Windows、Linux、端口覆盖、实例隔离与安全停止方式见 [Quick Start](docs/QUICKSTART.md)。
+不要使用 `down -v`，除非明确希望删除 MySQL、Redis、MinIO 和 RocketMQ 的持久数据。
 
-## 真实 AI 模式
+### 常见问题
 
-从 [.env.real-ai.example](.env.real-ai.example) 创建未跟踪的本地配置，由使用者自行提供 `SILICONFLOW_API_KEY`、`OPENAI_COMPATIBLE_API_KEY`，以及启用 VLM 时使用的 `OPENAI_COMPATIBLE_VISION_API_KEY`。
-
-- `SILICONFLOW_ASR_ENABLED=true`、`OPENAI_COMPATIBLE_ENABLED=true` 启用真实 Provider。
-- `MOCK_ASR_ENABLED=false`、`DEMO_MOCK_LLM_ENABLED=false` 关闭 Mock Provider；启动保护会拒绝混合配置。
-- 默认策略 `COURSELINGO_ASR_TRANSCRIPT_STRATEGY=EMBEDDED_SUBTITLE_FIRST` 优先使用覆盖充分的内嵌字幕。
-- 真实模式不会预填 Demo 凭据；本地 Key 不得提交到 Git。两种模式复用主要业务链路，但外部调用费用和数据合规责任由使用者承担。
+| 问题 | 检查方式 |
+| --- | --- |
+| 后端无法连接 MySQL/Redis | 运行 `docker compose --env-file .env ps`，检查密码和端口 |
+| MinIO 上传失败 | 检查 MinIO 用户、密码、endpoint 和 bucket 配置 |
+| AI 返回 401 | 检查 API Key、Base URL 和模型名 |
+| 没有 ASR 调用记录 | 视频可能已使用内嵌字幕 |
+| 没有视觉分析结果 | 检查 VLM 开关、Vision API Key、Vision Base URL 和视觉模型名 |
+| 没有 OCR 结果 | 检查 Tesseract 是否安装以及 OCR 开关 |
+| 前端无法调用后端 | 检查后端健康地址和 `8080` 端口 |
+| 端口冲突 | 修改 Host Port，并同步更新对应的后端连接地址；参见上方端口对应表 |
 
 ## 测试与质量保障
 
@@ -237,11 +447,9 @@ LectureLens/
 ├── backend/              # Spring Boot API、Pipeline、Flyway 与测试
 ├── frontend/             # Vue 课程学习工作区
 ├── infra/                # RocketMQ 本地配置
-├── scripts/demo/         # Demo 检查、启动与样例视频脚本
 ├── scripts/vision/       # 合成课程视频与离线视觉评测
 ├── docs/                 # 架构、API、数据与 UX 文档
 ├── compose.yaml          # 本地基础设施编排
-├── .env.demo.example     # 无密钥 Demo 模板
 └── .env.real-ai.example  # 真实 Provider 配置模板
 ```
 
@@ -249,17 +457,17 @@ LectureLens/
 
 ## 安全与能力边界
 
-- `.env`、本地凭据、媒体、日志和生成物不进入 Git；Demo 不访问作者服务器，Mock 输出不代表真实模型质量。
+- 仓库不提供作者托管的后端、共享账号或共享 API Key；使用者在自己的环境中部署基础设施。
+- 第三方 AI 请求使用部署者自己的凭据；`.env`、媒体、日志和生成物不得提交到仓库。
 - 课程问答是当前课程范围内、证据约束的单轮问答，不是通用聊天机器人。
 - 项目没有向量数据库、Embedding、通用 RAG 或 AgentLoop，也不提供在线托管 SaaS。
-- 视觉分析和 OCR 只有在使用者显式配置后才启用外部或本地能力；真实 AI 的费用、服务条款和数据合规责任由使用者承担。
-- 当前仓库用于可复现的本地学习和工程能力展示，不承诺商业多租户隔离、线上可用性或性能 SLA。
+- 视觉分析和 OCR 只有在使用者显式配置后才启用外部或本地能力；使用者需自行确认第三方服务条款、调用费用和数据合规要求。
+- 当前仓库用于可复现的本地学习和工程能力展示，不承诺商业多租户隔离、在线 SaaS 可用性或性能 SLA。
 
 漏洞报告和安全非目标见 [安全策略](SECURITY.md)，请只使用占位值与合成数据描述问题。
 
 ## 相关文档
 
-- [Quick Start](docs/QUICKSTART.md)
 - [架构设计](docs/ARCHITECTURE.md)
 - [API 契约](docs/API.md)
 - [数据库设计](docs/DB_SCHEMA.md)
