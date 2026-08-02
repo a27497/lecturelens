@@ -29,6 +29,17 @@ export function isRetryableTaskStatus(status: AnalysisTaskStatus | string | null
   return normalized === "FAILED" || CANCELED_STATUSES.has(normalized);
 }
 
+export function shouldReloadTerminalTaskDetail(
+  status: AnalysisTaskStatus | string | null | undefined,
+  currentTaskId: string,
+  lastReloadedTaskId: string,
+): boolean {
+  const normalizedTaskId = currentTaskId.trim();
+  return normalizedTaskId.length > 0
+    && isTerminalTaskStatus(status)
+    && normalizedTaskId !== lastReloadedTaskId.trim();
+}
+
 export function getTaskStatusGroup(status: AnalysisTaskStatus | string | null | undefined): TaskStatusGroup {
   const normalized = normalizeStatus(status);
   if (RUNNING_STATUSES.has(normalized)) {

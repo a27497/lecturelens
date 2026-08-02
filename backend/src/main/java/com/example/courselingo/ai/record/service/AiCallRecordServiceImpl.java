@@ -62,7 +62,7 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AiCallRecordView completeCall(CompleteAiCallRecordCommand command) {
         ValidatedCompleteAiCallRecordCommand validated = AiCallRecordValidators.validateComplete(command, sanitizer);
         AiCallRecord existing = findOwnedRecord(validated.recordId(), validated.taskId(), validated.userId());

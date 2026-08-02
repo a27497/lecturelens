@@ -5,6 +5,7 @@ import {
   getTaskStatusTagType,
   isRetryableTaskStatus,
   isRunningTaskStatus,
+  shouldReloadTerminalTaskDetail,
   shortenTaskId,
 } from "./taskStatus";
 
@@ -36,5 +37,15 @@ describe("task status helpers", () => {
     expect(getTaskStatusTagType("SUCCEEDED")).toBe("success");
     expect(shortenTaskId("task_3367abcdef9a54")).toBe("task_3367...9a54");
     expect(shortenTaskId("task_short")).toBe("task_short");
+  });
+
+  it("reloads terminal detail once per task and allows a new task to reload", () => {
+    expect(shouldReloadTerminalTaskDetail("SUCCEEDED", "task_1", "")).toBe(true);
+    expect(shouldReloadTerminalTaskDetail("FAILED", "task_1", "")).toBe(true);
+    expect(shouldReloadTerminalTaskDetail("CANCELED", "task_1", "")).toBe(true);
+    expect(shouldReloadTerminalTaskDetail("RUNNING", "task_1", "")).toBe(false);
+    expect(shouldReloadTerminalTaskDetail("SUCCEEDED", "task_1", "task_1")).toBe(false);
+    expect(shouldReloadTerminalTaskDetail("SUCCEEDED", "task_2", "task_1")).toBe(true);
+    expect(shouldReloadTerminalTaskDetail("SUCCEEDED", "", "")).toBe(false);
   });
 });

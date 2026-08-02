@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.courselingo.qa.service.CourseQaQueryTermExtractor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class CourseQaQueryTermExtractorTest {
 
@@ -30,11 +32,38 @@ class CourseQaQueryTermExtractorTest {
     @Test
     void extractsTechnicalTermsFromNaturalEnglishQuestions() {
         assertThat(extractor.extract("How does Spring Boot work?"))
-            .containsExactly("spring boot");
+            .containsExactly("spring boot", "spring", "boot");
         assertThat(extractor.extract("What is Transformer used for?"))
             .containsExactly("transformer");
         assertThat(extractor.extract("Can you please explain GPT-5?"))
             .containsExactly("gpt-5");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"TF-IDF", "TF\u2010IDF", "TF\u2011IDF", "TF\u2012IDF", "TF\u2013IDF", "TF\u2014IDF"})
+    void normalizesUnicodeDashVariantsInTechnicalTerms(String value) {
+        assertThat(extractor.extract(value)).containsExactly("tf-idf");
+        assertThat(extractor.extract("TF IDF")).containsExactly("tf idf");
+    }
+
+    @Test
+    void decomposesLongNaturalFactQuestionsIntoMatchableTerms() {
+        assertThat(extractor.extract("What position did Johann Sebastian Bach hold in Leipzig?"))
+            .contains(
+                "position johann sebastian bach hold leipzig",
+                "johann",
+                "sebastian",
+                "bach",
+                "leipzig"
+            );
+        assertThat(extractor.extract("巴赫在莱比锡担任的职位叫什么名字？"))
+            .contains("巴赫", "莱比锡担任", "职位叫", "名字");
+        assertThat(extractor.extract("When was Bach born?"))
+            .containsExactly("bach born", "bach", "born");
+        assertThat(extractor.extract("课程中提到巴赫为什么被关押一个月？请指出相关时间段。"))
+            .contains("巴赫", "关押");
+        assertThat(extractor.extract("At 60 seconds, what does the lesson ask us to remember?"))
+            .containsExactly("remember");
     }
 
     @Test

@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 public class VisionAnalysisServiceImpl implements VisionAnalysisService {
@@ -55,6 +58,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
     private final VideoFrameSampler frameSampler;
     private final VisionPromptContextBuilder promptContextBuilder;
     private final AiCallRecordService aiCallRecordService;
+    private final TransactionTemplate persistenceTransaction;
 
     @Autowired
     public VisionAnalysisServiceImpl(
@@ -68,7 +72,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         VisionAnalysisProperties properties,
         VideoFrameSampler frameSampler,
         VisionPromptContextBuilder promptContextBuilder,
-        AiCallRecordService aiCallRecordService
+        AiCallRecordService aiCallRecordService,
+        PlatformTransactionManager transactionManager
     ) {
         this(
             keyframeMapper,
@@ -83,7 +88,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             Clock.systemUTC(),
             frameSampler,
             promptContextBuilder,
-            aiCallRecordService
+            aiCallRecordService,
+            transactionManager
         );
     }
 
@@ -151,6 +157,28 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         VisionPromptContextBuilder promptContextBuilder,
         AiCallRecordService aiCallRecordService
     ) {
+        this(
+            keyframeMapper, ocrMapper, analysisMapper, storageService, provider, aiModelRouter, selector,
+            properties, objectMapper, clock, frameSampler, promptContextBuilder, aiCallRecordService, null
+        );
+    }
+
+    VisionAnalysisServiceImpl(
+        VideoKeyframeMapper keyframeMapper,
+        VideoKeyframeOcrMapper ocrMapper,
+        VideoKeyframeAnalysisMapper analysisMapper,
+        StorageService storageService,
+        VisionModelProvider provider,
+        AiModelRouter aiModelRouter,
+        HighValueKeyframeSelector selector,
+        VisionAnalysisProperties properties,
+        ObjectMapper objectMapper,
+        Clock clock,
+        VideoFrameSampler frameSampler,
+        VisionPromptContextBuilder promptContextBuilder,
+        AiCallRecordService aiCallRecordService,
+        PlatformTransactionManager transactionManager
+    ) {
         this.keyframeMapper = keyframeMapper;
         this.ocrMapper = ocrMapper;
         this.analysisMapper = analysisMapper;
@@ -164,16 +192,15 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         this.frameSampler = frameSampler;
         this.promptContextBuilder = promptContextBuilder;
         this.aiCallRecordService = aiCallRecordService;
+        this.persistenceTransaction = persistenceTransaction(transactionManager);
     }
 
     @Override
-    @Transactional
     public VisionAnalysisScanResult scan(String taskId, Long userId) {
         return scanInternal(taskId, userId, null, null, "");
     }
 
     @Override
-    @Transactional
     public VisionAnalysisScanResult scan(
         String taskId,
         Long userId,
@@ -212,8 +239,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         int failed = 0;
         int providerCalls = 0;
         long providerDurationMillis = 0L;
+        List<VideoKeyframeAnalysis> analysisRows = new ArrayList<>(selected.size());
         try {
-            analysisMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
             for (VideoKeyframe keyframe : selected) {
                 AnalysisOutcome outcome = analyze(
                     keyframe,
@@ -228,9 +255,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
                 if (outcome.providerCalled() && row.getDurationMillis() != null) {
                     providerDurationMillis += Math.max(0L, row.getDurationMillis());
                 }
-                if (analysisMapper.insert(row) != 1) {
-                    throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Visual analysis persistence failed");
-                }
+                analysisRows.add(row);
                 saved++;
                 VisionAnalysisStatus status = VisionAnalysisStatus.valueOf(row.getStatus());
                 switch (status) {
@@ -240,6 +265,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
                     default -> { }
                 }
             }
+            replaceAnalyses(normalizedTaskId, userId, analysisRows);
             int skipped = Math.max(0, keyframes.size() - selected.size());
             long wallDurationMillis = elapsedMillis(scanStartedNanos);
             completeAiCall(call, normalizedTaskId, userId, wallDurationMillis, providerDurationMillis,
@@ -309,6 +335,31 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         } finally {
             deleteDirectoryBestEffort(tempDirectory);
         }
+    }
+
+    private void replaceAnalyses(String taskId, Long userId, List<VideoKeyframeAnalysis> rows) {
+        Runnable persistence = () -> {
+            analysisMapper.deleteByTaskIdAndUserId(taskId, userId);
+            for (VideoKeyframeAnalysis row : rows) {
+                if (analysisMapper.insert(row) != 1) {
+                    throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Visual analysis persistence failed");
+                }
+            }
+        };
+        if (persistenceTransaction == null) {
+            persistence.run();
+            return;
+        }
+        persistenceTransaction.executeWithoutResult(status -> persistence.run());
+    }
+
+    private static TransactionTemplate persistenceTransaction(PlatformTransactionManager transactionManager) {
+        if (transactionManager == null) {
+            return null;
+        }
+        TransactionTemplate transaction = new TransactionTemplate(transactionManager);
+        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transaction;
     }
 
     private AiCallRecordView startAiCall(String taskId, Long userId, int inputUnits, AiModelRoute route) {

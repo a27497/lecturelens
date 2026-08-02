@@ -37,7 +37,21 @@ public class LlmStageException extends BusinessException {
     }
 
     public String safeDiagnosticSummary() {
-        return details.safeSummary() + ";stage=" + stage;
+        String failureType = providerFailureType();
+        return details.safeSummary() + ";stage=" + stage
+            + (failureType == null ? "" : ";failureType=" + failureType);
+    }
+
+    private String providerFailureType() {
+        Throwable current = getCause();
+        int depth = 0;
+        while (current != null && depth++ < 16) {
+            if (current instanceof OpenAiCompatibleLlmException providerFailure) {
+                return providerFailure.failureType().name();
+            }
+            current = current.getCause();
+        }
+        return null;
     }
 
     private static ErrorCode errorCode(LlmProviderFailureDetails details) {

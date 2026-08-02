@@ -17,6 +17,8 @@ class ArtifactSensitiveDataValidatorTest {
             On Linux use /home/example/project/compose.yaml.
             API_KEY=your-api-key
             Authorization: Bearer your-example-token
+            The tokenizer emits a token stream, and token: a searchable unit.
+            Tokenization and the access token concept are ordinary teaching topics.
             """;
 
         assertThat(ArtifactSensitiveDataValidator.containsSensitiveData(examples)).isFalse();
@@ -28,6 +30,7 @@ class ArtifactSensitiveDataValidatorTest {
         String unsafe = """
             api_key=sk_live_1234567890abcdef
             Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.abc123.signature
+            eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmaWN0aW9uYWwifQ.fakeSignature123
             C:\\Users\\alice\\Videos\\private.mp4
             /home/alice/private.mp4
             uploads/123e4567-e89b-12d3-a456-426614174000/source.mp4
@@ -41,6 +44,7 @@ class ArtifactSensitiveDataValidatorTest {
             .doesNotContain(
                 "sk_live_1234567890abcdef",
                 "eyJhbGciOiJIUzI1NiJ9",
+                "fakeSignature123",
                 "alice",
                 "/home/alice",
                 "BEGIN PRIVATE KEY",

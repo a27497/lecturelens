@@ -43,6 +43,41 @@ class CourseChapterCoverageValidatorTest {
     }
 
     @Test
+    void rejectsAnInternalGapExactlyOneEvidenceWindowLong() {
+        List<CourseChapterEvidenceItem> evidence = evidence(4);
+        var chapters = List.of(
+            chapter(0L, 240_000L, List.of(0)),
+            chapter(480_000L, 960_000L, List.of(2, 3))
+        );
+
+        CourseChapterCoverageReport report = CourseChapterCoverageValidator.validate(chapters, evidence, properties);
+
+        assertThat(report.valid()).isFalse();
+        assertThat(report.maxGapMillis()).isEqualTo(properties.getWindowSeconds() * 1000L);
+        assertThat(report.missingEvidenceIndexes()).containsExactly(1);
+        assertThat(report.violations()).contains(
+            "chapter timeline contains an uncovered gap",
+            "every evidence window must be cited"
+        );
+    }
+
+    @Test
+    void rejectsMissingInteriorEvidenceEvenWhenChapterTimelineIsContiguous() {
+        List<CourseChapterEvidenceItem> evidence = evidence(3);
+        var chapters = List.of(
+            chapter(0L, 480_000L, List.of(0)),
+            chapter(480_000L, 720_000L, List.of(2))
+        );
+
+        CourseChapterCoverageReport report = CourseChapterCoverageValidator.validate(chapters, evidence, properties);
+
+        assertThat(report.valid()).isFalse();
+        assertThat(report.maxGapMillis()).isZero();
+        assertThat(report.missingEvidenceIndexes()).containsExactly(1);
+        assertThat(report.violations()).contains("every evidence window must be cited");
+    }
+
+    @Test
     void deterministicFallbackCoversEveryEvidenceWindowInFiveToTwelveMinuteGroups() {
         List<CourseChapterEvidenceItem> evidence = evidence(18);
         var chapters = CourseChapterFallbackFactory.build(evidence, "zh-CN", properties);

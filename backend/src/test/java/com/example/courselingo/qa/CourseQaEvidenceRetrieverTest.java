@@ -17,6 +17,8 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -291,6 +293,52 @@ class CourseQaEvidenceRetrieverTest {
     }
 
     @Test
+    void retrieveMatchesHyphenatedQuestionAgainstSpacedTranscript() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(20L, 0, 120_000L, 180_000L, "TF IDF stands for term frequency inverse document frequency.")
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        assertThat(retriever.retrieve("task_1", 42L, "zh-CN", "What does TF-IDF stand for?"))
+            .singleElement()
+            .satisfies(item -> assertThat(item.snippet()).contains("TF IDF"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"TF-IDF", "TF IDF", "TF\u2010IDF", "TF\u2011IDF", "TF\u2012IDF", "TF\u2013IDF", "TF\u2014IDF"})
+    void retrieveMatchesEverySupportedTfIdfDashVariant(String term) {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(20L, 0, 1_140_000L, 1_200_000L, "TF IDF stands for term frequency inverse document frequency.")
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        assertThat(retriever.retrieve("task_1", 42L, "zh-CN", "What does " + term + " stand for?"))
+            .singleElement()
+            .satisfies(item -> {
+                assertThat(item.startTimeMillis()).isEqualTo(1_140_000L);
+                assertThat(item.endTimeMillis()).isEqualTo(1_200_000L);
+            });
+    }
+
+    @Test
+    void retrieveMatchesSpacedQuestionAgainstUnicodeDashTranscript() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            videoSegment(10L, 0, 0L, 60_000L, "The TF–IDF weighting scheme ranks search results.", 0.8d)
+        ));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        assertThat(retriever.retrieve("task_1", 42L, "zh-CN", "Explain TF IDF"))
+            .singleElement()
+            .satisfies(item -> assertThat(item.snippet()).contains("TF–IDF"));
+    }
+
+    @Test
     void retrieveMatchesTechnicalTermInsideNaturalEnglishQuestion() {
         when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
             videoSegment(10L, 0, 0L, 60_000L, "Spring Boot configuration", 0.8d)
@@ -302,6 +350,94 @@ class CourseQaEvidenceRetrieverTest {
         assertThat(retriever.retrieve("task_1", 42L, "zh-CN", "How does Spring Boot work?"))
             .singleElement()
             .satisfies(item -> assertThat(item.snippet()).contains("Spring Boot"));
+    }
+
+    @Test
+    void retrieveFindsBachFactForLongNaturalEnglishQuestion() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(
+                20L,
+                0,
+                600_000L,
+                620_000L,
+                "Johann Sebastian Bach served as cantor in Leipzig at St. Thomas Church."
+            )
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of(translation(0, 600_000L, 620_000L, "约翰·塞巴斯蒂安·巴赫在莱比锡担任圣托马斯教堂乐长。")));
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve(
+            "task_1",
+            42L,
+            "zh-CN",
+            "What position did Johann Sebastian Bach hold in Leipzig?"
+        );
+
+        assertThat(evidence).singleElement().satisfies(item -> {
+            assertThat(item.snippet()).contains("Bach", "Leipzig");
+            assertThat(item.translatedSnippet()).contains("巴赫", "莱比锡");
+        });
+    }
+
+    @Test
+    void retrieveFindsBachFactForLongNaturalChineseQuestion() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(20L, 0, 600_000L, 620_000L, "Bach served as cantor in Leipzig.")
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of(translation(0, 600_000L, 620_000L, "巴赫在莱比锡担任教堂乐长。")));
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve(
+            "task_1",
+            42L,
+            "zh-CN",
+            "请问巴赫在莱比锡担任的职位叫什么名字？"
+        );
+
+        assertThat(evidence).singleElement()
+            .satisfies(item -> assertThat(item.translatedSnippet()).contains("巴赫", "莱比锡", "乐长"));
+    }
+
+    @Test
+    void retrieveFindsEvidenceForTheThreeRealBachQuestions() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            subtitle(20L, 0, 0L, 60_000L, "Bach was born in 1685."),
+            subtitle(21L, 1, 480_000L, 540_000L,
+                "The Duke had Bach thrown in jail for a month because he had not obtained a release.")
+        ));
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of(
+                translation(0, 0L, 60_000L, "巴赫出生于1685年。"),
+                translation(1, 480_000L, 540_000L,
+                    "公爵让巴赫入狱，巴赫被关押了一个月，因为他没有获得解职许可。")
+            ));
+
+        assertThat(retriever.retrieve(
+            "task_1", 42L, "zh-CN", "课程中提到巴赫为什么被关押一个月？请指出相关时间段。"
+        )).isNotEmpty().allSatisfy(item -> assertThat(item.startTimeMillis()).isEqualTo(480_000L));
+        assertThat(retriever.retrieve(
+            "task_1", 42L, "zh-CN", "Why was Bach thrown in jail for a month?"
+        )).isNotEmpty().allSatisfy(item -> assertThat(item.startTimeMillis()).isEqualTo(480_000L));
+        assertThat(retriever.retrieve(
+            "task_1", 42L, "zh-CN", "When was Bach born?"
+        )).isNotEmpty().allSatisfy(item -> assertThat(item.startTimeMillis()).isEqualTo(0L));
+    }
+
+    @Test
+    void retrieveDoesNotAcceptOneIncidentalWordFromANaturalQuestion() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            videoSegment(10L, 0, 0L, 60_000L, "The machine completed its monthly backup.", 0.8d)
+        ));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        assertThat(retriever.retrieve(
+            "task_1", 42L, "zh-CN", "Why was Bach thrown in jail for a month?"
+        )).isEmpty();
     }
 
     @Test
@@ -421,6 +557,31 @@ class CourseQaEvidenceRetrieverTest {
 
         assertThat(evidence).extracting(CourseQaEvidenceItem::startTimeMillis)
             .containsExactly(540_000L, 600_000L);
+    }
+
+    @Test
+    void retrieveUnderstandsNaturalEnglishSecondTimestamp() {
+        when(videoSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            videoSegment(1L, 0, 0L, 60_000L, "course introduction", 0.9d),
+            videoSegment(2L, 1, 60_000L, 120_000L,
+                "Remember that the example document contains three searchable tokens.", 0.8d),
+            videoSegment(3L, 3, 180_000L, 240_000L, "unrelated conclusion", 0.9d)
+        ));
+        when(subtitleSegmentMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of());
+        when(translationSegmentMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN"))
+            .thenReturn(List.of());
+
+        List<CourseQaEvidenceItem> evidence = retriever.retrieve(
+            "task_1",
+            42L,
+            "zh-CN",
+            "At 60 seconds, what does the lesson ask us to remember?"
+        );
+
+        assertThat(evidence).isNotEmpty();
+        assertThat(evidence.getFirst().startTimeMillis()).isEqualTo(60_000L);
+        assertThat(evidence).extracting(CourseQaEvidenceItem::startTimeMillis)
+            .doesNotContain(180_000L);
     }
 
     @Test

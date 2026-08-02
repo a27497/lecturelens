@@ -8,8 +8,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.courselingo.ai.llm.LlmProvider;
+import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
+import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
 import com.example.courselingo.ai.llm.LlmRequest;
+import com.example.courselingo.ai.llm.LlmResponseFormat;
 import com.example.courselingo.ai.llm.LlmResult;
+import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.ai.llm.LlmUsage;
 import com.example.courselingo.ai.record.domain.AiCallRecordStatus;
 import com.example.courselingo.ai.record.domain.AiCallStage;
@@ -217,6 +221,91 @@ class CourseChapterServiceTest {
         verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
     }
 
+    @Test
+    void generateCompletesCoverageWithoutDiscardingModelAuthoredChapters() {
+        whenOwnedTask();
+        List<CourseChapterEvidenceItem> evidence = List.of(
+            new CourseChapterEvidenceItem(0, 0L, 240_000L, "00:00 - 04:00", "first"),
+            new CourseChapterEvidenceItem(1, 240_000L, 480_000L, "04:00 - 08:00", "missing"),
+            new CourseChapterEvidenceItem(2, 480_000L, 720_000L, "08:00 - 12:00", "second")
+        );
+        when(evidenceBuilder.build("task_1", 42L, "zh-CN")).thenReturn(new CourseChapterEvidenceBundle(evidence, ""));
+        when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
+        when(chapterMapper.insert(any(CourseChapter.class))).thenAnswer(invocation -> {
+            CourseChapter row = invocation.getArgument(0, CourseChapter.class);
+            row.setId((long) row.getChapterIndex() + 1L);
+            return 1;
+        });
+        llmProvider.content = """
+            {"chapters":[
+              {"title":"First model topic","summary":"First model summary","startTimeMillis":0,"endTimeMillis":240000,"keywords":["first"],"evidenceIndexes":[0]},
+              {"title":"Second model topic","summary":"Second model summary","startTimeMillis":480000,"endTimeMillis":720000,"keywords":["second"],"evidenceIndexes":[2]}
+            ]}
+            """;
+
+        List<CourseChapterResponse> response = service.generate("task_1", "Bearer demo");
+
+        assertThat(response).extracting(CourseChapterResponse::title)
+            .containsExactly("First model topic", "Second model topic");
+        assertThat(response.getFirst().evidence()).extracting(CourseChapterEvidenceItem::index)
+            .containsExactly(0, 1);
+        assertThat(response.getFirst().endTimeMillis()).isEqualTo(response.getLast().startTimeMillis());
+        assertThat(llmProvider.requests).hasSize(2);
+        verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
+    }
+
+    @Test
+    void generateRetriesMalformedStructuredProviderOutputAsText() {
+        whenOwnedTask();
+        when(evidenceBuilder.build("task_1", 42L, "zh-CN")).thenReturn(new CourseChapterEvidenceBundle(List.of(
+            new CourseChapterEvidenceItem(0, 0L, 240000L, "00:00:00 - 00:04:00", "课程开场")
+        ), ""));
+        when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
+        when(chapterMapper.insert(any(CourseChapter.class))).thenAnswer(invocation -> {
+            invocation.getArgument(0, CourseChapter.class).setId(1L);
+            return 1;
+        });
+        llmProvider.outputInvalidFailuresRemaining = 1;
+        llmProvider.content = """
+            {"chapters":[
+              {"title":"课程开场","summary":"介绍课程主题","startTimeMillis":0,"endTimeMillis":240000,"keywords":[],"evidenceIndexes":[0]}
+            ]}
+            """;
+
+        List<CourseChapterResponse> response = service.generate("task_1", "Bearer demo");
+
+        assertThat(response).singleElement().satisfies(chapter -> assertThat(chapter.title()).isEqualTo("课程开场"));
+        assertThat(llmProvider.requests).extracting(LlmRequest::responseFormat)
+            .containsExactly(LlmResponseFormat.JSON_OBJECT, LlmResponseFormat.TEXT);
+        verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
+        verify(aiCallRecordService, never()).failCall(any(FailAiCallRecordCommand.class));
+    }
+
+    @Test
+    void generatePersistsDeterministicFallbackWhenProviderOutputRecoveryAlsoFails() {
+        whenOwnedTask();
+        when(evidenceBuilder.build("task_1", 42L, "zh-CN")).thenReturn(new CourseChapterEvidenceBundle(List.of(
+            new CourseChapterEvidenceItem(0, 0L, 240000L, "00:00:00 - 00:04:00", "课程开场")
+        ), ""));
+        when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
+        when(chapterMapper.insert(any(CourseChapter.class))).thenAnswer(invocation -> {
+            invocation.getArgument(0, CourseChapter.class).setId(1L);
+            return 1;
+        });
+        llmProvider.outputInvalidFailuresRemaining = 2;
+
+        List<CourseChapterResponse> response = service.generate("task_1", "Bearer demo");
+
+        assertThat(response).singleElement().satisfies(chapter -> {
+            assertThat(chapter.evidence()).hasSize(1);
+            assertThat(chapter.usage().provider()).isEqualTo("deterministic-fallback");
+        });
+        assertThat(llmProvider.requests).extracting(LlmRequest::responseFormat)
+            .containsExactly(LlmResponseFormat.JSON_OBJECT, LlmResponseFormat.TEXT);
+        verify(aiCallRecordService).failCall(any(FailAiCallRecordCommand.class));
+        verify(aiCallRecordService, never()).completeCall(any(CompleteAiCallRecordCommand.class));
+    }
+
     private void whenOwnedTask() {
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
@@ -263,10 +352,19 @@ class CourseChapterServiceTest {
     private static final class FakeLlmProvider implements LlmProvider {
         private final List<LlmRequest> requests = new ArrayList<>();
         private String content = "{\"chapters\":[]}";
+        private int outputInvalidFailuresRemaining;
 
         @Override
         public LlmResult generate(LlmRequest request) {
             requests.add(request);
+            if (outputInvalidFailuresRemaining > 0) {
+                outputInvalidFailuresRemaining--;
+                throw new LlmStageException(
+                    "COURSE_CHAPTER",
+                    new LlmProviderFailureDetails(LlmProviderFailureCategory.OUTPUT_INVALID, null, null, false),
+                    new IllegalStateException("fictional malformed provider envelope")
+                );
+            }
             return new LlmResult(
                 "fake",
                 "fake-model",
