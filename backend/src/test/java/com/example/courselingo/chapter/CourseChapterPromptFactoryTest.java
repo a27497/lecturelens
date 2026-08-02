@@ -23,7 +23,13 @@ class CourseChapterPromptFactoryTest {
         );
 
         assertThat(CourseChapterPromptFactory.promptChars(messages)).isLessThanOrEqualTo(12_000);
-        assertThat(messages.getLast().content()).contains("Evidence:", "start=", "end=");
+        assertThat(messages.getLast().content()).contains(
+            "Evidence:",
+            "start=",
+            "end=",
+            "every evidence index must be cited",
+            "contiguous with no uncovered time gap"
+        );
     }
 
     @Test

@@ -34,6 +34,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -162,13 +163,16 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 LlmResponseFormat.JSON_OBJECT
             );
             LlmRequest routed = routedRequestFactory == null ? request : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, request);
-            LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
+            LlmResult result = executePrimaryWithTextRecovery(task, routed);
             boolean repairAttempted = false;
+            boolean coverageCompleted = false;
             boolean fallbackUsed = false;
             List<CourseChapterResponseParser.ParsedCourseChapter> parsed = List.of();
+            List<CourseChapterResponseParser.ParsedCourseChapter> primaryParsed = List.of();
             CourseChapterCoverageReport coverage;
             try {
                 parsed = parser.parse(result.content(), bundle.evidence(), properties.getMaxChapters());
+                primaryParsed = parsed;
                 coverage = CourseChapterCoverageValidator.validate(parsed, bundle.evidence(), properties);
             } catch (BusinessException firstParseFailure) {
                 coverage = CourseChapterCoverageReport.structuralFailure("structured output is invalid");
@@ -197,6 +201,27 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 result = withDuration(repaired, result.duration().plus(repaired.duration()));
             }
             if (!coverage.valid()) {
+                List<CourseChapterResponseParser.ParsedCourseChapter> completed = CourseChapterCoverageCompleter.complete(
+                    parsed, bundle.evidence(), properties.getMaxChapters()
+                );
+                CourseChapterCoverageReport completedCoverage = CourseChapterCoverageValidator.validate(
+                    completed, bundle.evidence(), properties
+                );
+                if (!completedCoverage.valid() && parsed != primaryParsed) {
+                    completed = CourseChapterCoverageCompleter.complete(
+                        primaryParsed, bundle.evidence(), properties.getMaxChapters()
+                    );
+                    completedCoverage = CourseChapterCoverageValidator.validate(
+                        completed, bundle.evidence(), properties
+                    );
+                }
+                if (completedCoverage.valid()) {
+                    coverageCompleted = true;
+                    parsed = completed;
+                    coverage = completedCoverage;
+                }
+            }
+            if (!coverage.valid()) {
                 fallbackUsed = true;
                 parsed = CourseChapterFallbackFactory.build(bundle.evidence(), task.getTargetLanguage(), properties);
                 coverage = CourseChapterCoverageValidator.validate(parsed, bundle.evidence(), properties);
@@ -205,9 +230,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course chapter coverage validation failed");
             }
             LOGGER.info(
-                "event=course_chapter_generation_validated repairAttempted={} fallbackUsed={} chapterCount={} "
+                "event=course_chapter_generation_validated repairAttempted={} coverageCompleted={} fallbackUsed={} chapterCount={} "
                     + "evidenceCount={} timelineCoverage={} evidenceCoverage={} maxGapMillis={}",
                 repairAttempted,
+                coverageCompleted,
                 fallbackUsed,
                 parsed.size(),
                 bundle.evidence().size(),
@@ -220,8 +246,61 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             return rows.stream().map(this::toResponse).toList();
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
+            if (safeFailure.details().category() == LlmProviderFailureCategory.OUTPUT_INVALID) {
+                List<CourseChapterResponseParser.ParsedCourseChapter> fallback = CourseChapterFallbackFactory.build(
+                    bundle.evidence(), task.getTargetLanguage(), properties
+                );
+                CourseChapterCoverageReport coverage = CourseChapterCoverageValidator.validate(
+                    fallback, bundle.evidence(), properties
+                );
+                if (coverage.valid()) {
+                    long durationMillis = elapsedMillis(startedNanos);
+                    failAiCall(started, task, safeFailure, durationMillis);
+                    List<CourseChapter> rows = persistSuccess(
+                        task,
+                        fallback,
+                        bundle.evidence(),
+                        new CourseChapterUsage("deterministic-fallback", "", null, null, null, durationMillis)
+                    );
+                    LOGGER.warn(
+                        "event=course_chapter_provider_output_fallback category={} chapterCount={} evidenceCount={}",
+                        safeFailure.details().category(), rows.size(), bundle.evidence().size()
+                    );
+                    return rows.stream().map(this::toResponse).toList();
+                }
+            }
             failAiCall(started, task, safeFailure, elapsedMillis(startedNanos));
             throw safeFailure;
+        }
+    }
+
+    private LlmResult executePrimaryWithTextRecovery(AnalysisTask task, LlmRequest request) {
+        try {
+            return LlmStructuredOutputExecutor.execute(llmProvider, request);
+        } catch (RuntimeException exception) {
+            LlmStageException safeFailure = toStageFailure(exception);
+            if (request.responseFormat() != LlmResponseFormat.JSON_OBJECT
+                || safeFailure.details().category() != LlmProviderFailureCategory.OUTPUT_INVALID) {
+                throw exception;
+            }
+            Map<String, Object> metadata = new LinkedHashMap<>(request.metadata());
+            metadata.put("providerOutputRecovery", true);
+            LlmRequest recovery = new LlmRequest(
+                "chapter_text_recovery_" + UUID.randomUUID(),
+                task.getId(),
+                request.messages(),
+                request.timeout(),
+                request.temperature(),
+                request.maxTokens(),
+                1,
+                metadata,
+                LlmResponseFormat.TEXT
+            );
+            LOGGER.warn(
+                "event=course_chapter_provider_output_recovery category={} nextResponseFormat={}",
+                safeFailure.details().category(), LlmResponseFormat.TEXT
+            );
+            return LlmStructuredOutputExecutor.execute(llmProvider, recovery);
         }
     }
 

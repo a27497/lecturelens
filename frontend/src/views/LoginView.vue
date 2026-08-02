@@ -1,19 +1,45 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { toReadableAuthError } from "../api/auth";
+import { fetchPublicRuntimeConfiguration } from "../api/runtimeConfiguration";
 import { useAuthStore } from "../stores/auth";
 import { validateLoginForm } from "../utils/authFormValidation";
+import {
+  loginCredentialPolicy,
+  type LoginCredentialMode,
+} from "../utils/loginCredentialPolicy";
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const errorMessage = ref("");
+const credentialMode = ref<LoginCredentialMode | "loading">("loading");
+const credentialEntryEnabled = reactive({ email: false, password: false });
 
 const form = reactive({
   email: "",
   password: "",
+});
+
+const credentialPolicy = computed(() => loginCredentialPolicy(
+  credentialMode.value === "demo" ? "demo" : "real",
+));
+
+onMounted(async () => {
+  let mode: LoginCredentialMode = "real";
+  try {
+    mode = (await fetchPublicRuntimeConfiguration()).demoMode ? "demo" : "real";
+  } catch {
+    // A failed mode check must not re-enable Demo credential autofill.
+    mode = "real";
+  }
+  form.email = "";
+  form.password = "";
+  credentialEntryEnabled.email = false;
+  credentialEntryEnabled.password = false;
+  credentialMode.value = mode;
 });
 
 async function submitLogin() {
@@ -55,23 +81,36 @@ async function submitLogin() {
         type="error"
       />
 
-      <el-form class="auth-form" label-position="top" @submit.prevent="submitLogin">
+      <el-form
+        v-if="credentialMode !== 'loading'"
+        :key="credentialMode"
+        class="auth-form"
+        :autocomplete="credentialPolicy.formAutocomplete"
+        label-position="top"
+        @submit.prevent="submitLogin"
+      >
         <el-form-item label="邮箱">
           <el-input
             v-model="form.email"
-            autocomplete="email"
+            :autocomplete="credentialPolicy.emailAutocomplete"
+            :name="credentialPolicy.emailName"
             placeholder="you@example.com"
+            :readonly="credentialPolicy.preventInitialAutofill && !credentialEntryEnabled.email"
             size="large"
+            @focus="credentialEntryEnabled.email = true"
           />
         </el-form-item>
         <el-form-item label="密码">
           <el-input
             v-model="form.password"
-            autocomplete="current-password"
+            :autocomplete="credentialPolicy.passwordAutocomplete"
+            :name="credentialPolicy.passwordName"
             placeholder="请输入密码"
+            :readonly="credentialPolicy.preventInitialAutofill && !credentialEntryEnabled.password"
             show-password
             size="large"
             type="password"
+            @focus="credentialEntryEnabled.password = true"
             @keyup.enter="submitLogin"
           />
         </el-form-item>

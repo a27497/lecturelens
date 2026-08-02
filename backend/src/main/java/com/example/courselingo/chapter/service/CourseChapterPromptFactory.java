@@ -52,8 +52,8 @@ public final class CourseChapterPromptFactory {
     ) {
         StringBuilder builder = new StringBuilder();
         builder.append("Cover the complete timeline from the first evidence item through the last. ")
-            .append("Every chapter must cite at least one evidence index; cite the first and last evidence items. ")
-            .append("Keep chapters ordered, non-overlapping, and without a gap longer than one evidence window. ")
+            .append("Every chapter must cite at least one evidence index, and every evidence index must be cited. ")
+            .append("Keep chapters ordered, non-overlapping, and contiguous with no uncovered time gap. ")
             .append("Long courses must not be summarized only at the beginning. Use no outside knowledge.\n");
         builder.append("请基于以下课程时间窗口生成课程章节，最多 ").append(maxChapters).append(" 章。\n");
         builder.append("输出格式：{\"chapters\":[{\"title\":\"...\",\"summary\":\"...\",\"startTimeMillis\":0,\"endTimeMillis\":180000,\"keywords\":[\"...\"],\"evidenceIndexes\":[0]}]}\n");

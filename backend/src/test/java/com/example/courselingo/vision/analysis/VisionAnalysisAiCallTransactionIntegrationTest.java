@@ -46,7 +46,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringJUnitConfig(VisionAnalysisAiCallTransactionIntegrationTest.Config.class)
 class VisionAnalysisAiCallTransactionIntegrationTest {
@@ -59,6 +61,9 @@ class VisionAnalysisAiCallTransactionIntegrationTest {
 
     @Autowired
     private FakeVisionState state;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @BeforeEach
     void createSchema() {
@@ -113,6 +118,43 @@ class VisionAnalysisAiCallTransactionIntegrationTest {
             assertThat(record.providerDurationMillis()).isEqualTo(14L);
             assertThat(record.durationMillis()).isPositive();
         });
+    }
+
+    @Test
+    void repeatableReadSnapshotCanCompleteRecordCreatedAfterSnapshot() {
+        state.keyframes = keyframes(2);
+        TransactionTemplate transaction = new TransactionTemplate(transactionManager);
+        transaction.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
+
+        VisionAnalysisScanResult result = transaction.execute(status -> {
+            assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM ai_call_record", Integer.class)).isZero();
+            return service.scan("task_tx", 42L);
+        });
+
+        assertThat(result).isNotNull();
+        assertThat(result.saved()).isEqualTo(2);
+        assertThat(records()).singleElement().satisfies(record -> {
+            assertThat(record.status()).isEqualTo(AiCallRecordStatus.SUCCEEDED);
+            assertThat(record.inputUnits()).isEqualTo(2);
+            assertThat(record.outputUnits()).isEqualTo(2);
+        });
+    }
+
+    @Test
+    void committedVisionRowsAndAuditAreIndependentFromACallerRollback() {
+        state.keyframes = keyframes(2);
+        TransactionTemplate transaction = new TransactionTemplate(transactionManager);
+
+        transaction.executeWithoutResult(status -> {
+            VisionAnalysisScanResult result = service.scan("task_tx", 42L);
+            assertThat(result.saved()).isEqualTo(2);
+            status.setRollbackOnly();
+        });
+
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM visual_probe", Integer.class)).isEqualTo(2);
+        assertThat(records()).singleElement().satisfies(record ->
+            assertThat(record.status()).isEqualTo(AiCallRecordStatus.SUCCEEDED)
+        );
     }
 
     @Test
@@ -276,7 +318,8 @@ class VisionAnalysisAiCallTransactionIntegrationTest {
         VisionAnalysisService visionAnalysisService(
             JdbcTemplate jdbc,
             FakeVisionState state,
-            AiCallRecordService records
+            AiCallRecordService records,
+            PlatformTransactionManager transactionManager
         ) {
             VideoKeyframeMapper keyframes = mock(VideoKeyframeMapper.class);
             when(keyframes.selectByTaskIdAndUserId(any(), any())).thenAnswer(ignored -> state.keyframes);
@@ -330,7 +373,7 @@ class VisionAnalysisAiCallTransactionIntegrationTest {
             properties.setUnknownMaxFramesPerMinute(10);
             return new VisionAnalysisServiceImpl(
                 keyframes, ocr, analyses, storage, provider, router, new HighValueKeyframeSelector(), properties,
-                new ObjectMapper(), Clock.systemUTC(), null, null, records
+                new ObjectMapper(), Clock.systemUTC(), null, null, records, transactionManager
             );
         }
 

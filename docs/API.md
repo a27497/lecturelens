@@ -979,7 +979,7 @@ Actuator 暴露范围固定为 `health,info,metrics`；`env`、`beans`、`config
 | GET | `/actuator/info` | 否 | 基础信息端点，当前不输出敏感信息 |
 | GET | `/actuator/metrics` | 否 | Micrometer metrics 端点，只暴露低基数、无敏感 tag 的业务指标 |
 | GET | `/api/debug/build-info` | 否 | 本地 E2E 调试构建信息，只返回应用名、服务端时间、git commit、Java 版本和 active profiles |
-| GET | `/api/public/runtime-configuration` | 否 | 公开且无敏感信息的运行模式标记，仅返回 `demoMode`，供前端显示本地 Demo 提示 |
+| GET | `/api/public/runtime-configuration` | 否 | 公开且无敏感信息的运行模式标记，仅返回 `demoMode`；登录页据此隔离 Demo/真实模式的密码管理器分区，读取失败按真实模式处理且不预填 Demo 凭据 |
 
 `GET /api/debug/build-info` 的 `gitCommit` 来自最终可执行 JAR 内的 `META-INF/build-info.properties`，属性名为 `build.gitCommit`。构建时未提供该属性或属性为空时返回 `unknown`；正式部署只接受构建时写入的完整 40 位 SHA。该接口不调用 Git、不启动子进程、不读取服务器 checkout 或环境变量作为版本来源。服务器部署同时校验 JAR freshness、JAR 内 SHA、JVM command line 中唯一的 `-jar` 路径和 API 返回值；checkout SHA 本身不能证明运行中的 JAR 已更新。完整部署验证语义见 `docs/DEPLOYMENT.md` 和 `docs/SERVER_RUNTIME.md`。响应使用统一 `ApiResponse` 包装，`data` 字段包含：
 
@@ -1350,7 +1350,7 @@ Evidence item:
 
 QA-R1 evidence is primarily built from ASR transcript text, subtitle translations, source subtitles, and time-bounded video segment speech evidence. OCR and keyframe data remain experimental visual assistance elsewhere in the product, but OCR is not included in QA-R1 prompt evidence, response evidence, or `course_qa_record.evidence_json` by default. The endpoint does not return object keys, local paths, raw prompts, raw provider responses, API keys, tokens, database passwords, JWT secrets, or user ids. If no usable course evidence exists, the backend records the insufficient result and does not call the LLM.
 
-Query terms are extracted by `CourseQaQueryTermExtractor`. It splits Chinese/Latin transitions, normalizes technical identifiers case-insensitively while preserving letters, digits, `+`, `#`, `.`, `_`, and `-`, and treats bounded Chinese and English question phrases as separators. Generic questions alone cannot create relevance. Candidate scoring remains `relevanceScore = keywordScore + timeBoost`; source weight and confidence are applied only after positive relevance.
+Query terms are extracted by `CourseQaQueryTermExtractor`. It splits Chinese/Latin transitions, normalizes technical identifiers case-insensitively while preserving letters, digits, `+`, `#`, `.`, `_`, and `-`, and treats bounded Chinese and English question phrases as separators. Natural English questions emit a bounded phrase plus meaningful unigrams; Chinese boundary phrases such as `提到`, `提及`, and `请指出` are removed while retaining the subject. Generic questions alone cannot create relevance. For a multi-term query, a candidate must match at least two terms unless it matches the exact phrase or a parsed time window supplies relevance. Time parsing accepts clock forms, Chinese natural minutes, and English `seconds` / `minutes` expressions. Source weight and confidence are applied only after that relevance gate.
 
 The insufficient-evidence answer has one exact constant source, `CourseQaMessages.INSUFFICIENT_EVIDENCE`, whose decoded value is `当前课程内容中没有找到明确依据` with no punctuation, surrounding whitespace, prefix, suffix, or line break. Empty retrieval returns that answer with `evidence = []` and `usage = null`, without starting an LLM or QA `ai_call_record`. A completed model call that cites no valid evidence returns the same exact answer and empty evidence while retaining the completed call audit.
 
@@ -1378,7 +1378,7 @@ Response data item:
 
 ### POST /api/tasks/{taskId}/chapters/generate
 
-Synchronously generates chapters for the current authenticated user's task and persists them in `course_chapter`. On success, existing chapters for the same `taskId + userId` are overwritten. On parse/provider failure, the original task state is not changed and existing chapters are preserved.
+Synchronously generates chapters for the current authenticated user's task and persists them in `course_chapter`. On success, existing chapters for the same `taskId + userId` are overwritten. Structured-output envelope failures trigger one same-route text-mode recovery attempt. If both envelopes are invalid, the backend persists a bounded deterministic chapter timeline from the already validated evidence and records the provider call as failed. Other parse/provider failures leave the original task state unchanged and preserve existing chapters.
 
 Generation evidence is built from stable text timelines only:
 
@@ -1404,7 +1404,7 @@ CHAPTER-R1 does not use OCR, keyframes, VLM, embeddings, a vector database, Agen
 }
 ```
 
-The backend filters out-of-range `evidenceIndexes`, clamps chapter times to evidence ranges, sorts chapters by start time, drops invalid duplicates/overlaps, limits chapter count, writes `ai_call_record` with stage `COURSE_CHAPTER`, and never persists or returns raw prompts, raw provider responses, object keys, local paths, API keys, tokens, passwords, JWT secrets, or user ids.
+The backend filters out-of-range `evidenceIndexes`, clamps chapter times to evidence ranges, sorts chapters by start time, drops invalid duplicates/overlaps, limits chapter count, and writes `ai_call_record` with stage `COURSE_CHAPTER`. The text-mode recovery reuses the routed model request but permits only one attempt. A deterministic fallback is labeled `deterministic-fallback` in chapter usage while the invalid provider call remains a failed audit record. The API never persists or returns raw prompts, raw provider responses, object keys, local paths, API keys, tokens, passwords, JWT secrets, or user ids.
 
 ## PRODUCT-POLISH-R1 batch delete API
 

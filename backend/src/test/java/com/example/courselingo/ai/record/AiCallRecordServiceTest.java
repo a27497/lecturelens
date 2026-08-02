@@ -333,7 +333,7 @@ class AiCallRecordServiceTest {
         assertThat(AiCallRecordServiceImpl.class.getMethod("startCall", StartAiCallRecordCommand.class)
             .getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
         assertThat(AiCallRecordServiceImpl.class.getMethod("completeCall", CompleteAiCallRecordCommand.class)
-            .getAnnotation(Transactional.class)).isNotNull();
+            .getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
         assertThat(AiCallRecordServiceImpl.class.getMethod("failCall", FailAiCallRecordCommand.class)
             .getAnnotation(Transactional.class).propagation()).isEqualTo(Propagation.REQUIRES_NEW);
 

@@ -4,7 +4,7 @@
 
 The public local Demo keeps the same upload, RocketMQ dispatch, bounded Analysis Runner, FFmpeg, persistence, result, and artifact boundaries as the normal asynchronous pipeline. It changes only the explicitly configured AI provider implementations: `MockAsrProvider` returns a deterministic local transcript and `DemoMockLlmProvider` returns deterministic aligned translations and a structured learning package. Both are disabled by default, perform no external network call, and do not replace a configured real `LlmProvider`.
 
-`.env.demo.example` enables the Demo providers and disables SiliconFlow, OpenAI-compatible, LangChain4j, OCR, and visual-analysis providers. `.env.real-ai.example` disables the Demo providers and requires the user to supply local credentials. A startup guard rejects any mixed Demo/real ASR or LLM configuration. The task-detail UI reads only the safe backend field from `/api/public/runtime-configuration`; it never derives the Demo notice from a browser-controlled value.
+`.env.demo.example` enables the Demo providers and disables SiliconFlow, OpenAI-compatible, LangChain4j, OCR, and visual-analysis providers. `.env.real-ai.example` disables the Demo providers and requires the user to supply local credentials. A startup guard rejects any mixed Demo/real ASR or LLM configuration. The task-detail UI reads only the safe backend field from `/api/public/runtime-configuration`; it never derives the Demo notice from a browser-controlled value. The login form uses separate password-manager sections for Demo and real modes. If the runtime-mode request fails, it fails closed to real mode, clears any provisional values, and never enables Demo credential autofill.
 
 The Demo Compose runtime validates `LECTURELENS_DEMO_INSTANCE` against `^[a-z0-9-]{1,32}$`, derives the project name as `lecturelens-demo-<instance>`, and uses Compose-scoped volumes, so Demo instances cannot share MySQL, Redis, MinIO, or RocketMQ state. The Demo environment maps nonstandard host ports while containers retain their normal internal ports, except RocketMQ proxy whose internal gRPC listener is deliberately set to the selected host port: RocketMQ 5.x clients receive that port in proxy route metadata. The standard default remains `8081`. Stopping a Demo runs `down` without `-v`; data deletion is an explicit manual action.
 
@@ -434,6 +434,7 @@ RESULT-UX-R1 只增强前端任务详情结果页体验，不改变 D16 结果�
 - 不信任客户端传入的 owner、Content-Type、文件名和排序字段。
 - MinIO bucket 禁止公开读写。
 - 密钥只能来自环境变量或安全配置，不得硬编码。
+- 字幕、学习包和导出制品共用高精度凭据泄漏检测：只拦截 `Authorization Bearer`、带明确 `token` / `secret` / `api key` 标签的值和私钥头等真实凭据形态；普通教学术语（例如 `token stream` 或 `token: a searchable unit`）不作为凭据。
 
 ## 未指定项
 
@@ -520,7 +521,7 @@ VLM-R1 only processes bounded high-value frames:
 
 The service reads thumbnails through `StorageService`, creates only temporary resized JPEG inputs for provider calls, and deletes the temporary directory after use. It never logs object keys, temporary paths, API keys, raw requests, or raw responses.
 
-`video_keyframe_analysis` stores one row per analyzed keyframe. Re-running analysis for the same `taskId + userId` deletes old rows before inserting new results, and `uk_video_keyframe_analysis_keyframe` prevents duplicate rows. Public APIs return a nested safe `visualAnalysis` view on keyframe metadata. The response includes status, screen type, summary, detected elements, provider, model, and a friendly message; it excludes object keys, local paths, provider stderr, raw provider payloads, credentials, and user ids.
+`video_keyframe_analysis` stores one row per analyzed keyframe. Provider calls run without an open database transaction. Completed rows are collected in memory and replace the old rows atomically in a short independent transaction; AI call completion is committed independently after evidence persistence. A caller rollback therefore cannot erase committed visual evidence or its audit record. Re-running analysis for the same `taskId + userId` replaces old rows, and `uk_video_keyframe_analysis_keyframe` prevents duplicate rows. Public APIs return a nested safe `visualAnalysis` view on keyframe metadata. The response includes status, screen type, summary, detected elements, provider, model, and a friendly message; it excludes object keys, local paths, provider stderr, raw provider payloads, credentials, and user ids.
 
 ## FUSION-R1 video segment fusion
 
@@ -546,7 +547,7 @@ The backend HTTP request path stays short:
 6. persist the sanitized result in `course_qa_record`;
 7. return a safe `ApiResponse<CourseQaResponse>`.
 
-Evidence retrieval is rule-based. It parses simple time windows such as `00:03:00`, `3:00`, and `3分到5分`. `CourseQaQueryTermExtractor` splits Chinese/Latin transitions, retains bounded technical identifier characters, normalizes Latin terms to lowercase, and treats generic Chinese and English question phrases as separators so mixed and Chinese-only technical questions retain their actual subject. It deduplicates terms in first-occurrence order. Retrieval scores up to 100 candidates and returns at most 8 evidence items. A candidate must first have positive `keywordScore + timeBoost`; only then may source priority and confidence affect ranking. Source priority is `video_segment` speech text, translated subtitles, and source subtitles. Learning-package content may inform context internally but is not exposed as primary time-bounded evidence. OCR and keyframes remain experimental visual assistance, but QA-R1 does not use OCR as default prompt, response, or `course_qa_record.evidence_json` evidence.
+Evidence retrieval is rule-based. It parses simple time windows such as `00:03:00`, `3:00`, `3分到5分`, `60 seconds`, and `2 minutes`. `CourseQaQueryTermExtractor` splits Chinese/Latin transitions, retains bounded technical identifier characters, normalizes Latin terms to lowercase, and treats generic Chinese and English question phrases as separators so mixed and Chinese-only technical questions retain their actual subject. Natural English questions emit both a bounded phrase and meaningful unigrams, while Chinese question boundaries such as `提到`, `提及`, and `请指出` are removed without discarding the subject. It deduplicates terms in first-occurrence order. Retrieval scores up to 100 candidates and returns at most 8 evidence items. A multi-term candidate must match at least two terms unless the exact phrase matches or a parsed time window provides relevance; this restores factual retrieval while preventing one incidental word from creating evidence. Only then may source priority and confidence affect ranking. Source priority is `video_segment` speech text, translated subtitles, and source subtitles. Learning-package content may inform context internally but is not exposed as primary time-bounded evidence. OCR and keyframes remain experimental visual assistance, but QA-R1 does not use OCR as default prompt, response, or `course_qa_record.evidence_json` evidence.
 
 The prompt requires JSON output with `answer` and `citedEvidenceIndexes`. `CourseQaServiceImpl` and `CourseQaPromptFactory` share `CourseQaMessages.INSUFFICIENT_EVIDENCE`, exactly `当前课程内容中没有找到明确依据`. If retrieval has no positively relevant evidence, the service refuses before the LLM call, writes no QA `ai_call_record`, persists an empty evidence list, and returns null usage. If a completed model response cites no valid retrieved index, the service no longer falls back to all retrieved evidence; it returns the same controlled refusal and an empty evidence list while retaining the completed call audit. LLM calls use `AiModelStage.COURSE_QA` and `AiCallStage.COURSE_QA`; `ai_call_record` stores only safe provider/model/status/duration/token metadata and sanitized errors.
 
@@ -562,13 +563,15 @@ The backend path is:
 2. read persisted subtitles, subtitle translations, and `video_segment.asr_text`;
 3. create bounded time windows using `COURSELINGO_CHAPTER_WINDOW_SECONDS`, `COURSELINGO_CHAPTER_MAX_EVIDENCE_ITEMS`, and `COURSELINGO_CHAPTER_MAX_CHARS_PER_WINDOW`;
 4. optionally include learning-package summary/glossary as global context only, not as time-boundary evidence;
-5. call the existing OpenAI-compatible provider through `AiModelStage.COURSE_CHAPTER`;
-6. parse JSON chapters, filter invalid evidence indexes, clamp times, sort, and drop invalid duplicate/overlapping chapters;
-7. overwrite `course_chapter` rows only after successful parsing;
-8. write safe `ai_call_record` metadata with `AiCallStage.COURSE_CHAPTER`;
-9. return safe chapter rows to the frontend.
+5. call the existing OpenAI-compatible provider through `AiModelStage.COURSE_CHAPTER` using structured JSON output;
+6. if the provider rejects or cannot produce the structured envelope, retry once through the same routed provider in text mode and parse the JSON text;
+7. parse chapters, filter invalid evidence indexes, clamp times, sort, and drop invalid duplicate/overlapping chapters;
+8. if both provider envelopes are invalid, build a bounded deterministic timeline from the same evidence windows instead of returning an empty chapter view;
+9. atomically overwrite `course_chapter` rows only after a valid model or fallback result is ready;
+10. write safe `ai_call_record` metadata with `AiCallStage.COURSE_CHAPTER`; the deterministic recovery preserves the failed provider audit instead of pretending that the model succeeded;
+11. return safe chapter rows to the frontend.
 
-Chapter generation failures do not change `analysis_task.status`, do not delete existing successful chapters, and do not affect QA, ASR, subtitle translation, learning-package generation, artifacts, keyframes, SSE, or task retry/cancel behavior. The chapter module never reads object storage, object keys, local media paths, OCR rows, keyframe images, raw prompts, raw provider responses, tokens, API keys, or secrets.
+Chapter generation failures outside the bounded invalid-envelope recovery do not change `analysis_task.status`, do not delete existing successful chapters, and do not affect QA, ASR, subtitle translation, learning-package generation, artifacts, keyframes, SSE, or task retry/cancel behavior. The chapter module never reads object storage, object keys, local media paths, OCR rows, keyframe images, raw prompts, raw provider responses, tokens, API keys, or secrets.
 
 ## VIDEO-CONTEXT-R1 course video context index
 

@@ -80,6 +80,7 @@ public final class CourseChapterCoverageValidator {
         for (int index = 0; index < safeEvidence.size(); index++) {
             if (!referenced.contains(index)) missingEvidence.add(index);
         }
+        if (!missingEvidence.isEmpty()) violations.add("every evidence window must be cited");
         double evidenceCoverage = safeEvidence.isEmpty() ? 0.0d : (double) referenced.size() / safeEvidence.size();
         long timelineStart = safeEvidence.stream().mapToLong(CourseChapterEvidenceItem::startTimeMillis).min().orElse(0L);
         long timelineEnd = safeEvidence.stream().mapToLong(CourseChapterEvidenceItem::endTimeMillis).max().orElse(timelineStart);
@@ -116,7 +117,7 @@ public final class CourseChapterCoverageValidator {
         if (!safeEvidence.isEmpty() && evidenceCoverage + 0.000001d < rules.getMinEvidenceCoverage()) {
             violations.add("evidence coverage is below the configured minimum");
         }
-        if (maxGap > rules.getWindowSeconds() * 1000L) violations.add("maximum uncovered gap exceeds one evidence window");
+        if (maxGap > 0L) violations.add("chapter timeline contains an uncovered gap");
         long tailGap = safeChapters.isEmpty() ? timelineMillis
             : Math.max(0L, timelineEnd - safeChapters.get(safeChapters.size() - 1).endTimeMillis());
         if (tailGap > 20L * 60L * 1000L) violations.add("course tail is missing for more than twenty minutes");

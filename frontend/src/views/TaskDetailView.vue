@@ -23,7 +23,7 @@ import type { CourseWorkspace } from "../components/task-detail/workspace";
 import { useTaskEventsStore } from "../stores/taskEvents";
 import { useTaskResultStore } from "../stores/taskResult";
 import type { TaskDetailResponse } from "../types/task";
-import { isRetryableTaskStatus } from "../utils/taskStatus";
+import { isRetryableTaskStatus, shouldReloadTerminalTaskDetail } from "../utils/taskStatus";
 import { normalizeSubtitleLanguage } from "../utils/subtitleLanguage";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
@@ -53,6 +53,7 @@ const subtitleMessage = ref("");
 const subtitleRequestVersion = ref(0);
 const commandVersion = ref(0);
 const completedResultReloadTaskId = ref("");
+const terminalDetailReloadTaskId = ref("");
 
 const taskId = computed(() => {
   const value = route.params.taskId;
@@ -80,13 +81,20 @@ watch(taskId, (nextTaskId) => {
   void refreshTaskEmbeddedSubtitles(nextTaskId);
   activeWorkspace.value = "overview";
   completedResultReloadTaskId.value = "";
+  terminalDetailReloadTaskId.value = "";
 }, { immediate: true });
 
 watch(() => task.value?.status, (status) => {
   const currentTaskId = taskId.value.trim();
-  if (status !== "SUCCEEDED" || !currentTaskId || completedResultReloadTaskId.value === currentTaskId) return;
-  completedResultReloadTaskId.value = currentTaskId;
-  void taskResultStore.load(currentTaskId);
+  if (!currentTaskId) return;
+  if (shouldReloadTerminalTaskDetail(status, currentTaskId, terminalDetailReloadTaskId.value)) {
+    terminalDetailReloadTaskId.value = currentTaskId;
+    void loadTaskDetail(currentTaskId);
+  }
+  if (status === "SUCCEEDED" && completedResultReloadTaskId.value !== currentTaskId) {
+    completedResultReloadTaskId.value = currentTaskId;
+    void taskResultStore.load(currentTaskId);
+  }
 });
 
 onBeforeUnmount(() => {

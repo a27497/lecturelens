@@ -11,6 +11,7 @@ import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,11 +43,15 @@ public class CourseQaEvidenceRetriever {
     private static final Pattern NATURAL_MINUTE = Pattern.compile(
         "(?<!\\d)(\\d{1,3})\\s*分钟(?:\\s*(?:附近|左右|前后))?"
     );
+    private static final Pattern NATURAL_ENGLISH_TIME = Pattern.compile(
+        "(?i)(?<!\\d)(\\d{1,5})\\s*(seconds?|secs?|minutes?|mins?)\\b"
+    );
     private static final Pattern OVERVIEW_INTENT = Pattern.compile(
         "(?:主要讲了什么|主要内容|课程概述|课程总结|总结这节|概括这节|what\\s+is\\s+this\\s+(?:course|lesson)\\s+about)",
         Pattern.CASE_INSENSITIVE
     );
     private static final Pattern COMPARABLE_TOKEN = Pattern.compile("[\\p{IsHan}]{2}|[a-z0-9+#._-]{2,}");
+    private static final Pattern DASH_SEPARATOR = Pattern.compile("[\\p{Pd}\\u2212]+");
     private static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<>() {
     };
 
@@ -292,10 +297,18 @@ public class CourseQaEvidenceRetriever {
     ) {
         String normalized = normalize(text);
         double keywordScore = 0.0d;
+        int matchedTerms = 0;
+        boolean matchedExactPhrase = false;
         for (String token : tokens) {
-            if (normalized.contains(token)) {
+            String normalizedToken = normalize(token);
+            if (!normalizedToken.isBlank() && normalized.contains(normalizedToken)) {
                 keywordScore += token.length() >= 4 ? 0.35d : 0.18d;
+                matchedTerms++;
+                matchedExactPhrase = matchedExactPhrase || normalizedToken.indexOf(' ') >= 0;
             }
+        }
+        if (tokens.size() > 1 && matchedTerms < 2 && !matchedExactPhrase) {
+            keywordScore = 0.0d;
         }
         double timeBoost = timeWindow
             .map(window -> overlaps(startMillis, endMillis, window.startMillis(), window.endMillis()) ? 0.8d : 0.0d)
@@ -331,10 +344,18 @@ public class CourseQaEvidenceRetriever {
             return Optional.of(new TimeWindow(Math.min(start, end), Math.max(start, end)));
         }
         Matcher naturalMinute = NATURAL_MINUTE.matcher(safeQuestion);
-        if (!naturalMinute.find()) {
+        if (naturalMinute.find()) {
+            long center = Long.parseLong(naturalMinute.group(1)) * 60_000L;
+            return Optional.of(new TimeWindow(Math.max(0L, center - 60_000L), center + 60_000L));
+        }
+        Matcher naturalEnglishTime = NATURAL_ENGLISH_TIME.matcher(safeQuestion);
+        if (!naturalEnglishTime.find()) {
             return Optional.empty();
         }
-        long center = Long.parseLong(naturalMinute.group(1)) * 60_000L;
+        long unitMillis = naturalEnglishTime.group(2).toLowerCase(java.util.Locale.ROOT).startsWith("m")
+            ? 60_000L
+            : 1_000L;
+        long center = Long.parseLong(naturalEnglishTime.group(1)) * unitMillis;
         return Optional.of(new TimeWindow(Math.max(0L, center - 60_000L), center + 60_000L));
     }
 
@@ -463,7 +484,14 @@ public class CourseQaEvidenceRetriever {
     }
 
     private static String normalize(String value) {
-        return value == null ? "" : value.toLowerCase(java.util.Locale.ROOT).replaceAll("\\s+", " ").strip();
+        if (value == null) {
+            return "";
+        }
+        return DASH_SEPARATOR.matcher(Normalizer.normalize(value, Normalizer.Form.NFKC)
+                .toLowerCase(java.util.Locale.ROOT))
+            .replaceAll(" ")
+            .replaceAll("\\s+", " ")
+            .strip();
     }
 
     private static String firstNonBlank(String... values) {
