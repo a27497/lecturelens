@@ -44,9 +44,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class CourseChapterServiceImpl implements CourseChapterService {
+
+    private GenerationFence generationFence;
+
+    @Autowired
+    public void configureGenerationFence(GenerationFence generationFence) {
+        this.generationFence = generationFence;
+    }
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseChapterServiceImpl.class);
 
@@ -132,12 +142,14 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public List<CourseChapterResponse> generate(String taskId, String authorizationHeader) {
         AnalysisTask task = requireOwnedTask(taskId, authorizationHeader);
         if (!properties.isEnabled()) {
             throw new BusinessException(ErrorCode.COMMON_VALIDATION_FAILED, "Course chapter generation is disabled");
         }
+        GenerationFence.Ticket ticket = generationFence == null ? null
+            : generationFence.begin(task.getId(), task.getUserId(), "chapter:" + task.getTargetLanguage());
         CourseChapterEvidenceBundle bundle = evidenceBuilder.build(task.getId(), task.getUserId(), task.getTargetLanguage());
         if (bundle.evidence().isEmpty()) {
             return List.of();
@@ -241,11 +253,16 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 coverage.evidenceCoverageRatio(),
                 coverage.maxGapMillis()
             );
-            List<CourseChapter> rows = persistSuccess(task, parsed, bundle.evidence(), usage(result));
+            List<CourseChapter> rows = persistSuccess(ticket, task, parsed, bundle.evidence(), usage(result));
             completeAiCall(started, task, result, bundle.evidence().size(), rows.size());
             return rows.stream().map(this::toResponse).toList();
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
+            if (exception instanceof BusinessException business
+                && (business.errorCode() == ErrorCode.TASK_INVALID_STATUS || business.errorCode() == ErrorCode.TASK_NOT_FOUND)) {
+                failAiCall(started, task, safeFailure, elapsedMillis(startedNanos));
+                throw business;
+            }
             if (safeFailure.details().category() == LlmProviderFailureCategory.OUTPUT_INVALID) {
                 List<CourseChapterResponseParser.ParsedCourseChapter> fallback = CourseChapterFallbackFactory.build(
                     bundle.evidence(), task.getTargetLanguage(), properties
@@ -257,7 +274,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                     long durationMillis = elapsedMillis(startedNanos);
                     failAiCall(started, task, safeFailure, durationMillis);
                     List<CourseChapter> rows = persistSuccess(
-                        task,
+                        ticket, task,
                         fallback,
                         bundle.evidence(),
                         new CourseChapterUsage("deterministic-fallback", "", null, null, null, durationMillis)
@@ -335,6 +352,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     }
 
     private List<CourseChapter> persistSuccess(
+        GenerationFence.Ticket ticket,
         AnalysisTask task,
         List<CourseChapterResponseParser.ParsedCourseChapter> parsed,
         List<CourseChapterEvidenceItem> evidence,
@@ -365,6 +383,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             row.setUpdatedAt(now);
             rows.add(row);
         }
+        java.util.function.Supplier<List<CourseChapter>> persist = () -> {
         chapterMapper.deleteByTaskIdAndUserId(task.getId(), task.getUserId());
         for (CourseChapter row : rows) {
             if (chapterMapper.insert(row) != 1) {
@@ -372,6 +391,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             }
         }
         return rows;
+        };
+        return generationFence == null ? persist.get() : generationFence.commit(ticket, persist);
     }
 
     private AiCallRecordView startAiCall(AnalysisTask task, int inputUnits) {

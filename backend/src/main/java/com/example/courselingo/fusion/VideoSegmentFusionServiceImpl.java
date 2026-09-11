@@ -42,6 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
 
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public void configureGenerationFence(com.example.courselingo.task.service.GenerationFence fence) {
+        this.generationFence = fence;
+    }
+
+
     private static final TypeReference<List<String>> STRING_LIST_TYPE = new TypeReference<>() {
     };
     private static final TypeReference<VideoSegmentEvidence> EVIDENCE_TYPE = new TypeReference<>() {
@@ -220,6 +228,7 @@ public class VideoSegmentFusionServiceImpl implements VideoSegmentService {
             : List.of();
         long windowMillis = Math.max(1L, properties.getWindowSeconds()) * 1000L;
         long durationMillis = durationMillis(subtitles, translations, keyframes, ocrRows, analysisRows, windowMillis);
+        if (generationFence != null) generationFence.sourceChanging(normalizedTaskId, userId);
         videoSegmentMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
         if (durationMillis <= 0) {
             return new VideoSegmentFusionResult(0, 0, 0, 0);

@@ -99,6 +99,20 @@ class TaskEventStreamServiceTest {
         emitter.complete();
     }
 
+    @Test
+    void recoveredDatabaseFailureOverridesStaleRunningCache() {
+        when(currentUserService.currentUser("Bearer access-token"))
+            .thenReturn(new CurrentUserResponse(42L, "demo@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_done", 42L))
+            .thenReturn(mysqlTask("task_done", 42L, "FAILED", 30, "FAILED"));
+        when(progressSnapshotService.find("task_done"))
+            .thenReturn(Optional.of(snapshot("task_done", "RUNNING", 30, "ASR")));
+        var service = new TaskEventStreamServiceImpl(currentUserService,analysisTaskMapper,progressSnapshotService,
+            new TaskEventStreamProperties(1,1,20,1),executor);
+        service.open("Bearer access-token", "task_done");
+        assertThat(service.activeConnectionCount()).isZero();
+    }
+
     private static TaskProgressSnapshot snapshot(
         String taskId,
         String status,

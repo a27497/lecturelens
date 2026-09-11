@@ -50,16 +50,16 @@ wait_completed rocketmq-store-init
 wait_running rocketmq-namesrv
 wait_running rocketmq-broker
 
+# A cluster-level update can succeed without creating a topic when no broker has registered yet.
+# Require the direct broker RPC success response, not just the CLI exit code.
 mq_ready=false
 for _ in $(seq 1 40); do
   if compose exec -T rocketmq-broker sh -lc \
-    '/home/rocketmq/rocketmq-5.3.4/bin/mqadmin clusterList -n rocketmq-namesrv:9876 >/dev/null 2>&1'; then
+    '/home/rocketmq/rocketmq-5.3.4/bin/mqadmin updateTopic -n rocketmq-namesrv:9876 -b 127.0.0.1:10911 -t courselingo-analysis-task 2>/dev/null | grep -Fq "create topic to 127.0.0.1:10911 success."'; then
     mq_ready=true
     break
   fi
   sleep 3
 done
-[[ "$mq_ready" == true ]] || { printf 'FAIL RocketMQ broker did not become ready.\n' >&2; exit 1; }
-compose exec -T rocketmq-broker sh -lc \
-  '/home/rocketmq/rocketmq-5.3.4/bin/mqadmin updateTopic -n rocketmq-namesrv:9876 -c DefaultCluster -t courselingo-analysis-task >/dev/null'
+[[ "$mq_ready" == true ]] || { printf 'FAIL RocketMQ broker/topic did not become ready.\n' >&2; exit 1; }
 printf 'PASS infrastructure-ready instance=%s project=%s\n' "$instance" "$project_name"

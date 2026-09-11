@@ -115,11 +115,11 @@ class TaskEventControllerTest {
     }
 
     @Test
-    void ownerReceivesRedisSnapshotFirstAndTerminalCompletedEventWithoutSensitiveFields() throws Exception {
+    void ownerReceivesMatchingTerminalSnapshotAndCompletedEventWithoutSensitiveFields() throws Exception {
         when(currentUserService.currentUser("Bearer access-token"))
             .thenReturn(new CurrentUserResponse(42L, "demo@example.com", "ACTIVE"));
         when(analysisTaskMapper.selectByIdAndUserId("task_abc123", 42L))
-            .thenReturn(mysqlTask("task_abc123", 42L, "RUNNING", 20, "ASR"));
+            .thenReturn(mysqlTask("task_abc123", 42L, "SUCCEEDED", 100, "DONE"));
         when(progressSnapshotService.find("task_abc123"))
             .thenReturn(Optional.of(new TaskProgressSnapshot(
                 "task_abc123",

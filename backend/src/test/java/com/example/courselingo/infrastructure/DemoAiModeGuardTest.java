@@ -54,4 +54,20 @@ class DemoAiModeGuardTest {
 
         assertThat(DemoAiModeGuard.isDemoMode(environment)).isFalse();
     }
+    @Test
+    void rejectsMultipleRealProvidersAndIncompleteConsumerConfiguration() {
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(new MockEnvironment()
+            .withProperty("courselingo.ai.llm.openai-compatible.enabled","true")
+            .withProperty("courselingo.ai.llm.langchain4j.enabled","true")));
+        var consumer = new MockEnvironment().withProperty("courselingo.mq.rocketmq.enabled","true");
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(consumer)).withMessageContaining("pipeline");
+        consumer.withProperty("courselingo.task.runner.pipeline.enabled","true");
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(consumer)).withMessageContaining("Flyway");
+        consumer.withProperty("spring.flyway.enabled","true");
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(consumer)).withMessageContaining("ASR");
+        consumer.withProperty("courselingo.ai.asr.mock.enabled","true");
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(consumer)).withMessageContaining("LLM");
+        consumer.withProperty("courselingo.ai.llm.demo-mock.enabled","true");
+        DemoAiModeGuard.validate(consumer);
+    }
 }

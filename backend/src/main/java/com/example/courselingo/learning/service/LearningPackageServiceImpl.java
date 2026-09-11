@@ -38,9 +38,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class LearningPackageServiceImpl implements LearningPackageService {
+
+    private GenerationFence generationFence;
+
+    @Autowired
+    public void configureGenerationFence(GenerationFence generationFence) {
+        this.generationFence = generationFence;
+    }
+
 
     private static final Logger log = LoggerFactory.getLogger(LearningPackageServiceImpl.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -171,15 +181,17 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public int generateLearningPackage(GenerateLearningPackageCommand command) {
         return generateLearningPackageWithAiCallRecord(command).savedCount();
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public LearningPackageAiCallResult generateLearningPackageWithAiCallRecord(GenerateLearningPackageCommand command) {
         ValidatedLearningPackageCommand validated = LearningPackageValidators.validateCommand(command);
+        GenerationFence.Ticket ticket = generationFence == null ? null
+            : generationFence.begin(validated.taskId(), validated.userId(), "learning:" + validated.targetLanguage());
         List<VideoSegment> multimodalSegments = loadMultimodalSegments(validated);
         boolean hasVisualEvidence = hasSemanticVisualEvidence(multimodalSegments);
         List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated, hasVisualEvidence);
@@ -253,15 +265,16 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             logFallbackUsed(validated, provider, result.model(), "validation_failed");
         }
 
-        learningPackageMapper.deleteByTaskIdUserIdAndTargetLanguage(
-            validated.taskId(),
-            validated.userId(),
-            validated.targetLanguage()
-        );
-        int inserted = learningPackageMapper.insert(toEntity(validated, parsed, provider));
-        if (inserted != 1) {
-            throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Learning package persistence failed");
-        }
+        LearningPackage entity = toEntity(validated, parsed, provider);
+        java.util.function.Supplier<Integer> persist = () -> {
+            learningPackageMapper.deleteByTaskIdUserIdAndTargetLanguage(
+                validated.taskId(), validated.userId(), validated.targetLanguage());
+            if (learningPackageMapper.insert(entity) != 1) {
+                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Learning package persistence failed");
+            }
+            return 1;
+        };
+        int inserted = generationFence == null ? persist.get() : generationFence.commit(ticket, persist);
         return new LearningPackageAiCallResult(
             inserted,
             provider,

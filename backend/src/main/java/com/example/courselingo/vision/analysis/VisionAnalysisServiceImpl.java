@@ -43,6 +43,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 public class VisionAnalysisServiceImpl implements VisionAnalysisService {
 
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+
+    @Autowired
+    public void configureGenerationFence(com.example.courselingo.task.service.GenerationFence fence) {
+        this.generationFence = fence;
+    }
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VisionAnalysisServiceImpl.class);
 
     private final VideoKeyframeMapper keyframeMapper;
@@ -339,6 +347,7 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
 
     private void replaceAnalyses(String taskId, Long userId, List<VideoKeyframeAnalysis> rows) {
         Runnable persistence = () -> {
+        if (generationFence != null) generationFence.sourceChanging(taskId, userId);
             analysisMapper.deleteByTaskIdAndUserId(taskId, userId);
             for (VideoKeyframeAnalysis row : rows) {
                 if (analysisMapper.insert(row) != 1) {

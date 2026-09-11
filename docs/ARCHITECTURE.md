@@ -18,7 +18,7 @@ The Demo Compose runtime validates `LECTURELENS_DEMO_INSTANCE` against `^[a-z0-9
 - 对象存储：MinIO 固定 RELEASE tag
 - 媒体处理：FFmpeg 8.0.3
 - 消息队列：RocketMQ 5.3.4
-- AI 编排：LangChain4j，使用 langchain4j-bom 固定版本
+- AI Pipeline：自有确定性步骤编排；真实 Demo 默认使用 HTTP OpenAI-compatible Provider。LangChain4j 为默认禁用的备用适配，POM 直接固定版本，并非 Agent runtime。
 - ASR：SiliconFlow-compatible ASR Provider
 - LLM：OpenAI-compatible LLM Provider
 - 实时进度：SSE
@@ -31,7 +31,7 @@ The Demo Compose runtime validates `LECTURELENS_DEMO_INSTANCE` against `^[a-z0-9
 
 - 使用单体后端应用承载认证、上传、任务、AI Pipeline、制品和设置接口。
 - 使用 package-by-domain 组织后端代码，避免按 Controller / Service / Mapper 横向堆叠。
-- HTTP 请求线程只处理短事务，不执行 FFmpeg / ASR / LLM 长任务。
+- 视频处理通过 MQ/Runner 执行。现有 QA、章节生成接口会同步等待 LLM；生成服务在数据库事务外等待模型，持久化使用短事务。
 - RocketMQ 作为分析任务异步边界。
 - MySQL 是事实来源，Redis 是短状态组件。
 
@@ -590,3 +590,10 @@ The backend path is:
 7. return safe DTOs that omit `userId`, object keys, local paths, raw prompts, raw responses, credentials, and full provider payloads.
 
 `course_video_chunk` and `course_chapter` serve different purposes. Chunks are fixed time-window indexes for backend context retrieval and long-video organization. Chapters are semantic chapter timeline records generated on demand by CHAPTER-R1. VIDEO-CONTEXT-R1 does not feed QA or Chapter generation in R1; that integration is intentionally deferred until the index behavior is stable.
+
+
+## C0–C3 可靠性与证据边界
+
+创建/取消事务写入 `task_outbox`，后台至少一次投递 RocketMQ；`task_execution` 提供数据库级执行资格、90 秒租约与过期恢复。删除事务提交墓碑与清理意图，外部对象清理可重试。Redis 进度与数据库状态冲突时，SSE 采用数据库状态。
+
+模型生成在事务外执行，`GenerationFence` 对任务授权、删除/取消、来源 revision 和 generation 做短事务检查与发布。`CourseEvidenceService` 物化不可变、权限隔离的来源快照，QA 和未来索引消费者共用该契约。详情与部署注意事项见 [C0_C3_EXECUTION.md](C0_C3_EXECUTION.md)。
