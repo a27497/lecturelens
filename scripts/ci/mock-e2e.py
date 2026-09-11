@@ -8,6 +8,8 @@ from pathlib import Path
 import secrets
 import subprocess
 import time
+import tempfile
+import zipfile
 import urllib.error
 import urllib.request
 
@@ -31,6 +33,8 @@ def main():
     for key in ('SILICONFLOW_ASR_ENABLED', 'OPENAI_COMPATIBLE_ENABLED', 'LANGCHAIN4J_OPENAI_ENABLED',
                 'COURSELINGO_VISION_ANALYSIS_ENABLED'):
         assert env.get(key, 'false') == 'false', f'{key} must be false for no-key smoke test'
+    # Hosted CI can take longer than the production default during client initialization.
+    env.setdefault('ROCKETMQ_SEND_TIMEOUT_MS', '10000')
     base = f"http://127.0.0.1:{env.get('APP_PORT', '8080')}"
     # Refuse to run assertions against another process accidentally occupying the requested port.
     import socket
@@ -68,6 +72,20 @@ def main():
     video = (logs / 'lecturelens-sample.mp4').read_bytes()
     jar = ROOT / 'backend/target/courselingo-backend-0.0.1-SNAPSHOT.jar'
     with (logs / 'mock-e2e-backend.log').open('w') as log:
+        # Broker registration does not guarantee that the client's gRPC route is ready.
+        # Reuse the packaged SDK and dependencies so this probes the actual client protocol.
+        with tempfile.TemporaryDirectory(prefix='lecturelens-mq-readiness-') as directory:
+            with zipfile.ZipFile(jar) as archive:
+                for entry in archive.infolist():
+                    if entry.filename.startswith('BOOT-INF/lib/') and entry.filename.endswith('.jar'):
+                        (Path(directory) / Path(entry.filename).name).write_bytes(archive.read(entry))
+            subprocess.run(['java', '--class-path', str(Path(directory) / '*'),
+                            str(ROOT / 'scripts/ci/RocketMqReadiness.java'),
+                            env.get('ROCKETMQ_ENDPOINT', '127.0.0.1:18081'),
+                            env.get('ROCKETMQ_ANALYSIS_TOPIC', 'courselingo-analysis-task'),
+                            env.get('ROCKETMQ_SSL_ENABLED', 'false'), env['ROCKETMQ_SEND_TIMEOUT_MS']],
+                           env=env, stdout=log, stderr=log, check=True, timeout=120)
+        print('PASS RocketMQ-client-readiness', flush=True)
         process = subprocess.Popen(['java', '-jar', str(jar)], cwd=ROOT / 'backend', env=env, stdout=log, stderr=log)
         try:
             deadline = time.monotonic() + 150
@@ -105,7 +123,10 @@ def main():
                 assert time.monotonic() < deadline, f'Pipeline timeout: {state["status"]}'
                 time.sleep(1)
             assert re.fullmatch(r'task_[a-f0-9]{32}', task)
-            assert sql(f"SELECT COUNT(*) FROM task_execution WHERE task_id='{task}' AND completed_at IS NOT NULL") == '1'
+            deadline = time.monotonic() + 10
+            while sql(f"SELECT COUNT(*) FROM task_execution WHERE task_id='{task}' AND completed_at IS NOT NULL") != '1':
+                assert time.monotonic() < deadline, 'Worker did not close its completed execution lease'
+                time.sleep(0.2)
             assert sql(f"SELECT source_language FROM analysis_task WHERE id='{task}'") == 'en'
             result = api('GET', f'/api/tasks/{task}/results')
             assert result['subtitles'] and result['translations'] and result['learningPackage'] and result['artifacts']

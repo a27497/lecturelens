@@ -94,3 +94,8 @@ python3 scripts/ci/mock-e2e.py --project lecturelens-demo-cleanup
 | 差异检查 | `git diff --check` 通过；已发布 V1–V21 未修改 |
 
 最终 E2E 命令：`python3 scripts/ci/mock-e2e.py --project lecturelens-demo-cleanup`。本轮测试实例在验收后关闭并保留数据卷；其他项目的容器未改动。上述结果为提交前的本地验收记录；远程 CI 状态以对应 PR 的 Checks 为准。本轮未调用付费模型，未重新验证历史长视频效果。
+
+
+远程 CI 初次验证中，后端与前端均通过；两轮 E2E 一轮通过、一轮在 RocketMQ 客户端初始化时失败。为消除 Broker 注册检查与客户端就绪之间的窗口，Mock E2E 增加使用打包 SDK 的 Proxy/主题路由探针（有界等待、不发送消息），并将测试进程的 MQ 请求超时默认设为 10 秒。业务运行配置不变。
+
+上述 CI 就绪检查修复已通过本地完整 Mock E2E；最新远程结果见 [PR #25 Checks](https://github.com/a27497/lecturelens/pull/25/checks)。
