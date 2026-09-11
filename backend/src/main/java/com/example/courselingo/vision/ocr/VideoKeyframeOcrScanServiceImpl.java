@@ -22,6 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanService {
 
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+
+    @Autowired
+    public void configureGenerationFence(com.example.courselingo.task.service.GenerationFence fence) {
+        this.generationFence = fence;
+    }
+
+
     private final VideoKeyframeMapper keyframeMapper;
     private final VideoKeyframeOcrMapper ocrMapper;
     private final StorageService storageService;
@@ -57,7 +65,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED)
     public VideoKeyframeOcrScanResult scan(String taskId, Long userId) {
         if (!properties.isEnabled()) {
             return new VideoKeyframeOcrScanResult(0, 0, 0, 0, 0);
@@ -66,6 +74,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
         if (userId == null) {
             throw new IllegalArgumentException("userId is required");
         }
+        var ticket = generationFence == null ? null : generationFence.begin(normalizedTaskId, userId, "ocr");
         List<VideoKeyframe> keyframes = keyframeMapper.selectByTaskIdAndUserId(normalizedTaskId, userId);
         List<VideoKeyframeOcr> existing = ocrMapper.selectByKeyframeIds(
             normalizedTaskId,
@@ -75,7 +84,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
         if (!keyframes.isEmpty() && existing.size() == keyframes.size()) {
             return summarize(existing);
         }
-        ocrMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
+        var rows = new java.util.ArrayList<VideoKeyframeOcr>();
         int succeeded = 0;
         int empty = 0;
         int failed = 0;
@@ -87,9 +96,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
             VideoKeyframeOcr row = index >= limit
                 ? skippedRow(keyframe)
                 : recognize(keyframe);
-            if (ocrMapper.insert(row) != 1) {
-                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Keyframe OCR persistence failed");
-            }
+            rows.add(row);
             saved++;
             OcrStatus status = OcrStatus.valueOf(row.getStatus());
             switch (status) {
@@ -101,6 +108,16 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
                 }
             }
         }
+        java.util.function.Supplier<Void> persist = () -> {
+            if (generationFence != null) generationFence.sourceChanging(normalizedTaskId, userId);
+            ocrMapper.deleteByTaskIdAndUserId(normalizedTaskId, userId);
+            for (VideoKeyframeOcr row : rows) {
+                if (ocrMapper.insert(row) != 1) throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR,
+                    "Keyframe OCR persistence failed");
+            }
+            return null;
+        };
+        if (ticket == null) persist.get(); else generationFence.commit(ticket, persist);
         return new VideoKeyframeOcrScanResult(saved, succeeded, empty, failed, skipped);
     }
 
@@ -177,7 +194,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
                 result.languageHint(),
                 ""
             );
-        String safeText = usefulText ? truncate(originalText, properties.getMaxTextLength()) : "";
+        String safeText = truncate(originalText, properties.getMaxTextLength());
         OcrStatus persistedStatus = status == OcrStatus.SUCCEEDED && !usefulText ? OcrStatus.EMPTY : status;
         VideoKeyframeOcr row = new VideoKeyframeOcr();
         row.setTaskId(keyframe.getTaskId());
@@ -188,7 +205,7 @@ public class VideoKeyframeOcrScanServiceImpl implements VideoKeyframeOcrScanServ
         row.setLanguageHint(nonBlank(result.languageHint(), properties.getLanguage()));
         row.setOcrText(safeText);
         row.setTextLength(originalText.length());
-        row.setTextTruncated(usefulText && safeText.length() < originalText.length());
+        row.setTextTruncated(safeText.length() < originalText.length());
         row.setConfidence(result.confidence());
         row.setStatus(persistedStatus.name());
         row.setErrorCode(result.errorCode());

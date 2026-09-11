@@ -170,12 +170,12 @@ class LearningPackageServiceTest {
     }
 
     @Test
-    void generateLearningPackageRequiresTransactionOnReadLlmParseDeleteAndInsert() throws NoSuchMethodException {
+    void generationSuspendsCallerTransactionDuringModelIo() throws NoSuchMethodException {
         Transactional annotation = LearningPackageServiceImpl.class
             .getMethod("generateLearningPackage", GenerateLearningPackageCommand.class)
             .getAnnotation(Transactional.class);
 
-        assertThat(annotation).isNotNull();
+        assertThat(annotation.propagation()).isEqualTo(org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED);
     }
 
     @Test

@@ -34,6 +34,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskCreationServiceImpl implements TaskCreationService {
 
+    private Boolean submissionEnabled;
+
+    @Autowired
+    public void configureSubmission(org.springframework.core.env.Environment environment) {
+        submissionEnabled = environment.getProperty("courselingo.task.runner.pipeline.enabled", Boolean.class, false)
+            && environment.getProperty("courselingo.mq.rocketmq.enabled", Boolean.class, false)
+            && environment.getProperty("spring.flyway.enabled", Boolean.class, false);
+    }
+
     private static final int MAX_RETRY_COUNT = 3;
     private static final Pattern UPLOAD_ID_PATTERN = Pattern.compile("[A-Za-z0-9][A-Za-z0-9_-]{0,63}");
     private static final Set<String> TASK_CREATABLE_UPLOAD_STATUSES = Set.of("STORED", "UPLOADED");
@@ -118,12 +127,17 @@ public class TaskCreationServiceImpl implements TaskCreationService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public CreateAnalysisTaskResponse create(CreateAnalysisTaskRequest request, String authorizationHeader) {
         String uploadId = normalizeUploadId(request);
         String targetLanguage = normalizeTargetLanguage(request);
         String sourceLanguage = normalizeSourceLanguage(request);
         CurrentUserResponse currentUser = currentUserService.currentUser(authorizationHeader);
 
+        if (Boolean.FALSE.equals(submissionEnabled)) {
+            throw new BusinessException(ErrorCode.TASK_RUNNER_EXECUTION_FAILED,
+                "Task submission requires the pipeline, message queue and database migrations");
+        }
         UploadSession uploadSession = uploadSessionMapper.selectByIdAndUserId(uploadId, currentUser.userId());
         if (uploadSession == null) {
             throw new BusinessException(ErrorCode.UPLOAD_SESSION_NOT_FOUND);

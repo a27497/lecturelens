@@ -134,7 +134,8 @@ public class TaskEventStreamServiceImpl implements TaskEventStreamService {
 
     private TaskEventPayload currentPayload(AnalysisTask task) {
         Optional<TaskProgressSnapshot> redisSnapshot = progressSnapshotService.find(task.getId())
-            .filter(snapshot -> Objects.equals(task.getId(), snapshot.taskId()));
+            .filter(snapshot -> Objects.equals(task.getId(), snapshot.taskId()))
+            .filter(snapshot -> Objects.equals(task.getStatus(), snapshot.status()));
         return redisSnapshot.map(this::fromSnapshot).orElseGet(() -> fromMysql(task));
     }
 

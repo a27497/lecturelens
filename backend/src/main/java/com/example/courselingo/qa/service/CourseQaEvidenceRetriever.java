@@ -27,6 +27,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CourseQaEvidenceRetriever {
 
+    private com.example.courselingo.evidence.CourseEvidenceService canonicalEvidence;
+
+    @Autowired
+    public void configureEvidence(com.example.courselingo.evidence.CourseEvidenceService evidence) {
+        this.canonicalEvidence = evidence;
+    }
+
+
     private static final int MAX_CANDIDATES = 100;
     private static final int MAX_EVIDENCE = 8;
     private static final int MAX_OVERVIEW_EVIDENCE = 6;
@@ -93,6 +101,7 @@ public class CourseQaEvidenceRetriever {
     }
 
     public List<CourseQaEvidenceItem> retrieve(String taskId, Long userId, String targetLanguage, String question) {
+        if (canonicalEvidence != null) return retrieveCanonical(taskId, userId, targetLanguage, question);
         List<String> tokens = queryTermExtractor.extract(question);
         Optional<TimeWindow> timeWindow = parseTimeWindow(question);
         boolean overview = timeWindow.isEmpty() && tokens.isEmpty() && isOverviewQuestion(question);
@@ -119,6 +128,26 @@ public class CourseQaEvidenceRetriever {
         }
         int limit = timeWindow.isPresent() ? MAX_TIME_EVIDENCE : MAX_EVIDENCE;
         return semanticallyDistinct(ranked.stream().map(Candidate::item).toList(), limit);
+    }
+
+    private List<CourseQaEvidenceItem> retrieveCanonical(String taskId, Long userId, String language, String question) {
+        List<String> tokens = queryTermExtractor.extract(question);
+        Optional<TimeWindow> window = parseTimeWindow(question);
+        boolean overview = window.isEmpty() && isOverviewQuestion(question);
+        List<Candidate> ranked = canonicalEvidence.current(taskId, userId).stream()
+            .filter(com.example.courselingo.evidence.CourseEvidence::retrievable)
+            .filter(item -> !"SUBTITLE_TRANSLATION".equals(item.sourceType()) || language.equals(item.language()))
+            .map(item -> new Candidate(score(item.normalizedText(), tokens, item.startMs(), item.endMs(), window,
+                    item.derived() ? 0.9d : 1.0d, item.extractionConfidence()),
+                new CourseQaEvidenceItem(item.sourceType(), item.sourceId(), item.startMs(), item.endMs(),
+                    formatRange(item.startMs(), item.endMs()), item.normalizedText(), "", item.extractionConfidence(),
+                    item.evidenceId(), item.revision())))
+            .filter(candidate -> overview || candidate.score() > 0)
+            .sorted(java.util.Comparator.comparingDouble(Candidate::score).reversed()
+                .thenComparing(candidate -> candidate.item().startTimeMillis()))
+            .toList();
+        if (overview) return evenlyDistributedOverview(ranked);
+        return semanticallyDistinct(ranked.stream().map(Candidate::item).toList(), window.isPresent() ? MAX_TIME_EVIDENCE : MAX_EVIDENCE);
     }
 
     private static boolean hasEvidenceText(CourseQaEvidenceItem item) {

@@ -451,7 +451,7 @@ class AnalysisTaskRunnerTest {
     }
 
     @Test
-    void noopExecutorReturnsSuccessfulResultWithoutExternalWork() {
+    void disabledExecutorNeverReportsSuccessfulAnalysis() {
         AnalysisTaskWorkResult result = new NoopAnalysisTaskWorkExecutor().execute(new AnalysisTaskExecutionContext(
             "task_1",
             "up_1",
@@ -460,9 +460,9 @@ class AnalysisTaskRunnerTest {
             "req_1"
         ));
 
-        assertThat(result.success()).isTrue();
-        assertThat(result.errorCode()).isNull();
-        assertThat(result.errorMessage()).isNull();
+        assertThat(result.success()).isFalse();
+        assertThat(result.errorCode()).isEqualTo("TASK_RUNNER_DISABLED");
+        assertThat(result.errorMessage()).isNotBlank();
     }
 
     private void assertCancelTransition(AnalysisTaskStatus status) {

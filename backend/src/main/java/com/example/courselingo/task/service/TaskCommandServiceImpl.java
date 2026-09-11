@@ -106,6 +106,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TaskCommandResponse cancel(String taskId, String authorizationHeader) {
         CurrentUserResponse currentUser = currentUserService.currentUser(authorizationHeader);
         AnalysisTask task = loadOwnedTask(taskId, currentUser.userId());
