@@ -96,6 +96,10 @@ python3 scripts/ci/mock-e2e.py --project lecturelens-demo-cleanup
 最终 E2E 命令：`python3 scripts/ci/mock-e2e.py --project lecturelens-demo-cleanup`。本轮测试实例在验收后关闭并保留数据卷；其他项目的容器未改动。上述结果为提交前的本地验收记录；远程 CI 状态以对应 PR 的 Checks 为准。本轮未调用付费模型，未重新验证历史长视频效果。
 
 
-远程 CI 初次验证中，后端与前端均通过；两轮 E2E 一轮通过、一轮在 RocketMQ 客户端初始化时失败。为消除 Broker 注册检查与客户端就绪之间的窗口，Mock E2E 增加使用打包 SDK 的 Proxy/主题路由探针（有界等待、不发送消息），并将测试进程的 MQ 请求超时默认设为 10 秒。业务运行配置不变。
+### 远程 CI 收口
 
-上述 CI 就绪检查修复已通过本地完整 Mock E2E；最新远程结果见 [PR #25 Checks](https://github.com/a27497/lecturelens/pull/25/checks)。
+远程冷启动验证暴露了 Demo 主题初始化的竞态：按集群创建主题时，Broker 尚未注册可能导致没有实际创建。Linux/PowerShell 启动脚本现改为直接向 Broker 创建主题，并要求明确的 RPC 成功响应，不能只依赖命令退出码。相关行为可对照 [RocketMQ 5.3.4 创建主题命令源码](https://github.com/apache/rocketmq/blob/rocketmq-all-5.3.4/tools/src/main/java/org/apache/rocketmq/tools/command/topic/UpdateTopicSubCommand.java)。
+
+Mock E2E 另使用打包 SDK 探测 Proxy/主题路由（有界等待、不发送消息），测试进程 MQ 请求超时默认 10 秒，并等待 worker 关闭已完成租约。业务运行配置不变。最新远程结果见 [PR #25 Checks](https://github.com/a27497/lecturelens/pull/25/checks)。
+
+主题初始化修复已在全新的 `cleanup-topic` 实例和空数据库上通过完整 Mock E2E；Linux 实例名称契约测试通过。PowerShell 使用相同的 Broker 命令，当前 Linux 环境未执行 PowerShell 脚本。

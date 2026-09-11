@@ -57,14 +57,13 @@ try {
     Wait-Running "rocketmq-namesrv"
     Wait-Running "rocketmq-broker"
 
+    # Require direct broker creation; a cluster-level update can be a no-op before registration.
     $mqReady = $false
     for ($attempt = 0; $attempt -lt 40; $attempt++) {
-        & docker compose --project-name $projectName --env-file .env.demo.local exec -T rocketmq-broker sh -lc "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin clusterList -n rocketmq-namesrv:9876 >/dev/null 2>&1"
+        & docker compose --project-name $projectName --env-file .env.demo.local exec -T rocketmq-broker sh -lc "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin updateTopic -n rocketmq-namesrv:9876 -b 127.0.0.1:10911 -t courselingo-analysis-task 2>/dev/null | grep -Fq 'create topic to 127.0.0.1:10911 success.'"
         if ($LASTEXITCODE -eq 0) { $mqReady = $true; break }
         Start-Sleep -Seconds 3
     }
-    if (-not $mqReady) { throw "RocketMQ broker did not become ready." }
-    & docker compose --project-name $projectName --env-file .env.demo.local exec -T rocketmq-broker sh -lc "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin updateTopic -n rocketmq-namesrv:9876 -c DefaultCluster -t courselingo-analysis-task >/dev/null"
-    if ($LASTEXITCODE -ne 0) { throw "RocketMQ Demo topic initialization failed." }
+    if (-not $mqReady) { throw "RocketMQ broker/topic did not become ready." }
     Write-Host "PASS infrastructure-ready instance=$instance project=$projectName"
 } finally { Pop-Location }
