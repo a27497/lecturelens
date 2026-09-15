@@ -8,6 +8,41 @@ permissions:
   contents: read
 
 jobs:
+  agent-service-test:
+    name: Agent Service Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.6-pg17@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f
+        env:
+          POSTGRES_USER: lecturelens
+          POSTGRES_PASSWORD: ci-test-only
+          POSTGRES_DB: lecturelens_agent
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lecturelens -d lecturelens_agent"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies
+        working-directory: agent-service
+        run: |
+          python -m pip install uv==0.12.5
+          uv sync --locked
+      - name: Lint and test with real pgvector, deterministic test embeddings
+        working-directory: agent-service
+        env:
+          AGENT_TEST_DATABASE_URL: postgresql://lecturelens:ci-test-only@127.0.0.1:5432/lecturelens_agent
+        run: |
+          uv run ruff check src tests
+          uv run ruff format --check src tests
+          uv run pytest -q
+
   backend-test:
     name: Backend Test
     runs-on: ubuntu-latest

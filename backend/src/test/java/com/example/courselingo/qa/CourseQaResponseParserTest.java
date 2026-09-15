@@ -40,6 +40,18 @@ class CourseQaResponseParserTest {
     }
 
     @Test
+    void refusalNeverCarriesCitationsAndFractionalIndexesAreNotCoerced() {
+        var refusal = parser.parse("""
+            {"answer":"当前课程内容中没有找到明确依据","citedEvidenceIndexes":[0,1]}
+            """, 2);
+        assertThat(refusal.citedEvidenceIndexes()).isEmpty();
+        var answer = parser.parse("""
+            {"answer":"Supported answer","citedEvidenceIndexes":[0.5,1.0,1,"0"]}
+            """, 2);
+        assertThat(answer.citedEvidenceIndexes()).containsExactly(1);
+    }
+
+    @Test
     void parsedTypeDoesNotExposeRawProviderResponse() {
         assertThat(List.of(CourseQaResponseParser.ParsedCourseQaResponse.class.getRecordComponents())
                 .stream()

@@ -1,0 +1,19 @@
+name: lecturelens-agent
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f
+    environment:
+      POSTGRES_USER: lecturelens
+      POSTGRES_PASSWORD: lecturelens-local-only
+      POSTGRES_DB: lecturelens_agent
+    ports:
+      - "127.0.0.1:${AGENT_POSTGRES_PORT:-15439}:5432"
+    volumes:
+      - agent-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lecturelens -d lecturelens_agent"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  agent-postgres:

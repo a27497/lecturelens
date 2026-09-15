@@ -6,12 +6,12 @@ import { toUserFriendlyError } from "../utils/errorMessage";
 describe("synchronous AI request timeout messages", () => {
   const timeout = { code: "ECONNABORTED" };
 
-  it("uses the backend budget plus ten seconds and never claims background work continues", () => {
-    expect(COURSE_QA_REQUEST_TIMEOUT_MS).toBe(55_000);
+  it("budgets cold retrieval and does not claim server cancellation on client timeout", () => {
+    expect(COURSE_QA_REQUEST_TIMEOUT_MS).toBe(180_000);
     expect(COURSE_CHAPTER_REQUEST_TIMEOUT_MS).toBe(70_000);
-    expect(toReadableCourseQaError(timeout)).toBe("课程问答请求已超时，本次请求已结束，请缩短问题或稍后重试。");
+    expect(toReadableCourseQaError(timeout)).toBe("等待课程回答超时，请稍后重试；后台处理可能仍在继续。");
     expect(toReadableCourseChapterError(timeout)).toBe("课程章节生成请求已超时，本次请求已结束，请稍后重试。");
-    expect(toReadableCourseQaError(timeout)).not.toContain("后台");
+    expect(toReadableCourseQaError(timeout)).not.toContain("本次请求已结束");
     expect(toReadableCourseChapterError(timeout)).not.toContain("后台");
   });
 

@@ -28,6 +28,10 @@ import org.springframework.stereotype.Service;
 public class CourseQaEvidenceRetriever {
 
     private com.example.courselingo.evidence.CourseEvidenceService canonicalEvidence;
+    private DenseEvidenceClient denseClient;
+
+    @Autowired
+    public void configureDenseRetrieval(DenseEvidenceClient client) { this.denseClient = client; }
 
     @Autowired
     public void configureEvidence(com.example.courselingo.evidence.CourseEvidenceService evidence) {
@@ -134,9 +138,28 @@ public class CourseQaEvidenceRetriever {
         List<String> tokens = queryTermExtractor.extract(question);
         Optional<TimeWindow> window = parseTimeWindow(question);
         boolean overview = window.isEmpty() && isOverviewQuestion(question);
-        List<Candidate> ranked = canonicalEvidence.current(taskId, userId).stream()
+        var current = canonicalEvidence.current(taskId, userId).stream()
             .filter(com.example.courselingo.evidence.CourseEvidence::retrievable)
-            .filter(item -> !"SUBTITLE_TRANSLATION".equals(item.sourceType()) || language.equals(item.language()))
+            .filter(item -> !"SUBTITLE_TRANSLATION".equals(item.sourceType()) || Objects.equals(language, item.language()))
+            .toList();
+        if (denseClient != null && denseClient.enabled() && !overview && !current.isEmpty()) {
+            var hits = denseClient.retrieve(taskId, userId, current, question,
+                window.map(TimeWindow::startMillis).orElse(null), window.map(TimeWindow::endMillis).orElse(null),
+                window.isPresent() ? MAX_TIME_EVIDENCE : MAX_EVIDENCE);
+            // The remote round trip may race a deletion/rebuild. Reauthorize before handing evidence to the LLM.
+            var fresh = canonicalEvidence.current(taskId, userId).stream()
+                .collect(java.util.stream.Collectors.toMap(com.example.courselingo.evidence.CourseEvidence::evidenceId,
+                    java.util.function.Function.identity()));
+            if (current.stream().anyMatch(e -> !e.equals(fresh.get(e.evidenceId())))) {
+                throw new com.example.courselingo.common.exception.BusinessException(
+                    com.example.courselingo.common.error.ErrorCode.RETRIEVAL_UNAVAILABLE);
+            }
+            return semanticallyDistinct(hits.stream().map(item -> new CourseQaEvidenceItem(
+                item.sourceType(), item.sourceId(), item.startMs(), item.endMs(), formatRange(item.startMs(), item.endMs()),
+                item.normalizedText(), "", item.extractionConfidence(), item.evidenceId(), item.revision())).toList(),
+                window.isPresent() ? MAX_TIME_EVIDENCE : MAX_EVIDENCE);
+        }
+        List<Candidate> ranked = current.stream()
             .map(item -> new Candidate(score(item.normalizedText(), tokens, item.startMs(), item.endMs(), window,
                     item.derived() ? 0.9d : 1.0d, item.extractionConfidence()),
                 new CourseQaEvidenceItem(item.sourceType(), item.sourceId(), item.startMs(), item.endMs(),

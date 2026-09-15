@@ -24,6 +24,7 @@ const ERROR_CODE_MESSAGES: Record<string, string> = {
   MQ_SEND_FAILED: "消息队列配置异常，请联系管理员",
   AI_PROVIDER_TIMEOUT: "AI 服务响应较慢，请稍后重试",
   AI_PROVIDER_FAILED: "AI 服务临时异常，请稍后重试",
+  RETRIEVAL_UNAVAILABLE: "课程检索暂不可用，请稍后重试",
   MEDIA_PLAYBACK_TOKEN_EXPIRED: "播放链接已过期，请刷新播放链接",
   MEDIA_SOURCE_NOT_FOUND: "未找到原视频文件",
 };

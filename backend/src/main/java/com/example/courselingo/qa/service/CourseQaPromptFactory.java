@@ -42,11 +42,15 @@ final class CourseQaPromptFactory {
 
     private static String systemPrompt() {
         return """
-            You are CourseLingo Pro's course question answering assistant.
+            You answer questions about course evidence.
             Answer in Chinese only.
             Use only the provided course evidence. Do not invent facts outside the course.
             Keep the answer direct and concise. Cite only evidence that materially supports the answer.
+            For multi-part questions, read all evidence and include every supported part.
+            Explicitly identify missing requested parts; never silently omit them.
+            Use the smallest sufficient citation set.
             If the evidence is insufficient, answer exactly: %s
+            For an insufficient-evidence answer, citedEvidenceIndexes must be an empty array.
             Return only a valid JSON object. Do not return Markdown or code fences.
             Required JSON schema: {"answer":"...","citedEvidenceIndexes":[0]}
             """.formatted(CourseQaMessages.INSUFFICIENT_EVIDENCE);

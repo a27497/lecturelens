@@ -29,3 +29,27 @@ it("renders the exact cited text returned by the API and keeps its video timesta
   await wrapper.findAll("button").find(button => button.text() === "跳到视频")!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[1234]]);
 });
+
+
+it("removes a previous answer when a new question fails", async () => {
+  vi.mocked(askCourseQa).mockResolvedValueOnce({ recordId: "1", answer: "旧问题的回答", usage: null, evidence: [] })
+    .mockRejectedValueOnce(new Error("retrieval unavailable"));
+  const wrapper = mount(CourseQaPanel, {
+    props: { taskId: "task" },
+    global: { stubs: {
+      "el-input": { props: ["modelValue"], emits: ["update:modelValue"],
+        template: `<textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
+      "el-button": { template: "<button><slot /></button>" },
+      "el-tag": true, "el-alert": true, "el-empty": true,
+    } },
+  });
+  await wrapper.get("textarea").setValue("第一个问题");
+  await wrapper.findAll("button")[0]!.trigger("click");
+  await flushPromises();
+  expect(wrapper.text()).toContain("旧问题的回答");
+  await wrapper.get("textarea").setValue("第二个问题");
+  await wrapper.findAll("button")[0]!.trigger("click");
+  await flushPromises();
+  expect(wrapper.find(".qa-answer").exists()).toBe(false);
+  expect(wrapper.find("el-alert-stub").attributes("title")).toBe("error");
+});

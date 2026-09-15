@@ -4,8 +4,11 @@ import type { ApiResponse } from "../types/task";
 import type { CourseQaAskRequest, CourseQaResponse } from "../types/qa";
 import { isTimeoutError, toUserFriendlyError } from "../utils/errorMessage";
 
-export const COURSE_QA_REQUEST_TIMEOUT_MS = 55_000;
-const COURSE_QA_TIMEOUT_MESSAGE = "课程问答请求已超时，本次请求已结束，请缩短问题或稍后重试。";
+// Covers 120s cold retrieval + 45s generation and response overhead.
+const configuredTimeout = Number(import.meta.env.VITE_COURSE_QA_TIMEOUT_MS);
+export const COURSE_QA_REQUEST_TIMEOUT_MS = Number.isFinite(configuredTimeout) && configuredTimeout >= 5000
+  ? Math.min(configuredTimeout, 600_000) : 180_000;
+const COURSE_QA_TIMEOUT_MESSAGE = "等待课程回答超时，请稍后重试；后台处理可能仍在继续。";
 
 function unwrap<T>(response: ApiResponse<T>): T {
   return response.data;

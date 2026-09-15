@@ -50,6 +50,11 @@ management:
       application: courselingo-pro
 
 courselingo:
+  retrieval:
+    enabled: ${DENSE_RETRIEVAL_ENABLED:false}
+    base-url: ${AGENT_SERVICE_URL:http://127.0.0.1:8090}
+    service-secret: ${AGENT_SERVICE_SECRET:}
+    timeout: ${DENSE_RETRIEVAL_TIMEOUT:120s}
   redis:
     enabled: ${REDIS_ENABLED:false}
     host: ${REDIS_HOST:localhost}

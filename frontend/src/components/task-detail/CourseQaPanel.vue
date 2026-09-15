@@ -32,6 +32,7 @@ async function submit() {
   requestVersion.value = version;
   loading.value = true;
   errorMessage.value = "";
+  response.value = null;
   try {
     const nextResponse = await askCourseQa(currentTaskId, { question: normalized });
     if (version === requestVersion.value && props.taskId === currentTaskId) response.value = nextResponse;

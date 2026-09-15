@@ -278,6 +278,9 @@ LectureLens/
 - [自适应课程画面理解与离线评测](docs/ADAPTIVE_VIDEO_UNDERSTANDING_R1.md)
 - [前端 UX](docs/FRONTEND_UX.md)
 - [测试计划](TEST_PLAN.md)
+- [Evidence RAG 评测素材与标注准备](eval/pilot-v1/README.md)
+- [L1 Python 向量检索：启动、契约与验证](docs/L1_DENSE_RETRIEVAL.md)
+- [L1 真实课程验收与已知限制](docs/L1_REAL_COURSE_ACCEPTANCE.md)
 - [安全策略](SECURITY.md)
 - [贡献指南](CONTRIBUTING.md)
 
