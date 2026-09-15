@@ -45,6 +45,10 @@ Playwright 使用真实页面和真实后端响应，无 HTTP mock：
 - Python：**24 tests 全部通过**，使用真实 pgvector；Ruff lint/format 通过。
 - 本地课程 HTTP、浏览器与生命周期验收通过相应结构/行为断言；语义质量保留上述已知问题。
 
+## CI 镜像来源修复
+
+首次远程 E2E 在启动基础设施时无法拉取 Docker Hub 的 `minio/mc`，尚未进入应用测试。Compose 的 MinIO server/client 改用官方 Quay 同版本镜像并锁定多架构 SHA-256；客户端摘要与原本本地缓存一致。已验证 registry manifest、实际拉取与存储桶初始化。官方客户端发布脚本见 [MinIO docker-buildx.sh](https://github.com/minio/mc/blob/master/docker-buildx.sh)。
+
 ## 复现素材与命令
 
 原视频及字幕来源、署名和 CC BY-NC-SA 4.0 条款见 [素材清单](../eval/pilot-v1/sources.json)。片段以原片 810,000 ms 为起点，视频重编码，字幕裁剪/平移后封装为 MP4 mov_text。原始视频保持不变。派生课程材料及相应问答记录遵循素材许可，不改变项目源码许可。
