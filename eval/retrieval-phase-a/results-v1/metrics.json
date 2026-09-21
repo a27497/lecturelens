@@ -1,0 +1,310 @@
+{
+  "dense": {
+    "queries": 24,
+    "answerable_queries": 20,
+    "latency_samples": 120,
+    "p50_ms": 30.871332999595325,
+    "p95_ms": 36.29667299992434,
+    "metrics": {
+      "1": {
+        "recall": 0.18011904761904762,
+        "mrr": 0.7,
+        "ndcg": 0.7,
+        "evidence_coverage": 0.4666666666666667
+      },
+      "3": {
+        "recall": 0.46863095238095237,
+        "mrr": 0.7833333333333333,
+        "ndcg": 0.6633376781325837,
+        "evidence_coverage": 0.7708333333333334
+      },
+      "5": {
+        "recall": 0.6801190476190476,
+        "mrr": 0.7933333333333333,
+        "ndcg": 0.6945780631228005,
+        "evidence_coverage": 0.8833333333333333
+      },
+      "8": {
+        "recall": 0.7489880952380953,
+        "mrr": 0.7933333333333333,
+        "ndcg": 0.7058274818042987,
+        "evidence_coverage": 0.8833333333333333
+      }
+    },
+    "by_category": {
+      "confusing-evidence-hard-negative": {
+        "recall": 0.275,
+        "mrr": 0.4583333333333333,
+        "ndcg": 0.3266433990956823,
+        "evidence_coverage": 0.625
+      },
+      "cross-section": {
+        "recall": 0.4401785714285714,
+        "mrr": 0.875,
+        "ndcg": 0.7653606369886217,
+        "evidence_coverage": 0.6875
+      },
+      "exception-no-answer": null,
+      "lexical": {
+        "recall": 0.6696428571428571,
+        "mrr": 1.0,
+        "ndcg": 0.9413401592471554,
+        "evidence_coverage": 1.0
+      },
+      "multi-condition": {
+        "recall": 0.4583333333333333,
+        "mrr": 0.75,
+        "ndcg": 0.6326803184943108,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "semantic": {
+        "recall": 0.5,
+        "mrr": 0.8333333333333334,
+        "ndcg": 0.6506638768371485,
+        "evidence_coverage": 0.875
+      }
+    },
+    "grounded_answer_rate": 0.2,
+    "grounded_answers": 4,
+    "answerable_count": 20,
+    "refusal_accuracy": 0.75,
+    "refusal_correct": 18,
+    "total_count": 24,
+    "no_answer_refusal_rate": 0.75,
+    "no_answer_refusal_correct": 3,
+    "no_answer_count": 4,
+    "false_refusals": 5,
+    "protocol_errors": 0
+  },
+  "bm25_dense": {
+    "queries": 24,
+    "answerable_queries": 20,
+    "latency_samples": 120,
+    "p50_ms": 39.115907000450534,
+    "p95_ms": 46.191788498708775,
+    "metrics": {
+      "1": {
+        "recall": 0.16720238095238096,
+        "mrr": 0.7,
+        "ndcg": 0.7,
+        "evidence_coverage": 0.42916666666666664
+      },
+      "3": {
+        "recall": 0.3327380952380952,
+        "mrr": 0.775,
+        "ndcg": 0.5362450729933931,
+        "evidence_coverage": 0.7416666666666667
+      },
+      "5": {
+        "recall": 0.5758333333333333,
+        "mrr": 0.7875,
+        "ndcg": 0.5912696382035734,
+        "evidence_coverage": 0.8583333333333333
+      },
+      "8": {
+        "recall": 0.7723809523809524,
+        "mrr": 0.7958333333333333,
+        "ndcg": 0.6731156852358459,
+        "evidence_coverage": 0.9208333333333333
+      }
+    },
+    "by_category": {
+      "confusing-evidence-hard-negative": {
+        "recall": 0.225,
+        "mrr": 0.625,
+        "ndcg": 0.33135256482001363,
+        "evidence_coverage": 0.5
+      },
+      "cross-section": {
+        "recall": 0.4714285714285714,
+        "mrr": 1.0,
+        "ndcg": 0.8519590445170673,
+        "evidence_coverage": 0.875
+      },
+      "exception-no-answer": null,
+      "lexical": {
+        "recall": 0.3839285714285714,
+        "mrr": 1.0,
+        "ndcg": 0.6379261612027428,
+        "evidence_coverage": 1.0
+      },
+      "multi-condition": {
+        "recall": 0.2916666666666667,
+        "mrr": 0.75,
+        "ndcg": 0.4619466389442091,
+        "evidence_coverage": 0.5833333333333334
+      },
+      "semantic": {
+        "recall": 0.29166666666666663,
+        "mrr": 0.5,
+        "ndcg": 0.3980409554829326,
+        "evidence_coverage": 0.75
+      }
+    },
+    "grounded_answer_rate": 0.35,
+    "grounded_answers": 7,
+    "answerable_count": 20,
+    "refusal_accuracy": 0.7083333333333334,
+    "refusal_correct": 17,
+    "total_count": 24,
+    "no_answer_refusal_rate": 0.25,
+    "no_answer_refusal_correct": 1,
+    "no_answer_count": 4,
+    "false_refusals": 3,
+    "protocol_errors": 2
+  },
+  "hybrid_rrf": {
+    "queries": 24,
+    "answerable_queries": 20,
+    "latency_samples": 120,
+    "p50_ms": 38.81035199992766,
+    "p95_ms": 45.68560650031941,
+    "metrics": {
+      "1": {
+        "recall": 0.15886904761904763,
+        "mrr": 0.65,
+        "ndcg": 0.65,
+        "evidence_coverage": 0.4125
+      },
+      "3": {
+        "recall": 0.3398809523809524,
+        "mrr": 0.75,
+        "ndcg": 0.5423893277888417,
+        "evidence_coverage": 0.7416666666666667
+      },
+      "5": {
+        "recall": 0.5570833333333334,
+        "mrr": 0.7625,
+        "ndcg": 0.5824246910521907,
+        "evidence_coverage": 0.8708333333333333
+      },
+      "8": {
+        "recall": 0.7777380952380952,
+        "mrr": 0.7708333333333334,
+        "ndcg": 0.6693265133622197,
+        "evidence_coverage": 0.9333333333333333
+      }
+    },
+    "by_category": {
+      "confusing-evidence-hard-negative": {
+        "recall": 0.225,
+        "mrr": 0.625,
+        "ndcg": 0.33135256482001363,
+        "evidence_coverage": 0.5
+      },
+      "cross-section": {
+        "recall": 0.4714285714285714,
+        "mrr": 1.0,
+        "ndcg": 0.8519590445170673,
+        "evidence_coverage": 0.875
+      },
+      "exception-no-answer": null,
+      "lexical": {
+        "recall": 0.41964285714285715,
+        "mrr": 1.0,
+        "ndcg": 0.7119466389442091,
+        "evidence_coverage": 1.0
+      },
+      "multi-condition": {
+        "recall": 0.2916666666666667,
+        "mrr": 0.625,
+        "ndcg": 0.4186474351799863,
+        "evidence_coverage": 0.5833333333333334
+      },
+      "semantic": {
+        "recall": 0.29166666666666663,
+        "mrr": 0.5,
+        "ndcg": 0.3980409554829326,
+        "evidence_coverage": 0.75
+      }
+    },
+    "grounded_answer_rate": 0.4,
+    "grounded_answers": 8,
+    "answerable_count": 20,
+    "refusal_accuracy": 0.75,
+    "refusal_correct": 18,
+    "total_count": 24,
+    "no_answer_refusal_rate": 0.75,
+    "no_answer_refusal_correct": 3,
+    "no_answer_count": 4,
+    "false_refusals": 3,
+    "protocol_errors": 2
+  },
+  "hybrid_rrf_ce": {
+    "queries": 24,
+    "answerable_queries": 20,
+    "latency_samples": 120,
+    "p50_ms": 334.80331850114453,
+    "p95_ms": 474.5485605000795,
+    "metrics": {
+      "1": {
+        "recall": 0.21511904761904763,
+        "mrr": 0.8,
+        "ndcg": 0.8,
+        "evidence_coverage": 0.5916666666666667
+      },
+      "3": {
+        "recall": 0.5274404761904762,
+        "mrr": 0.8416666666666667,
+        "ndcg": 0.7617319681505689,
+        "evidence_coverage": 0.8208333333333333
+      },
+      "5": {
+        "recall": 0.6892857142857143,
+        "mrr": 0.8516666666666667,
+        "ndcg": 0.7409167629895973,
+        "evidence_coverage": 0.9083333333333333
+      },
+      "8": {
+        "recall": 0.7777380952380952,
+        "mrr": 0.8516666666666667,
+        "ndcg": 0.760102725298178,
+        "evidence_coverage": 0.9333333333333333
+      }
+    },
+    "by_category": {
+      "confusing-evidence-hard-negative": {
+        "recall": 0.375,
+        "mrr": 0.625,
+        "ndcg": 0.5380533610557908,
+        "evidence_coverage": 0.75
+      },
+      "cross-section": {
+        "recall": 0.42589285714285713,
+        "mrr": 0.8333333333333334,
+        "ndcg": 0.7346393630113782,
+        "evidence_coverage": 0.6875
+      },
+      "exception-no-answer": null,
+      "lexical": {
+        "recall": 0.6696428571428571,
+        "mrr": 1.0,
+        "ndcg": 0.9413401592471554,
+        "evidence_coverage": 1.0
+      },
+      "multi-condition": {
+        "recall": 0.5625,
+        "mrr": 0.75,
+        "ndcg": 0.75,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "semantic": {
+        "recall": 0.6041666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.84462695743852,
+        "evidence_coverage": 1.0
+      }
+    },
+    "grounded_answer_rate": 0.25,
+    "grounded_answers": 5,
+    "answerable_count": 20,
+    "refusal_accuracy": 0.7083333333333334,
+    "refusal_correct": 17,
+    "total_count": 24,
+    "no_answer_refusal_rate": 0.5,
+    "no_answer_refusal_correct": 2,
+    "no_answer_count": 4,
+    "false_refusals": 4,
+    "protocol_errors": 2
+  }
+}

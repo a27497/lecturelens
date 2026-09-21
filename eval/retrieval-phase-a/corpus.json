@@ -1,0 +1,1223 @@
+{
+  "id": "phase-a-course-evidence-v1",
+  "provenance": {
+    "kind": "historical_authenticated_Java_Evidence_export",
+    "archive_sha256": "60f8cbf9ba1af3114717cbd00c90c62b8b7290227dd52cee3c55ff8e26076fd1",
+    "archive_path": ".data/l22-eval/baseline.jsonl",
+    "export_origin": "scripts/eval/evaluate-study.py canonical field; source facts only, no prior questions/answers used",
+    "boundary": "Previously consumed study-v1 courses, not new holdout; no AU tasks or labels reused. Offline archival evaluation, never current live authorization."
+  },
+  "courses": {
+    "strings": {
+      "scope": {
+        "owner_id": 3,
+        "course_id": "task_eb66a5a2bce14871a1d70378665a0ce2",
+        "revision": 2
+      },
+      "source": {
+        "id": "python",
+        "video_url": "https://archive.org/download/MIT6.0001F16/MIT6_0001F16_Lecture_03_300k.mp4",
+        "subtitle_url": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/6e2747d4f92152b8a5cf50493d1345d0_SE4P7IVCunE.vtt",
+        "source_page": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/",
+        "provider": "MIT OpenCourseWare",
+        "instructor": "Ana Bell",
+        "course": "6.0001 Fall 2016",
+        "split": "dev",
+        "license": "CC-BY-NC-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+        "downloaded_at": "2026-09-15",
+        "sha256": {
+          "mp4": "0071878688a02e2e155374a413be81ce70fd2e3d1732d9199c1d218c25149ae5",
+          "vtt": "8014f010b455014d13e241da401cfe8e5a48653878909006935674feba6706ea"
+        },
+        "clips": [
+          {
+            "id": "strings",
+            "start_seconds": 660,
+            "end_seconds": 777,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          },
+          {
+            "id": "bisection",
+            "start_seconds": 2330,
+            "end_seconds": 2408,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          }
+        ],
+        "attribution": "Ana Bell. 6.0001 Fall 2016. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+        "evaluation_caption_minimum_coverage": 0.75
+      },
+      "clip": {
+        "id": "strings",
+        "start_seconds": 660,
+        "end_seconds": 777,
+        "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+      },
+      "evidence": [
+        {
+          "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+          "text": "你可能会想，既然我可以索引字符串，我就可以说，s在位置0等于y。",
+          "start_ms": 36340,
+          "end_ms": 45490,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "15",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:15@2",
+            "SUBTITLE_SEGMENT_INDEX:2@2"
+          ],
+          "content_hash": "f41c9015e50188f0f014cd2838fd97b9dab59d54f8ed6660964e334b9ae3a407",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+          "text": "再次，现在可能没什么意义，但请记住在后台，字符串是不可变的。",
+          "start_ms": 91330,
+          "end_ms": 107210,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "19",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:19@2",
+            "SUBTITLE_SEGMENT_INDEX:6@2"
+          ],
+          "content_hash": "9e2d1ec17c10ee2c0f44c415c5d5b96ba1e3af208b88809fdbcac1729e36e043",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+          "text": "starting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+          "start_ms": 78020,
+          "end_ms": 91330,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "18",
+          "source_refs": [
+            "SUBTITLE:18@2"
+          ],
+          "content_hash": "97dcfd6615103158474f12555ead1527dd342c0ac480a89032e77df75441be43",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+          "text": "记得在第一节课时，我们画了一个类似这样的图。这是我的记忆。我有一个对象“hello”。这个对象“hello”绑定到变量s上。所以现在我可以用变量s来访问对象“hello”。",
+          "start_ms": 17574,
+          "end_ms": 36340,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "14",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:14@2",
+            "SUBTITLE_SEGMENT_INDEX:1@2"
+          ],
+          "content_hash": "404a4a573a2b812fcdc5673cbace16fb5b0c318c7dca9f5a0b10bd86b90d234d",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+          "text": "Remember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.",
+          "start_ms": 17574,
+          "end_ms": 36340,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "14",
+          "source_refs": [
+            "SUBTITLE:14@2"
+          ],
+          "content_hash": "fa1d0631fd211141eb52d2d12859a52cbfcb73eba4b1ce9ae157600c3236dbb0",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+          "text": "Now you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.",
+          "start_ms": 36340,
+          "end_ms": 45490,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "15",
+          "source_refs": [
+            "SUBTITLE:15@2"
+          ],
+          "content_hash": "a1ea749be084861d13f14bba49ee063ee3cc24a01c39c5fbeeef4ec312960585",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+          "text": "\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+          "start_ms": 91330,
+          "end_ms": 107210,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "19",
+          "source_refs": [
+            "SUBTITLE:19@2"
+          ],
+          "content_hash": "1415ae1ee529358b8175fc9c48909b43d41301dfb06928e570f03df34bc99d12",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+          "text": "And that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,",
+          "start_ms": 45490,
+          "end_ms": 63954,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "16",
+          "source_refs": [
+            "SUBTITLE:16@2"
+          ],
+          "content_hash": "bf4abd63bec262139f8d4f8ea4e63523106741918f63fe930d6ecc2a439b5dd6",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "6649028e7ea9e6e4548ef44e94a4ab0f3c220e1c24f60e564a96a73410ed9545",
+          "text": "字符串是不可变的。",
+          "start_ms": 107210,
+          "end_ms": 112590,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "20",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:20@2",
+            "SUBTITLE_SEGMENT_INDEX:7@2"
+          ],
+          "content_hash": "0998626f01a8cf7d6371dd1e5448ddeacef8d1cfdbb2df54d3954cb74072c979",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+          "text": "那就会把小写字母h变成y，我就会得到一个新的对象。但是字符串是不可变的，这意味着在Python中，你实际上不能这样做。如果你尝试这样做，它会给你一个错误。如果你想让变量s指向字符串Y-E-L-L-O，",
+          "start_ms": 45490,
+          "end_ms": 63954,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "16",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:16@2",
+            "SUBTITLE_SEGMENT_INDEX:3@2"
+          ],
+          "content_hash": "35e452e8b26fa5803fbfaa0f0d889522a9f9a2f3f2c2d4fd4c45bbda453ae414",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "858e19bc132337f089757bf92d49714e67f1520f37d41f4d5102e4fd407d9a41",
+          "text": "Again, it might notmean anything right now, but just keep this inthe back of your mind, strings are immutable.",
+          "start_ms": 107210,
+          "end_ms": 112590,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "20",
+          "source_refs": [
+            "SUBTITLE:20@2"
+          ],
+          "content_hash": "94b797bc02b873fe0e23b26baa0cdc028476237dbea80d4a0a3d05a6685e6deb",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+          "text": "you could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements",
+          "start_ms": 63954,
+          "end_ms": 78020,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "17",
+          "source_refs": [
+            "SUBTITLE:17@2"
+          ],
+          "content_hash": "4df76a8c6184905f82bd80c4150347fc13a7823cd89cb2c5cb4ccf64afc4964b",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+          "text": "所以，我们在进行这门课程时，只要记住这个单词在心里就好。我所说的这个意思是一个真正的字符串对象一旦被创建，就不能被修改。现在可能还看不出什么来。但让我画个图。假设我有一个字符串，s等于hello。",
+          "start_ms": 0,
+          "end_ms": 17574,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "13",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:13@2",
+            "SUBTITLE_SEGMENT_INDEX:0@2"
+          ],
+          "content_hash": "50e33af9ec591b9a9cf99d5ecb9de0402f570b76b4bbab06849cd3154b84a00a",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+          "text": "\"hello.\" 我会将字符串变量 s 绑定到新对象 \"yello\"。 而这个旧对象仍然存在于内存中的某个地方。 但它是一个完全不同的对象，我在这里创建了它。",
+          "start_ms": 78020,
+          "end_ms": 91330,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "18",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:18@2",
+            "SUBTITLE_SEGMENT_INDEX:5@2"
+          ],
+          "content_hash": "f4180cb2b78273050c50f92a2b155029794c3d21f8e6cb938a7e28ee73ac17cb",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+          "text": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.",
+          "start_ms": 0,
+          "end_ms": 17574,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "13",
+          "source_refs": [
+            "SUBTITLE:13@2"
+          ],
+          "content_hash": "895b50ab49069bb8720a0742cbaf2cc7c7a9136574aeea50f15ba94f3d78764e",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01",
+          "text": "你可以直接说 sis 等于 Y-E-L-L-O。 或者你可以进行字符串操作，比如这样。 这会取 y 并将其连接到字符串 s 的所有元素，从位置 1 开始，即 e, l, l, o。 所以这会得到 Y-E-L-L-O。 内部来说，当我写下这一行时，Python 会说，好的，我要与这个原始对象断开联系",
+          "start_ms": 63954,
+          "end_ms": 78020,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "17",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:17@2",
+            "SUBTITLE_SEGMENT_INDEX:4@2"
+          ],
+          "content_hash": "73f75a67e6cb2a75b8255c70f132cf8378a4abd1eb9c40c60a31928e07177392",
+          "retrievable": true
+        }
+      ]
+    },
+    "bisection": {
+      "scope": {
+        "owner_id": 4,
+        "course_id": "task_53c9ba64a45b4f0b84468efca94296e2",
+        "revision": 2
+      },
+      "source": {
+        "id": "python",
+        "video_url": "https://archive.org/download/MIT6.0001F16/MIT6_0001F16_Lecture_03_300k.mp4",
+        "subtitle_url": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/6e2747d4f92152b8a5cf50493d1345d0_SE4P7IVCunE.vtt",
+        "source_page": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/",
+        "provider": "MIT OpenCourseWare",
+        "instructor": "Ana Bell",
+        "course": "6.0001 Fall 2016",
+        "split": "dev",
+        "license": "CC-BY-NC-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+        "downloaded_at": "2026-09-15",
+        "sha256": {
+          "mp4": "0071878688a02e2e155374a413be81ce70fd2e3d1732d9199c1d218c25149ae5",
+          "vtt": "8014f010b455014d13e241da401cfe8e5a48653878909006935674feba6706ea"
+        },
+        "clips": [
+          {
+            "id": "strings",
+            "start_seconds": 660,
+            "end_seconds": 777,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          },
+          {
+            "id": "bisection",
+            "start_seconds": 2330,
+            "end_seconds": 2408,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          }
+        ],
+        "attribution": "Ana Bell. 6.0001 Fall 2016. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+        "evaluation_caption_minimum_coverage": 0.75
+      },
+      "clip": {
+        "id": "bisection",
+        "start_seconds": 2330,
+        "end_seconds": 2408,
+        "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+      },
+      "evidence": [
+        {
+          "evidence_id": "008bd5ddb54d90408447c8cdbcd2ddc91cc1b3db94fe74c1306d6b09d9b2ec45",
+          "text": "所以这意味着，实际搜索空间越大，我需要搜索时，使用二分查找法（这种方法）越好。这就是我在这里要说明的。",
+          "start_ms": 45240,
+          "end_ms": 61410,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "24",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:24@2",
+            "SUBTITLE_SEGMENT_INDEX:3@2"
+          ],
+          "content_hash": "5875c2f565297a6210bb55f1ce971b91e23408a2cbcaf6baddd19804ad23607b",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+          "text": "So that means that thelarger the space actually is, that I need tosearch, the better it is to use bisection search,this bisection search method. So that's basically whatI'm illustrating here.",
+          "start_ms": 45240,
+          "end_ms": 61410,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "24",
+          "source_refs": [
+            "SUBTITLE:24@2"
+          ],
+          "content_hash": "72688c9ea25a65600f7a90d702c5ce59f3e156504bfba86bc8f0261e676ceafb",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+          "text": "所以用猜测和检查法，我需要76次猜测才能到达那个数字，而我刚才用的二分查找法，只用了6次。这不是很好玩吗？",
+          "start_ms": 17140,
+          "end_ms": 30310,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "22",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:22@2",
+            "SUBTITLE_SEGMENT_INDEX:1@2"
+          ],
+          "content_hash": "9ee2ff232fc90668826462307d171cb484033bdc3b14deaca15af29d988fbeaf",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+          "text": "所以我们有了原始的搜索空间。我们将选择一个猜测值，排除一半的猜测。然后我们将在剩余的区间内继续寻找，排除一半的猜测，以此类推。",
+          "start_ms": 61410,
+          "end_ms": 74878,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "25",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:25@2",
+            "SUBTITLE_SEGMENT_INDEX:4@2"
+          ],
+          "content_hash": "0741d45e9d74fde8c7280a9511f5b364aacae74f97e0e6724baadc6ee4bec8e6",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+          "text": "游戏被设了后门。所以你还是得到了奖品，只是因为我设了后门。给你。往下传。观众：谢谢。安娜·贝尔：谢谢。所以请注意，在二分查找中，我所做的就是每次猜测都会排除一半的搜索空间。我说，嗯，她说的是更高还是更低，那么我肯定不在另一个搜索空间里，对吧？如果是近似解法，或者在这种情况下，猜测和检查，我就会问索菲，你的数字是0、1、2、3、4，等等？",
+          "start_ms": 0,
+          "end_ms": 17140,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "21",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:21@2",
+            "SUBTITLE_SEGMENT_INDEX:0@2"
+          ],
+          "content_hash": "c1e03659d1e07a8b023219d9809080bbcdeb4153adac045f0d3be878343a8273",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+          "text": "So we have ouroriginal search space. We're going to choose aguess halfway, eliminate half of the guesses. Then we're going look inthe remaining interval, eliminate half the guesses,and so on and so on.",
+          "start_ms": 61410,
+          "end_ms": 74878,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "25",
+          "source_refs": [
+            "SUBTITLE:25@2"
+          ],
+          "content_hash": "d64099e1f3da5e190e70a14f5c4074e3dffa76fed7ef3782e982183df9c4aa83",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+          "text": "So with guess and check,it would have taken me 76 guesses to get to the number,whereas, with this bisection search, that I justdid, it only took me 6. Isn't that cool?",
+          "start_ms": 30310,
+          "end_ms": 45240,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "23",
+          "source_refs": [
+            "SUBTITLE:23@2"
+          ],
+          "content_hash": "dd3b4219a67c6f1a4e0709afcfa1d6ce3de349644b218bbc24d3906388cbc484",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "e5838bff909805b142991503de1b56575487f7824bbc53cd9ca2d78af00e76b8",
+          "text": "所以这意味着，实际搜索空间越大，我需要搜索时，使用二分查找法（这种方法）越好。这就是我在这里要说明的。",
+          "start_ms": 30310,
+          "end_ms": 45240,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "23",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:23@2",
+            "SUBTITLE_SEGMENT_INDEX:2@2"
+          ],
+          "content_hash": "5875c2f565297a6210bb55f1ce971b91e23408a2cbcaf6baddd19804ad23607b",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+          "text": "The game was rigged. So you get the prize anyway,just because I rigged the game. Here you go. Pass it down. AUDIENCE: Thank you. ANA BELL: Thank you. So notice, in bisectionsearch, what I did was I eliminated half the searchspace with every guess. I said, well, she saidit's higher or lower,",
+          "start_ms": 0,
+          "end_ms": 17140,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "21",
+          "source_refs": [
+            "SUBTITLE:21@2"
+          ],
+          "content_hash": "92df40fba5dece0309dba5415645faa6277d06b36188e661616bcd04d9b01c41",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+          "text": "so I definitely cannot be inthe other search space, right? If I was doing approximatesolution or, in this case, guess and check, I would beasking Sophie, is your number 0, 1, 2, 3, 4, and so on?",
+          "start_ms": 17140,
+          "end_ms": 30310,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "22",
+          "source_refs": [
+            "SUBTITLE:22@2"
+          ],
+          "content_hash": "10532ba7c938f90ee08997a5ad99765070793317150a423e3d285cfec232a4e7",
+          "retrievable": true
+        }
+      ]
+    },
+    "interfaces": {
+      "scope": {
+        "owner_id": 5,
+        "course_id": "task_f82f20caea8c4a1eb55f8a9a7b1f9106",
+        "revision": 2
+      },
+      "source": {
+        "id": "algorithms",
+        "video_url": "https://archive.org/download/MIT6.006S20/MIT6_006S20_02_06_Lecture_2_300k.mp4",
+        "subtitle_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/300863d48d855d35aba4867a911faf1e_CHhwJjR0mZA.vtt",
+        "source_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-2-data-structures-and-dynamic-arrays/",
+        "provider": "MIT OpenCourseWare",
+        "instructor": "Erik Demaine",
+        "course": "6.006 Spring 2020",
+        "split": "holdout",
+        "license": "CC-BY-NC-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+        "downloaded_at": "2026-09-15",
+        "sha256": {
+          "mp4": "79003036c0fd3293082ed998d39b2b5c1d602526f8a1a91a46ac39ca5d3d824a",
+          "vtt": "c4a0e69b758e50040df83ea28372ac776adf4c0a9f6408c0cb9f9cc59c519713"
+        },
+        "clips": [
+          {
+            "id": "interfaces",
+            "start_seconds": 65,
+            "end_seconds": 215,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          },
+          {
+            "id": "amortization",
+            "start_seconds": 2710,
+            "end_seconds": 2880,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          }
+        ],
+        "attribution": "Erik Demaine. 6.006 Spring 2020. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+        "evaluation_caption_minimum_coverage": 0.75
+      },
+      "clip": {
+        "id": "interfaces",
+        "start_seconds": 65,
+        "end_seconds": 215,
+        "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+      },
+      "evidence": [
+        {
+          "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+          "text": "versus a data structure. These are useful distinctions. The idea is that an interfacesays what you want to do. A data structuresays how you do it.",
+          "start_ms": 0,
+          "end_ms": 15840,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "38",
+          "source_refs": [
+            "SUBTITLE:38@2"
+          ],
+          "content_hash": "26c8b9aa2ba8ba62547f6152f9222fca9ec27ea3b5382dce0a948ef5e3a47df3",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+          "text": "and various special of them. The idea is to separate what youwant to do versus how to do it. Because-- you can think ofthis as the problem statement. Yesterday-- or, last class,Jason talked about problems",
+          "start_ms": 106510,
+          "end_ms": 121870,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "45",
+          "source_refs": [
+            "SUBTITLE:45@2"
+          ],
+          "content_hash": "792201d5d89d52ad6b34ecb2b505281cb0d59678fa88a3496ac826d830707d60",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+          "text": "然后数据结构实际上给你提供了算法——这就是算法的来源——如何支持这些操作的方法。",
+          "start_ms": 60630,
+          "end_ms": 71990,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "42",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:42@2",
+            "SUBTITLE_SEGMENT_INDEX:4@2"
+          ],
+          "content_hash": "00496385660980052f1a54a3aeb5b90174feb62af5a29dff94ffd00ad5e2a7f8",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+          "text": "So you might callthis a specification. And in the contextof data structures, we're trying to store some data. So the interface will specifywhat data you can store,",
+          "start_ms": 15840,
+          "end_ms": 30580,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "39",
+          "source_refs": [
+            "SUBTITLE:39@2"
+          ],
+          "content_hash": "5a5868504d4574a8f3bcf03265dda81c496244efe12f77a1dc867136c0e634a2",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+          "text": "All right. In this class, we're going tofocus on two main interfaces",
+          "start_ms": 97870,
+          "end_ms": 106510,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "44",
+          "source_refs": [
+            "SUBTITLE:44@2"
+          ],
+          "content_hash": "7b0a98360165c8b205132ee0db7898df1535ee19dbde594306e10b9f86cbf2b7",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "623bdbe54ce8068ba18b0098719ccf2b90e64f143bda37876c537debbbf137c9",
+          "text": "what operations aresupported, and in some sense, what they mean.",
+          "start_ms": 60630,
+          "end_ms": 71990,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "42",
+          "source_refs": [
+            "SUBTITLE:42@2"
+          ],
+          "content_hash": "f3c1c1d6f90fb332e973cc8fcfe9171000fc847249f2321ef3b7fe4711bbed27",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a",
+          "text": "和各种特殊的它们。想法是将你想要做什么与如何做区分开。因为——你可以把这看作问题陈述。昨天——或者上节课，Jason讨论了问题是什么以及问题的算法解决方案。这在数据结构方面是类似的观念，我们想要根据各种操作来维护一些数据。",
+          "start_ms": 106510,
+          "end_ms": 121870,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "45",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:45@2",
+            "SUBTITLE_SEGMENT_INDEX:7@2"
+          ],
+          "content_hash": "596de823fc0b4dfb36758398dd30e7e65b984424872720ffc37225fe799fd4a3",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556",
+          "text": "不同的数据结构可能支持某些操作比其他操作更快。根据你实际上使用那些数据结构的方式，你选择正确的数据结构。",
+          "start_ms": 136480,
+          "end_ms": 150000,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "47",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:47@2",
+            "SUBTITLE_SEGMENT_INDEX:9@2"
+          ],
+          "content_hash": "3c89d1409cf01212a0dae2e2ff078a8e5831a0004e874c332d1b7942768c78e4",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+          "text": "and defined what a problem wasversus algorithmic solutions to the problem. And this is the analogous notionfor data structures, where we want to maintainsome data according to various operations.",
+          "start_ms": 121870,
+          "end_ms": 136480,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "46",
+          "source_refs": [
+            "SUBTITLE:46@2"
+          ],
+          "content_hash": "6938013dcf8f9f14d2240eed4342bb744c95af3802714836833b9cbb83b9c9de",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "83c9a90c2a4ff526f3f167a0f39e19dfa51892be51cfee081500e08f7f0daafa",
+          "text": "仅仅存储数据确实非常容易。你只需要把它扔进一个文件或类似的东西。使它变得有趣的是对那数据的操作。在接口中，你指定这些操作做什么，哪些操作是支持的，以及在某种意义上，它们意味着什么。",
+          "start_ms": 45150,
+          "end_ms": 60630,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "41",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:41@2",
+            "SUBTITLE_SEGMENT_INDEX:3@2"
+          ],
+          "content_hash": "0ad5032b2b344c1a3975b1c72ce8d7678388ab6c238edec1d295400822f1aadb",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+          "text": "好的。在这个类中，我们将专注于两个主要接口",
+          "start_ms": 77720,
+          "end_ms": 85310,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "43",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:43@2",
+            "SUBTITLE_SEGMENT_INDEX:5@2"
+          ],
+          "content_hash": "87f12122763403063b991109deac7a561798c711ed948698f5789c69c4c61e59",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "884908c38d35648d51746c668386562c976e3a8a0ecad874864232eba8db1d52",
+          "text": "whereas the datastructure will give you an actual representation andtell you how to store it. This is pretty boring.",
+          "start_ms": 30580,
+          "end_ms": 45150,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "40",
+          "source_refs": [
+            "SUBTITLE:40@2"
+          ],
+          "content_hash": "911ea994617104432c7fdbf517e2dc4474260e55dba7228e76f04f0610a45618",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+          "text": "与一种数据结构相比。这些是有用的区别。想法是接口说明了你想要做什么。而数据结构说明了你如何做。",
+          "start_ms": 0,
+          "end_ms": 15840,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "38",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:38@2",
+            "SUBTITLE_SEGMENT_INDEX:0@2"
+          ],
+          "content_hash": "88e48f606f4f04abf96d1c215496a392a30767f40331ce05001a0de7e33088d2",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+          "text": "And the data structureactually gives you algorithms-- this is where thealgorithms come in-- for how to supportthose operations.",
+          "start_ms": 77720,
+          "end_ms": 85310,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "43",
+          "source_refs": [
+            "SUBTITLE:43@2"
+          ],
+          "content_hash": "1b29c7e11cf6be504b8141a6bce280431a6e5c8235a5fa20cc9116c3d8d6779e",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+          "text": "同样的问题可以通过多种不同的数据结构来解决。我们会看到这一点。不同的数据结构会有不同的优势。它们可能支持某些操作比其他操作更快。根据你实际上使用那些数据结构的方式，你选择正确的数据结构。",
+          "start_ms": 121870,
+          "end_ms": 136480,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "46",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:46@2",
+            "SUBTITLE_SEGMENT_INDEX:8@2"
+          ],
+          "content_hash": "5ec16be760d10abb91810867dbd3e42befac7e62c0fa369ec13720132396a914",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+          "text": "在这个类中，我们将专注于两个主要接口",
+          "start_ms": 97870,
+          "end_ms": 106510,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "44",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:44@2",
+            "SUBTITLE_SEGMENT_INDEX:6@2"
+          ],
+          "content_hash": "399c0c3f2c8dd27810b9414bb6f6f7144f92d0058fc0703939550813e2ae8cc3",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+          "text": "The same problem can besolved by many different data structures. And we're going to see that. And different datastructures are going to have different advantages. They might support someoperations faster than others. And depending onwhat you actually use those datastructures for, you choose the right data structure.",
+          "start_ms": 136480,
+          "end_ms": 150000,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "47",
+          "source_refs": [
+            "SUBTITLE:47@2"
+          ],
+          "content_hash": "db2b5d280f881b5b0c7c92f8f195e131f6ad4597ea33542b0802133f8605846e",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "e3268db767e08b2dc2badf2f7a4a8f4f405f1c9634918cd586d67eabb804bcc2",
+          "text": "而数据结构将给你一个实际的表示，并告诉你如何存储它。这相当无聊。",
+          "start_ms": 30580,
+          "end_ms": 45150,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "40",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:40@2",
+            "SUBTITLE_SEGMENT_INDEX:2@2"
+          ],
+          "content_hash": "2d67765100caeb6609e26606035bd5033b5afcf8613ab147b8561ebadc55c7d3",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+          "text": "Just storing datais really easy. You just throw it ina file or something. What makes it interesting ishaving operations on that data. In the interface, you specifywhat the operations do,",
+          "start_ms": 45150,
+          "end_ms": 60630,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "41",
+          "source_refs": [
+            "SUBTITLE:41@2"
+          ],
+          "content_hash": "fcf2de9069c4192a22ab9f414f352e3f63bf5c5c05a1d3b57f553c83b757c14d",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+          "text": "所以你可能会把它称为规范。而在数据结构的上下文中，我们正在尝试存储一些数据。所以接口将说明你可以存储哪些数据，",
+          "start_ms": 15840,
+          "end_ms": 30580,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "39",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:39@2",
+            "SUBTITLE_SEGMENT_INDEX:1@2"
+          ],
+          "content_hash": "d6c2d90e09a2f1fbbda7aa038bbb66e6c7f0765b006432a1ee98c0796f950586",
+          "retrievable": true
+        }
+      ]
+    },
+    "amortization": {
+      "scope": {
+        "owner_id": 6,
+        "course_id": "task_705b6e37d297489db01e99dce5d5cd33",
+        "revision": 2
+      },
+      "source": {
+        "id": "algorithms",
+        "video_url": "https://archive.org/download/MIT6.006S20/MIT6_006S20_02_06_Lecture_2_300k.mp4",
+        "subtitle_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/300863d48d855d35aba4867a911faf1e_CHhwJjR0mZA.vtt",
+        "source_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-2-data-structures-and-dynamic-arrays/",
+        "provider": "MIT OpenCourseWare",
+        "instructor": "Erik Demaine",
+        "course": "6.006 Spring 2020",
+        "split": "holdout",
+        "license": "CC-BY-NC-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+        "downloaded_at": "2026-09-15",
+        "sha256": {
+          "mp4": "79003036c0fd3293082ed998d39b2b5c1d602526f8a1a91a46ac39ca5d3d824a",
+          "vtt": "c4a0e69b758e50040df83ea28372ac776adf4c0a9f6408c0cb9f9cc59c519713"
+        },
+        "clips": [
+          {
+            "id": "interfaces",
+            "start_seconds": 65,
+            "end_seconds": 215,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          },
+          {
+            "id": "amortization",
+            "start_seconds": 2710,
+            "end_seconds": 2880,
+            "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+          }
+        ],
+        "attribution": "Erik Demaine. 6.006 Spring 2020. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+        "evaluation_caption_minimum_coverage": 0.75
+      },
+      "clip": {
+        "id": "amortization",
+        "start_seconds": 2710,
+        "end_seconds": 2880,
+        "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+      },
+      "evidence": [
+        {
+          "evidence_id": "01aa434d42550178d74a6e746feb386d9a72615037805cb93c1b29168b49e50c",
+          "text": "take, at most, ktimes t of n time. This is a little bitsloppy, but be good enough. The idea is here, ifthis works for n or k,",
+          "start_ms": 123540,
+          "end_ms": 136110,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "34",
+          "source_refs": [
+            "SUBTITLE:34@2"
+          ],
+          "content_hash": "42b8bf904dec39797a111fd89b0ff4235f9997a91d7bdc3de36854e20f6f5287",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+          "text": "The \"kind of\" isan important notion which we call amortization.",
+          "start_ms": 78401,
+          "end_ms": 85990,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "31",
+          "source_refs": [
+            "SUBTITLE:31@2"
+          ],
+          "content_hash": "0ad8bc738a626ce2d98ac8c03ccef43ff6265cae1ba0bfd0f771a6a981a29b13",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "093021559316e75bd07bf85b93f36721c7789ccae237bf88ca8ea8487137c10d",
+          "text": "视为摊还",
+          "start_ms": 166110,
+          "end_ms": 170000,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "37",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:37@2",
+            "SUBTITLE_SEGMENT_INDEX:11@2"
+          ],
+          "content_hash": "dca38ae5f1d95d1b935583441e0164df44f836217e97b6d0ee421b7df42958f6",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1",
+          "text": "其余都是0。所以如果你知道二进制算术，你减——如果你加1到这里，你得到这个。或者如果你从这里减1，你得到这个。这就是为什么这个恒等式成立。或者更高层次地说，就是说，嗯，",
+          "start_ms": 17700,
+          "end_ms": 32040,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "27",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:27@2",
+            "SUBTITLE_SEGMENT_INDEX:1@2"
+          ],
+          "content_hash": "e78a10e75a8f590b800e9eeb4bcfff1d5ca20be9dca4797e54161429f367dee0",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+          "text": "对操作序列进行平均。所以虽然单个操作可能会很昂贵，但接近末尾的一个操作，即当我必须调整数组时，只花费线性时间。但大多数操作都很便宜。大多数都是常数。",
+          "start_ms": 136110,
+          "end_ms": 152390,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "35",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:35@2",
+            "SUBTITLE_SEGMENT_INDEX:9@2"
+          ],
+          "content_hash": "1133d201bcbeb9bb0bafd1169c45e2252f5433ff01cd6b523b15f135125dd7fd",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "33b6e5558a5630718458a9f3b220904b7488ccbd5f7159f69c18385fa8ccc5a1",
+          "text": "If I sum them all up, what thatmeans is, I'm putting 1s here. And if you think about what thismeans, this is up to k from 0-- sorry, I shoulddo 0 to be proper. If I write-- that'sthe left-hand side. The right-hand side is 2 to thek plus 1, which is a 1 here,",
+          "start_ms": 0,
+          "end_ms": 17700,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "26",
+          "source_refs": [
+            "SUBTITLE:26@2"
+          ],
+          "content_hash": "9c6c686c9c0857382b16caf68d523beb70ca420c7c7c896cc24ff615f85c455e",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "3d3b348b1278e35c46f8861c81498c7f1e53cb162b120444441436237f37a9ba",
+          "text": "所以我可以把这种高成本",
+          "start_ms": 152390,
+          "end_ms": 166110,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "36",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:36@2",
+            "SUBTITLE_SEGMENT_INDEX:10@2"
+          ],
+          "content_hash": "6a5b84129013bc827adfe12440e47e7da35a8bed0c7e62e4f46768736896a99f",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb",
+          "text": "好的。线性时间。对于我的所有操作都是线性时间。这里我做了n次操作，我总共花费了线性时间来完成所有调整大小。这很好。这就像常数时间一样，差不多。",
+          "start_ms": 62920,
+          "end_ms": 78401,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "30",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:30@2",
+            "SUBTITLE_SEGMENT_INDEX:4@2"
+          ],
+          "content_hash": "4f83370184f1cc37456f491811611fb17d5f58f836ded190d0a3cb9af01ba3b4",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "4ad6d958e972106980e0e32b292be97c25dfebbfdbb130b7c1d1f0522177f870",
+          "text": "‘差不多’这个概念非常重要，我们称之为摊还。",
+          "start_ms": 78401,
+          "end_ms": 85990,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "31",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:31@2",
+            "SUBTITLE_SEGMENT_INDEX:5@2"
+          ],
+          "content_hash": "a6559b17eb742705c4a9fa6e2172acf658e4941469d0c1e61e303a597738788d",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "4b7241c7d08774ff0ca84e939ec3074287a3981b16efaf9807b8874c226bf11e",
+          "text": "最多花费k次t(n)的时间。这有点模糊，但足够好了。这个想法是，如果这适用于n或k，",
+          "start_ms": 105560,
+          "end_ms": 123540,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "33",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:33@2",
+            "SUBTITLE_SEGMENT_INDEX:7@2"
+          ],
+          "content_hash": "6d045dabfcf0d13460db720aae128fee8db28db641ef84222527e14d854d7ccd",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "4ca22ebd13143e6fe94aaebfc54639d254909be7a4ede0764703dc24aeeb5302",
+          "text": "and the rest 0s. So if you know yourbinary arithmetic, you subtract-- if you add1 to this, you get this. Or if you subtract 1from this, you get this. This is why this identity holds. Or the higher-levelthing is to say, oh,",
+          "start_ms": 17700,
+          "end_ms": 32040,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "27",
+          "source_refs": [
+            "SUBTITLE:27@2"
+          ],
+          "content_hash": "1532ada867bf0e77acd60c4001bf3533adb2603664596f059489c4ad6b9fd988",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+          "text": "averaging over thesequence of operations. So while individualoperations will be expensive, one near the end, when Ihave to resize the array, is going to take linear timejust for that one operation. But most of theoperations are cheap. Most of them are constant.",
+          "start_ms": 152390,
+          "end_ms": 166110,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "36",
+          "source_refs": [
+            "SUBTITLE:36@2"
+          ],
+          "content_hash": "57fb9dad1d9f5585bcb0bc0818030a596def6971cfdcb271599d260f58e09494",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+          "text": "then in terms oftheta notation, you can just look at the last termand put a theta around it, and you're done. So this is thetaof the last term, like 2 to the logn, which is theta n.",
+          "start_ms": 46380,
+          "end_ms": 59340,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "29",
+          "source_refs": [
+            "SUBTITLE:29@2"
+          ],
+          "content_hash": "40d954f246e0c5c5e7d3970b2fc184a19dc3269739ac28a9b10f8f4ba3288b34",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+          "text": "Cool. Linear time. Linear time for allof my operations. I'm doing n operations here,and I spent linear total time to do all of the resizing. That's good. That's like constanteach, kind of.",
+          "start_ms": 62920,
+          "end_ms": 78401,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "30",
+          "source_refs": [
+            "SUBTITLE:30@2"
+          ],
+          "content_hash": "cc5a18fb4938c907ab3047d3be518c779fa7d0b0bcdcbf9b3eeae97687f3bed1",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+          "text": "to do n operations froman empty array here takes linear time,which means I would call this constant amortized. Amortized means a particularkind of averaging--",
+          "start_ms": 136110,
+          "end_ms": 152390,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "35",
+          "source_refs": [
+            "SUBTITLE:35@2"
+          ],
+          "content_hash": "beec72bb18ef70aadc0a63189a5b5e1fa29347aa58df4ec1dfd85013bc1af647",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "8dee64d598f125c6804047b1ff3a937d366c572700238f8522a4269ae59dbd47",
+          "text": "我想说一个操作的摊还时间如果，比如说，其中的k个操作",
+          "start_ms": 95360,
+          "end_ms": 105560,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "32",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:32@2",
+            "SUBTITLE_SEGMENT_INDEX:6@2"
+          ],
+          "content_hash": "bb6b7e24fff0d61dbf511cb9b3b87203857335224459e07ffe628a4817cb35f4",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7",
+          "text": "这是一个几何级数。所以你应该知道这一点。我现在告诉你。几何级数由最后一个项主导——最大的项。如果你有任何系列可以识别为几何级数，这意味着它至少是指数增长的，",
+          "start_ms": 32040,
+          "end_ms": 46380,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "28",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:28@2",
+            "SUBTITLE_SEGMENT_INDEX:2@2"
+          ],
+          "content_hash": "c16982d0a6b91d0585c3e6a8f816289b4aa5bd6b685d46190efb557fe63dc2a2",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+          "text": "this is a geometric series. So I know-- youshould know this. I'm telling you now. Geometric series are dominatedby the last term-- the biggest term. If you have any series you canidentify as geometric, which means it's growing atleast exponentially,",
+          "start_ms": 32040,
+          "end_ms": 46380,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "28",
+          "source_refs": [
+            "SUBTITLE:28@2"
+          ],
+          "content_hash": "8d757aad808f81b8e1d6d58c13e0e2bee84b841ded2513ef5242aef18900b37b",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "b0c97e6e2beeb55b1945893bb9abdb3c62227b0bede080f091e7a56469d5529f",
+          "text": "I want to say anoperation takes t of n",
+          "start_ms": 95360,
+          "end_ms": 105560,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "32",
+          "source_refs": [
+            "SUBTITLE:32@2"
+          ],
+          "content_hash": "3c94b6cdb3c8c4f3b4c9655cd906487461dfa4a6e141e4b423e5276661f0e639",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+          "text": "来做n次操作从一个空数组开始，花费线性时间，这意味着我会把这个称为常数摊还。摊还意味着一种特定的平均——",
+          "start_ms": 123540,
+          "end_ms": 136110,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "34",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:34@2",
+            "SUBTITLE_SEGMENT_INDEX:8@2"
+          ],
+          "content_hash": "a4b0dc5f9e9f2ae6ab5e3092b5467cf935f4ce7a145274432110b125a4bcdcd2",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "b8d1aa1d95156b2578121c3bdd5fb012279ce66f5353fb3b4599e59666810c3e",
+          "text": "So I can think ofcharging that high cost",
+          "start_ms": 166110,
+          "end_ms": 170000,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "37",
+          "source_refs": [
+            "SUBTITLE:37@2"
+          ],
+          "content_hash": "506eef3cae701f85e798f2657608683441b28c2ea3b173dc92fd6043a6951e3b",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+          "text": "amortized time if, let's say,any k of those operations",
+          "start_ms": 105560,
+          "end_ms": 123540,
+          "language": "en",
+          "source_type": "SUBTITLE",
+          "source_id": "33",
+          "source_refs": [
+            "SUBTITLE:33@2"
+          ],
+          "content_hash": "8e93df7560f955c470941205349c8f6c2c4841d185a9e133ecf6de898cc01476",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "dd4b8ab8ad1baf0fd243679e6fabec2a59618bde924546f562a12729a98c3675",
+          "text": "如果我加起来，那就是说，我在这里放1。如果你想想这表示什么，这是从0到k，抱歉，我应该从0到k。如果我写——这是左边。右边是2的k加1次方，这里有一个1。",
+          "start_ms": 0,
+          "end_ms": 17700,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "26",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:26@2",
+            "SUBTITLE_SEGMENT_INDEX:0@2"
+          ],
+          "content_hash": "e9bc6d9b6f208219327e16593ae764a1e1255f1f48a4be519324bd574417395f",
+          "retrievable": true
+        },
+        {
+          "evidence_id": "fb030b4ae831cb7de9ecb46772b01e7679f54cb513bdb035a5444ebf7c896b92",
+          "text": "那么在θ记号中，你可以只看最后一个项，然后用θ围绕它，你就可以结束了。所以这是最后一个项的θ，像2的logn次方，是θn。",
+          "start_ms": 46380,
+          "end_ms": 59340,
+          "language": "zh-CN",
+          "source_type": "SUBTITLE_TRANSLATION",
+          "source_id": "29",
+          "source_refs": [
+            "SUBTITLE_TRANSLATION:29@2",
+            "SUBTITLE_SEGMENT_INDEX:3@2"
+          ],
+          "content_hash": "34e11715182f77f9d7bb8bc2e0b855d4b0389f8c5f24800663fe098dcb4a256c",
+          "retrievable": true
+        }
+      ]
+    }
+  }
+}

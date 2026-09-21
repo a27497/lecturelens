@@ -1,0 +1,2795 @@
+[
+  {
+    "case_id": "strings-semantic",
+    "category": "semantic",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": 0.9991634456006138
+      },
+      {
+        "evidence_id": "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "score": 0.7632000081883528
+      },
+      {
+        "evidence_id": "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+        "score": 0.754615936417032
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.6814960961916271
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.5683484828308318
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.4591940498535683
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.4238483900430045
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.4004652353335817
+      }
+    ],
+    "latency_ms": [
+      36.08146700025827,
+      36.68497700164153,
+      35.65874699961569,
+      34.3313470002613,
+      38.730306001525605
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.25,
+        "ndcg": 0.2640681225725909,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 0.25,
+        "ndcg": 0.48247555939075504,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-semantic",
+    "category": "semantic",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": 0.03252247488101534
+      },
+      {
+        "evidence_id": "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "score": 0.032266458495966696
+      },
+      {
+        "evidence_id": "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+        "score": 0.03128054740957967
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.031009615384615385
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.029850746268656716
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.015873015873015872
+      },
+      {
+        "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "score": 0.015625
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.015384615384615385
+      }
+    ],
+    "latency_ms": [
+      35.47186700052407,
+      36.10574699996505,
+      35.01350699843897,
+      35.07879700009653,
+      36.14840699992783
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.25,
+        "ndcg": 0.2640681225725909,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 0.25,
+        "ndcg": 0.48247555939075504,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "category": "multi-condition",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "score": 0.575643987634861
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.5614915176793623
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.5611148252822299
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.5458015743319048
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.5417745508860908
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.540740697385573
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.5089662972328666
+      },
+      {
+        "evidence_id": "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+        "score": 0.5032531404358545
+      }
+    ],
+    "latency_ms": [
+      31.385706999571994,
+      33.65911699984281,
+      33.038126999599626,
+      31.957407998561393,
+      29.69266800027981
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "category": "multi-condition",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.9696832669158114
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.8690744070961327
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.698769955140097
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.673907763012777
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.6169065874625217
+      },
+      {
+        "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.47407910623233535
+      },
+      {
+        "evidence_id": "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+        "score": 0.43712185938357695
+      }
+    ],
+    "latency_ms": [
+      38.52615699906892,
+      39.57565599921509,
+      39.4465859990305,
+      40.24751700126217,
+      39.51183699973626
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "category": "multi-condition",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.031746031746031744
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.031544957774465976
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.030834914611005692
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.030536130536130537
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.030309988518943745
+      },
+      {
+        "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.015625
+      }
+    ],
+    "latency_ms": [
+      38.18913699979021,
+      40.62858699944627,
+      40.78314700018382,
+      44.581105999895954,
+      39.83990699998685
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "category": "multi-condition",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 3.292099952697754
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.9694399833679199
+      },
+      {
+        "evidence_id": "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "score": -1.5598312616348267
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": -1.7020272016525269
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": -3.1372201442718506
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": -3.1980621814727783
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": -3.5283215045928955
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": -4.506266117095947
+      }
+    ],
+    "latency_ms": [
+      328.9255140007299,
+      324.49983399965276,
+      352.3198519997095,
+      340.6811230015592,
+      342.70303300036176
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "strings-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.4184860091243614
+      },
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": 0.40307871026540043
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.39255064251269234
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.37768132445743985
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.37307063403235685
+      },
+      {
+        "evidence_id": "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "score": 0.3231343576577389
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.30185738895289616
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.2932514091479568
+      }
+    ],
+    "latency_ms": [
+      29.15963800114696,
+      28.924817999723018,
+      27.809377999801654,
+      29.455726999003673,
+      27.737947999412427
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d"
+    ]
+  },
+  {
+    "case_id": "strings-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.9380992199605296
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.7158866813482362
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.6858266910028488
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.6654409428969186
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.6438919743709559
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.5550187727073427
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": 0.4815916201222603
+      }
+    ],
+    "latency_ms": [
+      40.707066998947994,
+      36.16835700086085,
+      36.405597000339185,
+      35.97428700049932,
+      35.89062799983367
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7"
+    ]
+  },
+  {
+    "case_id": "strings-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "hybrid_rrf",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.03252247488101534
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.03125763125763126
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.03125
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.030798389007344232
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": 0.030090497737556562
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.029631255487269532
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": 0.016129032258064516
+      }
+    ],
+    "latency_ms": [
+      45.68127600032312,
+      37.89617700022063,
+      35.77403700001014,
+      35.620728000139934,
+      36.41077700012829
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7"
+    ]
+  },
+  {
+    "case_id": "strings-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": -1.882336139678955
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": -3.0446507930755615
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": -3.694763422012329
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": -4.899535655975342
+      },
+      {
+        "evidence_id": "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "score": -5.804842472076416
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": -6.1333465576171875
+      },
+      {
+        "evidence_id": "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "score": -6.149927616119385
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": -7.161514759063721
+      }
+    ],
+    "latency_ms": [
+      344.3398729996261,
+      303.4972950008523,
+      311.3767450013256,
+      308.3122659991204,
+      308.6032859991974
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7"
+    ]
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.4950603110591849
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.47522375898002267
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.3162894956562221
+      },
+      {
+        "evidence_id": "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+        "score": 0.31561610153483
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.29550985685917475
+      },
+      {
+        "evidence_id": "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01",
+        "score": 0.28800808277544143
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.28129566020313923
+      },
+      {
+        "evidence_id": "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "score": 0.2710968389030317
+      }
+    ],
+    "latency_ms": [
+      30.943128000217257,
+      31.69848799916508,
+      31.833847000598325,
+      34.419817000525654,
+      31.525368000075105
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.2,
+        "ndcg": 0.23719771276929622,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.2,
+        "ndcg": 0.23719771276929622,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+      "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085"
+    ]
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.9799655197194845
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.6242581347323146
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.5712395326881838
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.5552931711254498
+      },
+      {
+        "evidence_id": "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+        "score": 0.5510153608703009
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.5172614021111135
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.3010693152719686
+      },
+      {
+        "evidence_id": "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01",
+        "score": 0.2908818141361869
+      }
+    ],
+    "latency_ms": [
+      40.04367699963041,
+      41.18157700031588,
+      39.349487000436056,
+      42.26559600101609,
+      39.36071600037394
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.16666666666666666,
+        "ndcg": 0.21840743681816419,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+      "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+    ]
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 0.03252247488101534
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": 0.03149801587301587
+      },
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 0.031099324975891997
+      },
+      {
+        "evidence_id": "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+        "score": 0.031009615384615385
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": 0.030798389007344232
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": 0.030536130536130537
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01",
+        "score": 0.015151515151515152
+      }
+    ],
+    "latency_ms": [
+      45.13006600063818,
+      39.52072700121789,
+      44.311906000075396,
+      47.924395999871194,
+      39.29361699920264
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.16666666666666666,
+        "ndcg": 0.21840743681816419,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+      "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+    ]
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "score": 2.276920795440674
+      },
+      {
+        "evidence_id": "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "score": 1.2188044786453247
+      },
+      {
+        "evidence_id": "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01",
+        "score": -0.500870406627655
+      },
+      {
+        "evidence_id": "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+        "score": -4.045167446136475
+      },
+      {
+        "evidence_id": "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "score": -4.69757604598999
+      },
+      {
+        "evidence_id": "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "score": -5.745347499847412
+      },
+      {
+        "evidence_id": "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+        "score": -6.916205883026123
+      },
+      {
+        "evidence_id": "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "score": -8.114190101623535
+      }
+    ],
+    "latency_ms": [
+      448.3457950009324,
+      444.66558400017675,
+      461.5647930004343,
+      487.74757199862506,
+      476.6170319999219
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.2,
+        "ndcg": 0.23719771276929622,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.2,
+        "ndcg": 0.23719771276929622,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+      "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085"
+    ]
+  },
+  {
+    "case_id": "bisection-cross-section",
+    "category": "cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": -2.469599962234497
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": -4.717681407928467
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": -6.026689052581787
+      },
+      {
+        "evidence_id": "008bd5ddb54d90408447c8cdbcd2ddc91cc1b3db94fe74c1306d6b09d9b2ec45",
+        "score": -6.036474704742432
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": -7.289645671844482
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": -7.809970378875732
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": -7.889403820037842
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": -7.914769172668457
+      }
+    ],
+    "latency_ms": [
+      452.6297739994334,
+      458.28175299902796,
+      463.29812300064077,
+      420.57175699846994,
+      418.4563059989159
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.7039180890341347,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.6,
+        "mrr": 1.0,
+        "ndcg": 0.6548086577531307,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.8,
+        "mrr": 1.0,
+        "ndcg": 0.7756199604526248,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "bisection-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.28170767944512387
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.2577649848457675
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.24993424636843276
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.2418440076012095
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.22683385438776082
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.22609167330048363
+      },
+      {
+        "evidence_id": "008bd5ddb54d90408447c8cdbcd2ddc91cc1b3db94fe74c1306d6b09d9b2ec45",
+        "score": 0.18973773139437655
+      },
+      {
+        "evidence_id": "e5838bff909805b142991503de1b56575487f7824bbc53cd9ca2d78af00e76b8",
+        "score": 0.18973773139437655
+      }
+    ],
+    "latency_ms": [
+      29.72732699890912,
+      29.532077000112622,
+      28.876327000034507,
+      32.63960799995402,
+      29.457737999109668
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+    ]
+  },
+  {
+    "case_id": "bisection-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.8859926479611644
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.745431500500257
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.5986873172181388
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.4575043629507793
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.42924638774059454
+      },
+      {
+        "evidence_id": "008bd5ddb54d90408447c8cdbcd2ddc91cc1b3db94fe74c1306d6b09d9b2ec45",
+        "score": 0.3367635056454631
+      }
+    ],
+    "latency_ms": [
+      36.65986800115206,
+      35.79896700102836,
+      36.87336800066987,
+      39.99866699996346,
+      40.45019599834632
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+    ]
+  },
+  {
+    "case_id": "bisection-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "hybrid_rrf",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.03200204813108039
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.03125763125763126
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.030536130536130537
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.015625
+      },
+      {
+        "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "score": 0.015625
+      }
+    ],
+    "latency_ms": [
+      37.34087700104283,
+      42.999527000574744,
+      37.41786799946567,
+      41.81630699895322,
+      49.93682599888416
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+    ]
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "score": 0.47751290956150727
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.4684801602354143
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.43296241846225625
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.43271034725888
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.42480219272385344
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.3953951904717439
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.3702768368386542
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": 0.3230198564042287
+      }
+    ],
+    "latency_ms": [
+      33.721437999702175,
+      40.61053700024786,
+      32.71476800000528,
+      42.3208460015303,
+      34.336257000177284
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.7039180890341347,
+        "evidence_coverage": 1.0
+      },
+      "5": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.5087403079104241,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.8495981447350542,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+    ]
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "score": 1.0
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.7120876616173171
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.6796098900315225
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.6090928720916782
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": 0.4600992271419263
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.44896514839882773
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.44480702428960794
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.41401518425421124
+      }
+    ],
+    "latency_ms": [
+      41.269467001257,
+      47.2103159991093,
+      46.1854859986488,
+      43.89471700051217,
+      43.927836000875686
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 0.46927872602275644,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.6,
+        "mrr": 1.0,
+        "ndcg": 0.6164336326286644,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.8442380676954223,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+    ]
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "score": 0.03278688524590164
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": 0.03200204813108039
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": 0.031754032258064516
+      },
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 0.03149801587301587
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": 0.030090497737556562
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": 0.03007688828584351
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": 0.015384615384615385
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": 0.015151515151515152
+      }
+    ],
+    "latency_ms": [
+      44.816087000072,
+      45.995575999768334,
+      45.767886000248836,
+      40.64799700063304,
+      42.67629699825193
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 0.46927872602275644,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.6,
+        "mrr": 1.0,
+        "ndcg": 0.6164336326286644,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.8442380676954223,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+    ]
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "score": 3.178828716278076
+      },
+      {
+        "evidence_id": "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "score": 1.2764718532562256
+      },
+      {
+        "evidence_id": "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "score": -4.378319263458252
+      },
+      {
+        "evidence_id": "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "score": -5.826537609100342
+      },
+      {
+        "evidence_id": "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+        "score": -7.1089043617248535
+      },
+      {
+        "evidence_id": "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "score": -7.244480609893799
+      },
+      {
+        "evidence_id": "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "score": -7.387106418609619
+      },
+      {
+        "evidence_id": "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "score": -8.463589668273926
+      }
+    ],
+    "latency_ms": [
+      473.19227300067723,
+      475.26502199980314,
+      483.7536309987627,
+      498.3083410006657,
+      492.53174000114086
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 1.0
+      },
+      "3": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.7653606369886217,
+        "evidence_coverage": 1.0
+      },
+      "5": {
+        "recall": 0.8,
+        "mrr": 1.0,
+        "ndcg": 0.830419897363192,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 1.0,
+        "mrr": 1.0,
+        "ndcg": 0.9434732991210639,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+    ]
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "category": "multi-condition",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.6690950727250445
+      },
+      {
+        "evidence_id": "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "score": 0.6674066909578871
+      },
+      {
+        "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "score": 0.6442525113892572
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.6372189134814843
+      },
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.6323798394308078
+      },
+      {
+        "evidence_id": "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556",
+        "score": 0.6213668482308651
+      },
+      {
+        "evidence_id": "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "score": 0.5856124542309635
+      },
+      {
+        "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "score": 0.5793893545216143
+      }
+    ],
+    "latency_ms": [
+      31.58706800059008,
+      34.460726999895996,
+      30.81536799982132,
+      39.64584699861007,
+      31.907877000776352
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.16666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.3333333333333333
+      },
+      "3": {
+        "recall": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.7653606369886217,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "5": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.830419897363192,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "8": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.7409096387260824,
+        "evidence_coverage": 0.6666666666666666
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "category": "multi-condition",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.9725635154173939
+      },
+      {
+        "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "score": 0.7827742787241196
+      },
+      {
+        "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "score": 0.6674202623872973
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "score": 0.4987383095198406
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.47617964879509783
+      },
+      {
+        "evidence_id": "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556",
+        "score": 0.464333749836331
+      },
+      {
+        "evidence_id": "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "score": 0.437615279280059
+      }
+    ],
+    "latency_ms": [
+      39.47728700040898,
+      40.20664599920565,
+      39.45698700044886,
+      39.578316998813534,
+      38.80790699986392
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.16666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.3333333333333333
+      },
+      "3": {
+        "recall": 0.16666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.46927872602275644,
+        "evidence_coverage": 0.3333333333333333
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 1.0,
+        "ndcg": 0.6164336326286644,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "8": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.6577779270716586,
+        "evidence_coverage": 0.6666666666666666
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "category": "multi-condition",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "score": 0.03200204813108039
+      },
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.03177805800756621
+      },
+      {
+        "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "score": 0.030090497737556562
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "623bdbe54ce8068ba18b0098719ccf2b90e64f143bda37876c537debbbf137c9",
+        "score": 0.015873015873015872
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": 0.015625
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.015625
+      }
+    ],
+    "latency_ms": [
+      45.064595999065205,
+      39.053247000993,
+      40.73534599956474,
+      38.84506699978374,
+      41.97392700007185
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.16666666666666666,
+        "mrr": 0.5,
+        "ndcg": 0.2960819109658652,
+        "evidence_coverage": 0.3333333333333333
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.5,
+        "ndcg": 0.4912596920895758,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "8": {
+        "recall": 0.6666666666666666,
+        "mrr": 0.5,
+        "ndcg": 0.5337676583167362,
+        "evidence_coverage": 0.6666666666666666
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "category": "multi-condition",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": -2.1885323524475098
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": -2.949847459793091
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": -4.572225093841553
+      },
+      {
+        "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "score": -4.782336711883545
+      },
+      {
+        "evidence_id": "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "score": -4.901917934417725
+      },
+      {
+        "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "score": -5.489744663238525
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": -6.747424602508545
+      },
+      {
+        "evidence_id": "623bdbe54ce8068ba18b0098719ccf2b90e64f143bda37876c537debbbf137c9",
+        "score": -7.461446285247803
+      }
+    ],
+    "latency_ms": [
+      292.1238770013588,
+      305.9411549984361,
+      276.76149800026906,
+      290.85583699998097,
+      282.2315079993132
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.16666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.3333333333333333
+      },
+      "3": {
+        "recall": 0.5,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "5": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.8539316501572937,
+        "evidence_coverage": 0.6666666666666666
+      },
+      "8": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.7618870795651186,
+        "evidence_coverage": 0.6666666666666666
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-cross-section",
+    "category": "cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "score": 0.6999738397877129
+      },
+      {
+        "evidence_id": "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "score": 0.6932166481667734
+      },
+      {
+        "evidence_id": "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "score": 0.6760075818571029
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.6115915820436872
+      },
+      {
+        "evidence_id": "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556",
+        "score": 0.6050880351777123
+      },
+      {
+        "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+        "score": 0.5965037226176689
+      },
+      {
+        "evidence_id": "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a",
+        "score": 0.5842723069898622
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.5540923371511828
+      }
+    ],
+    "latency_ms": [
+      31.018948000564706,
+      31.638258000384667,
+      40.07262600134709,
+      31.373798001368414,
+      31.102258000828442
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.14285714285714285,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.2857142857142857,
+        "mrr": 1.0,
+        "ndcg": 0.7653606369886217,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.5714285714285714,
+        "mrr": 1.0,
+        "ndcg": 0.830419897363192,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.8571428571428571,
+        "mrr": 1.0,
+        "ndcg": 0.8625618335428545,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 0.836021837809861
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.7526613248613039
+      },
+      {
+        "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "score": 0.6992576480561726
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.5684695554296667
+      },
+      {
+        "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+        "score": 0.4794533052680181
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.4273579350391652
+      },
+      {
+        "evidence_id": "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a",
+        "score": 0.3918797889839717
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": 0.3903858258560655
+      }
+    ],
+    "latency_ms": [
+      29.889768000430195,
+      27.18868800002383,
+      31.72289699978137,
+      28.12144800009264,
+      27.531828000064706
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+      "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+      "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15"
+    ]
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 1.0
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.4501445361960054
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.422557715314418
+      },
+      {
+        "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "score": 0.4182053724146898
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.3549968444064109
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": 0.32516697799388405
+      },
+      {
+        "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+        "score": 0.28674687883994104
+      },
+      {
+        "evidence_id": "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a",
+        "score": 0.23437174201728098
+      }
+    ],
+    "latency_ms": [
+      37.35657700053707,
+      40.94748699935735,
+      36.87649799940118,
+      38.04841700002726,
+      36.38523600056942
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+      "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+    ]
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "hybrid_rrf",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 0.03278688524590164
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.030776515151515152
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.03055037313432836
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": 0.030090497737556562
+      },
+      {
+        "evidence_id": "884908c38d35648d51746c668386562c976e3a8a0ecad874864232eba8db1d52",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "score": 0.015873015873015872
+      },
+      {
+        "evidence_id": "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+        "score": 0.015873015873015872
+      }
+    ],
+    "latency_ms": [
+      43.575766001595184,
+      34.566886999527924,
+      35.518516999218264,
+      38.892176999070216,
+      34.72610700009682
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0"
+    ]
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "category": "exception-no-answer",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": false,
+    "hits": [
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 6.629500389099121
+      },
+      {
+        "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "score": 1.4866434335708618
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 1.4151103496551514
+      },
+      {
+        "evidence_id": "884908c38d35648d51746c668386562c976e3a8a0ecad874864232eba8db1d52",
+        "score": -4.087791442871094
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": -7.479010581970215
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": -8.351080894470215
+      },
+      {
+        "evidence_id": "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+        "score": -8.649795532226562
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": -8.942110061645508
+      }
+    ],
+    "latency_ms": [
+      237.5447920003353,
+      216.16731299945968,
+      214.84145300019009,
+      218.85886200107052,
+      214.3915830001788
+    ],
+    "metrics": {
+      "1": null,
+      "3": null,
+      "5": null,
+      "8": null
+    },
+    "hard_negatives_at_context_k": [
+      "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+      "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+      "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+    ]
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 0.6357392876637157
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.611609550810541
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.6108539614501964
+      },
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.6101231086792275
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.577256577909489
+      },
+      {
+        "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+        "score": 0.5562880037064873
+      },
+      {
+        "evidence_id": "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "score": 0.5400219678635355
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.5278345433679492
+      }
+    ],
+    "latency_ms": [
+      31.721626999569708,
+      28.64904799935175,
+      28.222877999724005,
+      27.140047999637318,
+      28.940718000740162
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.2,
+        "mrr": 0.5,
+        "ndcg": 0.2960819109658652,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.4,
+        "mrr": 0.5,
+        "ndcg": 0.36005461457723403,
+        "evidence_coverage": 0.5
+      },
+      "8": {
+        "recall": 0.4,
+        "mrr": 0.5,
+        "ndcg": 0.36005461457723403,
+        "evidence_coverage": 0.5
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.746303926014142
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.718993275477811
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.5685014744431597
+      },
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.4810223016561952
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.45400417208039373
+      },
+      {
+        "evidence_id": "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+        "score": 0.4375126836590479
+      }
+    ],
+    "latency_ms": [
+      40.90613700100221,
+      36.347896999359364,
+      35.495477000949904,
+      35.243786998762516,
+      42.41701700084377
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 0.46927872602275644,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.4703652827859579,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.6,
+        "mrr": 1.0,
+        "ndcg": 0.591176585485452,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee"
+    ]
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "score": 0.031754032258064516
+      },
+      {
+        "evidence_id": "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "score": 0.03149801587301587
+      },
+      {
+        "evidence_id": "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "score": 0.030090497737556562
+      },
+      {
+        "evidence_id": "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+        "score": 0.015873015873015872
+      },
+      {
+        "evidence_id": "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "score": 0.015384615384615385
+      }
+    ],
+    "latency_ms": [
+      36.31489699910162,
+      35.963936999905854,
+      39.11845699985861,
+      34.53640699990501,
+      39.1649969988066
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.2,
+        "mrr": 1.0,
+        "ndcg": 0.46927872602275644,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.4703652827859579,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.6,
+        "mrr": 1.0,
+        "ndcg": 0.591176585485452,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee"
+    ]
+  },
+  {
+    "case_id": "amortization-semantic",
+    "category": "semantic",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "score": 0.5467833544671775
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": 0.5364330688670093
+      },
+      {
+        "evidence_id": "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1",
+        "score": 0.47447301607706804
+      },
+      {
+        "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "score": 0.4232682121589103
+      },
+      {
+        "evidence_id": "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "score": 0.3835927757226876
+      },
+      {
+        "evidence_id": "4b7241c7d08774ff0ca84e939ec3074287a3981b16efaf9807b8874c226bf11e",
+        "score": 0.3722862487291141
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": 0.32857575877316636
+      },
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": 0.32849942535829013
+      }
+    ],
+    "latency_ms": [
+      29.597987999295583,
+      29.909377999501885,
+      30.598456998632173,
+      30.39367699966533,
+      31.28374699917913
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.16666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.5
+      },
+      "3": {
+        "recall": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.7653606369886217,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 1.0,
+        "ndcg": 0.6843515475204855,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.706046305905179,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "category": "cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "score": 0.5811559929110283
+      },
+      {
+        "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "score": 0.5678757279385028
+      },
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": 0.5535538369587962
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": 0.4949771516937018
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": 0.45252277218599446
+      },
+      {
+        "evidence_id": "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7",
+        "score": 0.43808741256966144
+      },
+      {
+        "evidence_id": "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "score": 0.4303444790133646
+      },
+      {
+        "evidence_id": "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1",
+        "score": 0.41226266109337695
+      }
+    ],
+    "latency_ms": [
+      33.103296998888254,
+      32.41664699999092,
+      33.6183079998591,
+      33.24364699983562,
+      31.049487999553094
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.125,
+        "mrr": 0.5,
+        "ndcg": 0.2960819109658652,
+        "evidence_coverage": 0.25
+      },
+      "5": {
+        "recall": 0.25,
+        "mrr": 0.5,
+        "ndcg": 0.34519134224686937,
+        "evidence_coverage": 0.5
+      },
+      "8": {
+        "recall": 0.375,
+        "mrr": 0.5,
+        "ndcg": 0.3475406804124245,
+        "evidence_coverage": 0.5
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "category": "cross-section",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "score": 0.9885742682390625
+      },
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": 0.606606418490792
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": 0.5041672051241718
+      },
+      {
+        "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "score": 0.5
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": 0.4258556719120679
+      },
+      {
+        "evidence_id": "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7",
+        "score": 0.37691034585677086
+      },
+      {
+        "evidence_id": "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+        "score": 0.37672985566472134
+      },
+      {
+        "evidence_id": "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "score": 0.370248680442712
+      }
+    ],
+    "latency_ms": [
+      41.59500700006902,
+      40.957426999739255,
+      42.603076000887086,
+      42.347697000877815,
+      48.54676600007224
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.125,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.25
+      },
+      "3": {
+        "recall": 0.25,
+        "mrr": 1.0,
+        "ndcg": 0.7039180890341347,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.25,
+        "mrr": 1.0,
+        "ndcg": 0.5087403079104241,
+        "evidence_coverage": 0.5
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 1.0,
+        "ndcg": 0.5538282970597391,
+        "evidence_coverage": 0.75
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "category": "cross-section",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "score": 0.03252247488101534
+      },
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": 0.031024531024531024
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": 0.030309988518943745
+      },
+      {
+        "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "score": 0.01639344262295082
+      },
+      {
+        "evidence_id": "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+        "score": 0.016129032258064516
+      },
+      {
+        "evidence_id": "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+        "score": 0.015873015873015872
+      },
+      {
+        "evidence_id": "4ca22ebd13143e6fe94aaebfc54639d254909be7a4ede0764703dc24aeeb5302",
+        "score": 0.015625
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": 0.015625
+      }
+    ],
+    "latency_ms": [
+      41.93259699968621,
+      42.43119599959755,
+      43.07510699982231,
+      41.56791700006579,
+      45.083666998834815
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.125,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "evidence_coverage": 0.25
+      },
+      "3": {
+        "recall": 0.25,
+        "mrr": 1.0,
+        "ndcg": 0.7039180890341347,
+        "evidence_coverage": 0.5
+      },
+      "5": {
+        "recall": 0.375,
+        "mrr": 1.0,
+        "ndcg": 0.639945385422766,
+        "evidence_coverage": 0.75
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 1.0,
+        "ndcg": 0.5673656574390139,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "category": "cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "score": -5.4833197593688965
+      },
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": -6.5998921394348145
+      },
+      {
+        "evidence_id": "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "score": -6.708344459533691
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": -6.797288417816162
+      },
+      {
+        "evidence_id": "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+        "score": -7.888133525848389
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": -8.170136451721191
+      },
+      {
+        "evidence_id": "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+        "score": -8.279332160949707
+      },
+      {
+        "evidence_id": "4ca22ebd13143e6fe94aaebfc54639d254909be7a4ede0764703dc24aeeb5302",
+        "score": -9.378705978393555
+      }
+    ],
+    "latency_ms": [
+      381.1214990000735,
+      399.6097989984264,
+      354.0569309989223,
+      341.5649819999089,
+      346.4600419993076
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.125,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.23463936301137822,
+        "evidence_coverage": 0.25
+      },
+      "5": {
+        "recall": 0.25,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.30078518014914984,
+        "evidence_coverage": 0.5
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.39873718892724236,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": []
+  },
+  {
+    "case_id": "amortization-confusing-evidence-hard-negative",
+    "category": "confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "hits": [
+      {
+        "evidence_id": "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "score": 2.006422758102417
+      },
+      {
+        "evidence_id": "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "score": 1.9009544849395752
+      },
+      {
+        "evidence_id": "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb",
+        "score": 0.9816378951072693
+      },
+      {
+        "evidence_id": "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "score": 0.05439691245555878
+      },
+      {
+        "evidence_id": "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+        "score": -2.805798292160034
+      },
+      {
+        "evidence_id": "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "score": -3.7428996562957764
+      },
+      {
+        "evidence_id": "b0c97e6e2beeb55b1945893bb9abdb3c62227b0bede080f091e7a56469d5529f",
+        "score": -5.006427764892578
+      },
+      {
+        "evidence_id": "01aa434d42550178d74a6e746feb386d9a72615037805cb93c1b29168b49e50c",
+        "score": -6.108969211578369
+      }
+    ],
+    "latency_ms": [
+      257.59600900164514,
+      258.9971199995489,
+      259.9196689989185,
+      257.6006300005247,
+      252.37904999994498
+    ],
+    "metrics": {
+      "1": {
+        "recall": 0.0,
+        "mrr": 0,
+        "ndcg": 0.0,
+        "evidence_coverage": 0.0
+      },
+      "3": {
+        "recall": 0.5,
+        "mrr": 0.5,
+        "ndcg": 0.38685280723454163,
+        "evidence_coverage": 1.0
+      },
+      "5": {
+        "recall": 0.5,
+        "mrr": 0.5,
+        "ndcg": 0.38685280723454163,
+        "evidence_coverage": 1.0
+      },
+      "8": {
+        "recall": 0.5,
+        "mrr": 0.5,
+        "ndcg": 0.38685280723454163,
+        "evidence_coverage": 1.0
+      }
+    },
+    "hard_negatives_at_context_k": [
+      "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb"
+    ]
+  }
+]

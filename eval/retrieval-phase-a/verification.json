@@ -1,0 +1,93 @@
+{
+  "phase": "A only",
+  "status": "complete",
+  "freeze_sha256": "a3a21da316beda51f939d2b3f695347f3b91eba6785a1224ee96c1bbc48deb99",
+  "retrieval_rows": 96,
+  "latency_samples": 480,
+  "ranking_stability_repetitions": 5,
+  "recomputed_per_query_metrics_match": true,
+  "model_http_attempts": 96,
+  "model_responses": 96,
+  "protocol_failures_preserved": 6,
+  "semantic_reviews": 96,
+  "raw_answers_sha256": "a20b83d2e38f88f2ed7be4209baebb7d9a957d8bec2d73a3d3b8e3c6be6bddd0",
+  "attempt_ledger_sha256": "6525d8679738861ffc252c64b252d2d274db5d46076581a127c288b236d84dd4",
+  "report_reaggregation_identical": true,
+  "tests": {
+    "python_full": {
+      "passed": 564,
+      "skipped": 0,
+      "database": "lecturelens_agent_test",
+      "log_sha256": "4865c789a40f28c256e0959a57679308934e6da91b77ee3c035987a8bf48eafa"
+    },
+    "python_final_benchmark_and_retrieval": {
+      "passed": 50,
+      "skipped": 0,
+      "log_sha256": "b99480e85c3028b0c61377ec824a9524883875c15127c9dbf70c6ea3ddfd4ee7"
+    },
+    "java_scoped": {
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "suites": [
+        {
+          "name": "com.example.courselingo.qa.StudyControllerTest",
+          "tests": "3",
+          "errors": "0",
+          "skipped": "0",
+          "failures": "0"
+        },
+        {
+          "name": "com.example.courselingo.qa.StudyAuthorityTest",
+          "tests": "8",
+          "errors": "0",
+          "skipped": "0",
+          "failures": "0"
+        },
+        {
+          "name": "com.example.courselingo.qa.DenseEvidenceClientTest",
+          "tests": "14",
+          "errors": "0",
+          "skipped": "0",
+          "failures": "0"
+        },
+        {
+          "name": "com.example.courselingo.qa.DenseRetrievalRoutingTest",
+          "tests": "4",
+          "errors": "0",
+          "skipped": "0",
+          "failures": "0"
+        },
+        {
+          "name": "com.example.courselingo.qa.CourseQaEvidenceRetrieverTest",
+          "tests": "33",
+          "errors": "0",
+          "skipped": "0",
+          "failures": "0"
+        }
+      ],
+      "log_sha256": "dbcb55957ef2cb3e82ece998ff67529b3227af6bfb23cf4aee2b37f2e828bfdd"
+    },
+    "ruff_check": "pass",
+    "ruff_format": "pass",
+    "git_diff_check": "pass",
+    "existing_warning": "Starlette/AnyIO BlockingPortal deprecation"
+  },
+  "boundaries": {
+    "tracked_production_source_and_dependencies_unchanged": true,
+    "java_authority_unchanged": true,
+    "production_default_retrieval_unchanged": true,
+    "database": "lecturelens_retrieval_benchmark",
+    "mysql_access_by_benchmark": false,
+    "reader_port": 8096,
+    "reader_stopped": true,
+    "phase_b_c_d_started": false
+  },
+  "shutdown_note": "Reader finished all 96 calls. Graceful shutdown closed listener but stalled; the dedicated 8096 process was then killed. Production 8091 was untouched.",
+  "baseline_git_commit": "0a82867f993616454cfe342b90e82aea3c54968d",
+  "notes": [
+    "No frontend implementation changes; no frontend/browser suite rerun.",
+    "No scored trial was retried, omitted or relabeled.",
+    "Real-model outcomes are separate from deterministic mechanism tests."
+  ]
+}

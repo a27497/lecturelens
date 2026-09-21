@@ -1,0 +1,36 @@
+{
+  "id": "retrieval-phase-a-v1",
+  "frozen_at": "2026-09-21T07:42:29.994991+00:00",
+  "files": {
+    "eval/retrieval-phase-a/corpus.json": "6902e894ae01d4184a7ff572915e09d38a1a57db38f1fc43b91faea54ac3decd",
+    "eval/retrieval-phase-a/cases.json": "9969923eaeefce498eb6c3f063978717127df62f335d76744b39312bc62709db",
+    "eval/retrieval-phase-a/config.json": "8ecadc0cdf1b9011010e3a32089a49c86f733f74104706d79b993bd7f2622fe4",
+    "eval/retrieval-phase-a/PROTOCOL.md": "a54245afd017822dc03463c7ac90c11174c37e1099ec5d9e65d5cafc376c9afe",
+    "eval/retrieval-phase-a/pyproject.toml": "795e17548fd0b01f103a182e893987c94e051ddb39ab331acc73455c5da91a83",
+    "eval/retrieval-phase-a/uv.lock": "2475e5d92e6a83da09d5e881d8437cc3e6d505c23ea7980bf4b7155e1536364e",
+    "agent-service/src/lecturelens_agent/benchmark/__init__.py": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+    "agent-service/src/lecturelens_agent/benchmark/answers.py": "8101912f64c708be8f6edd7c84868d09df2b7b95d0d3f302cb27807d331cd5cd",
+    "agent-service/src/lecturelens_agent/benchmark/core.py": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c",
+    "agent-service/src/lecturelens_agent/benchmark/freeze.py": "a4cebf9402f54706bf00cfa1d6c1b3765eef94e8dc0c6fc539ed2d01b12b6a0c",
+    "agent-service/src/lecturelens_agent/benchmark/report.py": "b5094d5b54d5ae514607bcdf833cb99d4fbf6565bc9bebee890ca3119d0e2117",
+    "agent-service/src/lecturelens_agent/benchmark/reranker.py": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6",
+    "agent-service/src/lecturelens_agent/benchmark/run.py": "d5fbddf20b050d416c0e5b3fedca247b4c84d4181ae45079559124438646b346",
+    "agent-service/src/lecturelens_agent/benchmark/serve_reader.py": "b66b619c448da90a03c5e26146b0d602a55ce900ec1afb41167582a699cc5be6",
+    "agent-service/src/lecturelens_agent/embedding.py": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4",
+    "agent-service/src/lecturelens_agent/retrieval.py": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe",
+    "agent-service/src/lecturelens_agent/contracts.py": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06",
+    "agent-service/src/lecturelens_agent/store.py": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d"
+  },
+  "packages": {
+    "fastembed": "0.8.0",
+    "onnxruntime": "1.30.0",
+    "torch": "2.14.0+cpu",
+    "transformers": "5.17.0",
+    "psycopg": "3.3.6",
+    "numpy": "2.5.3",
+    "pydantic": "2.13.5",
+    "huggingface-hub": "1.32.0",
+    "tokenizers": "0.23.2"
+  },
+  "scope": "Fixed diagnostic on previously seen public course excerpts; not an independent holdout or Study Agent acceptance."
+}

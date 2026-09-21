@@ -1,0 +1,20 @@
+[project]
+name = "lecturelens-retrieval-benchmark"
+version = "0.1.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "lecturelens-agent",
+  "torch==2.14.0+cpu",
+  "transformers==5.17.0",
+  "pytest>=8,<10",
+  "ruff>=0.12,<1",
+]
+
+[tool.uv.sources]
+lecturelens-agent = { path = "../../agent-service", editable = true }
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

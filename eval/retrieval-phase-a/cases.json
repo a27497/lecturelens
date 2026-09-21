@@ -1,0 +1,580 @@
+{
+  "id": "phase-a-queries-v1",
+  "annotation": "Codex source-based annotation before retrieval; not blind human gold. Alternatives judged by actual content, not sourceId alignment. Binary relevance is union of aspect IDs.",
+  "cases": [
+    {
+      "id": "strings-lexical",
+      "course": "strings",
+      "category": "lexical",
+      "query": "What does immutable mean for an actual string object after it is created?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "object cannot be modified",
+          "evidence_ids": [
+            "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a",
+            "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a",
+            "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+            "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+            "858e19bc132337f089757bf92d49714e67f1520f37d41f4d5102e4fd407d9a41",
+            "6649028e7ea9e6e4548ef44e94a4ab0f3c220e1c24f60e564a96a73410ed9545",
+            "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068"
+          ]
+        }
+      ],
+      "reference_answer": "A string object cannot be modified once created.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "strings-semantic",
+      "course": "strings",
+      "category": "semantic",
+      "query": "变量换了指向以后，之前那份文字是不是就被改写了？",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "new binding and old distinct object",
+          "evidence_ids": [
+            "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+            "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+          ]
+        }
+      ],
+      "reference_answer": "没有。变量绑定到新对象，旧对象仍在内存中，是不同对象。",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "strings-multi-condition",
+      "course": "strings",
+      "category": "multi-condition",
+      "query": "To turn hello into yello, identify the new prefix, the slice starting position, and the resulting string.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "prefix y and concatenation",
+          "evidence_ids": [
+            "85a0a2edb5cc2a7915e1258680e206cd78ab4d2625ab6aea20cb25507d563c5b",
+            "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01"
+          ]
+        },
+        {
+          "description": "slice from position 1 and result yello",
+          "evidence_ids": [
+            "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+            "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01"
+          ]
+        }
+      ],
+      "reference_answer": "Concatenate y with the characters of s from position 1, producing yello.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "strings-cross-section",
+      "course": "strings",
+      "category": "cross-section",
+      "query": "Connect the initial memory diagram for hello with what happens to the binding and old object after creating yello.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "initial hello bound to s",
+          "evidence_ids": [
+            "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+            "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801"
+          ]
+        },
+        {
+          "description": "rebind s and retain distinct old object",
+          "evidence_ids": [
+            "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+            "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+          ]
+        }
+      ],
+      "reference_answer": "Initially s refers to hello; later s binds to the new yello object while the old hello object remains distinct in memory.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "strings-exception-no-answer",
+      "course": "strings",
+      "category": "exception-no-answer",
+      "query": "What exact Python exception class name does this clip give for assigning to s[0]?",
+      "answerable": false,
+      "aspects": [],
+      "reference_answer": "The clip says an error occurs but does not name the exception class.",
+      "hard_negative_ids": [
+        "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d"
+      ],
+      "no_answer_reason": "All 16 Evidence records checked: error is mentioned but no exception class name appears."
+    },
+    {
+      "id": "strings-confusing-evidence-hard-negative",
+      "course": "strings",
+      "category": "confusing-evidence-hard-negative",
+      "query": "The lecturer says we might set s at position 0 to y. Is this operation actually permitted, and why?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "attempt is prohibited due to immutability",
+          "evidence_ids": [
+            "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+            "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d"
+          ]
+        }
+      ],
+      "reference_answer": "No. The suggestion is a hypothetical misconception; strings are immutable and attempting this produces an error.",
+      "hard_negative_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+      ],
+      "no_answer_reason": null
+    },
+    {
+      "id": "bisection-lexical",
+      "course": "bisection",
+      "category": "lexical",
+      "query": "How many guesses did guess and check take, compared with bisection, in the demonstration?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "76 versus 6",
+          "evidence_ids": [
+            "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+            "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+          ]
+        }
+      ],
+      "reference_answer": "Guess and check would take 76 guesses; bisection took 6.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "bisection-semantic",
+      "course": "bisection",
+      "category": "semantic",
+      "query": "不把每个候选挨个试完，老师怎样快速缩小可能答案的范围？",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "repeated elimination of half",
+          "evidence_ids": [
+            "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+            "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+            "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+            "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8"
+          ]
+        }
+      ],
+      "reference_answer": "每次猜测利用大小反馈排除一半搜索空间，然后在剩余区间重复。",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "bisection-multi-condition",
+      "course": "bisection",
+      "category": "multi-condition",
+      "query": "Describe where the next guess is chosen and which interval is searched after eliminating half the possibilities.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "midpoint guess",
+          "evidence_ids": [
+            "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+          ]
+        },
+        {
+          "description": "remaining interval and repeated halving",
+          "evidence_ids": [
+            "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+            "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8"
+          ]
+        }
+      ],
+      "reference_answer": "Choose a guess halfway through the current space, eliminate half, and continue in the remaining interval.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "bisection-cross-section",
+      "course": "bisection",
+      "category": "cross-section",
+      "query": "Relate the 76-versus-6 demonstration to the later claim about when bisection becomes more useful.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "76 versus 6",
+          "evidence_ids": [
+            "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+            "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+          ]
+        },
+        {
+          "description": "larger search space favors bisection",
+          "evidence_ids": [
+            "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+            "e5838bff909805b142991503de1b56575487f7824bbc53cd9ca2d78af00e76b8",
+            "008bd5ddb54d90408447c8cdbcd2ddc91cc1b3db94fe74c1306d6b09d9b2ec45"
+          ]
+        }
+      ],
+      "reference_answer": "The demonstration uses 76 sequential guesses versus 6 bisection guesses; the lecturer says bisection is more advantageous as the search space grows.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "bisection-exception-no-answer",
+      "course": "bisection",
+      "category": "exception-no-answer",
+      "query": "What epsilon value and absolute-error stopping test does the clip prescribe for computing a square root?",
+      "answerable": false,
+      "aspects": [],
+      "reference_answer": "No square-root epsilon or error stopping test is specified in this clip.",
+      "hard_negative_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+      ],
+      "no_answer_reason": "All 10 Evidence records checked: number guessing and interval halving only; no square-root tolerance or stopping code."
+    },
+    {
+      "id": "bisection-confusing-evidence-hard-negative",
+      "course": "bisection",
+      "category": "confusing-evidence-hard-negative",
+      "query": "Did bisection ask Sophie 0, 1, 2, 3, 4 in order? Identify which method that sequence describes and contrast bisection.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "sequential guesses are guess and check",
+          "evidence_ids": [
+            "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+            "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+          ]
+        },
+        {
+          "description": "bisection halves space",
+          "evidence_ids": [
+            "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+            "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+            "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e",
+            "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8"
+          ]
+        }
+      ],
+      "reference_answer": "No. The sequence describes guess and check; bisection eliminates half the search space on each guess.",
+      "hard_negative_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ],
+      "no_answer_reason": null
+    },
+    {
+      "id": "interfaces-lexical",
+      "course": "interfaces",
+      "category": "lexical",
+      "query": "What is the distinction between an interface and a data structure in terms of what versus how?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "what versus how",
+          "evidence_ids": [
+            "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+            "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+            "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+            "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a"
+          ]
+        }
+      ],
+      "reference_answer": "An interface says what you want to do; a data structure says how to do it.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "interfaces-semantic",
+      "course": "interfaces",
+      "category": "semantic",
+      "query": "同一个问题有几种存储方案时，应该依据什么来挑选？",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "choose by operations and usage",
+          "evidence_ids": [
+            "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+            "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+            "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556"
+          ]
+        }
+      ],
+      "reference_answer": "看实际使用方式和需要支持哪些操作，因为不同数据结构在不同操作上各有速度优势。",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "interfaces-multi-condition",
+      "course": "interfaces",
+      "category": "multi-condition",
+      "query": "Separate three roles: specifying what data may be stored, providing its representation, and supplying algorithms for operations.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "interface specifies stored data",
+          "evidence_ids": [
+            "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+            "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326"
+          ]
+        },
+        {
+          "description": "data structure represents and stores it",
+          "evidence_ids": [
+            "884908c38d35648d51746c668386562c976e3a8a0ecad874864232eba8db1d52",
+            "e3268db767e08b2dc2badf2f7a4a8f4f405f1c9634918cd586d67eabb804bcc2"
+          ]
+        },
+        {
+          "description": "data structure supplies algorithms",
+          "evidence_ids": [
+            "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+            "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c"
+          ]
+        }
+      ],
+      "reference_answer": "The interface specifies what data can be stored. The data structure gives its representation and supplies algorithms supporting operations.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "interfaces-cross-section",
+      "course": "interfaces",
+      "category": "cross-section",
+      "query": "Combine the opening what/how distinction with the closing explanation of why multiple data structures can solve the same problem.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "what/how distinction",
+          "evidence_ids": [
+            "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+            "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d",
+            "13dad19af7d914b7cad82c3de8891e9d410f57b8f3be7f9f108229a64abaeaf7",
+            "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a"
+          ]
+        },
+        {
+          "description": "many implementations with different operation performance",
+          "evidence_ids": [
+            "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+            "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+            "711900bb4d68f9fac91da7ff1507d0574316f2c2ad4e024da433c3385171a556"
+          ]
+        }
+      ],
+      "reference_answer": "One interface describes what is required; multiple data structures implement how, with different operation speeds, so usage determines the choice.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "interfaces-exception-no-answer",
+      "course": "interfaces",
+      "category": "exception-no-answer",
+      "query": "Name the two main interfaces that the instructor says this class will focus on.",
+      "answerable": false,
+      "aspects": [],
+      "reference_answer": "The clip mentions two main interfaces but does not name them.",
+      "hard_negative_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+      ],
+      "no_answer_reason": "All 20 Evidence records checked: two interfaces are promised but their names are outside this clip."
+    },
+    {
+      "id": "interfaces-confusing-evidence-hard-negative",
+      "course": "interfaces",
+      "category": "confusing-evidence-hard-negative",
+      "query": "Does the interface itself supply the algorithms that implement the operations, or does another component do that?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "algorithms supplied by data structure",
+          "evidence_ids": [
+            "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+            "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c"
+          ]
+        },
+        {
+          "description": "interface specifies operation meaning",
+          "evidence_ids": [
+            "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360",
+            "83c9a90c2a4ff526f3f167a0f39e19dfa51892be51cfee081500e08f7f0daafa",
+            "623bdbe54ce8068ba18b0098719ccf2b90e64f143bda37876c537debbbf137c9"
+          ]
+        }
+      ],
+      "reference_answer": "The data structure supplies implementation algorithms; the interface specifies supported operations and what they mean.",
+      "hard_negative_ids": [
+        "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326"
+      ],
+      "no_answer_reason": null
+    },
+    {
+      "id": "amortization-lexical",
+      "course": "amortization",
+      "category": "lexical",
+      "query": "Which term dominates a growing geometric series, and what is the theta simplification of 2 to the log n here?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "largest last term dominates",
+          "evidence_ids": [
+            "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+            "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7"
+          ]
+        },
+        {
+          "description": "theta n",
+          "evidence_ids": [
+            "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+            "fb030b4ae831cb7de9ecb46772b01e7679f54cb513bdb035a5444ebf7c896b92"
+          ]
+        }
+      ],
+      "reference_answer": "The largest, last term dominates; 2 to the log n is theta n.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "amortization-semantic",
+      "course": "amortization",
+      "category": "semantic",
+      "query": "偶尔一次扩容很慢，为什么仍然能说平均下来每次很便宜？",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "linear total for n operations",
+          "evidence_ids": [
+            "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+            "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb",
+            "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+            "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0"
+          ]
+        },
+        {
+          "description": "amortized average across sequence with rare costly operation",
+          "evidence_ids": [
+            "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+            "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+          ]
+        }
+      ],
+      "reference_answer": "n 次操作总耗时是线性的；摊还是对操作序列平均。个别扩容花线性时间，大多数操作是常数时间。",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "amortization-multi-condition",
+      "course": "amortization",
+      "category": "multi-condition",
+      "query": "Starting from an empty array, state the total cost of n operations, the amortized cost per operation, and the cost of one expensive resize.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "empty array n operations linear total and constant amortized",
+          "evidence_ids": [
+            "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+            "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0"
+          ]
+        },
+        {
+          "description": "one resize linear",
+          "evidence_ids": [
+            "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+            "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+          ]
+        }
+      ],
+      "reference_answer": "From an empty array, n operations take linear total time and constant amortized time each, although a single resize can take linear time.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "amortization-cross-section",
+      "course": "amortization",
+      "category": "cross-section",
+      "query": "Link the geometric-series last-term argument to the later total resizing cost and explain why it is called amortized.",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "last term dominates",
+          "evidence_ids": [
+            "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+            "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7"
+          ]
+        },
+        {
+          "description": "last term theta n",
+          "evidence_ids": [
+            "56c8f5e2d480081444512699a755f44cf8f894530d0f56a742ac1fb015cdd474",
+            "fb030b4ae831cb7de9ecb46772b01e7679f54cb513bdb035a5444ebf7c896b92"
+          ]
+        },
+        {
+          "description": "linear total resizing",
+          "evidence_ids": [
+            "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+            "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb"
+          ]
+        },
+        {
+          "description": "averaging across operations",
+          "evidence_ids": [
+            "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+            "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+          ]
+        }
+      ],
+      "reference_answer": "The growing geometric sum is dominated by its last term, theta n, giving linear total resizing work. Averaging that work across the sequence gives constant amortized cost.",
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "amortization-exception-no-answer",
+      "course": "amortization",
+      "category": "exception-no-answer",
+      "query": "What potential function Phi and accounting credits does the lecturer define for array shrinking in this clip?",
+      "answerable": false,
+      "aspects": [],
+      "reference_answer": "The clip does not define a potential function or credits for shrinking.",
+      "hard_negative_ids": [
+        "b8d1aa1d95156b2578121c3bdd5fb012279ce66f5353fb3b4599e59666810c3e",
+        "093021559316e75bd07bf85b93f36721c7789ccae237bf88ca8ea8487137c10d"
+      ],
+      "no_answer_reason": "All 24 Evidence records checked: geometric growth and averaging only, no shrinking potential/credit definition; final charging sentence is truncated."
+    },
+    {
+      "id": "amortization-confusing-evidence-hard-negative",
+      "course": "amortization",
+      "category": "confusing-evidence-hard-negative",
+      "query": "Does constant amortized mean every individual operation, including a resize near the end, takes constant time?",
+      "answerable": true,
+      "aspects": [
+        {
+          "description": "individual resize can be linear, most operations constant",
+          "evidence_ids": [
+            "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+            "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+          ]
+        }
+      ],
+      "reference_answer": "No. A single resize can take linear time, while most operations are constant; amortized cost averages across the sequence.",
+      "hard_negative_ids": [
+        "6960187ae7fe6d0871ec6709cf8c8f0ef1277e6ab3eaf968aea29a25b78bc6bc",
+        "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb",
+        "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "4ad6d958e972106980e0e32b292be97c25dfebbfdbb130b7c1d1f0522177f870"
+      ],
+      "no_answer_reason": null
+    }
+  ]
+}

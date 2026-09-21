@@ -1,0 +1,1751 @@
+[
+  {
+    "case_id": "strings-semantic",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "b9308c26d44b20ffc3160028a9a20ec37d971bd130f722dbce5956a2f26996e8",
+    "review": {
+      "case_id": "strings-semantic",
+      "strategy": "dense",
+      "response_sha256": "b9308c26d44b20ffc3160028a9a20ec37d971bd130f722dbce5956a2f26996e8",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Returns only refused=true despite cited original explicitly describing rebinding to a distinct object; no learner answer.",
+      "context_ids": [
+        "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf"
+      ],
+      "cited_ids": [
+        "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-semantic",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "a5de10cb4fd9bfdd93fe95c31cc7d286d0fa02eb44253f06f8fbe5aed3ad33d5",
+    "review": {
+      "case_id": "strings-semantic",
+      "strategy": "bm25_dense",
+      "response_sha256": "a5de10cb4fd9bfdd93fe95c31cc7d286d0fa02eb44253f06f8fbe5aed3ad33d5",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Provider JSON omits required boolean refused; protocol failure retained. No substantive answer.",
+      "context_ids": [
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "strings-semantic",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "a5de10cb4fd9bfdd93fe95c31cc7d286d0fa02eb44253f06f8fbe5aed3ad33d5",
+    "review": {
+      "case_id": "strings-semantic",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "a5de10cb4fd9bfdd93fe95c31cc7d286d0fa02eb44253f06f8fbe5aed3ad33d5",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Provider JSON omits required boolean refused; protocol failure retained. No substantive answer.",
+      "context_ids": [
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d",
+        "0316674bcd3da68d3f7c6be6b6a64ee5d1c695aee1cdd9ce6cf7c70192592068",
+        "882c1bd16058f3f660c103ea3f7b643b03d663778df062be3a3801f7af41172a"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "strings-semantic",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "b9308c26d44b20ffc3160028a9a20ec37d971bd130f722dbce5956a2f26996e8",
+    "review": {
+      "case_id": "strings-semantic",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "b9308c26d44b20ffc3160028a9a20ec37d971bd130f722dbce5956a2f26996e8",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses despite reranker placing the explicit rebinding passage first; no learner answer.",
+      "context_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d"
+      ],
+      "cited_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "75e9038b21b2638b283d607a9c6506881274823eaa97d54acee1e7ebdd191b5d"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "6427ecb4c73077b292d9068bdc6e1cb5a760b92bd0af9c4437999680654b6304",
+    "review": {
+      "case_id": "strings-multi-condition",
+      "strategy": "dense",
+      "response_sha256": "6427ecb4c73077b292d9068bdc6e1cb5a760b92bd0af9c4437999680654b6304",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses because top-3 lacks the concatenation/slice facts; source corpus can answer, so counted as a false refusal.",
+      "context_ids": [
+        "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "52243818278f14929c4d0c8ed07ee60b9405d5a99a29d738d9c3e1776419c112",
+    "review": {
+      "case_id": "strings-multi-condition",
+      "strategy": "bm25_dense",
+      "response_sha256": "52243818278f14929c4d0c8ed07ee60b9405d5a99a29d738d9c3e1776419c112",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Top-3 omits concatenation and slice facts; model refuses an answerable corpus question.",
+      "context_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a"
+      ],
+      "cited_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "a7df3ca8ac87528857c948126c36221cce45e543b13e77a97af847211a1a9d1a"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "5b9e6d0e3314f47f60b8a7a2eda423f45ee44230ffa512ba8cae5ed871ef626d",
+    "review": {
+      "case_id": "strings-multi-condition",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "5b9e6d0e3314f47f60b8a7a2eda423f45ee44230ffa512ba8cae5ed871ef626d",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Invalid JSON with malformed quoted answer; also describes a nonsensical prefix/result and wrong starting position. Retained protocol failure.",
+      "context_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "strings-multi-condition",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "2e1e530d7da168e2ca289506d253913c6e9a4065707fac0808a689bd28593a13",
+    "review": {
+      "case_id": "strings-multi-condition",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "2e1e530d7da168e2ca289506d253913c6e9a4065707fac0808a689bd28593a13",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Invalid JSON with malformed quoted answer; purported prefix/result are not supported. Retained protocol failure.",
+      "context_ids": [
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "strings-cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "970e58a6b6384f0ad0280c2ca237e92000853209bbe932852db8b5cf44966de5",
+    "review": {
+      "case_id": "strings-cross-section",
+      "strategy": "dense",
+      "response_sha256": "970e58a6b6384f0ad0280c2ca237e92000853209bbe932852db8b5cf44966de5",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Incorrectly says hello remains bound to s after rebinding; directly contradicts cited new-object passage.",
+      "context_ids": [
+        "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf"
+      ],
+      "cited_ids": [
+        "1d0e29f3d14f15a186af8a301a259556cfd6b70ae07aee9d07833d3ced3c5801",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-cross-section",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "964fdaf5fe915d0b1bf20591d87af92f8c3a5951670ae67c5cf3fa5f1c612730",
+    "review": {
+      "case_id": "strings-cross-section",
+      "strategy": "bm25_dense",
+      "response_sha256": "964fdaf5fe915d0b1bf20591d87af92f8c3a5951670ae67c5cf3fa5f1c612730",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Content correctly explains initial binding and rebinding, but citations include only rebinding passages (6/13), not the supplied initial-memory diagram passage (1); initial-diagram claim lacks its citation.",
+      "context_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+      ],
+      "cited_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "964fdaf5fe915d0b1bf20591d87af92f8c3a5951670ae67c5cf3fa5f1c612730",
+    "review": {
+      "case_id": "strings-cross-section",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "964fdaf5fe915d0b1bf20591d87af92f8c3a5951670ae67c5cf3fa5f1c612730",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Same complete explanation as score fusion, but citations omit the supplied initial-memory diagram passage; initial-diagram claim is not supported by the explicitly cited sections.",
+      "context_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+      ],
+      "cited_ids": [
+        "59d8877c30a9599bba3d301c9d83279dde771e9779a43e5f019474bc9799d5cf",
+        "951467a1b53cd08ff9b03a4181cc67f78b12e43aefac62242c918c6fd45559bb"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "6841da26f3b74d4e40cf80d8d8d1788b04801e99281e0fdef613ee2cf7315e0f",
+    "review": {
+      "case_id": "strings-exception-no-answer",
+      "strategy": "bm25_dense",
+      "response_sha256": "6841da26f3b74d4e40cf80d8d8d1788b04801e99281e0fdef613ee2cf7315e0f",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Despite refused=true, answer body supplies ValueError, a class absent from the evidence (and wrong for the attempted operation). Not a correct refusal.",
+      "context_ids": [
+        "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1"
+      ],
+      "cited_ids": [
+        "5b199e9948df06f410bdbcb84b7a84f711881a26a9de03ad2f64e5e28d5ce5d7"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "2a85459a6d52956bbb21809fcb6982b7a2f5353ed2c9944894f4da8f0fa5c7f8",
+    "review": {
+      "case_id": "strings-confusing-evidence-hard-negative",
+      "strategy": "dense",
+      "response_sha256": "2a85459a6d52956bbb21809fcb6982b7a2f5353ed2c9944894f4da8f0fa5c7f8",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Top-3 retrieves hypothetical assignment but misses the instructor correction; refuses an answerable question.",
+      "context_ids": [
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57"
+      ],
+      "cited_ids": [
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "db940034d27f9db8ca20507ccc9baf475346b5f29af83be1a5059b9c0e2358b0",
+    "review": {
+      "case_id": "strings-confusing-evidence-hard-negative",
+      "strategy": "bm25_dense",
+      "response_sha256": "db940034d27f9db8ca20507ccc9baf475346b5f29af83be1a5059b9c0e2358b0",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Hypothetical assignment dominates top-3; correction absent and answerable question refused.",
+      "context_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "438cded4bd9df249b100aa57a304606efb689dc168f40c9efa3dc688002269e1"
+      ],
+      "cited_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "6730db0f97abffea325806dd6df06e86148c0afcbe89bdce5f45e185774a6447",
+    "review": {
+      "case_id": "strings-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "6730db0f97abffea325806dd6df06e86148c0afcbe89bdce5f45e185774a6447",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Top-3 contains attempted assignment and slice but not prohibition; answerable question refused.",
+      "context_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "184850b4094886de183b7bd43b921834b2adcbee6e940fb977450de736743e57",
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+      ],
+      "cited_ids": [
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0"
+      ]
+    }
+  },
+  {
+    "case_id": "strings-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "2a85459a6d52956bbb21809fcb6982b7a2f5353ed2c9944894f4da8f0fa5c7f8",
+    "review": {
+      "case_id": "strings-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "2a85459a6d52956bbb21809fcb6982b7a2f5353ed2c9944894f4da8f0fa5c7f8",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Reranker retains hypothetical assignment ahead of correction; no explanation of prohibition, answerable question refused.",
+      "context_ids": [
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085",
+        "aca1da0b25235b25558f68d609a0771b60fbab816ce7ddc70581c637ff83db01"
+      ],
+      "cited_ids": [
+        "00ce9943d19cd247b1d6a82fec1f52f66f172698fe68e7f4faebb93f3b178fe0",
+        "5164ec1360fd9c7efd545976876e9c987ea9db3a5566d0dbcb36e4859a206085"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-lexical",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "b545731e5d08f0d3e3167eb8967211405656b2b1e23abd16cffcb729f627217a",
+    "review": {
+      "case_id": "bisection-lexical",
+      "strategy": "dense",
+      "response_sha256": "b545731e5d08f0d3e3167eb8967211405656b2b1e23abd16cffcb729f627217a",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Only gives 6 guesses (supported), omitting the requested 76-versus-6 comparison although both numbers are retrieved.",
+      "context_ids": [
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+      ],
+      "cited_ids": [
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-lexical",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "f2cce94e0453f8eabf4d612633350fda919c1f0a6ff06934e48432040055664f",
+    "review": {
+      "case_id": "bisection-lexical",
+      "strategy": "bm25_dense",
+      "response_sha256": "f2cce94e0453f8eabf4d612633350fda919c1f0a6ff06934e48432040055664f",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Only gives bisection's 6 guesses, omitting requested guess-and-check count of 76 although comparison is available.",
+      "context_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+      ],
+      "cited_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-lexical",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "f2cce94e0453f8eabf4d612633350fda919c1f0a6ff06934e48432040055664f",
+    "review": {
+      "case_id": "bisection-lexical",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "f2cce94e0453f8eabf4d612633350fda919c1f0a6ff06934e48432040055664f",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Only states 6 guesses; missing the requested 76-versus-6 comparison.",
+      "context_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+      ],
+      "cited_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "ee27faa182975d20e66ec9f4a15cb4e4209da409f0c5b3217431f108d6aa662b",
+        "be774becfa30e740a34d40c65eb2808f9fcc67d3e9c2e65e9a98fcd2d71eba2e"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-lexical",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "d41732ced42f4198afb78714fb35b135d081bd20c7637ddfefe516e563890899",
+    "review": {
+      "case_id": "bisection-lexical",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "d41732ced42f4198afb78714fb35b135d081bd20c7637ddfefe516e563890899",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Despite both comparison passages ranked first, answer only gives 6, omitting 76.",
+      "context_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+      ],
+      "cited_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-semantic",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "0e9276b7a55ded80bc53e2dbf9a6faaeedb89f0c8ca65b7ece1f3c838e91cd23",
+    "review": {
+      "case_id": "bisection-semantic",
+      "strategy": "dense",
+      "response_sha256": "0e9276b7a55ded80bc53e2dbf9a6faaeedb89f0c8ca65b7ece1f3c838e91cd23",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Starts with correct halving statement but then calls sequential 0,1,2,3 guesses an example of halving; conflates the contrasting methods.",
+      "context_ids": [
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "4d2d0638d46e938c3afca40e42349d10f4da3d5f96115bb3fd12a1ee93845bc8",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ],
+      "cited_ids": [
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "36ee0c248344d2415bb208f60807bf61375bbea8bad8cb656bc601bb8172edb9",
+    "review": {
+      "case_id": "bisection-cross-section",
+      "strategy": "dense",
+      "response_sha256": "36ee0c248344d2415bb208f60807bf61375bbea8bad8cb656bc601bb8172edb9",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Complete and correct content, but cites only 76/6 passages, omitting retrieved passage 3 supporting the larger-search-space claim.",
+      "context_ids": [
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ],
+      "cited_ids": [
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-cross-section",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "6e0525480c4dfd99a0ab4d67fe4f8651f462f0c2767262e80548947614845efd",
+    "review": {
+      "case_id": "bisection-cross-section",
+      "strategy": "bm25_dense",
+      "response_sha256": "6e0525480c4dfd99a0ab4d67fe4f8651f462f0c2767262e80548947614845efd",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Complete comparison and larger-space claim, but citations omit passage 3 that supports the latter claim.",
+      "context_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ],
+      "cited_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-cross-section",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "9c38ea500816f815f0891fad3f2564db39a7c955e2fab91229eac2b5d39454e2",
+    "review": {
+      "case_id": "bisection-cross-section",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "9c38ea500816f815f0891fad3f2564db39a7c955e2fab91229eac2b5d39454e2",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Correct content but only count-comparison citations; the distinct larger-space claim lacks its source citation.",
+      "context_ids": [
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ],
+      "cited_ids": [
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "953da4d4ce4091934121bf2e47b312ea6b0cec49e73e9408b0f15dff07bf0dfe",
+    "review": {
+      "case_id": "bisection-cross-section",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "953da4d4ce4091934121bf2e47b312ea6b0cec49e73e9408b0f15dff07bf0dfe",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correct supported 76-versus-6 comparison, but omits requested larger-space conclusion; reranker removed that passage from top-3.",
+      "context_ids": [
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ],
+      "cited_ids": [
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "8f2c0cc2417acdef4234c0acf92fcd700cd4441f3bea8e548fb8f68e45059908",
+    "review": {
+      "case_id": "bisection-confusing-evidence-hard-negative",
+      "strategy": "dense",
+      "response_sha256": "8f2c0cc2417acdef4234c0acf92fcd700cd4441f3bea8e548fb8f68e45059908",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Correctly distinguishes sequential guessing from halving, but adds 76/6 counts without citing retrieved passage 2, the only source for those counts.",
+      "context_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+      ],
+      "cited_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "e35df7c964c054a0d7b6a6d6dacc2babe7c39e6055045844d16362a8b952814a",
+    "review": {
+      "case_id": "bisection-confusing-evidence-hard-negative",
+      "strategy": "bm25_dense",
+      "response_sha256": "e35df7c964c054a0d7b6a6d6dacc2babe7c39e6055045844d16362a8b952814a",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correctly identifies the sequence as guess-and-check, but omits requested contrast explaining bisection halving.",
+      "context_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520"
+      ],
+      "cited_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "4f5342bef7fd22e441bec56015524cd957dbe3bc298c94482ab45be9cd7fffb5",
+    "review": {
+      "case_id": "bisection-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "4f5342bef7fd22e441bec56015524cd957dbe3bc298c94482ab45be9cd7fffb5",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Identifies guess-and-check and cites valid count comparison, but omits halving and incorrectly marks an answerable response refused=true.",
+      "context_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0"
+      ],
+      "cited_ids": [
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "d6012acd2e07da6b624d976789de5d1c81619c0fdff7efe03efe815611dbf520",
+        "03b032b8ac0c41016cca463649d76b312447a08eb9910181c958cc228e5203c0"
+      ]
+    }
+  },
+  {
+    "case_id": "bisection-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "d820cb8e71d65f25d130efdca744009dd70fdbffdbf818a5fe37fa940f5d9f80",
+    "review": {
+      "case_id": "bisection-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "d820cb8e71d65f25d130efdca744009dd70fdbffdbf818a5fe37fa940f5d9f80",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correctly rejects the false premise but does not provide the requested bisection-halving contrast, despite having that passage.",
+      "context_ids": [
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7",
+        "25db0f6682529bcb3d4bcd7ef59ec9d843cbdb5cbeb6334e870a370383f2fdb3"
+      ],
+      "cited_ids": [
+        "947a5e079b070f8865c34e3832c7ed2f56bee4db6c4d7fbe6f78a1bcb0d64195",
+        "f30f10040ee88725e7f2a3b67780c6d8577e86fa272371c6a92f0ab3db6084b7"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-semantic",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "8e9102403faf894bbbf70875cc63aa100d31054a02404b5f844527263a91f366",
+    "review": {
+      "case_id": "interfaces-semantic",
+      "strategy": "dense",
+      "response_sha256": "8e9102403faf894bbbf70875cc63aa100d31054a02404b5f844527263a91f366",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Says to choose by usage but omits the key reason: differing performance of required operations. Retrieved evidence includes that distinction.",
+      "context_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a"
+      ],
+      "cited_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-semantic",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "534d7186d9465b5b3cb5fc8eb26003044ee859c9cf9f599a6af4bf098532b8f4",
+    "review": {
+      "case_id": "interfaces-semantic",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "534d7186d9465b5b3cb5fc8eb26003044ee859c9cf9f599a6af4bf098532b8f4",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Gives only generic usage advice; omits operation-specific performance differences required by the reference answer.",
+      "context_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "6d3c4eb85ec3cd284213e9103985d0195550f278526aaf270059527f4893503a"
+      ],
+      "cited_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "8d8c6b6f9a096fcf2e084962cb4f33b9a0db2530070cec19479da2a789603616",
+    "review": {
+      "case_id": "interfaces-multi-condition",
+      "strategy": "dense",
+      "response_sha256": "8d8c6b6f9a096fcf2e084962cb4f33b9a0db2530070cec19479da2a789603616",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Misassigns roles: E1 discusses implementation algorithms, not representation; E3 does not supply algorithms. The representation source was not retrieved.",
+      "context_ids": [
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615"
+      ],
+      "cited_ids": [
+        "fb3971c81b40c1bc8cb2f8d6713414f4e752c109cf90599730821d2bbd754326",
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "25ced0a69fdfa9fcdb82dd4ab5e06f924f1b0f5320282daf60ae52f2277248c5",
+    "review": {
+      "case_id": "interfaces-multi-condition",
+      "strategy": "bm25_dense",
+      "response_sha256": "25ced0a69fdfa9fcdb82dd4ab5e06f924f1b0f5320282daf60ae52f2277248c5",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Summarizes retrieved snippets instead of distinguishing interface data specification, representation, and operation algorithms; required roles missing/misattributed.",
+      "context_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ],
+      "cited_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "7fc4d9d9f1d706534421595bc24ec5c380377439cad1fa77e2e98f96fb678eb3",
+    "review": {
+      "case_id": "interfaces-multi-condition",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "7fc4d9d9f1d706534421595bc24ec5c380377439cad1fa77e2e98f96fb678eb3",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Representation claim is not supported by the algorithms-only citation, and interface data-specification role is not established.",
+      "context_ids": [
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ],
+      "cited_ids": [
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-multi-condition",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "5f30257b7e4be8309c17f2c6b0c6eca6bb57d635d18f4016fb3ef3b0b1c9a2db",
+    "review": {
+      "case_id": "interfaces-multi-condition",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "5f30257b7e4be8309c17f2c6b0c6eca6bb57d635d18f4016fb3ef3b0b1c9a2db",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correctly avoids filling the missing representation fact, but corpus-answerable question is refused; no complete learner answer.",
+      "context_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "interfaces-cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "86cb5b670c9ef8de80b0eb01116155b6d9de4183759af55d91b171093e45aac5",
+    "review": {
+      "case_id": "interfaces-cross-section",
+      "strategy": "dense",
+      "response_sha256": "86cb5b670c9ef8de80b0eb01116155b6d9de4183759af55d91b171093e45aac5",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Supported explanation of different implementations, but opening interface-what/data-structure-how distinction is omitted.",
+      "context_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615"
+      ],
+      "cited_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-cross-section",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "0da4eafcdbd207234e1f397dd706695b52729aa3e12e6fcba1fab1127cdf25ba",
+    "review": {
+      "case_id": "interfaces-cross-section",
+      "strategy": "bm25_dense",
+      "response_sha256": "0da4eafcdbd207234e1f397dd706695b52729aa3e12e6fcba1fab1127cdf25ba",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Educational content is correct and complete; however it explicitly attributes the opening what/how distinction to E1 (closing advantages passage), which does not state it. E3 is the actual source.",
+      "context_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ],
+      "cited_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-cross-section",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "afae92646875de4cd5e52a7a95a68b29866d986264bcadbbf3b4a515b053327e",
+    "review": {
+      "case_id": "interfaces-cross-section",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "afae92646875de4cd5e52a7a95a68b29866d986264bcadbbf3b4a515b053327e",
+      "answer_correct": true,
+      "all_claims_supported": false,
+      "all_required_aspects": true,
+      "reason": "Correct substantive explanation, but explicitly misattributes the opening what/how distinction to E1 instead of E3; source attribution is inaccurate.",
+      "context_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "8376b623f7ee8a8b7f15868a9a33c0a2695a2b07346cda2f8381596c21c51615",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ],
+      "cited_ids": [
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "295971e6172a24a356301671d59701c5a074ed694c0285108035c83c42936611",
+    "review": {
+      "case_id": "interfaces-cross-section",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "295971e6172a24a356301671d59701c5a074ed694c0285108035c83c42936611",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Explains differing implementation advantages but does not actually explain the interface-what versus data-structure-how roles; cites only the closing section.",
+      "context_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304",
+        "915dee31ad3f1bcdccc4066436ef3c75e27b6b265a02d95ec279534a7a82c67d"
+      ],
+      "cited_ids": [
+        "aaf755df0b6b28ba766d12f83aaf8b5849bce85850139084d18e435057c14180",
+        "c1823f07d9721929c9030aac5ed528f3ddc4bac489bbf9bf8ea49fe1af8b1304"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "strategy": "dense",
+    "answerable": false,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "7dd29e5c64a9f8d9d53af917b0de0f06aaacca073ed965335e80bb85ac60b329",
+    "review": {
+      "case_id": "interfaces-exception-no-answer",
+      "strategy": "dense",
+      "response_sha256": "7dd29e5c64a9f8d9d53af917b0de0f06aaacca073ed965335e80bb85ac60b329",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Repeats two main interfaces without naming them and sets refused=false. Names are absent from entire clip, so refusal classification fails.",
+      "context_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15"
+      ],
+      "cited_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "a9e7f74ab1b7e015c14cdc08d83e18fa97982c2bdebf8d879380b5d73263380f",
+    "review": {
+      "case_id": "interfaces-exception-no-answer",
+      "strategy": "bm25_dense",
+      "response_sha256": "a9e7f74ab1b7e015c14cdc08d83e18fa97982c2bdebf8d879380b5d73263380f",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Echoes two main interfaces as if answered, with refused=false; does not acknowledge missing names.",
+      "context_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ],
+      "cited_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "strategy": "hybrid_rrf",
+    "answerable": false,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "0829ca7a9a43a1a0aac94b598a4ba82044c94be0e5912ea95f74d1d376d8cd40",
+    "review": {
+      "case_id": "interfaces-exception-no-answer",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "0829ca7a9a43a1a0aac94b598a4ba82044c94be0e5912ea95f74d1d376d8cd40",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Echoes two main interfaces, without names or acknowledgement of missing evidence; refused=false is incorrect classification.",
+      "context_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ],
+      "cited_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-exception-no-answer",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": false,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "7dd29e5c64a9f8d9d53af917b0de0f06aaacca073ed965335e80bb85ac60b329",
+    "review": {
+      "case_id": "interfaces-exception-no-answer",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "7dd29e5c64a9f8d9d53af917b0de0f06aaacca073ed965335e80bb85ac60b329",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Reranking retrieves all mentions, but model merely echoes two main interfaces instead of refusing absent names.",
+      "context_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+      ],
+      "cited_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "872ba6091065422fda0d741a90201d044000d195c72562fcfd1bb751c5a17b15",
+        "b16c7bdeb6775b3601bc7e2d9fdae70d1d82e53da61c49536f944212472b24ef"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "28c313dd570f8b8fd98107947fc8af59a29c3ad381117c2c0618f60ed80b15a8",
+    "review": {
+      "case_id": "interfaces-confusing-evidence-hard-negative",
+      "strategy": "dense",
+      "response_sha256": "28c313dd570f8b8fd98107947fc8af59a29c3ad381117c2c0618f60ed80b15a8",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses a corpus-answerable role question even though the main data-structure algorithm fact is in context.",
+      "context_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ],
+      "cited_ids": [
+        "46ec3d2dd4093ce2195255ee2bd8ab13efc2901fbbb7cf2c34d3dd8531879cf0",
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "99020934c3f7a33914133d326d860009d634c209caee43e361c32aa681d7bf90",
+    "review": {
+      "case_id": "interfaces-confusing-evidence-hard-negative",
+      "strategy": "bm25_dense",
+      "response_sha256": "99020934c3f7a33914133d326d860009d634c209caee43e361c32aa681d7bf90",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correctly names the data structure. Under the frozen strict completeness rubric, interface operation-specification role is also required and omitted; the short answer does answer the literal either/or question.",
+      "context_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee"
+      ],
+      "cited_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "99020934c3f7a33914133d326d860009d634c209caee43e361c32aa681d7bf90",
+    "review": {
+      "case_id": "interfaces-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "99020934c3f7a33914133d326d860009d634c209caee43e361c32aa681d7bf90",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correct literal either/or answer naming the data structure; fails the frozen richer completeness rubric because interface operation meaning/specification is omitted.",
+      "context_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "0f607a02aecdafa0b8ebdb8fb0cbdb1b88b22f6ab6d7dc60a65ecacca8420771",
+        "4548101022a72f9dc8b80f62877e3965f88bbd76a354f4d114ec5f454282abee"
+      ],
+      "cited_ids": [
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0"
+      ]
+    }
+  },
+  {
+    "case_id": "interfaces-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "403f3ef12cbe641d30871796136f74f84b274a779e41e1338b2722d2eee42108",
+    "review": {
+      "case_id": "interfaces-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "403f3ef12cbe641d30871796136f74f84b274a779e41e1338b2722d2eee42108",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correctly says interface does not supply algorithms, but neither names the responsible data structure in the answer nor explains the frozen interface-specification aspect.",
+      "context_ids": [
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0",
+        "f1781e9338df75e48c3c5e120fd6e108f1ebc15b7e55bcf12290af94dea28360"
+      ],
+      "cited_ids": [
+        "17c1ab469a3e7e351b7d7bd773033975e6050e3a9b09f9dbf3495d6bd789b44c",
+        "922aa35ee645865e19eef926eee1fefa1f8bae1ab973bb59c15810d99d57c0e0"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-semantic",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "a08c25f8658863cbf8a5e49c79b673ceac5fbda453afdb9760419ab90870eb68",
+    "review": {
+      "case_id": "amortization-semantic",
+      "strategy": "dense",
+      "response_sha256": "a08c25f8658863cbf8a5e49c79b673ceac5fbda453afdb9760419ab90870eb68",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Supported discussion of rare expensive resizing and mostly cheap operations, but omits linear total over n operations required to justify the average bound.",
+      "context_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1"
+      ],
+      "cited_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-semantic",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "27579206069fcdebd9652425604f51d8dad45fdc3afe8e365654d006583cc660",
+    "review": {
+      "case_id": "amortization-semantic",
+      "strategy": "bm25_dense",
+      "response_sha256": "27579206069fcdebd9652425604f51d8dad45fdc3afe8e365654d006583cc660",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Describes cheap operations and linear single resize, but omits linear total over n operations despite that source being retrieved.",
+      "context_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1"
+      ],
+      "cited_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-semantic",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "b9d7b0108c4c0e681346b0d2b42ae9e514ef8787585cb1aa6547baa9b700f91d",
+    "review": {
+      "case_id": "amortization-semantic",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "b9d7b0108c4c0e681346b0d2b42ae9e514ef8787585cb1aa6547baa9b700f91d",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Mostly-cheap-operation explanation is supported but lacks the required linear-total justification for the average bound.",
+      "context_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1"
+      ],
+      "cited_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-semantic",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "176f28089467a8cc417f23572019c6acee99c2a8b3c54bdbbc96124947b4e438",
+    "review": {
+      "case_id": "amortization-semantic",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "176f28089467a8cc417f23572019c6acee99c2a8b3c54bdbbc96124947b4e438",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Changes average cost per operation into average cost per resize, which the course does not claim; also omits linear total.",
+      "context_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb"
+      ],
+      "cited_ids": [
+        "2941782a3578f1e6f66a4b78019abd97e4046738a4245aa5b84631d859a6a3fc",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-multi-condition",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "15196116121feef8fe75e80bab99e1ed7811d25bd7b96541bd14fca5db689a5a",
+    "review": {
+      "case_id": "amortization-multi-condition",
+      "strategy": "dense",
+      "response_sha256": "15196116121feef8fe75e80bab99e1ed7811d25bd7b96541bd14fca5db689a5a",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Correct constant-amortized and linear-single-resize facts, but omits the explicitly requested total cost of n operations.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-multi-condition",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "48117c107975da5dcb80de5cb70f300f47c2ffe2f1150cd8465fb810783d6384",
+    "review": {
+      "case_id": "amortization-multi-condition",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "48117c107975da5dcb80de5cb70f300f47c2ffe2f1150cd8465fb810783d6384",
+      "answer_correct": true,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Omits explicitly requested n-operation total cost even though both original and translation providing it are in context.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "b4eaf103066e3767de2905e56c30b7fc216eab1935516485859f1e024f3861a0",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "bbcb420a56c4508166e3bdf2b1d3716ee163ca2ddc16ee3bbeddf9ab4db7a2dd",
+    "review": {
+      "case_id": "amortization-cross-section",
+      "strategy": "dense",
+      "response_sha256": "bbcb420a56c4508166e3bdf2b1d3716ee163ca2ddc16ee3bbeddf9ab4db7a2dd",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Does not establish theta-n last term or linear resizing total, and misleadingly calls the last-term argument itself amortized rather than the cost averaged across operations.",
+      "context_ids": [
+        "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169"
+      ],
+      "cited_ids": [
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "3da8237ff22f2cc937741decb0dc7e16f3fb7fe95339f81d701e99a0c729c453",
+    "review": {
+      "case_id": "amortization-cross-section",
+      "strategy": "bm25_dense",
+      "response_sha256": "3da8237ff22f2cc937741decb0dc7e16f3fb7fe95339f81d701e99a0c729c453",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Treats a linear single resize as enough to establish constant amortized cost; omits theta-n last-term step and total resizing sum required for the cross-section explanation.",
+      "context_ids": [
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ],
+      "cited_ids": [
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "a96de734d40c635412a03858d844e80f691e8a0725fa6580cb15e8502d28ac5d",
+    "review": {
+      "case_id": "amortization-cross-section",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "a96de734d40c635412a03858d844e80f691e8a0725fa6580cb15e8502d28ac5d",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Calls an end resize constant amortized without establishing the total resizing sum or theta-n last-term link; confuses single-event cost with sequence amortization.",
+      "context_ids": [
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ],
+      "cited_ids": [
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-cross-section",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": false,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": true,
+    "response_sha256": "1cd09c99d953969f8e221b0e8222feec96cf7d941f91c19454c7f1719ff40daa",
+    "review": {
+      "case_id": "amortization-cross-section",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "1cd09c99d953969f8e221b0e8222feec96cf7d941f91c19454c7f1719ff40daa",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Incorrectly treats geometric last-term dominance as meaning costs are averaged over time; missing theta-n and total-resizing steps.",
+      "context_ids": [
+        "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2"
+      ],
+      "cited_ids": [
+        "090b27b4912a1aa7544afd5b29b1fc92bd53e68d692ddbd4bf1c7d3a23a2955d",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "aadf5cb989a3ad8e963fa9e947d3a7fa72328a15ad6c05fe50fd82a7835835b2"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-exception-no-answer",
+    "strategy": "bm25_dense",
+    "answerable": false,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "416a5eaa8b356f2bea6e6ebb29a655762faa1e0fd3321dce0c0a1f1e7d03b768",
+    "review": {
+      "case_id": "amortization-exception-no-answer",
+      "strategy": "bm25_dense",
+      "response_sha256": "416a5eaa8b356f2bea6e6ebb29a655762faa1e0fd3321dce0c0a1f1e7d03b768",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Empty answer violates frozen output contract even though refused=true; retained protocol failure, not counted as a successful refusal.",
+      "context_ids": [
+        "4ca22ebd13143e6fe94aaebfc54639d254909be7a4ede0764703dc24aeeb5302",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "amortization-exception-no-answer",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": false,
+    "protocol_valid": false,
+    "refused": null,
+    "grounded_answer_pass": null,
+    "refusal_classification_pass": false,
+    "response_sha256": "416a5eaa8b356f2bea6e6ebb29a655762faa1e0fd3321dce0c0a1f1e7d03b768",
+    "review": {
+      "case_id": "amortization-exception-no-answer",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "416a5eaa8b356f2bea6e6ebb29a655762faa1e0fd3321dce0c0a1f1e7d03b768",
+      "answer_correct": false,
+      "all_claims_supported": false,
+      "all_required_aspects": false,
+      "reason": "Empty answer violates frozen contract; refused=true alone does not rescue protocol failure.",
+      "context_ids": [
+        "a44ae1c6244353b7a244ae51ee900987d725b2f87af012a6a722fd1825fe4ac7",
+        "0bb47b75c24ba69c49f0abc8c2a1d7e094c9ee6a6009c5673c46a491b7997ff1",
+        "33b6e5558a5630718458a9f3b220904b7488ccbd5f7159f69c18385fa8ccc5a1"
+      ],
+      "cited_ids": []
+    }
+  },
+  {
+    "case_id": "amortization-confusing-evidence-hard-negative",
+    "strategy": "dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "6730db0f97abffea325806dd6df06e86148c0afcbe89bdce5f45e185774a6447",
+    "review": {
+      "case_id": "amortization-confusing-evidence-hard-negative",
+      "strategy": "dense",
+      "response_sha256": "6730db0f97abffea325806dd6df06e86148c0afcbe89bdce5f45e185774a6447",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses although cited passage explicitly distinguishes linear single resize from constant amortized sequence cost.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-confusing-evidence-hard-negative",
+    "strategy": "bm25_dense",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "64e7c968a1ae5edf3bcaa041396bb78dba0c741dcbc285c116c5149beb974c1f",
+    "review": {
+      "case_id": "amortization-confusing-evidence-hard-negative",
+      "strategy": "bm25_dense",
+      "response_sha256": "64e7c968a1ae5edf3bcaa041396bb78dba0c741dcbc285c116c5149beb974c1f",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses answerable misconception correction despite explicit supporting expensive-resize passage.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "64e7c968a1ae5edf3bcaa041396bb78dba0c741dcbc285c116c5149beb974c1f",
+    "review": {
+      "case_id": "amortization-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf",
+      "response_sha256": "64e7c968a1ae5edf3bcaa041396bb78dba0c741dcbc285c116c5149beb974c1f",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Refuses answerable misconception correction despite explicit supporting expensive-resize passage.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "c7fa63cfcf2e6e6ea62c8cbcb3355aa6af4853a4e1ea3c3529bd99d89a03d45f"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c"
+      ]
+    }
+  },
+  {
+    "case_id": "amortization-confusing-evidence-hard-negative",
+    "strategy": "hybrid_rrf_ce",
+    "answerable": true,
+    "protocol_valid": true,
+    "refused": true,
+    "grounded_answer_pass": false,
+    "refusal_classification_pass": false,
+    "response_sha256": "ac8c2cfdd6bc130d4883d8bc9841d959090bb3bc1ed9e4a63a2cf6b66e38a09d",
+    "review": {
+      "case_id": "amortization-confusing-evidence-hard-negative",
+      "strategy": "hybrid_rrf_ce",
+      "response_sha256": "ac8c2cfdd6bc130d4883d8bc9841d959090bb3bc1ed9e4a63a2cf6b66e38a09d",
+      "answer_correct": false,
+      "all_claims_supported": true,
+      "all_required_aspects": false,
+      "reason": "Reranker includes the exact expensive-resize correction, yet reader refuses rather than explaining why constant amortized does not mean every operation constant.",
+      "context_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb"
+      ],
+      "cited_ids": [
+        "6b6ac9256bc7b6745c490f48f6feb27e1bdee92bbee900ba36774ff98dbd9169",
+        "536c3f049195bab814ecc5f2e371b005b1c2793e82c7b8a494f7816d8225fa5c",
+        "461c31566bbd73ad3d631bcfb9e1d0153417122bd48d0bcc7199d440b6ecf6cb"
+      ]
+    }
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "archive_sha256": "60f8cbf9ba1af3114717cbd00c90c62b8b7290227dd52cee3c55ff8e26076fd1",
+  "matched_canonical_evidence": 70,
+  "verified": [
+    "evidence_id",
+    "normalizedText",
+    "contentHash",
+    "start_ms",
+    "end_ms",
+    "owner_id",
+    "course_id",
+    "revision"
+  ],
+  "mode": "Historical authenticated Java export; current live authorization not asserted"
+}

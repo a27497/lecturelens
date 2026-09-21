@@ -1,0 +1,11 @@
+{
+  "cpu_model": "AMD EPYC 7B13",
+  "logical_cpus": 8,
+  "affinity_cpus": 8,
+  "platform": "Linux-7.0.0-1011-gcp-x86_64-with-glibc2.39",
+  "dense_threads": 2,
+  "reranker_threads": 2,
+  "reader_threads": 4,
+  "parallel_benchmark_queries": 1,
+  "latency_scope": "warm query; real PostgreSQL; shared host, not concurrency SLA"
+}

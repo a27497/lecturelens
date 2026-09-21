@@ -1,0 +1,7 @@
+{
+  "freeze_sha256": "a3a21da316beda51f939d2b3f695347f3b91eba6785a1224ee96c1bbc48deb99",
+  "answers_sha256": "a20b83d2e38f88f2ed7be4209baebb7d9a957d8bec2d73a3d3b8e3c6be6bddd0",
+  "reviews_sha256": "27c04349e7c0dea7357be356251c0c69f0c71af19b656dd763aae667c32d65de",
+  "review_method": "Codex manual source-based review of every actual response, question, frozen rubric and explicitly cited Evidence; not blind human gold or automatic judge. No failed trial reclassified or removed.",
+  "retrieval_sha256": "35c4e487384052f65900c8e97e99bf7d14882e1a803947b3fc06539247b830e5"
+}
