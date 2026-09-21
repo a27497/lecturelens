@@ -16,6 +16,7 @@ const navItems = computed(() =>
     ? [
         { label: "我的课程", to: "/tasks" },
         { label: "上传课程", to: "/upload" },
+        { label: "模型管理", to: "/settings/models" },
       ]
     : [{ label: "首页", to: "/" }],
 );

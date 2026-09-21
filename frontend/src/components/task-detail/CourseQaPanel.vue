@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { askCourseQa, toReadableCourseQaError } from "../../api/qa";
+import { askCourseQa, getEvidenceIndexStatus, toReadableCourseQaError } from "../../api/qa";
+import type { EvidenceIndexStatus } from "../../api/qa";
 import type { CourseQaEvidenceItem, CourseQaResponse } from "../../types/qa";
 import { formatMillisRange } from "../../utils/time";
 
@@ -11,7 +12,14 @@ const loading = ref(false);
 const errorMessage = ref("");
 const response = ref<CourseQaResponse | null>(null);
 const requestVersion = ref(0);
-const canSubmit = computed(() => question.value.trim().length > 0 && question.value.trim().length <= 500 && !loading.value);
+const indexStatus = ref<EvidenceIndexStatus["status"] | "UNKNOWN">("UNKNOWN");
+const indexReady = computed(() => ["DISABLED", "READY"].includes(indexStatus.value));
+const indexMessage = computed(() => ({
+  UNKNOWN: "正在检查课程资料状态…", DISABLED: "", READY: "课程资料已就绪，可以提问。",
+  PENDING: "课程资料等待更新，完成后即可提问。", INDEXING: "正在准备课程资料，完成后即可提问。",
+  FAILED: "课程资料更新暂时失败，系统会自动重试。",
+})[indexStatus.value]);
+const canSubmit = computed(() => indexReady.value && question.value.trim().length > 0 && question.value.trim().length <= 500 && !loading.value);
 const confidenceDetails = computed(() => (response.value?.evidence ?? [])
   .filter((item) => item.confidence !== null)
   .map((item, index) => ({
@@ -20,10 +28,26 @@ const confidenceDetails = computed(() => (response.value?.evidence ?? [])
     value: item.confidence!.toFixed(2),
   })));
 
-watch(() => props.taskId, clear, { immediate: true });
+watch(() => props.taskId, (taskId, _previous, onCleanup) => {
+  clear();
+  indexStatus.value = "UNKNOWN";
+  let active = true;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  onCleanup(() => { active = false; clearTimeout(timer); });
+  async function poll() {
+    try {
+      const status = await getEvidenceIndexStatus(taskId);
+      if (active) indexStatus.value = status.status;
+    } catch {
+      if (active) indexStatus.value = "UNKNOWN";
+    }
+    if (active) timer = setTimeout(poll, indexReady.value ? 30_000 : 3_000);
+  }
+  void poll();
+}, { immediate: true });
 
 async function submit() {
-  if (loading.value) return;
+  if (loading.value || !indexReady.value) return;
   const normalized = question.value.trim();
   if (!normalized) { errorMessage.value = "请输入课程问题"; return; }
   if (normalized.length > 500) { errorMessage.value = "问题不能超过 500 个字符"; return; }
@@ -65,6 +89,7 @@ function originalText(item: CourseQaEvidenceItem): string {
 <template>
   <section class="workspace-panel qa-panel" aria-labelledby="qa-title">
     <header><h2 id="qa-title">课程问答</h2><p>根据当前课程已经生成的内容回答问题。</p></header>
+    <p v-if="indexMessage" class="index-status" role="status">{{ indexMessage }}</p>
     <div class="qa-form">
       <el-input v-model="question" type="textarea" :rows="4" maxlength="500" show-word-limit placeholder="输入与当前课程有关的问题" @keydown.ctrl.enter.prevent="submit" />
       <div><el-button type="primary" :loading="loading" :disabled="!canSubmit" @click="submit">提问</el-button><el-button :disabled="loading && !response" @click="clear">清空</el-button></div>

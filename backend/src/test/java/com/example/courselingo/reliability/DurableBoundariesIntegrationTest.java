@@ -31,18 +31,22 @@ class DurableBoundariesIntegrationTest {
     RocketMqAnalysisTaskMessageProducer transport;
     VideoKeyframeEvidenceLifecycleService cleanup;
     AnalysisTaskMessage message;
+    com.example.courselingo.qa.service.DenseEvidenceClient dense;
+    EvidenceIndexSynchronizer indexes;
+    DataSourceTransactionManager manager;
 
     @BeforeEach
     void setup() {
         var ds = new DriverManagerDataSource("jdbc:h2:mem:" + UUID.randomUUID()
             + ";MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1", "sa", "");
         jdbc = new JdbcTemplate(ds);
-        var manager = new DataSourceTransactionManager(ds);
+        manager = new DataSourceTransactionManager(ds);
         tx = new TransactionTemplate(manager);
         jdbc.execute("CREATE TABLE analysis_task(id VARCHAR(64) PRIMARY KEY,user_id BIGINT,status VARCHAR(32),"
             + "deleted_at TIMESTAMP,error_code VARCHAR(64),error_message VARCHAR(1024),finished_at TIMESTAMP)");
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V22__durable_task_boundaries.sql"),
-            new ClassPathResource("db/migration/V23__versioned_course_evidence.sql")).execute(ds);
+            new ClassPathResource("db/migration/V23__versioned_course_evidence.sql"),
+            new ClassPathResource("db/migration/V24__evidence_index_sync.sql")).execute(ds);
         jdbc.execute("CREATE TABLE publication(content VARCHAR(64))");
         jdbc.update("INSERT INTO analysis_task(id,user_id,status) VALUES ('task',42,'QUEUED')");
         jdbc.execute("CREATE TABLE subtitle_segment(id BIGINT PRIMARY KEY,task_id VARCHAR(64),user_id BIGINT,"
@@ -61,7 +65,95 @@ class DurableBoundariesIntegrationTest {
         cleanup = mock(VideoKeyframeEvidenceLifecycleService.class);
         outbox = new DurableTaskOutbox(jdbc, json, transport, cleanup, manager);
         evidence = new CourseEvidenceService(jdbc, json, fence, manager);
+        dense = mock(com.example.courselingo.qa.service.DenseEvidenceClient.class);
+        when(dense.enabled()).thenReturn(true);
+        indexes = new EvidenceIndexSynchronizer(jdbc, evidence, dense, manager);
         message = new AnalysisTaskMessage("task", "upload", 42L, "en-US", "zh-CN", "event", "trace", Instant.now());
+    }
+
+    private void indexable() throws Exception {
+        jdbc.update("UPDATE analysis_task SET status='SUCCEEDED'");
+        tx.executeWithoutResult(status -> {
+            fence.sourceChanging("task", 42L);
+            jdbc.update("INSERT INTO subtitle_segment VALUES (1,'task',42,0,0,1000,'bread recipe','en')");
+        });
+        when(dense.sync(anyString(), anyLong(), anyLong(), anyLong(), anyList(), anyBoolean())).thenAnswer(call -> {
+            assertThat(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
+            return new ObjectMapper().createObjectNode().put("state", (boolean) call.getArgument(5) ? "DELETED" : "READY")
+                .put("index_version", "test-v1");
+        });
+    }
+
+    @Test void backgroundIndexBuildDoesNotNeedAQuestionAndRecoversAfterRestart() throws Exception {
+        indexable();
+        assertThat(indexes.status("task",42L).status()).isEqualTo("PENDING");
+        indexes.synchronize();
+        assertThat(indexes.status("task",42L).status()).isEqualTo("READY");
+        verify(dense).sync(eq("task"),eq(42L),eq(1L),anyLong(),argThat(items -> items.size()==1),eq(false));
+        jdbc.update("UPDATE evidence_index_sync SET claim_until=TIMESTAMP '2000-01-01 00:00:00',"
+            + "available_at=TIMESTAMP '2000-01-01 00:00:00',claim_id='crashed',status='INDEXING'");
+        new EvidenceIndexSynchronizer(jdbc,evidence,dense,manager).synchronize();
+        assertThat(indexes.status("task",42L).status()).isEqualTo("READY");
+        verify(dense,times(2)).sync(anyString(),anyLong(),anyLong(),anyLong(),anyList(),eq(false));
+    }
+
+    @Test void sourceRollbackDoesNotEnqueueIndexWork() {
+        tx.executeWithoutResult(status -> { fence.sourceChanging("task",42L); status.setRollbackOnly(); });
+        assertThat(count("evidence_index_sync")).isZero();
+        assertThat(count("evidence_change")).isZero();
+    }
+
+    @Test void offlineIndexRetriesAndDeleteRequiresNoMoreQuestions() throws Exception {
+        indexable();
+        when(dense.sync(anyString(),anyLong(),anyLong(),anyLong(),anyList(),anyBoolean()))
+            .thenThrow(new IllegalStateException("private provider detail"));
+        indexes.synchronize();
+        assertThat(indexes.status("task",42L).status()).isEqualTo("FAILED");
+        assertThat(indexes.status("task",42L).lastError()).isEqualTo("IllegalStateException");
+        tx.executeWithoutResult(status -> {
+            jdbc.update("UPDATE analysis_task SET deleted_at=CURRENT_TIMESTAMP");
+            outbox.enqueueCleanup("task",42L);
+        });
+        assertThatThrownBy(() -> indexes.status("task",42L)).isInstanceOf(BusinessException.class);
+        doReturn(new ObjectMapper().createObjectNode().put("state","DELETED").put("index_version","test-v1"))
+            .when(dense).sync(anyString(),anyLong(),anyLong(),anyLong(),anyList(),eq(true));
+        new EvidenceIndexSynchronizer(jdbc,evidence,dense,manager).synchronizeDeletes();
+        assertThat(jdbc.queryForObject("SELECT status FROM evidence_index_sync",String.class)).isEqualTo("DELETED");
+        verify(dense).sync(eq("task"),eq(42L),anyLong(),anyLong(),eq(java.util.List.of()),eq(true));
+    }
+
+    @Test void concurrentSourceChangeCannotBeAcknowledgedAsReady() throws Exception {
+        indexable();
+        when(dense.sync(anyString(),anyLong(),anyLong(),anyLong(),anyList(),eq(false))).thenAnswer(call -> {
+            tx.executeWithoutResult(status -> {
+                fence.sourceChanging("task",42L);
+                jdbc.update("UPDATE analysis_task SET status='RUNNING'");
+            });
+            return new ObjectMapper().createObjectNode().put("state","READY").put("index_version","test-v1");
+        });
+        indexes.synchronize();
+        assertThat(indexes.status("task",42L).status()).isEqualTo("PENDING");
+        assertThat(indexes.status("task",42L).indexedRevision()).isNull();
+    }
+
+    @Test void deletionRevokesAnInFlightIndexClaim() throws Exception {
+        indexable();
+        jdbc.update("UPDATE evidence_index_sync SET claim_id='slow-worker',claim_until=TIMESTAMP '2099-01-01 00:00:00'");
+        tx.executeWithoutResult(status -> {
+            jdbc.update("UPDATE analysis_task SET deleted_at=CURRENT_TIMESTAMP");
+            outbox.enqueueCleanup("task",42L);
+        });
+        indexes.synchronizeDeletes();
+        assertThat(jdbc.queryForObject("SELECT status FROM evidence_index_sync",String.class)).isEqualTo("DELETED");
+        verify(dense).sync(anyString(),anyLong(),anyLong(),anyLong(),eq(java.util.List.of()),eq(true));
+    }
+
+    @Test void indexStatusIsOwnerScopedAndDoesNotMaterializeSnapshots() {
+        assertThat(indexes.status("task",42L).status()).isEqualTo("PENDING");
+        assertThatThrownBy(() -> indexes.status("task",99L)).isInstanceOf(BusinessException.class);
+        assertThat(count("course_evidence_snapshot")).isZero();
+        when(dense.enabled()).thenReturn(false);
+        assertThat(indexes.status("task",42L).status()).isEqualTo("DISABLED");
     }
 
     @Test void rolledBackCreationCannotDeliverAnEvent() {

@@ -82,6 +82,8 @@ class DenseEvidenceClientTest {
         assertThat(received.get().path("owner_id").asLong()).isEqualTo(42);
         assertThat(received.get().path("revision").asLong()).isEqualTo(7);
         assertThat(received.get().path("time_window").path("start_ms").asLong()).isEqualTo(900);
+        assertThat(received.get().has("evidence")).isFalse();
+        assertThat(received.get().path("allowed_evidence_ids").get(0).asText()).isEqualTo("e1");
         assertThat(signature.get()).matches("[0-9a-f]{64}");
     }
 
@@ -127,6 +129,30 @@ class DenseEvidenceClientTest {
     void emptyEvidenceDoesNotCallService() {
         assertThat(client.retrieve("task-1", 42L, List.of(), "question", null, null, 8)).isEmpty();
         assertThat(received.get()).isNull();
+    }
+
+    @Test
+    void syncPlansWithoutTextThenSendsOnlyMissingEvidence() throws Exception {
+        var requests = new java.util.ArrayList<ObjectNode>();
+        server.createContext("/internal/v1/evidence/sync", exchange -> {
+            try {
+                var request = (ObjectNode) json.readTree(exchange.getRequestBody());
+                requests.add(request);
+                var result = request.deepCopy().put("index_version", "test-v1");
+                if ("PLAN".equals(request.path("operation").asText())) {
+                    result.put("state", "PENDING").putArray("missing_ids").add("e2");
+                } else result.put("state", "READY");
+                byte[] bytes = json.writeValueAsBytes(result);
+                exchange.sendResponseHeaders(200,bytes.length);
+                exchange.getResponseBody().write(bytes);
+            } finally { exchange.close(); }
+        });
+        client.sync("task-1",42L,7,10,List.of(evidence("e1",7),evidence("e2",7)),false);
+        assertThat(requests).hasSize(2);
+        assertThat(requests.getFirst().has("upserts")).isFalse();
+        assertThat(requests.getFirst().path("manifest").size()).isEqualTo(2);
+        assertThat(requests.getLast().path("upserts").size()).isEqualTo(1);
+        assertThat(requests.getLast().path("upserts").get(0).path("evidence_id").asText()).isEqualTo("e2");
     }
 
     private static void assertUnavailable(org.assertj.core.api.ThrowableAssert.ThrowingCallable action) {

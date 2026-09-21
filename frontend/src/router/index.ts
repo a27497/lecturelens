@@ -6,10 +6,12 @@ import RegisterView from "../views/RegisterView.vue";
 import TaskDetailView from "../views/TaskDetailView.vue";
 import TaskListView from "../views/TaskListView.vue";
 import UploadView from "../views/UploadView.vue";
+import ModelManagementView from "../views/ModelManagementView.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: "/settings/models", name: "models", component: ModelManagementView, meta: { requiresAuth: true } },
     {
       path: "/",
       name: "home",

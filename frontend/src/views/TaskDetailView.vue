@@ -13,6 +13,7 @@ import { cancelTask, fetchTaskDetail, retryTask, toReadableTaskError } from "../
 import CourseContentPanel from "../components/task-detail/CourseContentPanel.vue";
 import CourseFilesPanel from "../components/task-detail/CourseFilesPanel.vue";
 import CourseOverviewPanel from "../components/task-detail/CourseOverviewPanel.vue";
+import CourseAgentPanel from "../components/task-detail/CourseAgentPanel.vue";
 import CourseQaPanel from "../components/task-detail/CourseQaPanel.vue";
 import CourseStudyPanel from "../components/task-detail/CourseStudyPanel.vue";
 import CourseTechnicalPanel from "../components/task-detail/CourseTechnicalPanel.vue";
@@ -34,7 +35,7 @@ const router = useRouter();
 const taskEventsStore = useTaskEventsStore();
 const taskResultStore = useTaskResultStore();
 
-const activeWorkspace = ref<CourseWorkspace>("overview");
+const activeWorkspace = ref<CourseWorkspace>("agent");
 const videoAsideRef = ref<VideoAsideExpose | null>(null);
 const taskDetail = ref<TaskDetailResponse | null>(null);
 const taskDetailRequestVersion = ref(0);
@@ -79,7 +80,7 @@ watch(taskId, (nextTaskId) => {
   void taskResultStore.load(nextTaskId);
   void refreshTaskPlayback(nextTaskId);
   void refreshTaskEmbeddedSubtitles(nextTaskId);
-  activeWorkspace.value = "overview";
+  activeWorkspace.value = "agent";
   completedResultReloadTaskId.value = "";
   terminalDetailReloadTaskId.value = "";
 }, { immediate: true });
@@ -350,6 +351,7 @@ async function confirmRetryTask() {
             />
             <CourseContentPanel v-else-if="activeWorkspace === 'content'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
             <CourseStudyPanel v-else-if="activeWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
+            <CourseAgentPanel v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="activeWorkspace = $event" />
             <CourseQaPanel v-else-if="activeWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
             <CourseFilesPanel v-else-if="activeWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
             <CourseTechnicalPanel

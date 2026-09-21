@@ -1,7 +1,7 @@
 import type { TaskEventPayload } from "../../types/task";
 import { formatApiTimestamp } from "../../utils/time";
 
-export type CourseWorkspace = "overview" | "content" | "study" | "qa" | "files" | "technical";
+export type CourseWorkspace = "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
 
 export function courseStageText(stage: string, status?: TaskEventPayload["status"]): string {
   if (status === "CANCELED") {

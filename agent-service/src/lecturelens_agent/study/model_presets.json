@@ -1,0 +1,272 @@
+{
+  "checked_at": "2026-09-17",
+  "presets": [
+    {
+      "id": "bailian-beijing",
+      "name": "阿里云百炼 · 北京",
+      "group": "国内服务",
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "models": [
+        "qwen-plus",
+        "qwen-flash",
+        "qwen-turbo"
+      ],
+      "note": "使用同地域的普通 API Key；模型权限以控制台为准。工作空间专属域名请用自定义服务。",
+      "docs_url": "https://help.aliyun.com/en/model-studio/base-url"
+    },
+    {
+      "id": "bailian-singapore",
+      "name": "阿里云百炼 · 新加坡",
+      "group": "国内服务",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "models": [
+        "qwen-plus",
+        "qwen-flash",
+        "qwen-turbo"
+      ],
+      "note": "使用同地域的普通 API Key；模型权限以控制台为准。工作空间专属域名请用自定义服务。",
+      "docs_url": "https://help.aliyun.com/en/model-studio/base-url"
+    },
+    {
+      "id": "bailian-hongkong",
+      "name": "阿里云百炼 · 香港",
+      "group": "国内服务",
+      "base_url": "https://cn-hongkong.dashscope.aliyuncs.com/compatible-mode/v1",
+      "models": [
+        "qwen-plus",
+        "qwen-flash",
+        "qwen-turbo"
+      ],
+      "note": "使用同地域的普通 API Key；模型权限以控制台为准。工作空间专属域名请用自定义服务。",
+      "docs_url": "https://help.aliyun.com/en/model-studio/base-url"
+    },
+    {
+      "id": "bailian-virginia",
+      "name": "阿里云百炼 · 弗吉尼亚",
+      "group": "国内服务",
+      "base_url": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
+      "models": [
+        "qwen-plus",
+        "qwen-flash",
+        "qwen-turbo"
+      ],
+      "note": "使用同地域的普通 API Key；模型权限以控制台为准。工作空间专属域名请用自定义服务。",
+      "docs_url": "https://help.aliyun.com/en/model-studio/base-url"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "group": "国内服务",
+      "base_url": "https://api.deepseek.com",
+      "models": [
+        "deepseek-flash",
+        "deepseek-v4-pro"
+      ],
+      "note": "使用 DeepSeek API Key；思考模型可能需要额外参数适配，先测试工具调用。",
+      "docs_url": "https://api-docs.deepseek.com/"
+    },
+    {
+      "id": "moonshot",
+      "name": "Kimi / Moonshot",
+      "group": "国内服务",
+      "base_url": "https://api.moonshot.cn/v1",
+      "models": [
+        "kimi-k3",
+        "kimi-k2.6"
+      ],
+      "note": "使用 Kimi 开放平台 API Key；思考模型的参数与多轮工具调用仍需验证。",
+      "docs_url": "https://platform.kimi.com/docs/api/overview"
+    },
+    {
+      "id": "zhipu",
+      "name": "智谱 BigModel · GLM",
+      "group": "国内服务",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "models": [],
+      "note": "普通模型 API 地址；从控制台复制模型 ID。Coding Plan 使用不同地址。",
+      "docs_url": "https://docs.bigmodel.cn/cn/best-practice/case/ai-search-engine"
+    },
+    {
+      "id": "minimax-cn",
+      "name": "MiniMax · 国内",
+      "group": "国内服务",
+      "base_url": "https://api.minimax.cn/v1",
+      "models": [
+        "MiniMax-M3",
+        "MiniMax-M2.7"
+      ],
+      "note": "使用国内平台 API Key；思考内容回传与多轮工具调用尚需适配验证。",
+      "docs_url": "https://platform.minimax.cn/docs/api-reference/text-openai-api"
+    },
+    {
+      "id": "volcengine",
+      "name": "火山方舟 · 豆包",
+      "group": "国内服务",
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "models": [],
+      "note": "填写控制台的模型 ID 或已开通的推理接入点 ID（ep-…）。此处为普通 API 地址。",
+      "docs_url": "https://www.volcengine.com/docs/82379/1795150"
+    },
+    {
+      "id": "hunyuan",
+      "name": "腾讯混元",
+      "group": "国内服务",
+      "base_url": "https://api.hunyuan.cloud.tencent.com/v1",
+      "models": [],
+      "note": "使用混元 API Key，非腾讯云 SecretId / SecretKey；模型 ID 从混元控制台复制。",
+      "docs_url": "https://cloud.tencent.com.cn/document/product/1729/111007"
+    },
+    {
+      "id": "qianfan",
+      "name": "百度千帆 · 文心",
+      "group": "国内服务",
+      "base_url": "https://qianfan.baidubce.com/v2",
+      "models": [
+        "ernie-4.5-turbo-32k"
+      ],
+      "note": "使用千帆 V2 API Key；支持的模型与工具能力以账号权限和连接测试为准。",
+      "docs_url": "https://cloud.baidu.com/doc/qianfan-docs/s/Wm8r4sw29"
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "group": "国际服务",
+      "base_url": "https://api.openai.com/v1",
+      "models": [
+        "gpt-4.1",
+        "gpt-4.1-mini"
+      ],
+      "note": "使用 OpenAI API Key；ChatGPT 订阅不等于 API 额度。这里只使用 Chat Completions。",
+      "docs_url": "https://developers.openai.com/api/docs/models/gpt-4.1"
+    },
+    {
+      "id": "gemini",
+      "name": "Google Gemini",
+      "group": "国际服务",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "models": [
+        "gemini-3.8-flash"
+      ],
+      "note": "使用 Google AI Studio API Key；走兼容接口，模型的多轮工具调用仍需验证。",
+      "docs_url": "https://ai.google.dev/gemini-api/docs/openai"
+    },
+    {
+      "id": "xai",
+      "name": "xAI · Grok",
+      "group": "国际服务",
+      "base_url": "https://api.x.ai/v1",
+      "models": [
+        "grok-4.6"
+      ],
+      "note": "使用 xAI API Key；选择支持 Chat Completions 和工具调用的模型。",
+      "docs_url": "https://docs.x.ai/overview"
+    },
+    {
+      "id": "zai",
+      "name": "Z.AI · GLM 国际",
+      "group": "国际服务",
+      "base_url": "https://api.z.ai/api/paas/v4",
+      "models": [
+        "glm-5.3"
+      ],
+      "note": "使用 Z.AI 平台 API Key；与国内智谱及 Coding Plan 的地址、额度区分。",
+      "docs_url": "https://docs.z.ai/guides/overview/quick-start"
+    },
+    {
+      "id": "minimax-global",
+      "name": "MiniMax · 国际",
+      "group": "国际服务",
+      "base_url": "https://api.minimax.io/v1",
+      "models": [
+        "MiniMax-M3",
+        "MiniMax-M2.7"
+      ],
+      "note": "使用国际平台 API Key；思考内容回传与多轮工具调用尚需适配验证。",
+      "docs_url": "https://platform.minimax.io/docs/api-reference/text-openai-api"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "group": "国际服务",
+      "base_url": "https://api.mistral.ai/v1",
+      "models": [
+        "mistral-small-latest",
+        "mistral-large-latest"
+      ],
+      "note": "使用 Mistral 平台 API Key，先确认所选模型的工具调用支持。",
+      "docs_url": "https://docs.mistral.ai/resources/migration-guides"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "group": "聚合平台",
+      "base_url": "https://openrouter.ai/api/v1",
+      "models": [],
+      "note": "可选择 Claude、GPT、Gemini、Qwen 等；使用 OpenRouter Key 和该平台模型 ID，保存后获取列表。",
+      "docs_url": "https://openrouter.ai/docs/quickstart"
+    },
+    {
+      "id": "siliconflow-cn",
+      "name": "硅基流动 · 国内",
+      "group": "聚合平台",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "models": [],
+      "note": "保存后获取账号可见模型，选择支持工具调用的文本模型。",
+      "docs_url": "https://docs.siliconflow.cn/docs/api/chat-completions-post"
+    },
+    {
+      "id": "siliconflow-global",
+      "name": "SiliconFlow · 国际",
+      "group": "聚合平台",
+      "base_url": "https://api.siliconflow.com/v1",
+      "models": [],
+      "note": "使用国际站 API Key；保存后获取模型列表，模型权限与国内站区分。",
+      "docs_url": "https://docs.siliconflow.com/en/api-reference/chat-completions/chat-completions"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "group": "聚合平台",
+      "base_url": "https://api.groq.com/openai/v1",
+      "models": [],
+      "note": "保存后获取可用模型；Llama、Qwen 等模型的工具支持以服务商列表为准。",
+      "docs_url": "https://console.groq.com/docs/openai"
+    },
+    {
+      "id": "together",
+      "name": "Together AI",
+      "group": "聚合平台",
+      "base_url": "https://api.together.ai/v1",
+      "models": [],
+      "note": "使用 Together API Key；保存后获取模型 ID，不能直接使用其他平台的模型名。",
+      "docs_url": "https://docs.together.ai/docs/inference/openai-compatibility"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama（服务端本机）",
+      "group": "本地服务",
+      "base_url": "http://127.0.0.1:11434/v1",
+      "models": [],
+      "note": "先在服务器安装并启动模型，保存后获取实际已安装的模型。",
+      "docs_url": "https://docs.ollama.com/api/openai-compatibility"
+    },
+    {
+      "id": "llamacpp",
+      "name": "llama.cpp（服务端本机）",
+      "group": "本地服务",
+      "base_url": "http://127.0.0.1:8091/v1",
+      "models": [],
+      "note": "本项目使用 8091 端口；保存后获取当前加载模型的别名。",
+      "docs_url": "https://github.com/ggml-org/llama.cpp/tree/master/tools/server"
+    },
+    {
+      "id": "lmstudio",
+      "name": "LM Studio（服务端本机）",
+      "group": "本地服务",
+      "base_url": "http://127.0.0.1:1234/v1",
+      "models": [],
+      "note": "先在服务器启动 LM Studio API 服务，再获取已加载的模型。",
+      "docs_url": "https://lmstudio.ai/docs/developer/openai-compat"
+    }
+  ]
+}
