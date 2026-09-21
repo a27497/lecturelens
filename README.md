@@ -19,6 +19,18 @@
 
 当前状态：**Study Agent 学习闭环已完成有限范围验收，尚未发布。** 冻结 AU 在已见公开课程的新目标上开发集严格 **31/31**、冻结后的全新保留集严格 **8/8**；同时通过 **547** 项 Python/PostgreSQL 机制测试、**1366** 项 Java 测试、**79** 项前端测试与真实浏览器闭环／恢复／取消／越权／删除验收。完整证据见 [AU 完成报告](eval/phase-completion/FINAL_AU.md)。
 
+## Study Agent / Engineering Highlights
+
+| 工程亮点 | 关键结果与证据 |
+| --- | --- |
+| **Evidence-grounded Study Agent** | 课程 Evidence 驱动模型选工具、观察和保存学习产物；Java authoritative backend 守住 **owner / revision / deletion / permission**，Python/PostgreSQL 保存 Run 与 checkpoint。[架构与边界](docs/AGENT_PRODUCT_CONTRACT.md) |
+| **Retrieval Benchmark · Phase A** | **24 Query / 70 Evidence**；对比 Dense、BM25+Dense、RRF、RRF+Cross-Encoder，报告 Recall / MRR / nDCG / GAR / latency。**CE 改善检索，但未带来对应答案收益，因此未直接上线**；默认保留 Dense。[指标、Bad Case 与复现](eval/retrieval-phase-a/README.md) |
+| **Trace / Replay · Phase B** | Run Trace 关联实际 **token / latency / tool / checkpoint**；用 recorded replay 复现真实历史失败，区分六类 failure taxonomy。回放历史 usage 与新模型调用分开计量，失败记录保留。[链路与失败证据](eval/agent-trace-phase-b/README.md) |
+| **Course MCP · Phase C** | **official MCP SDK + stdio Client/Server**；MCP 不能绕过 Java Authority。真实验证 wrong owner / old revision / deleted course 均拒绝；默认 internal，MCP 可选。[协议、parity 与拒绝验证](eval/course-mcp-phase-c/README.md) |
+| **Recruiter Demo · Phase D** | 已准备的 **Sample Course → Evidence IDs → no-answer refusal → saved answer + feedback → View Trace**，五个真实浏览器场景通过。本机演示，尚未公网发布。[演示脚本与验收](eval/recruiter-demo-phase-d/README.md) |
+
+以上是真实评测与已实现工程能力；项目仍处于实验阶段，有限课程验收不证明未见课程泛化、自动评分或长期记忆。
+
 <p align="center">
   <strong>Model-selected Tools</strong> ·
   <strong>Course-grounded Evidence</strong> ·
@@ -33,13 +45,6 @@
   <a href="#系统流程">系统流程</a> ·
   <a href="#测试与质量保障">验证结果</a>
 </p>
-
-| 想证明什么 | LectureLens 怎么做 | 当前证据 |
-| --- | --- | --- |
-| 不只是 RAG 问答 | 模型根据学习目标选择检索、补读、计算、保存练习/拒答等工具，工具观察会影响下一步 | 真实课程任务 + 冻结 AU 评测 |
-| Agent 能恢复而不是“跑一次算一次” | Session / Run / 工具结果 / checkpoint 持久化到 PostgreSQL，支持取消、幂等恢复和中断续跑 | 独立 PostgreSQL 机制测试与恢复验收 |
-| 模型不能越过业务边界 | Java/MySQL 保持课程权属、Evidence revision 和删除的权威判断，Python 只消费已授权证据 | 越权、版本围栏、删除和迟到结果验收 |
-| 效果可测而不是只看 Demo | 开发集与冻结后新保留集分开，失败候选不改判，真实模型质量与确定性机制测试分开报告 | 开发 31/31；fresh holdout 8/8；失败历史保留 |
 
 ## 项目预览
 
@@ -291,14 +296,16 @@ uv run --env-file ../.env.agent.local uvicorn lecturelens_agent.app:create_app -
 
 ## 测试与质量保障
 
-| 检查项 | 当前主干结果 |
+| 检查项 | 验证结果与范围 |
 | --- | --- |
-| Agent / Python | **547 passed**，使用独立 PostgreSQL/pgvector 测试库 |
-| Java 业务与证据服务 | **1366 passed** |
-| Frontend | **19 files / 79 tests passed** |
+| Agent / Python | Phase A–D **605 passed、0 skipped**，使用独立 PostgreSQL/pgvector 测试库 |
+| Java 业务与证据服务 | Phase A–D 定向回归 **62 passed、0 skipped**；AU 历史全量 **1366 passed** |
+| Frontend | Phase D **21 files / 85 tests passed** |
 | Production build / TypeScript | **passed** |
-| MySQL migrations + Mock AI E2E | **passed** |
+| MySQL migrations + Mock AI E2E | 历史基线 **passed**，本轮未重跑 |
 | 真实模型质量 | AU 开发集 **31/31**，冻结后 fresh holdout **8/8**；与机制测试分开报告 |
+
+Phase A–D 最近回归与真实演示验收见 [Phase D 验证记录](eval/recruiter-demo-phase-d/README.md)；AU 冻结质量结论与历史全量计数保留原口径。
 
 默认自动化测试使用 Mock、Fake 或禁用配置，不依赖真实 AI Key。CI 在 `push` 和 `pull_request` 上运行 Agent Python lint/测试（真实 PostgreSQL/pgvector）、Java 测试、前端单测/构建/依赖审计，以及摄取基础设施的 Mock E2E。真实模型任务评测单独执行，不能用测试夹具代替模型质量。历史清理验证见 [C0–C3 执行记录](docs/C0_C3_EXECUTION.md)，课程质量评测见 [L2.2 验证摘要](eval/study-v1/verification.json)，本轮模型管理测试与真实本地连接验收见 [模型管理验证摘要](eval/model-management/verification.json)。
 

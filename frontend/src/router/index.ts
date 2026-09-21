@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import RecruiterDemoView from "../views/RecruiterDemoView.vue";
 import Home from "../pages/Home.vue";
 import { useAuthStore } from "../stores/auth";
 import LoginView from "../views/LoginView.vue";
@@ -11,6 +12,7 @@ import ModelManagementView from "../views/ModelManagementView.vue";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: "/demo", name: "recruiter-demo", component: RecruiterDemoView },
     { path: "/settings/models", name: "models", component: ModelManagementView, meta: { requiresAuth: true } },
     {
       path: "/",

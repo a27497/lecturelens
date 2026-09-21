@@ -15,7 +15,7 @@ export interface StudyArtifact {
   questions: PracticeQuestion[]; citations: Citation[]; revision: number; mode: string;
 }
 export interface StudyResponse {
-  session_id?: string; mode?: string;
+  session_id?: string; mode?: string; events?: StudyEvent[];
   sessions?: { session_id: string; revision: number; created_at?: string }[];
   runs?: { run_id: string; goal: string; status: RunStatus; created_at: string }[];
   run?: StudyRun | null; artifact?: StudyArtifact | null; questions?: PracticeQuestion[];
@@ -40,9 +40,9 @@ export interface StudyFeedbackRun {
   run_id: string; request_key?: string; status: RunStatus; error_code: string | null;
   attempt_id: string; question_index: number; answer_version: number; feedback: StudyFeedback | null;
 }
-export interface StudyEvent { sequence: number; event_type: string; payload: { tool?: string; status?: RunStatus; error_code?: string; accepted?: boolean } }
+export interface StudyEvent { sequence: number; event_type: string; payload: { [key: string]: unknown; tool?: string; status?: RunStatus; error_code?: string; accepted?: boolean } }
 export interface StudyCommand {
-  operation: string; session_id?: string; run_id?: string; goal?: string; request_key?: string;
+  operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
   attempt_id?: string; feedback_id?: string; note_text?: string; disposition?: "disputed" | "acknowledged";
 }

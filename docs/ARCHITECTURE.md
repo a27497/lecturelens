@@ -611,6 +611,14 @@ The backend path is:
 
 浏览器请求先经过 Java 权属与课程就绪校验，再进入 Python。Agent 只能读取已授权 Evidence；模型选择工具和参数，程序负责预算、版本、权限、停止条件和持久化。恢复使用已落盘工具结果与 checkpoint，不能借重启绕过预算或重复已经提交的副作用。课程删除由 Java 权威事实触发，Agent 派生 Session/索引随删除清理。
 
+Phase A Retrieval Benchmark 位于 `agent-service/src/lecturelens_agent/benchmark/` 与 `eval/retrieval-phase-a/`，使用历史认证导出的公开课程 Evidence 快照、独立 PostgreSQL 和固定本地读者比较 Dense、BM25 分数融合、RRF 与 Cross-Encoder。历史快照不代表当前访问授权；评测代码不接入浏览器网关、不写 MySQL，也不改变生产 Dense 路径或 Java authority/revision/deletion。真实模型质量与机制测试分列，详见 [基准报告](../eval/retrieval-phase-a/README.md)。
+
+Phase B Run Trace 通过既有事件、工具结果、artifact/feedback 和 LangGraph checkpoint 投影执行链路；私有诊断仅存于事件的非索引 `trace_detail` 列。运维 CLI 读取前后经过现有 Java READ 授权，新 Replay 复用 CREATE_SESSION/START，保留模型快照、版本、取消、恢复、幂等和删除边界；不新建执行状态、不增加浏览器 API。详见 [Trace / Replay 报告](../eval/agent-trace-phase-b/README.md)。
+
+Phase C 增加可选 Course MCP stdio transport：Study Agent → MCP Client → Course MCP Server → 原 Java Authority API。CHECK/SEARCH/READ/WINDOW 语义、Java HMAC/owner/revision/deletion/就绪检查保留；MCP Server 没有数据库、签名密钥或独立权限状态。MCP 错误进入原 StudyError/Run 终态，不回退 direct；默认传输仍是 internal。见 [Course MCP 验证](../eval/course-mcp-phase-c/README.md)。
+
+Phase D 仅增加 Vue 演示入口、Sample Course 示例目标、Evidence ID 展示和基于原 `EVENTS` 的公开 Run Trace。共享演示账号仍经过 Java 正常登录，课程由原摄取流程准备；没有新的权限层、Agent 状态或工具。私有 Trace/Replay 保持 Phase B 运维入口，Course MCP 保持可选。详见 [Recruiter Demo](../eval/recruiter-demo-phase-d/README.md)。
+
 ### 当前验收边界
 
 冻结 AU 在已见公开课程的新目标上完成开发 31/31、全新保留 8/8；独立 PostgreSQL 机制测试 547 项通过，并完成真实浏览器闭环、重启/调用中断恢复、取消、越权与删除验证。该结论不证明未见课程泛化、自动评分、长期记忆或复习调度。失败候选和原始调用保存在评测记录与被忽略的 .data/ 中。

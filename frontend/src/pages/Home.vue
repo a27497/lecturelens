@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { recruiterDemoEnabled } from "../recruiterDemo";
 import { computed } from "vue";
 import { useAuthStore } from "../stores/auth";
 
@@ -20,6 +21,7 @@ const secondaryTarget = computed(() => (authStore.isAuthenticated ? "/tasks" : "
           上传课程录屏、讲座或网课视频，按时间查看字幕、中文翻译、课程摘要和下载文件。
         </p>
         <div class="home-hero__actions">
+          <RouterLink v-if="recruiterDemoEnabled" to="/demo"><el-button size="large" type="primary">试用 Sample Course</el-button></RouterLink>
           <RouterLink :to="primaryTarget">
             <el-button size="large" type="primary">上传课程</el-button>
           </RouterLink>

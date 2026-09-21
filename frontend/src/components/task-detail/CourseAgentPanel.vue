@@ -3,6 +3,8 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
 import { studyCommand, studyEvents, studyStatus } from "../../api/study";
 import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun } from "../../api/study";
+import RunTracePanel from "./RunTracePanel.vue";
+import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
@@ -180,6 +182,7 @@ async function reveal() {
     <div v-else-if="enabled">
       <div v-if="!ready" role="status"><p>{{ readinessText }}</p><el-button text @click="$emit('navigate', 'overview')">查看处理进度</el-button><el-button text @click="load()">刷新状态</el-button></div>
       <p v-if="run?.model_mode === 'mock'" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
+      <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
       <div class="actions">
         <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">解释并出题</el-button>
@@ -216,7 +219,7 @@ async function reveal() {
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
             <el-button text @click="$emit('seek', citation.start_ms)">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
-            <p>{{ citation.text }}</p>
+            <code class="evidence-id">{{ citation.evidence_id }}</code><p>{{ citation.text }}</p>
           </div>
         </details>
         <h3 v-if="artifact.questions.length">两道自测题</h3>
@@ -228,12 +231,14 @@ async function reveal() {
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
       </article>
+      <RunTracePanel v-if="run" :task-id="taskId" :session-id="sessionId" :run="run" :artifact="artifact" />
     </div>
     <div v-if="error" role="alert"><el-alert :title="error" type="error" :closable="false" /><el-button v-if="!run && !loading" @click="load()">重新连接</el-button><RouterLink to="/settings/models">检查模型配置</RouterLink></div>
   </section>
 </template>
 
 <style scoped>
+.sample-goals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }.sample-goals p { width: 100%; }.sample-goals .el-button + .el-button { margin-left: 0; }.evidence-id { display: block; overflow-wrap: anywhere; font-size: 12px; }
 .agent-panel { display: grid; gap: 20px; padding: 24px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
 header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p, .run-goal, .mode-label { color: var(--color-ink-soft); }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }.run-progress { margin-top: 20px; padding: 16px; background: var(--color-canvas); border-radius: var(--radius-md); }.run-progress ol { line-height: 1.9; }
