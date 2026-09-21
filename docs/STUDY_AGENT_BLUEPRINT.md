@@ -123,6 +123,8 @@ Eval、Trace、权限与最小 UI 从前期贯穿建设；L5/L6 是收口，不�
 
 ## 6. L1：Evidence 与 RAG 实施边界
 
+实施进度（2026-09-11）：首条 dense 链路采用 Java 签名的当前证据快照、Python 本地多语言 Embedding、pgvector 按需原子缓存；完整评测暂缓。后台游标同步与删除投影仍未实施。当前契约、取舍和复现入口见 [L1 实施文档](L1_DENSE_RETRIEVAL.md)，下文为最终阶段目标。
+
 ### 证据契约
 
 最小字段建议：

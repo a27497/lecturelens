@@ -1,0 +1,25 @@
+{
+  "version": "pilot-v1",
+  "status": "planned_not_annotated",
+  "target_questions": 50,
+  "split_unit": "course_id",
+  "query_language_targets": {"zh-CN": 35, "en": 15},
+  "source_quotas": {
+    "mit-60001-f16-lec01": {"literal": 4, "paraphrase": 4, "time_localization": 3, "visual_only": 2, "multi_span": 2, "unanswerable": 3},
+    "mit-1806-s10-lec01": {"literal": 3, "paraphrase": 3, "time_localization": 2, "visual_only": 3, "multi_span": 2, "unanswerable": 3},
+    "mit-1401sc-f11-lec01": {"literal": 3, "paraphrase": 3, "time_localization": 3, "visual_only": 3, "multi_span": 2, "unanswerable": 2}
+  },
+  "separate_access_control_cases": [
+    "another_user_task_evidence_returns_404",
+    "another_user_qa_task_returns_404",
+    "evidence_changes_do_not_include_another_user",
+    "deleted_task_is_not_retrievable",
+    "client_course_scope_cannot_override_authenticated_owner"
+  ],
+  "freeze_rule": "Freeze after source review and human annotation, before comparing retrieval variants; never tune on holdout.",
+  "notes": [
+    "Quotas are preparation targets, not completed questions or guaranteed visual evidence availability.",
+    "Cross-user isolation is an API fixture assertion even though the original media is public; exclude it from Recall@K denominators.",
+    "Chinese queries over English speech test cross-lingual retrieval, not Chinese ASR quality."
+  ]
+}

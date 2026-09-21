@@ -31,11 +31,14 @@ public class CourseQaResponseParser {
             if (answer.isBlank()) {
                 throw invalid("QA answer is empty");
             }
+            if (CourseQaMessages.INSUFFICIENT_EVIDENCE.equals(answer)) {
+                return new ParsedCourseQaResponse(answer, List.of());
+            }
             LinkedHashSet<Integer> indexes = new LinkedHashSet<>();
             JsonNode cited = root.path("citedEvidenceIndexes");
             if (cited.isArray()) {
                 for (JsonNode node : cited) {
-                    if (node.canConvertToInt()) {
+                    if (node.isIntegralNumber() && node.canConvertToInt()) {
                         int index = node.asInt();
                         if (index >= 0 && index < evidenceCount) {
                             indexes.add(index);

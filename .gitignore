@@ -29,6 +29,7 @@ coverage/
 !.env.e2e.example
 !.env.demo.example
 !.env.real-ai.example
+!.env.agent.example
 .env.e2e.local
 *.local
 *.pem
@@ -52,6 +53,7 @@ tmp/
 artifacts/
 courselingo-pro-debug-bundle.zip
 .demo/
+.data/
 *.srt
 *.vtt
 
@@ -60,6 +62,10 @@ build/
 out/
 release/
 __pycache__/
+.venv/
+agent-service/.cache/
+.pytest_cache/
+.ruff_cache/
 *.py[cod]
 
 # OS
