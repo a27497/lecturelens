@@ -12,6 +12,8 @@
 - AU 开发逐题复核：[`phase-completion/AU-development-review.json`](phase-completion/AU-development-review.json)
 - AU 全新保留复核：[`phase-completion/AU-holdout-review.json`](phase-completion/AU-holdout-review.json)
 
+求职增强实验最新完成 **Phase E · Multi-user Agent Concurrency & Isolation**：5/20/50-user 固定响应、5/10-user 真实模型、取消晚到结果及两种进程崩溃恢复已实测，2,160 次负向权限请求 0 绕过；并发检索 503 和全部失败保留。这是执行/隔离实验，不更新 AU 的教学质量结论。见 [Phase E 报告](multi-user-phase-e/README.md)；本轮停止，不开启 Phase F。
+
 ## 历史目录
 
 | 目录 | 作用 |
@@ -26,6 +28,7 @@
 | `method-scope/` | 方法范围约束及失败候选 X |
 | `phase-completion/` | X 之后到最终 AU 的 Phase 完整收敛记录 |
 | `model-management/` | 用户模型连接/路由机制验收 |
+| `multi-user-phase-e/` | 最终求职增强实验：多用户并发、权限/产物/checkpoint 隔离及取消/恢复 |
 
 历史失败是评测证据的一部分，不因后续候选通过而删除或改判。阅读项目时优先从当前完成报告进入，再按需要追溯历史目录。
 

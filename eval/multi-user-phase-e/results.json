@@ -1,0 +1,3898 @@
+{
+  "phase": "E",
+  "experiment_acceptance_checks_pass": true,
+  "production_code_changed": false,
+  "quality_benchmark": false,
+  "environment": {
+    "java_jar_sha256": "c6cef6e658e4d61a89e4de044b3e900c25c1dccf710724641b6eb6910aaae9d2",
+    "python": "3.12.3",
+    "host_logical_cpus": 8,
+    "runtime_source_commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+    "runtime_unchanged": true,
+    "postgresql": "17.11 (Debian 17.11-1.pgdg12+2)",
+    "postgresql_max_connections": 100,
+    "regression_database_separate": true
+  },
+  "cohorts": {
+    "deterministic-5": {
+      "mode": "deterministic",
+      "attempted": 5,
+      "succeeded": 1,
+      "failed": 4,
+      "cancelled": 0,
+      "recovered": 0,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 4
+      },
+      "run_p50_seconds": 1.255,
+      "run_p95_seconds": 2.933,
+      "successful_run_p50_seconds": 2.933,
+      "successful_run_p95_seconds": 2.933,
+      "provider_rate_limit_events": 0,
+      "timeout_runs": 0,
+      "infra_failed_runs": 4,
+      "search_p50_ms": 58.468,
+      "search_p95_ms": 131.493,
+      "search_observations": 5,
+      "peak_running_runs": 5,
+      "model_calls": 8,
+      "tool_calls": 7,
+      "input_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 8
+      },
+      "output_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 8
+      },
+      "billable_model_calls": 0,
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "02dfca24-f6be-48d2-9614-5920b1fed867",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 2.933302
+        },
+        {
+          "user": 1,
+          "run_id": "a3e280b4-e5d5-469b-9718-c91acf719fd3",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.255329
+        },
+        {
+          "user": 2,
+          "run_id": "b1de14f1-8e6d-435c-9702-d8ba8a60ffe3",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.21835
+        },
+        {
+          "user": 3,
+          "run_id": "6ff61950-327f-477d-86a5-e0c9c49c0f09",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.258021
+        },
+        {
+          "user": 4,
+          "run_id": "f55c4959-77d8-4ae6-9491-976ba6979326",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.252394
+        }
+      ],
+      "users": 5,
+      "workers": 5,
+      "queue_p50_seconds": 0.229,
+      "queue_p95_seconds": 0.237,
+      "execution_p50_seconds": 1.018,
+      "execution_p95_seconds": 2.707,
+      "successful_search_count": 1,
+      "failed_search_count": 4,
+      "successful_search_p50_ms": 131.493,
+      "successful_search_p95_ms": 131.493,
+      "failed_search_p50_ms": 36.955,
+      "failed_search_p95_ms": 67.867,
+      "unique_artifacts": 1,
+      "duplicate_artifact_ids": 0,
+      "checkpoint_observations": 20,
+      "duplicate_checkpoint_ids": 0,
+      "isolation": {
+        "artifact_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 2
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 35
+        },
+        "checkpoint_run_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 20
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 5
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 41
+        },
+        "unsigned_agent_command": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "isolation_audit_sha256": "22b76c511a321a1418ff731b54beff3255475d85af769624f50d04f41aea805c",
+      "identity": {
+        "commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+        "created_at": "2026-09-21T10:42:31.690780",
+        "arguments": {
+          "action": "cohort",
+          "mode": "deterministic",
+          "users": 5,
+          "workers": 5,
+          "label": "deterministic-5",
+          "item": 0,
+          "hold": false
+        },
+        "runtime_sources_sha256": "4dba9294d4b52711d46a8c7db17e28dc231f53be840f22b082cfb2ea25d5fe39",
+        "harness_sources_sha256": "145483f9979e06d053234f2643a451c8ea0dce23355f30052d5a4db2f84f9497"
+      },
+      "captured_provider_responses": 0,
+      "observed_models": [
+        "phase-e-fixed-response"
+      ],
+      "successful_run_model_time_fraction": 0.1463,
+      "raw_result_sha256": "6acf9fac1c7aa29a7da7206196891e8e4f74541185a0d8f18dbff6375592af29"
+    },
+    "deterministic-20": {
+      "mode": "deterministic",
+      "attempted": 20,
+      "succeeded": 10,
+      "failed": 10,
+      "cancelled": 0,
+      "recovered": 0,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 10
+      },
+      "run_p50_seconds": 2.62,
+      "run_p95_seconds": 6.237,
+      "successful_run_p50_seconds": 4.872,
+      "successful_run_p95_seconds": 6.504,
+      "provider_rate_limit_events": 0,
+      "timeout_runs": 0,
+      "infra_failed_runs": 10,
+      "search_p50_ms": 42.72,
+      "search_p95_ms": 76.934,
+      "search_observations": 20,
+      "peak_running_runs": 5,
+      "model_calls": 50,
+      "tool_calls": 40,
+      "input_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 50
+      },
+      "output_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 50
+      },
+      "billable_model_calls": 0,
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "7dccfde2-b70b-401f-a511-87a21ecee688",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.235361,
+          "artifact_ids": []
+        },
+        {
+          "user": 1,
+          "run_id": "7a048a72-d2ea-491e-ac33-721eb43a1233",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 0.993001,
+          "artifact_ids": []
+        },
+        {
+          "user": 2,
+          "run_id": "bfa66295-c53d-49bd-a0ea-56c404077524",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 0.995879,
+          "artifact_ids": []
+        },
+        {
+          "user": 3,
+          "run_id": "52274a0f-0eff-46d3-9257-3519fb5b84af",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 2.620385,
+          "artifact_ids": [
+            "681a18ec-7557-5eaa-9809-4c5afb3fc06b"
+          ]
+        },
+        {
+          "user": 4,
+          "run_id": "6ced3870-9120-496a-a1c7-2880ddd9ddbc",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 0.986074,
+          "artifact_ids": []
+        },
+        {
+          "user": 5,
+          "run_id": "57133999-61b1-4c68-a442-3015b443e699",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.743184,
+          "artifact_ids": []
+        },
+        {
+          "user": 6,
+          "run_id": "f5057ebe-51ac-44c4-af5f-e36ab229d64d",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 3.411357,
+          "artifact_ids": [
+            "5cd618d3-e537-5c50-8b11-17a98bc1de41"
+          ]
+        },
+        {
+          "user": 7,
+          "run_id": "6aeb439e-c8a3-4f3d-af2a-9ecc17424e80",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.667262,
+          "artifact_ids": []
+        },
+        {
+          "user": 8,
+          "run_id": "7888e590-2b63-4651-92cb-f81732f67aed",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.745744,
+          "artifact_ids": []
+        },
+        {
+          "user": 9,
+          "run_id": "e0a652f6-9836-48c3-929a-9965a0988153",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 4.005254,
+          "artifact_ids": [
+            "04916eeb-44e8-510a-a267-000e4e86670d"
+          ]
+        },
+        {
+          "user": 10,
+          "run_id": "daea95c5-866e-423b-861d-1d922bfc68dc",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.352019,
+          "artifact_ids": []
+        },
+        {
+          "user": 11,
+          "run_id": "7dbbd325-66f8-4f8d-bcfa-b9c0346e0903",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.237055,
+          "artifact_ids": []
+        },
+        {
+          "user": 12,
+          "run_id": "cb57effd-1634-4500-b16a-b1f4cea2b8aa",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.900876,
+          "artifact_ids": []
+        },
+        {
+          "user": 13,
+          "run_id": "113ca93e-1ba8-4e9c-b5ab-a032a19d9467",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 4.423377,
+          "artifact_ids": [
+            "239196ee-bbd4-5ff6-b9d0-359d4d48e2cb"
+          ]
+        },
+        {
+          "user": 14,
+          "run_id": "f6c33e7a-cf72-43b8-883f-d457441f7e2d",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 4.871819,
+          "artifact_ids": [
+            "0612028d-1b8a-5d6b-8ed6-5733f60fc2ea"
+          ]
+        },
+        {
+          "user": 15,
+          "run_id": "910594fb-ff13-4115-bdfe-80a1e133f097",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 4.891026,
+          "artifact_ids": [
+            "8c349295-6194-57b8-b96a-249dd5372af6"
+          ]
+        },
+        {
+          "user": 16,
+          "run_id": "bc183843-4a4f-48d0-88e9-6e15cb339870",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.191901,
+          "artifact_ids": [
+            "ca51fa67-d461-58ae-8d35-20d810ab99c0"
+          ]
+        },
+        {
+          "user": 17,
+          "run_id": "7538dfd8-7e3a-422e-8043-ff8c08495cd3",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.801678,
+          "artifact_ids": [
+            "6a0bf037-cab2-500d-80b4-b4201562fc5d"
+          ]
+        },
+        {
+          "user": 18,
+          "run_id": "326d673e-f2d8-4146-a626-45f7c6710bb3",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 6.236694,
+          "artifact_ids": [
+            "43d852cd-7227-5454-85d2-c0316b0ad9fd"
+          ]
+        },
+        {
+          "user": 19,
+          "run_id": "1235a6ca-bace-4643-8bd3-c327e14b8c42",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 6.503939,
+          "artifact_ids": [
+            "91e29907-9adf-5096-89a1-c2b4252c2426"
+          ]
+        }
+      ],
+      "users": 20,
+      "workers": 5,
+      "queue_p50_seconds": 1.67,
+      "queue_p95_seconds": 4.591,
+      "execution_p50_seconds": 0.655,
+      "execution_p95_seconds": 2.275,
+      "successful_search_count": 10,
+      "failed_search_count": 10,
+      "successful_search_p50_ms": 71.226,
+      "successful_search_p95_ms": 91.6,
+      "failed_search_p50_ms": 19.009,
+      "failed_search_p95_ms": 42.72,
+      "unique_artifacts": 10,
+      "duplicate_artifact_ids": 0,
+      "checkpoint_observations": 110,
+      "duplicate_checkpoint_ids": 0,
+      "isolation": {
+        "artifact_evidence_scope": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 20
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 380
+        },
+        "checkpoint_run_scope": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 110
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 20
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 424
+        },
+        "unsigned_agent_command": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 20,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "isolation_audit_sha256": "83c8e3deda4871f8e861abaeea15c67ff93b2820de732012537694b8e318d9ef",
+      "identity": {
+        "commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+        "created_at": "2026-09-21T11:33:07.514008",
+        "arguments": {
+          "action": "cohort",
+          "mode": "deterministic",
+          "users": 20,
+          "workers": 5,
+          "label": "deterministic-20",
+          "item": 0,
+          "hold": false
+        },
+        "runtime_sources_sha256": "4dba9294d4b52711d46a8c7db17e28dc231f53be840f22b082cfb2ea25d5fe39",
+        "harness_sources_sha256": "601d87cc6ff28ea20fa3ba03a73d435025d7e5afea15e7c2df19896e65506813"
+      },
+      "captured_provider_responses": 0,
+      "observed_models": [
+        "phase-e-fixed-response"
+      ],
+      "successful_run_model_time_fraction": 0.0851,
+      "raw_result_sha256": "bfeaccf4410e7fa846da4293953e975341b738b13f1c4d9ac44207d913f82593"
+    },
+    "deterministic-50": {
+      "mode": "deterministic",
+      "attempted": 50,
+      "succeeded": 40,
+      "failed": 10,
+      "cancelled": 0,
+      "recovered": 0,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 10
+      },
+      "run_p50_seconds": 9.618,
+      "run_p95_seconds": 19.25,
+      "successful_run_p50_seconds": 11.892,
+      "successful_run_p95_seconds": 19.25,
+      "provider_rate_limit_events": 0,
+      "timeout_runs": 0,
+      "infra_failed_runs": 10,
+      "search_p50_ms": 61.238,
+      "search_p95_ms": 80.489,
+      "search_observations": 50,
+      "peak_running_runs": 5,
+      "model_calls": 170,
+      "tool_calls": 130,
+      "input_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 170
+      },
+      "output_tokens": {
+        "total": null,
+        "known_total": 0,
+        "missing_calls": 170
+      },
+      "billable_model_calls": 0,
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "156beee7-1c05-4f3e-bf06-83d3f04f39d0",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.42196,
+          "artifact_ids": []
+        },
+        {
+          "user": 1,
+          "run_id": "28b2bdf8-8129-4e9b-a082-3f38e1056ae1",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.582368,
+          "artifact_ids": []
+        },
+        {
+          "user": 2,
+          "run_id": "59f60b15-d744-4c6c-b9d7-94e3e598383d",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 3.014478,
+          "artifact_ids": [
+            "bad9f0a5-4969-5a62-a68d-4f7645ff5977"
+          ]
+        },
+        {
+          "user": 3,
+          "run_id": "fa829966-f358-4878-bcaa-451f80a0bc84",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.576715,
+          "artifact_ids": []
+        },
+        {
+          "user": 4,
+          "run_id": "0b3f96fe-225f-4773-8c35-d314bd885b3a",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.548858,
+          "artifact_ids": []
+        },
+        {
+          "user": 5,
+          "run_id": "5c41fa1e-3719-4d2f-b253-2cd488600b58",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 3.575794,
+          "artifact_ids": [
+            "aea140a1-3213-5286-a972-cc93e88945f1"
+          ]
+        },
+        {
+          "user": 6,
+          "run_id": "4f7ca79e-c4ae-4c95-8183-8720798ee251",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.059689,
+          "artifact_ids": []
+        },
+        {
+          "user": 7,
+          "run_id": "2986270e-467e-4547-b362-1671302f82f9",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.081236,
+          "artifact_ids": []
+        },
+        {
+          "user": 8,
+          "run_id": "af2175f0-4da7-470f-a7b2-a9ee3972a8c1",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 1.889006,
+          "artifact_ids": []
+        },
+        {
+          "user": 9,
+          "run_id": "c1600dae-d227-440a-8891-30ced8f67f1e",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 4.325659,
+          "artifact_ids": [
+            "b78016b1-8a9c-5293-a846-64dc3cdc757b"
+          ]
+        },
+        {
+          "user": 10,
+          "run_id": "5bb66c12-1aa9-4c06-81ab-0bc4e9e5d44b",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.691317,
+          "artifact_ids": []
+        },
+        {
+          "user": 11,
+          "run_id": "799c671e-ec8a-4b51-b7fb-57b5974a50d4",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.751677,
+          "artifact_ids": []
+        },
+        {
+          "user": 12,
+          "run_id": "4d22d258-995e-476a-9951-a9b6e1b23537",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.516681,
+          "artifact_ids": []
+        },
+        {
+          "user": 13,
+          "run_id": "1997cbcf-e939-49bc-ac12-693bbef3dc49",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.049034,
+          "artifact_ids": [
+            "df225126-cf22-5f9b-8bb9-06fb03a73cfe"
+          ]
+        },
+        {
+          "user": 14,
+          "run_id": "f8eb41a0-b43c-4157-a3a7-04d3fb399d6d",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.878224,
+          "artifact_ids": [
+            "24d97a74-79a6-5a57-b83a-144b5e8e94e6"
+          ]
+        },
+        {
+          "user": 15,
+          "run_id": "32aa88b3-b9dd-40a9-b82b-d2203d38ec40",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.433234,
+          "artifact_ids": [
+            "bbf707b1-b509-5ba6-af7d-0d4aa71b57a2"
+          ]
+        },
+        {
+          "user": 16,
+          "run_id": "f8fc1e13-65fe-43b5-9a31-a33414b68303",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 5.965929,
+          "artifact_ids": [
+            "05bfd513-e85a-53df-9276-2b6e1a1b3341"
+          ]
+        },
+        {
+          "user": 17,
+          "run_id": "7464f179-b6a8-4a63-b987-e801e8fc69fa",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 6.420383,
+          "artifact_ids": [
+            "2909b940-1a4d-5b52-b4cd-9db034d75729"
+          ]
+        },
+        {
+          "user": 18,
+          "run_id": "c22c4a5e-67b0-4c60-b773-674e6ee94ffd",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 7.01872,
+          "artifact_ids": [
+            "6ab8d874-930b-539e-ac56-46dcbf2a432a"
+          ]
+        },
+        {
+          "user": 19,
+          "run_id": "c8130a56-5be1-4e04-93e1-dae7d2d4c140",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 8.120809,
+          "artifact_ids": [
+            "dc91bafc-d5ec-5a12-ad87-9b9d926fee21"
+          ]
+        },
+        {
+          "user": 20,
+          "run_id": "43da8b83-1f46-4685-90a2-8b3832380870",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 7.880626,
+          "artifact_ids": [
+            "007ce4f2-f1fc-5797-bb37-ec674adf2fc7"
+          ]
+        },
+        {
+          "user": 21,
+          "run_id": "7acfe987-32d0-437b-90c2-a62a0cbd35fb",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 7.847448,
+          "artifact_ids": [
+            "0ea6d722-f270-594d-8064-19f1d299c30a"
+          ]
+        },
+        {
+          "user": 22,
+          "run_id": "7849b720-6302-4b59-a755-c830a78811b6",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 8.789655,
+          "artifact_ids": [
+            "b708a942-84c4-5e70-85ca-7626de6b4668"
+          ]
+        },
+        {
+          "user": 23,
+          "run_id": "093fa0f9-4de3-432f-ac72-98ceb513e8bf",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 9.394459,
+          "artifact_ids": [
+            "94b9084d-d65f-5cbc-a31c-8ce23ee363d1"
+          ]
+        },
+        {
+          "user": 24,
+          "run_id": "99ebe329-64ce-4eee-bcce-26ab871ec9a6",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 9.80555,
+          "artifact_ids": [
+            "b986a92e-4bd8-5d3a-90b6-9946f1f3eed8"
+          ]
+        },
+        {
+          "user": 25,
+          "run_id": "a3a097ce-ce6e-4be9-9735-fd7d2eb1ed5a",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 9.618257,
+          "artifact_ids": [
+            "9cee2809-d63a-5c21-91ce-043590301a41"
+          ]
+        },
+        {
+          "user": 26,
+          "run_id": "5bb1dd43-e7f4-4724-ae90-5c7d7f7e5e62",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 10.193589,
+          "artifact_ids": [
+            "8fd7d832-1168-51cb-ae99-c9ec6addfe7c"
+          ]
+        },
+        {
+          "user": 27,
+          "run_id": "76c0290d-1cb4-439d-b566-acc3d259de35",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 10.923868,
+          "artifact_ids": [
+            "1974184a-489c-5af9-97c4-ae367dd82b48"
+          ]
+        },
+        {
+          "user": 28,
+          "run_id": "a18ba938-6085-45ef-915c-3a859284d651",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 11.406888,
+          "artifact_ids": [
+            "2e611ca1-a812-5d57-b447-c7d63c774b9f"
+          ]
+        },
+        {
+          "user": 29,
+          "run_id": "abd0b7a8-9d9e-43bb-b9d1-75adaab9cb03",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 11.891742,
+          "artifact_ids": [
+            "d167e22d-d742-50b8-b3ff-37d94184c640"
+          ]
+        },
+        {
+          "user": 30,
+          "run_id": "baab982d-26ea-4345-8865-77ef7775ca9c",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 12.126385,
+          "artifact_ids": [
+            "c55d5fac-53f3-5cd7-8b4e-236953570871"
+          ]
+        },
+        {
+          "user": 31,
+          "run_id": "265ecba7-2181-478b-b31a-15d59b0fe7da",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 12.097824,
+          "artifact_ids": [
+            "d9050403-f528-537a-a794-517667e772a0"
+          ]
+        },
+        {
+          "user": 32,
+          "run_id": "445c1ec7-993f-4f5d-b186-b95912608318",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 13.24995,
+          "artifact_ids": [
+            "7aed2ffb-cfb4-54f5-b3d9-6b03153a9d09"
+          ]
+        },
+        {
+          "user": 33,
+          "run_id": "bccb4b8f-2780-4587-834e-5cae8616bb65",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 13.854697,
+          "artifact_ids": [
+            "9b30d8be-d976-5089-9783-f93f98118a2c"
+          ]
+        },
+        {
+          "user": 34,
+          "run_id": "f2c3ab9b-eea9-4cb1-ab26-f71506a2fd19",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 14.023937,
+          "artifact_ids": [
+            "e2aeb853-dec0-5651-bea4-89fee46a3b45"
+          ]
+        },
+        {
+          "user": 35,
+          "run_id": "47b0247b-c197-486e-8ee1-d301d3c985a8",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 14.082459,
+          "artifact_ids": [
+            "d1a0c09e-80a7-5481-a3f1-1918cce2010b"
+          ]
+        },
+        {
+          "user": 36,
+          "run_id": "30e9d755-7cf9-4a2d-80f7-5edb17b1fd6a",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 14.465876,
+          "artifact_ids": [
+            "b93211f5-9635-5cd4-96ea-b0b2ed4e6a48"
+          ]
+        },
+        {
+          "user": 37,
+          "run_id": "e2eb9125-63c7-4ce1-bd58-aa5ee76a0ebc",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 16.051143,
+          "artifact_ids": [
+            "cb112195-3de9-538c-95d0-e32986c4a102"
+          ]
+        },
+        {
+          "user": 38,
+          "run_id": "8d5a2c3c-f7db-4e25-920b-2e2faff326bc",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 15.926728,
+          "artifact_ids": [
+            "906c48b5-6866-573c-8f29-1d79967488ca"
+          ]
+        },
+        {
+          "user": 39,
+          "run_id": "8c842915-6523-4d0f-9b2b-af7eea359a73",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 16.290743,
+          "artifact_ids": [
+            "b958ad6d-8ed4-5f98-8f2a-da698e5c6c24"
+          ]
+        },
+        {
+          "user": 40,
+          "run_id": "e3849d7a-3fdc-4f24-a078-57e17b860b53",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 16.139313,
+          "artifact_ids": [
+            "61d09b0a-76db-52ea-b4cd-5d76e72bd9ed"
+          ]
+        },
+        {
+          "user": 41,
+          "run_id": "6a988022-a986-483b-9211-1d120b6d51bb",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 16.36746,
+          "artifact_ids": [
+            "627fc5e3-093a-5816-b1e2-adc71fa8947c"
+          ]
+        },
+        {
+          "user": 42,
+          "run_id": "19c1107a-7fb7-4149-9373-7246c5ad1c27",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 17.355948,
+          "artifact_ids": [
+            "25f8fa7d-5c68-5e45-87f3-d2140afd46c4"
+          ]
+        },
+        {
+          "user": 43,
+          "run_id": "79fccc12-0ec2-4ddb-876a-61483921d974",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 18.34463,
+          "artifact_ids": [
+            "09df0873-ad8b-5532-b4c5-622f4aab5029"
+          ]
+        },
+        {
+          "user": 44,
+          "run_id": "fcf582b6-c063-46f7-a860-7e21d5283ad8",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 17.760419,
+          "artifact_ids": [
+            "5f2d3007-e206-5e4d-a17e-de7e66df24de"
+          ]
+        },
+        {
+          "user": 45,
+          "run_id": "8e0b6647-170d-460a-9f83-32842aa59bbb",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 18.95126,
+          "artifact_ids": [
+            "3a77e017-18fa-5623-9498-88a9183aec2c"
+          ]
+        },
+        {
+          "user": 46,
+          "run_id": "1466e07f-a72f-4116-9d91-0bd874ed9796",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.000899,
+          "artifact_ids": [
+            "d795ccdd-9621-5312-b234-f6d438300d5c"
+          ]
+        },
+        {
+          "user": 47,
+          "run_id": "33143ad3-4b6f-4a06-b5bd-19e160426114",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.250224,
+          "artifact_ids": [
+            "6cb0fc67-6ee5-5e91-8ccb-956b1623511c"
+          ]
+        },
+        {
+          "user": 48,
+          "run_id": "c3f9ae55-c23a-4bc9-b78b-e1418b73624d",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.715957,
+          "artifact_ids": [
+            "6e98fbe7-bf86-55dd-b7bc-e566fc663763"
+          ]
+        },
+        {
+          "user": 49,
+          "run_id": "51c0c5b3-8c6c-4272-a9b4-53e63c9d00bb",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.842009,
+          "artifact_ids": [
+            "6b963725-92cc-5e7b-ada2-591bfe3f9ab3"
+          ]
+        }
+      ],
+      "users": 50,
+      "workers": 5,
+      "queue_p50_seconds": 7.461,
+      "queue_p95_seconds": 17.281,
+      "execution_p50_seconds": 2.049,
+      "execution_p95_seconds": 2.29,
+      "successful_search_count": 40,
+      "failed_search_count": 10,
+      "successful_search_p50_ms": 65.836,
+      "successful_search_p95_ms": 80.489,
+      "failed_search_p50_ms": 20.993,
+      "failed_search_p95_ms": 38.854,
+      "unique_artifacts": 40,
+      "duplicate_artifact_ids": 0,
+      "checkpoint_observations": 350,
+      "duplicate_checkpoint_ids": 0,
+      "isolation": {
+        "artifact_evidence_scope": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 80
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 1535
+        },
+        "checkpoint_run_scope": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 350
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 50
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 1711
+        },
+        "unsigned_agent_command": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 50,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "isolation_audit_sha256": "beefb38b44ec587c45350a87a51641d7776a3e63b8f0eff0da18851bf116ed5d",
+      "identity": {
+        "commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+        "created_at": "2026-09-21T11:33:59.239032",
+        "arguments": {
+          "action": "cohort",
+          "mode": "deterministic",
+          "users": 50,
+          "workers": 5,
+          "label": "deterministic-50",
+          "item": 0,
+          "hold": false
+        },
+        "runtime_sources_sha256": "4dba9294d4b52711d46a8c7db17e28dc231f53be840f22b082cfb2ea25d5fe39",
+        "harness_sources_sha256": "601d87cc6ff28ea20fa3ba03a73d435025d7e5afea15e7c2df19896e65506813"
+      },
+      "captured_provider_responses": 0,
+      "observed_models": [
+        "phase-e-fixed-response"
+      ],
+      "successful_run_model_time_fraction": 0.0351,
+      "raw_result_sha256": "2312dc14d23e82ff83325bb4744198af0831e6e1874d0437b0947a77dd15e98d"
+    },
+    "real-5": {
+      "mode": "real",
+      "attempted": 5,
+      "succeeded": 4,
+      "failed": 1,
+      "cancelled": 0,
+      "recovered": 0,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 1
+      },
+      "run_p50_seconds": 20.755,
+      "run_p95_seconds": 22.726,
+      "successful_run_p50_seconds": 20.755,
+      "successful_run_p95_seconds": 22.726,
+      "provider_rate_limit_events": 0,
+      "timeout_runs": 0,
+      "infra_failed_runs": 1,
+      "search_p50_ms": 87.09,
+      "search_p95_ms": 108.756,
+      "search_observations": 5,
+      "peak_running_runs": 5,
+      "model_calls": 18,
+      "tool_calls": 14,
+      "input_tokens": {
+        "total": 41081,
+        "known_total": 41081,
+        "missing_calls": 0
+      },
+      "output_tokens": {
+        "total": 2948,
+        "known_total": 2948,
+        "missing_calls": 0
+      },
+      "billable_model_calls": null,
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "f2ed1694-b113-40bd-9bff-dac0e8d45f06",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 20.877404
+        },
+        {
+          "user": 1,
+          "run_id": "1a19666f-91ab-44dd-9184-13628fbeaf4c",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 2.678894
+        },
+        {
+          "user": 2,
+          "run_id": "57c80ea5-bf10-4368-ab42-80e8a71835b0",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 22.725624
+        },
+        {
+          "user": 3,
+          "run_id": "b0628141-46f3-4c6c-b705-353ca489caa0",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 20.755102
+        },
+        {
+          "user": 4,
+          "run_id": "6043f900-8502-481b-9a03-6ed78e084eac",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.900424
+        }
+      ],
+      "users": 5,
+      "workers": 5,
+      "queue_p50_seconds": 0.292,
+      "queue_p95_seconds": 0.328,
+      "execution_p50_seconds": 20.45,
+      "execution_p95_seconds": 22.434,
+      "successful_search_count": 4,
+      "failed_search_count": 1,
+      "successful_search_p50_ms": 87.09,
+      "successful_search_p95_ms": 108.756,
+      "failed_search_p50_ms": 32.571,
+      "failed_search_p95_ms": 32.571,
+      "unique_artifacts": 4,
+      "duplicate_artifact_ids": 0,
+      "checkpoint_observations": 37,
+      "duplicate_checkpoint_ids": 0,
+      "isolation": {
+        "artifact_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 26
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 146
+        },
+        "checkpoint_run_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 37
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 5
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 154
+        },
+        "unsigned_agent_command": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "isolation_audit_sha256": "ac620a9b07f8b4e0bad9d26ae1b6d1c998b949e8c790a7ddcb0702cd4e5ab1b7",
+      "identity": {
+        "commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+        "created_at": "2026-09-21T10:42:53.556991",
+        "arguments": {
+          "action": "cohort",
+          "mode": "real",
+          "users": 5,
+          "workers": 5,
+          "label": "real-5",
+          "item": 0,
+          "hold": false
+        },
+        "runtime_sources_sha256": "4dba9294d4b52711d46a8c7db17e28dc231f53be840f22b082cfb2ea25d5fe39",
+        "harness_sources_sha256": "145483f9979e06d053234f2643a451c8ea0dce23355f30052d5a4db2f84f9497"
+      },
+      "captured_provider_responses": 18,
+      "observed_models": [
+        "qwen3-max"
+      ],
+      "successful_run_model_time_fraction": 0.8613,
+      "raw_result_sha256": "7f2eb31f4cf5e79f485db028c72809edffee2e6298d60ff24af5e90b82dbf0fb"
+    },
+    "real-10": {
+      "mode": "real",
+      "attempted": 10,
+      "succeeded": 4,
+      "failed": 6,
+      "cancelled": 0,
+      "recovered": 0,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 6
+      },
+      "run_p50_seconds": 3.493,
+      "run_p95_seconds": 22.245,
+      "successful_run_p50_seconds": 18.875,
+      "successful_run_p95_seconds": 22.245,
+      "provider_rate_limit_events": 0,
+      "timeout_runs": 0,
+      "infra_failed_runs": 6,
+      "search_p50_ms": 42.613,
+      "search_p95_ms": 169.482,
+      "search_observations": 10,
+      "peak_running_runs": 10,
+      "model_calls": 23,
+      "tool_calls": 19,
+      "input_tokens": {
+        "total": 46250,
+        "known_total": 46250,
+        "missing_calls": 0
+      },
+      "output_tokens": {
+        "total": 3045,
+        "known_total": 3045,
+        "missing_calls": 0
+      },
+      "billable_model_calls": null,
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "33966c2c-299d-48ed-b479-153a2ac77627",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.502954
+        },
+        {
+          "user": 1,
+          "run_id": "7d67e885-9218-4a1c-b520-c6eda2a1e0e9",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.328893
+        },
+        {
+          "user": 2,
+          "run_id": "fe8aeb39-9588-42df-8ce2-e1e5ae23477f",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.492997
+        },
+        {
+          "user": 3,
+          "run_id": "6ffb882a-7465-48de-b812-6c51335f095b",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 17.927308
+        },
+        {
+          "user": 4,
+          "run_id": "d65a4181-50de-4823-8ce1-b0fc24be8fce",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 19.36405
+        },
+        {
+          "user": 5,
+          "run_id": "1b31437d-ccc7-4cab-a426-f1db8802d8dd",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 18.874568
+        },
+        {
+          "user": 6,
+          "run_id": "4e07a6c3-951c-4fde-a425-48788af77d56",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.372316
+        },
+        {
+          "user": 7,
+          "run_id": "fb211f89-f064-41a3-84e0-8851902c1dc3",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.347484
+        },
+        {
+          "user": 8,
+          "run_id": "fc6c6141-9821-45df-bdbb-57412f293b80",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 3.370589
+        },
+        {
+          "user": 9,
+          "run_id": "c9d8f144-2a17-43c8-a326-3c68efe0286e",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 22.244856
+        }
+      ],
+      "users": 10,
+      "workers": 10,
+      "queue_p50_seconds": 0.379,
+      "queue_p95_seconds": 0.542,
+      "execution_p50_seconds": 3.026,
+      "execution_p95_seconds": 21.759,
+      "successful_search_count": 4,
+      "failed_search_count": 6,
+      "successful_search_p50_ms": 132.033,
+      "successful_search_p95_ms": 169.482,
+      "failed_search_p50_ms": 24.634,
+      "failed_search_p95_ms": 58.398,
+      "unique_artifacts": 4,
+      "duplicate_artifact_ids": 0,
+      "checkpoint_observations": 52,
+      "duplicate_checkpoint_ids": 0,
+      "isolation": {
+        "artifact_evidence_scope": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 28
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 146
+        },
+        "checkpoint_run_scope": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 52
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 10
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 154
+        },
+        "unsigned_agent_command": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 10,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "isolation_audit_sha256": "a328779a664615f2d76cf053d75d2a7e03a8e7cb069da1f8859e58d68dea21b2",
+      "identity": {
+        "commit": "512e970bca7afc841ea84d820169276ebcc90bc6",
+        "created_at": "2026-09-21T10:47:41.818847",
+        "arguments": {
+          "action": "cohort",
+          "mode": "real",
+          "users": 10,
+          "workers": 10,
+          "label": "real-10",
+          "item": 0,
+          "hold": false
+        },
+        "runtime_sources_sha256": "4dba9294d4b52711d46a8c7db17e28dc231f53be840f22b082cfb2ea25d5fe39",
+        "harness_sources_sha256": "746d47ee1879d7592793c244c66f3604b1c2439c09e57332647ef2511ac54e91"
+      },
+      "captured_provider_responses": 23,
+      "observed_models": [
+        "qwen3-max"
+      ],
+      "successful_run_model_time_fraction": 0.8063,
+      "raw_result_sha256": "fe9f9c6b03366f4a61ef8debf49265e196e63feb6b9ffca35fe991a8bf0d540d"
+    }
+  },
+  "sequential_control": {
+    "mode": "deterministic",
+    "attempted": 5,
+    "succeeded": 5,
+    "failed": 0,
+    "cancelled": 0,
+    "recovered": 0,
+    "failure_types": {},
+    "run_p50_seconds": 6.701,
+    "run_p95_seconds": 10.858,
+    "successful_run_p50_seconds": 6.701,
+    "successful_run_p95_seconds": 10.858,
+    "provider_rate_limit_events": 0,
+    "timeout_runs": 0,
+    "infra_failed_runs": 0,
+    "search_p50_ms": 85.097,
+    "search_p95_ms": 89.545,
+    "search_observations": 5,
+    "peak_running_runs": 1,
+    "model_calls": 20,
+    "tool_calls": 15,
+    "input_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 20
+    },
+    "output_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 20
+    },
+    "billable_model_calls": 0,
+    "rows": [
+      {
+        "user": 0,
+        "run_id": "1a0d7568-27f4-45c8-91b9-087baf67c0f6",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 2.399974,
+        "artifact_ids": [
+          "4230ecd6-4fe5-5b57-9451-12403571024d"
+        ]
+      },
+      {
+        "user": 1,
+        "run_id": "748b9b2c-449c-4129-8948-27d73fac304d",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 4.528659,
+        "artifact_ids": [
+          "8c105732-3722-5e6c-a187-957b3bb92f79"
+        ]
+      },
+      {
+        "user": 2,
+        "run_id": "9b1ddd87-9633-452d-bf33-ec1b31442eb7",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 6.700937,
+        "artifact_ids": [
+          "d83d35da-263d-5108-83db-db237a1ad6ad"
+        ]
+      },
+      {
+        "user": 3,
+        "run_id": "a7314166-bf1d-4438-942f-a8688b6e2bae",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 8.707464,
+        "artifact_ids": [
+          "77730878-fff0-5d60-afa4-995fe7419035"
+        ]
+      },
+      {
+        "user": 4,
+        "run_id": "78b7a6c5-2d64-4b15-af08-cee5e519085b",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 10.857593,
+        "artifact_ids": [
+          "4c7d4121-705e-57fe-977e-9b1e6fcc382d"
+        ]
+      }
+    ],
+    "users": 5,
+    "workers": 1
+  },
+  "isolation_formal_cohorts": {
+    "artifact_evidence_scope": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 156
+    },
+    "checkpoint_evidence_scope": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 2242
+    },
+    "checkpoint_run_scope": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 569
+    },
+    "foreign_course_ANSWERS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_CANCEL": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_EVENTS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_READ": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_evidence": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_evidence_id": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 90
+    },
+    "foreign_run_ANSWERS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_CANCEL": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_EVENTS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_READ": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_ANSWERS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_CANCEL": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_EVENTS": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_READ": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_CHECK": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_READ": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_SEARCH": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_WINDOW": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "trace_evidence_scope": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 2484
+    },
+    "unsigned_agent_command": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "unsigned_java_authority": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_CHECK": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_READ": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_SEARCH": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_WINDOW": {
+      "attempted": 90,
+      "violations": 0,
+      "observations": 0
+    }
+  },
+  "independent_owners": 50,
+  "independent_courses": 50,
+  "cancel": {
+    "attempted": 5,
+    "cancelled": 5,
+    "late_result_checks": [
+      {
+        "run_id": "2562ca24-675c-4644-aa7d-3c28746b6160",
+        "late_response_returned": true,
+        "events_unchanged": true,
+        "checkpoints_unchanged": false,
+        "checkpoint_states_unchanged": true,
+        "pending_write_channels_after": [
+          "__error__",
+          "branch:to:decide",
+          "branch:to:tool",
+          "done",
+          "history",
+          "pending",
+          "protocol_retries",
+          "queue",
+          "retry_tool_contract",
+          "run_id",
+          "selected",
+          "turn"
+        ],
+        "status": "cancelled",
+        "artifacts": 0
+      },
+      {
+        "run_id": "19514b3d-ef80-49a6-ae22-3ccccb89f41e",
+        "late_response_returned": true,
+        "events_unchanged": true,
+        "checkpoints_unchanged": false,
+        "checkpoint_states_unchanged": true,
+        "pending_write_channels_after": [
+          "__error__",
+          "branch:to:decide",
+          "branch:to:tool",
+          "done",
+          "history",
+          "pending",
+          "protocol_retries",
+          "queue",
+          "retry_tool_contract",
+          "run_id",
+          "selected",
+          "turn"
+        ],
+        "status": "cancelled",
+        "artifacts": 0
+      },
+      {
+        "run_id": "844afd72-196c-438a-a487-b89f1e5c5513",
+        "late_response_returned": true,
+        "events_unchanged": true,
+        "checkpoints_unchanged": false,
+        "checkpoint_states_unchanged": true,
+        "pending_write_channels_after": [
+          "__error__",
+          "branch:to:decide",
+          "branch:to:tool",
+          "done",
+          "history",
+          "pending",
+          "protocol_retries",
+          "queue",
+          "retry_tool_contract",
+          "run_id",
+          "selected",
+          "turn"
+        ],
+        "status": "cancelled",
+        "artifacts": 0
+      },
+      {
+        "run_id": "4f5199b5-3df5-4dee-aa5a-3e4ac63c9e83",
+        "late_response_returned": true,
+        "events_unchanged": true,
+        "checkpoints_unchanged": false,
+        "checkpoint_states_unchanged": true,
+        "pending_write_channels_after": [
+          "__error__",
+          "branch:to:decide",
+          "branch:to:tool",
+          "done",
+          "history",
+          "pending",
+          "protocol_retries",
+          "queue",
+          "retry_tool_contract",
+          "run_id",
+          "selected",
+          "turn"
+        ],
+        "status": "cancelled",
+        "artifacts": 0
+      },
+      {
+        "run_id": "bf66753b-6fef-484c-b2fb-e01a8b51e5eb",
+        "late_response_returned": true,
+        "events_unchanged": true,
+        "checkpoints_unchanged": false,
+        "checkpoint_states_unchanged": true,
+        "pending_write_channels_after": [
+          "__error__",
+          "branch:to:decide",
+          "branch:to:tool",
+          "done",
+          "history",
+          "pending",
+          "protocol_retries",
+          "queue",
+          "retry_tool_contract",
+          "run_id",
+          "selected",
+          "turn"
+        ],
+        "status": "cancelled",
+        "artifacts": 0
+      }
+    ],
+    "replacement_succeeded": 5,
+    "replacement_isolation": {
+      "by_case": {
+        "artifact_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 10
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 370
+        },
+        "checkpoint_run_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 75
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 211
+        },
+        "unsigned_agent_command": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "violations": 0
+    }
+  },
+  "cancel_active_run_isolation": {
+    "artifact_evidence_scope": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "checkpoint_evidence_scope": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 148
+    },
+    "checkpoint_run_scope": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 35
+    },
+    "foreign_course_ANSWERS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_CANCEL": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_EVENTS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_course_READ": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_evidence": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_evidence_id": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_ANSWERS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_CANCEL": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_EVENTS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_run_READ": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_ANSWERS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_CANCEL": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_EVENTS": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "foreign_session_READ": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_CHECK": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_READ": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_SEARCH": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "stale_revision_WINDOW": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "trace_evidence_scope": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 211
+    },
+    "unsigned_agent_command": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "unsigned_java_authority": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_CHECK": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_READ": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_SEARCH": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    },
+    "wrong_owner_WINDOW": {
+      "attempted": 5,
+      "violations": 0,
+      "observations": 0
+    }
+  },
+  "recovery": {
+    "mode": "deterministic",
+    "attempted": 5,
+    "succeeded": 5,
+    "failed": 0,
+    "cancelled": 0,
+    "recovered": 5,
+    "failure_types": {},
+    "run_p50_seconds": 14.805,
+    "run_p95_seconds": 14.938,
+    "successful_run_p50_seconds": 14.805,
+    "successful_run_p95_seconds": 14.938,
+    "provider_rate_limit_events": 0,
+    "timeout_runs": 0,
+    "infra_failed_runs": 0,
+    "search_p50_ms": 68.704,
+    "search_p95_ms": 83.03,
+    "search_observations": 5,
+    "peak_running_runs": 5,
+    "model_calls": 25,
+    "tool_calls": 15,
+    "input_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 25
+    },
+    "output_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 25
+    },
+    "billable_model_calls": 0,
+    "rows": [
+      {
+        "user": 0,
+        "run_id": "49080a5c-41be-4903-95a6-da7ec13bd04c",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 14.374897
+      },
+      {
+        "user": 1,
+        "run_id": "d00544b1-01c7-4b0d-af28-92f0cc68846c",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 14.804938
+      },
+      {
+        "user": 2,
+        "run_id": "e7a59793-cd20-46e8-aa76-f459261ae7ee",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 14.211906
+      },
+      {
+        "user": 3,
+        "run_id": "5d460221-7a53-458e-96d4-dda3158e1511",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 14.937747
+      },
+      {
+        "user": 4,
+        "run_id": "1ba74f57-b3c2-46df-b76b-bc82210fdea5",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 14.920662
+      }
+    ],
+    "checks": [
+      {
+        "run_id": "49080a5c-41be-4903-95a6-da7ec13bd04c",
+        "artifacts": 1,
+        "finished_events": 1,
+        "resumptions": 1,
+        "original_tools_retained": true,
+        "search_executions": 1,
+        "deadline_unchanged": true,
+        "checkpoint_history_retained": true
+      },
+      {
+        "run_id": "d00544b1-01c7-4b0d-af28-92f0cc68846c",
+        "artifacts": 1,
+        "finished_events": 1,
+        "resumptions": 1,
+        "original_tools_retained": true,
+        "search_executions": 1,
+        "deadline_unchanged": true,
+        "checkpoint_history_retained": true
+      },
+      {
+        "run_id": "e7a59793-cd20-46e8-aa76-f459261ae7ee",
+        "artifacts": 1,
+        "finished_events": 1,
+        "resumptions": 1,
+        "original_tools_retained": true,
+        "search_executions": 1,
+        "deadline_unchanged": true,
+        "checkpoint_history_retained": true
+      },
+      {
+        "run_id": "5d460221-7a53-458e-96d4-dda3158e1511",
+        "artifacts": 1,
+        "finished_events": 1,
+        "resumptions": 1,
+        "original_tools_retained": true,
+        "search_executions": 1,
+        "deadline_unchanged": true,
+        "checkpoint_history_retained": true
+      },
+      {
+        "run_id": "1ba74f57-b3c2-46df-b76b-bc82210fdea5",
+        "artifacts": 1,
+        "finished_events": 1,
+        "resumptions": 1,
+        "original_tools_retained": true,
+        "search_executions": 1,
+        "deadline_unchanged": true,
+        "checkpoint_history_retained": true
+      }
+    ],
+    "isolation": {
+      "by_case": {
+        "artifact_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 10
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 185
+        },
+        "checkpoint_run_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 40
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 248
+        },
+        "unsigned_agent_command": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "violations": 0
+    }
+  },
+  "post_commit_recovery": {
+    "mode": "deterministic",
+    "attempted": 5,
+    "succeeded": 5,
+    "failed": 0,
+    "cancelled": 0,
+    "recovered": 5,
+    "failure_types": {},
+    "run_p50_seconds": 19.937,
+    "run_p95_seconds": 20.625,
+    "successful_run_p50_seconds": 19.937,
+    "successful_run_p95_seconds": 20.625,
+    "provider_rate_limit_events": 0,
+    "timeout_runs": 0,
+    "infra_failed_runs": 0,
+    "search_p50_ms": 86.729,
+    "search_p95_ms": 89.03,
+    "search_observations": 5,
+    "peak_running_runs": 5,
+    "model_calls": 20,
+    "tool_calls": 15,
+    "input_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 20
+    },
+    "output_tokens": {
+      "total": null,
+      "known_total": 0,
+      "missing_calls": 20
+    },
+    "billable_model_calls": 0,
+    "rows": [
+      {
+        "user": 0,
+        "run_id": "2fd79c40-8369-4b2a-b6e3-a032b97f5b15",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 20.514273,
+        "artifact_ids": [
+          "daffbc23-131d-5265-801b-ee5a92b4770e"
+        ]
+      },
+      {
+        "user": 1,
+        "run_id": "a606a340-912c-4ffe-990d-b008d635ab88",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 19.562645,
+        "artifact_ids": [
+          "2085f0cb-a237-5b75-8072-80fb39683457"
+        ]
+      },
+      {
+        "user": 2,
+        "run_id": "4927290a-db62-4e7c-b7d3-3b50706ea9b0",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 20.624659,
+        "artifact_ids": [
+          "2b865274-da94-5f4d-89b5-531c1685185e"
+        ]
+      },
+      {
+        "user": 3,
+        "run_id": "64964ec6-36aa-4812-83f5-c73f965909b5",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 19.93657,
+        "artifact_ids": [
+          "89237b03-c1c9-5ecb-b445-b8d83eb621e8"
+        ]
+      },
+      {
+        "user": 4,
+        "run_id": "2d5bb8e6-5bee-4fcf-af50-0f947b6ab7af",
+        "status": "succeeded",
+        "error_code": null,
+        "failure_type": null,
+        "latency_seconds": 19.26664,
+        "artifact_ids": [
+          "ce29fdf4-f076-5f62-a68e-20723051e7f3"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "run_id": "2fd79c40-8369-4b2a-b6e3-a032b97f5b15",
+        "artifacts": 1,
+        "artifact_events": 1,
+        "finished_events": 1,
+        "artifact_content_unchanged": true,
+        "tool_results_unchanged": true,
+        "model_calls_unchanged": true,
+        "tool_calls_unchanged": true,
+        "deadline_unchanged": true,
+        "resumptions": 1
+      },
+      {
+        "run_id": "a606a340-912c-4ffe-990d-b008d635ab88",
+        "artifacts": 1,
+        "artifact_events": 1,
+        "finished_events": 1,
+        "artifact_content_unchanged": true,
+        "tool_results_unchanged": true,
+        "model_calls_unchanged": true,
+        "tool_calls_unchanged": true,
+        "deadline_unchanged": true,
+        "resumptions": 1
+      },
+      {
+        "run_id": "4927290a-db62-4e7c-b7d3-3b50706ea9b0",
+        "artifacts": 1,
+        "artifact_events": 1,
+        "finished_events": 1,
+        "artifact_content_unchanged": true,
+        "tool_results_unchanged": true,
+        "model_calls_unchanged": true,
+        "tool_calls_unchanged": true,
+        "deadline_unchanged": true,
+        "resumptions": 1
+      },
+      {
+        "run_id": "64964ec6-36aa-4812-83f5-c73f965909b5",
+        "artifacts": 1,
+        "artifact_events": 1,
+        "finished_events": 1,
+        "artifact_content_unchanged": true,
+        "tool_results_unchanged": true,
+        "model_calls_unchanged": true,
+        "tool_calls_unchanged": true,
+        "deadline_unchanged": true,
+        "resumptions": 1
+      },
+      {
+        "run_id": "2d5bb8e6-5bee-4fcf-af50-0f947b6ab7af",
+        "artifacts": 1,
+        "artifact_events": 1,
+        "finished_events": 1,
+        "artifact_content_unchanged": true,
+        "tool_results_unchanged": true,
+        "model_calls_unchanged": true,
+        "tool_calls_unchanged": true,
+        "deadline_unchanged": true,
+        "resumptions": 1
+      }
+    ],
+    "isolation": {
+      "by_case": {
+        "artifact_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 10
+        },
+        "checkpoint_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 185
+        },
+        "checkpoint_run_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 40
+        },
+        "foreign_course_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_course_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_evidence_id": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 5
+        },
+        "foreign_run_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_run_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_ANSWERS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_CANCEL": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_EVENTS": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "foreign_session_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "stale_revision_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "trace_evidence_scope": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 211
+        },
+        "unsigned_agent_command": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "unsigned_java_authority": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_CHECK": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_READ": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_SEARCH": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        },
+        "wrong_owner_WINDOW": {
+          "attempted": 5,
+          "violations": 0,
+          "observations": 0
+        }
+      },
+      "violations": 0
+    }
+  },
+  "bad_cases": {
+    "formal_failed_runs": [
+      {
+        "cohort": "deterministic-5",
+        "user": 1,
+        "run_id": "a3e280b4-e5d5-469b-9718-c91acf719fd3",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.255329
+      },
+      {
+        "cohort": "deterministic-5",
+        "user": 2,
+        "run_id": "b1de14f1-8e6d-435c-9702-d8ba8a60ffe3",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.21835
+      },
+      {
+        "cohort": "deterministic-5",
+        "user": 3,
+        "run_id": "6ff61950-327f-477d-86a5-e0c9c49c0f09",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.258021
+      },
+      {
+        "cohort": "deterministic-5",
+        "user": 4,
+        "run_id": "f55c4959-77d8-4ae6-9491-976ba6979326",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.252394
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 0,
+        "run_id": "7dccfde2-b70b-401f-a511-87a21ecee688",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.235361,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 1,
+        "run_id": "7a048a72-d2ea-491e-ac33-721eb43a1233",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 0.993001,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 2,
+        "run_id": "bfa66295-c53d-49bd-a0ea-56c404077524",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 0.995879,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 4,
+        "run_id": "6ced3870-9120-496a-a1c7-2880ddd9ddbc",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 0.986074,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 5,
+        "run_id": "57133999-61b1-4c68-a442-3015b443e699",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.743184,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 7,
+        "run_id": "6aeb439e-c8a3-4f3d-af2a-9ecc17424e80",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.667262,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 8,
+        "run_id": "7888e590-2b63-4651-92cb-f81732f67aed",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.745744,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 10,
+        "run_id": "daea95c5-866e-423b-861d-1d922bfc68dc",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.352019,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 11,
+        "run_id": "7dbbd325-66f8-4f8d-bcfa-b9c0346e0903",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.237055,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-20",
+        "user": 12,
+        "run_id": "cb57effd-1634-4500-b16a-b1f4cea2b8aa",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.900876,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 0,
+        "run_id": "156beee7-1c05-4f3e-bf06-83d3f04f39d0",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.42196,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 1,
+        "run_id": "28b2bdf8-8129-4e9b-a082-3f38e1056ae1",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.582368,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 3,
+        "run_id": "fa829966-f358-4878-bcaa-451f80a0bc84",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.576715,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 4,
+        "run_id": "0b3f96fe-225f-4773-8c35-d314bd885b3a",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.548858,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 6,
+        "run_id": "4f7ca79e-c4ae-4c95-8183-8720798ee251",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.059689,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 7,
+        "run_id": "2986270e-467e-4547-b362-1671302f82f9",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.081236,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 8,
+        "run_id": "af2175f0-4da7-470f-a7b2-a9ee3972a8c1",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 1.889006,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 10,
+        "run_id": "5bb66c12-1aa9-4c06-81ab-0bc4e9e5d44b",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.691317,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 11,
+        "run_id": "799c671e-ec8a-4b51-b7fb-57b5974a50d4",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.751677,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "deterministic-50",
+        "user": 12,
+        "run_id": "4d22d258-995e-476a-9951-a9b6e1b23537",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.516681,
+        "artifact_ids": []
+      },
+      {
+        "cohort": "real-5",
+        "user": 1,
+        "run_id": "1a19666f-91ab-44dd-9184-13628fbeaf4c",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 2.678894
+      },
+      {
+        "cohort": "real-10",
+        "user": 0,
+        "run_id": "33966c2c-299d-48ed-b479-153a2ac77627",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.502954
+      },
+      {
+        "cohort": "real-10",
+        "user": 1,
+        "run_id": "7d67e885-9218-4a1c-b520-c6eda2a1e0e9",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.328893
+      },
+      {
+        "cohort": "real-10",
+        "user": 2,
+        "run_id": "fe8aeb39-9588-42df-8ce2-e1e5ae23477f",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.492997
+      },
+      {
+        "cohort": "real-10",
+        "user": 6,
+        "run_id": "4e07a6c3-951c-4fde-a425-48788af77d56",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.372316
+      },
+      {
+        "cohort": "real-10",
+        "user": 7,
+        "run_id": "fb211f89-f064-41a3-84e0-8851902c1dc3",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.347484
+      },
+      {
+        "cohort": "real-10",
+        "user": 8,
+        "run_id": "fc6c6141-9821-45df-bdbb-57412f293b80",
+        "status": "failed",
+        "error_code": "STUDY_EXECUTION_FAILED",
+        "failure_type": "infra",
+        "latency_seconds": 3.370589
+      }
+    ],
+    "pilot": {
+      "attempted": 3,
+      "succeeded": 1,
+      "failed": 2,
+      "failure_types": {
+        "STUDY_EXECUTION_FAILED": 2
+      },
+      "rows": [
+        {
+          "user": 0,
+          "run_id": "ed9244cd-6976-4c00-a9af-6e9513bdb63b",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 0.967004
+        },
+        {
+          "user": 1,
+          "run_id": "27d27f37-b776-425b-afa9-e0aa28fa6ad2",
+          "status": "succeeded",
+          "error_code": null,
+          "failure_type": null,
+          "latency_seconds": 2.511567
+        },
+        {
+          "user": 2,
+          "run_id": "1b90915f-2582-480a-a501-eff401373a3b",
+          "status": "failed",
+          "error_code": "STUDY_EXECUTION_FAILED",
+          "failure_type": "infra",
+          "latency_seconds": 0.991531
+        }
+      ]
+    },
+    "pilot_accounting_note": "Two empty-evidence traces were initially marked as scope-check failures. Both were failed SEARCHs with zero returned Evidence, not cross-user disclosure. Original result is preserved; subsequent harness separates observations from violations.",
+    "foreign_id_probe_note": "The initial harness derived peer IDs from successful SEARCH traces, so failed peers could yield an empty READ. Published formal isolation totals use a separate v2 audit with actual nonempty peer-owned Java Evidence IDs for every probe. Original trial results remain untouched.",
+    "initial_cancel": {
+      "attempted": 5,
+      "cancelled": 5,
+      "late_result_checks": [
+        {
+          "run_id": "50516576-ee82-4cfc-a6e7-57a091507662",
+          "late_response_returned": true,
+          "events_unchanged": true,
+          "checkpoints_unchanged": false,
+          "status": "cancelled",
+          "artifacts": 0
+        },
+        {
+          "run_id": "78ae62cd-1e72-470f-89db-f645ff75392c",
+          "late_response_returned": true,
+          "events_unchanged": true,
+          "checkpoints_unchanged": false,
+          "status": "cancelled",
+          "artifacts": 0
+        },
+        {
+          "run_id": "f4987d46-8744-4239-baf4-dc0d7d105b9d",
+          "late_response_returned": true,
+          "events_unchanged": true,
+          "checkpoints_unchanged": false,
+          "status": "cancelled",
+          "artifacts": 0
+        },
+        {
+          "run_id": "f44cb425-c5c1-4eea-a275-1286e49eb36b",
+          "late_response_returned": true,
+          "events_unchanged": true,
+          "checkpoints_unchanged": false,
+          "status": "cancelled",
+          "artifacts": 0
+        },
+        {
+          "run_id": "efb13929-90c2-4f82-8a33-a20f63daf685",
+          "late_response_returned": true,
+          "events_unchanged": true,
+          "checkpoints_unchanged": false,
+          "status": "cancelled",
+          "artifacts": 0
+        }
+      ],
+      "replacement_succeeded": 2,
+      "replacement_isolation": {
+        "by_case": {
+          "artifact_evidence_scope": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 4
+          },
+          "checkpoint_evidence_scope": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 149
+          },
+          "checkpoint_run_scope": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 45
+          },
+          "foreign_course_ANSWERS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_course_CANCEL": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_course_EVENTS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_course_READ": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_evidence": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_evidence_id": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_run_ANSWERS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_run_CANCEL": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_run_EVENTS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_run_READ": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_session_ANSWERS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_session_CANCEL": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_session_EVENTS": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "foreign_session_READ": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "stale_revision_CHECK": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "stale_revision_READ": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "stale_revision_SEARCH": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "stale_revision_WINDOW": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "trace_evidence_scope": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 85
+          },
+          "unsigned_agent_command": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "unsigned_java_authority": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "wrong_owner_CHECK": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "wrong_owner_READ": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "wrong_owner_SEARCH": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          },
+          "wrong_owner_WINDOW": {
+            "attempted": 5,
+            "violations": 0,
+            "observations": 0
+          }
+        },
+        "violations": 0
+      }
+    },
+    "checkpoint_diagnostic": [
+      {
+        "run_id": "844afd72-196c-438a-a487-b89f1e5c5513",
+        "added_channels": [
+          "__error__"
+        ],
+        "removed_channels": [],
+        "error_values": [
+          "RunStopped()"
+        ]
+      },
+      {
+        "run_id": "19514b3d-ef80-49a6-ae22-3ccccb89f41e",
+        "added_channels": [
+          "__error__"
+        ],
+        "removed_channels": [],
+        "error_values": [
+          "RunStopped()"
+        ]
+      },
+      {
+        "run_id": "2562ca24-675c-4644-aa7d-3c28746b6160",
+        "added_channels": [
+          "__error__"
+        ],
+        "removed_channels": [],
+        "error_values": [
+          "RunStopped()"
+        ]
+      },
+      {
+        "run_id": "bf66753b-6fef-484c-b2fb-e01a8b51e5eb",
+        "added_channels": [
+          "__error__"
+        ],
+        "removed_channels": [],
+        "error_values": [
+          "RunStopped()"
+        ]
+      },
+      {
+        "run_id": "4f5199b5-3df5-4dee-aa5a-3e4ac63c9e83",
+        "added_channels": [
+          "__error__"
+        ],
+        "removed_channels": [],
+        "error_values": [
+          "RunStopped()"
+        ]
+      }
+    ],
+    "preparation_wait_timeouts": [
+      {
+        "user": 21,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 41,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 43,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 31,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 49,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 46,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 45,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 26,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 25,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 40,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 36,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 42,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 32,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 30,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 29,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 48,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 47,
+        "client_wait_timeouts": 1
+      },
+      {
+        "user": 37,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 39,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 24,
+        "client_wait_timeouts": 2
+      },
+      {
+        "user": 27,
+        "client_wait_timeouts": 1
+      }
+    ]
+  },
+  "regression": {
+    "python_postgres_passed": 605,
+    "python_postgres_skipped": 0,
+    "java_related_passed": 62,
+    "java_related_skipped": 0,
+    "runner_accounting_passed": 4,
+    "evidence": [
+      "python-regression.log",
+      "java-regression.log",
+      "runner-regression.log"
+    ],
+    "production_code_changed": false
+  },
+  "limitations": [
+    "Concurrent login/start burst; deterministic executor bounded to five workers. Real cohorts use five and ten workers. Production default remains one sequential worker.",
+    "Fixed responses prove mechanics only. Successful real Runs are completion counts, not independently scored teaching quality.",
+    "Same public MIT strings clip independently uploaded by 50 owners; this is not unseen-course or long-duration soak testing.",
+    "Run latency is persisted creation-to-terminal, includes queue; SEARCH includes failures. Small-sample nearest-rank P95.",
+    "Background course preparation shares host and provider during early cohorts. Not an isolated hardware throughput benchmark.",
+    "Unknown token usage is null. Fixed provider makes no billable model calls; real usage comes only from provider replies.",
+    "Negative browser/gateway probes use ring peers, not every user pair. Signed stale revision and wrong-owner probes hit all four Java Authority actions."
+  ]
+}
