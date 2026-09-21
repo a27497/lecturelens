@@ -24,3 +24,10 @@ LectureLens is a course-grounded Study Agent project, currently experimental. Th
 - Run checks appropriate to the changed layer; documentation-only edits do not require starting the service stack.
 - Keep README, architecture and deployment instructions consistent with actual code. State implemented, experimental and planned capabilities separately. Current quality limitations remain visible when presenting the project as a Study Agent.
 - Preserve existing uncommitted work. Keep provider credentials, downloaded media and private evaluation records out of Git.
+
+## Documentation and comments
+
+- Comments explain invariants, constraints, races, failure semantics or non-obvious trade-offs; preserve authority, idempotency, privacy and recovery explanations.
+- Do not narrate obvious code execution.
+- Public docs describe current behavior and link to evidence; experiment chronology belongs in `eval/` or history documents.
+- Prefer concise engineering statements over tutorial-style prose and repeated caveats.

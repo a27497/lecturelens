@@ -1,61 +1,73 @@
-# LectureLens Study Agent — Python 核心服务
+# LectureLens Study Agent 服务
 
-当前开发状态（2026-09-20）：学习闭环 Phase 开发与有限范围验收已完成，未发布。冻结 AU：开发严格31/31、新保留严格8/8、独立PostgreSQL机制547项及真实闭环／恢复／权限验收通过，见 [Phase 完成报告](../eval/phase-completion/FINAL_AU.md) 为准。下方各冻结候选的结果是历史记录；线上 C、默认反馈关闭和原账号路由保持不变。
+Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的模型决策、上下文、工具编排和持久执行。学习闭环已完成有限范围验收，仍属实验能力，尚未发布；线上配置保持不变。质量结论与历史失败见[评测索引](../eval/README.md)。
 
-Python/FastAPI + LangGraph + PostgreSQL/pgvector。负责模型工具决策、Context、持久 Session/Run、checkpoint、解释与练习产物，以及本地多语言 Evidence 检索。Java 提供课程、权属、版本与签名入口。职责约束见 [Agent 项目约束](../docs/AGENT_PRODUCT_CONTRACT.md)。
+## 职责与边界
 
-Study Agent 默认关闭，需在 Java/Python 两端显式启用并配置模型。当前处于实验阶段；隔离BC通过本轮有限范围门槛，线上C仍未达标；运行与恢复机制见 [L2 实施说明](../docs/L2_STUDY_AGENT.md)，真实效果见 [L2.2 评测](../docs/L2_QUALITY_EVALUATION.md)。
+- Python 保存 Session/Run、checkpoint、解释与练习、不可变作答版本、反馈和用户核对记录；PostgreSQL 同时保存派生 Evidence 索引。
+- Java/MySQL 负责账号、课程与媒体事实、Evidence 权属/revision/删除检查和浏览器网关。Python 不读写 MySQL，不接收浏览器自报身份或用户 JWT。
+- Java 后台推送 Evidence 清单与差量，Python 使用固定版本的本地 ONNX Embedding 建索引；学习请求只消费已就绪索引，不触发全文索引。
+- 普通课程 QA 与媒体准备保持独立路径。自动评分、长期学习记忆和复习调度尚未交付。
 
-草稿复核与反馈修订在 Python runtime 中执行，决策与复核共享调用和时间预算；模型复核不保证事实正确。机制与真实试验范围见 [L2 质量修订](../docs/L2_QUALITY_REVIEW.md)。
+详细约束见[项目契约](../docs/AGENT_PRODUCT_CONTRACT.md)和[Evidence 同步](../docs/L1_EVIDENCE_SYNC.md)。
 
-复核采用仅问题代码的短输出契约，逐字段检查显式引用编号；决策工具格式错误在原预算内最多纠正一次，失败用量可追踪。百炼最新六题开发回归完成 6/6、完整拒答 2/2，但课程内语义仍为 1/4，见 [回归报告](../eval/bailian-pilot/REGRESSION.md)。
+## 运行模型
 
-上述为线上 C 状态。此前冻结的未发布 BC 实验：`answer_points` 同源生成答案和评分依据；`create_python_practice` 由有界 AST 解释器从同一程序生成输出题、答案和评分点，仍须检查课程支持。`create_interval_practice` 从明确的实数区间和严格反馈生成边界与中点练习，可附已解示例，保留提交条件；模型选择减半或比较重点，工具生成方法说明并原样引用选中的课堂结果；整数专属问题不使用此工具。`create_sequence_practice` 逐轮计算课程方法对应的数组和排序区域，最多8个不同整数、3轮。`check_python_example` 可提供计算观察，禁止导入、I/O、循环及任意方法。拒绝理由/计算记录只在私有工具结果中保存，公开事件不含答案。独立双重求解保留为显式回放实验，默认不启用；实测未证明其收益。线上 C 快照及个人模型连接保持不变，用户已授权仅在隔离测试采用 qwen3-max 生成。BC已完成本轮小样本质量与恢复验收，仍不代表通用自动评分，见 [长任务记录](../eval/l22-completion/README.md)。[M](../eval/reviewer-probe/COURSE_ANSWER_FIRST.md)、[L](../eval/reviewer-probe/FEEDBACK_PRESERVATION.md)、[K](../eval/reviewer-probe/CLAUSE_REVIEW.md)、[J](../eval/reviewer-probe/FIX.md) 和 [D/E](../eval/bailian-pilot/FIELD_REVIEW.md) 历史失败全部保留。现有服务启动源路径固定在 C 快照，勿将普通重启视作候选发布。
+浏览器请求经 Java 鉴权和课程就绪检查后进入签名命令入口。Session 固定 owner/course/revision，同一 Session 最多一个活跃 Run；每个进程的一个后台 worker 从 PostgreSQL 队列依次领取任务。
 
-后台索引、删除同步、状态与契约升级见 [Evidence 同步](../docs/L1_EVIDENCE_SYNC.md)。
+执行循环是 **model → tool → observation → 下一次决策或停止**。模型通过标准 `tool_calls` 选择检索、相邻证据补读、有界计算、练习草稿或证据不足报告；草稿经过目标条件、字段引用、答案一致性与课程方法范围复核，最多提交两份候选。程序保存解释、练习与私有答案，或保存证据不足产物。受限 Python AST 工具没有导入、I/O、循环或任意方法执行能力；计算正确不等于课程支持。
 
-`lecturelens_agent.benchmark` 是隔离的 [Phase A 检索评测入口](../eval/retrieval-phase-a/README.md)，复用 Dense 模型、chunker 和 PostgreSQL 检索；BM25、RRF、多语言 Cross-Encoder 与固定读者仅用于离线消融。其 Torch/Transformers 依赖由独立 eval 环境锁定，生产 app 不导入此模块，默认检索不变。运行方式见 [复现说明](../eval/retrieval-phase-a/REPRODUCE.md)。
+作答保存为不可变版本。反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议；`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有结果和核对记录仍可读。见[工具与执行协议](../docs/L2_STUDY_AGENT.md)、[复核机制](../docs/L2_QUALITY_REVIEW.md)及[学习交互](../docs/L3_LEARNING_FLOW.md)。
 
-运行诊断使用 `python -m lecturelens_agent.study.trace_cli`，支持按 run_id 导出私有 Trace、启动受权新 Run Replay 和对比；复用现有事件与 checkpoint，只增加非索引 `study_event.trace_detail`。CLI 同时需要运维数据库访问和 Java 用户登录；说明、真实失败 Case 和计量边界见 [Phase B](../eval/agent-trace-phase-b/README.md)。
+## 授权、停止与恢复
 
-可选 `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用唯一 Course MCP stdio 集成；默认 `internal`。官方 MCP Client/Server 转发原 Java 签名请求，Server 不持有签名密钥，失败不回退直连。工具、真实端到端结果、故障与复现说明见 [Phase C](../eval/course-mcp-phase-c/README.md)。
+- 内部 HMAC 绑定 audience、方法、实际路径、时间戳和原始请求体。每次工具或生成上下文前后重新检查 Java 当前权限与版本；Java 不可用时拒绝使用缓存证据。
+- 默认 Run 上限为 6 次模型调用、8 次逻辑工具执行、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
+- Session 使用专用 autocommit 连接上的 PostgreSQL advisory lock 保护 checkpoint 写入，不持有跨模型请求的业务事务。仍持锁的慢 worker 不被其他 worker 接管。
+- 创建请求通过 `request_key` 幂等，同一 key 更换内容会冲突。工具结果按 `run_id + call_id` 唯一，每 Run 最多一个学习产物；副作用已提交而 checkpoint 未保存时，恢复回读工具结果，不重复保存。
+- 模型响应尚未 checkpoint 时崩溃可能导致外部请求重发，不承诺 provider 恰好调用一次。恢复保留原预算、deadline 和模型配置。
+- 取消立即将 Run 标为 `cancelled`。外部调用可能继续至返回或超时，但 worker token、运行状态和版本检查阻止晚到结果发布。预算耗尽、无效工具/引用、权限或版本变化、provider 失败和修订耗尽均停止执行。
+- Java 删除立即关闭访问；Python 持久墓碑阻止晚到同步恢复课程，清理器取得 Session 锁后删除派生状态及 checkpoint，失败继续重试。源 revision 变化使旧 Session 失效。
+- 公开事件只展示安全状态与计量，不含隐藏推理、源正文或参考答案；答案通过单独授权命令读取。
 
-完整启动步骤、Java/Python 契约、验证与边界见 [L1 实施文档](../docs/L1_DENSE_RETRIEVAL.md)。
+执行实现见 [runtime.py](src/lecturelens_agent/study/runtime.py)，持久约束见 [store.py](src/lecturelens_agent/study/store.py)。Agent 崩溃后恢复原 Run；Java 媒体任务租约过期后标为失败，由用户创建新任务重试。
+
+## 本地运行
+
+需要 Python 3.12、uv、PostgreSQL/pgvector 和已启动的 Java Evidence 服务。从仓库根目录准备配置，已有文件不要覆盖：
 
 ```bash
+test -e .env.agent.local || cp .env.agent.example .env.agent.local
+docker compose -f compose.agent.yml up -d
+```
+
+启动前完成以下配置：
+
+1. 设置数据库连接和独立 `AGENT_SERVICE_SECRET`，Java/Python 使用同一服务密钥。
+2. 两端显式设置 `STUDY_AGENT_ENABLED=true`；Java 加载 `DENSE_RETRIEVAL_ENABLED`、`AGENT_SERVICE_URL` 等配置，Python 设置 `AGENT_JAVA_BASE_URL`。
+3. 使用支持标准工具调用的模型。可配置全局 `AGENT_LLM_*` 默认连接，或启动后在 `/settings/models` 配置个人决策/复核用途。新 Run 冻结连接版本和加密凭据，后续编辑不改变已有 Run；加密密钥与允许地址见[模型管理](../docs/MODEL_MANAGEMENT.md)。
+
+```bash
+cd agent-service
 uv sync --locked
 uv run --env-file ../.env.agent.local uvicorn lecturelens_agent.app:create_app --factory --host 127.0.0.1 --port 8090
 ```
 
-`/healthz` 在模型及数据库初始化后可用。内部端点接受 Java 签名的检索、差量同步和 Study 命令，不接受浏览器用户自报身份。Embedding 使用固定版本的本地 ONNX 权重；Study 的真实 LLM 请求使用配置的 Provider，是否收费由该服务决定。mock 不会作为真实模型失败时的自动回退。
+`/healthz` 在 Embedding 模型与数据库初始化后可用。真实模式没有可用模型连接时拒绝新 Run 入队。`AGENT_LLM_MODE=mock` 仅用于显式的确定性流程演示，不是模型故障回退；真实/mock 模式不能交叉恢复已有 Run。完整双服务配置见[部署指南](../docs/DEPLOYMENT.md)和[检索服务说明](../docs/L1_DENSE_RETRIEVAL.md)。
+
+## 验证与诊断
+
+先创建独立 PostgreSQL/pgvector 测试数据库，不能与运行中的服务共用数据库或队列。在 `agent-service/` 执行，连接地址按本地配置替换：
 
 ```bash
 uv run ruff check src tests
 uv run ruff format --check src tests
-AGENT_TEST_DATABASE_URL=postgresql://lecturelens:lecturelens-local-only@127.0.0.1:15439/lecturelens_agent_test uv run pytest -q
+AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_agent_test' uv run pytest -q
 ```
 
-先创建独立测试数据库。测试使用确定性模型/向量夹具；数据库相关用例使用真实 PostgreSQL/pgvector，覆盖取消、幂等、进程退出恢复、持久预算与课程删除。未设置测试数据库地址时这部分用例会 skip，不能将其报告为完整通过。CI 提供真实数据库并执行全部用例。真实 Study 模型验证使用 `scripts/eval/evaluate-study.py`，Java 的 `DenseRetrievalLiveIT` 仅验证检索服务契约。
+测试使用确定性模型/向量夹具和真实 PostgreSQL，覆盖权限、取消、幂等、进程恢复、预算及删除。未设置测试数据库时相关用例会 skip，不能报告为完整通过。CI 提供独立数据库；真实模型质量按[质量评测说明](../docs/L2_QUALITY_EVALUATION.md)单独验证，Java `DenseRetrievalLiveIT` 只验证检索契约。
 
-## 用户模型管理
-
-启用 Study Agent 后，浏览器 `/settings/models` 管理个人连接和决策/复核用途。真实模式可不设置全局 `AGENT_LLM_BASE_URL` / `AGENT_LLM_MODEL`，先启动服务再配置个人模型。全局配置仍可作为只读默认。每个新 Run 冻结模型和加密凭据，编辑连接不改变已创建运行。加密密钥、允许地址和兼容协议见 [模型管理说明](../docs/MODEL_MANAGEMENT.md)。
-
-BC未发布实现补充：检索时模型可选择`python_strings`，随后用`immutability`或`rebinding`概念技能生成字符串方法说明与概念题，避免额外错误类名和对象生命周期结论；其他Python代码仍保留自由概念契约。选择排序概念用`boundary`、`placement`或`progress`技能，说明与应用使用同一模型所选方法，已解示例不得使用相反方法。模型仍选择证据、程序/数组/轮数及工具；这些模板没有来源豁免，只有重新核算匹配的应用答案可移出模型复核视图。旧自由契约仅用于已有记录和测试回放。
-
-## L3.1 作答与证据反馈（未发布）
-
-`study_attempt` 保存不可变的逐题作答版本，`study_feedback` 和 `study_feedback_note` 分别保存模型反馈和用户核对记录；都由课程 Session/Run 的外键链级联清理。新命令经同一签名入口、当前权属与版本校验，不向 MySQL 写学习状态。默认入口、字段和恢复说明见 [学习交互开发](../docs/L3_LEARNING_FLOW.md)。
-
-反馈是新的 `task_kind=feedback` Run，引用精确的 `source_attempt_id`；复用同一队列、Session 单活、模型快照、6模型/8工具/64k预留/90秒预算与 LangGraph checkpoint。通过 `STUDY_FEEDBACK_ENABLED=true` 在 Python **单独启用实验能力**，默认 false；该开关仅控制新反馈请求，不中断已持久化的运行，已有结果和纠正记录仍可读。模型只选来源，程序回填权威原文；模型语义复核与精确引用检查不是自动评分可靠性的证明。
-
-当前新增反馈质量需看 [独立验收](../eval/feedback-v1/README.md)，不能复用 BC 生成练习的质量分数。没有自动成绩、掌握程度标签或长期记忆写入。
-
-2026-09-20 反馈验收完成：冻结 `feedback-P` 在已见MIT课程的新合成作答上开发6/6、新保留8/8通过，另有旧题回归8/8；AI来源核查，仍有一次复核误拒绝，所有历史失败保留。学习入口、不可变作答历史、独立证据反馈和用户核对记录已实现，反馈默认关闭且未部署。该结果不证明未见课程、自动评分或长期记忆能力；详情见 [学习交互验收](../docs/L3_LEARNING_FLOW.md)。
-
-
-2026-09-20 真实闭环后续验收：实际浏览器上传→新执行出题→作答→反馈→修改→再次反馈，以及重启、调用中断恢复、取消、越权和删除检查已完成；补上取消后查看历史反馈的入口，前端79项及独立PostgreSQL作答/反馈46项通过。未见MIT线性代数课程严格质量仅4/6，提示调整候选Q未改善并已恢复P；四份新课程作答反馈正确不抵消出题/拒答问题。暂未开发同Session自适应后续练习，线上不变。见 [真实学习闭环结果](../eval/learning-loop/RESULTS.md)。
-
-2026-09-20 字段支持修复后续：候选 T 已增加逐字段来源隔离、候选不可见的课程覆盖观察、相邻教学步骤补读和答案匹配记录；独立 PostgreSQL 的完整 Python 测试459项通过。R/S/T对七个已消费目标严格通过4/7、5/7、6/7，最终仍误接受课程未讲授的解集分类。新保留题未消耗，当时工作区T保持实验状态，线上C与原模型路由不变；先修复应用任务与已演示方法的范围对应，再推进新保留验收。见 [字段支持修复结果](../eval/field-support/RESULTS.md)。
-
-2026-09-20 方法范围约束后续：实验候选X新增生成前的课程方法观察、模型选方法及独立范围判断，原交点越界开发问题已通过回归。完整Python测试467项、固定诊断4/4、已消费开发7/7；新保留八题严格质量5/8，仍有双点任务错误拒绝、明确条件遗漏和拒答夹带未教答案。当时的工作区X未发布，线上C和原路由不变；下一步先修复目标条件与拒答正文，再冻结新目标。见 [方法范围结果](../eval/method-scope/RESULTS.md)。
+- **Trace / Replay：** `python -m lecturelens_agent.study.trace_cli` 导出私有 Trace、启动授权的新 Run Replay 和比较结果；需要运维数据库访问及 Java 用户登录，读取前后重新授权。[用法与真实失败](../eval/agent-trace-phase-b/README.md)
+- **Course MCP：** `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用官方 SDK stdio Client/Server；默认 `internal`。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
+- **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
+- **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
