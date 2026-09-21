@@ -1,0 +1,75 @@
+{
+  "version": "phase-AO-consumed-regression",
+  "data_status": "Consumed historical regression including prior failed holdout; not fresh",
+  "cases": [
+    {
+      "id": "new-string-output",
+      "split": "development",
+      "expected": "practice",
+      "goal": "解释字符串不可变与变量重新绑定的区别，并给我一道概念题和一道新字符串代码输出题。",
+      "checks": [
+        "Object immutability and variable rebinding distinguished.",
+        "Application uses a new program rather than the lecture hello/yello example.",
+        "Answer matches executable code, and each field has its own supporting citations."
+      ]
+    },
+    {
+      "id": "before-after-prints",
+      "split": "development",
+      "expected": "practice",
+      "goal": "根据课程解释变量重新绑定后为什么不等于原地改字符，给概念题；应用题用一个新字符串，先打印它，再切片拼接并重新绑定，最后打印它，让我写出两行输出。",
+      "checks": [
+        "New multi-character string input; two prints before/after; immutable object versus rebinding accurate; exact computed answer."
+      ]
+    },
+    {
+      "id": "two-rebindings",
+      "split": "development",
+      "expected": "practice",
+      "goal": "结合课程解释为什么直接给字符串下标赋值不可行。出一道概念题和一道新字符串代码输出题，代码必须连续两次重新绑定同一个变量，再打印结果。",
+      "checks": [
+        "Two rebindings of same variable; new input; supported slice/concatenation operations; computed answer matches exact program."
+      ]
+    },
+    {
+      "id": "string-interning",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只依据这段课程解释 Python 字符串驻留如何用 is 比较对象身份，设计两道判断题。",
+      "checks": [
+        "Interning and is identity are not taught; immutable/rebinding teaching does not license memory-identity claims."
+      ]
+    },
+    {
+      "id": "three-prints-two-rebindings",
+      "split": "development",
+      "expected": "practice",
+      "goal": "结合课程解释重新绑定为何不等于原地改字符，给一道概念题。应用题使用新字符串 cabin：先打印 s，再用 r 加 s[1:] 重新绑定并打印，再用 t 加 s[1:] 重新绑定并打印；让我依次写出全部三行输出。",
+      "checks": [
+        "Initial cabin, two rebindings using requested r and t slicing expressions.",
+        "Exactly three output lines cabin,rabin,tabin in order.",
+        "Own citations support immutability, slicing/concatenation and rebinding."
+      ]
+    },
+    {
+      "id": "chinese-literal-slice",
+      "split": "development",
+      "expected": "practice",
+      "goal": "按照课程说明字符串不可变与变量重绑定的区别，并给概念题。应用题固定写 s=\"你好呀\"，先打印 s，再执行 s=\"早\"+s[1:] 后打印 s，让我写出两行输出；只做这段代码，不讲编码理论。",
+      "checks": [
+        "Preserve Chinese literal and exact operations.",
+        "Outputs 你好呀 then 早好呀; two lines in order.",
+        "No encoding/normalization claims; transfer taught string operation only."
+      ]
+    },
+    {
+      "id": "unicode-normalization-outside-clip",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只用这一片段教我 Unicode 的 NFC 与 NFD 规范化，并设计练习判断两段视觉相同的文字规范化前后是否相等。",
+      "checks": [
+        "No normalization teaching in this bounded clip; abstain without adding unicode algorithm claims."
+      ]
+    }
+  ]
+}

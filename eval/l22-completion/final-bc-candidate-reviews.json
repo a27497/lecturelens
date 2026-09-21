@@ -1,0 +1,162 @@
+{
+  "strings-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "概念解释与索引错误没有额外错误类型；yello输出正确，解释及每题自身引用覆盖其主张。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "英文目标匹配，区别对象不可变与重新绑定；输出题正确，概念与应用各自引用完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "指定hello到yello方法在程序及答案中完整给出，重新绑定概念不同，自身引用覆盖拼接、切片与对象绑定。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确索引赋值报错且不命名未教类型，yello程序输出准确，各字段自身引用完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Kubernetes扩容依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "中点与反馈概念正确，75.25与区间准确，每题自身引用支持方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "原文引用课堂76/6，概念比较与区间应用不同，75.25正确，自身来源完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "指定例题解释和应用均为(50,100]及75，概念不同，每个字段自己的引用支持减半方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "反馈排除半区间的概念正确；40和(30,50]正确，各字段自己的来源完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有Transformer学习率依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-20": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有岭回归正则化系数依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-16": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "正确区别甲无需排序的log n查询与乙未排序输入的准备/扫描选择；每题自身引用覆盖排序、二分、线性成本，概念与情境纠错不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-17": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "正确把排序成本计一次，应用区分准备和每次查询；没有固定盈亏次数，各题自己引用包含三种代价和复用条件。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-18": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释给出Ari首项1次、Rex需列表长度（所给名单5项）；应用Eli/Zoe均5次且停止原因不同。91400及107090完整原文描述直到找到末尾目标的全表遍历，可据顺序扫描方法推导早命中与缺失情况，自己引用支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-19": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释2次特例与一般最坏n，应用明确6次缺失查找，各题自己来源含扫描与线性时间，概念和应用不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-20": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有摆的Euler–Lagrange方程依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-16": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "含负数数组两轮及后缀正确，无变化轮仍缩边界；各字段自己的引用支持最大值移右和排好后缀。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-17": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "三轮状态及后缀全正确，保留第二轮无变化；概念说明确认最终位置，应用逐轮追踪不同，每题自身来源完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-18": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "最大值放在剩余前缀末尾、排除已固定位置的说明，与两轮缩小前缀/增加后缀实例共同纠正边界向右说法；各题自身来源完整，计算正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-19": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "给定数组一轮为[3,-1,0,5]、后缀[5]，结合最大值与末尾交换规则明确是5和0；未声称全表排好，概念和应用各自引用支持方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

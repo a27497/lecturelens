@@ -1,0 +1,80 @@
+{
+  "candidate": "AK",
+  "type": "fixed consumed diagnostic, not autonomous holdout",
+  "passed": 7,
+  "total": 8,
+  "cases": [
+    {
+      "case_id": "historical-classification",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "missing-second-point",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "new-point",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "new-point-error",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "parallel-classification",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "supported-short-explanation",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "error_code": null
+    },
+    {
+      "case_id": "uncited-explanation-claim",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": false,
+      "observed_accept": true,
+      "label_matched": false,
+      "error_code": null
+    },
+    {
+      "case_id": "violates-neither-condition",
+      "source_sha256": "6155a455c7beb008c4bc29897d4c69bcf90dff1e70da8870766c1cf777d4fc64",
+      "status": "completed",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "error_code": null
+    }
+  ]
+}

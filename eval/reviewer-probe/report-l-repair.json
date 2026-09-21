@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "protocol": "seeded-draft-real-repair-development",
+    "seeded_decisions_per_run": 2,
+    "autonomous_generation_assessed": false,
+    "runtime_sha256": "4f0b43b7d9a057cdbb9ff2b8352a7af3be8bee9395638c39b149a9243d61d5c3",
+    "runner_sha256": "ffba2078ca36ccf3080557ea52f0e1f667e83df34a557f21cffd4b9721dc4f11",
+    "dataset_sha256": "118ce189610fb69aa0075304d5d0c4b627cfd2bb849fd337e8295c1866dc4464",
+    "source_sha256": "28abb23043ebb5aaf7a69d0aeff05d24a7604a91cdb60dbf30ccbc679300e85d",
+    "evidence_sha256": "9efc09db1b5740fbd67630412bb8fe75ba8e92b3dc32a58c9128c3fbd7d51673",
+    "models": {
+      "decision": {
+        "model": "qwen-plus",
+        "version": 2,
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      },
+      "review": {
+        "model": "qwen3-max",
+        "version": 2,
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      }
+    },
+    "deadline_seconds": 90,
+    "max_model_calls_per_run": 6,
+    "max_tool_calls_per_run": 8,
+    "reserved_token_budget_per_run": 64000,
+    "decision_output_limit": 900,
+    "review_output_limit": 300,
+    "review_wire_contract": "rule-results-and-source-anchors; separate rubric observations",
+    "max_candidates_per_run": 2,
+    "max_tool_format_repairs_per_run": 1,
+    "temperature": 0.2,
+    "bailian_enable_thinking": false,
+    "tool_choice": "named for single tool; auto for multiple",
+    "model_identity_limit": "Provider aliases may change; remote weights/hardware are not verifiable.",
+    "full_l2_gate_assessed": false
+  },
+  "scope": "Two previously seen seeded K drafts, fixed public Evidence, actual LangGraph/PostgreSQL and real review/repair decisions. Search and initial draft injected deterministically; not autonomous generation or held-out quality.",
+  "runs": 2,
+  "semantic_repairs_passed": 1,
+  "external_model_calls": 4,
+  "seeded_decisions": 4,
+  "known_prompt_tokens": 13833,
+  "known_completion_tokens": 503,
+  "calls_without_complete_usage": 0,
+  "assessment": "Codex compared final artifact to frozen per-case criteria and full cited passages; not blind human gold. Run success alone is insufficient.",
+  "cases": [
+    {
+      "case_id": "rk-04",
+      "status": "succeeded",
+      "error_code": null,
+      "run_model_call_reservations": 5,
+      "seeded_decisions": 2,
+      "external_model_calls": 3,
+      "tool_calls": 3,
+      "reserved_tokens": 58252,
+      "elapsed_seconds": 11.484,
+      "artifact_created": true,
+      "semantic_repair_passed": true,
+      "assessment": "真实决策接收到私有事实纠正、课程原文及待核对规则后，补上 None 不是字符串，保留合法分项评分和正确第二题；复核接受并持久化。"
+    },
+    {
+      "case_id": "rk-06",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "run_model_call_reservations": 3,
+      "seeded_decisions": 2,
+      "external_model_calls": 1,
+      "tool_calls": 2,
+      "reserved_tokens": 30282,
+      "elapsed_seconds": 2.837,
+      "artifact_created": false,
+      "semantic_repair_passed": false,
+      "assessment": "首次真实复核即 MODEL_REVIEW_CONTRACT，尚未进入修订，未发布产物；保留失败，不重试。事件仅定位 review_schema/value_error；本脚本未捕获验证前的原始工具参数，不能断言具体是哪项字段失败。"
+    }
+  ],
+  "cleanup_remaining_rows": {
+    "study_session": 0,
+    "study_run": 0,
+    "study_tool_result": 0,
+    "study_artifact": 0,
+    "checkpoints": 0,
+    "checkpoint_blobs": 0,
+    "checkpoint_writes": 0,
+    "agent_model_connection": 0
+  },
+  "full_l2_gate_assessed": false,
+  "deployed": false
+}

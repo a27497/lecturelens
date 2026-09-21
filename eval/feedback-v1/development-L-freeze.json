@@ -1,0 +1,21 @@
+{
+  "candidate": "feedback-L",
+  "source_sha256": "e5d679fc168f4db7e4b0c7da0ca45d38bdb5feaccad2c6223d0d7458f8919034",
+  "runner_sha256": "104b62bfcd0cb163815abe43f57eaadbb972be96e305854245503d83f7bf15ed",
+  "frozen_at_utc": "2026-09-20T12:13:12.638043+00:00",
+  "changes": [
+    "Keep K semantic fixes; explicitly state the existing 400 character observation bound including spaces",
+    "Aim at <=45 English words or <=150 Chinese characters, explaining the key distinction once; do not expand protocol limit"
+  ],
+  "per_run_budgets": {
+    "model_calls": 6,
+    "tools": 8,
+    "conservative_token_reservation": 64000,
+    "deadline_seconds": 90,
+    "drafts": 2,
+    "decision_output_tokens": 900,
+    "review_output_tokens": 900
+  },
+  "aggregate_call_cap": null,
+  "fresh_holdout_authored": false
+}

@@ -1,0 +1,162 @@
+{
+  "strings-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "不可变与重新绑定符合课程示例；yello输出正确。概念自身引用含对象说明，应用自身引用含拼接、切片和绑定。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "对象不可变与重新绑定区别准确，yello输出正确；两题各自引用均覆盖所用操作。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "回答hello到yello的拼接与绑定，概念/输出题不同，自身引用包含完整切片和绑定说明。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "纠正索引原地修改，morld输出准确，自身引用覆盖错误、拼接、切片和绑定。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "中点概念正确，[1,100]上半区间及75.25准确；各题自身引用支持减半方法，算术由明确题面条件推出。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "课堂76/6原文有解释自身引用，概念自身引用含逐项猜测和减半；应用自身引用含中点减半方法，75.25计算正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释给出指定(50,100]及75，概念与计算应用不同；每题自身引用支持方法，未添加整数取整规则。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "反馈排除整半区间的概念正确；[10,50]下半区间及20准确，自身引用支持方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Transformer学习率依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有词向量训练学习率依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "概念与遗漏准备阶段纠错应用不同；应用自身引用现包含排序n log n、二分log n及扫描n的依据，成本推导正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "比较一次准备和每次查询，应用纠正重复排序。应用自身引用覆盖三种成本及重复查询权衡，没有固定查询次数盈亏点。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "线性扫描及Beth末尾4次检查正确，概念与应用各自引用覆盖算法和最坏情况。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "计入排序准备阶段，概念与纠错应用不同；每题自身引用都含排序、二分和扫描成本。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有高斯混合协方差更新依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "最大值与未排序末尾交换正确，课堂数组两轮状态准确；自身引用含数组、交换和后缀定义。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "两轮范围、位置、后缀比较完整，课堂数组两轮状态准确；解释及各题自身引用覆盖初始数组和两轮操作。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "请求[6,2,9,5]与应用[1,7,3,8]逐轮结果正确；概念和应用各自引用含最大值交换及后缀方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "纠正课程采用最大值移右，[5,1,9,3]两轮结果准确；每题自身引用包含其方法依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

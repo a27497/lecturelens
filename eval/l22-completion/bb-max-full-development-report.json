@@ -1,0 +1,861 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 20,
+  "structure_pass": 20,
+  "semantic_supported_pass": 16,
+  "supported_review_components": {
+    "grounded": 16,
+    "answers_correct": 16,
+    "questions_distinct": 16
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 4,
+  "successful_within_90s": 20,
+  "p50_all_seconds": 10.858,
+  "p95_all_seconds": 13.396,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 20
+  },
+  "model_calls": 63,
+  "tool_calls": 41,
+  "measured_model_calls": 63,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 129469,
+  "reported_completion_tokens": 8090,
+  "gates": {
+    "complete": true,
+    "structure": true,
+    "provenance": true,
+    "insufficient": true,
+    "semantic": true,
+    "no_serious_unsupported": true,
+    "latency": true
+  },
+  "passed": true,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.429,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "不可变与重新绑定符合课程示例；yello输出正确。概念自身引用含对象说明，应用自身引用含拼接、切片和绑定。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.028,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "对象不可变与重新绑定区别准确，yello输出正确；两题各自引用均覆盖所用操作。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.072,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "回答hello到yello的拼接与绑定，概念/输出题不同，自身引用包含完整切片和绑定说明。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.884,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "纠正索引原地修改，morld输出准确，自身引用覆盖错误、拼接、切片和绑定。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 4.898,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 7.9,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "中点概念正确，[1,100]上半区间及75.25准确；各题自身引用支持减半方法，算术由明确题面条件推出。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 8.121,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "课堂76/6原文有解释自身引用，概念自身引用含逐项猜测和减半；应用自身引用含中点减半方法，75.25计算正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.547,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释给出指定(50,100]及75，概念与计算应用不同；每题自身引用支持方法，未添加整数取整规则。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 14.167,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "反馈排除整半区间的概念正确；[10,50]下半区间及20准确，自身引用支持方法。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 6.992,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确课程没有Transformer学习率依据。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 4.786,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确课程没有词向量训练学习率依据。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.608,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "概念与遗漏准备阶段纠错应用不同；应用自身引用现包含排序n log n、二分log n及扫描n的依据，成本推导正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.451,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "比较一次准备和每次查询，应用纠正重复排序。应用自身引用覆盖三种成本及重复查询权衡，没有固定查询次数盈亏点。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.184,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "线性扫描及Beth末尾4次检查正确，概念与应用各自引用覆盖算法和最坏情况。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.951,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "计入排序准备阶段，概念与纠错应用不同；每题自身引用都含排序、二分和扫描成本。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.022,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确课程没有高斯混合协方差更新依据。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.858,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "最大值与未排序末尾交换正确，课堂数组两轮状态准确；自身引用含数组、交换和后缀定义。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.958,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "两轮范围、位置、后缀比较完整，课堂数组两轮状态准确；解释及各题自身引用覆盖初始数组和两轮操作。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.357,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "请求[6,2,9,5]与应用[1,7,3,8]逐轮结果正确；概念和应用各自引用含最大值交换及后缀方法。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 13.396,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "纠正课程采用最大值移右，[5,1,9,3]两轮结果准确；每题自身引用包含其方法依据。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+  "runtime": {
+    "source_sha256": "2f917dfb336a7a9fb5661bec8902a314bb26207be6b905f67698c525464f5863",
+    "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+    "base_url": "http://127.0.0.1:8082",
+    "deadline_seconds": 90,
+    "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 20,
+      "observed_cases": 20,
+      "structure_pass": 20,
+      "semantic_supported_pass": 16,
+      "supported_review_components": {
+        "grounded": 16,
+        "answers_correct": 16,
+        "questions_distinct": 16
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 4,
+      "successful_within_90s": 20,
+      "p50_all_seconds": 10.858,
+      "p95_all_seconds": 13.396,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 20
+      },
+      "model_calls": 63,
+      "tool_calls": 41,
+      "measured_model_calls": 63,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 129469,
+      "reported_completion_tokens": 8090,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.429,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "不可变与重新绑定符合课程示例；yello输出正确。概念自身引用含对象说明，应用自身引用含拼接、切片和绑定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.028,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "对象不可变与重新绑定区别准确，yello输出正确；两题各自引用均覆盖所用操作。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.072,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "回答hello到yello的拼接与绑定，概念/输出题不同，自身引用包含完整切片和绑定说明。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.884,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "纠正索引原地修改，morld输出准确，自身引用覆盖错误、拼接、切片和绑定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.898,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 7.9,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "中点概念正确，[1,100]上半区间及75.25准确；各题自身引用支持减半方法，算术由明确题面条件推出。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.121,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课堂76/6原文有解释自身引用，概念自身引用含逐项猜测和减半；应用自身引用含中点减半方法，75.25计算正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.547,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释给出指定(50,100]及75，概念与计算应用不同；每题自身引用支持方法，未添加整数取整规则。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.167,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "反馈排除整半区间的概念正确；[10,50]下半区间及20准确，自身引用支持方法。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 6.992,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Transformer学习率依据。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.786,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有词向量训练学习率依据。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.608,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "概念与遗漏准备阶段纠错应用不同；应用自身引用现包含排序n log n、二分log n及扫描n的依据，成本推导正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.451,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "比较一次准备和每次查询，应用纠正重复排序。应用自身引用覆盖三种成本及重复查询权衡，没有固定查询次数盈亏点。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.184,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "线性扫描及Beth末尾4次检查正确，概念与应用各自引用覆盖算法和最坏情况。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.951,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "计入排序准备阶段，概念与纠错应用不同；每题自身引用都含排序、二分和扫描成本。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.022,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有高斯混合协方差更新依据。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.858,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "最大值与未排序末尾交换正确，课堂数组两轮状态准确；自身引用含数组、交换和后缀定义。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.958,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "两轮范围、位置、后缀比较完整，课堂数组两轮状态准确；解释及各题自身引用覆盖初始数组和两轮操作。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.357,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "请求[6,2,9,5]与应用[1,7,3,8]逐轮结果正确；概念和应用各自引用含最大值交换及后缀方法。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.396,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "纠正课程采用最大值移右，[5,1,9,3]两轮结果准确；每题自身引用包含其方法依据。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 0,
+      "observed_cases": 0,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": null,
+      "p95_all_seconds": null,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {},
+      "model_calls": 0,
+      "tool_calls": 0,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": []
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 16,
+      "structure_pass": 16,
+      "semantic_supported_pass": 16,
+      "supported_review_components": {
+        "grounded": 16,
+        "answers_correct": 16,
+        "questions_distinct": 16
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 16,
+      "p50_all_seconds": 11.184,
+      "p95_all_seconds": 14.167,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 16
+      },
+      "model_calls": 51,
+      "tool_calls": 33,
+      "measured_model_calls": 51,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 111630,
+      "reported_completion_tokens": 7645,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.429,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "不可变与重新绑定符合课程示例；yello输出正确。概念自身引用含对象说明，应用自身引用含拼接、切片和绑定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.028,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "对象不可变与重新绑定区别准确，yello输出正确；两题各自引用均覆盖所用操作。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.072,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "回答hello到yello的拼接与绑定，概念/输出题不同，自身引用包含完整切片和绑定说明。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.884,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "纠正索引原地修改，morld输出准确，自身引用覆盖错误、拼接、切片和绑定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 7.9,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "中点概念正确，[1,100]上半区间及75.25准确；各题自身引用支持减半方法，算术由明确题面条件推出。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.121,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课堂76/6原文有解释自身引用，概念自身引用含逐项猜测和减半；应用自身引用含中点减半方法，75.25计算正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.547,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释给出指定(50,100]及75，概念与计算应用不同；每题自身引用支持方法，未添加整数取整规则。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.167,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "反馈排除整半区间的概念正确；[10,50]下半区间及20准确，自身引用支持方法。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.608,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "概念与遗漏准备阶段纠错应用不同；应用自身引用现包含排序n log n、二分log n及扫描n的依据，成本推导正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.451,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "比较一次准备和每次查询，应用纠正重复排序。应用自身引用覆盖三种成本及重复查询权衡，没有固定查询次数盈亏点。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.184,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "线性扫描及Beth末尾4次检查正确，概念与应用各自引用覆盖算法和最坏情况。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.951,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "计入排序准备阶段，概念与纠错应用不同；每题自身引用都含排序、二分和扫描成本。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.858,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "最大值与未排序末尾交换正确，课堂数组两轮状态准确；自身引用含数组、交换和后缀定义。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.958,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "两轮范围、位置、后缀比较完整，课堂数组两轮状态准确；解释及各题自身引用覆盖初始数组和两轮操作。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.357,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "请求[6,2,9,5]与应用[1,7,3,8]逐轮结果正确；概念和应用各自引用含最大值交换及后缀方法。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.396,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "纠正课程采用最大值移右，[5,1,9,3]两轮结果准确；每题自身引用包含其方法依据。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 4,
+      "structure_pass": 4,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 4,
+      "successful_within_90s": 4,
+      "p50_all_seconds": 4.898,
+      "p95_all_seconds": 6.992,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4
+      },
+      "model_calls": 12,
+      "tool_calls": 8,
+      "measured_model_calls": 12,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 17839,
+      "reported_completion_tokens": 445,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.898,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 6.992,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Transformer学习率依据。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.786,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有词向量训练学习率依据。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.022,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有高斯混合协方差更新依据。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  },
+  "full_l2_gate_assessed": false,
+  "scope": "Seen development only; each field and its own citations reviewed. Fresh final gate remains unassessed."
+}

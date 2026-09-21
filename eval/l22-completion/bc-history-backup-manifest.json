@@ -1,0 +1,11 @@
+{
+  "database": "lecturelens_agent_l22test",
+  "created_at_utc": "2026-09-19T17:53:09.864742+00:00",
+  "bytes": 2857098,
+  "sha256": "27af827acb019af7e17b63f9ea61d6b1bdea7a4a8cfb48b37368f14b32ba7116",
+  "format": "pg_dump custom",
+  "private_file_mode": "0600",
+  "includes_full_history_and_checkpoints": true,
+  "archive_table_of_contents_verified": true,
+  "full_archive_decoded_without_error": true
+}

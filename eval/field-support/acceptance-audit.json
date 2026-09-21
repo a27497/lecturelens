@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-20",
+  "current_source_sha256": "471705bfbd23e9729cc67c68d73a2b981677c8c7956aa92425040b36c651dc03",
+  "external_calls": {
+    "started": 86,
+    "completed": 86
+  },
+  "known_usage": {
+    "completion_tokens": 9730,
+    "prompt_tokens": 139541
+  },
+  "by_frozen_source": {
+    "9ff9fc2c40875a58147070551d4f3b618ef898c2c7de650a30cbab08750bd43a": {
+      "started": 30,
+      "completed": 30
+    },
+    "7f947d964d4414e64fb16bf3eeecd8dcd2bb6bf16e6382cb73304b5d30f7f317": {
+      "started": 29,
+      "completed": 29
+    },
+    "471705bfbd23e9729cc67c68d73a2b981677c8c7956aa92425040b36c651dc03": {
+      "started": 27,
+      "completed": 27
+    }
+  },
+  "ledger_sha256": "d761cad096a5b081aa7fddfb7592aa41a05a66c0406c328e757b95d5e215df7e",
+  "mechanics": {
+    "python_passed": 459,
+    "python_skipped": 0,
+    "separate_database": "lecturelens_agent_test",
+    "ruff": "passed",
+    "java_frontend": "unchanged this increment; not rerun"
+  },
+  "quality": {
+    "R": {
+      "passed": 4,
+      "total": 7
+    },
+    "S": {
+      "passed": 5,
+      "total": 7
+    },
+    "T": {
+      "passed": 6,
+      "total": 7
+    },
+    "fresh_holdout_consumed": 0,
+    "gate_passed": false
+  },
+  "per_run_budgets_unchanged": true,
+  "review_output_max_tokens": 900,
+  "source_archives": "Ignored .data/field-support-20260920/{R,S,T}-source.tar.gz",
+  "raw_trial_scope": "Actual authenticated Java gateway and prepared Evidence; synthetic learner goals. Codex semantic review, not human grading.",
+  "cleanup": {
+    "live_model_routing_unchanged": true,
+    "owned_processes_stopped": [
+      "backend",
+      "agent"
+    ],
+    "test_redis_stopped": true,
+    "retained": "Isolated databases, new-course storage, media and private evaluation records preserved for replay; live services not stopped."
+  }
+}

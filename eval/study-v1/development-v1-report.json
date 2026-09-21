@@ -1,0 +1,365 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 5,
+  "structure_pass": 1,
+  "semantic_supported_pass": 0,
+  "supported_review_components": {
+    "grounded": 0,
+    "answers_correct": 0,
+    "questions_distinct": 0
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 1,
+  "successful_within_90s": 1,
+  "p50_all_seconds": 42.389,
+  "p95_all_seconds": 59.571,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "failed": 3,
+    "succeeded": 2
+  },
+  "model_calls": 10,
+  "tool_calls": 7,
+  "measured_model_calls": 10,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 8725,
+  "reported_completion_tokens": 1291,
+  "gates": {
+    "complete": false,
+    "structure": false,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "failed",
+      "error_code": "INVALID_TOOL_ARGUMENTS",
+      "elapsed_seconds": 59.571,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "failed",
+      "error_code": "INVALID_TOOL_ARGUMENTS",
+      "elapsed_seconds": 53.531,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 26.48,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "主题在课程中，但模型自行添加不相关时间过滤，产生错误的证据不足。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "failed",
+      "error_code": "INVALID_TOOL_ARGUMENTS",
+      "elapsed_seconds": 42.389,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 24.562,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "明确课程不包含目标主题，正确停止，无练习。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "407ecfe4b9c2bda3780cb855785afe1616a3da8b425d396c38d8f94b9919fe32",
+  "runtime": {
+    "source_sha256": "1472607863670bf90d09d252943e9a6aebaa8060213bacd35bbff4830ab227d3",
+    "model": "lecturelens-local-qwen",
+    "deadline_seconds": 90
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 5,
+      "structure_pass": 1,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 1,
+      "successful_within_90s": 1,
+      "p50_all_seconds": 42.389,
+      "p95_all_seconds": 59.571,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "failed": 3,
+        "succeeded": 2
+      },
+      "model_calls": 10,
+      "tool_calls": 7,
+      "measured_model_calls": 10,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 8725,
+      "reported_completion_tokens": 1291,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 59.571,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 53.531,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 26.48,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "主题在课程中，但模型自行添加不相关时间过滤，产生错误的证据不足。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 42.389,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 24.562,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确课程不包含目标主题，正确停止，无练习。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 0,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": null,
+      "p95_all_seconds": null,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {},
+      "model_calls": 0,
+      "tool_calls": 0,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": []
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 4,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": 42.389,
+      "p95_all_seconds": 59.571,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "failed": 3,
+        "succeeded": 1
+      },
+      "model_calls": 8,
+      "tool_calls": 5,
+      "measured_model_calls": 8,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 7047,
+      "reported_completion_tokens": 1226,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 59.571,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 53.531,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 26.48,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "主题在课程中，但模型自行添加不相关时间过滤，产生错误的证据不足。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "failed",
+          "error_code": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 42.389,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "工具 schema 错误删除业务字段 title，导致模型参数缺失而失败。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 1,
+      "structure_pass": 1,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 1,
+      "successful_within_90s": 1,
+      "p50_all_seconds": 24.562,
+      "p95_all_seconds": 24.562,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 1
+      },
+      "model_calls": 2,
+      "tool_calls": 2,
+      "measured_model_calls": 2,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 1678,
+      "reported_completion_tokens": 65,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 24.562,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确课程不包含目标主题，正确停止，无练习。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  }
+}

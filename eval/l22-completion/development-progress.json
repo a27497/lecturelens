@@ -1,0 +1,3315 @@
+{
+  "status": "phase_completed_bc_isolated_acceptance_passed_not_deployed",
+  "trials": [
+    {
+      "label": "n-dev",
+      "runtime_sha256": "f8a40d2fe59fb6deefe5a5b8d85af43aad917ef7a991fd51a3ec9c3d1d765779",
+      "dataset_sha256": "0192258825042e49e17b8103264b6341b7c707d2b6b993a977f6cca52746ebb0",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 22,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 24.052272
+        },
+        {
+          "id": "bailian-02",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 21.859697
+        },
+        {
+          "id": "bailian-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 18.712008
+        },
+        {
+          "id": "bailian-04",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 18.88369
+        },
+        {
+          "id": "bailian-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.425244
+        },
+        {
+          "id": "bailian-06",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.256586
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "n-json-diagnostic",
+      "runtime_sha256": "10fd5c9ab4ff92ff48f9cf28daef0dd60b987c3a055aeecf1dd2f6a00c084a0f",
+      "dataset_sha256": "a3d8f9a410453e3d754497fb327259453131de2839665f34e909f90730d3f290",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 4,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 23.476461
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "o-dev",
+      "runtime_sha256": "f3527e0d7b3a9177ed89d289db8bf040fbf25fd69bf3132c1c226d72d119f244",
+      "dataset_sha256": "0192258825042e49e17b8103264b6341b7c707d2b6b993a977f6cca52746ebb0",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 22,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 10.893465
+        },
+        {
+          "id": "bailian-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 16.255243
+        },
+        {
+          "id": "bailian-03",
+          "status": "failed",
+          "error": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 22.735853
+        },
+        {
+          "id": "bailian-04",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 17.304193
+        },
+        {
+          "id": "bailian-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.534765
+        },
+        {
+          "id": "bailian-06",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.214742
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "p-dev",
+      "runtime_sha256": "ed58058caa54938d2059e27119219b8144695b4701ecd015578c40d480cf8e91",
+      "dataset_sha256": "0192258825042e49e17b8103264b6341b7c707d2b6b993a977f6cca52746ebb0",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 23,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 23.46772
+        },
+        {
+          "id": "bailian-02",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 22.879148
+        },
+        {
+          "id": "bailian-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 30.342556
+        },
+        {
+          "id": "bailian-04",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 17.458612
+        },
+        {
+          "id": "bailian-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.610492
+        },
+        {
+          "id": "bailian-06",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.792115
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "q-dev",
+      "runtime_sha256": "242b9338b0368fd1d7ebaddb2bf23c83c2374872e8292da409a567311fed4706",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 19,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 24.083327
+        },
+        {
+          "id": "bailian-02",
+          "status": "failed",
+          "error": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 30.853357
+        },
+        {
+          "id": "bailian-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 23.261637
+        },
+        {
+          "id": "bailian-04",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 19.449428
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "r-dev",
+      "runtime_sha256": "7640351e15e16c14a388971c1919c497673d4d9b6eae3b961b26eab4a6c94413",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 17,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 19.962598
+        },
+        {
+          "id": "bailian-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.605003
+        },
+        {
+          "id": "bailian-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 14.479988
+        },
+        {
+          "id": "bailian-04",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 17.62028
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "s-dev",
+      "runtime_sha256": "70e9db11296348ada1918de33649ac2334d0178108f8fe0a40f50aeb2449642b",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 15,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.723745
+        },
+        {
+          "id": "bailian-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.433127
+        },
+        {
+          "id": "bailian-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.883821
+        },
+        {
+          "id": "bailian-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.826042
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "t-dev",
+      "runtime_sha256": "50ce00502ae994cf2a12a589c647a6c45f2db4f1985361e14f4489bb8d40f5a6",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 18,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.58864
+        },
+        {
+          "id": "bailian-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.674414
+        },
+        {
+          "id": "bailian-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.322087
+        },
+        {
+          "id": "bailian-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.663195
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "u-dev",
+      "runtime_sha256": "90bb53137773157bd888817cec0a2dcd3948b526c8095d1a55cddec10faff797",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "real_calls": 17,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 18.335669
+        },
+        {
+          "id": "bailian-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.995509
+        },
+        {
+          "id": "bailian-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.2075
+        },
+        {
+          "id": "bailian-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.085201
+        }
+      ],
+      "quality_gate_assessed": false
+    },
+    {
+      "label": "w-dev",
+      "runtime_sha256": "aaf8b6db54a451fc3617bc3794a98f9aa46712fb3f7b90695fb669016f459d6e",
+      "dataset_sha256": "e3609640761efc7faec1a64e59cc57eae309687a52f6c013d8f7e49740f22ac3",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "models": {
+        "decision": "qwen-plus",
+        "review": "qwen3-max"
+      },
+      "real_calls": 2,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "STUDY_EXECUTION_FAILED",
+          "elapsed_seconds": 2.510692
+        }
+      ],
+      "incomplete_reason": "Harness aborted during the second task after PostgreSQL DDL deadlocks with concurrent unit tests; only the first task has a durable row. Dedicated pilot database used subsequently."
+    },
+    {
+      "label": "w-max-dev",
+      "runtime_sha256": "aaf8b6db54a451fc3617bc3794a98f9aa46712fb3f7b90695fb669016f459d6e",
+      "dataset_sha256": "0192258825042e49e17b8103264b6341b7c707d2b6b993a977f6cca52746ebb0",
+      "protocol": "managed-real-provider-development-fixed-evidence",
+      "models": {
+        "decision": "qwen3-max",
+        "review": "qwen3-max"
+      },
+      "real_calls": 23,
+      "cases": [
+        {
+          "id": "bailian-01",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 11.409932
+        },
+        {
+          "id": "bailian-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.703392
+        },
+        {
+          "id": "bailian-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.718431
+        },
+        {
+          "id": "bailian-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.020448
+        },
+        {
+          "id": "bailian-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.795768
+        },
+        {
+          "id": "bailian-06",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.693268
+        }
+      ],
+      "quality_note": "5/6 completed; bailian-03 incorrect omitted internal print and wrong language accepted, bailian-04 includes unsupported NoneType singleton claim. Not a quality pass."
+    },
+    {
+      "label": "s-full-dev",
+      "runtime": {
+        "source_sha256": "c0e0a003c0313273662edc51ab880192d10faef60f68037a6e109376f2dc19bc",
+        "model": "{\"decision\": {\"base_url\": \"https://dashscope.aliyuncs.com/compatible-mode/v1\", \"model\": \"qwen-plus\", \"version\": 2}, \"review\": {\"base_url\": \"https://dashscope.aliyuncs.com/compatible-mode/v1\", \"model\": \"qwen3-max\", \"version\": 2}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 30,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 91.042
+        },
+        {
+          "id": "strings-02",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.979
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.733
+        },
+        {
+          "id": "strings-04",
+          "status": "failed",
+          "error": "INVALID_TOOL_ARGUMENTS",
+          "elapsed_seconds": 21.32
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.517
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.077
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 28.083
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.21
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.42
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.507
+        }
+      ]
+    },
+    {
+      "label": "v-full-dev",
+      "runtime": {
+        "source_sha256": "f332c6177a9a6d7ae691a0c9ca02419e34763071e6ac06b2f3bbb511a4cfb290",
+        "model": "{\"decision\": {\"base_url\": \"https://dashscope.aliyuncs.com/compatible-mode/v1\", \"model\": \"qwen-plus\", \"version\": 2}, \"review\": {\"base_url\": \"https://dashscope.aliyuncs.com/compatible-mode/v1\", \"model\": \"qwen3-max\", \"version\": 2}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 43,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.087
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.598
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.126
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 24.428
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.778
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.917
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 23.568
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.173
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.661
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.861
+        }
+      ]
+    },
+    {
+      "label": "x-max-full-dev",
+      "runtime": {
+        "source_sha256": "469c665826f5999dda874b1653618fb3b20a201c405409335cf9aeb741a1e18f",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 43,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.389
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.265
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.071
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.517
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.148
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.673
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.874
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.648
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.959
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.684
+        }
+      ],
+      "semantic_supported_pass": 2
+    },
+    {
+      "label": "y-max-full-dev",
+      "runtime": {
+        "source_sha256": "026ec8a373f82f53374cf542d44cf605154d4aac461940e8df93e308f0301fb2",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 50,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 22.026
+        },
+        {
+          "id": "strings-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 22.818
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.611
+        },
+        {
+          "id": "strings-04",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 20.089
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.017
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.853
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.744
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.592
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.211
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.283
+        }
+      ]
+    },
+    {
+      "label": "z-max-full-dev",
+      "runtime": {
+        "source_sha256": "9116bbe5ef2fda0e78bc8de87ed37d8a4c3f1f8b4c287dad0c4d4215215be993",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 41,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "failed",
+          "error": "UNSUPPORTED_CITATION",
+          "elapsed_seconds": 15.505
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 25.144
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.597
+        },
+        {
+          "id": "strings-04",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 18.081
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.209
+        },
+        {
+          "id": "bisection-01",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 31.583
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 21.793
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 21.198
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "STUDY_EXECUTION_FAILED",
+          "elapsed_seconds": 1.672
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.692
+        }
+      ],
+      "failure_note": "strings-01: program_evidence_ids alias conversion missing; bisection-04: authoritative retrieval HTTP failure while an isolated new course was being indexed. Both retained as failures."
+    },
+    {
+      "label": "aa-max-full-dev",
+      "runtime": {
+        "source_sha256": "80c8683c4b1a21731e3be5b679d3f5376d3bdea81891019ecb376924fec5fc7b",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 44,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.345
+        },
+        {
+          "id": "strings-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 20.546
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.239
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.27
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.502
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.299
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 21.365
+        },
+        {
+          "id": "bisection-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 24.8
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 19.346
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.249
+        }
+      ]
+    },
+    {
+      "label": "ab-max-full-dev",
+      "runtime": {
+        "source_sha256": "4e61baa26a207ea1bb6edd9a2609c7ed22bda72c187495a0ba2bdfff762051b0",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 40,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.313
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.535
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.132
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.485
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.949
+        },
+        {
+          "id": "bisection-01",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 20.838
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 27.888
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.052
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 23.043
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.335
+        }
+      ],
+      "semantic_report": "ab-max-full-development-report.json",
+      "semantic_supported_pass": 3
+    },
+    {
+      "label": "ac-max-full-dev",
+      "runtime": {
+        "source_sha256": "523ffb341713a65b558e7493487659889677eabfa937c471f13fe9b391874a69",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 32,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.116
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.164
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.218
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.07
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.718
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.161
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.078
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.542
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.125
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.928
+        }
+      ]
+    },
+    {
+      "label": "ad-max-full-dev",
+      "runtime": {
+        "source_sha256": "2a0155f66c283668cf964f8a681d5ad95cbc3d5d1df6e11a0493545c1638e17f",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 39,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.217
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.835
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.331
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.451
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.794
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 25.047
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.604
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.576
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 28.514
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.169
+        }
+      ],
+      "semantic_report": "ad-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "ae-max-full-dev",
+      "runtime": {
+        "source_sha256": "01814d4b07027052f3a2df408318d91538734fa4778b9a370b412cc8574a9f4a",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 35,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.048
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.462
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.689
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 25.435
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.01
+        },
+        {
+          "id": "bisection-01",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 25.889
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.025
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 16.368
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 23.328
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.04
+        }
+      ],
+      "semantic_report": "ae-max-full-development-report.json",
+      "semantic_supported_pass": 2
+    },
+    {
+      "label": "af-max-full-dev",
+      "runtime": {
+        "source_sha256": "d43003451402c01b10d01aff99a82b03af17c3e9da44444e86555f8483495cf8",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 39,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.386
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.24
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.111
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.783
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.013
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.617
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 25.871
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 21.202
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 21.822
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.613
+        }
+      ],
+      "semantic_report": "af-max-full-development-report.json",
+      "semantic_supported_pass": 4
+    },
+    {
+      "label": "ag-max-full-dev",
+      "runtime": {
+        "source_sha256": "547cf00d92a04ef040fb3c3386031ce99c482d47acde22787e958ecab3403089",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 34,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.03
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.648
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.763
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.201
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.14
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.698
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.614
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 23.176
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.522
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.239
+        }
+      ],
+      "semantic_report": "ag-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "ah-max-full-dev",
+      "runtime": {
+        "source_sha256": "630ffcf4c62ee44058933140c99a2be83c9fd609ad47a2673b326c550725adbc",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 33,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.568
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.987
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.954
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.119
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.45
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.651
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.693
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 21.901
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 24.815
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.724
+        }
+      ],
+      "semantic_report": "ah-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "ai-max-full-dev",
+      "runtime": {
+        "source_sha256": "bafbc72ff76b1cb25782995eaa8ec0c830bd25c64e6a1c1dcf2785a7e31fde8e",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 36,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.892
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.849
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.819
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.681
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.422
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.15
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 12.858
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.931
+        },
+        {
+          "id": "bisection-04",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 24.472
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.713
+        }
+      ],
+      "semantic_report": "ai-max-full-development-report.json",
+      "semantic_supported_pass": 6
+    },
+    {
+      "label": "aj-max-full-dev",
+      "runtime": {
+        "source_sha256": "a08e663c8d9e2ce0446da0153d78364373e9285360a84db2d371c4c80a0a6fc2",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 32,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.688
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.237
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.763
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.83
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.859
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.611
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.218
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 21.093
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.658
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.006
+        }
+      ],
+      "semantic_report": "aj-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "ak-max-full-dev",
+      "runtime": {
+        "source_sha256": "d9e7d86086b4d4244ca02511448c9bc0f1bb7ccdcd1e0701658b221f8dca534c",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 32,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.429
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.617
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.443
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.463
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.482
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.734
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.264
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_TOOL_CONTRACT",
+          "elapsed_seconds": 17.315
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.755
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.105
+        }
+      ],
+      "semantic_report": "ak-max-full-development-report.json",
+      "semantic_supported_pass": 6
+    },
+    {
+      "label": "am-max-full-dev",
+      "runtime": {
+        "source_sha256": "0ea2626f9f38db817186e277309658e340f68fecd3c33797f7e179dc4fd885b0",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 32,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 21.038
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.628
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.439
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.346
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.111
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.556
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.359
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 13.074
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.412
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.197
+        }
+      ],
+      "semantic_report": "am-max-full-development-report.json",
+      "semantic_supported_pass": 6
+    },
+    {
+      "label": "an-max-full-dev",
+      "runtime": {
+        "source_sha256": "9623f30888889a2c6162d39f539fea5ebf708a8823da1ed6515d317ddb0b467f",
+        "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+        "base_url": "http://127.0.0.1:8082",
+        "deadline_seconds": 90,
+        "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+      },
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "real-java-evidence-agent-seen-development",
+      "model_calls": 34,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.88
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.739
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.22
+        },
+        {
+          "id": "strings-04",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 12.748
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.916
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.023
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.017
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 18.976
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.426
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.634
+        }
+      ],
+      "semantic_report": "an-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "ao-max-full-dev",
+      "runtime_sha256": "802dc3018ab38b05a9f798f92934ac48b41b254b58abcb3c96d0993ae525d578",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 32,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.354
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.288
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.377
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.562
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.693
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.42
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.6
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.554
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.064
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.343
+        }
+      ],
+      "semantic_report": "ao-max-full-development-report.json",
+      "semantic_supported_pass": 6
+    },
+    {
+      "label": "ap-max-full-dev",
+      "runtime_sha256": "7ff8a5f6f245f6670678b2072eab07ecb22e4234d5de3a1dd7bb8ce95c5169f3",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 34,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.03
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.208
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.776
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.609
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.495
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.871
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.222
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.343
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.592
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.998
+        }
+      ],
+      "semantic_report": "ap-max-full-development-report.json",
+      "semantic_supported_pass": 6
+    },
+    {
+      "label": "aq-max-full-dev",
+      "runtime_sha256": "26e1a1dd583f22d5ff86244fdb3db1a73b0bf1005bdc8e8a534dea9af03e2b44",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 36,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 27.056
+        },
+        {
+          "id": "strings-02",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.839
+        },
+        {
+          "id": "strings-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.385
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 27.21
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.163
+        },
+        {
+          "id": "bisection-01",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 14.518
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.055
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 16.699
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.749
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.95
+        }
+      ],
+      "semantic_report": "aq-max-full-development-report.json",
+      "semantic_supported_pass": 2
+    },
+    {
+      "label": "ar-max-full-dev",
+      "runtime_sha256": "4e90ec0c6db1856c337dd5f205fb9ca7d50ae75db9578a200f69fe2e5bee0528",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 39,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 28.747
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.154
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.982
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 27.2
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.17
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.65
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.324
+        },
+        {
+          "id": "bisection-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 29.522
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.529
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.402
+        }
+      ],
+      "semantic_report": "ar-max-full-development-report.json",
+      "semantic_supported_pass": 5
+    },
+    {
+      "label": "as-max-full-dev",
+      "runtime_sha256": "a82bfc38731de6961f4b1900d72f6d634949a37ef8d55de7572ad0a889bfc199",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 39,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.542
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 22.577
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.095
+        },
+        {
+          "id": "strings-04",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 26.827
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.831
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 24.684
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 24.102
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 19.023
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.325
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.507
+        }
+      ],
+      "semantic_report": "as-max-full-development-report.json",
+      "semantic_supported_pass": 4
+    },
+    {
+      "label": "at-max-full-dev",
+      "runtime_sha256": "8f8df7ee3bc7dfdc7acec32b33cd29b80dd7cf703550e2c8f9149dcc9f413868",
+      "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+      "protocol": "full-java-evidence-agent-development",
+      "real_calls": 33,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.438
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.419
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.716
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.713
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.565
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.72
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.048
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 16.554
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.821
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.957
+        }
+      ],
+      "semantic_report": "at-max-full-development-report.json",
+      "semantic_supported_pass": 8
+    },
+    {
+      "label": "au-max-full-dev",
+      "runtime_sha256": "566dc58ce01301f46624bc7fcbc23e6619c856b0adf8cd80caca35e7e69d3dba",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 71,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.46
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.293
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.906
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.148
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.661
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.85
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.394
+        },
+        {
+          "id": "bisection-03",
+          "status": "failed",
+          "error": "QUALITY_REPAIR_EXHAUSTED",
+          "elapsed_seconds": 25.995
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.972
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.364
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.999
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 23.452
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.752
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.598
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.667
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.657
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.971
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.464
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.676
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.27
+        }
+      ],
+      "semantic_report": "au-max-full-development-report.json",
+      "semantic_supported_pass": 10,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "av-max-full-dev",
+      "runtime_sha256": "6e36eca4ce6af63145f676e6ceda44b3585466514f07c4aef12c9d365b460ebf",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 67,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.125
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.453
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.169
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.568
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.552
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.331
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.417
+        },
+        {
+          "id": "bisection-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 21.494
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.696
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.115
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.396
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.338
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 23.776
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.351
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.637
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.38
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.417
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.023
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.144
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.141
+        }
+      ],
+      "semantic_report": "av-max-full-development-report.json",
+      "semantic_supported_pass": 12
+    },
+    {
+      "label": "aw-max-full-dev",
+      "runtime_sha256": "4321df74184d895eda9c0a5ad77605a7096a7f28b513fef5ec04b718811eb01a",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 67,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.213
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.822
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.788
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.948
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.71
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.924
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.267
+        },
+        {
+          "id": "bisection-03",
+          "status": "budget_exceeded",
+          "error": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 17.53
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.147
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.403
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.14
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 24.685
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.289
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "failed",
+          "error": "MODEL_UNAVAILABLE",
+          "elapsed_seconds": 28.15
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.731
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.415
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.413
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.915
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.686
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.576
+        }
+      ],
+      "semantic_report": "aw-max-full-development-report.json",
+      "semantic_supported_pass": 9,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "ax-max-full-dev",
+      "runtime_sha256": "31e2bbd64f9a745a2a1ebccadbce1d08231f3450c88ae536f9ac20a33e37132b",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 65,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.187
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.648
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.699
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.795
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.471
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.188
+        },
+        {
+          "id": "bisection-02",
+          "status": "failed",
+          "error": "UNSUPPORTED_CITATION",
+          "elapsed_seconds": 6.98
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.24
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.563
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.024
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.077
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 26.463
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.925
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.699
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.931
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.813
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.602
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.434
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.024
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.118
+        }
+      ],
+      "semantic_report": "ax-max-full-development-report.json",
+      "semantic_supported_pass": 14,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "ay-max-full-dev",
+      "runtime_sha256": "cb8ef288b0d60c2a168f58312a32d58635bb6ca92e8b5f9f326ceb18b2d8bd57",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 65,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.442
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.294
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.543
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.393
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.722
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.066
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.399
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.116
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.838
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.73
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.044
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 23.331
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 19.599
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.191
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.348
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.749
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.164
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.523
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.302
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.173
+        }
+      ],
+      "semantic_report": "ay-max-full-development-report.json",
+      "semantic_supported_pass": 14,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "az-max-full-dev",
+      "runtime_sha256": "f9773e9b5dbecf36d7d71b91f5872c8ad0e7675cac564ea3da6d746272b4bb14",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 66,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.343
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.939
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.592
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 20.239
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.935
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.524
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.535
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.304
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.854
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.485
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.075
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 17.19
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.32
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.17
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.65
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.184
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.33
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.83
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.586
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "failed",
+          "error": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 13.362
+        }
+      ],
+      "semantic_report": "az-max-full-development-report.json",
+      "semantic_supported_pass": 11,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "ba-max-full-dev",
+      "runtime_sha256": "212c1b7fea97bf82ff814a4d141ea9fd637353a21084a496cc0b0e4eef5ba521",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 61,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.708
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.026
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.88
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.407
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.353
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 8.085
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 8.567
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 8.85
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 8.803
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.595
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.952
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.154
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.267
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.204
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.516
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.628
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.815
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 15.253
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.824
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.855
+        }
+      ],
+      "semantic_report": "ba-max-full-development-report.json",
+      "semantic_supported_pass": 13,
+      "review_errata": "citation-review-errata.json"
+    },
+    {
+      "label": "bb-max-full-dev",
+      "runtime_sha256": "2f917dfb336a7a9fb5661bec8902a314bb26207be6b905f67698c525464f5863",
+      "dataset_sha256": "e6b9c279c3f18be6bfaa31ae58d4f3c82f54d8053bd3220fddbff58e7420f143",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 63,
+      "cases": [
+        {
+          "id": "strings-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.429
+        },
+        {
+          "id": "strings-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.028
+        },
+        {
+          "id": "strings-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.072
+        },
+        {
+          "id": "strings-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.884
+        },
+        {
+          "id": "strings-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.898
+        },
+        {
+          "id": "bisection-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 7.9
+        },
+        {
+          "id": "bisection-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 8.121
+        },
+        {
+          "id": "bisection-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 9.547
+        },
+        {
+          "id": "bisection-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 14.167
+        },
+        {
+          "id": "bisection-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 6.992
+        },
+        {
+          "id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 4.786
+        },
+        {
+          "id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.608
+        },
+        {
+          "id": "searchtradeoff-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.451
+        },
+        {
+          "id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 11.184
+        },
+        {
+          "id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.951
+        },
+        {
+          "id": "selectionstep-05",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 5.022
+        },
+        {
+          "id": "selectionstep-01",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.858
+        },
+        {
+          "id": "selectionstep-02",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 12.958
+        },
+        {
+          "id": "selectionstep-03",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 10.357
+        },
+        {
+          "id": "selectionstep-04",
+          "status": "succeeded",
+          "error": null,
+          "elapsed_seconds": 13.396
+        }
+      ],
+      "semantic_report": "bb-max-full-development-report.json",
+      "semantic_supported_pass": 16
+    },
+    {
+      "label": "bc-max-full-dev",
+      "runtime_sha256": "2c8f835c0a3b274e54cfa78b06e7c39e33ff8809915e44b58115bf75c4a152bd",
+      "dataset_sha256": "8e530f0f6d96c1324298cec5e47a401e2c44eaafc0e36648ad3ae733ce1fc7c0",
+      "protocol": "full-stack-seen-development",
+      "real_calls": 63,
+      "semantic_supported_pass": 15,
+      "semantic_report": "bc-max-full-development-report.json"
+    }
+  ],
+  "protocol_diagnostics": [
+    {
+      "label": "ag-worked-diagnostic",
+      "real_provider_calls": 1,
+      "status": "harness_error_after_provider_call",
+      "raw_response_preserved": false,
+      "reason": "Observer returned bytes; serialization failed after request."
+    },
+    {
+      "label": "ag-worked-diagnostic-2",
+      "real_provider_calls": 1,
+      "status": "MODEL_TOOL_CONTRACT",
+      "raw_response_preserved": true,
+      "reason": "worked_example was a JSON-encoded object string; exact lossless decode confirmed."
+    }
+  ],
+  "preflight_trials": [
+    {
+      "label": "al-max-dev",
+      "status": "not_run_preflight_failed",
+      "real_model_calls": 0,
+      "tests_passed": 308,
+      "tests_failed": 4,
+      "reason": "Prompt/schema growth exceeded original budget in existing repair and replay tests. Frozen source preserved."
+    }
+  ],
+  "formal_cohorts": {
+    "at": {
+      "candidate_report": "final-at-candidate-report.json",
+      "baseline_report": "final-at-baseline-c-report.json",
+      "heldout_consumed": true,
+      "accepted": false
+    }
+  },
+  "review_errata": "citation-review-errata.json",
+  "formal_bb": {
+    "report": "FINAL_BB.md",
+    "structure": 19,
+    "semantic": 13,
+    "abstention": 4,
+    "real_calls": 131,
+    "holdout_consumed": true
+  },
+  "formal_bc": {
+    "report": "FINAL_BC.md",
+    "structure": 20,
+    "semantic": 16,
+    "abstention": 4,
+    "real_calls": 128,
+    "holdout_consumed": true,
+    "final_mechanisms_pending": false
+  },
+  "completed_at_utc": "2026-09-19T17:55:45.964201+00:00"
+}

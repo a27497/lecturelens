@@ -1,0 +1,22 @@
+{
+  "candidate": "feedback-F",
+  "source_sha256": "60c5d32e2f541c912cf481e9530431b0fb6b774b6d92cbf10b345f6e792c916f",
+  "runner_sha256": "104b62bfcd0cb163815abe43f57eaadbb972be96e305854245503d83f7bf15ed",
+  "frozen_at_utc": "2026-09-20T11:39:51.943531+00:00",
+  "changes": [
+    "Each reviewer result must contain source_fact, learner_meaning, verdict and reason for every observation",
+    "Reject missing/duplicate/cross-source review entries; persist all structured checks in tool journal",
+    "Review output allowance 600 instead of 300 tokens to fit the structured contract; persistent total 64000 and six model calls unchanged"
+  ],
+  "per_run_budgets": {
+    "model_calls": 6,
+    "tools": 8,
+    "conservative_token_reservation": 64000,
+    "deadline_seconds": 90,
+    "drafts": 2,
+    "decision_output_tokens": 900,
+    "review_output_tokens": 600
+  },
+  "aggregate_call_cap": null,
+  "fresh_holdout_authored": false
+}

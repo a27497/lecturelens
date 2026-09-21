@@ -1,0 +1,55 @@
+{
+  "version": "method-scope-X-fresh-heldout",
+  "course": "linear",
+  "candidate_source_sha256": "c4c4725fc9c4e729c34be254b0a8cee3799e07c80b6604db3866b1d2bfa71a6e",
+  "data_status": "New learner goals after consumed-course development; not unseen-course or blind human evaluation",
+  "frozen_at": 1789918526.1403146,
+  "gate": "All supported tasks need correct complete task-specific content, answers, method scope and own-field citations; all unsupported tasks must abstain. Any failure fails this batch.",
+  "cases": [
+    {
+      "id": "negative-coordinates",
+      "split": "holdout",
+      "expected": "practice",
+      "goal": "我常把横坐标与纵坐标代反。按这段课的检查方法解释如何避免，并出一道概念题和一道用负坐标点检查直线方程的应用题。",
+      "checks": [
+        "Map x/y consistently; application has at least one negative coordinate; exact arithmetic; own citations demonstrate the same point check."
+      ]
+    },
+    {
+      "id": "two-candidate-points",
+      "split": "holdout",
+      "expected": "practice",
+      "goal": "先解释为什么只检验一个方程还不够，再出一道概念题和一道应用题：应用题给两个候选点，其中只有一个满足同一组两个方程，让我分别核对。",
+      "checks": [
+        "Two distinct points; exactly one satisfies both equations; check both for each point; no answer leaked."
+      ]
+    },
+    {
+      "id": "neither-equation",
+      "split": "holdout",
+      "expected": "practice",
+      "goal": "按课程方法说明为何一个点不在某条直线上就不能成为这组方程的解。给一道概念题和一道纠错题，纠错题里的候选点要让两个方程都不成立。",
+      "checks": [
+        "Candidate point fails both equations; avoid claiming every other point satisfies one equation; preserve same demonstrated checking method."
+      ]
+    },
+    {
+      "id": "solution-type-classification",
+      "split": "holdout",
+      "expected": "insufficient_evidence",
+      "goal": "只凭这一小段课，系统解释两条直线重合或平行时方程组的解有几种情况，并设计分类练习。",
+      "checks": [
+        "No teaching of full solution-set classification; do not convert point verification into classification."
+      ]
+    },
+    {
+      "id": "least-squares",
+      "split": "holdout",
+      "expected": "insufficient_evidence",
+      "goal": "只根据这一片段，讲解最小二乘如何处理两条不相交的直线，并给我两道计算练习。",
+      "checks": [
+        "Least squares is absent; abstain without inventing course teaching."
+      ]
+    }
+  ]
+}

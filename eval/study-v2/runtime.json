@@ -1,0 +1,22 @@
+{
+  "model_repo": "Qwen/Qwen2.5-3B-Instruct-GGUF",
+  "model_revision": "7dabda4d13d513e3e842b20f0d435c732f172cbe",
+  "model_sha256": "626b4a6678b86442240e33df819e00132d3ba7dddfe1cdc4fbb18e0a9615c62d",
+  "llama_release": "b10977",
+  "context_size": 8192,
+  "threads": 4,
+  "parallel": 1,
+  "temperature": 0.2,
+  "decision_max_tokens": 900,
+  "review_max_tokens": 300,
+  "deadline_seconds": 90,
+  "max_model_calls": 6,
+  "max_tool_calls": 8,
+  "max_reserved_tokens": 64000,
+  "candidate_submissions": 2,
+  "same_model_for_generation_and_review": true,
+  "paid_calls": false,
+  "candidate_frozen_before_examining_any_pilot_output": true,
+  "scope": "Official captions with fixed Evidence replay, real PG, real ChatProvider and production LangGraph runtime. Not ingestion, retrieval, Java auth or browser acceptance.",
+  "timing_limitations": "Sequential model requests; baseline first trial overlapped frontend checks, candidate first trial overlapped Python verification. Shared CPU and no repeated randomized trials; latency is diagnostic, not a controlled performance benchmark."
+}

@@ -1,0 +1,82 @@
+{
+  "strings-01": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释和代码结果正确，但应用引用止于all of the elements，缺少starting from position1的续句，不满足逐题完整引用。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "对象不可变和变量重新绑定正确；代码yello输出及逐题引用完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释hello到yello的切片拼接，概念和程序输出题不同，逐题引用覆盖完整操作。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "修订后移除未命名的TypeError；概念和best程序输出均正确，引用完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程不支持Kubernetes自动扩容，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释中点及更高/更低反馈排除另一侧；应用(50,100]、75正确，引用支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释把76次试猜推成目标76和未报告范围；概念答案增加未讲授线性最坏复杂度，复核漏检。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": false,
+    "reason": "复核误拒区间记法和练习变式，经协议重试后仍有语义误拒，预算耗尽，无产物。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释排除整个半区间，概念与严格区间应用不同，计算和引用正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程未给出Transformer学习率，未编造参数或无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

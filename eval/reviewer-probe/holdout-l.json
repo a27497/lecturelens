@@ -1,0 +1,373 @@
+{
+  "version": "reviewer-holdout-l-20260919",
+  "scope": "New drafts on already seen passages: three component scores, repeated calls, conditional total scores, delayed outer print and extra unsupported operation. Paired diagnostic, not independent courses or full L2.",
+  "source_manifest": "../study-v2/sources.json",
+  "order_seed": 91912,
+  "frozen_candidate_sha256": "4f0b43b7d9a057cdbb9ff2b8352a7af3be8bee9395638c39b149a9243d61d5c3",
+  "cases": [
+    {
+      "id": "rl-01",
+      "split": "holdout",
+      "pair": "three_component_credit",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "从调用到显示逐项核对",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "必须按顺序写出 ready、ready、None 三行；只写最后一行不得分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "三项答案齐全，逐项计分无矛盾；三行输出完整，不应误拒绝。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-02",
+      "split": "holdout",
+      "pair": "three_component_credit",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "从调用到显示逐项核对",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，类型是 NoneType。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "必须按顺序写出 ready、ready、None 三行；只写最后一行不得分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "遗漏题目及第三评分项要求的含义，应补充表示值的缺失；不能把合法的分项计分说成矛盾，也不能丢失这一事实纠正。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-03",
+      "split": "holdout",
+      "pair": "conditional_total_score",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "多次调用与条件扣分",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "三行及其顺序全部正确即得满分；如果没有写最后一行 None，则整题零分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "答案有最后一行 None，条件零分不适用；多次内部打印顺序正确。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-04",
+      "split": "holdout",
+      "pair": "conditional_total_score",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "多次调用与条件扣分",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "三行及其顺序全部正确即得满分；如果写了最后一行 None，则整题零分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "同一完整正确答案同时满分和零分，应核对原文并修正第二条；不能删除正确输出 None 来服从错误规则。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-05",
+      "split": "holdout",
+      "pair": "delayed_outer_print",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "先接收返回值，再显示",
+        "explanation": "课程函数 is_even_with_return 内部先打印 with return，再返回参数除以 2 的余数是否为零。赋值可以接收返回值，要显示它还需要 print。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数内部调用 print 与把值 return 给调用者，各自起什么作用？",
+            "answer": "print 在屏幕显示内容；return 把值交给调用者，返回值本身不会自动显示。",
+            "rubric": "说明显示与交回的区别，允许等价表述。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          },
+          {
+            "question": "沿用课程描述的 is_even_with_return 定义，下面两句依次执行后屏幕有哪些行？\n```python\nflag = is_even_with_return(7)\nprint(flag)\n```",
+            "answer": "第一行 with return，第二行 False。",
+            "rubric": "with return 和 False 两行都要写出且顺序正确。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "7 的余数非零，内部文字先显示，随后显示保存的 False；不应要求完整函数源码。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-06",
+      "split": "holdout",
+      "pair": "delayed_outer_print",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "先接收返回值，再显示",
+        "explanation": "课程函数 is_even_with_return 内部先打印 with return，再返回参数除以 2 的余数是否为零。赋值可以接收返回值，要显示它还需要 print。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数内部调用 print 与把值 return 给调用者，各自起什么作用？",
+            "answer": "print 在屏幕显示内容；return 把值交给调用者，返回值本身不会自动显示。",
+            "rubric": "说明显示与交回的区别，允许等价表述。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          },
+          {
+            "question": "沿用课程描述的 is_even_with_return 定义，下面两句依次执行后屏幕有哪些行？\n```python\nflag = is_even_with_return(7)\nprint(flag)\n```",
+            "answer": "只显示 False。",
+            "rubric": "只写 False 就是完整正确答案，不需要其他输出。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "答案满足自身错误规则，却漏掉调用时先显示的 with return；应同时纠正答案与规则为两行，保留事实证据。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-07",
+      "split": "holdout",
+      "pair": "extra_unsupported_operation",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "None 的课程定义及使用",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "必须按顺序写出 ready、ready、None 三行；只写最后一行不得分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "课程直接支持 None 的值、类型和含义，应用也正确；不得声称缺乏类型或 None 支持。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rl-08",
+      "split": "holdout",
+      "pair": "extra_unsupported_operation",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "None 的课程定义及使用",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。另外，None 可以像列表一样用下标读取元素。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "必须按顺序写出 ready、ready、None 三行；只写最后一行不得分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "unsupported_explanation"
+        ],
+        "reason": "新增 None 可下标读取元素的断言不受任何给定片段支持，应删除该断言并定位解释与课程原文，不改正确答案。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      }
+    }
+  ]
+}

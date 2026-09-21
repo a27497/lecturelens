@@ -1,0 +1,266 @@
+{
+  "U": {
+    "kind": "Fixed pre-labelled development probes; not generation or held-out tasks",
+    "matched": 2,
+    "total": 4,
+    "cases": [
+      {
+        "case_id": "historical-classification",
+        "status": "failed",
+        "error_code": "MODEL_REVIEW_CONTRACT",
+        "expected_accept": false,
+        "observed_accept": null,
+        "label_matched": false,
+        "issues": null,
+        "method_assessment": null,
+        "raw_record_sha256": "32ca4425ef570e57a24782b6ec9fd68f48f021add2db0587b8a99dfceabbf78f"
+      },
+      {
+        "case_id": "new-point",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "将给定点代入每个方程，验证等式是否成立。",
+          "output": "该点是否满足两个方程。",
+          "matches": true
+        },
+        "raw_record_sha256": "e8857f036b62fa1e7e525748e5ac54411564957e75ca8dd3b49ae7504a99ed00"
+      },
+      {
+        "case_id": "new-point-error",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "将给定点代入每个方程，验证所有等式是否成立。",
+          "output": "该点是否满足所有方程。",
+          "matches": true
+        },
+        "raw_record_sha256": "c53bd20b37bfedf2bba03500d622276bcec6e6fd95ec5c1540002d0193033e73"
+      },
+      {
+        "case_id": "parallel-classification",
+        "status": "failed",
+        "error_code": "MODEL_REVIEW_CONTRACT",
+        "expected_accept": false,
+        "observed_accept": null,
+        "label_matched": false,
+        "issues": null,
+        "method_assessment": null,
+        "raw_record_sha256": "992f16280a577a80c4e36fa5b1d40de6de6d76438ad14415c4777e0a1709bf77"
+      }
+    ]
+  },
+  "V": {
+    "kind": "Fixed pre-labelled development probes; not generation or held-out tasks",
+    "matched": 2,
+    "total": 4,
+    "cases": [
+      {
+        "case_id": "historical-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "代入一个给定点验证是否满足两个方程",
+          "output": "该点是否为解",
+          "matches": false
+        },
+        "raw_record_sha256": "70d52152b3fc90af1b9a994b24545a94a85ef44b1e66f14ee7146026cd2bc4d1"
+      },
+      {
+        "case_id": "new-point",
+        "status": "failed",
+        "error_code": "MODEL_REVIEW_CONTRACT",
+        "expected_accept": true,
+        "observed_accept": null,
+        "label_matched": false,
+        "issues": null,
+        "method_assessment": null,
+        "raw_record_sha256": "cafadc156a306bcc887975d4b609663b51733e64918c268aa9adc75d88d97fa9"
+      },
+      {
+        "case_id": "new-point-error",
+        "status": "failed",
+        "error_code": "MODEL_REVIEW_CONTRACT",
+        "expected_accept": true,
+        "observed_accept": null,
+        "label_matched": false,
+        "issues": null,
+        "method_assessment": null,
+        "raw_record_sha256": "f5fb7891db2f505b0a3fdd6dcac537956a58dc430c1db4414749b1e5ef0d406a"
+      },
+      {
+        "case_id": "parallel-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "判断两条直线是否平行并得出无解结论",
+          "output": "无解及原因",
+          "matches": false
+        },
+        "raw_record_sha256": "3f8b9896abca248be4df605f9fe56e5c28587df4a98ac97c4d6a9c3b4db67979"
+      }
+    ]
+  },
+  "W": {
+    "kind": "Fixed pre-labelled development probes; not generation or held-out tasks",
+    "matched": 4,
+    "total": 4,
+    "cases": [
+      {
+        "case_id": "historical-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "判断两个方程是否表示同一条直线并描述解集",
+          "output": "解的个数及原因",
+          "matches": false
+        },
+        "raw_record_sha256": "956a92069a8bb40c04ac27b814c3102efd52730f2f6afe646281e67f86ee6a3b"
+      },
+      {
+        "case_id": "new-point",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "Substitute a given point into each equation and check whether both equalities hold.",
+          "output": "Whether that particular point satisfies both equations.",
+          "matches": true
+        },
+        "raw_record_sha256": "e8fd7c0ccba6b4148d605a4e9c9a337bc6582616bba258131be09d7abfe1e82e"
+      },
+      {
+        "case_id": "new-point-error",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "Substitute a given point into each equation and check whether both equalities hold.",
+          "output": "Whether that particular point satisfies both equations.",
+          "matches": true
+        },
+        "raw_record_sha256": "de4c24b1a779861a0d1b57a3ae6eb114d804302e64845af170b80faba8a6e7cd"
+      },
+      {
+        "case_id": "parallel-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "Find and describe the solution set of two given linear equations.",
+          "output": "The solution set (e.g., a point, no solution, or infinite solutions).",
+          "matches": false
+        },
+        "raw_record_sha256": "0c1841a5970bd6eb71dca438e2a96f3429dc59b12a9248169c5dfa7ed513e200"
+      }
+    ]
+  },
+  "X": {
+    "kind": "Fixed pre-labelled development probes; not generation or held-out tasks",
+    "matched": 4,
+    "total": 4,
+    "cases": [
+      {
+        "case_id": "historical-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "判断两个方程是否表示同一直线并说明解的个数",
+          "output": "解的个数分类（唯一、无穷、无解）",
+          "matches": false
+        },
+        "raw_record_sha256": "267306390bbeb9504c5824bc1430cc5662a8ffed1f4229d44f26253cae0dbded"
+      },
+      {
+        "case_id": "new-point",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "Substitute a given point into each equation and check whether both equalities hold.",
+          "output": "Whether that particular point satisfies both equations.",
+          "matches": true
+        },
+        "raw_record_sha256": "adb66cd545b56bd754f5c87a0b93b31d429927340bed0f372147ba5efb07c407"
+      },
+      {
+        "case_id": "new-point-error",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": true,
+        "observed_accept": true,
+        "label_matched": true,
+        "issues": [],
+        "method_assessment": {
+          "operation": "Substitute a given point into each equation and check whether both equalities hold.",
+          "output": "Whether that particular point satisfies both equations.",
+          "matches": true
+        },
+        "raw_record_sha256": "4fc74717fb93866b6556a9a4581f234516c9a5478afabe25dec52448106cc427"
+      },
+      {
+        "case_id": "parallel-classification",
+        "status": "completed",
+        "error_code": null,
+        "expected_accept": false,
+        "observed_accept": false,
+        "label_matched": true,
+        "issues": [
+          "unsupported_question"
+        ],
+        "method_assessment": {
+          "operation": "判断两个方程对应的直线是否平行且不重合，并得出无解结论",
+          "output": "方程组无解及其原因",
+          "matches": false
+        },
+        "raw_record_sha256": "34c1380a0a6b4b9cec406f4a179c32197f767ef29a286b60716945a2145e1cbd"
+      }
+    ]
+  }
+}

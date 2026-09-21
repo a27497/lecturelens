@@ -1,0 +1,115 @@
+{
+  "date": "2026-09-20",
+  "current_agent_source_sha256": "6e72c1e52e49a3f876012f585d7a36e12af796fd3c4e8ae5a1a3c86a567768d7",
+  "external_call_counts": {
+    "started": 76,
+    "completed": 75,
+    "interrupted_without_response": 1
+  },
+  "known_usage_tokens": {
+    "prompt_tokens": 155408,
+    "completion_tokens": 9330
+  },
+  "usage_caveat": "The deliberately killed in-flight call may have been billed; its response/usage is unknown. Java course preparation uses a local provider and is separate from this external-call ledger.",
+  "runtime_budgets_unchanged": true,
+  "checks": {
+    "recovery-report": {
+      "completed_state_restored_without_calls": true,
+      "idempotent_save_and_version_conflict": true,
+      "inflight_recovery": {
+        "before_calls": 3,
+        "after_calls": 5,
+        "same_attempt": true
+      },
+      "cancelled_inflight_no_late_feedback": true
+    },
+    "history-browser-report": {
+      "saved_feedback_accessible_after_cancel": true,
+      "feedback_evidence_video_seek_seconds": 36.34,
+      "old_feedback_version_warning": true,
+      "answers_only_after_explicit_reveal": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    },
+    "deletion-report": {
+      "cross_owner_denied": true,
+      "deleted_course_read_and_new_feedback_denied": true
+    },
+    "initial-browser-report": {
+      "answer_saved": true,
+      "restored_after_reload": true,
+      "feedback_version": 1,
+      "answers_hidden": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    },
+    "revise-browser-report": {
+      "answer_saved": true,
+      "restored_after_reload": true,
+      "feedback_version": 2,
+      "answers_hidden": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    }
+  },
+  "tests": {
+    "python_postgresql_targeted": 46,
+    "python_skipped": 0,
+    "frontend": 79,
+    "frontend_build": "passed",
+    "java": "Packaged current source; no Java source changed in this step, no new full Java test claim."
+  },
+  "private_artifact_sha256": {
+    "calls.jsonl": "ea61bbf01b25987c947102dce7ac63d10ac09fbca6d6cdb7718fd29ad19a4425",
+    "run-identities.json": "51b60753b00dbcf2e5848a4124aa85e3808e29f9c37a2f34089782842f2f70eb",
+    "baseline.tar.gz": "682ef6009d0038c7865ddf01416f779bb54d2af48cd9db9423b4704596e0ed7e",
+    "Q-source.tar.gz": "600eebea530bb9cb37273d9123fb5c6cf4f07428136c27cdeb18e82197840d43",
+    "run-service.py": "ab8a235fe376d6d55f74e13c0018de16bb39f1b13ea5097e6bc192c9a362768b",
+    "prepare-browser.py": "b1baf043ae2139ba4abf2d415429975a158eb777607495f81922499dabe3e678",
+    "generate-browser.py": "4649036c3a45c8b66222e93dc2bc853906ecae98624670eeb00b1b7a82322200",
+    "answer-browser.py": "ca6f0be91b132bd195b2846af368b3882672df3316f3aaab4895d5e2d32f7a4d",
+    "history-browser.py": "89fedac10a9aaf7b27f9499ee9b13597db684fc2438c6db0592fd3e78b19ad10",
+    "recovery.py": "c7e92b36b9c8ae72098cb99c4135a98be431c53dcee36973218939cf79f6b4b7",
+    "deletion-check.py": "1e5b54afc6b18f6cc4945a3e6acfe2c4caf82502fb431cb9a25a81f29e988c7a",
+    "mechanics-tests.log": "e7db6c3aa42fe5a69987ca39adbeca1ba34fb0aa104a2cb1186ac1672abf7ed0",
+    "frontend-tests.log": "c264b027bc4fd390726f819671a601d3e0e5d82b714483ecdee913ed1868f18f",
+    "frontend-build.log": "15c800e8f2b51cc6dd9d29ad2b9925727f7d5c3a01f7b732ca90be2fb6724cc7",
+    "new-course/feedback-cases.json": "044dfeb38fafa6a0b8a7f465c29b8580b3a7a11b113907787000763999246444",
+    "new-course/feedback-freeze.json": "21fe5bcfa83368f57a2e0988262e298854f70f35c8016bcf01d56f617382b61a"
+  },
+  "quality": {
+    "P_new_course": {
+      "development": "1/2",
+      "fresh_holdout": "3/4",
+      "overall": "4/6",
+      "execution": "6/6",
+      "gate_passed": false
+    },
+    "Q_consumed_regression": {
+      "semantic": "4/6",
+      "execution": "6/6",
+      "improvement": false,
+      "adopted": false
+    },
+    "Q_new_course_feedback_development": "4/4; unchanged feedback logic, synthetic answers, AI source review",
+    "human_review": "One known-course question, two answer versions, user confirmed summarized feedback; see human-review.json"
+  },
+  "next_adaptive_feature": "Not implemented: new-course quality gate failed; no fresh Q holdout consumed.",
+  "cleanup": {
+    "live_model_routing_unchanged": true,
+    "owned_processes_stopped": [
+      "backend",
+      "agent",
+      "frontend"
+    ],
+    "deleted_course_remaining_sessions": 0,
+    "test_redis_stopped": true,
+    "retained": "Isolated databases, new-course storage, media and private evaluation records preserved for replay; live services not stopped."
+  },
+  "final_evaluation_runner_sha256": "7d444eeefc9b282467fda021e0bae1ae1c5fc4f80a1c48dd99283b30f23717d1",
+  "final_frontend_sha256": {
+    "frontend/src/components/task-detail/PracticeFeedbackPanel.vue": "9135d7ffb95bbf5cae7782397dfd044fc8853b4e84f61d8522935d54576b07f2",
+    "frontend/src/components/task-detail/CourseAgentPanel.vue": "2d0280eb2bb073ac54d3a6793827f0dc51d32873eeb74ddfcae5e720580da2b7",
+    "frontend/src/components/task-detail/PracticeFeedbackPanel.test.ts": "4f74078720d7aac40662b1e56e483403913c8d9d1a5571139705c11bc892bf46"
+  }
+}

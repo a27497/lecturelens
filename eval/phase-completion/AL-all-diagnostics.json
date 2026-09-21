@@ -1,0 +1,113 @@
+{
+  "candidate": "AL",
+  "data_status": "Consumed fixed diagnostics, not autonomous or held-out",
+  "pipeline_correct": 10,
+  "raw_model_correct": 9,
+  "total": 10,
+  "cases": [
+    {
+      "case_id": "historical-classification",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": false,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "violates-neither-condition",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": false,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "missing-second-point",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": false,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "uncited-explanation-claim",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": false,
+      "model_label_matched": true,
+      "rule_observations": [
+        "x4: joint relation lacks an explicit signal in explanation-owned sources; semantic support not established."
+      ],
+      "status": "completed"
+    },
+    {
+      "case_id": "parallel-classification",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": false,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "new-point",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "model_observed_accept": true,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "new-point-error",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "model_observed_accept": true,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "supported-short-explanation",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "model_observed_accept": true,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    },
+    {
+      "case_id": "verification-without-correction",
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "model_observed_accept": true,
+      "model_label_matched": false,
+      "rule_observations": [
+        "Requested correction task has no concrete error or claim to correct in the application."
+      ],
+      "status": "completed"
+    },
+    {
+      "case_id": "misconception-correction",
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "model_observed_accept": true,
+      "model_label_matched": true,
+      "rule_observations": [],
+      "status": "completed"
+    }
+  ]
+}

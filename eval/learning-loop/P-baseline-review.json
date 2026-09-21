@@ -1,0 +1,18 @@
+{
+  "candidate": "feedback-P",
+  "reviewer": "Codex source review",
+  "execution": "6/6 succeeded",
+  "expected_type": "5/6",
+  "semantic_and_citation_acceptance": "4/6",
+  "gate_passed": false,
+  "cases": [
+    {"id":"dev-row","accepted":false,"reason":"The explanation adds that a system's solution is the lines' common intersection, but its own evidence_ids cite only the single-line discussion. The relevant later passages are cited by question 2, not by the explanation. Runtime review incorrectly accepted this field."},
+    {"id":"dev-eigen","accepted":true,"reason":"The excerpt does not teach eigenvalues; correctly abstained."},
+    {"id":"heldout-common-point","accepted":true,"reason":"Explanation and answers correctly require simultaneous satisfaction. The application explicitly states there is no intersection and asks to correct the inference, which follows from the taught common-point criterion. Own field citations include the common-point continuation."},
+    {"id":"heldout-origin","accepted":false,"reason":"The candidate treated the absence of a general theorem as lack of support despite the observed demonstration of substituting (0,0). Two window reads preceded unjustified abstention, which the independent reviewer incorrectly accepted."},
+    {"id":"heldout-determinant","accepted":true,"reason":"The excerpt does not teach determinants/invertibility; correctly abstained."},
+    {"id":"heldout-gradient","accepted":true,"reason":"The excerpt does not teach gradient descent; correctly abstained."}
+  ],
+  "additional_integration_quality_issue": "A request for new string code practice received the lecture's same hello-to-yello example; answers and feedback were correct, but new-example intent was not fulfilled.",
+  "data_status": "All six tasks are now consumed; future candidate regressions on these tasks are not fresh holdout acceptance. Original outputs remain unchanged."
+}

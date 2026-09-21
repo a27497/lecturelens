@@ -1,0 +1,104 @@
+{
+  "status": "passed",
+  "passed": 8,
+  "total": 8,
+  "note": "Single-call fixed diagnostics; not autonomous generation or fresh held-out tasks.",
+  "cases": [
+    {
+      "case_id": "historical-classification",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922935.9962811,
+      "finished_at": 1789922942.782719
+    },
+    {
+      "case_id": "violates-neither-condition",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922970.1590548,
+      "finished_at": 1789922978.44449
+    },
+    {
+      "case_id": "missing-second-point",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922963.4643884,
+      "finished_at": 1789922970.1545947
+    },
+    {
+      "case_id": "uncited-explanation-claim",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922978.451117,
+      "finished_at": 1789922987.0430615
+    },
+    {
+      "case_id": "parallel-classification",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922956.5306993,
+      "finished_at": 1789922963.4612648
+    },
+    {
+      "case_id": "new-point",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922942.7861376,
+      "finished_at": 1789922949.781791
+    },
+    {
+      "case_id": "new-point-error",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922949.7852306,
+      "finished_at": 1789922956.5275085
+    },
+    {
+      "case_id": "supported-short-explanation",
+      "source_sha256": "2ec9311235a8e1c8c614d185a708aed33d16cb57187e4e675b4095fced5fbc4f",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789922987.049156,
+      "finished_at": 1789922994.1387825
+    }
+  ]
+}

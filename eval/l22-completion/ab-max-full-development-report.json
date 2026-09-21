@@ -1,0 +1,158 @@
+{
+  "expected_cases": 10,
+  "observed_cases": 10,
+  "structure_pass": 8,
+  "semantic_supported_pass": 3,
+  "supported_review_components": {
+    "grounded": 4,
+    "answers_correct": 3,
+    "questions_distinct": 6
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 2,
+  "successful_within_90s": 8,
+  "p50_all_seconds": 13.052,
+  "p95_all_seconds": 27.888,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 8,
+    "budget_exceeded": 1,
+    "failed": 1
+  },
+  "model_calls": 40,
+  "tool_calls": 28,
+  "measured_model_calls": 40,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 84465,
+  "reported_completion_tokens": 5462,
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": true,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.313,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "概念题解释不可变；代码题的程序、yello 输出和评分点由同一计算结果生成，逐题引用覆盖拼接和切片续文。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.535,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "区分不可变对象与重新绑定；新值 world→word 为直接赋值，无错误切片，解释与逐题引用一致，语言正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 15.132,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释 hello→yello，概念题与 world→gorld 的切片拼接应用不同；答案及关键操作均受逐题引用支持。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 13.485,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "把 'b' + 'world'[1:] 的结果写成 bird，实际为 borld；错误题目与答案被接受。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 4.949,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "字符串证据不能支持 Kubernetes 自动扩容；明确拒答且无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 20.838,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "修订后因持久预留预算不足未完成复核，没有可验收产物；失败保留计入。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "failed",
+      "error_code": "QUALITY_REPAIR_EXHAUSTED",
+      "elapsed_seconds": 27.888,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "两份草稿后仍被拒绝，QUALITY_REPAIR_EXHAUSTED；没有可验收产物，失败保留。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 13.052,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "未约定整数搜索，却把新区间限定为51到100并称中点为75；应用题也加入未给定的整数取整规则。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 23.043,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "应用题正确排除1到32；但解释在1到100猜50后统计只排除1–49或51–100，漏掉已经被否定的50，前后不一致。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 6.335,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "没有 Transformer 或学习率证据，明确停止且不编造练习。",
+      "serious_unsupported": false
+    }
+  ],
+  "runtime": {
+    "source_sha256": "4e61baa26a207ea1bb6edd9a2609c7ed22bda72c187495a0ba2bdfff762051b0",
+    "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+    "base_url": "http://127.0.0.1:8082",
+    "deadline_seconds": 90,
+    "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+  },
+  "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b"
+}

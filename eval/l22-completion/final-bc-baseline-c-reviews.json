@@ -1,0 +1,162 @@
+{
+  "strings-01": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "应用自己的引用缺切片续句，且replace方法及其返回行为不在课程；选择B本身正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "英语目标得到中文产物；应用来源缺拼接前句。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释与切片拼接正确，但应用引入课程未教的replace及count参数，评分条款还明确接受未引用方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": true,
+    "reason": "课程未教replace；选项C不重新赋值，不能将变量s变为yello，答案却接受D。应用引用也缺切片续句，英语目标得到中文。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": false,
+    "reason": "两份候选后QUALITY_REPAIR_EXHAUSTED，无产物。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": true,
+    "reason": "英语目标得到中文产物且没有回答课堂76/6；应用推入未声明整数域和最坏次数，评分却接受7次或更少而非正确上界，答案与评分标准不一致。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": true,
+    "reason": "未声明整数域却将区间改为51到100并取整；课程未教取整规则。短编号残留不弥补内容问题。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": false,
+    "reason": "解释和来源正确，但两题都复述排除半区间，同一概念，没有不同应用。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有Transformer学习率依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-20": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有岭回归正则化系数依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-16": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "私有答案最终正确区分甲乙，但夹入课程未教的常数因子推测；概念自身来源缺线性代价，应用自身来源缺二分代价，解释也没有清晰回应已有序起点。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-17": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": true,
+    "reason": "英语目标得到中文；应用把渐近阶当具体操作次数、比较时漏排序成本，来源也缺二分log n，违背不编固定盈亏点的目标。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-18": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "Ari1次与Rex5次正确，但英语目标得到全中文解释与问题。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-19": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "实际2次与最坏n次区分正确，给定名单n=6可直接代入；概念与纠错应用不同。应用自己的120120ms引用末句明确说linear time，支持O(n)等价记法；完整原文核查后确认来源成立。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-20": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确没有摆的Euler–Lagrange推导依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-16": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "两轮数组和后缀正确，来源支持最大值移右；英语目标得到全中文产物。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-17": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": false,
+    "reason": "RUN_BUDGET_EXCEEDED，无产物。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-18": {
+    "grounded": false,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "方法与未排序子数组正确，但英语目标得到全中文产物。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-19": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "5与0交换、完整数组及固定后缀正确，概念与具体应用不同，各字段自身引用支持方法。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

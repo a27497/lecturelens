@@ -1,0 +1,23 @@
+{
+  "candidate": "feedback-P",
+  "source_sha256": "6e72c1e52e49a3f876012f585d7a36e12af796fd3c4e8ae5a1a3c86a567768d7",
+  "runner_sha256": "95bfe8b0d891676941c86196620d5185f60cb8763f4691608a9c14f0bfa4ea0c",
+  "frozen_at_utc": "2026-09-20T12:32:38.125689+00:00",
+  "changes": [
+    "During first evidence read, derive a fallible course basis from only question and evidence, without learner answer or candidate",
+    "Persist private basis with completed read tool; pass it to decision and review without treating it as an authoritative answer key or replacing source support",
+    "Normal path now 4 model calls; one repair can fit 6; all per-Run budgets unchanged",
+    "86 targeted feedback/provider/evaluation tests passed with real isolated PostgreSQL"
+  ],
+  "per_run_budgets": {
+    "model_calls": 6,
+    "tools": 8,
+    "conservative_token_reservation": 64000,
+    "deadline_seconds": 90,
+    "drafts": 2,
+    "decision_output_tokens": 900,
+    "review_output_tokens": 900
+  },
+  "aggregate_call_cap": null,
+  "fresh_holdout_authored": false
+}

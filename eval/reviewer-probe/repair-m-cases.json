@@ -1,0 +1,101 @@
+{
+  "version": "seeded-repair-m-20260919",
+  "scope": "Previously seen failures, not held-out or autonomous generation; frozen explicit repair criteria.",
+  "frozen_candidate_sha256": "7c25036f8bf696fdd84afee01e45c7f70c0c6256dc4ecf91bf05ecbf7a20a043",
+  "cases": [
+    {
+      "id": "rl-04",
+      "split": "development",
+      "pair": "conditional_total_score",
+      "goal": "根据课程制作一份概念与代码应用练习，帮助区分返回值和屏幕输出。",
+      "candidate": {
+        "kind": "practice",
+        "title": "多次调用与条件扣分",
+        "explanation": "没有显式 return 的函数返回 None。None 属于 NoneType，表示值的缺失，并不是字符串。函数内部显示内容与交给调用者的返回值不同。",
+        "evidence_ids": [
+          "caption-1",
+          "caption-2",
+          "caption-3",
+          "caption-4",
+          "caption-5"
+        ],
+        "questions": [
+          {
+            "question": "函数不写 return 时，调用结果是什么、属于什么类型、表达什么含义？",
+            "answer": "结果是 None，属于 NoneType，表示值的缺失。",
+            "rubric": "指出 None 得 1 分；指出 NoneType 得 1 分；说明表示值的缺失得 1 分；三项合计 3 分，缺项仅扣该项的分数。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "列出以下完整程序的屏幕输出，按出现顺序作答。\n```python\ndef signal():\n    print('ready')\nfirst = signal()\nsecond = signal()\nprint(second)\n```",
+            "answer": "依次是 ready、ready、None，共三行。",
+            "rubric": "三行及其顺序全部正确即得满分；如果写了最后一行 None，则整题零分。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "同一完整正确答案同时满分和零分，应核对原文并修正第二条；不能删除正确输出 None 来服从错误规则。",
+        "label_source": "Codex source-based annotation after candidate L freeze before any L calls; not blind human gold"
+      },
+      "repair_acceptance": "Preserve the question and correct ready/ready/None three-line answer; remove the rubric conflict so this complete answer earns full credit. Keep concept and application grounded. Changing the program to avoid None fails."
+    },
+    {
+      "id": "rk-06",
+      "split": "development",
+      "pair": "wrong_answer_and_rubric",
+      "goal": "依据课程区分函数调用结果与屏幕输出，给出概念题及应用题。",
+      "candidate": {
+        "kind": "practice",
+        "title": "零作为参数时的完整输出",
+        "explanation": "课程的 is_even_with_return 内部会打印 with return，并返回除以 2 的余数是否为零的布尔值。若要显示这个返回值，还需外层 print。",
+        "evidence_ids": [
+          "caption-2",
+          "caption-3",
+          "caption-4"
+        ],
+        "questions": [
+          {
+            "question": "课程中这个函数的内部打印，与函数返回的布尔值，有什么区别？",
+            "answer": "内部打印直接显示文字，布尔返回值交给调用处使用。",
+            "rubric": "分清显示文字与交回值即可，不要求固定措辞。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          },
+          {
+            "question": "按课程描述的含内部打印的函数定义，执行 print(is_even_with_return(0)) 后，屏幕依次出现什么？",
+            "answer": "只显示 with return。",
+            "rubric": "只要回答 with return 就正确，不要求其他输出。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "答案满足其自身错误评分规则，但丢失外层 print 显示的 True；应在课程事实复核中拒绝。",
+        "label_source": "Codex source-based annotation after candidate K freeze and before any K calls; not blind human gold"
+      },
+      "repair_acceptance": "Keep the whole print(is_even_with_return(0)) task; answer AND rubric must require with return then True. No unsupported additions. No artifact or changing away the task fails."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "status": "AT final twenty-task cohort completed and failed. Ten held-out goals are now consumed development material; future candidates need newly authored held-out goals after freeze.",
+  "provider": "MIT OpenCourseWare",
+  "course": "6.006 Spring 2020",
+  "instructor": "Justin Solomon",
+  "source_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-3-sets-and-sorting/",
+  "license": "CC BY-NC-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "attribution": "Justin Solomon. Lecture 3: Sets and Sorting. 6.006 Spring 2020. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+  "source_sha256": {
+    "mp4": "cf97cbcc0c50e1508f7428b1743cf01bc19509cff8af9bd06d16e828f967a656",
+    "vtt": "685461025a0488c1f8ec1fbffd2d93fac97027535709104b761b50317f9b92d0"
+  },
+  "clips": [
+    {
+      "id": "searchtradeoff",
+      "source_start_seconds": 591.14,
+      "source_end_seconds": 729.68,
+      "sha256": "1e970f47e648ea9e591e72fbc7debb75109731ba759adb93d2aec1eca1dea7d3"
+    },
+    {
+      "id": "selectionstep",
+      "source_start_seconds": 1587.82,
+      "source_end_seconds": 1687.06,
+      "sha256": "e5a251b5738d24fde2eb0b99cc129c49fa19d47b1020b34104e5ca5312f1ba8f"
+    }
+  ],
+  "changes": "Video excerpted and re-encoded; official captions clipped, shifted to zero and embedded as mov_text. No source content rewritten."
+}

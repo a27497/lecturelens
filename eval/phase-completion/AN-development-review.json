@@ -1,0 +1,147 @@
+{
+  "candidate": "AN",
+  "status": "passed bounded consumed regression",
+  "execution_pass": 15,
+  "total": 15,
+  "strict_pass": 15,
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "dev-row",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Line-as-solution-set explanation and substitution supported by own course passages; 3*2-6=0, complete point check."
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Own references include common-point teaching and the adjacent actual check. Application contains a false claim and both points are checked against both equations; (1,2) satisfies both and (2,1) satisfies neither."
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Own references demonstrate (0,0) substitution; new equation 3x-y=0 and the exact origin check are correct."
+    },
+    {
+      "case_id": "least-squares",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Coordinate order is grounded in the worked (x,y) substitution. Both negative coordinates are preserved and 3*(-2)-(-1)=-5; correction claim is false as intended."
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Common-point and per-equation sources are cited. The actual point (2,2) gives 2!=3 and 4!=0; the false all-equations claim is corrected with both checks."
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Exactly two points and two equations; (2,2) fails both, (3,2) satisfies both. All four substitutions shown. Own passages connect equation solution lines and simultaneous satisfaction; no solution-count theorem added."
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Own sources support slicing, concatenation and rebinding. Code prints before and after the operation; exact lines apple then bpple."
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Own sources distinguish immutable objects and variable rebinding. Novel sample string is sliced/rebound; exact output is yample_b5e9cda4."
+    },
+    {
+      "case_id": "string-interning",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "Requested theory/method is absent from the bounded clip. Neutral refusal contains no unsupported answer, solution classification, or invented citation."
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "pass",
+      "review_note": "The same variable is rebound twice, first to yello then to novel world, and prints world. A fresh literal is present; the goal does not forbid other course literals."
+    }
+  ],
+  "reviewer": "Codex source inspection of final public fields, private answers and each field-owned canonical text; not blind human grading",
+  "reviewed_at": 1789927450.8028324,
+  "source_sha256": "6531876524f0b0e40bc8e58c4b0d74f316b840f9214d1abee4d7071f4b6a72f3"
+}

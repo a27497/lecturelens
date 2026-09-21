@@ -1,0 +1,69 @@
+{
+  "candidate": "AT",
+  "split": "holdout",
+  "source_archive_matches_freeze": true,
+  "task_hashes_match": true,
+  "all_trials_started_after_freeze": true,
+  "persistent_budgets_unchanged": true,
+  "private_answers_not_in_public_artifact": true,
+  "models": "qwen3-max/max",
+  "total": 8,
+  "cases": [
+    {
+      "case_id": "three-points-three-outcomes",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 37557,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "second-only-correction",
+      "model_calls": 6,
+      "tool_calls": 4,
+      "reserved_tokens": 55621,
+      "status": "budget_exceeded"
+    },
+    {
+      "case_id": "english-origin-two-lines",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 35904,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "zero-x-coefficient-two-points",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 39050,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "qr-outside-clip",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 25809,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "mixed-string-operations-three-prints",
+      "model_calls": 4,
+      "tool_calls": 3,
+      "reserved_tokens": 41785,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "single-character-empty-tail",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 28693,
+      "status": "succeeded"
+    },
+    {
+      "case_id": "regex-backtracking-outside-clip",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 27022,
+      "status": "succeeded"
+    }
+  ]
+}

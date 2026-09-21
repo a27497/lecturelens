@@ -1,0 +1,80 @@
+{
+  "candidate": "T",
+  "quality_passed": 6,
+  "total": 7,
+  "gate_passed": false,
+  "mechanics": "459 passed, 0 skipped, separate PostgreSQL test database",
+  "reviewer": "Codex source and per-field citation review; not blind or independent human acceptance",
+  "cases": [
+    {
+      "id": "dev-eigen",
+      "run_id": "738b1304-447c-4a9b-b917-5013c91891c4",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 25538,
+      "quality_pass": true,
+      "reason": "Requested theory is absent; explicit evidence insufficiency without fabricated teaching.",
+      "raw_record_sha256": "3886149017c718e74f4d84afc6be8e2b08f12e0c0c1006ed87581e756e2c08b2"
+    },
+    {
+      "id": "dev-row",
+      "run_id": "5e595fa4-538b-4787-a9ce-2b16d4b42262",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 29346,
+      "quality_pass": true,
+      "reason": "Own sources show line-as-solution-set and origin; new point (1,3) satisfies 3x+y=6.",
+      "raw_record_sha256": "5aa89ef8d93a63f0f3516ae4020dd8dc587275b91f0a49d09c6cef34c01a54b7"
+    },
+    {
+      "id": "heldout-common-point",
+      "run_id": "3e3e717c-25cb-4af7-9186-f51776489af3",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 29642,
+      "quality_pass": false,
+      "reason": "Application introduces coincident lines, infinitely many solutions, and a uniqueness criterion absent from its cited lesson. Review accepts this as simple transfer; fails strict course-method scope.",
+      "raw_record_sha256": "03750da63d463c535428d296b62a01ea864eab0b93b04fd8b1eee67a513ca1b2"
+    },
+    {
+      "id": "heldout-determinant",
+      "run_id": "fa8aadb1-4b42-40fa-8093-0eec960ed504",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 24882,
+      "quality_pass": true,
+      "reason": "Requested theory is absent; explicit evidence insufficiency without fabricated teaching.",
+      "raw_record_sha256": "997c1950a3755dff69b3f73fbff7d9e420ab5abc42adf5c2390dba9f32b025c8"
+    },
+    {
+      "id": "heldout-gradient",
+      "run_id": "f03a0bcb-3a6e-4838-b0a9-2aa55a8fa76e",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 25505,
+      "quality_pass": true,
+      "reason": "Requested theory is absent; explicit evidence insufficiency without fabricated teaching.",
+      "raw_record_sha256": "0481ac5fbc54ff6dc292cc5325e6798d5697dac64c0921e30fa9f6aa9840219e"
+    },
+    {
+      "id": "heldout-origin",
+      "run_id": "07ffb424-b587-42c3-ba09-9e2d977179ce",
+      "execution": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 29332,
+      "quality_pass": true,
+      "reason": "Own sources now include 46.510–62.340 seconds origin conclusion; substitution for 3x+2y=0 is correct.",
+      "raw_record_sha256": "a3dc613bdef675152085ccef7d7b86dd0bb0b4fd6e48daa03ece4d3f0033139e"
+    },
+    {
+      "id": "new-string-output",
+      "run_id": "0e32a91a-a55b-4d38-ac4d-eb30c10588a1",
+      "execution": "succeeded",
+      "model_calls": 3,
+      "reserved_tokens": 25279,
+      "quality_pass": true,
+      "reason": "New world/x input, exact output xorld, supported immutability/rebinding statements and own sources.",
+      "raw_record_sha256": "7f29bd5d4b536d36eab6e678aa0a3c8f031d813d21dcb3f92ee4d9a03e60fc03"
+    }
+  ]
+}

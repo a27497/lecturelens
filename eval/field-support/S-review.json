@@ -1,0 +1,59 @@
+{
+  "candidate": "S",
+  "quality_passed": 5,
+  "total": 7,
+  "gate_passed": false,
+  "mechanics": "458 passed, 0 skipped",
+  "reviewer": "Codex source review, not independent human review",
+  "cases": [
+    {
+      "id": "dev-eigen",
+      "run_id": "969051ee-47d9-469c-b073-37f4c53347a4",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Verified content, own-field sources, and expected type."
+    },
+    {
+      "id": "dev-row",
+      "run_id": "ed6e7d71-ecb6-4fbf-9dee-4cb0843eede9",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Verified content, own-field sources, and expected type."
+    },
+    {
+      "id": "heldout-common-point",
+      "run_id": "94560e1a-1b6d-4f4b-a8a6-13125d2588e3",
+      "execution": "succeeded",
+      "quality_pass": false,
+      "reason": "Incorrect claim: every non-intersection point satisfies exactly one equation; points on neither line are omitted."
+    },
+    {
+      "id": "heldout-determinant",
+      "run_id": "84cb6e98-1f5c-42ab-878c-780c845dc6c2",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Verified content, own-field sources, and expected type."
+    },
+    {
+      "id": "heldout-gradient",
+      "run_id": "7c97fc67-12ea-47e1-ba8f-c04be073e279",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Verified content, own-field sources, and expected type."
+    },
+    {
+      "id": "heldout-origin",
+      "run_id": "70ef3f92-dc54-4f4e-9b63-0bb5643bad5c",
+      "execution": "succeeded",
+      "quality_pass": false,
+      "reason": "Correct substitution, but field citations end before the demonstrated origin conclusion; explanation misattributes the full demonstration to these partial sources."
+    },
+    {
+      "id": "new-string-output",
+      "run_id": "332b25cb-281b-4824-a2e7-9e8808d93ef9",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Verified content, own-field sources, and expected type."
+    }
+  ]
+}

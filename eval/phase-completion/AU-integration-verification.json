@@ -1,0 +1,116 @@
+{
+  "candidate": "AU",
+  "source_sha256": "8ed48f00bd96cc1acc1ed31f0d7d46d80f9bd724a33f875cd957be8d8ede6d3e",
+  "practice_and_feedback": {
+    "practice_generated_in_browser": true,
+    "initial_wrong_answer_actions": [
+      "revise",
+      "revise"
+    ],
+    "corrected_answer_actions": [
+      "retain",
+      "retain"
+    ],
+    "review": "Codex source inspection and automated browser acceptance, not independent blind human grading"
+  },
+  "browser": {
+    "initial": {
+      "answer_saved": true,
+      "restored_after_reload": true,
+      "feedback_version": 1,
+      "answers_hidden": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    },
+    "revise": {
+      "answer_saved": true,
+      "restored_after_reload": true,
+      "feedback_version": 2,
+      "answers_hidden": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    },
+    "history": {
+      "saved_feedback_accessible_after_cancel": true,
+      "feedback_evidence_video_seek_seconds": 17.574,
+      "old_feedback_version_warning": true,
+      "answers_only_after_explicit_reveal": true,
+      "mobile_no_overflow": true,
+      "browser_errors": []
+    }
+  },
+  "recovery": {
+    "completed_state_restored_without_calls": true,
+    "idempotent_save_and_version_conflict": true,
+    "inflight_recovery": {
+      "before_calls": 3,
+      "after_calls": 5,
+      "same_attempt": true
+    },
+    "cancelled_inflight_no_late_feedback": true
+  },
+  "ownership_and_deletion": {
+    "foreign_owner_read_404": true,
+    "owner_read_before_delete": true,
+    "authenticated_delete": true,
+    "read_and_feedback_after_delete_404": true,
+    "agent_sessions_removed": true,
+    "derived_index_deleted": true,
+    "retained_development_courses_not_deleted": true
+  },
+  "cleanup": {
+    "live_model_routing_unchanged": true,
+    "owned_processes_stopped": [
+      "agent",
+      "backend",
+      "frontend"
+    ],
+    "test_redis_stopped": true,
+    "retained": "Isolated databases, retained development-course storage, media and private evaluation records preserved for replay; live services not stopped.",
+    "ports_after_cleanup": {
+      "8084": false,
+      "8094": false,
+      "8095": false,
+      "5184": false,
+      "16381": false,
+      "8080": true,
+      "8090": true,
+      "8091": true
+    },
+    "owned_pids_terminated": true
+  },
+  "frontend": {
+    "unit_tests_passed": 79,
+    "unit_test_files": 19,
+    "typecheck_and_production_build": "passed",
+    "change": "Wrap long history goal buttons to prevent mobile horizontal overflow; no Python source changes",
+    "course_agent_panel_sha256": "bad60033ec49f0fe2a70c83191912de788bfa503c04413a15694993f1a1b94f6"
+  },
+  "mechanism": {
+    "python_tests_passed": 547,
+    "database_tests_skipped": 0,
+    "database": "separate PostgreSQL lecturelens_agent_test",
+    "ruff_check": "passed",
+    "ruff_format": "passed",
+    "git_diff_check": "passed"
+  },
+  "preserved_acceptance_failures": [
+    "History harness assumed a session select with only one session; corrected conditional selector and checked loaded run identity.",
+    "Expanded learning history overflowed at 390px; before screenshot retained, product CSS fixed and browser rechecked.",
+    "Deletion DB inspection used status instead of state; authenticated delete and API checks had passed; corrected read-only inspection without repeating deletion."
+  ],
+  "private_evidence_sha256": {
+    "AU-full-tests.log": "0a522e65b0666d4c76c8316f78ccda65b8adbc2f273ba2cdc6e75cc6eb837733",
+    "AU-frontend-tests.log": "24c831a4019fdf765627659dce4d47035fd4c1e36ab0a8a4e3a5dc37d1d4d4ca",
+    "AU-frontend-build.log": "bb674693fec9a653629c2b08ddfb723814f4c4d460f2bfc8e36ffd601813f02b",
+    "integration/practice.json": "39e7d388852510552fe918e8c5a782cfbcb3a0282ecbe8699c07cadb48cd95eb",
+    "integration/initial-feedback.json": "c4063489781442788dfbf2160c7aa115c5cbc6aabdcda8f40766065f411ef118",
+    "integration/revise-feedback.json": "9e4a187bd992384914bce6b6464f3458b233a807801d1eaca3623ac61981c6c7",
+    "integration/recovery-report.json": "b178f59ac6d6e74d90957268bb72c029ccaf8ce490e90bd4db256a3109d6b266",
+    "integration/history-browser-report.json": "32b1e681082ab3c1a8d58b36c9b1a41a335355e87c717cf20d927c27d5cb4ec6",
+    "integration/ownership-deletion-report.json": "95b13b8ef322b2c6ddfc9e89c429b9aea7d7bb6fdda4eba2908bbba7e70257c0",
+    "integration/feedback-history-mobile-before-fix.png": "9b5a962af2139879a5ca347dea5c61b6e1615abe2d84df8eb464ab4937630346",
+    "integration/feedback-history-mobile.png": "ab617ff74ba0683fad381b47d7b96202aa7487e7c32e5a54548f5868f2b6d15f",
+    "cleanup.json": "9611c0e77d86df5019f38ef62d4c087f4a4bd7502dcdcc6801781017f1350a8a"
+  }
+}

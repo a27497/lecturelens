@@ -1,0 +1,8 @@
+{
+  "source_sha256": "6e72c1e52e49a3f876012f585d7a36e12af796fd3c4e8ae5a1a3c86a567768d7",
+  "tasks_sha256": "512be4b8e8764ae2dc0d5439e19a3c18e5d1863d7a42fcd9f70f06c9e5e79e06",
+  "source_manifest_sha256": "93ba30276584954f32c2fbcbf6a94b88887a4ecb04ecc87c0a22a7ffb2050faa",
+  "created_at": "2026-09-20",
+  "model": "qwen3-max/max",
+  "source_unchanged": true
+}

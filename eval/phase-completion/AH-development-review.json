@@ -1,0 +1,129 @@
+{
+  "candidate": "AH",
+  "status": "failed",
+  "execution_pass": 12,
+  "total": 15,
+  "strict_pass": null,
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "dev-row",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "model_calls": 5,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "least-squares",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "model_calls": 5,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "model_calls": 6,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "string-interning",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    }
+  ]
+}

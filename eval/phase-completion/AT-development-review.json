@@ -1,0 +1,218 @@
+{
+  "candidate": "AT",
+  "status": "passed bounded development gate",
+  "execution_pass": 23,
+  "total": 23,
+  "strict_pass": 23,
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Topic absent from bounded clip; fixed neutral abstention without unsupported definitions or citations.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "dev-row",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Row picture and coordinate substitution match own line/origin/example passages; 2*1-2=0. Concept and application distinct.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "english-fixed-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "English fields, fixed (4,-1) and x-2y=6 preserved; signed coordinate-order substitution 4+2=6 correct. Own row-picture and actual substitution sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "gauss-jordan-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "No full Gauss-Jordan/inverse teaching in bounded clip; neutral refusal with no leaked row operations.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "Own common-point and both-equation demonstration inspected. Actual correction claim false for P1(1,2); every check for P1 and P2(-1,0) correct. No solution-set classification.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Topic absent; neutral refusal contains no determinant teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "No gradient descent or learning rate teaching in clip; neutral refusal without unsupported instruction.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Uses origin and changed coefficient 3; 0=0; own cited origin substitution supports explanation and question.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "least-squares",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Bounded clip lacks least-squares method; neutral refusal with no unsupported teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Own example explicitly maps x=1,y=2 to ordered point; signed input (-1,-2) uses same operation, 2*(-1)-(-2)=0. No new method claim.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Actual correction claim that (0,0) satisfies both is false; 0!=1 and 0!=5 both shown. Own common-point and check passages inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "origin-two-equation-contrast",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Same specified origin and both original equations; 0=0 versus 0!=4, not joint solution. Own origin substitution evidence inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Bounded clip lacks parallel/coincident solution-set classification; neutral refusal without leaked teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "specified-mixed-pair",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Specified x+2y=7, 2x-y=4 and both points preserved; four substitutions correct (both vs first-only). Concept has actual joint-point sources; application owns substitution method.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "three-specified-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "All three fixed coordinates and original equation preserved; outcomes 0=0,0=0,1!=0 with no omitted successful point. Chinese row-picture explanation and own sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Two distinct points against same equations; (3,3) satisfies both, (2,4) fails first and satisfies second. All four checks correct; own joint-concept/method citations inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "New sample literal, print before/after prefix slice rebinding; two correct outputs. Own immutability/rebinding and operation evidence inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "chinese-literal-slice",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "Exact 你好呀 and 早+s[1:] preserved; two outputs 你好呀/早好呀, no encoding claims. Own slice, concatenation and rebinding sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "New sample literal; prefix plus slice, outputs sample_49082906 and yample_49082906. Own conceptual and operation sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "string-interning",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "No interning/identity teaching in bounded clip; neutral refusal without unsupported answer.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "three-prints-two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Exact cabin, r+s[1:], t+s[1:] sequence with three outputs cabin/rabin/tabin. Own operation and rebinding sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "Two consecutive assignments hello -> jello -> mello, then one print mello. New jello/mello literals and same variable; direct reassignments taught in own citations.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "unicode-normalization-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "No normalization teaching in clip; neutral refusal without algorithm claims.",
+      "strict_pass": true
+    }
+  ],
+  "reviewed_at": 1789931200.269297,
+  "reviewer": "Codex inspection of actual outputs, private answers and field-owned canonical sources; not blind human grading"
+}

@@ -1,0 +1,19 @@
+{
+  "source_sha256": "1bbaac5c2f9a534b3864ba673a708564f0297ad942a34294b329f6dc67a97ec5",
+  "tasks_sha256": "709f83d49f5b149ca1b5166f9cc732a47f7f7800f1ff29a1a7c3373b5bbf0102",
+  "frozen_at": 1789926828.6660368,
+  "check_goal": true,
+  "data_status": "Consumed extra goal-task diagnostics; not held out",
+  "cases": [
+    {
+      "id": "verification-without-correction",
+      "expected_accept": false,
+      "label_reason": "Plain point verification contains no erroneous claim or requested correction; fails the learner goal."
+    },
+    {
+      "id": "misconception-correction",
+      "expected_accept": true,
+      "label_reason": "The requested correction has a concrete false claim and a correct, supported correction."
+    }
+  ]
+}

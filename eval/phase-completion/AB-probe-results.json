@@ -1,0 +1,107 @@
+{
+  "status": "failed",
+  "passed": 7,
+  "total": 8,
+  "note": "One internally contradictory wrong-answer label despite a matching answer; goal mismatch was noticed, but invalid response remains a protocol failure.",
+  "cases": [
+    {
+      "case_id": "historical-classification",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921902.7370944,
+      "finished_at": 1789921909.7789094
+    },
+    {
+      "case_id": "violates-neither-condition",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "expected_accept": false,
+      "observed_accept": null,
+      "label_matched": false,
+      "usage": {
+        "completion_tokens": 463,
+        "prompt_tokens": 2588
+      },
+      "started_at": 1789921940.0135868,
+      "finished_at": 1789921948.0124936
+    },
+    {
+      "case_id": "missing-second-point",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921932.3694015,
+      "finished_at": 1789921940.0085137
+    },
+    {
+      "case_id": "uncited-explanation-claim",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921948.0178545,
+      "finished_at": 1789921957.5909045
+    },
+    {
+      "case_id": "parallel-classification",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": false,
+      "observed_accept": false,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921925.0382843,
+      "finished_at": 1789921932.36629
+    },
+    {
+      "case_id": "new-point",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921909.782335,
+      "finished_at": 1789921917.0426927
+    },
+    {
+      "case_id": "new-point-error",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921917.0459573,
+      "finished_at": 1789921925.0350802
+    },
+    {
+      "case_id": "supported-short-explanation",
+      "source_sha256": "e1ac11bc9513122f27bb410c17700c28831acea55d3d06986832d7841883496d",
+      "status": "completed",
+      "error_code": null,
+      "expected_accept": true,
+      "observed_accept": true,
+      "label_matched": true,
+      "usage": null,
+      "started_at": 1789921957.5951927,
+      "finished_at": 1789921965.691118
+    }
+  ]
+}

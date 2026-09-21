@@ -1,0 +1,20 @@
+{
+  "version": "method-scope-V-regression",
+  "course": "strings",
+  "cases": [
+    {
+      "id": "new-string-output",
+      "split": "development",
+      "expected": "practice",
+      "goal": "解释字符串不可变与变量重新绑定的区别，并给我一道概念题和一道新字符串代码输出题。",
+      "checks": [
+        "Object immutability and variable rebinding distinguished.",
+        "Application uses a new program rather than the lecture hello/yello example.",
+        "Answer matches executable code, and each field has its own supporting citations."
+      ]
+    }
+  ],
+  "candidate_source_sha256": "a0e65dfc5981a5163d3acfb488da232890f016afa7abe3f5dd41cab8643bd38d",
+  "frozen_before_first_model_run": true,
+  "data_status": "All tasks previously consumed; regression only"
+}

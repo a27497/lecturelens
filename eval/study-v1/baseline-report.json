@@ -1,0 +1,870 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 20,
+  "structure_pass": 5,
+  "semantic_supported_pass": 0,
+  "supported_review_components": {
+    "grounded": 1,
+    "answers_correct": 3,
+    "questions_distinct": 0
+  },
+  "serious_unsupported_cases": 3,
+  "insufficient_pass": 0,
+  "successful_within_90s": 5,
+  "p50_all_seconds": 74.449,
+  "p95_all_seconds": 90.967,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "budget_exceeded": 8,
+    "succeeded": 6,
+    "failed": 6
+  },
+  "model_calls": 43,
+  "tool_calls": 32,
+  "measured_model_calls": 0,
+  "model_calls_without_complete_usage": 43,
+  "reported_prompt_tokens": null,
+  "reported_completion_tokens": null,
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": false,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.176,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.854,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.967,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 91.002,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 69.884,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "原始字幕只讨论字符串不可变与变量重新绑定；产物却断言 Kubernetes/HPA 和 70% CPU 阈值，课程引用无法支持这些结论。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 17.332,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 16.521,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.89,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 63.321,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "解释主题正确，6 次与 76 次答案有课程依据；最终引用只覆盖次数比较，没有覆盖主要纠错结论“每轮排除一半”。两题均复述同一示例的次数，未区分概念理解与应用。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 15.408,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source review (AI, not human gold)",
+      "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 74.449,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "what/how 定义正确；加入无引用支持的哈希表示例；两题均为定义回忆，没有应用题。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 59.772,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "接口操作与实现算法的区别基本正确，有对应引用；两题都围绕同一概念定义，第二题答案重复第一题后一半。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.857,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 60.098,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "将 lecture 的 class 误当成编程类，引用仅为课堂将关注两个接口，不能支持 OOP 方法实现断言或唯一性纠正；两题重复定义。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "interfaces-05",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.751,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-01",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 26.863,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-02",
+      "status": "failed",
+      "error_code": "UNSUPPORTED_CITATION",
+      "elapsed_seconds": 80.574,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "failed / UNSUPPORTED_CITATION，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.674,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 83.533,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "解释把整个操作序列总成本说成常数，课程明确为线性；第二题为笼统重要性，没有具体应用。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "amortization-05",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 16.802,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "407ecfe4b9c2bda3780cb855785afe1616a3da8b425d396c38d8f94b9919fe32",
+  "runtime": {
+    "source_sha256": "f0b47dd1c4431df5c7800c47e47b97f0811e235bcef2aad04f636bc7c0646ef6",
+    "model": "lecturelens-local-qwen",
+    "deadline_seconds": 90
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 1,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 1,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 1,
+      "insufficient_pass": 0,
+      "successful_within_90s": 1,
+      "p50_all_seconds": 69.884,
+      "p95_all_seconds": 91.002,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "budget_exceeded": 5,
+        "succeeded": 2,
+        "failed": 3
+      },
+      "model_calls": 21,
+      "tool_calls": 14,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 21,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.176,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.854,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.967,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 91.002,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 69.884,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "原始字幕只讨论字符串不可变与变量重新绑定；产物却断言 Kubernetes/HPA 和 70% CPU 阈值，课程引用无法支持这些结论。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 17.332,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 16.521,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.89,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 63.321,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "解释主题正确，6 次与 76 次答案有课程依据；最终引用只覆盖次数比较，没有覆盖主要纠错结论“每轮排除一半”。两题均复述同一示例的次数，未区分概念理解与应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 15.408,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 4,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 1,
+        "answers_correct": 2,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 2,
+      "insufficient_pass": 0,
+      "successful_within_90s": 4,
+      "p50_all_seconds": 74.449,
+      "p95_all_seconds": 90.857,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4,
+        "budget_exceeded": 3,
+        "failed": 3
+      },
+      "model_calls": 22,
+      "tool_calls": 18,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 22,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "interfaces-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 74.449,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 定义正确；加入无引用支持的哈希表示例；两题均为定义回忆，没有应用题。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 59.772,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "接口操作与实现算法的区别基本正确，有对应引用；两题都围绕同一概念定义，第二题答案重复第一题后一半。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.857,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 60.098,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "将 lecture 的 class 误当成编程类，引用仅为课堂将关注两个接口，不能支持 OOP 方法实现断言或唯一性纠正；两题重复定义。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "interfaces-05",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.751,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 26.863,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-02",
+          "status": "failed",
+          "error_code": "UNSUPPORTED_CITATION",
+          "elapsed_seconds": 80.574,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / UNSUPPORTED_CITATION，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.674,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 83.533,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释把整个操作序列总成本说成常数，课程明确为线性；第二题为笼统重要性，没有具体应用。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-05",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 16.802,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 16,
+      "structure_pass": 5,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 1,
+        "answers_correct": 3,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 2,
+      "insufficient_pass": 0,
+      "successful_within_90s": 5,
+      "p50_all_seconds": 80.574,
+      "p95_all_seconds": 91.002,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "budget_exceeded": 7,
+        "failed": 4,
+        "succeeded": 5
+      },
+      "model_calls": 34,
+      "tool_calls": 25,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 34,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.176,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.854,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.967,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 91.002,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 17.332,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 16.521,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.89,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：budget_exceeded / RUN_BUDGET_EXCEEDED",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 63.321,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "解释主题正确，6 次与 76 次答案有课程依据；最终引用只覆盖次数比较，没有覆盖主要纠错结论“每轮排除一半”。两题均复述同一示例的次数，未区分概念理解与应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 74.449,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 定义正确；加入无引用支持的哈希表示例；两题均为定义回忆，没有应用题。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 59.772,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "接口操作与实现算法的区别基本正确，有对应引用；两题都围绕同一概念定义，第二题答案重复第一题后一半。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.857,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 60.098,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "将 lecture 的 class 误当成编程类，引用仅为课堂将关注两个接口，不能支持 OOP 方法实现断言或唯一性纠正；两题重复定义。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 26.863,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-02",
+          "status": "failed",
+          "error_code": "UNSUPPORTED_CITATION",
+          "elapsed_seconds": 80.574,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / UNSUPPORTED_CITATION，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.674,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 83.533,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释把整个操作序列总成本说成常数，课程明确为线性；第二题为笼统重要性，没有具体应用。",
+          "serious_unsupported": true
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 4,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 1,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": 16.802,
+      "p95_all_seconds": 90.751,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 1,
+        "failed": 2,
+        "budget_exceeded": 1
+      },
+      "model_calls": 9,
+      "tool_calls": 7,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 9,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": true,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 69.884,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "原始字幕只讨论字符串不可变与变量重新绑定；产物却断言 Kubernetes/HPA 和 70% CPU 阈值，课程引用无法支持这些结论。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 15.408,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "Codex source review (AI, not human gold)",
+          "reason": "未产出可评分练习：failed / REPEATED_TOOL_WITHOUT_PROGRESS",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-05",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 90.751,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "budget_exceeded / RUN_BUDGET_EXCEEDED，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-05",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 16.802,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "failed / REPEATED_TOOL_WITHOUT_PROGRESS，没有最终产物。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  }
+}

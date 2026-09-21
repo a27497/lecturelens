@@ -1,0 +1,37 @@
+{
+  "version": "phase-AU-fresh-holdout-v1",
+  "data_status": "Authored after AU source freeze and strict 31/31 development gate; not previously sent as model tasks",
+  "cases": [
+    {
+      "id": "three-rebindings-four-prints",
+      "goal": "结合课程解释变量重绑定为何不修改原字符串，并给一道概念题。应用题从 s=\"9x\" 开始并打印；再执行 s=\"!\"+s[1:] 并打印；接着 s=\"ok\" 并打印；最后 s=\"+\"+s[1:] 并打印。让我按顺序写出四行输出，保留三次绑定和所有操作。",
+      "expected": "practice",
+      "checks": [
+        "Exactly three rebindings, four prints, original literals and expressions.",
+        "Outputs 9x,!x,ok,+k in order.",
+        "Own concept and operation sources, no unrequested methods."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "english-assignment-empty-tail",
+      "goal": "Use English to explain string immutability versus variable rebinding, then give a conceptual question. For the output question, use exactly this sequence: s=\"ab\"; print(s); s=\"N\"; print(s); s=\"_\"+s[1:]; print(s). Preserve the direct assignment followed by concatenation with a slice, and ask for all three output lines.",
+      "expected": "practice",
+      "checks": [
+        "English fields and all three operations/prints in order.",
+        "Outputs ab,N,_; final one-character slice has empty tail.",
+        "Own immutable-object and rebinding/operation sources."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "utf8-byte-length-outside-clip",
+      "goal": "仅根据这个字符串片段，解释 UTF-8 编码怎样决定表情符号的字节数，并出题让我计算编码后字节长度。",
+      "expected": "insufficient_evidence",
+      "checks": [
+        "No UTF-8 byte-encoding instruction in bounded immutability clip; neutral refusal without invented encoding answer."
+      ],
+      "split": "holdout"
+    }
+  ]
+}

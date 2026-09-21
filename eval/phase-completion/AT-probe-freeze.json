@@ -1,0 +1,49 @@
+{
+  "source_sha256": "55925c1c3be68475aee302e200c1b9609fdfe914200a2d0764fbc8ac74f73b52",
+  "tasks_sha256": "8b99aa97bf5c900449ef9404daf37963eb45b13e5ad4df8ee6c9c0894c4444b1",
+  "frozen_at": 1789930759.8281057,
+  "check_goal": true,
+  "data_status": "Pre-labelled diagnostic development cases, not autonomous generation",
+  "cases": [
+    {
+      "id": "historical-classification",
+      "expected_accept": false,
+      "reason": "Classifying an entire system and infinitely many solutions is not the demonstrated check of one candidate point."
+    },
+    {
+      "id": "new-point",
+      "expected_accept": true,
+      "reason": "Both equations are checked for the supplied point by the demonstrated substitution operation."
+    },
+    {
+      "id": "new-point-error",
+      "expected_accept": true,
+      "reason": "Correction tests both equations at one point and preserves the observed output type."
+    },
+    {
+      "id": "parallel-classification",
+      "expected_accept": false,
+      "reason": "Classification of parallel lines and the entire solution set has no method evidence in the excerpt."
+    },
+    {
+      "id": "missing-second-point",
+      "expected_accept": false,
+      "reason": "Actual provided point(s) violate the explicit goal despite a correct answer and supported method."
+    },
+    {
+      "id": "violates-neither-condition",
+      "expected_accept": false,
+      "reason": "Actual provided point(s) violate the explicit goal despite a correct answer and supported method."
+    },
+    {
+      "id": "uncited-explanation-claim",
+      "expected_accept": false,
+      "reason": "The explanation adds system intersection, but its own references teach only a single equation, line and origin check."
+    },
+    {
+      "id": "supported-short-explanation",
+      "expected_accept": true,
+      "reason": "Single-equation explanation, point-check method and answers supported by their own sources."
+    }
+  ]
+}

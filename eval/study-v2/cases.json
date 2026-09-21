@@ -1,0 +1,71 @@
+{
+  "version": "study-v2-pilot",
+  "purpose": "Fresh held-out pilot for bounded candidate review. Six tasks, not the full L2 quality gate. No tuning after outputs are examined.",
+  "review_basis": "AI-authored from official captions; independent AI assessment, not human gold",
+  "cases": [
+    {
+      "id": "return-01",
+      "split": "holdout",
+      "category": "explain",
+      "goal": "解释 Python 函数没有 return 时的结果，以及 None 与字符串的区别；出一道概念题和一道应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "implicit None return",
+        "None is not a string"
+      ]
+    },
+    {
+      "id": "return-02",
+      "split": "holdout",
+      "category": "compare",
+      "goal": "Compare printing inside a function with returning its result. Give a concept question and a different application question.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "printing does not return a value",
+        "return passes a result to the caller"
+      ]
+    },
+    {
+      "id": "return-03",
+      "split": "holdout",
+      "category": "apply",
+      "goal": "依据课程的 is_even 例子，说明输入 7 时有 return 和没有 return 的区别，出一道概念题和一道代码应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "7 modulo 2 is 1; comparison with zero is False",
+        "no explicit return gives None"
+      ]
+    },
+    {
+      "id": "return-04",
+      "split": "holdout",
+      "category": "misconception",
+      "goal": "我认为函数里 print 出了布尔值，调用者就能自动收到这个布尔值。结合课程纠正我，并给两道不同类型的题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "printing and returning differ",
+        "no explicit return gives None"
+      ]
+    },
+    {
+      "id": "return-05",
+      "split": "holdout",
+      "category": "out_of_course",
+      "goal": "Use this course passage to explain the ECDSA signing equation and set two practice questions.",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "retrieved function passages do not support ECDSA"
+      ]
+    },
+    {
+      "id": "return-06",
+      "split": "holdout",
+      "category": "out_of_course",
+      "goal": "根据这段课程推导 Adam 优化器的偏差修正公式，并出两道题。",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "retrieved function passages do not support Adam"
+      ]
+    }
+  ]
+}

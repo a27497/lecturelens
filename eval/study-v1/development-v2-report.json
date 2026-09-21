@@ -1,0 +1,530 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 10,
+  "structure_pass": 8,
+  "semantic_supported_pass": 1,
+  "supported_review_components": {
+    "grounded": 2,
+    "answers_correct": 1,
+    "questions_distinct": 4
+  },
+  "serious_unsupported_cases": 5,
+  "insufficient_pass": 1,
+  "successful_within_90s": 8,
+  "p50_all_seconds": 61.673,
+  "p95_all_seconds": 91.027,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 9,
+    "budget_exceeded": 1
+  },
+  "model_calls": 23,
+  "tool_calls": 27,
+  "measured_model_calls": 22,
+  "model_calls_without_complete_usage": 1,
+  "reported_prompt_tokens": 20286,
+  "reported_completion_tokens": 3486,
+  "gates": {
+    "complete": false,
+    "structure": false,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": false,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 48.523,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "解释混淆修改对象和重新绑定；第二题引入无引用支持的 contains/函数，偏离不可变性。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 63.689,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "区分不可变对象和重新绑定，引用原始字幕支持；概念比较与具体赋值应用不同。解释冗长但核心正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 61.673,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "对象不可变和创建新对象有证据；问题要求解释原因，答案只复述定义；应用未给出可操作的赋值或拼接步骤。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 52.647,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "把 s[0] 赋值错误说成绑定新对象，认可了待纠正的错误观念；两题基本重复。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 28.643,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "明确说明 Kubernetes 自动扩容无课程证据，未生成练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 50.179,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "未解释 higher/lower 与中点；应用题没有具体区间且引入未引用的精确 log2(n) 次数公式。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 91.027,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "90 秒预算耗尽，没有最终产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 64.328,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "将 50 与 100 的中点回答为 63，参考答案与 rubric 都错误。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 88.059,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "解释声称每轮排除整个搜索空间，违背课程的一半；第二题 50 正确但不能抵消主要错误。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 89.856,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "课程外问题却编造 transformer 学习率 0.001，将二分查找错误嫁接到模型训练，还把答案写入问题。",
+      "serious_unsupported": true
+    }
+  ],
+  "dataset_sha256": "407ecfe4b9c2bda3780cb855785afe1616a3da8b425d396c38d8f94b9919fe32",
+  "runtime": {
+    "source_sha256": "fad5eed61b19f76e9a54845418a103159b41115d4e7d5cba203a5646a0034971",
+    "model": "lecturelens-local-qwen",
+    "deadline_seconds": 90
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 8,
+      "semantic_supported_pass": 1,
+      "supported_review_components": {
+        "grounded": 2,
+        "answers_correct": 1,
+        "questions_distinct": 4
+      },
+      "serious_unsupported_cases": 5,
+      "insufficient_pass": 1,
+      "successful_within_90s": 8,
+      "p50_all_seconds": 61.673,
+      "p95_all_seconds": 91.027,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 9,
+        "budget_exceeded": 1
+      },
+      "model_calls": 23,
+      "tool_calls": 27,
+      "measured_model_calls": 22,
+      "model_calls_without_complete_usage": 1,
+      "reported_prompt_tokens": 20286,
+      "reported_completion_tokens": 3486,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 48.523,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释混淆修改对象和重新绑定；第二题引入无引用支持的 contains/函数，偏离不可变性。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 63.689,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "区分不可变对象和重新绑定，引用原始字幕支持；概念比较与具体赋值应用不同。解释冗长但核心正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 61.673,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "对象不可变和创建新对象有证据；问题要求解释原因，答案只复述定义；应用未给出可操作的赋值或拼接步骤。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 52.647,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把 s[0] 赋值错误说成绑定新对象，认可了待纠正的错误观念；两题基本重复。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 28.643,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确说明 Kubernetes 自动扩容无课程证据，未生成练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 50.179,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未解释 higher/lower 与中点；应用题没有具体区间且引入未引用的精确 log2(n) 次数公式。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 91.027,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "90 秒预算耗尽，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 64.328,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "将 50 与 100 的中点回答为 63，参考答案与 rubric 都错误。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 88.059,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释声称每轮排除整个搜索空间，违背课程的一半；第二题 50 正确但不能抵消主要错误。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 89.856,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "课程外问题却编造 transformer 学习率 0.001，将二分查找错误嫁接到模型训练，还把答案写入问题。",
+          "serious_unsupported": true
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 0,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": null,
+      "p95_all_seconds": null,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {},
+      "model_calls": 0,
+      "tool_calls": 0,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": []
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 8,
+      "structure_pass": 7,
+      "semantic_supported_pass": 1,
+      "supported_review_components": {
+        "grounded": 2,
+        "answers_correct": 1,
+        "questions_distinct": 4
+      },
+      "serious_unsupported_cases": 4,
+      "insufficient_pass": 0,
+      "successful_within_90s": 7,
+      "p50_all_seconds": 61.673,
+      "p95_all_seconds": 91.027,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 7,
+        "budget_exceeded": 1
+      },
+      "model_calls": 18,
+      "tool_calls": 20,
+      "measured_model_calls": 17,
+      "model_calls_without_complete_usage": 1,
+      "reported_prompt_tokens": 15316,
+      "reported_completion_tokens": 2769,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 48.523,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释混淆修改对象和重新绑定；第二题引入无引用支持的 contains/函数，偏离不可变性。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 63.689,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "区分不可变对象和重新绑定，引用原始字幕支持；概念比较与具体赋值应用不同。解释冗长但核心正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 61.673,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "对象不可变和创建新对象有证据；问题要求解释原因，答案只复述定义；应用未给出可操作的赋值或拼接步骤。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 52.647,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把 s[0] 赋值错误说成绑定新对象，认可了待纠正的错误观念；两题基本重复。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 50.179,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未解释 higher/lower 与中点；应用题没有具体区间且引入未引用的精确 log2(n) 次数公式。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 91.027,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "90 秒预算耗尽，没有最终产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 64.328,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "将 50 与 100 的中点回答为 63，参考答案与 rubric 都错误。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 88.059,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释声称每轮排除整个搜索空间，违背课程的一半；第二题 50 正确但不能抵消主要错误。",
+          "serious_unsupported": true
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 2,
+      "structure_pass": 1,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 1,
+      "insufficient_pass": 1,
+      "successful_within_90s": 1,
+      "p50_all_seconds": 28.643,
+      "p95_all_seconds": 89.856,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 2
+      },
+      "model_calls": 5,
+      "tool_calls": 7,
+      "measured_model_calls": 5,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 4970,
+      "reported_completion_tokens": 717,
+      "gates": {
+        "complete": false,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": true,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 28.643,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确说明 Kubernetes 自动扩容无课程证据，未生成练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 89.856,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "课程外问题却编造 transformer 学习率 0.001，将二分查找错误嫁接到模型训练，还把答案写入问题。",
+          "serious_unsupported": true
+        }
+      ]
+    }
+  }
+}

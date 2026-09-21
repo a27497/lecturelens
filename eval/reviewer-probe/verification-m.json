@@ -1,0 +1,23 @@
+{
+  "python_tests_passed": 189,
+  "skipped": 0,
+  "database": "separate lecturelens_agent_test PostgreSQL/pgvector",
+  "ruff_check": "passed",
+  "runtime_sha256": "7c25036f8bf696fdd84afee01e45c7f70c0c6256dc4ecf91bf05ecbf7a20a043",
+  "real_calls": 20,
+  "direct_reviewer_calls": 16,
+  "seeded_repair_external_calls": 4,
+  "seeded_decisions_not_external_calls": 4,
+  "known_prompt_tokens": 76872,
+  "known_completion_tokens": 3437,
+  "source_matches_frozen_candidate": true,
+  "deployed": false,
+  "full_l2_gate_assessed": false,
+  "model_configuration_changed": false,
+  "remaining_warning": "Existing Starlette/AnyIO BlockingPortal deprecation",
+  "ruff_format": "passed",
+  "patch_whitespace": "passed",
+  "frozen_runner_and_dataset_identities_match": true,
+  "online_source_still_c": true,
+  "configured_model_identities_match_previous": true
+}

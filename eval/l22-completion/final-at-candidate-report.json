@@ -1,0 +1,869 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 20,
+  "structure_pass": 16,
+  "semantic_supported_pass": 9,
+  "supported_review_components": {
+    "grounded": 10,
+    "answers_correct": 11,
+    "questions_distinct": 12
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 4,
+  "successful_within_90s": 16,
+  "p50_all_seconds": 11.69,
+  "p95_all_seconds": 25.934,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 16,
+    "budget_exceeded": 1,
+    "failed": 3
+  },
+  "model_calls": 72,
+  "tool_calls": 45,
+  "measured_model_calls": 72,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 153628,
+  "reported_completion_tokens": 11849,
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": true,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.546,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释不可变及重新绑定，概念与两行代码输出不同，hello/yello及逐题引用正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.19,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "区分对象修改和变量重新绑定，代码输出yello正确，所有所用操作有逐题引用。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 25.395,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释回答hello到yello，练习改用z的同方法应用，zello核算与引用正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.69,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "正确纠正原地修改，概念与morld程序输出不同；拼接、切片及绑定引用完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.074,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "课程无Kubernetes扩容依据，明确停止，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.636,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "中点反馈与排除半区间正确；应用(50,100]及75核算正确，逐题来源支持。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.508,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释增加课堂未报告的[0,100]初始范围及未讲授的指数级加速说法，复核漏检；两题答案及区间核算正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 24.242,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "首次拒绝包含两条课程证据加目标片段，内部grounds三条上限导致格式失败；重试后修订耗尽预算，无产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 28.977,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核把已核算的严格端点误判为课程必须单独教授的事实，重复工具后停止，无产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.589,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确课程没有Transformer学习率依据，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 4.996,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确片段没有词向量训练学习率，无编造或无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 23.999,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "说明一次扫描避免预先排序；概念与具体1000人单次查询应用不同，逐题来源完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-02",
+      "status": "failed",
+      "error_code": "MODEL_OUTPUT_TRUNCATED",
+      "elapsed_seconds": 22.54,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "模型输出截断，未发布可验收产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.004,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "按课程顺序扫描到末尾，4项及线性最坏情况正确；概念与具体名单应用不同，来源完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.846,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释排序与二分总成本正确，但应用转为实数区间减半；本片段仅提二分查询复杂度，未教授该区间反馈方法，且偏离任务应用。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.109,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确选择排序证据不包含高斯混合协方差更新，无编造。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 20.48,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "方法引用完整，但[5,1,7,2]第二轮应为[2,1,5,7]，参考答案错误地写成[1,2,5,7]，复核漏检。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 18.032,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "两轮范围/位置/后缀变化准确，应用[5,1,9,3,7]的两次最大值交换结果正确，逐题来源完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-03",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "elapsed_seconds": 25.934,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核合约失败，未发布可验收产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 13.282,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "正确纠正最大值移到右端的方法，概念与新数组首轮应用不同，交换结果[2,1,4,5]及来源正确。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "587772c55f3f38227e7a08e6dc52c8cadb92e192a04bdbe6309f9db4695569c9",
+  "runtime": {
+    "source_sha256": "8f8df7ee3bc7dfdc7acec32b33cd29b80dd7cf703550e2c8f9149dcc9f413868",
+    "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+    "base_url": "http://127.0.0.1:8082",
+    "deadline_seconds": 90,
+    "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 8,
+      "semantic_supported_pass": 5,
+      "supported_review_components": {
+        "grounded": 5,
+        "answers_correct": 6,
+        "questions_distinct": 6
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 8,
+      "p50_all_seconds": 11.546,
+      "p95_all_seconds": 28.977,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 8,
+        "budget_exceeded": 1,
+        "failed": 1
+      },
+      "model_calls": 35,
+      "tool_calls": 22,
+      "measured_model_calls": 35,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 75107,
+      "reported_completion_tokens": 5136,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.546,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释不可变及重新绑定，概念与两行代码输出不同，hello/yello及逐题引用正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.19,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "区分对象修改和变量重新绑定，代码输出yello正确，所有所用操作有逐题引用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 25.395,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释回答hello到yello，练习改用z的同方法应用，zello核算与引用正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.69,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "正确纠正原地修改，概念与morld程序输出不同；拼接、切片及绑定引用完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.074,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程无Kubernetes扩容依据，明确停止，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.636,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "中点反馈与排除半区间正确；应用(50,100]及75核算正确，逐题来源支持。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.508,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释增加课堂未报告的[0,100]初始范围及未讲授的指数级加速说法，复核漏检；两题答案及区间核算正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 24.242,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "首次拒绝包含两条课程证据加目标片段，内部grounds三条上限导致格式失败；重试后修订耗尽预算，无产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 28.977,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核把已核算的严格端点误判为课程必须单独教授的事实，重复工具后停止，无产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.589,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Transformer学习率依据，无无关练习。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 8,
+      "semantic_supported_pass": 4,
+      "supported_review_components": {
+        "grounded": 5,
+        "answers_correct": 5,
+        "questions_distinct": 6
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 8,
+      "p50_all_seconds": 13.282,
+      "p95_all_seconds": 25.934,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 8,
+        "failed": 2
+      },
+      "model_calls": 37,
+      "tool_calls": 23,
+      "measured_model_calls": 37,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 78521,
+      "reported_completion_tokens": 6713,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.996,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确片段没有词向量训练学习率，无编造或无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 23.999,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "说明一次扫描避免预先排序；概念与具体1000人单次查询应用不同，逐题来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-02",
+          "status": "failed",
+          "error_code": "MODEL_OUTPUT_TRUNCATED",
+          "elapsed_seconds": 22.54,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "模型输出截断，未发布可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.004,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "按课程顺序扫描到末尾，4项及线性最坏情况正确；概念与具体名单应用不同，来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.846,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释排序与二分总成本正确，但应用转为实数区间减半；本片段仅提二分查询复杂度，未教授该区间反馈方法，且偏离任务应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.109,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确选择排序证据不包含高斯混合协方差更新，无编造。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 20.48,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "方法引用完整，但[5,1,7,2]第二轮应为[2,1,5,7]，参考答案错误地写成[1,2,5,7]，复核漏检。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 18.032,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "两轮范围/位置/后缀变化准确，应用[5,1,9,3,7]的两次最大值交换结果正确，逐题来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 25.934,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核合约失败，未发布可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.282,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "正确纠正最大值移到右端的方法，概念与新数组首轮应用不同，交换结果[2,1,4,5]及来源正确。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 16,
+      "structure_pass": 12,
+      "semantic_supported_pass": 9,
+      "supported_review_components": {
+        "grounded": 10,
+        "answers_correct": 11,
+        "questions_distinct": 12
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 12,
+      "p50_all_seconds": 13.282,
+      "p95_all_seconds": 28.977,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 12,
+        "budget_exceeded": 1,
+        "failed": 3
+      },
+      "model_calls": 60,
+      "tool_calls": 37,
+      "measured_model_calls": 60,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 136579,
+      "reported_completion_tokens": 11432,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.546,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释不可变及重新绑定，概念与两行代码输出不同，hello/yello及逐题引用正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.19,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "区分对象修改和变量重新绑定，代码输出yello正确，所有所用操作有逐题引用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 25.395,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释回答hello到yello，练习改用z的同方法应用，zello核算与引用正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.69,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "正确纠正原地修改，概念与morld程序输出不同；拼接、切片及绑定引用完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.636,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "中点反馈与排除半区间正确；应用(50,100]及75核算正确，逐题来源支持。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.508,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释增加课堂未报告的[0,100]初始范围及未讲授的指数级加速说法，复核漏检；两题答案及区间核算正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "elapsed_seconds": 24.242,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "首次拒绝包含两条课程证据加目标片段，内部grounds三条上限导致格式失败；重试后修订耗尽预算，无产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 28.977,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核把已核算的严格端点误判为课程必须单独教授的事实，重复工具后停止，无产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 23.999,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "说明一次扫描避免预先排序；概念与具体1000人单次查询应用不同，逐题来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-02",
+          "status": "failed",
+          "error_code": "MODEL_OUTPUT_TRUNCATED",
+          "elapsed_seconds": 22.54,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "模型输出截断，未发布可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.004,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "按课程顺序扫描到末尾，4项及线性最坏情况正确；概念与具体名单应用不同，来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 12.846,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释排序与二分总成本正确，但应用转为实数区间减半；本片段仅提二分查询复杂度，未教授该区间反馈方法，且偏离任务应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 20.48,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "方法引用完整，但[5,1,7,2]第二轮应为[2,1,5,7]，参考答案错误地写成[1,2,5,7]，复核漏检。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 18.032,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "两轮范围/位置/后缀变化准确，应用[5,1,9,3,7]的两次最大值交换结果正确，逐题来源完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 25.934,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核合约失败，未发布可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.282,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "正确纠正最大值移到右端的方法，概念与新数组首轮应用不同，交换结果[2,1,4,5]及来源正确。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 4,
+      "structure_pass": 4,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 4,
+      "successful_within_90s": 4,
+      "p50_all_seconds": 5.074,
+      "p95_all_seconds": 5.589,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4
+      },
+      "model_calls": 12,
+      "tool_calls": 8,
+      "measured_model_calls": 12,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 17049,
+      "reported_completion_tokens": 417,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.074,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程无Kubernetes扩容依据，明确停止，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.589,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确课程没有Transformer学习率依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.996,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确片段没有词向量训练学习率，无编造或无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.109,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确选择排序证据不包含高斯混合协方差更新，无编造。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "strings-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "不可变及创建新字符串解释准确；World输出及逐题来源支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "区分变量重新绑定与对象变化，original保持world、s变borld，输出与绑定来源正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "正确说明hello到yello的拼接与重新绑定，概念和输出应用不同，来源完整。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "纠正原地字符赋值，aorld计算题及所有操作引用正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Kubernetes扩容依据，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "工具方法说明正确；[1,100]严格上半区间及75.25计算准确，逐题来源支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": false,
+    "reason": "新增reported_evidence_ids短引用未转换成正式ID，被UNSUPPORTED_CITATION拒绝，无产物；原始请求与错误保留。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "修订后产物解释减半方法，概念与计算应用不同；指定0到100、更大条件及75在应用参考答案中完整回答，引用支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "工具说明排除整半区间，概念纠正只排除单值，应用[10,50]后剩余(30,50]及40正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有Transformer学习率依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有词向量训练学习率依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释一次查询避免排序开销；1000名字场景采用定性比较，无虚构操作计数，引用支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "比较单次与反复查询的准备/查询权衡，单次Taylor Kim场景应用正确，未推断固定查询次数盈亏点。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "解释顺序扫描，Beth位于第4项的逐项过程及4次检查正确，概念与应用不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "searchtradeoff-04": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": true,
+    "reason": "将O(n)等同1000步，并将排序加二分计算为10010步；课程没有支持这些精确操作次数，复核漏检。 补充逐题引用审阅：应用题自身引用未包含排序 n log n 的依据；解释部分的共享引用不能代替题目自己的来源。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确课程没有高斯混合协方差更新依据。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "最大值向未排序区域末尾交换正确；课堂数组两轮状态与右侧已排序后缀正确，引用支持。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "两轮范围、位置、后缀变化完整；[5,1,9,3,7]两轮结果正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "右侧已排序后缀及选最大值方法正确；请求[6,2,9,5]和应用[7,1,5,3]步骤准确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "selectionstep-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "纠正课程方法为最大值移向未排序区域右端，后缀从右端扩展；[5,1,7,3]计算与引用正确。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

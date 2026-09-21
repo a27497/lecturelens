@@ -1,0 +1,66 @@
+{
+  "candidate": "W",
+  "passed": 6,
+  "total": 7,
+  "gate_passed": false,
+  "data_status": "Consumed development regression",
+  "reviewer": "Codex source review",
+  "cases": [
+    {
+      "id": "dev-eigen",
+      "run_id": "f93a1d09-616c-4ffd-bfe0-23983ffe43c3",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "1ad07c55b708b2020be994b231b69943f211e3589325e77ab751f2c1b00a75f9"
+    },
+    {
+      "id": "dev-row",
+      "run_id": "1c63813a-c693-4a27-827d-0053b930533e",
+      "status": "failed",
+      "quality_pass": false,
+      "reason": "Exact quote was respaced by the model; method observation rejected before a candidate.",
+      "raw_record_sha256": "c2277f26a3e68b2cb6994d536036b3038df943e8ff7857da862da318d38f4cdf"
+    },
+    {
+      "id": "heldout-common-point",
+      "run_id": "a9103e9f-6cf8-4b8b-8845-4f4e9208058d",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "670082c0fe33f04203c5b73e9fbc444e1a31775879c326df0d671a69e4ca24a4"
+    },
+    {
+      "id": "heldout-determinant",
+      "run_id": "e58554ec-e635-4e98-bcdb-24b9b3d6e6aa",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "0b164e635ccdf78e814a85f4ebd8ff6232ac90ac5f0d53d8cea4d76d56bbe518"
+    },
+    {
+      "id": "heldout-gradient",
+      "run_id": "370e63ae-e595-40a5-b1d4-c245086ac8c1",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "7fbce707fd41ceaa718ce0ab56cb263101976367f022073d81d1ed06ea9cdf19"
+    },
+    {
+      "id": "heldout-origin",
+      "run_id": "71e40baf-3cdd-4c0e-9df8-723dc40d72ab",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "c7c4e0d9f886cd5fb9760bdb93a2af68e5d0264a8bd3fd5460e4b59583af9147"
+    },
+    {
+      "id": "new-string-output",
+      "run_id": "42980f95-6333-4838-8ef6-16f21b5964d0",
+      "status": "succeeded",
+      "quality_pass": true,
+      "reason": "Checked content, task, and own-field sources; no solution-set classification introduced.",
+      "raw_record_sha256": "ec6bd929a8bd5c14c448b4819cd93fc00447046121e7244ce502cc77f90bc982"
+    }
+  ]
+}

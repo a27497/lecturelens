@@ -1,0 +1,141 @@
+{
+  "expected_cases": 8,
+  "observed_cases": 8,
+  "expected_accepts": 4,
+  "expected_rejects": 4,
+  "correct": 6,
+  "errors": 0,
+  "false_accepts": 2,
+  "false_rejects": 0,
+  "target_code_hits": 2,
+  "all_labels_matched": false,
+  "pairs_both_correct": {
+    "abstention": true,
+    "full_output": true,
+    "rubric_consistency": false,
+    "unsupported_claim": false
+  },
+  "known_prompt_tokens": 12471,
+  "known_completion_tokens": 122,
+  "calls_without_complete_usage": 0,
+  "cases": [
+    {
+      "case_id": "rp-06",
+      "pair": "unsupported_claim",
+      "expected_accept": false,
+      "observed_accept": true,
+      "correct": false,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 0.9158
+    },
+    {
+      "case_id": "rp-03",
+      "pair": "rubric_consistency",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 0.8255
+    },
+    {
+      "case_id": "rp-08",
+      "pair": "abstention",
+      "expected_accept": false,
+      "observed_accept": false,
+      "correct": true,
+      "target_code_hit": true,
+      "issues": [
+        "unjustified_abstention"
+      ],
+      "error_code": null,
+      "seconds": 1.0767
+    },
+    {
+      "case_id": "rp-04",
+      "pair": "rubric_consistency",
+      "expected_accept": false,
+      "observed_accept": true,
+      "correct": false,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 0.8509
+    },
+    {
+      "case_id": "rp-05",
+      "pair": "unsupported_claim",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 1.1952
+    },
+    {
+      "case_id": "rp-07",
+      "pair": "abstention",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 0.9745
+    },
+    {
+      "case_id": "rp-01",
+      "pair": "full_output",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 0.9638
+    },
+    {
+      "case_id": "rp-02",
+      "pair": "full_output",
+      "expected_accept": false,
+      "observed_accept": false,
+      "correct": true,
+      "target_code_hit": true,
+      "issues": [
+        "incorrect_answer"
+      ],
+      "error_code": null,
+      "seconds": 0.9981
+    }
+  ],
+  "full_l2_gate_assessed": false,
+  "scope": "Fixed source-annotated development drafts; direct reviewer only; no generation, repair, runtime or full-stack evaluation.",
+  "assessment": "Pre-call Codex source-based labels, not blind human gold. Code hits do not establish useful correction feedback.",
+  "variant": "c",
+  "runtime_sha256": "2bf1fa93d80a6ceaec85c30c17dea9b3029267caba5559fa222f210d5f6cd8b3",
+  "runner_sha256": "caede6890980ff13c92b9ef6874e959e8efb6d5b4548173e7ef4d21e502f1d7a",
+  "dataset_sha256": "670dfc2e17ff4e67aafd9347296667b1ef8b94237f23720256f0acce8ca34991",
+  "evidence_sha256": "9efc09db1b5740fbd67630412bb8fe75ba8e92b3dc32a58c9128c3fbd7d51673",
+  "source_sha256": "28abb23043ebb5aaf7a69d0aeff05d24a7604a91cdb60dbf30ccbc679300e85d",
+  "results_sha256": "a541bcd7a52d4d3c3e8b3c364358cc68ba737b9b17835a8eb91874d2a3321e2f",
+  "reviewer_model": "qwen3-max",
+  "max_output_tokens": 300,
+  "timeout_seconds": 30,
+  "temperature": 0.2,
+  "order": [
+    "rp-06",
+    "rp-03",
+    "rp-08",
+    "rp-04",
+    "rp-05",
+    "rp-07",
+    "rp-01",
+    "rp-02"
+  ],
+  "retries": 0,
+  "labels_sent": false
+}

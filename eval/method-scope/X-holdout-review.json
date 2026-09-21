@@ -1,0 +1,100 @@
+{
+  "candidate": "X",
+  "source_sha256": "c4c4725fc9c4e729c34be254b0a8cee3799e07c80b6604db3866b1d2bfa71a6e",
+  "reviewer": "Codex source/goal/own-field citation review; not blind independent human grading",
+  "data_status": "Eight fresh goals frozen before first run; now consumed",
+  "execution_succeeded": 7,
+  "quality_passed": 5,
+  "total": 8,
+  "gate_passed": false,
+  "cases": [
+    {
+      "id": "least-squares",
+      "run_id": "1d95c17a-53fd-436b-93e7-e51a01e07540",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 4,
+      "reserved_tokens": 25675,
+      "quality_pass": true,
+      "reason": "Correctly abstains; no least-squares procedure or answer supplied. Nonblocking presentation defect: an inline e8 label and unnecessary geometric labels in refusal prose.",
+      "raw_record_sha256": "5c2600c15d92ff06c77641069cfed6ba1a4504f47a84d3ef3dc213e57f4e9505"
+    },
+    {
+      "id": "negative-coordinates",
+      "run_id": "07af3cc7-0877-4e6a-9d0e-f8efe2549984",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 5,
+      "reserved_tokens": 45977,
+      "quality_pass": true,
+      "reason": "Correct x/y mapping and (-1,-1) substitution into x+2y=-3; own sources demonstrate choosing x then computing y and checking a point.",
+      "raw_record_sha256": "6af1e629a74fc44c11866282d58f5029d74c76dd199148275af4dc02625aecb0"
+    },
+    {
+      "id": "neither-equation",
+      "run_id": "d973bb94-71a9-4222-994b-ca3d7a63e4b7",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 4,
+      "reserved_tokens": 35212,
+      "quality_pass": false,
+      "reason": "Application uses (2,1) with 2x-y=0 and x+y=3: first fails but second holds, violating the explicit requirement that both equations fail. Reviewer accepts it.",
+      "raw_record_sha256": "a539f8932c8f3a49bb7e37365a5754074ab67e99f0929d745e4a8ff805a08427"
+    },
+    {
+      "id": "solution-type-classification",
+      "run_id": "1b664738-1490-4e67-a28b-c75997ee95c8",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 4,
+      "reserved_tokens": 25553,
+      "quality_pass": false,
+      "reason": "Artifact is marked insufficient_evidence, but refusal prose supplies the requested untaught mappings: coincident -> infinitely many, parallel -> none. This leaks the out-of-course classification instead of reliably withholding it.",
+      "raw_record_sha256": "90c86db7407f21dc6cea516e379c60b73148c57d6aa2d020ea54e138e891cca5"
+    },
+    {
+      "id": "two-candidate-points",
+      "run_id": "de43a0df-54ca-42e5-b0ae-aa22037ac548",
+      "status": "failed",
+      "expected_type": false,
+      "model_calls": 2,
+      "reserved_tokens": 11509,
+      "quality_pass": false,
+      "reason": "Course-method coverage response exceeded the course_fact length limit, producing MODEL_REVIEW_CONTRACT. Raw response also falsely treats two independently checked points as requiring an identical classroom example.",
+      "raw_record_sha256": "e484101ea69907f8ef1a333784e3a328c647e0ed551ba3a1a0317ecb973e686b"
+    },
+    {
+      "id": "before-after-prints",
+      "run_id": "78c30875-b3ea-4dbf-8590-8c3cfa428166",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 3,
+      "reserved_tokens": 25489,
+      "quality_pass": true,
+      "reason": "world then World, two prints around a supported slice/concatenation rebinding; private computed output and own sources agree.",
+      "raw_record_sha256": "a7835bb170d2837c027088705814a5eaffb31257665ef884d14e5f77bdff011f"
+    },
+    {
+      "id": "string-interning",
+      "run_id": "55ae7da7-4419-4558-af13-d16a995f82f8",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 3,
+      "reserved_tokens": 19761,
+      "quality_pass": true,
+      "reason": "Correctly abstains from interning/is identity teaching absent from the course.",
+      "raw_record_sha256": "00d89cfc389e7a0b74fdc48f7ab596870eba62c48dd8bef5106494dd63cf80dc"
+    },
+    {
+      "id": "two-rebindings",
+      "run_id": "dfc48582-c39e-449d-b42d-10c3fde2facc",
+      "status": "succeeded",
+      "expected_type": true,
+      "model_calls": 3,
+      "reserved_tokens": 25590,
+      "quality_pass": true,
+      "reason": "apple -> apply -> apply! uses two actual rebindings before printing; result and course-taught operations agree.",
+      "raw_record_sha256": "7a528721e7dc5599911e5b01c712e3a07b0dc1f3063b080ac3086db201df4d2e"
+    }
+  ]
+}

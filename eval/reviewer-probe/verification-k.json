@@ -1,0 +1,15 @@
+{
+  "python_tests_passed": 177,
+  "skipped": 0,
+  "database": "separate lecturelens_agent_test PostgreSQL/pgvector",
+  "focused_final_source_tests_passed": 70,
+  "ruff_check": "passed",
+  "ruff_format": "passed",
+  "runtime_sha256": "87def3384dcbdebbbee278439822e065ab37c877470f2d09aa28bbd4b61b7b2e",
+  "real_calls": 24,
+  "source_matches_frozen_candidate": true,
+  "model_identity_unchanged": true,
+  "deployed": false,
+  "full_l2_gate_assessed": false,
+  "remaining_warning": "Existing Starlette/AnyIO BlockingPortal deprecation"
+}

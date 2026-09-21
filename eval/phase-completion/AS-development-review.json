@@ -1,0 +1,193 @@
+{
+  "candidate": "AS",
+  "status": "failed",
+  "execution_pass": 9,
+  "total": 23,
+  "strict_pass": null,
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "dev-row",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "english-fixed-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "gauss-jordan-outside-clip",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "least-squares",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "origin-two-equation-contrast",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "specified-mixed-pair",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "three-specified-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 6,
+      "expected_type": true,
+      "semantic_review": "pending source review"
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 4,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "chinese-literal-slice",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "string-interning",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "three-prints-two-rebindings",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    },
+    {
+      "case_id": "unicode-normalization-outside-clip",
+      "status": "failed",
+      "error_code": "MODEL_TOOL_CONTRACT",
+      "model_calls": 2,
+      "expected_type": false,
+      "semantic_review": "failed/no artifact"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "version": "phase-AT-fresh-holdout-v1",
+  "data_status": "Authored after AT source freeze and strict 23/23 consumed-development gate; not previously sent as model tasks",
+  "cases": [
+    {
+      "id": "three-points-three-outcomes",
+      "goal": "按课程解释一个点成为方程组解的要求，并给一道概念题。应用题固定使用 x+y=2 和 x-y=4，同时检验三个点 (3,-1)、(-1,3)、(0,0)，每个点都要检验两个方程，再区分同时满足、仅满足第一式、两式都不满足；保留所有指定数据。",
+      "expected": "practice",
+      "checks": [
+        "All six substitutions shown with original equations and three points.",
+        "(3,-1): 2=2,4=4; (-1,3): 2=2,-4!=4; (0,0):0!=2,0!=4.",
+        "Own sources teach both-equation solution and substitution."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "second-only-correction",
+      "goal": "根据课程讲解为什么要逐式检查，再给一道概念题和一道纠错题。纠错题必须检验并纠正这个说法：点 (2,1) 同时满足 x+3y=8 与 x-2y=0。保留这两个方程和这个点，写出两次检验，不要只检查第一式。",
+      "expected": "practice",
+      "checks": [
+        "Actual false claim retained for correction, not merely a verification task.",
+        "5!=8 and 0=0; second-only is not a system solution.",
+        "Own explanation and method sources support claims."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "english-origin-two-lines",
+      "goal": "Use English to explain the course method for checking the origin, then give one conceptual question and one application. Keep the point (0,0) and equations 3x-y=0 and x+y=2. Ask me to check each equation and decide whether the origin lies on both lines.",
+      "expected": "practice",
+      "checks": [
+        "English throughout and fixed origin/equations preserved.",
+        "0=0 and 0!=2, so not on both lines.",
+        "Own origin-substitution citations."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "zero-x-coefficient-two-points",
+      "goal": "依据课程的 row picture 说明怎样检查一个点是否在直线上，并出一道概念题。应用题固定用 0x+2y=6，检验 (-4,3) 与 (5,3) 两个点；两点都要列出完整代入过程，不能因 x 的系数为零而漏掉其中一个点。",
+      "expected": "practice",
+      "checks": [
+        "Exactly two fixed points and 0x+2y=6 preserved.",
+        "Both yield 6=6; signed x values still represented in each substitution.",
+        "No unsupported general classification theory."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "qr-outside-clip",
+      "goal": "只用这段课教我 QR 分解中的 Gram-Schmidt 正交化，演示构造 Q 和 R 的全部步骤并给计算练习。",
+      "expected": "insufficient_evidence",
+      "checks": [
+        "Absent from bounded row-picture clip; neutral abstention without QR algorithm teaching."
+      ],
+      "split": "holdout"
+    }
+  ]
+}

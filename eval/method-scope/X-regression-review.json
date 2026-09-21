@@ -1,0 +1,77 @@
+{
+  "reviewer": "Codex source/own-field citation review, not independent human review",
+  "passed": 7,
+  "total": 7,
+  "data_status": "Consumed development goals",
+  "notes": [
+    "Application uses point checks and corrections, without solution-set classification.",
+    "Origin sources include the demonstrated (0,0) conclusion.",
+    "New string uses world/m and exact output morld.",
+    "Three missing topics correctly abstain."
+  ],
+  "cases": [
+    {
+      "id": "dev-eigen",
+      "run_id": "c210f275-214b-4131-a14e-7ee58b6eba91",
+      "status": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 25225,
+      "quality_pass": true,
+      "raw_sha256": "8122fa3e345b37a28508180ac3142b2876d749b005ad027ff8bff8143d83211e"
+    },
+    {
+      "id": "dev-row",
+      "run_id": "55ec9230-7491-457e-889f-a1f2e8d1c507",
+      "status": "succeeded",
+      "model_calls": 5,
+      "reserved_tokens": 49211,
+      "quality_pass": true,
+      "raw_sha256": "b1f5f99fc4e7a7a5042345ddddc5dd9acce3a2c1500b12a7f3f4cd4a98962179"
+    },
+    {
+      "id": "heldout-common-point",
+      "run_id": "07e205a8-0c82-4394-a4c4-c48226b55ddc",
+      "status": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 34104,
+      "quality_pass": true,
+      "raw_sha256": "1cc32fe037fbc07db65c713fe6ff9e97dc39752f71991a3a1b7695f7f1188ac1"
+    },
+    {
+      "id": "heldout-determinant",
+      "run_id": "0dda56b0-0eaa-4d75-a2b3-366010820879",
+      "status": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 25093,
+      "quality_pass": true,
+      "raw_sha256": "6c3a59347d688f494bd5bda19b97f825282653038a29cb98e499c9141957fd9c"
+    },
+    {
+      "id": "heldout-gradient",
+      "run_id": "f2073d07-9518-4fdd-b7bb-ba32ccd4c962",
+      "status": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 25215,
+      "quality_pass": true,
+      "raw_sha256": "167f743ea60a00fec7f27feb262d235a23cb30bfe7f57fb4bb268f4770393ef9"
+    },
+    {
+      "id": "heldout-origin",
+      "run_id": "6fdaee02-6032-4fc7-8830-7d6fc8b0c511",
+      "status": "succeeded",
+      "model_calls": 4,
+      "reserved_tokens": 32272,
+      "quality_pass": true,
+      "raw_sha256": "3e86aaa6ae80e086b2df031c2b5d47afd3f067331b3a10a260baa8469ee9e1ed"
+    },
+    {
+      "id": "new-string-output",
+      "run_id": "680c80c1-9baf-4810-90aa-dc078dff62f7",
+      "status": "succeeded",
+      "model_calls": 3,
+      "reserved_tokens": 25279,
+      "quality_pass": true,
+      "raw_sha256": "a0867ff6be36794d34ac35c72003abf05910ab09151e363778a0d7b02284d604"
+    }
+  ]
+}

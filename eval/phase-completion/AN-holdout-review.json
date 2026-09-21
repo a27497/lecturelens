@@ -1,0 +1,76 @@
+{
+  "candidate": "AN",
+  "source_sha256": "6531876524f0b0e40bc8e58c4b0d74f316b840f9214d1abee4d7071f4b6a72f3",
+  "status": "failed gate",
+  "strict_pass": 7,
+  "total": 8,
+  "reviewed_at": 1789927867.9379003,
+  "reviewer": "Codex inspection of field-owned source text and actual answers; not blind human grading",
+  "data_status": "Originally fresh for frozen AN; all eight now consumed development data. No failure relabeled.",
+  "cases": [
+    {
+      "case_id": "english-fixed-point",
+      "status": "succeeded",
+      "model_calls": 4,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "English fields; exact point/equation and coordinate-order calculation correct. Own line and substitution passages inspected."
+    },
+    {
+      "case_id": "gauss-jordan-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Topic absent from bounded clip; neutral refusal has no unsupported answer or citation."
+    },
+    {
+      "case_id": "origin-two-equation-contrast",
+      "status": "succeeded",
+      "model_calls": 5,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Exact origin and equations preserved; 0=0 and 0!=4, not a joint solution; source supports origin substitution."
+    },
+    {
+      "case_id": "specified-mixed-pair",
+      "status": "succeeded",
+      "model_calls": 5,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Exact equations and points preserved; all four substitutions correct, with first-only distinguished by the two results. Own concept and method sources inspected."
+    },
+    {
+      "case_id": "three-specified-points",
+      "status": "budget_exceeded",
+      "model_calls": 6,
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "strict_pass": false,
+      "review_note": "FAILED: no artifact. First review used field2_source2 outside application-owned references; retry wrongly demanded the classroom point and rejected new inputs, exhausting the original Run budget."
+    },
+    {
+      "case_id": "chinese-literal-slice",
+      "status": "succeeded",
+      "model_calls": 4,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Exact Chinese literals and two prints preserved; outputs 你好呀 and 早好呀; no encoding theory added."
+    },
+    {
+      "case_id": "three-prints-two-rebindings",
+      "status": "succeeded",
+      "model_calls": 4,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Requested cabin/r/t operations and all three prints preserved; exact outputs cabin,rabin,tabin; own string-operation and rebinding evidence inspected."
+    },
+    {
+      "case_id": "unicode-normalization-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "error_code": null,
+      "strict_pass": true,
+      "review_note": "Topic absent from bounded clip; neutral refusal has no unsupported answer or citation."
+    }
+  ]
+}

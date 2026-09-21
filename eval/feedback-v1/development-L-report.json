@@ -1,0 +1,739 @@
+{
+  "candidate": "feedback-L",
+  "phase": "development",
+  "source_sha256": "e5d679fc168f4db7e4b0c7da0ca45d38bdb5feaccad2c6223d0d7458f8919034",
+  "runner_sha256": "104b62bfcd0cb163815abe43f57eaadbb972be96e305854245503d83f7bf15ed",
+  "dataset_sha256": "128191d031fb9168c29d73c8a817f5d1dd6c04a8a383efbf905ca27a67fc382a",
+  "private_trials_sha256": "b179392eb29ea6799ef1359163d2472e34625c75c372d6458958a9d876ebbf97",
+  "reviewer": "Codex AI source review, not blind human gold",
+  "passed": true,
+  "structure_success": 6,
+  "quality_success": 6,
+  "total": 6,
+  "model_calls": 18,
+  "provider_usage": {
+    "prompt_tokens": 48496,
+    "completion_tokens": 2970,
+    "total_tokens": 51466
+  },
+  "latency_all_seconds": {
+    "median": 10.364824500000001,
+    "max": 15.172721
+  },
+  "cases": [
+    {
+      "id": "dev-strings-wrong",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "明确纠正字符串可变及索引赋值不报错，两组完整原文支持。",
+      "elapsed_seconds": 15.172721,
+      "feedback": {
+        "kind": "guidance",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "citations": [
+          {
+            "text": "you could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements",
+            "end_ms": 78020,
+            "start_ms": 63954,
+            "evidence_id": "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.",
+            "end_ms": 17574,
+            "start_ms": 0,
+            "evidence_id": "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "starting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+            "end_ms": 91330,
+            "start_ms": 78020,
+            "evidence_id": "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Now you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.",
+            "end_ms": 45490,
+            "start_ms": 36340,
+            "evidence_id": "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Remember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.",
+            "end_ms": 36340,
+            "start_ms": 17574,
+            "evidence_id": "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "And that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,",
+            "end_ms": 63954,
+            "start_ms": 45490,
+            "evidence_id": "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+            "end_ms": 107210,
+            "start_ms": 91330,
+            "evidence_id": "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62",
+            "source_type": "SUBTITLE"
+          }
+        ],
+        "observations": [
+          {
+            "action": "revise",
+            "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+            "evidence_id": "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+            "observation": "课程明确指出字符串对象一旦创建就不可修改，即字符串是不可变的。",
+            "evidence_ids": [
+              "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+              "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+              "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+              "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4"
+            ],
+            "learner_quote": "字符串是可变的",
+            "evidence_quote": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.\n\nRemember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.\n\nNow you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.\n\nAnd that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,\n\nyou could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements\n\nstarting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+            "anchor_evidence_ids": [
+              "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41"
+            ]
+          },
+          {
+            "action": "revise",
+            "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+            "evidence_id": "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+            "observation": "索引赋值 s[0] = 'y' 不会修改原字符串对象，而是会报错；要得到 'yello' 需要创建新字符串并重新绑定变量 s。",
+            "evidence_ids": [
+              "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+              "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+              "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+              "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+            ],
+            "learner_quote": "s[0] = 'y' 会在原来的字符串对象上把 hello 改成 yello。",
+            "evidence_quote": "Remember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.\n\nNow you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.\n\nAnd that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,\n\nyou could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements\n\nstarting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object\n\n\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+            "anchor_evidence_ids": [
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+              "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+            ]
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "index": 0,
+              "reason": "观察正确指出了学习者关于字符串可变性的根本错误，且修订行动适当。",
+              "source_fact": "课程指出字符串对象一旦创建就不能被修改，即字符串是不可变的。",
+              "evidence_ids": [
+                "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+                "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+                "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+                "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+                "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+                "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4"
+              ],
+              "learner_meaning": "学习者错误地认为字符串是可变的，并声称s[0]='y'会原地修改字符串。",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            },
+            {
+              "index": 1,
+              "reason": "观察准确纠正了学习者对索引赋值行为的误解，修订行动合理。",
+              "source_fact": "索引赋值s[0]='y'会导致错误；要得到'yello'需创建新字符串并重新绑定变量s。",
+              "evidence_ids": [
+                "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+                "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+                "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+                "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+                "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+                "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+              ],
+              "learner_meaning": "学习者认为s[0]='y'会在原字符串对象上把hello改成yello。",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "ceb090a3-d534-581a-beb9-ae189a01796b"
+        }
+      ]
+    },
+    {
+      "id": "dev-strings-equivalent",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "保留等价正确的不可变与拼接重新绑定解释，没有强迫补充术语。",
+      "elapsed_seconds": 13.873478,
+      "feedback": {
+        "kind": "guidance",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "citations": [
+          {
+            "text": "you could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements",
+            "end_ms": 78020,
+            "start_ms": 63954,
+            "evidence_id": "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.",
+            "end_ms": 17574,
+            "start_ms": 0,
+            "evidence_id": "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "starting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+            "end_ms": 91330,
+            "start_ms": 78020,
+            "evidence_id": "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Now you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.",
+            "end_ms": 45490,
+            "start_ms": 36340,
+            "evidence_id": "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Remember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.",
+            "end_ms": 36340,
+            "start_ms": 17574,
+            "evidence_id": "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "And that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,",
+            "end_ms": 63954,
+            "start_ms": 45490,
+            "evidence_id": "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+            "end_ms": 107210,
+            "start_ms": 91330,
+            "evidence_id": "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62",
+            "source_type": "SUBTITLE"
+          }
+        ],
+        "observations": [
+          {
+            "action": "retain",
+            "next_step": "这段与课程证据一致的表述可以保留。",
+            "evidence_id": "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+            "observation": "正确指出字符串对象不可变，符合课程中“an actual string object, once it's created, cannot be modified”和“strings are immutable”的说明。",
+            "evidence_ids": [
+              "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+              "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+              "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+              "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4"
+            ],
+            "learner_quote": "原有的字符串对象不能原地改字符",
+            "evidence_quote": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.\n\nRemember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.\n\nNow you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.\n\nAnd that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,\n\nyou could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements\n\nstarting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+            "anchor_evidence_ids": [
+              "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41"
+            ]
+          },
+          {
+            "action": "retain",
+            "next_step": "这段与课程证据一致的表述可以保留。",
+            "evidence_id": "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+            "observation": "准确描述了通过拼接创建新字符串并重新绑定变量的过程，与课程中“bind my string variable s to the new object”和通过字符串操作生成新对象的示例一致。",
+            "evidence_ids": [
+              "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+              "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+              "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+              "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+            ],
+            "learner_quote": "可以拼接出新字符串，再让变量名指向新对象，所以索引赋值不能这样做。",
+            "evidence_quote": "Now you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.\n\nAnd that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,\n\nyou could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements\n\nstarting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object\n\n\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+            "anchor_evidence_ids": [
+              "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+              "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+              "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+            ]
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "index": 0,
+              "reason": "Learner correctly captures immutability; evidence supports retaining this accurate statement.",
+              "source_fact": "字符串对象一旦创建就不能被修改，即字符串是不可变的。",
+              "evidence_ids": [
+                "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+                "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+                "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+                "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+                "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+                "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4"
+              ],
+              "learner_meaning": " learner states original string objects cannot be modified in place.",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            },
+            {
+              "index": 1,
+              "reason": "Learner accurately describes reassignment after creating a new string, matching course examples.",
+              "source_fact": "可通过拼接创建新字符串，并将变量重新绑定到新对象。",
+              "evidence_ids": [
+                "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+                "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+                "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+                "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+                "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62"
+              ],
+              "learner_meaning": "Learner explains creating a new string via concatenation and reassigning the variable.",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "cb82d45e-4c77-59a1-b417-7364c58d0118"
+        }
+      ]
+    },
+    {
+      "id": "dev-interval-wrong",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "准确修正保留半区间和中点，课程规则支持给定值直接推导。",
+      "elapsed_seconds": 11.351993,
+      "feedback": {
+        "kind": "guidance",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "citations": [
+          {
+            "text": "The game was rigged. So you get the prize anyway,just because I rigged the game. Here you go. Pass it down. AUDIENCE: Thank you. ANA BELL: Thank you. So notice, in bisectionsearch, what I did was I eliminated half the searchspace with every guess. I said, well, she saidit's higher or lower,",
+            "end_ms": 17140,
+            "start_ms": 0,
+            "evidence_id": "9ec6bf9b7e7d0c6c55b81aa96b03751a22c3d23ac0595e2c0f7235e15165611c",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So we have ouroriginal search space. We're going to choose aguess halfway, eliminate half of the guesses. Then we're going look inthe remaining interval, eliminate half the guesses,and so on and so on.",
+            "end_ms": 74878,
+            "start_ms": 61410,
+            "evidence_id": "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So that means that thelarger the space actually is, that I need tosearch, the better it is to use bisection search,this bisection search method. So that's basically whatI'm illustrating here.",
+            "end_ms": 61410,
+            "start_ms": 45240,
+            "evidence_id": "cf9db1d4fb1f882c7d762b2de0d2bdc1f52da7d6771630cf96e3b2e8f94e117b",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "so I definitely cannot be inthe other search space, right? If I was doing approximatesolution or, in this case, guess and check, I would beasking Sophie, is your number 0, 1, 2, 3, 4, and so on?",
+            "end_ms": 30310,
+            "start_ms": 17140,
+            "evidence_id": "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+            "source_type": "SUBTITLE"
+          }
+        ],
+        "observations": [
+          {
+            "action": "revise",
+            "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+            "evidence_id": "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+            "observation": "得知 x > 50.5 后，剩余区间应为 (50.5, 100] 而非 [1, 50.5]。二分搜索在每次猜测后保留满足条件的一半区间。",
+            "evidence_ids": [
+              "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+              "cf9db1d4fb1f882c7d762b2de0d2bdc1f52da7d6771630cf96e3b2e8f94e117b",
+              "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+            ],
+            "learner_quote": "剩余区间是 [1, 50.5]",
+            "evidence_quote": "so I definitely cannot be inthe other search space, right? If I was doing approximatesolution or, in this case, guess and check, I would beasking Sophie, is your number 0, 1, 2, 3, 4, and so on?\n\nSo that means that thelarger the space actually is, that I need tosearch, the better it is to use bisection search,this bisection search method. So that's basically whatI'm illustrating here.\n\nSo we have ouroriginal search space. We're going to choose aguess halfway, eliminate half of the guesses. Then we're going look inthe remaining interval, eliminate half the guesses,and so on and so on.",
+            "anchor_evidence_ids": [
+              "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+            ]
+          },
+          {
+            "action": "revise",
+            "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+            "evidence_id": "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+            "observation": "因剩余区间应为 (50.5, 100]，下一次中点应为 (50.5 + 100)/2 = 75.25，而非 25.75。",
+            "evidence_ids": [
+              "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+              "cf9db1d4fb1f882c7d762b2de0d2bdc1f52da7d6771630cf96e3b2e8f94e117b",
+              "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+            ],
+            "learner_quote": "下一次取 25.75",
+            "evidence_quote": "so I definitely cannot be inthe other search space, right? If I was doing approximatesolution or, in this case, guess and check, I would beasking Sophie, is your number 0, 1, 2, 3, 4, and so on?\n\nSo that means that thelarger the space actually is, that I need tosearch, the better it is to use bisection search,this bisection search method. So that's basically whatI'm illustrating here.\n\nSo we have ouroriginal search space. We're going to choose aguess halfway, eliminate half of the guesses. Then we're going look inthe remaining interval, eliminate half the guesses,and so on and so on.",
+            "anchor_evidence_ids": [
+              "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+            ]
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "index": 0,
+              "reason": "Learner incorrectly kept lower half despite x > 50.5; observation correctly identifies error and next step appropriately requests revision.",
+              "source_fact": "二分搜索每次猜测后保留满足条件的一半区间，排除另一半。",
+              "evidence_ids": [
+                "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+                "cf9db1d4fb1f882c7d762b2de0d2bdc1f52da7d6771630cf96e3b2e8f94e117b",
+                "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+              ],
+              "learner_meaning": "learner claimed remaining interval is [1, 50.5] after learning x > 50.5",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            },
+            {
+              "index": 1,
+              "reason": "Given correct remaining interval (50.5,100], midpoint is 75.25; observation accurately corrects miscalculation stemming from prior error.",
+              "source_fact": "下一次中点应为剩余区间端点的平均值。",
+              "evidence_ids": [
+                "f23f9efc004fc862b05c01205725c8fe1cecabf064930cf55c27f63f0e5df6f7",
+                "cf9db1d4fb1f882c7d762b2de0d2bdc1f52da7d6771630cf96e3b2e8f94e117b",
+                "c3dd1e64e51a6db8dc29a7ba625e657b5c8b41ce8cebf4c6491442ded4b70687"
+              ],
+              "learner_meaning": "learner proposed next midpoint as 25.75 based on wrong interval [1, 50.5]",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "b9c2d6ed-d6a8-51a8-be4e-fad77b545024"
+        }
+      ]
+    },
+    {
+      "id": "dev-cost-omission",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "纠正排序准备成本遗漏，与所附排序及单次扫描成本原文一致。",
+      "elapsed_seconds": 8.825855,
+      "feedback": {
+        "kind": "guidance",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "citations": [
+          {
+            "text": "because I've gotto sort everybody. And then I have to dobinary search, which is maybe log n time. But I claim that, if theonly thing I care about is building up my entireset and searching it once, there's actually afaster algorithm. This is going to be needlesslyconfusing because we're",
+            "end_ms": 75820,
+            "start_ms": 62620,
+            "evidence_id": "3a0b74692f8b1a354fce390ebad5c50cf1f28c71cc7efb809b2703ad7770f8dc",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "going to see that this is reallynot the right way to implement it in about 38 seconds. Yes? AUDIENCE: [INAUDIBLE] JUSTIN: Yeah. Just iterate from beginningto this array and say, is this guy Erik? No. Is this guy Erik? No. Is this guy Erik? Yes. And then return it.",
+            "end_ms": 91400,
+            "start_ms": 75820,
+            "evidence_id": "7a9327a624f0978412616b0acf7aadc1a90d0dc8aa20bdb7d7f72ca82b05bdaa",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So in the worst case, howlong will that algorithm take? Well, in the worst caseof really bad luck, your instructor is all theway at the end of the list. So in this case, whatis that going to mean? That means that I have towalk along the entire array",
+            "end_ms": 107090,
+            "start_ms": 91400,
+            "evidence_id": "9d386c568ce74c7e80e8505210e2a2da8083df0b14fbe11bd4e9e2ea232b8850",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "if my set is unordered? We'll think aboutit for a second. Yeah? AUDIENCE: [INAUDIBLE] JUSTIN: It's actually aninteresting suggestion,",
+            "end_ms": 46440,
+            "start_ms": 32190,
+            "evidence_id": "a36eadcf0bab0ca6ba94e4e1032e564780745c31a3846644f276d7246165476d",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "it makes sense to do a littlebit of work ahead of time, like sorting the list. And then my query ismuch more efficient. But this is all just to saythat an unordered array is a perfectly reasonable way toimplement this set interface. And then searching that arrayit will take linear time",
+            "end_ms": 135870,
+            "start_ms": 120120,
+            "evidence_id": "b72388ea5f61b99dff2dcac2a2e84485195d6a1c30b9a96c2ee4bcd632fadb1d",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "which is going to anticipatewhat's happening later in this lecture, which wasto sort the set and then binary search. But let's say that actuallyI only have to do this once. For some reason, I built upa whole set of the people in this classroom. And I just want to know, isErik Demaine in this class? So then that algorithmwould take n log n time",
+            "end_ms": 62620,
+            "start_ms": 46440,
+            "evidence_id": "b9dba029c22dd92256e8a0b32297875b56f082e580dbbea17ab8d650e55026a3",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "before I find him. So that algorithmtakes order n time. And so yourcolleague's intuition that somehow thisis quite inefficient is absolutely correct. If I know that I'mgoing to have to search my array many, many times fordifferent people, then probably",
+            "end_ms": 120120,
+            "start_ms": 107090,
+            "evidence_id": "da7f8442c364f63907bc92b2d35f01a2648bbe7382463d4178a4d87e0cbeeee4",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "every single time I search.",
+            "end_ms": 138540,
+            "start_ms": 135870,
+            "evidence_id": "ff2086254482c2d637ea84005b2f3590e63ec1e62df97e0528286dbc4f4d6823",
+            "source_type": "SUBTITLE"
+          }
+        ],
+        "observations": [
+          {
+            "action": "revise",
+            "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+            "evidence_id": "a36eadcf0bab0ca6ba94e4e1032e564780745c31a3846644f276d7246165476d",
+            "observation": "遗漏了排序阶段的成本。课程指出，若只查询一次，先排序再二分查找的总成本是 n log n（排序）+ log n（查找），远高于直接线性扫描的 O(n)。",
+            "evidence_ids": [
+              "a36eadcf0bab0ca6ba94e4e1032e564780745c31a3846644f276d7246165476d",
+              "b9dba029c22dd92256e8a0b32297875b56f082e580dbbea17ab8d650e55026a3",
+              "3a0b74692f8b1a354fce390ebad5c50cf1f28c71cc7efb809b2703ad7770f8dc",
+              "7a9327a624f0978412616b0acf7aadc1a90d0dc8aa20bdb7d7f72ca82b05bdaa",
+              "9d386c568ce74c7e80e8505210e2a2da8083df0b14fbe11bd4e9e2ea232b8850",
+              "da7f8442c364f63907bc92b2d35f01a2648bbe7382463d4178a4d87e0cbeeee4",
+              "b72388ea5f61b99dff2dcac2a2e84485195d6a1c30b9a96c2ee4bcd632fadb1d",
+              "ff2086254482c2d637ea84005b2f3590e63ec1e62df97e0528286dbc4f4d6823"
+            ],
+            "learner_quote": "既然最后使用二分查找，总成本就是 O(log n)，排序不需要计入。",
+            "evidence_quote": "if my set is unordered? We'll think aboutit for a second. Yeah? AUDIENCE: [INAUDIBLE] JUSTIN: It's actually aninteresting suggestion,\n\nwhich is going to anticipatewhat's happening later in this lecture, which wasto sort the set and then binary search. But let's say that actuallyI only have to do this once. For some reason, I built upa whole set of the people in this classroom. And I just want to know, isErik Demaine in this class? So then that algorithmwould take n log n time\n\nbecause I've gotto sort everybody. And then I have to dobinary search, which is maybe log n time. But I claim that, if theonly thing I care about is building up my entireset and searching it once, there's actually afaster algorithm. This is going to be needlesslyconfusing because we're\n\ngoing to see that this is reallynot the right way to implement it in about 38 seconds. Yes? AUDIENCE: [INAUDIBLE] JUSTIN: Yeah. Just iterate from beginningto this array and say, is this guy Erik? No. Is this guy Erik? No. Is this guy Erik? Yes. And then return it.\n\nSo in the worst case, howlong will that algorithm take? Well, in the worst caseof really bad luck, your instructor is all theway at the end of the list. So in this case, whatis that going to mean? That means that I have towalk along the entire array\n\nbefore I find him. So that algorithmtakes order n time. And so yourcolleague's intuition that somehow thisis quite inefficient is absolutely correct. If I know that I'mgoing to have to search my array many, many times fordifferent people, then probably\n\nit makes sense to do a littlebit of work ahead of time, like sorting the list. And then my query ismuch more efficient. But this is all just to saythat an unordered array is a perfectly reasonable way toimplement this set interface. And then searching that arrayit will take linear time\n\nevery single time I search.",
+            "anchor_evidence_ids": [
+              "b9dba029c22dd92256e8a0b32297875b56f082e580dbbea17ab8d650e55026a3",
+              "3a0b74692f8b1a354fce390ebad5c50cf1f28c71cc7efb809b2703ad7770f8dc",
+              "da7f8442c364f63907bc92b2d35f01a2648bbe7382463d4178a4d87e0cbeeee4"
+            ]
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "index": 0,
+              "reason": "观察正确指出遗漏排序成本，且修订行动适合纠正此错误。",
+              "source_fact": "若只查询一次，先排序再二分查找总成本为 n log n + log n，而直接线性扫描只需 O(n)。",
+              "evidence_ids": [
+                "a36eadcf0bab0ca6ba94e4e1032e564780745c31a3846644f276d7246165476d",
+                "b9dba029c22dd92256e8a0b32297875b56f082e580dbbea17ab8d650e55026a3",
+                "3a0b74692f8b1a354fce390ebad5c50cf1f28c71cc7efb809b2703ad7770f8dc",
+                "7a9327a624f0978412616b0acf7aadc1a90d0dc8aa20bdb7d7f72ca82b05bdaa",
+                "9d386c568ce74c7e80e8505210e2a2da8083df0b14fbe11bd4e9e2ea232b8850",
+                "da7f8442c364f63907bc92b2d35f01a2648bbe7382463d4178a4d87e0cbeeee4",
+                "b72388ea5f61b99dff2dcac2a2e84485195d6a1c30b9a96c2ee4bcd632fadb1d",
+                "ff2086254482c2d637ea84005b2f3590e63ec1e62df97e0528286dbc4f4d6823"
+              ],
+              "learner_meaning": "学习者认为总成本仅为二分查找的 O(log n)，忽略排序成本。",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "e6d85e74-fddc-55ea-a5f6-32be96c20405"
+        }
+      ]
+    },
+    {
+      "id": "dev-selection-equivalent",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "简洁保留最终位置和缩小区间的完整正确解释；引用支持全过程。",
+      "elapsed_seconds": 9.377656,
+      "feedback": {
+        "kind": "guidance",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "citations": [
+          {
+            "text": "do? Well, it just kept choosing theelement which was the biggest and swapping it into theback and then iterating.",
+            "end_ms": 99240,
+            "start_ms": 91670,
+            "evidence_id": "309adfb44a7014e3209e1408cf52b5c31dc9a9f492c23e3804fb073de4960fb9",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "I'm going to look to theleft of the red line, find the next biggest thing. What's that? Come on. AUDIENCE: 8. JUSTIN: There we go. Yeah, wake up. OK. So right, the nextbiggest one is the 8. So we're going to swap itwith the 3, put it at the end,",
+            "end_ms": 76740,
+            "start_ms": 60700,
+            "evidence_id": "5f0bbb02bd54714807ede860115fc0e84a5966af4cbc6975e8448718eabd4b27",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "and so on. I think you guys couldall finish this off. I suppose there should be onelast line here where everything is green and we're happy. But in some sense, we're prettysure that an array of one item is in sorted order. And so essentially, from a highlevel, what does selection sort",
+            "end_ms": 91670,
+            "start_ms": 76740,
+            "evidence_id": "b38c204f33b91688c374b5942d9bb6ab82eb9c9e0618ee8f7f528e234bf1d4f1",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "which is I can find the biggestnumber in this whole list and stick it at the end. So in this case, what'sthe biggest number in this list everybody? 9. Good. See, this is why you go to MIT. So I'm going to take that 9.",
+            "end_ms": 45300,
+            "start_ms": 30630,
+            "evidence_id": "cba5b8098379ebc88c885e7048b817b08968bf4030fbe984ae67d667192fa267",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "I find it. And then swap it out withthe 3, which is at the end. And now, what's myinductive hypothesis? Well, in some sense,it's that everything to the right of this littlered line that I've drawn here is in sorted order, in this casebecause there's only one thing. So now, what am I going to do?",
+            "end_ms": 60700,
+            "start_ms": 45300,
+            "evidence_id": "d8fef0a85f90e7c7e6c3f05f1534f3bea330c02dbefd092c79f9f352abffc1a6",
+            "source_type": "SUBTITLE"
+          }
+        ],
+        "observations": [
+          {
+            "action": "retain",
+            "next_step": "Retain this statement that agrees with the course evidence.",
+            "evidence_id": "cba5b8098379ebc88c885e7048b817b08968bf4030fbe984ae67d667192fa267",
+            "observation": "The learner correctly states that the range shrinks because the selected element is in its final position. The evidence shows each pass places the largest unsorted element at the end, and the red line marks sorted positions that are excluded from subsequent passes.",
+            "evidence_ids": [
+              "cba5b8098379ebc88c885e7048b817b08968bf4030fbe984ae67d667192fa267",
+              "d8fef0a85f90e7c7e6c3f05f1534f3bea330c02dbefd092c79f9f352abffc1a6",
+              "5f0bbb02bd54714807ede860115fc0e84a5966af4cbc6975e8448718eabd4b27",
+              "b38c204f33b91688c374b5942d9bb6ab82eb9c9e0618ee8f7f528e234bf1d4f1",
+              "309adfb44a7014e3209e1408cf52b5c31dc9a9f492c23e3804fb073de4960fb9"
+            ],
+            "learner_quote": "Yes. An element has reached its final position even when no swap changes the array. The next pass excludes this position.",
+            "evidence_quote": "which is I can find the biggestnumber in this whole list and stick it at the end. So in this case, what'sthe biggest number in this list everybody? 9. Good. See, this is why you go to MIT. So I'm going to take that 9.\n\nI find it. And then swap it out withthe 3, which is at the end. And now, what's myinductive hypothesis? Well, in some sense,it's that everything to the right of this littlered line that I've drawn here is in sorted order, in this casebecause there's only one thing. So now, what am I going to do?\n\nI'm going to look to theleft of the red line, find the next biggest thing. What's that? Come on. AUDIENCE: 8. JUSTIN: There we go. Yeah, wake up. OK. So right, the nextbiggest one is the 8. So we're going to swap itwith the 3, put it at the end,\n\nand so on. I think you guys couldall finish this off. I suppose there should be onelast line here where everything is green and we're happy. But in some sense, we're prettysure that an array of one item is in sorted order. And so essentially, from a highlevel, what does selection sort\n\ndo? Well, it just kept choosing theelement which was the biggest and swapping it into theback and then iterating.",
+            "anchor_evidence_ids": [
+              "d8fef0a85f90e7c7e6c3f05f1534f3bea330c02dbefd092c79f9f352abffc1a6",
+              "5f0bbb02bd54714807ede860115fc0e84a5966af4cbc6975e8448718eabd4b27"
+            ]
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "index": 0,
+              "reason": "The learner correctly infers that the sorted portion is excluded regardless of whether a swap occurred, consistent with the algorithm's invariant shown in the evidence.",
+              "source_fact": "Selection sort places the largest unsorted element at the end each pass and excludes it from future passes using a shrinking range marked by a red line.",
+              "evidence_ids": [
+                "cba5b8098379ebc88c885e7048b817b08968bf4030fbe984ae67d667192fa267",
+                "d8fef0a85f90e7c7e6c3f05f1534f3bea330c02dbefd092c79f9f352abffc1a6",
+                "5f0bbb02bd54714807ede860115fc0e84a5966af4cbc6975e8448718eabd4b27",
+                "b38c204f33b91688c374b5942d9bb6ab82eb9c9e0618ee8f7f528e234bf1d4f1",
+                "309adfb44a7014e3209e1408cf52b5c31dc9a9f492c23e3804fb073de4960fb9"
+              ],
+              "learner_meaning": "The learner states that even if no swap occurs, an element already at its destination is excluded from the next pass because it's in its final position.",
+              "next_step_verdict": "accept",
+              "observation_verdict": "accept"
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "f6270e8f-6f83-5e9b-9f72-3ddd2deac069"
+        }
+      ]
+    },
+    {
+      "id": "dev-outside-course",
+      "status": "succeeded",
+      "quality_pass": true,
+      "source_review": "课程外主题准确拒答，不评价阈值或生成评分记忆。",
+      "elapsed_seconds": 7.723145,
+      "feedback": {
+        "kind": "insufficient_evidence",
+        "mode": "real",
+        "policy": "evidence_guidance_v4",
+        "reason": "课程片段仅讨论 Python 字符串的不可变性，未涉及 Kubernetes 自动扩容或 CPU 阈值设置。",
+        "citations": [
+          {
+            "text": "you could just say sis equal to Y-E-L-L-O. Or you could do stringoperations like this. And this takes the yand it concatenates it to the string s,all of the elements",
+            "end_ms": 78020,
+            "start_ms": 63954,
+            "evidence_id": "06e9ceaaa11a42faf9242cfd93e7bc9f90b87bac9c1b3b269a9f413b3e41732c",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "So just keep this wordin the back of your mind as we go through this class. And what I mean by this isthat an actual string object, once it's created,cannot be modified. This might not meananything right now. But let me just drawa little something. Let's say I have thisstring, s is equal to hello.",
+            "end_ms": 17574,
+            "start_ms": 0,
+            "evidence_id": "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "starting from position1, which is e, l, l, o. So this makes Y-E-L-L-O. Now internally,what happens when I write this lineis Python says, OK, I'm going to break mybond with this original object",
+            "end_ms": 91330,
+            "start_ms": 78020,
+            "evidence_id": "9d68d1040dab93df2bba8df24ab925877be7ad5e5a1e8013f95a272b8b6863d4",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Now you might think, well, sinceI could index into a string, I might be able to just saysomething like, s at position 0 is equal to y.",
+            "end_ms": 45490,
+            "start_ms": 36340,
+            "evidence_id": "d5de57653e84e4ba90b15cd031ae0186ff42772896501c1fc365bdb026ec49f7",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "Remember, in thefirst lecture, we drew a diagramsort of like this. This is my memory. I have this object \"hello.\" And this object, \"hello\" isbound to this variable s. So now I can access the object\"hello\" using this variable s.",
+            "end_ms": 36340,
+            "start_ms": 17574,
+            "evidence_id": "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "And that will just changethe little h into a y, and I'll have a new object. Well strings are immutable,which means, in Python, you're not actuallyallowed to do this. And it gives you an errorif you do try to do that. If you want the variable s topoint to the string, Y-E-L-L-O,",
+            "end_ms": 63954,
+            "start_ms": 45490,
+            "evidence_id": "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+            "source_type": "SUBTITLE"
+          },
+          {
+            "text": "\"hello.\" I'm going to bindmy string variable s to the new object \"yello.\"and this other, old object still is in memory somewhere. But it's an entirely differentobject that I've created here.",
+            "end_ms": 107210,
+            "start_ms": 91330,
+            "evidence_id": "e9c9234c8c3d1f2c86398f941d296d033bbc72c634d3ed5dcdf7923013051e62",
+            "source_type": "SUBTITLE"
+          }
+        ]
+      },
+      "review_results": [
+        {
+          "done": true,
+          "checks": [
+            {
+              "reason": "课程内容仅讲解 Python 字符串的不可变性，与 Kubernetes 自动扩容或 CPU 阈值无关，候选理由准确无误。",
+              "evidence_ids": [
+                "409348c96087eee9f97a6d873ab4f86ebd55275626c11e48f040375ec0ebbd9a",
+                "e6e8a9fbedcda3ae82b6b215e873deadc3f02ac0ff671f423fbd9258422bfa41",
+                "dbb6c4d8b044ab21153527b4a61e151dc7ab5abd451e0ea94a42ebb302072f6b"
+              ],
+              "reason_faithful": true,
+              "course_covers_topic": false
+            }
+          ],
+          "issues": [],
+          "accepted": true,
+          "exhausted": false,
+          "feedback_id": "b5f6b408-a7cf-5442-a68a-4d61b3c1c8a6"
+        }
+      ]
+    }
+  ]
+}

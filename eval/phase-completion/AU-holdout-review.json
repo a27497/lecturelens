@@ -1,0 +1,68 @@
+{
+  "candidate": "AU",
+  "source_sha256": "8ed48f00bd96cc1acc1ed31f0d7d46d80f9bd724a33f875cd957be8d8ede6d3e",
+  "status": "passed bounded fresh holdout gate",
+  "strict_pass": 8,
+  "total": 8,
+  "reviewed_at": 1789932129.4644587,
+  "reviewer": "Codex inspection of actual outputs, private answers and field-owned sources; not blind human grading",
+  "data_status": "Fresh goals frozen after strict 31/31 development gate; all trials retained, no in-batch source changes or retries. Known courses, not unseen-course generalization.",
+  "cases": [
+    {
+      "case_id": "diagonalization-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Absent diagonalization/matrix-power method; neutral refusal without unsupported teaching."
+    },
+    {
+      "case_id": "english-coordinate-swap",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "English fields, fixed swapped signed points and equation; -1=-1 versus -5!=-1, own coordinate-order/check sources inspected."
+    },
+    {
+      "case_id": "negative-second-only-error",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Exact negative point and both equations preserved; actual false all-equations claim, 0!=1 and -3=-3 with no omitted successful check. Own joint-point/check citations inspected."
+    },
+    {
+      "case_id": "signed-common-point-pair",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "All four signed substitutions correct; (-1,2) both and (2,-1) first-only. Exact equations/points retained; own joint/check sources."
+    },
+    {
+      "case_id": "zero-y-coefficient-three-points",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Equivalent 3x=-6 displayed; all three fixed points retain 0*y in full computations, -6=-6,-6=-6,0!=-6. Own row-picture/method sources."
+    },
+    {
+      "case_id": "english-assignment-empty-tail",
+      "status": "succeeded",
+      "model_calls": 3,
+      "strict_pass": true,
+      "review_note": "English and exact assignment/slice sequence; outputs ab,N,_ in order. Own conceptual and operation sources inspected."
+    },
+    {
+      "case_id": "three-rebindings-four-prints",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Exact three operations and four prints; outputs 9x,!x,ok,+k. Own immutable/rebinding and concatenation/slice sources."
+    },
+    {
+      "case_id": "utf8-byte-length-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Absent UTF-8 byte-encoding instruction; neutral refusal without extra encoding claims."
+    }
+  ]
+}

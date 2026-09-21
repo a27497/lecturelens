@@ -1,0 +1,13 @@
+{
+  "candidate": "feedback-D",
+  "frozen_at_utc": "2026-09-20T11:22:28.984366+00:00",
+  "source_sha256": "6205701109aa5fdd356dcd2d2e14619bd2da454bd2953c4b58705830f56cc3d4",
+  "runner_sha256": "fa61b8d74f319b2c9b3d7b859df1026bae148b4c7b114a60b6f31d9b35be067a",
+  "status": "implemented, model quality unvalidated",
+  "change": "Compare whole-answer meaning and equivalent formulations before alleging defects; retain sufficient answers; require each citation to support its entire observation; independently challenge false deficiencies.",
+  "previous_holdout_consumed": true,
+  "previous_round_actual_calls": 75,
+  "previous_round_limit": 84,
+  "new_real_calls_authorized": false,
+  "quality_gate_unchanged": "6/6 development plus 8/8 fresh heldout answers; old holdout cannot qualify"
+}

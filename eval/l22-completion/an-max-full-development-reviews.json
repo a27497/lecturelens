@@ -1,0 +1,82 @@
+{
+  "strings-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "概念与具体应用任务不同；答案核对正确，各自引用覆盖实际使用的不可变、拼接、切片或重新绑定操作。未增加无来源的实现细节。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": false,
+    "reason": "第二题仍要求描述不可变与重新绑定的区别，只套用课堂同一例子；没有执行、预测或纠正新情境，未满足目标要求的应用题。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "概念与具体应用任务不同；答案核对正确，各自引用覆盖实际使用的不可变、拼接、切片或重新绑定操作。未增加无来源的实现细节。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-04": {
+    "grounded": false,
+    "answers_correct": false,
+    "questions_distinct": false,
+    "reason": "复核声称解释无支持，却只引用两个课程段而没有指出解释的争议文本，MODEL_REVIEW_CONTRACT；无产物，失败入账。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "strings-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "明确说明字符串课程不支持 Kubernetes 自动扩容，无无关练习。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-01": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "中点与反馈排除一半的方法解释正确；具体题目的参考结果符合题面条件，各自引用支持所用方法，概念和具体应用不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-02": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": false,
+    "reason": "保留课堂76/6的报告，但第二题仍是回忆已解释的数字和优势，没有独立的应用技能；两题围绕相同策略说明。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-03": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "中点与反馈排除一半的方法解释正确；具体题目的参考结果符合题面条件，各自引用支持所用方法，概念和具体应用不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-04": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "中点与反馈排除一半的方法解释正确；具体题目的参考结果符合题面条件，各自引用支持所用方法，概念和具体应用不同。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  },
+  "bisection-05": {
+    "grounded": true,
+    "answers_correct": true,
+    "questions_distinct": true,
+    "reason": "证据无 Transformer 学习率，明确拒答无捏造数值。",
+    "reviewer": "AI source review, not blind human gold",
+    "serious_unsupported": false
+  }
+}

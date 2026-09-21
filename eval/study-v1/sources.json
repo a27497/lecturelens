@@ -1,0 +1,74 @@
+{
+  "version": "study-v1",
+  "purpose": "local_noncommercial_evaluation",
+  "sources": [
+    {
+      "id": "python",
+      "video_url": "https://archive.org/download/MIT6.0001F16/MIT6_0001F16_Lecture_03_300k.mp4",
+      "subtitle_url": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/6e2747d4f92152b8a5cf50493d1345d0_SE4P7IVCunE.vtt",
+      "source_page": "https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/",
+      "provider": "MIT OpenCourseWare",
+      "instructor": "Ana Bell",
+      "course": "6.0001 Fall 2016",
+      "split": "dev",
+      "license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+      "downloaded_at": "2026-09-15",
+      "sha256": {
+        "mp4": "0071878688a02e2e155374a413be81ce70fd2e3d1732d9199c1d218c25149ae5",
+        "vtt": "8014f010b455014d13e241da401cfe8e5a48653878909006935674feba6706ea"
+      },
+      "clips": [
+        {
+          "id": "strings",
+          "start_seconds": 660,
+          "end_seconds": 777,
+          "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+        },
+        {
+          "id": "bisection",
+          "start_seconds": 2330,
+          "end_seconds": 2408,
+          "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+        }
+      ],
+      "attribution": "Ana Bell. 6.0001 Fall 2016. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+      "evaluation_caption_minimum_coverage": 0.75
+    },
+    {
+      "id": "algorithms",
+      "video_url": "https://archive.org/download/MIT6.006S20/MIT6_006S20_02_06_Lecture_2_300k.mp4",
+      "subtitle_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/300863d48d855d35aba4867a911faf1e_CHhwJjR0mZA.vtt",
+      "source_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-2-data-structures-and-dynamic-arrays/",
+      "provider": "MIT OpenCourseWare",
+      "instructor": "Erik Demaine",
+      "course": "6.006 Spring 2020",
+      "split": "holdout",
+      "license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "terms_url": "https://ocw.mit.edu/pages/privacy-and-terms-of-use/",
+      "downloaded_at": "2026-09-15",
+      "sha256": {
+        "mp4": "79003036c0fd3293082ed998d39b2b5c1d602526f8a1a91a46ac39ca5d3d824a",
+        "vtt": "c4a0e69b758e50040df83ea28372ac776adf4c0a9f6408c0cb9f9cc59c519713"
+      },
+      "clips": [
+        {
+          "id": "interfaces",
+          "start_seconds": 65,
+          "end_seconds": 215,
+          "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+        },
+        {
+          "id": "amortization",
+          "start_seconds": 2710,
+          "end_seconds": 2880,
+          "changes": "Excerpted video, captions clipped and shifted to zero, re-encoded and embedded as mov_text."
+        }
+      ],
+      "attribution": "Erik Demaine. 6.006 Spring 2020. MIT OpenCourseWare. CC BY-NC-SA 4.0.",
+      "evaluation_caption_minimum_coverage": 0.75
+    }
+  ]
+}

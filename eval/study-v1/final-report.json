@@ -1,0 +1,861 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 20,
+  "structure_pass": 19,
+  "semantic_supported_pass": 1,
+  "supported_review_components": {
+    "grounded": 6,
+    "answers_correct": 9,
+    "questions_distinct": 7
+  },
+  "serious_unsupported_cases": 6,
+  "insufficient_pass": 3,
+  "successful_within_90s": 19,
+  "p50_all_seconds": 46.382,
+  "p95_all_seconds": 62.16,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 20
+  },
+  "model_calls": 40,
+  "tool_calls": 40,
+  "measured_model_calls": 40,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 39578,
+  "reported_completion_tokens": 5661,
+  "gates": {
+    "complete": true,
+    "structure": true,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": false,
+    "latency": true
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 62.16,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "原地修改报错与重新赋值的方向正确；“字符串操作来修改字符串”表述含混，问题的引用未覆盖重新绑定；代码应用答案没有写出导致错误的代码。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 58.737,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "解释和答案正确区分不变对象与重新绑定；两个问题都检查定义/区别，没有请求的具体应用题。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 51.699,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "为得到 yello，答案只在 hello 前添加 y，会得到 yhello；漏掉 s[1:]，虽有原始片段仍给出错误操作。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 54.526,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "Q1 将尝试修改说成 Python 自动新建并绑定，与 Q2 报错相冲突；Q2 结论正确但自身引用未包含报错片段。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 33.36,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "明确 Kubernetes 不在证据中，无练习；使用英文回答中文目标是语言体验缺点，不改变本题拒答合格判定。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 67.624,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "把已排除的上半区又作为下一轮搜索区，且认可未按中点更新、找到目标后仍继续猜测的序列，答案错误。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 46.382,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "顺序枚举与折半的比较有原始证据；两题都询问速度优势，没有具体应用，且遗漏题目要点中的 6/76 对照。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 43.781,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "未回答保留上半区并猜 75；两题改成已知目标后直接除以二，给出 37.5/12.5，缺乏合法搜索区间依据，且题型重复。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 42.404,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "折半与 6 次猜测有证据，核心纠正正确；两题均为课程内容回忆，没有具体应用/错误纠正题，第二题 rubric 与计数答案不对应。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 31.817,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "明确没有 transformer 学习率证据，未编造数值或练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 40.476,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "what/how 区分有证据；概念题与给定存储类型后描述实现要求的基础应用不同，答案方向正确。第二题措辞较宽泛，可改进但不判为事实错误。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 50.066,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "what/how 正确，但问题自己的引用未覆盖算法片段，另引入原片段未讲的二叉搜索树；两题都是定义加举例，缺少不同的应用任务。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 44.309,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "不同实现的操作速度与使用场景有证据；两题均为解释概念，未对给定操作需求做选择应用。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 40.736,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "非唯一实现结论正确，但最终引用未包含 136.48 秒的多种实现说明；两题都是概念回忆，第二题只回答 No，没有 rubric 要求的原因。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "interfaces-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 35.097,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "明确所给资料是接口/数据结构，不能回答停止跑步的心率，没有生成数值或无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 61.491,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "把平均常数错误解释为每个操作均为常数，且把总序列成本说成常数；假设每次插入都翻倍的题目也偏离课程的按需扩容。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "amortization-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 44.745,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "尽管先说单次扩容线性、摊还常数，随后明确声称整个操作序列总成本为常数，违背引用中的线性总成本；两题都是复杂度回忆。",
+      "serious_unsupported": true
+    },
+    {
+      "case_id": "amortization-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 46.962,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "总线性成本分摊到 n 次操作、平均常数的解释和答案正确，引用支持；两题实质都问同一个平均成本，答案完全重复。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 54.82,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "解释正确区分平均与单次，概念与错误观念纠正可区分；但两题自己的引用未包括 152.39 秒的单次昂贵操作说明，逐题来源支持不完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "amortization-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 54.764,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review (Codex), not human gold",
+      "reason": "未拒答课程外 SHA-256 问题，错误地把几何级数和二进制位说明嫁接为压缩常数的推导，没有相关课程证据。",
+      "serious_unsupported": true
+    }
+  ],
+  "dataset_sha256": "407ecfe4b9c2bda3780cb855785afe1616a3da8b425d396c38d8f94b9919fe32",
+  "runtime": {
+    "source_sha256": "1a9ae0a5c45623dc13c9672425fcaa37252703f3071a4df1fd600f1417a6b3ea",
+    "model": "lecturelens-local-qwen",
+    "deadline_seconds": 90,
+    "java_sha256": "4f6403bdd8eaea1146a8c91859e8829dac19e394168698d654dc17987f97ebd5"
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 10,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 3,
+        "answers_correct": 3,
+        "questions_distinct": 4
+      },
+      "serious_unsupported_cases": 3,
+      "insufficient_pass": 2,
+      "successful_within_90s": 10,
+      "p50_all_seconds": 46.382,
+      "p95_all_seconds": 67.624,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 10
+      },
+      "model_calls": 20,
+      "tool_calls": 20,
+      "measured_model_calls": 20,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 20121,
+      "reported_completion_tokens": 2854,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 62.16,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "原地修改报错与重新赋值的方向正确；“字符串操作来修改字符串”表述含混，问题的引用未覆盖重新绑定；代码应用答案没有写出导致错误的代码。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 58.737,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释和答案正确区分不变对象与重新绑定；两个问题都检查定义/区别，没有请求的具体应用题。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 51.699,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "为得到 yello，答案只在 hello 前添加 y，会得到 yhello；漏掉 s[1:]，虽有原始片段仍给出错误操作。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.526,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "Q1 将尝试修改说成 Python 自动新建并绑定，与 Q2 报错相冲突；Q2 结论正确但自身引用未包含报错片段。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 33.36,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确 Kubernetes 不在证据中，无练习；使用英文回答中文目标是语言体验缺点，不改变本题拒答合格判定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 67.624,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把已排除的上半区又作为下一轮搜索区，且认可未按中点更新、找到目标后仍继续猜测的序列，答案错误。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 46.382,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "顺序枚举与折半的比较有原始证据；两题都询问速度优势，没有具体应用，且遗漏题目要点中的 6/76 对照。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 43.781,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未回答保留上半区并猜 75；两题改成已知目标后直接除以二，给出 37.5/12.5，缺乏合法搜索区间依据，且题型重复。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 42.404,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "折半与 6 次猜测有证据，核心纠正正确；两题均为课程内容回忆，没有具体应用/错误纠正题，第二题 rubric 与计数答案不对应。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 31.817,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确没有 transformer 学习率证据，未编造数值或练习。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 9,
+      "semantic_supported_pass": 1,
+      "supported_review_components": {
+        "grounded": 3,
+        "answers_correct": 6,
+        "questions_distinct": 3
+      },
+      "serious_unsupported_cases": 3,
+      "insufficient_pass": 1,
+      "successful_within_90s": 9,
+      "p50_all_seconds": 44.745,
+      "p95_all_seconds": 61.491,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 10
+      },
+      "model_calls": 20,
+      "tool_calls": 20,
+      "measured_model_calls": 20,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 19457,
+      "reported_completion_tokens": 2807,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "interfaces-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 40.476,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 区分有证据；概念题与给定存储类型后描述实现要求的基础应用不同，答案方向正确。第二题措辞较宽泛，可改进但不判为事实错误。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 50.066,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 正确，但问题自己的引用未覆盖算法片段，另引入原片段未讲的二叉搜索树；两题都是定义加举例，缺少不同的应用任务。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 44.309,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "不同实现的操作速度与使用场景有证据；两题均为解释概念，未对给定操作需求做选择应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 40.736,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "非唯一实现结论正确，但最终引用未包含 136.48 秒的多种实现说明；两题都是概念回忆，第二题只回答 No，没有 rubric 要求的原因。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 35.097,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确所给资料是接口/数据结构，不能回答停止跑步的心率，没有生成数值或无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 61.491,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把平均常数错误解释为每个操作均为常数，且把总序列成本说成常数；假设每次插入都翻倍的题目也偏离课程的按需扩容。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 44.745,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "尽管先说单次扩容线性、摊还常数，随后明确声称整个操作序列总成本为常数，违背引用中的线性总成本；两题都是复杂度回忆。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 46.962,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "总线性成本分摊到 n 次操作、平均常数的解释和答案正确，引用支持；两题实质都问同一个平均成本，答案完全重复。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.82,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释正确区分平均与单次，概念与错误观念纠正可区分；但两题自己的引用未包括 152.39 秒的单次昂贵操作说明，逐题来源支持不完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.764,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未拒答课程外 SHA-256 问题，错误地把几何级数和二进制位说明嫁接为压缩常数的推导，没有相关课程证据。",
+          "serious_unsupported": true
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 16,
+      "structure_pass": 16,
+      "semantic_supported_pass": 1,
+      "supported_review_components": {
+        "grounded": 6,
+        "answers_correct": 9,
+        "questions_distinct": 7
+      },
+      "serious_unsupported_cases": 5,
+      "insufficient_pass": 0,
+      "successful_within_90s": 16,
+      "p50_all_seconds": 46.962,
+      "p95_all_seconds": 67.624,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 16
+      },
+      "model_calls": 32,
+      "tool_calls": 32,
+      "measured_model_calls": 32,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 31496,
+      "reported_completion_tokens": 5136,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": false,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 62.16,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "原地修改报错与重新赋值的方向正确；“字符串操作来修改字符串”表述含混，问题的引用未覆盖重新绑定；代码应用答案没有写出导致错误的代码。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 58.737,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释和答案正确区分不变对象与重新绑定；两个问题都检查定义/区别，没有请求的具体应用题。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 51.699,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "为得到 yello，答案只在 hello 前添加 y，会得到 yhello；漏掉 s[1:]，虽有原始片段仍给出错误操作。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.526,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "Q1 将尝试修改说成 Python 自动新建并绑定，与 Q2 报错相冲突；Q2 结论正确但自身引用未包含报错片段。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 67.624,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把已排除的上半区又作为下一轮搜索区，且认可未按中点更新、找到目标后仍继续猜测的序列，答案错误。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 46.382,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "顺序枚举与折半的比较有原始证据；两题都询问速度优势，没有具体应用，且遗漏题目要点中的 6/76 对照。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 43.781,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未回答保留上半区并猜 75；两题改成已知目标后直接除以二，给出 37.5/12.5，缺乏合法搜索区间依据，且题型重复。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 42.404,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "折半与 6 次猜测有证据，核心纠正正确；两题均为课程内容回忆，没有具体应用/错误纠正题，第二题 rubric 与计数答案不对应。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 40.476,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 区分有证据；概念题与给定存储类型后描述实现要求的基础应用不同，答案方向正确。第二题措辞较宽泛，可改进但不判为事实错误。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 50.066,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "what/how 正确，但问题自己的引用未覆盖算法片段，另引入原片段未讲的二叉搜索树；两题都是定义加举例，缺少不同的应用任务。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 44.309,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "不同实现的操作速度与使用场景有证据；两题均为解释概念，未对给定操作需求做选择应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 40.736,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "非唯一实现结论正确，但最终引用未包含 136.48 秒的多种实现说明；两题都是概念回忆，第二题只回答 No，没有 rubric 要求的原因。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 61.491,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "把平均常数错误解释为每个操作均为常数，且把总序列成本说成常数；假设每次插入都翻倍的题目也偏离课程的按需扩容。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 44.745,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "尽管先说单次扩容线性、摊还常数，随后明确声称整个操作序列总成本为常数，违背引用中的线性总成本；两题都是复杂度回忆。",
+          "serious_unsupported": true
+        },
+        {
+          "case_id": "amortization-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 46.962,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "总线性成本分摊到 n 次操作、平均常数的解释和答案正确，引用支持；两题实质都问同一个平均成本，答案完全重复。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.82,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "解释正确区分平均与单次，概念与错误观念纠正可区分；但两题自己的引用未包括 152.39 秒的单次昂贵操作说明，逐题来源支持不完整。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 4,
+      "structure_pass": 3,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 1,
+      "insufficient_pass": 3,
+      "successful_within_90s": 3,
+      "p50_all_seconds": 33.36,
+      "p95_all_seconds": 54.764,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4
+      },
+      "model_calls": 8,
+      "tool_calls": 8,
+      "measured_model_calls": 8,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 8082,
+      "reported_completion_tokens": 525,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": false,
+        "semantic": true,
+        "no_serious_unsupported": false,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 33.36,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确 Kubernetes 不在证据中，无练习；使用英文回答中文目标是语言体验缺点，不改变本题拒答合格判定。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 31.817,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确没有 transformer 学习率证据，未编造数值或练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "interfaces-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 35.097,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "明确所给资料是接口/数据结构，不能回答停止跑步的心率，没有生成数值或无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "amortization-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 54.764,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review (Codex), not human gold",
+          "reason": "未拒答课程外 SHA-256 问题，错误地把几何级数和二进制位说明嫁接为压缩常数的推导，没有相关课程证据。",
+          "serious_unsupported": true
+        }
+      ]
+    }
+  }
+}

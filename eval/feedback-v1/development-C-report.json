@@ -1,0 +1,67 @@
+{
+  "candidate": "feedback-C",
+  "phase": "development",
+  "source_sha256": "5cb96c378421b49a1b90016f9c9ab4e77f88a223b46665608fbdd40684d8dc17",
+  "private_trials_sha256": "bed50bc2e23f4dba82bdf9f3d87a8593e7c26e1404329b14b0d29e0e0e3dfd88",
+  "reviewer": "Codex AI source review; not blind human gold",
+  "passed": true,
+  "quality_success": 6,
+  "total": 6,
+  "model_calls": 18,
+  "provider_usage": {
+    "prompt_tokens": 38715,
+    "completion_tokens": 1519,
+    "total_tokens": 40234
+  },
+  "latency_all_seconds": {
+    "median": 7.8013105,
+    "max": 8.632849
+  },
+  "review_false_rejections": 0,
+  "review_false_acceptances_observed": 0,
+  "repair_success": 0,
+  "cases": [
+    {
+      "id": "dev-strings-wrong",
+      "status": "succeeded",
+      "elapsed_seconds": 7.921118,
+      "quality_pass": true,
+      "source_review": "正确纠正不可变性和索引赋值；新对象说明可由不可变性直接推出。"
+    },
+    {
+      "id": "dev-strings-equivalent",
+      "status": "succeeded",
+      "elapsed_seconds": 7.681503,
+      "quality_pass": true,
+      "source_review": "保留正确解释；建议把不可行明确为抛出错误，没有制造相反结论。"
+    },
+    {
+      "id": "dev-interval-wrong",
+      "status": "succeeded",
+      "elapsed_seconds": 7.265982,
+      "quality_pass": true,
+      "source_review": "正确保留右侧开区间并计算75.25；属于课程二分规则对题设数字的正确应用，复核本次接受。"
+    },
+    {
+      "id": "dev-cost-omission",
+      "status": "succeeded",
+      "elapsed_seconds": 8.632849,
+      "quality_pass": true,
+      "source_review": "指出排序准备成本和扫描对照；扫描复杂度从逐项算法推导。"
+    },
+    {
+      "id": "dev-selection-equivalent",
+      "status": "succeeded",
+      "elapsed_seconds": 7.986783,
+      "quality_pass": true,
+      "source_review": "承认不交换也缩小未排序区域；课程排序后缀支持解释。"
+    },
+    {
+      "id": "dev-outside-course",
+      "status": "succeeded",
+      "elapsed_seconds": 4.36147,
+      "quality_pass": true,
+      "source_review": "资料不涉及Kubernetes，正确拒答，没有评价CPU阈值。"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "candidate": "R",
+  "quality_passed": 4,
+  "total": 7,
+  "gate_passed": false,
+  "reviewer": "Codex source review, not independent human review",
+  "cases": [
+    {
+      "id": "dev-eigen",
+      "run_id": "a6a55637-93b2-4764-b98e-c37448824716",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Practice/abstention checked against source and field citations."
+    },
+    {
+      "id": "dev-row",
+      "run_id": "7db73755-f7c0-4e7f-a9ce-d402827a6fcc",
+      "execution": "failed",
+      "quality_pass": false,
+      "reason": "Review borrowed another field source twice; rejected by contract, no artifact."
+    },
+    {
+      "id": "heldout-common-point",
+      "run_id": "cdc00350-4a06-4eb7-b91a-bf86ab25b0a1",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Practice/abstention checked against source and field citations."
+    },
+    {
+      "id": "heldout-determinant",
+      "run_id": "80d093aa-ce5f-47ab-83ea-2470ecf1cf7d",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Practice/abstention checked against source and field citations."
+    },
+    {
+      "id": "heldout-gradient",
+      "run_id": "c3458a99-e986-44d5-b269-ced2c49fb916",
+      "execution": "succeeded",
+      "quality_pass": true,
+      "reason": "Practice/abstention checked against source and field citations."
+    },
+    {
+      "id": "heldout-origin",
+      "run_id": "2768cc94-041e-4cc3-bc1c-d6a609d107d7",
+      "execution": "succeeded",
+      "quality_pass": false,
+      "reason": "Incorrect abstention: search context missed the origin demonstration and reviewer failed to transfer substitution."
+    },
+    {
+      "id": "new-string-output",
+      "run_id": "12ad29ec-debc-4a76-a459-14cb270ce4f9",
+      "execution": "succeeded",
+      "quality_pass": false,
+      "reason": "Copied hello/yello lecture program despite explicit new exercise goal; review accepted."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "candidate": "feedback-I",
+  "source_sha256": "bd6684bf6435d85a3315b56a0b1085c98cc210fbe808a6ebadc30c26bbc6670d",
+  "runner_sha256": "104b62bfcd0cb163815abe43f57eaadbb972be96e305854245503d83f7bf15ed",
+  "frozen_at_utc": "2026-09-20T11:54:31.121835+00:00",
+  "changes": [
+    "Model gives specific factual feedback plus a chosen action: revise/retain/optional clarify",
+    "Application renders the action as a revise-and-save or retain instruction without a second freeform factual answer",
+    "Review checks both factual observation and action appropriateness; all original quality criteria retained"
+  ],
+  "per_run_budgets": {
+    "model_calls": 6,
+    "tools": 8,
+    "conservative_token_reservation": 64000,
+    "deadline_seconds": 90,
+    "drafts": 2,
+    "decision_output_tokens": 900,
+    "review_output_tokens": 900
+  },
+  "aggregate_call_cap": null,
+  "fresh_holdout_authored": false
+}

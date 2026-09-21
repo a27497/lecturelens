@@ -1,0 +1,44 @@
+{
+  "version": "phase-AN-consumed-regression",
+  "data_status": "All previously consumed; not holdout",
+  "cases": [
+    {
+      "id": "new-string-output",
+      "split": "development",
+      "expected": "practice",
+      "goal": "解释字符串不可变与变量重新绑定的区别，并给我一道概念题和一道新字符串代码输出题。",
+      "checks": [
+        "Object immutability and variable rebinding distinguished.",
+        "Application uses a new program rather than the lecture hello/yello example.",
+        "Answer matches executable code, and each field has its own supporting citations."
+      ]
+    },
+    {
+      "id": "before-after-prints",
+      "split": "development",
+      "expected": "practice",
+      "goal": "根据课程解释变量重新绑定后为什么不等于原地改字符，给概念题；应用题用一个新字符串，先打印它，再切片拼接并重新绑定，最后打印它，让我写出两行输出。",
+      "checks": [
+        "New multi-character string input; two prints before/after; immutable object versus rebinding accurate; exact computed answer."
+      ]
+    },
+    {
+      "id": "two-rebindings",
+      "split": "development",
+      "expected": "practice",
+      "goal": "结合课程解释为什么直接给字符串下标赋值不可行。出一道概念题和一道新字符串代码输出题，代码必须连续两次重新绑定同一个变量，再打印结果。",
+      "checks": [
+        "Two rebindings of same variable; new input; supported slice/concatenation operations; computed answer matches exact program."
+      ]
+    },
+    {
+      "id": "string-interning",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只依据这段课程解释 Python 字符串驻留如何用 is 比较对象身份，设计两道判断题。",
+      "checks": [
+        "Interning and is identity are not taught; immutable/rebinding teaching does not license memory-identity claims."
+      ]
+    }
+  ]
+}

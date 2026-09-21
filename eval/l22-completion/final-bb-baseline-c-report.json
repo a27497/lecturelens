@@ -1,0 +1,865 @@
+{
+  "expected_cases": 20,
+  "observed_cases": 20,
+  "structure_pass": 19,
+  "semantic_supported_pass": 4,
+  "supported_review_components": {
+    "grounded": 4,
+    "answers_correct": 13,
+    "questions_distinct": 14
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 4,
+  "successful_within_90s": 19,
+  "p50_all_seconds": 9.46,
+  "p95_all_seconds": 14.426,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 19,
+    "failed": 1
+  },
+  "model_calls": 64,
+  "tool_calls": 43,
+  "measured_model_calls": 64,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 84638,
+  "reported_completion_tokens": 6742,
+  "gates": {
+    "complete": true,
+    "structure": true,
+    "provenance": true,
+    "insufficient": true,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": true
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.628,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "应用题自己的引用缺少索引1开始的切片续句，答案计算正确但来源不完整。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 8.663,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "英语目标得到中文产物；应用自己的来源含切片后半句和绑定，但缺少拼接前句。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 8.645,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "不可变概念及拼接表达式应用不同，答案正确，两题自己的引用分别支持不可变与完整切片拼接。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.493,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "课程未教replace API；选项C调用replace但不赋值不能把变量s变为yello，答案却接受D；应用引用也缺切片续句。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 4.681,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确没有Kubernetes扩容依据，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "failed",
+      "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+      "elapsed_seconds": 14.942,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "重复工具无进展失败，没有产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.233,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "英语目标得到中文产物；应用把课堂6次带入新声明的范围与目标，而来源仅给课堂计数、没有这些具体条件。并不把6次本身判成算术错误，完整来源仍不合格。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.514,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "未声明整数域却缩为51到100，且没有回答指定下一中点75。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.814,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "英语目标得到中文产物；两题重复排除半区间的同一个概念，没有不同应用。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.373,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确没有Transformer学习率依据，无编造。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-15",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.09,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确没有B样条连续性依据，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-11",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.74,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "英语目标得到中文产物，概念自身来源没有排序和二分代价，应用自身来源没有线性扫描代价。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-12",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.46,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释区分起点，但概念自身来源缺线性代价，应用自身来源缺其答案比较的排序代价。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-13",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.344,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "3次实际与6次最坏正确，引用支持扫描；英语目标得到全中文解释与题目。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "searchtradeoff-14",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 9.336,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "1次实际与4次最坏正确，概念与具体名单应用不同，每题自身来源支持扫描和最坏情况。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-15",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.327,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确没有Adam更新式依据，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-11",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 14.426,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "指定数组三轮与各轮后缀准确，包含无变化轮；概念和追踪应用不同，每题自己的引用支持最大值移右及范围缩小。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-12",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.821,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "指定数组两轮均正确，区分保证有序后缀与未保证前缀；每题自己的引用含交换、后缀和下一轮范围。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-13",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.253,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "边界缩小与具体数组正确，但英语目标得到全中文产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "selectionstep-14",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 8.734,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释把已排序区域前端等同于数组末尾；后续最大值实际应放在剩余前缀末尾、既有后缀之前。应用结果正确。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "b14b525cb1d1d4a036e85690c63fabe4738317e57e1243ee8ed96774df0ad44d",
+  "runtime": {
+    "source_sha256": "b947e04f968294095757aec90b9932604c0d56c0e33dd85c5338ad86c14b26ea",
+    "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+    "base_url": "http://127.0.0.1:8082",
+    "deadline_seconds": 90,
+    "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 9,
+      "semantic_supported_pass": 1,
+      "supported_review_components": {
+        "grounded": 1,
+        "answers_correct": 5,
+        "questions_distinct": 6
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 9,
+      "p50_all_seconds": 9.233,
+      "p95_all_seconds": 14.942,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 9,
+        "failed": 1
+      },
+      "model_calls": 31,
+      "tool_calls": 20,
+      "measured_model_calls": 31,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 39465,
+      "reported_completion_tokens": 3330,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.628,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "应用题自己的引用缺少索引1开始的切片续句，答案计算正确但来源不完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.663,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；应用自己的来源含切片后半句和绑定，但缺少拼接前句。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.645,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "不可变概念及拼接表达式应用不同，答案正确，两题自己的引用分别支持不可变与完整切片拼接。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.493,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程未教replace API；选项C调用replace但不赋值不能把变量s变为yello，答案却接受D；应用引用也缺切片续句。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.681,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Kubernetes扩容依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 14.942,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "重复工具无进展失败，没有产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.233,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；应用把课堂6次带入新声明的范围与目标，而来源仅给课堂计数、没有这些具体条件。并不把6次本身判成算术错误，完整来源仍不合格。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.514,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "未声明整数域却缩为51到100，且没有回答指定下一中点75。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.814,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；两题重复排除半区间的同一个概念，没有不同应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.373,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Transformer学习率依据，无编造。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 10,
+      "semantic_supported_pass": 3,
+      "supported_review_components": {
+        "grounded": 3,
+        "answers_correct": 8,
+        "questions_distinct": 8
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 10,
+      "p50_all_seconds": 9.46,
+      "p95_all_seconds": 14.426,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 10
+      },
+      "model_calls": 33,
+      "tool_calls": 23,
+      "measured_model_calls": 33,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 45173,
+      "reported_completion_tokens": 3412,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "searchtradeoff-15",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.09,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有B样条连续性依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-11",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.74,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物，概念自身来源没有排序和二分代价，应用自身来源没有线性扫描代价。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-12",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.46,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释区分起点，但概念自身来源缺线性代价，应用自身来源缺其答案比较的排序代价。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-13",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.344,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "3次实际与6次最坏正确，引用支持扫描；英语目标得到全中文解释与题目。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-14",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.336,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "1次实际与4次最坏正确，概念与具体名单应用不同，每题自身来源支持扫描和最坏情况。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-15",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.327,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Adam更新式依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-11",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.426,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "指定数组三轮与各轮后缀准确，包含无变化轮；概念和追踪应用不同，每题自己的引用支持最大值移右及范围缩小。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-12",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.821,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "指定数组两轮均正确，区分保证有序后缀与未保证前缀；每题自己的引用含交换、后缀和下一轮范围。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-13",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.253,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "边界缩小与具体数组正确，但英语目标得到全中文产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-14",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.734,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释把已排序区域前端等同于数组末尾；后续最大值实际应放在剩余前缀末尾、既有后缀之前。应用结果正确。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 16,
+      "observed_cases": 16,
+      "structure_pass": 15,
+      "semantic_supported_pass": 4,
+      "supported_review_components": {
+        "grounded": 4,
+        "answers_correct": 13,
+        "questions_distinct": 14
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 15,
+      "p50_all_seconds": 9.74,
+      "p95_all_seconds": 14.942,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 15,
+        "failed": 1
+      },
+      "model_calls": 52,
+      "tool_calls": 35,
+      "measured_model_calls": 52,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 70309,
+      "reported_completion_tokens": 6363,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.628,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "应用题自己的引用缺少索引1开始的切片续句，答案计算正确但来源不完整。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.663,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；应用自己的来源含切片后半句和绑定，但缺少拼接前句。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.645,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "不可变概念及拼接表达式应用不同，答案正确，两题自己的引用分别支持不可变与完整切片拼接。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.493,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程未教replace API；选项C调用replace但不赋值不能把变量s变为yello，答案却接受D；应用引用也缺切片续句。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "REPEATED_TOOL_WITHOUT_PROGRESS",
+          "elapsed_seconds": 14.942,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "重复工具无进展失败，没有产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.233,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；应用把课堂6次带入新声明的范围与目标，而来源仅给课堂计数、没有这些具体条件。并不把6次本身判成算术错误，完整来源仍不合格。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.514,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "未声明整数域却缩为51到100，且没有回答指定下一中点75。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.814,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物；两题重复排除半区间的同一个概念，没有不同应用。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-11",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.74,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "英语目标得到中文产物，概念自身来源没有排序和二分代价，应用自身来源没有线性扫描代价。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-12",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.46,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释区分起点，但概念自身来源缺线性代价，应用自身来源缺其答案比较的排序代价。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-13",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.344,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "3次实际与6次最坏正确，引用支持扫描；英语目标得到全中文解释与题目。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-14",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 9.336,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "1次实际与4次最坏正确，概念与具体名单应用不同，每题自身来源支持扫描和最坏情况。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-11",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.426,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "指定数组三轮与各轮后缀准确，包含无变化轮；概念和追踪应用不同，每题自己的引用支持最大值移右及范围缩小。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-12",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 10.821,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "指定数组两轮均正确，区分保证有序后缀与未保证前缀；每题自己的引用含交换、后缀和下一轮范围。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-13",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 11.253,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "边界缩小与具体数组正确，但英语目标得到全中文产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-14",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 8.734,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释把已排序区域前端等同于数组末尾；后续最大值实际应放在剩余前缀末尾、既有后缀之前。应用结果正确。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 4,
+      "observed_cases": 4,
+      "structure_pass": 4,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 4,
+      "successful_within_90s": 4,
+      "p50_all_seconds": 5.09,
+      "p95_all_seconds": 5.373,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4
+      },
+      "model_calls": 12,
+      "tool_calls": 8,
+      "measured_model_calls": 12,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 14329,
+      "reported_completion_tokens": 379,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 4.681,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Kubernetes扩容依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.373,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Transformer学习率依据，无编造。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "searchtradeoff-15",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.09,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有B样条连续性依据，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "selectionstep-15",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.327,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确没有Adam更新式依据，无无关练习。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  }
+}

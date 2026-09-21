@@ -1,0 +1,131 @@
+{
+  "candidate": "Y",
+  "status": "failed",
+  "execution_pass": 11,
+  "strict_pass": 10,
+  "total": 15,
+  "reviewer": "Codex AI source review; not independent human blind grading",
+  "data_status": "Consumed development goals only",
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "dev-row",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "model_calls": 6,
+      "strict_pass": false,
+      "reason": "Invalid review protocol; no artifact"
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Supported task, own-field sources, answer and goal checked."
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "strict_pass": true,
+      "reason": "Supported task, own-field sources, answer and goal checked."
+    },
+    {
+      "case_id": "least-squares",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "model_calls": 2,
+      "strict_pass": false,
+      "reason": "Invalid review protocol; no artifact"
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Supported task, own-field sources, answer and goal checked."
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 6,
+      "strict_pass": false,
+      "reason": "Second point answer omits checking the second equation, despite explicit requirement to check both for each point."
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "model_calls": 4,
+      "strict_pass": false,
+      "reason": "Invalid review protocol; no artifact"
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "model_calls": 4,
+      "strict_pass": false,
+      "reason": "Invalid review protocol; no artifact"
+    },
+    {
+      "case_id": "string-interning",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "strict_pass": true,
+      "reason": "Requested topic absent; neutral refusal contains no unsupported teaching."
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "strict_pass": true,
+      "reason": "Supported task, own-field sources, answer and goal checked."
+    }
+  ]
+}

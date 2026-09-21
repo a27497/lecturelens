@@ -1,0 +1,24 @@
+{
+  "source_sha256": "19cf71ad1fda5db3097a6730796e516955fe1dece836bf3023ddaec8c2d4b89a",
+  "tasks_sha256": "f4c0da4792afe04b23ef2c75626320b88cf8c1d832281695c3fc5256c32e41ce",
+  "frozen_at": 1789929853.93711,
+  "check_goal": true,
+  "data_status": "Consumed extra goal-task diagnostics; not held out",
+  "cases": [
+    {
+      "id": "verification-without-correction",
+      "expected_accept": false,
+      "reason": "Plain point verification contains no erroneous claim or requested correction; fails the learner goal."
+    },
+    {
+      "id": "misconception-correction",
+      "expected_accept": true,
+      "reason": "The requested correction has a concrete false claim and a correct, supported correction."
+    },
+    {
+      "id": "negative-new-point-transfer",
+      "expected_accept": true,
+      "reason": "Signed coordinates use the same demonstrated substitution operation; both explicit negative coordinates and every equality are correct."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-15",
+  "python": {
+    "passed": 84,
+    "skipped": 0,
+    "real_postgresql": true,
+    "database": "lecturelens_agent_test",
+    "warning": "Existing Starlette/AnyIO deprecation warning"
+  },
+  "frontend": {
+    "passed": 48,
+    "production_build": "passed",
+    "warnings": [
+      "Existing VueUse annotation warning",
+      "Existing large output chunk warning"
+    ]
+  },
+  "ruff": "passed",
+  "java": "Not rerun: no Java code changed in this step",
+  "browser": "Not rerun: runtime pilot does not claim browser acceptance",
+  "real_evaluation": "Six new held-out tasks, paired frozen runtimes, same local model; scope and timing caveats in runtime.json",
+  "cleanup": {
+    "owned_sessions": 12,
+    "remaining_rows": {
+      "study_session": 0,
+      "study_run": 0,
+      "study_artifact": 0,
+      "study_event": 0,
+      "study_tool_result": 0,
+      "checkpoints": 0,
+      "checkpoint_blobs": 0,
+      "checkpoint_writes": 0
+    },
+    "raw_trial_files_preserved": true
+  },
+  "owned_services_stopped": true,
+  "real_evaluation_result": {
+    "baseline_run_success": 5,
+    "candidate_run_success": 0,
+    "candidate_budget_exceeded": 6,
+    "full_l2_gate_assessed": false
+  }
+}

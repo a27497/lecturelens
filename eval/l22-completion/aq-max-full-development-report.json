@@ -1,0 +1,532 @@
+{
+  "expected_cases": 10,
+  "observed_cases": 10,
+  "structure_pass": 6,
+  "semantic_supported_pass": 2,
+  "supported_review_components": {
+    "grounded": 2,
+    "answers_correct": 3,
+    "questions_distinct": 4
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 2,
+  "successful_within_90s": 6,
+  "p50_all_seconds": 14.518,
+  "p95_all_seconds": 27.21,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "succeeded": 6,
+    "failed": 4
+  },
+  "model_calls": 36,
+  "tool_calls": 24,
+  "measured_model_calls": 36,
+  "model_calls_without_complete_usage": 0,
+  "reported_prompt_tokens": 76628,
+  "reported_completion_tokens": 6227,
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": true,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "strings-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 27.056,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "真实拒绝指出未讲授的垃圾回收和异常名，第二稿移除；不可变概念与World代码输出均有来源且正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-02",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "elapsed_seconds": 17.839,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核拒绝混用解释和答案锚点，且修正超过200字符，协议失败，未发布。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-03",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "elapsed_seconds": 17.385,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 27.21,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "第二稿移除TypeError，但应用仍要求课程未讲授的upper方法，复核漏检。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "strings-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.163,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "课程外Kubernetes目标明确证据不足，无无关练习。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-01",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "elapsed_seconds": 14.518,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 14.055,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核把未报告的目标76和初始范围误当课程事实；答案还称从0逐次试到N只需N次，不正确。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-03",
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "elapsed_seconds": 16.699,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "复核协议失败，未形成可验收产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 13.749,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "解释反馈排除一半并在重复减半中缩小空间；例题及严格上半区间应用均核算正确，题型和来源支持。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bisection-05",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 5.95,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "AI source review, not blind human gold",
+      "reason": "明确缺少Transformer学习率证据，没有编造数值或无关题目。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "b0330e0837694c036be955939f9efd10f169d96efd25791c3583fb2e3ed9747b",
+  "runtime": {
+    "source_sha256": "26e1a1dd583f22d5ff86244fdb3db1a73b0bf1005bdc8e8a534dea9af03e2b44",
+    "model": "{\"decision\": {\"model\": \"qwen3-max\", \"version\": 1}, \"review\": {\"model\": \"qwen3-max\", \"version\": 1}}",
+    "base_url": "http://127.0.0.1:8082",
+    "deadline_seconds": 90,
+    "java_sha256": "badf5ea052867004dd2825c01816357d21858bb25cd5397809a5b154d0046964"
+  },
+  "splits": {
+    "dev": {
+      "expected_cases": 10,
+      "observed_cases": 10,
+      "structure_pass": 6,
+      "semantic_supported_pass": 2,
+      "supported_review_components": {
+        "grounded": 2,
+        "answers_correct": 3,
+        "questions_distinct": 4
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 6,
+      "p50_all_seconds": 14.518,
+      "p95_all_seconds": 27.21,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 6,
+        "failed": 4
+      },
+      "model_calls": 36,
+      "tool_calls": 24,
+      "measured_model_calls": 36,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 76628,
+      "reported_completion_tokens": 6227,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 27.056,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "真实拒绝指出未讲授的垃圾回收和异常名，第二稿移除；不可变概念与World代码输出均有来源且正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.839,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核拒绝混用解释和答案锚点，且修正超过200字符，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.385,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 27.21,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "第二稿移除TypeError，但应用仍要求课程未讲授的upper方法，复核漏检。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.163,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程外Kubernetes目标明确证据不足，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 14.518,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.055,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核把未报告的目标76和初始范围误当课程事实；答案还称从0逐次试到N只需N次，不正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 16.699,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核协议失败，未形成可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.749,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释反馈排除一半并在重复减半中缩小空间；例题及严格上半区间应用均核算正确，题型和来源支持。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.95,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确缺少Transformer学习率证据，没有编造数值或无关题目。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "holdout": {
+      "expected_cases": 0,
+      "observed_cases": 0,
+      "structure_pass": 0,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 0,
+      "p50_all_seconds": null,
+      "p95_all_seconds": null,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {},
+      "model_calls": 0,
+      "tool_calls": 0,
+      "measured_model_calls": 0,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": null,
+      "reported_completion_tokens": null,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": []
+    }
+  },
+  "outcomes": {
+    "practice": {
+      "expected_cases": 8,
+      "observed_cases": 8,
+      "structure_pass": 4,
+      "semantic_supported_pass": 2,
+      "supported_review_components": {
+        "grounded": 2,
+        "answers_correct": 3,
+        "questions_distinct": 4
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 0,
+      "successful_within_90s": 4,
+      "p50_all_seconds": 16.699,
+      "p95_all_seconds": 27.21,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 4,
+        "failed": 4
+      },
+      "model_calls": 30,
+      "tool_calls": 20,
+      "measured_model_calls": 30,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 68491,
+      "reported_completion_tokens": 6012,
+      "gates": {
+        "complete": true,
+        "structure": false,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": false,
+        "no_serious_unsupported": true,
+        "latency": false
+      },
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "strings-01",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 27.056,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "真实拒绝指出未讲授的垃圾回收和异常名，第二稿移除；不可变概念与World代码输出均有来源且正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-02",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.839,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核拒绝混用解释和答案锚点，且修正超过200字符，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 17.385,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "strings-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 27.21,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "第二稿移除TypeError，但应用仍要求课程未讲授的upper方法，复核漏检。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-01",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 14.518,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核事实对照超过160字符限制，协议失败，未发布。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-02",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 14.055,
+          "structure_valid": true,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核把未报告的目标76和初始范围误当课程事实；答案还称从0逐次试到N只需N次，不正确。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-03",
+          "status": "failed",
+          "error_code": "MODEL_REVIEW_CONTRACT",
+          "elapsed_seconds": 16.699,
+          "structure_valid": false,
+          "semantic_review_pass": false,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "复核协议失败，未形成可验收产物。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-04",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 13.749,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "解释反馈排除一半并在重复减半中缩小空间；例题及严格上半区间应用均核算正确，题型和来源支持。",
+          "serious_unsupported": false
+        }
+      ]
+    },
+    "insufficient_evidence": {
+      "expected_cases": 2,
+      "observed_cases": 2,
+      "structure_pass": 2,
+      "semantic_supported_pass": 0,
+      "supported_review_components": {
+        "grounded": 0,
+        "answers_correct": 0,
+        "questions_distinct": 0
+      },
+      "serious_unsupported_cases": 0,
+      "insufficient_pass": 2,
+      "successful_within_90s": 2,
+      "p50_all_seconds": 5.163,
+      "p95_all_seconds": 5.95,
+      "quantile_method": "nearest rank, all outcomes",
+      "status_counts": {
+        "succeeded": 2
+      },
+      "model_calls": 6,
+      "tool_calls": 4,
+      "measured_model_calls": 6,
+      "model_calls_without_complete_usage": 0,
+      "reported_prompt_tokens": 8137,
+      "reported_completion_tokens": 215,
+      "gates": {
+        "complete": true,
+        "structure": true,
+        "provenance": true,
+        "insufficient": true,
+        "semantic": true,
+        "no_serious_unsupported": true,
+        "latency": true
+      },
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "strings-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.163,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "课程外Kubernetes目标明确证据不足，无无关练习。",
+          "serious_unsupported": false
+        },
+        {
+          "case_id": "bisection-05",
+          "status": "succeeded",
+          "error_code": null,
+          "elapsed_seconds": 5.95,
+          "structure_valid": true,
+          "semantic_review_pass": true,
+          "reviewer": "AI source review, not blind human gold",
+          "reason": "明确缺少Transformer学习率证据，没有编造数值或无关题目。",
+          "serious_unsupported": false
+        }
+      ]
+    }
+  }
+}

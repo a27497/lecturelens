@@ -1,0 +1,369 @@
+{
+  "version": "l22-bc-seen-development-from-consumed-bb-final",
+  "cases": [
+    {
+      "id": "strings-01",
+      "clip_id": "strings",
+      "split": "dev",
+      "category": "explain",
+      "goal": "解释 Python 字符串不可变的含义，并给出一道概念题和一道代码应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "已创建的字符串对象不能原地修改",
+        "变量重新绑定与对象修改不同"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "strings-02",
+      "clip_id": "strings",
+      "split": "dev",
+      "category": "compare",
+      "goal": "Compare modifying a string object with rebinding its variable. Give one concept question and one application question.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "object cannot change in place",
+        "rebinding names a different object"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "strings-03",
+      "clip_id": "strings",
+      "split": "dev",
+      "category": "apply",
+      "goal": "结合课程解释 s='hello' 后如何得到 'yello'；出两道不同类型的题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "concatenate y with s[1:] or reassign yello",
+        "new string object rather than mutate the old string"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "strings-04",
+      "clip_id": "strings",
+      "split": "dev",
+      "category": "misconception",
+      "goal": "A learner says s[0]='y' edits 'hello' in place. Correct this using this course and give two distinct practice questions.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "item assignment raises an error",
+        "strings are immutable"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "strings-05",
+      "clip_id": "strings",
+      "split": "dev",
+      "category": "insufficient",
+      "goal": "这段课程采用哪种 Kubernetes 集群自动扩容策略？请解释并出题。",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "明确证据不足",
+        "不生成无关练习"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "bisection-01",
+      "clip_id": "bisection",
+      "split": "dev",
+      "category": "explain",
+      "goal": "解释二分查找为何每轮能够排除一半候选，并给出概念题和应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "higher/lower feedback rules out half",
+        "choose midpoint of remaining interval"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "bisection-02",
+      "clip_id": "bisection",
+      "split": "dev",
+      "category": "compare",
+      "goal": "Compare bisection search with guess-and-check in the lecture guessing game; give two different practice questions.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "sequential guessing versus halving",
+        "six guesses versus approximately 76 in lecture"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "bisection-03",
+      "clip_id": "bisection",
+      "split": "dev",
+      "category": "apply",
+      "goal": "区间为 0 到 100，猜 50 后被告知目标更大。下一步如何缩小区间并选择猜测？结合证据出两题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "retain upper half",
+        "next midpoint 75"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "bisection-04",
+      "clip_id": "bisection",
+      "split": "dev",
+      "category": "misconception",
+      "goal": "A learner says bisection only removes the number just guessed. Correct this with evidence and give two distinct practice questions.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "rules out an entire half",
+        "higher/lower response identifies remaining interval"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "bisection-05",
+      "clip_id": "bisection",
+      "split": "dev",
+      "category": "insufficient",
+      "goal": "What exact learning rate does the lecturer recommend for training a transformer? Explain and make practice questions.",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "explicit insufficient evidence",
+        "no fabricated rate or unrelated practice"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after reading official source captions; not a human gold standard"
+    },
+    {
+      "id": "searchtradeoff-15",
+      "clip_id": "searchtradeoff",
+      "split": "dev",
+      "category": "insufficient",
+      "goal": "这段课给出了 B 样条在内部节点处连续性的哪条公式？请讲解并出练习。",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "明确没有B样条连续性依据",
+        "不编造公式或给无关练习"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "searchtradeoff-11",
+      "clip_id": "searchtradeoff",
+      "split": "dev",
+      "category": "compare",
+      "goal": "Compare many lookups on one unchanged unordered roster with one lookup on each of many unrelated new unordered rosters. Explain when the lecture’s sorting preparation can be reused, and give one concept and one application question.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "sorting once can be reused for repeated queries on the same unchanged roster",
+        "sorting one roster does not prepare a different roster; a single scan avoids sorting for each one-off query"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "searchtradeoff-12",
+      "clip_id": "searchtradeoff",
+      "split": "dev",
+      "category": "explain",
+      "goal": "有同学把“在已排序名单中查询”的成本与“收到未排序名单后完成一次查询”的成本混为一谈。请结合课程区分这两个起点，并给一道概念题和一道应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "已有序时二分查询为log n",
+        "未排序输入先排序再二分需计入n log n准备成本，单次也可n扫描"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "searchtradeoff-13",
+      "clip_id": "searchtradeoff",
+      "split": "dev",
+      "category": "apply",
+      "goal": "A learner says linear search must always inspect every entry. Use [Dara, Evan, Faye, Gus, Hana, Ivo], looking for Faye from the start, to correct this and distinguish this lookup from the worst case. Give two different practice questions.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "stop when Faye found after3comparisons",
+        "six comparisons in worst case, not necessarily every successful query"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "searchtradeoff-14",
+      "clip_id": "searchtradeoff",
+      "split": "dev",
+      "category": "apply",
+      "goal": "按课程的逐项扫描方法，在名单 [Uma, Pia, Leon, Bo] 中找 Uma。说明本次实际检查数和这张名单的最坏检查数为何不同，并出一道概念题和一道应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "实际首项命中检查1项",
+        "最坏需要检查4项，实际成本与最坏情况有区别"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "selectionstep-15",
+      "clip_id": "selectionstep",
+      "split": "dev",
+      "category": "insufficient",
+      "goal": "What exact Adam parameter-update equation is taught in this clip? Explain it and give practice questions.",
+      "expected_outcome": "insufficient_evidence",
+      "required_points": [
+        "explicit lack of Adam update evidence",
+        "no fabricated equation or unrelated practice"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "selectionstep-11",
+      "clip_id": "selectionstep",
+      "split": "dev",
+      "category": "apply",
+      "goal": "Apply the clip’s largest-to-right procedure to [7, -2, 4, 0, 9] for three passes. Show the array and sorted suffix after each pass, including passes that leave the array unchanged. Give one concept and one application question.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "pass1 [7,-2,4,0,9], suffix[9]",
+        "pass2 [0,-2,4,7,9], suffix[7,9]",
+        "pass3 [0,-2,4,7,9], suffix[4,7,9]; a no-op still advances boundary"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "selectionstep-12",
+      "clip_id": "selectionstep",
+      "split": "dev",
+      "category": "apply",
+      "goal": "对 [6, 4, 2, 9, 8] 执行片段演示的选择排序前两轮。展示状态，并说明哪些位置已保证最终有序、哪些仍不能保证；给概念题和应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "第一轮[6,4,2,8,9]，后缀[9]",
+        "第二轮数组不变，后缀[8,9]，剩余[6,4,2]未排好"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "selectionstep-13",
+      "clip_id": "selectionstep",
+      "split": "dev",
+      "category": "misconception",
+      "goal": "A learner correctly swaps the largest remaining element to the end, but keeps searching the same full range on later passes. Explain the missing boundary update using this clip and give two distinct practice questions.",
+      "expected_outcome": "practice",
+      "required_points": [
+        "exclude fixed sorted suffix from subsequent searches",
+        "search remaining prefix and shrink its right boundary each pass"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    },
+    {
+      "id": "selectionstep-14",
+      "clip_id": "selectionstep",
+      "split": "dev",
+      "category": "explain",
+      "goal": "请只说明这段课程实际演示的选择排序方向：每轮选什么、放在哪里、下轮范围如何改变。无需评价课外“最小值移左”变体的正确性。给一道概念题和一道具体应用题。",
+      "expected_outcome": "practice",
+      "required_points": [
+        "课程取剩余前缀最大值并交换到该前缀末尾",
+        "右侧有序后缀逐轮增加，下轮排除它",
+        "不把课外另一种变体笼统判错"
+      ],
+      "unacceptable": [
+        "unsupported claims",
+        "answer leaked into public question",
+        "two paraphrases of the same question"
+      ],
+      "review_basis": "AI-authored after BB source freeze from official MIT captions; not human gold"
+    }
+  ],
+  "authored_at_utc": "2026-09-19T17:24:38.796163+00:00",
+  "scope": "All20seen; formerBBheldoutconsumed; no formal gate assessed"
+}
