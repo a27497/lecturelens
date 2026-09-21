@@ -1,0 +1,5 @@
+{
+  "source_sha256": "471705bfbd23e9729cc67c68d73a2b981677c8c7956aa92425040b36c651dc03",
+  "tasks_sha256": "b20519ac326e4fbf8d35743d7b1608ab846d7ff6d55383bf8ae5bc029605a9fe",
+  "data_status": "Consumed P/Q/R/S tasks; regression only"
+}

@@ -597,3 +597,20 @@ The backend path is:
 创建/取消事务写入 `task_outbox`，后台至少一次投递 RocketMQ；`task_execution` 提供数据库级执行资格、90 秒租约与过期恢复。删除事务提交墓碑与清理意图，外部对象清理可重试。Redis 进度与数据库状态冲突时，SSE 采用数据库状态。
 
 模型生成在事务外执行，`GenerationFence` 对任务授权、删除/取消、来源 revision 和 generation 做短事务检查与发布。`CourseEvidenceService` 物化不可变、权限隔离的来源快照，QA 和未来索引消费者共用该契约。详情与部署注意事项见 [C0_C3_EXECUTION.md](C0_C3_EXECUTION.md)。
+
+## Study Agent 架构增量（未发布候选）
+
+当前工作区在既有课程摄取与 Evidence 基础上增加 Python Study Agent runtime。该能力已经完成冻结 AU 的有限范围验收，但线上仍保持原配置，未发布。最终验收记录：../eval/phase-completion/FINAL_AU.md。
+
+### 状态与职责
+
+- Vue：学习目标、执行状态、练习、作答、反馈与历史查看；不直接持有模型凭据或课程权属。
+- Java / MySQL：鉴权、课程与媒体业务事实、Evidence 权属/revision/删除、浏览器到 Agent 的签名网关。
+- Python Agent / PostgreSQL：模型决策、受限工具调用、Session/Run、artifact、attempt、feedback、事件与 checkpoint。
+- Model Registry：按账号冻结决策/复核用途连接；Run 启动后固定版本。
+
+浏览器请求先经过 Java 权属与课程就绪校验，再进入 Python。Agent 只能读取已授权 Evidence；模型选择工具和参数，程序负责预算、版本、权限、停止条件和持久化。恢复使用已落盘工具结果与 checkpoint，不能借重启绕过预算或重复已经提交的副作用。课程删除由 Java 权威事实触发，Agent 派生 Session/索引随删除清理。
+
+### 当前验收边界
+
+冻结 AU 在已见公开课程的新目标上完成开发 31/31、全新保留 8/8；独立 PostgreSQL 机制测试 547 项通过，并完成真实浏览器闭环、重启/调用中断恢复、取消、越权与删除验证。该结论不证明未见课程泛化、自动评分、长期记忆或复习调度。失败候选和原始调用保存在评测记录与被忽略的 .data/ 中。

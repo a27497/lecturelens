@@ -8,9 +8,17 @@ import org.springframework.web.bind.annotation.*;
 public class CourseEvidenceController {
     private final CourseEvidenceService evidence;
     private final CurrentUserService users;
-    public CourseEvidenceController(CourseEvidenceService evidence, CurrentUserService users) {
+    private final EvidenceIndexSynchronizer indexes;
+    public CourseEvidenceController(CourseEvidenceService evidence, CurrentUserService users, EvidenceIndexSynchronizer indexes) {
         this.evidence = evidence;
         this.users = users;
+        this.indexes = indexes;
+    }
+
+    @GetMapping("/api/tasks/{taskId}/evidence/index-status")
+    public ApiResponse<EvidenceIndexSynchronizer.IndexStatus> indexStatus(
+        @PathVariable String taskId, @RequestHeader(value="Authorization", required=false) String auth) {
+        return ApiResponse.success(indexes.status(taskId, users.currentUser(auth).userId()));
     }
 
     @GetMapping("/api/tasks/{taskId}/evidence")

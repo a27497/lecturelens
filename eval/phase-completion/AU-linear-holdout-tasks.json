@@ -1,0 +1,59 @@
+{
+  "version": "phase-AU-fresh-holdout-v1",
+  "data_status": "Authored after AU source freeze and strict 31/31 development gate; not previously sent as model tasks",
+  "cases": [
+    {
+      "id": "signed-common-point-pair",
+      "goal": "按课程解释方程组的公共解，并给概念题。应用题固定使用 x+y=1 与 2x-y=-4，比较 (-1,2) 和 (2,-1) 两点。每个点都要代入两式，区分满足两式和只满足第一式；不能更换数据。",
+      "expected": "practice",
+      "checks": [
+        "All four substitutions preserve both equations and signed points.",
+        "(-1,2):1=1,-4=-4; (2,-1):1=1,5!=-4.",
+        "Own joint-solution and point-check sources."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "negative-second-only-error",
+      "goal": "结合课程解释为何检查方程组时不能只看一个等式，再给概念题和纠错题。纠错题中有人声称点 (-2,1) 同时满足 x+2y=1 和 2x+y=-3；请让我逐式检验并纠正，保留点和两个方程，不能省略成立的那一式。",
+      "expected": "practice",
+      "checks": [
+        "Explicit wrong all-equations claim to correct.",
+        "0!=1 and -3=-3; only second equation holds.",
+        "Preserve negative point, both checks, own method and explanation sources."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "zero-y-coefficient-three-points",
+      "goal": "依据课程解释 row picture 并给一道概念题。应用题固定用 3x+0y=-6，对 (-2,-1)、(-2,4)、(0,0) 三个点分别列出代入检验；不要因为第二个系数是零而漏掉任何点。",
+      "expected": "practice",
+      "checks": [
+        "Three fixed points and equivalent 3x=-6 retained.",
+        "-6=-6,-6=-6,0!=-6 with zero*y visible in complete checks.",
+        "Own row-picture and substitution sources; no classification theorem."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "english-coordinate-swap",
+      "goal": "In English, explain how the course example uses the first coordinate as x and the second as y, then give one conceptual question and one application. Compare the two fixed points (1,-3) and (-3,1) against 2x+y=-1. Show both substitutions so I can see why swapping coordinates changes this check.",
+      "expected": "practice",
+      "checks": [
+        "English fields; exact swapped points and equation.",
+        "(1,-3) gives -1=-1; (-3,1) gives -5!=-1.",
+        "Own coordinate-order demonstration and point-check sources."
+      ],
+      "split": "holdout"
+    },
+    {
+      "id": "diagonalization-outside-clip",
+      "goal": "只依靠这一小段课程，教我把矩阵对角化后计算高次幂，并设计需要求 P、D 和 P 的逆的练习。",
+      "expected": "insufficient_evidence",
+      "checks": [
+        "No diagonalization/matrix-power method in bounded row-picture clip; neutral refusal without teaching it."
+      ],
+      "split": "holdout"
+    }
+  ]
+}

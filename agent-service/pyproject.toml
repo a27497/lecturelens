@@ -9,6 +9,10 @@ dependencies = [
   "psycopg[binary]>=3.2,<4",
   "fastembed>=0.7,<1",
   "huggingface-hub>=1,<2",
+  "langgraph>=1,<2",
+  "langgraph-checkpoint-postgres>=3,<4",
+  "httpx>=0.28,<1",
+  "cryptography>=46,<49",
 ]
 
 [dependency-groups]

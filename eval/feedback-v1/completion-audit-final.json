@@ -1,0 +1,82 @@
+{
+  "checked_at_utc": "2026-09-20T12:46:04.953734+00:00",
+  "completion_proven": true,
+  "candidate": "feedback-P",
+  "source_sha256": "6e72c1e52e49a3f876012f585d7a36e12af796fd3c4e8ae5a1a3c86a567768d7",
+  "runner_sha256": "95bfe8b0d891676941c86196620d5185f60cb8763f4691608a9c14f0bfa4ea0c",
+  "checks": {
+    "python": "442 passed, 0 skipped, real isolated PostgreSQL",
+    "frontend": "77 passed, build passed",
+    "java": "1366 full suite then 3 updated gateway tests; accumulated XML 1367/0 failures/0 errors/0 skipped",
+    "browser": "Desktop and 390px Chromium with deterministic API fixtures; actual components, not live gateway e2e",
+    "quality": "Development 6/6, consumed regression 8/8, newly authored frozen holdout 8/8; Codex AI source review",
+    "source_and_runner_match_P_freeze": true,
+    "holdout_inputs_unchanged_since_freeze": true,
+    "baseline_archive_integrity": true,
+    "original_head_unchanged": true,
+    "model_calls_total": 515,
+    "original_authorization_calls": 75,
+    "additional_unlimited_authorization_calls": 440,
+    "per_run_model_limit": 6,
+    "default_feedback_enabled": false,
+    "deployment_performed": false,
+    "original_user_model_routes_verified_unchanged_per_queue": true
+  },
+  "limitations": [
+    "Known-course prior questions and fresh synthetic answers, not unseen-course quality or real student outcome",
+    "Same qwen3-max alias in separate contexts; remote model weights cannot be frozen/verified",
+    "One false rejection in new holdout; corrected final feedback within 6 calls, not an effective semantic repair",
+    "No automated grade, inferred mastery or persistent learning memory",
+    "Historical failed gates and review addendum preserved"
+  ],
+  "evidence": {
+    "python_full": {
+      "path": ".data/development-20260920/final-validation/python_full.log",
+      "sha256": "2e1c2ea8d8b6042d327a3f24d54af2d37731004eb9fcf0a9efe0b56aa6b3a967"
+    },
+    "frontend_units": {
+      "path": ".data/development-20260920/final-validation/frontend_units.log",
+      "sha256": "b79f6de449ebfd748a8c99fb3fb46d4abd631f410e571ec30dd02a57426c97a7"
+    },
+    "frontend_build": {
+      "path": ".data/development-20260920/final-validation/frontend_build.log",
+      "sha256": "b11562f051920f0ffcfce9a9a308012ce8b01d96b3ec0907351b5e7ef54a5cec"
+    },
+    "java_full": {
+      "path": ".data/development-20260920/final-validation/java_full.log",
+      "sha256": "a1d50f188cfa9a1e3e39129b05cef3983183a378b34b1a7c0cc9fe52a74a4cbc"
+    },
+    "java_added_gateway": {
+      "path": ".data/development-20260920/final-validation/java_added_gateway.log",
+      "sha256": "5e5b766dd7ca0df91d35803df461194f42aa963f70cb52ab96a7ad2bd584112a"
+    },
+    "browser": {
+      "path": ".data/development-20260920/browser-report-final.json",
+      "sha256": "14dbb4eda62d6df775f1851d1c0f97dbd9e784d16ad1a24177d2f842f01ccd30"
+    },
+    "baseline": {
+      "path": ".data/development-20260920/manifest.json",
+      "sha256": "2c66786b172b6205668f1af26df4d4f74d725fad50cf0b35f4e801dec9b6f37d"
+    },
+    "source_freeze": {
+      "path": "eval/feedback-v1/development-P-freeze.json",
+      "sha256": "c417a1176d87414244d2346de43877afddc8e14f921bb056fe9b327bba2902cd"
+    },
+    "holdout_freeze": {
+      "path": "eval/feedback-v1/holdout-P-freeze.json",
+      "sha256": "24a63c17f82ebad8b9e66cf6cddc25d9f717f0390a8fcaab1824783724cd502a"
+    },
+    "holdout_results": {
+      "path": "eval/feedback-v1/holdout-P-report.json",
+      "sha256": "9fa781c2a254477baeb72936131160b1f8a4fb1a8e09af1256986c5e13b95f0f"
+    },
+    "call_accounting": {
+      "path": "eval/feedback-v1/call-accounting-final.json",
+      "sha256": "8817b15287effd14578f35b8efe926a97fc676cf79c34b288c7e8d4a13f90792"
+    },
+    "java_gateway_xml": {
+      "path": "backend/target/surefire-reports/TEST-com.example.courselingo.qa.StudyControllerTest.xml",
+      "sha256": "b33b00b48edc708c0d444c6301c6e038ecf9539c49b4200e6ba366cf0523d702"
+    }
+  }
+}

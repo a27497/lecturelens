@@ -1,0 +1,69 @@
+{
+  "date": "2026-09-15",
+  "automated_tests": {
+    "java": {
+      "passed": 1362,
+      "failed": 0,
+      "skipped": 0
+    },
+    "python": {
+      "passed": 74,
+      "failed": 0,
+      "warnings": 1,
+      "warning": "Existing Starlette/AnyIO deprecation"
+    },
+    "frontend": {
+      "passed": 48,
+      "failed": 0,
+      "production_build": "passed"
+    }
+  },
+  "ruff_lint": "passed",
+  "ruff_format": "passed",
+  "git_diff_check": "passed",
+  "browser": {
+    "case_id": "strings-05",
+    "artifact_kind": "insufficient_evidence",
+    "restored_after_reload": true,
+    "question_count": 0,
+    "answers_hidden_until_requested": true,
+    "empty_practice_controls_hidden": true,
+    "mobile_no_horizontal_overflow": true,
+    "semantic_quality_evaluated_here": false
+  },
+  "cleanup": {
+    "owned_courses_deleted": 5,
+    "sessions_before": 55,
+    "runs_before": 55,
+    "immediate_http_404": true,
+    "tombstones": 5,
+    "remaining_rows": {
+      "indexed_evidence": 0,
+      "evidence_vector": 0,
+      "study_session": 0,
+      "study_run": 0,
+      "study_artifact": 0,
+      "study_tool_result": 0,
+      "study_event": 0,
+      "checkpoints": 0,
+      "checkpoint_blobs": 0,
+      "checkpoint_writes": 0
+    }
+  },
+  "shutdown": {
+    "owned_process_groups_stopped": [
+      "model",
+      "backend",
+      "agent",
+      "frontend"
+    ],
+    "compose_projects_stopped": [
+      "lecturelens-demo-l2",
+      "lecturelens-agent"
+    ],
+    "volumes_preserved": true
+  },
+  "quality_gate_passed": false,
+  "l3_started": false,
+  "review_method": "AI source review; not human gold"
+}

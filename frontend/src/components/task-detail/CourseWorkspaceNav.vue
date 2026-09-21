@@ -5,6 +5,7 @@ defineProps<{ active: CourseWorkspace }>();
 defineEmits<{ change: [workspace: CourseWorkspace] }>();
 
 const items: Array<{ value: CourseWorkspace; label: string }> = [
+  { value: "agent", label: "学习助手" },
   { value: "overview", label: "概览" },
   { value: "content", label: "课程内容" },
   { value: "study", label: "学习资料" },

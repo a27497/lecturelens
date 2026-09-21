@@ -1504,3 +1504,44 @@ items 为统一 CourseEvidence，包含来源 ID 和引用链、task/course ID�
 ### QA 引文兼容
 
 `POST /api/tasks/{taskId}/qa` 的 evidence 新增 `evidenceId/revision`，新回答来自统一快照。snippet 是实际送入模型且被引用的片段，可能按提示词预算截断；用 evidenceId 与 revision 可定位完整规范文本。历史持久化 JSON 没有新字段时仍可读取。视觉来源 VISION 表示派生描述，OCR 表示画面文字，置信度为抽取置信度而非答案正确率。
+
+## Study Agent API（未发布候选）
+
+当前工作区已完成冻结 AU 的有限范围验收，但尚未发布。浏览器仍通过 Java 鉴权网关访问 Study Agent；Java 注入 owner、course 与当前 revision，Python runtime 不接受浏览器自行指定这些权属字段。当前冻结 AU 的开发目标严格 31/31、全新保留目标严格 8/8，完整结论见 Phase 完成报告：../eval/phase-completion/FINAL_AU.md。这些结果仅覆盖所测课程与任务。
+
+学习入口继续使用 POST /api/tasks/{taskId}/study/command。Session/Run、练习产物、作答、反馈与 checkpoint 保存在 PostgreSQL；课程事实、Evidence 权属、版本与删除由 Java/MySQL 权威层控制。运行仍受模型调用、工具调用、deadline、版本围栏、取消和幂等约束。
+
+## Study Agent 学习记录与证据反馈 API（未发布）
+
+继续使用 `POST /api/tasks/{taskId}/study/command`。Java 注入 owner/course/current revision，Python 再验证 Session、Run 与产物归属；浏览器不能指定 owner/revision。READ 的公开题目仍不包含参考答案。
+
+| operation | 必要字段（除 operation 外） | 结果 |
+| --- | --- | --- |
+| `RUNS` | `session_id` | 最近20个练习 Run：run_id/goal/status/created_at；不含反馈 Run |
+| `SAVE_ATTEMPT` | `session_id`, `run_id`, `artifact_id`, `question_index`, `request_key`, `expected_version`, `answer_text` | `attempt`：attempt_id/artifact_id/question_index/version/answer_text/created_at |
+| `ATTEMPT_HISTORY` | session/run/artifact/question；可选 `before_version` | 倒序20条 `attempts`，及 `next_before_version` |
+| `START_FEEDBACK` | session/run/artifact/question（指练习Run）, `attempt_id`, `request_key` | 新反馈 `run`，成功后有独立 `feedback` |
+| `SAVE_FEEDBACK_NOTE` | `session_id`, `run_id`（反馈Run）, `feedback_id`, `request_key`, `expected_version`, `disposition`, `note_text` | 保存的 `note` |
+| `FEEDBACK_NOTES` | session/反馈run/feedback_id；可选 `before_version` | 倒序20条 `notes`，及 `next_before_version` |
+
+`question_index` 为0或1；`answer_text`保留原始文本，非空白且最多4000字符；首次 `expected_version=0`，后续传已读版本。重试必须复用同一 request_key 和完全相同的正文/版本；同一请求在后续版本出现后仍返回原版本。冲突不会覆盖记录。
+
+练习 READ 增加最新逐题 `attempts`、`feedback_enabled` 和最近20条 `feedback_runs`（含 question_index、answer_version、attempt_id、状态及成功反馈）。不带 run_id 的 READ 仍恢复最近练习。反馈Run支持原 READ/CANCEL/EVENTS/SSE，返回 task_kind=feedback；它没有练习ANSWERS。
+
+`feedback`包含 feedback_id、精确作答快照及版本、content、最新note。content.kind为guidance或insufficient_evidence；前者含observations（learner_quote/observation/next_step/evidence_id/evidence_quote），后者含reason；两者含citations/mode/policy。引用正文由权威片段回填；ID存在性和原文一致不自动证明语义正确。
+
+核对 `disposition` 为 disputed 或 acknowledged，`note_text` 非空白、最多2000字符，单独版本化。模型原反馈不会被用户意见覆盖，用户原始作答也不会被模型或核对记录改写。没有成绩或长期记忆接口。
+
+409可包含 ATTEMPT_VERSION_CONFLICT、FEEDBACK_VERSION_CONFLICT、REQUEST_KEY_CONFLICT、SESSION_BUSY、FEEDBACK_DISABLED；404用于越权、过期Session、错误artifact/question/attempt/feedback。参考答案只有显式ANSWERS读取；事件流仅含ID、版本、状态，不传播私有正文。
+
+反馈的每条 `observations[]` 包含学生原话、具体反馈说明、`action` 和 `next_step`。模型选择 `action=revise|retain|clarify`；服务生成修改后保存、保留表述或可选补充的中英文操作提示，避免在下一步另生成一份学科结论。复核同时检查事实判断与动作是否适合真实作答。旧记录的自由文本 `next_step` 继续可读。
+
+`anchor_evidence_ids` 是模型选择的1–3个证据锚点；`evidence_ids` 是实际支持组：在已读取、同类型的授权片段中补齐锚点之间的内容，并各补最多两个相邻片段，总计最多8段。程序按顺序保存精确原文到 `evidence_quote`，不改写字幕。`evidence_id` 保留实际支持组的首个ID；只有单个ID的历史反馈仍兼容。前端可展开支持组原文并逐段回看。每条反馈必须由自己的完整支持组支撑，不能借用其他观察的引用。
+
+复核内部按观察索引记录 `source_fact`、`learner_meaning`、`observation_verdict`、`next_step_verdict` 和 `reason`。索引必须完整且唯一，由服务绑定该条支持组；模型不能替换来源。记录用于审计与预算内修订，不是成绩或学习记忆。证据不足采用独立的 `review_feedback_insufficiency` 契约，分别判断课程是否覆盖题目、拒答理由是否真实。
+
+反馈模型每次决策/复核最多900输出tokens；整个Run仍受6次模型调用、8次工具、64,000保守预留和90秒截止约束，最多两份候选。用户针对隔离评测解除总调用次数限制，不改变产品Run的这些边界。
+
+反馈工具按阶段提供：首次只读题目证据，之后不再提供重复读取同一题证据的动作；可选补读窗口仅在剩余调用多于2次时提供，最后保留决策和复核各一次。最新复核结果单独保留在决策上下文中，补读窗口不会遮蔽待处理的问题。持久预算仍是最终约束，工具可用性不保证语义修订成功。
+
+当前 `evidence_guidance_v5` 在首次读取证据时，先由复核用途模型只看题干和来源，形成独立的 `course_basis`（覆盖性、解释、来源ID）。该私有观察与读工具结果一并落盘，供后续决策和复核核查；不暴露学生作答、草稿或参考答案给此步骤，不把生成的依据当作权威答案，也不替代每条反馈的真实引用。正常路径4次模型调用，一次修订可在6次内完成；补读会占用同一预算。历史v4反馈继续可读，旧worker需排空后再升级。

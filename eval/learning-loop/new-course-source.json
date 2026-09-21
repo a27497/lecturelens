@@ -1,0 +1,17 @@
+{
+  "id": "linear-algebra-row",
+  "course": "MIT 18.06 Linear Algebra Spring 2010",
+  "instructor": "Gilbert Strang",
+  "source_page": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/resources/lecture-1-the-geometry-of-linear-equations/",
+  "video_url": "https://archive.org/download/MIT18.06S05_MP4/01.mp4",
+  "subtitle_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/d292ec07b3ed5124ae1409dc520e61fe_J7DzL2_Na80.vtt",
+  "license": "CC BY-NC-SA 4.0",
+  "attribution": "Gilbert Strang. MIT OpenCourseWare. 18.06 Linear Algebra, Spring 2010. CC BY-NC-SA 4.0.",
+  "changes": "Excerpt 260000\u2013519679 ms; captions clipped/shifted and embedded; video re-encoded for local noncommercial evaluation.",
+  "sha256": {
+    "linear-algebra.mp4": "a3fa5bb22fa65d96f95452ae8ef80cd0a743f24ff6d47b7a24332598fa316a31",
+    "linear-algebra.vtt": "9fa6200af463b9e099735faf930e08ff55d4f9e13e09e107be19fe870d6e3d93",
+    "row-picture.mp4": "de85f300c6bd0fa596cb663eb9a676757e0d2740be6b92cf4f8c78cb6f800812",
+    "row-picture.srt": "93b2f972e396d63a2d4c993dd307025b477b7b40dea67ac5751f92187b25189a"
+  }
+}

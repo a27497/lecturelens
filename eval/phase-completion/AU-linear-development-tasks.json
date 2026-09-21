@@ -1,0 +1,217 @@
+{
+  "version": "phase-AU-consumed-regression",
+  "data_status": "Consumed historical regression including all prior failed holdout batches; not fresh",
+  "cases": [
+    {
+      "id": "dev-row",
+      "split": "development",
+      "expected": "practice",
+      "goal": "解释课程里 row picture 是怎样用直线表达一个方程的，给我概念题和一道判断某个点是否满足方程的应用题。",
+      "checks": [
+        "Each line is the set of points satisfying one equation.",
+        "New coordinate substitution is grounded in the demonstrated method.",
+        "Do not present one equation's solution as necessarily solving the whole system."
+      ]
+    },
+    {
+      "id": "dev-eigen",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "根据这段课程，解释特征值与特征向量的定义，并给我两道特征值计算题。",
+      "checks": [
+        "No eigenvalue teaching exists in the excerpt; abstain without invented course claims."
+      ]
+    },
+    {
+      "id": "heldout-common-point",
+      "split": "development",
+      "expected": "practice",
+      "goal": "我不明白为什么两条线的交点才是方程组的解。结合这段课程解释，给我一道概念题和一道纠正常见误解的应用题。",
+      "checks": [
+        "Common point satisfies both equations.",
+        "Point on only one line is insufficient.",
+        "No unsupported claims about all possible systems or unique solutions in general."
+      ]
+    },
+    {
+      "id": "heldout-origin",
+      "split": "development",
+      "expected": "practice",
+      "goal": "课程如何判断一条方程对应的直线是否经过原点？解释后，给我一道概念题和一道带不同数值的判断题。",
+      "checks": [
+        "Substitute zero for both coordinates.",
+        "Distinguish zero and nonzero right-hand side as taught in this example.",
+        "The new example's expected answer must agree with direct substitution."
+      ]
+    },
+    {
+      "id": "heldout-determinant",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只根据这段课程，教我用行列式判断矩阵可逆，并给两道求行列式的练习。",
+      "checks": [
+        "Determinants and invertibility are not taught in this excerpt."
+      ]
+    },
+    {
+      "id": "heldout-gradient",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "请用这段课程解释梯度下降的学习率怎么选择，并设计两道学习率练习。",
+      "checks": [
+        "Gradient descent is not taught in the excerpt."
+      ]
+    },
+    {
+      "id": "negative-coordinates",
+      "split": "development",
+      "expected": "practice",
+      "goal": "我常把横坐标与纵坐标代反。按这段课的检查方法解释如何避免，并出一道概念题和一道用负坐标点检查直线方程的应用题。",
+      "checks": [
+        "Map x/y consistently; application has at least one negative coordinate; exact arithmetic; own citations demonstrate the same point check."
+      ]
+    },
+    {
+      "id": "two-candidate-points",
+      "split": "development",
+      "expected": "practice",
+      "goal": "先解释为什么只检验一个方程还不够，再出一道概念题和一道应用题：应用题给两个候选点，其中只有一个满足同一组两个方程，让我分别核对。",
+      "checks": [
+        "Two distinct points; exactly one satisfies both equations; check both for each point; no answer leaked."
+      ]
+    },
+    {
+      "id": "neither-equation",
+      "split": "development",
+      "expected": "practice",
+      "goal": "按课程方法说明为何一个点不在某条直线上就不能成为这组方程的解。给一道概念题和一道纠错题，纠错题里的候选点要让两个方程都不成立。",
+      "checks": [
+        "Candidate point fails both equations; avoid claiming every other point satisfies one equation; preserve same demonstrated checking method."
+      ]
+    },
+    {
+      "id": "solution-type-classification",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只凭这一小段课，系统解释两条直线重合或平行时方程组的解有几种情况，并设计分类练习。",
+      "checks": [
+        "No teaching of full solution-set classification; do not convert point verification into classification."
+      ]
+    },
+    {
+      "id": "least-squares",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只根据这一片段，讲解最小二乘如何处理两条不相交的直线，并给我两道计算练习。",
+      "checks": [
+        "Least squares is absent; abstain without inventing course teaching."
+      ]
+    },
+    {
+      "id": "specified-mixed-pair",
+      "split": "development",
+      "expected": "practice",
+      "goal": "请按课程的代入检验方法解释方程组的解，并给一道概念题和一道应用题。应用题固定使用 x+2y=7 与 2x-y=4，候选点必须是 (3,2) 和 (1,3)，不要改动这些数据；让我逐点逐式检验，并区分满足两式和仅满足第一式。",
+      "checks": [
+        "Preserve both equations and both exact points.",
+        "(3,2): 7=7 and 4=4; (1,3): 7=7 and -1!=4.",
+        "Both equations checked for each point; joint concept and checking operation each grounded."
+      ]
+    },
+    {
+      "id": "origin-two-equation-contrast",
+      "split": "development",
+      "expected": "practice",
+      "goal": "依据课程说明怎样检查原点。给一道概念题，再用应用题让我把同一个原点 (0,0) 分别代入 4x-y=0 和 x+3y=4，判断它在哪条直线上以及是否满足这组方程。不要换坐标或方程。",
+      "checks": [
+        "Preserve one origin and both equations.",
+        "0=0 for first, 0!=4 for second; not a joint solution.",
+        "Own sources support origin substitution and line meaning."
+      ]
+    },
+    {
+      "id": "three-specified-points",
+      "split": "development",
+      "expected": "practice",
+      "goal": "用中文解释 row picture 的直线含义，再给一道概念题和一道应用题。应用题只使用方程 2x-y=0，固定比较三个点 (-2,-4)、(0,0)、(1,1)，对每个点写出代入检验，不能省略前两个成立的点。",
+      "checks": [
+        "Exactly three preserved points, one preserved equation.",
+        "Substitutions 0=0,0=0,1!=0 all reported.",
+        "Line meaning and substitutions grounded; no unsupported solution classification."
+      ]
+    },
+    {
+      "id": "english-fixed-point",
+      "split": "development",
+      "expected": "practice",
+      "goal": "Please explain the row picture in English, then give one conceptual question and one application question. Keep the application exactly about checking the point (4,-1) against x-2y=6; show how the coordinate order determines the substitution.",
+      "checks": [
+        "English explanation and questions.",
+        "Preserve (4,-1), x-2y=6; 4-2*(-1)=6.",
+        "Concept and own citations support coordinate substitution and a line as solutions."
+      ]
+    },
+    {
+      "id": "gauss-jordan-outside-clip",
+      "split": "development",
+      "expected": "insufficient_evidence",
+      "goal": "只根据这一小段课程，教我高斯－约旦消元的完整行变换步骤，并出一道用增广矩阵求逆的练习。",
+      "checks": [
+        "This clip does not teach Gauss-Jordan/inversion; neutral abstention with no untaught procedural answer."
+      ]
+    },
+    {
+      "id": "three-points-three-outcomes",
+      "goal": "按课程解释一个点成为方程组解的要求，并给一道概念题。应用题固定使用 x+y=2 和 x-y=4，同时检验三个点 (3,-1)、(-1,3)、(0,0)，每个点都要检验两个方程，再区分同时满足、仅满足第一式、两式都不满足；保留所有指定数据。",
+      "expected": "practice",
+      "checks": [
+        "All six substitutions shown with original equations and three points.",
+        "(3,-1): 2=2,4=4; (-1,3): 2=2,-4!=4; (0,0):0!=2,0!=4.",
+        "Own sources teach both-equation solution and substitution."
+      ],
+      "split": "development"
+    },
+    {
+      "id": "second-only-correction",
+      "goal": "根据课程讲解为什么要逐式检查，再给一道概念题和一道纠错题。纠错题必须检验并纠正这个说法：点 (2,1) 同时满足 x+3y=8 与 x-2y=0。保留这两个方程和这个点，写出两次检验，不要只检查第一式。",
+      "expected": "practice",
+      "checks": [
+        "Actual false claim retained for correction, not merely a verification task.",
+        "5!=8 and 0=0; second-only is not a system solution.",
+        "Own explanation and method sources support claims."
+      ],
+      "split": "development"
+    },
+    {
+      "id": "english-origin-two-lines",
+      "goal": "Use English to explain the course method for checking the origin, then give one conceptual question and one application. Keep the point (0,0) and equations 3x-y=0 and x+y=2. Ask me to check each equation and decide whether the origin lies on both lines.",
+      "expected": "practice",
+      "checks": [
+        "English throughout and fixed origin/equations preserved.",
+        "0=0 and 0!=2, so not on both lines.",
+        "Own origin-substitution citations."
+      ],
+      "split": "development"
+    },
+    {
+      "id": "zero-x-coefficient-two-points",
+      "goal": "依据课程的 row picture 说明怎样检查一个点是否在直线上，并出一道概念题。应用题固定用 0x+2y=6，检验 (-4,3) 与 (5,3) 两个点；两点都要列出完整代入过程，不能因 x 的系数为零而漏掉其中一个点。",
+      "expected": "practice",
+      "checks": [
+        "Exactly two fixed points and 0x+2y=6 preserved.",
+        "Both yield 6=6; signed x values still represented in each substitution.",
+        "No unsupported general classification theory."
+      ],
+      "split": "development"
+    },
+    {
+      "id": "qr-outside-clip",
+      "goal": "只用这段课教我 QR 分解中的 Gram-Schmidt 正交化，演示构造 Q 和 R 的全部步骤并给计算练习。",
+      "expected": "insufficient_evidence",
+      "checks": [
+        "Absent from bounded row-picture clip; neutral abstention without QR algorithm teaching."
+      ],
+      "split": "development"
+    }
+  ]
+}

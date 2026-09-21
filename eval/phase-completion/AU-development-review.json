@@ -1,0 +1,290 @@
+{
+  "candidate": "AU",
+  "status": "passed bounded development gate",
+  "execution_pass": 31,
+  "total": 31,
+  "strict_pass": 31,
+  "cases": [
+    {
+      "case_id": "dev-eigen",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Neutral refusal for absent eigen topic; no unsupported definition.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "dev-row",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "Own row and substitution sources support both fields; (1,2) gives 0=0.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "english-fixed-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "English all fields, specified (4,-1) and x-2y=6; 4+2=6 exact, own row/check sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "english-origin-two-lines",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "English and fixed origin/equations; 0=0 then 0!=2, not joint solution; own origin-check sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "gauss-jordan-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent full row-operation/inverse method, neutral refusal.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-common-point",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "Actual false claim about P1 is corrected; all four checks for (1,2),(-1,0) correct. Own both-line/common-point and check passages inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-determinant",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent determinant topic; neutral refusal with no leaked teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-gradient",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent learning-rate topic; neutral refusal.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "heldout-origin",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Changed 3x-y=0 with origin, 0=0; own origin-check source.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "least-squares",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent method; neutral refusal without least-squares teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "negative-coordinates",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "(-2,-1) against 3x-y=-5 gives -5=-5; own coordinate-order example and substitution sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "neither-equation",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Actual correction claim about (0,0); both checks 0!=1 and 0!=5, own common-point/check sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "origin-two-equation-contrast",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Both fixed equations and origin preserved, 0=0 vs 0!=4. Own origin-check source supports fields.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "qr-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent QR/Gram-Schmidt teaching; neutral refusal without extra algorithm claims.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "second-only-correction",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Previously failed AT task now explicitly corrects false all-equations claim; 5!=8 and 0=0, both fixed equations/point preserved; own both-line/check passages.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "solution-type-classification",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent general classification; neutral refusal without unsupported solution cases.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "specified-mixed-pair",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Exact two equations/points, four checks correct; own joint-concept and worked check sources inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "three-points-three-outcomes",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "All six substitutions correct for fixed points; both/first-only/neither retained, own joint and check passages.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "three-specified-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "All fixed points and 2x-y=0 retained; 0=0,0=0,1!=0 with no omission. Own row-picture and substitution sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "two-candidate-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Same x-y=1,2x+y=8; (3,2) both, (2,1) first-only. All four checks correct, joint source belongs to explanation/concept.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "zero-x-coefficient-two-points",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Equivalent 2y=6 preserved; full substitutions include 0*x for both fixed points, each 6=6. Own row/point-check sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "before-after-prints",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 5,
+      "expected_type": true,
+      "semantic_review": "New sample_c99311b9, prefix y plus slice; two exact ordered outputs, own operation/context sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "chinese-literal-slice",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "Exact 你好呀/早+s[1:] and outputs 你好呀/早好呀; own conceptual and operation sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "mixed-string-operations-three-prints",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Exact A B, ?+slice then assignment done; three outputs correct; own operation sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "new-string-output",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 6,
+      "expected_type": true,
+      "semantic_review": "New sample_0f8122e1 followed by taught direct assignment yello; two exact outputs; no extra requested operation omitted.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "regex-backtracking-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent regex method; neutral refusal without leaked matching/backtracking teaching.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "single-character-empty-tail",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "Exact m and L+s[1:], two outputs m/L; empty tail preserved, own slice sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "string-interning",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 3,
+      "expected_type": true,
+      "semantic_review": "Absent interning topic; neutral refusal.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "three-prints-two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Exact cabin/r+s[1:]/t+s[1:] and cabin/rabin/tabin; own method and concept sources.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "two-rebindings",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 6,
+      "expected_type": true,
+      "semantic_review": "New sample_fac00342, direct rebinding then Y+slice, only final print Yample_fac00342; exactly two rebindings, own citations inspected.",
+      "strict_pass": true
+    },
+    {
+      "case_id": "unicode-normalization-outside-clip",
+      "status": "succeeded",
+      "error_code": null,
+      "model_calls": 4,
+      "expected_type": true,
+      "semantic_review": "Absent normalization topic; neutral refusal.",
+      "strict_pass": true
+    }
+  ],
+  "reviewed_at": 1789931953.3384044,
+  "reviewer": "Codex inspection of actual outputs, private answers and field-owned canonical sources; not blind human grading"
+}

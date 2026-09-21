@@ -1,0 +1,19 @@
+{
+  "owned_courses_deleted": 4,
+  "sessions_before": 542,
+  "runs_before": 542,
+  "immediate_http_404": true,
+  "tombstones": 4,
+  "remaining_rows": {
+    "indexed_evidence": 0,
+    "evidence_vector": 0,
+    "study_session": 0,
+    "study_run": 0,
+    "study_artifact": 0,
+    "study_tool_result": 0,
+    "study_event": 0,
+    "checkpoints": 0,
+    "checkpoint_blobs": 0,
+    "checkpoint_writes": 0
+  }
+}

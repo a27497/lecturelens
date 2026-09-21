@@ -1,0 +1,11 @@
+{
+  "candidate": "feedback-P",
+  "source_sha256": "6e72c1e52e49a3f876012f585d7a36e12af796fd3c4e8ae5a1a3c86a567768d7",
+  "runner_sha256": "95bfe8b0d891676941c86196620d5185f60cb8763f4691608a9c14f0bfa4ea0c",
+  "dataset_sha256": "3e5495f09cae521bf4407c07c42dab7cbe46ff1d4651135d1a9c29b4163dfbe3",
+  "authored_at_utc": "2026-09-20T12:38:39.870953+00:00",
+  "development_passed": true,
+  "consumed_regression_passed": true,
+  "fresh_cases": 8,
+  "gate": "All eight within 90s; exact learner quotes, supported helpful feedback, equivalence, correct abstention, no grades/mastery/memory; no rewrite after evaluation."
+}

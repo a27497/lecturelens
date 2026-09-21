@@ -1,0 +1,12 @@
+{
+  "version": "bailian-development-pilot-2026-09-17",
+  "purpose": "Six newly written development diagnostics using previously seen public course passages. Not held-out or a full L2.2 gate. Freeze before calling providers; keep all failures.",
+  "cases": [
+    {"id":"bailian-01","split":"development","category":"explain","goal":"根据这段课程，解释函数执行到结尾却没有 return 时，调用者会得到什么，以及这与屏幕上显示的内容有什么关系。给一道概念题和一道不同的应用题。","expected_outcome":"practice","required_points":["No explicit return means None","Printed output and returned value are separate"]},
+    {"id":"bailian-02","split":"development","category":"apply","goal":"用课程的 is_even_with_return 思路分析输入 14 时返回的布尔值，说明依据，并出一道概念题和一道换一个输入值的应用题。","expected_outcome":"practice","required_points":["14 modulo 2 is 0 so comparison returns True","Return passes Boolean to caller"]},
+    {"id":"bailian-03","split":"development","category":"compare","goal":"Explain why returning False from is_even_with_return(5) does not by itself display that returned value, and how print(is_even_with_return(5)) differs. Include one concept question and one distinct application question grounded in the course.","expected_outcome":"practice","required_points":["5 modulo 2 is 1 so result is False","Returning differs from displaying the returned value; do not deny any separate print inside the function"]},
+    {"id":"bailian-04","split":"development","category":"misconception","goal":"我把没有 return 的函数结果当成了字符串 'None'。请根据课程纠正这个认识，解释 None 表示什么，并出一道概念题和一道纠错题。","expected_outcome":"practice","required_points":["None is not a string","None represents absence of a returned value"]},
+    {"id":"bailian-05","split":"development","category":"out_of_course","goal":"请根据这段课程解释数据库 B+ 树索引的分裂过程，并给两道练习题。","expected_outcome":"insufficient_evidence","required_points":["Function return passages cannot support B+ tree splitting; no invented practice"]},
+    {"id":"bailian-06","split":"development","category":"out_of_course","goal":"Using these course passages, derive Bayes' theorem for a medical screening posterior and create two calculation exercises.","expected_outcome":"insufficient_evidence","required_points":["Function return passages cannot support Bayesian medical screening; no invented practice"]}
+  ]
+}

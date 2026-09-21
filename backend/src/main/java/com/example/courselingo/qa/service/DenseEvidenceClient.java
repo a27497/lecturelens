@@ -46,6 +46,79 @@ public class DenseEvidenceClient implements AutoCloseable {
     @Override
     public void close() { http.close(); }
 
+    public com.fasterxml.jackson.databind.JsonNode sync(String taskId, Long ownerId, long revision,
+            long sequence, List<CourseEvidence> evidence, boolean deleted) throws Exception {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        String requestId = UUID.randomUUID().toString();
+        payload.put("request_id", requestId);
+        payload.put("owner_id", ownerId);
+        payload.put("course_id", taskId);
+        payload.put("revision", revision);
+        payload.put("sequence", sequence);
+        payload.put("operation", deleted ? "DELETE" : "PLAN");
+        List<Map<String, Object>> manifest = new ArrayList<>();
+        for (var item : evidence) manifest.add(Map.of("evidence_id", item.evidenceId(), "content_hash",
+            HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(item.normalizedText().getBytes(StandardCharsets.UTF_8))),
+            "start_ms", item.startMs(), "end_ms", item.endMs()));
+        payload.put("manifest", manifest);
+        var plan = post("/internal/v1/evidence/sync", payload);
+        validateSync(plan, requestId, taskId, ownerId, revision, sequence);
+        if (deleted) {
+            if (!"DELETED".equals(plan.path("state").asText())) throw new IllegalStateException("Delete not acknowledged");
+            return plan;
+        }
+        if ("READY".equals(plan.path("state").asText())) return plan;
+        if (!"PENDING".equals(plan.path("state").asText()) || !plan.path("missing_ids").isArray()) {
+            throw new IllegalStateException("Invalid sync plan");
+        }
+        var missing = new HashSet<String>();
+        plan.path("missing_ids").forEach(id -> missing.add(id.asText()));
+        var allowed = evidence.stream().map(CourseEvidence::evidenceId).collect(Collectors.toSet());
+        if (!allowed.containsAll(missing)) throw new IllegalStateException("Invalid sync scope");
+        payload.put("operation", "APPLY");
+        payload.put("index_version", plan.path("index_version").asText());
+        payload.put("upserts", evidence.stream().filter(e -> missing.contains(e.evidenceId())).map(e -> Map.of(
+            "evidence_id", e.evidenceId(), "text", e.normalizedText(),
+            "start_ms", e.startMs(), "end_ms", e.endMs())).toList());
+        var result = post("/internal/v1/evidence/sync", payload);
+        validateSync(result, requestId, taskId, ownerId, revision, sequence);
+        if (!"READY".equals(result.path("state").asText())
+                || !plan.path("index_version").equals(result.path("index_version"))) {
+            throw new IllegalStateException("Index not published");
+        }
+        return result;
+    }
+
+    private void validateSync(com.fasterxml.jackson.databind.JsonNode result, String requestId, String taskId,
+                              Long ownerId, long revision, long sequence) {
+        if (!requestId.equals(result.path("request_id").asText()) || !taskId.equals(result.path("course_id").asText())
+                || !result.path("owner_id").isIntegralNumber() || result.path("owner_id").asLong() != ownerId
+                || !result.path("revision").isIntegralNumber() || result.path("revision").asLong() != revision
+                || !result.path("sequence").isIntegralNumber() || result.path("sequence").asLong() != sequence
+                || result.path("index_version").asText().isBlank()) throw new IllegalStateException("Sync response mismatch");
+    }
+
+    private com.fasterxml.jackson.databind.JsonNode post(String path, Map<String, Object> payload) throws Exception {
+        if (properties.getServiceSecret().getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("Missing retrieval execution-context key");
+        }
+        byte[] body = json.writeValueAsBytes(payload);
+        if (body.length > 4 * 1024 * 1024) throw new IllegalStateException("Request too large");
+        String timestamp = Long.toString(Instant.now().getEpochSecond());
+        String digest = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(body));
+        String message = "lecturelens-retrieval-v1\nPOST\n" + path + "\n" + timestamp + "\n" + digest;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(properties.getServiceSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        String signature = HexFormat.of().formatHex(mac.doFinal(message.getBytes(StandardCharsets.UTF_8)));
+        var request = HttpRequest.newBuilder(URI.create(properties.getBaseUrl().replaceAll("/+$", "") + path))
+            .timeout(properties.getTimeout()).header("Content-Type", "application/json")
+            .header("X-LectureLens-Timestamp", timestamp).header("X-LectureLens-Signature", signature)
+            .POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
+        var response = http.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (response.statusCode() != 200) throw new IllegalStateException("Evidence service rejected request: " + response.statusCode());
+        return json.readTree(response.body());
+    }
+
     public List<CourseEvidence> retrieve(String taskId, Long ownerId, List<CourseEvidence> evidence,
                                         String question, Long startMs, Long endMs, int topK) {
         if (evidence.isEmpty()) return List.of();
@@ -68,25 +141,9 @@ public class DenseEvidenceClient implements AutoCloseable {
             payload.put("revision", revision);
             payload.put("query", question);
             payload.put("top_k", topK);
-            payload.put("evidence", evidence.stream().map(e -> Map.of(
-                "evidence_id", e.evidenceId(), "text", e.normalizedText(),
-                "start_ms", e.startMs(), "end_ms", e.endMs())).toList());
+            payload.put("allowed_evidence_ids", evidence.stream().map(CourseEvidence::evidenceId).toList());
             if (startMs != null && endMs != null) payload.put("time_window", Map.of("start_ms", startMs, "end_ms", endMs));
-            byte[] body = json.writeValueAsBytes(payload);
-            if (body.length > 4 * 1024 * 1024) throw new IllegalStateException("Snapshot too large");
-            String timestamp = Long.toString(Instant.now().getEpochSecond());
-            String digest = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(body));
-            String message = "lecturelens-retrieval-v1\nPOST\n" + PATH + "\n" + timestamp + "\n" + digest;
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(properties.getServiceSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-            String signature = HexFormat.of().formatHex(mac.doFinal(message.getBytes(StandardCharsets.UTF_8)));
-            var request = HttpRequest.newBuilder(URI.create(properties.getBaseUrl().replaceAll("/+$", "") + PATH))
-                .timeout(properties.getTimeout()).header("Content-Type", "application/json")
-                .header("X-LectureLens-Timestamp", timestamp).header("X-LectureLens-Signature", signature)
-                .POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() != 200) throw new IllegalStateException("Retrieval service rejected request");
-            var result = json.readTree(response.body());
+            var result = post(PATH, payload);
             if (!requestId.equals(result.path("request_id").asText())
                     || !taskId.equals(result.path("course_id").asText())
                     || !result.path("owner_id").isIntegralNumber() || result.path("owner_id").asLong() != ownerId

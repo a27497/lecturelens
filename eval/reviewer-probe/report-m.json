@@ -1,0 +1,211 @@
+{
+  "expected_cases": 8,
+  "observed_cases": 8,
+  "expected_accepts": 4,
+  "expected_rejects": 4,
+  "correct": 5,
+  "errors": 3,
+  "false_accepts": 0,
+  "false_rejects": 0,
+  "target_code_hits": 1,
+  "all_labels_matched": false,
+  "pairs_both_correct": {
+    "conditional_total_score": false,
+    "delayed_outer_print": false,
+    "extra_unsupported_operation": true,
+    "three_component_credit": false
+  },
+  "known_prompt_tokens": 31512,
+  "known_completion_tokens": 1215,
+  "calls_without_complete_usage": 0,
+  "cases": [
+    {
+      "case_id": "rl-04",
+      "pair": "conditional_total_score",
+      "expected_accept": false,
+      "observed_accept": null,
+      "correct": false,
+      "target_code_hit": false,
+      "issues": null,
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "seconds": 4.5296
+    },
+    {
+      "case_id": "rl-05",
+      "pair": "delayed_outer_print",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 2.5831
+    },
+    {
+      "case_id": "rl-01",
+      "pair": "three_component_credit",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 2.6914
+    },
+    {
+      "case_id": "rl-08",
+      "pair": "extra_unsupported_operation",
+      "expected_accept": false,
+      "observed_accept": false,
+      "correct": true,
+      "target_code_hit": true,
+      "issues": [
+        "unsupported_explanation"
+      ],
+      "error_code": null,
+      "seconds": 3.61
+    },
+    {
+      "case_id": "rl-07",
+      "pair": "extra_unsupported_operation",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 2.9592
+    },
+    {
+      "case_id": "rl-03",
+      "pair": "conditional_total_score",
+      "expected_accept": true,
+      "observed_accept": true,
+      "correct": true,
+      "target_code_hit": false,
+      "issues": [],
+      "error_code": null,
+      "seconds": 2.5636
+    },
+    {
+      "case_id": "rl-02",
+      "pair": "three_component_credit",
+      "expected_accept": false,
+      "observed_accept": null,
+      "correct": false,
+      "target_code_hit": false,
+      "issues": null,
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "seconds": 3.5575
+    },
+    {
+      "case_id": "rl-06",
+      "pair": "delayed_outer_print",
+      "expected_accept": false,
+      "observed_accept": null,
+      "correct": false,
+      "target_code_hit": false,
+      "issues": null,
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "seconds": 3.5773
+    }
+  ],
+  "full_l2_gate_assessed": false,
+  "scope": "Fixed source-annotated development drafts; direct reviewer only; no generation, repair, runtime or full-stack evaluation.",
+  "assessment": "Pre-call Codex source-based labels, not blind human gold. Code hits do not establish useful correction feedback.",
+  "identity": {
+    "protocol": "fixed-draft-reviewer-probe-v1",
+    "variant": "m",
+    "runtime_sha256": "7c25036f8bf696fdd84afee01e45c7f70c0c6256dc4ecf91bf05ecbf7a20a043",
+    "evaluation_split": "development",
+    "runner_sha256": "2b5ab7fc63da54d976a8d0c96a4b8ea62d59c29acf29beff68a8a0419aceb4a3",
+    "dataset_sha256": "0d27cf58f1eea8c96ba977b0c0e85c864c54cb9a2506a5d47ab9fdae6faf03cb",
+    "evidence_sha256": "9efc09db1b5740fbd67630412bb8fe75ba8e92b3dc32a58c9128c3fbd7d51673",
+    "source_sha256": "28abb23043ebb5aaf7a69d0aeff05d24a7604a91cdb60dbf30ccbc679300e85d",
+    "reviewer": {
+      "model": "qwen3-max",
+      "version": 2,
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    },
+    "order": [
+      "rl-04",
+      "rl-05",
+      "rl-01",
+      "rl-08",
+      "rl-07",
+      "rl-03",
+      "rl-02",
+      "rl-06"
+    ],
+    "timeout_seconds": 30,
+    "max_output_tokens": 300,
+    "temperature": 0.2,
+    "retries": 0,
+    "labels_sent": false,
+    "runtime_executed": false,
+    "database_writes": false
+  },
+  "manual_feedback_assessment": {
+    "method": "Codex checks full input, original reference answer, rubric and own citations; not blind human gold. Protocol failures stay failures even if computed answers are right.",
+    "passed": 5,
+    "total": 8,
+    "cases": [
+      {
+        "case_id": "rl-01",
+        "passed": true,
+        "reason": "正确接受。课程求解与原答案一致。"
+      },
+      {
+        "case_id": "rl-02",
+        "passed": false,
+        "reason": "课程求解正确补出值的缺失，但又把同题误报为课程不支持；同一字段重复问题触发协议失败。"
+      },
+      {
+        "case_id": "rl-03",
+        "passed": true,
+        "reason": "正确接受三行完整输出，条件零分不适用。"
+      },
+      {
+        "case_id": "rl-04",
+        "passed": false,
+        "reason": "保留正确的 ready/ready/None，且给出删除错误零分条款的建议；但额外无据批评解释，并引用解释未声明的 e6，整体协议失败。不能算成功拒绝。"
+      },
+      {
+        "case_id": "rl-05",
+        "passed": true,
+        "reason": "正确接受延后显示的 with return/False。"
+      },
+      {
+        "case_id": "rl-06",
+        "passed": false,
+        "reason": "正确求出两行，但额外把同题标成 unsupported_question，与答案检查重复，整体协议失败。"
+      },
+      {
+        "case_id": "rl-07",
+        "passed": true,
+        "reason": "正确接受课程支持的解释与练习。"
+      },
+      {
+        "case_id": "rl-08",
+        "passed": true,
+        "reason": "正确删除无据的 None 下标访问断言，保留正确答案。"
+      }
+    ]
+  },
+  "raw_answer_check_assessment": {
+    "semantically_correct_answers": 16,
+    "total": 16,
+    "scope": "Manual read of pre-validation answers and matches values, including failed trials. This diagnoses a subcomponent only; it does not rescore failures or establish that every selected excerpt independently proves the full answer."
+  },
+  "offline_protocol_diagnosis": {
+    "rl-04": [
+      "Value error, Finding must locate its own field and use only its own cited evidence"
+    ],
+    "rl-02": [
+      "Value error, Report at most one main defect per field"
+    ],
+    "rl-06": [
+      "Value error, Report at most one main defect per field"
+    ]
+  }
+}

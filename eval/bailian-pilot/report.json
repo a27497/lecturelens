@@ -1,0 +1,145 @@
+{
+  "expected_cases": 6,
+  "observed_cases": 6,
+  "status_counts": {
+    "succeeded": 4,
+    "failed": 2
+  },
+  "structure_pass": 4,
+  "semantic_supported_pass": 1,
+  "supported_review_components": {
+    "grounded": 1,
+    "answers_correct": 3,
+    "questions_distinct": 4
+  },
+  "insufficient_pass": 0,
+  "successful_within_90s": 4,
+  "p50_all_seconds": 10.807285,
+  "p95_all_seconds": 12.638567,
+  "model_calls": 20,
+  "tool_calls": 14,
+  "quality_checks": 4,
+  "rejected_candidates": 0,
+  "runs_completed_after_rejection": 0,
+  "usage_by_purpose": {
+    "decision": {
+      "calls_started": 14,
+      "calls_finished": 14,
+      "known_prompt_tokens": 19689,
+      "known_completion_tokens": 1525,
+      "calls_without_complete_usage": 0
+    },
+    "review": {
+      "calls_started": 6,
+      "calls_finished": 4,
+      "known_prompt_tokens": 6579,
+      "known_completion_tokens": 353,
+      "calls_without_complete_usage": 2
+    }
+  },
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "bailian-01",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.638567,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "核心 None/print 解释与两题答案正确，但解释内明确写出 e3，而声明的解释引用及展示引用仅 caption-1/4/5；存在正文与引用列表不一致。复核误接受。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bailian-02",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 10.807285,
+      "structure_valid": true,
+      "semantic_review_pass": true,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "caption-2 给出 i % 2 == 0 的规则，14 返回 True、7 返回 False 可从规则推导；概念题与换输入的应用题不同，题目无答案泄露。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bailian-03",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 12.377343,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "应用题问 print(is_even_with_return(7)) 的屏幕输出，答案只有 False，遗漏 caption-2/3 明确存在的内部 print(\"with return\") 输出；答案及评分要点不完整。复核误接受。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bailian-04",
+      "status": "succeeded",
+      "error_code": null,
+      "elapsed_seconds": 11.468347,
+      "structure_valid": true,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "NoneType、无显式 return 的题目答案正确，但 singleton object 的细节不在引用字幕中，中文目标收到英文产物；不满足全部声明有据及目标语言要求。复核误接受。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bailian-05",
+      "status": "failed",
+      "error_code": "MODEL_OUTPUT_TRUNCATED",
+      "elapsed_seconds": 10.120621,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "决策已提交证据不足候选，但复核达到 300 token 输出上限，终态 MODEL_OUTPUT_TRUNCATED；没有持久化拒答产物，不能算完整拒答。未保存该次原始提供商响应，不能判断其未完成内容。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "bailian-06",
+      "status": "failed",
+      "error_code": "INVALID_TOOL_ARGUMENTS",
+      "elapsed_seconds": 8.911302,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review; not blind, not human gold; runtime verdict not used as grading",
+      "reason": "决策提交了证据不足候选，但复核返回不满足参数契约，INVALID_TOOL_ARGUMENTS；没有持久化拒答产物，不能算完整拒答通过。复核原始响应未落盘，不推断具体错误字段。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "0192258825042e49e17b8103264b6341b7c707d2b6b993a977f6cca52746ebb0",
+  "results_sha256": "858e98b791439ab938250041a226d263c164568bd2a352fdebcb385a162e3c1a",
+  "reviews_sha256": "da54f7c2ddbb4b9e5f2151cc69b4d94e9c02972f65975cb203aefb8d2064189e",
+  "full_l2_gate_assessed": false,
+  "scope": "Fixed-Evidence replay pilot; real provider, production Python runtime and isolated PG. No ingestion, dense retrieval, Java auth or browser acceptance.",
+  "assessment": "Source-based Codex AI review, not blind and not a human gold standard. Runtime model review is not used as semantic scoring.",
+  "runtime_sha256": "ecfa565c8dca26a61335895b80c7fb92e15996638c979686d8dd29106aa7711c",
+  "models": {
+    "decision": "qwen-plus",
+    "review": "qwen3-max"
+  },
+  "source_sha256": "28abb23043ebb5aaf7a69d0aeff05d24a7604a91cdb60dbf30ccbc679300e85d",
+  "independent_candidate_review": {
+    "assessable": 4,
+    "false_accepts": 3,
+    "false_rejects": 0,
+    "not_assessable": 2,
+    "effective_revision_observed": false,
+    "basis": "Codex AI review, not human gold; reasons in case details."
+  },
+  "limitations": [
+    "Six development tasks on previously seen public passages, not held-out.",
+    "Fixed Evidence replay, not live dense retrieval or browser/Java acceptance.",
+    "Two failed review calls have no complete usage; known token totals are lower bounds.",
+    "Remote model aliases and hardware are not immutable verified identities.",
+    "Full provider responses on failed review calls were not retained; exact invalid field is unknown."
+  ]
+}

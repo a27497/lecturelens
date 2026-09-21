@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-15",
+  "scope": "Per-user model management and Study Agent decision/review routing",
+  "automated_checks": {
+    "python": { "passed": 102, "skipped": 0, "real_isolated_postgresql": true },
+    "java": { "passed": 1365, "failed": 0, "skipped": 0 },
+    "frontend": { "files": 16, "passed": 52 },
+    "python_lint_and_format": "passed",
+    "typescript": "passed",
+    "production_build": "passed"
+  },
+  "browser_acceptance": {
+    "script": "scripts/eval/check-model-management.py",
+    "browser": "Chromium",
+    "real_java_python_postgresql": true,
+    "startup_without_global_model_configuration": true,
+    "model_discovery_and_tool_call": "passed",
+    "local_model": "Qwen2.5-3B-Instruct Q4_K_M via llama.cpp",
+    "tool_call_latency_ms": 4531,
+    "separate_decision_review_bindings_restore_after_reload": true,
+    "cross_account_access_rejected": true,
+    "client_supplied_owner_rejected": true,
+    "mobile_width_px": 390,
+    "mobile_no_horizontal_overflow": true,
+    "paid_cloud_calls": false,
+    "cloud_provider_credentials_validated": false
+  },
+  "cleanup": {
+    "owned_test_accounts_and_refresh_tokens_deleted": true,
+    "owned_model_connections_and_routes_deleted": true,
+    "owned_temporary_services_stopped": true,
+    "data_volumes_preserved": true,
+    "unrelated_project_services_preserved": true
+  },
+  "quality_limit": "Connection and routing acceptance is not teaching-quality evaluation. The existing L2.2 quality gate remains failed."
+}

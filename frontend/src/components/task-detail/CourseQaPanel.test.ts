@@ -1,9 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { expect, it, vi } from "vitest";
 import CourseQaPanel from "./CourseQaPanel.vue";
-import { askCourseQa } from "../../api/qa";
+import { askCourseQa, getEvidenceIndexStatus } from "../../api/qa";
 
-vi.mock("../../api/qa", () => ({ askCourseQa: vi.fn(), toReadableCourseQaError: () => "error" }));
+vi.mock("../../api/qa", () => ({ getEvidenceIndexStatus: vi.fn().mockResolvedValue({ status: "READY" }), askCourseQa: vi.fn(), toReadableCourseQaError: () => "error" }));
 
 it("renders the exact cited text returned by the API and keeps its video timestamp", async () => {
   const snippet = "The emcee introduces maritime history; ie ot is a literal source example.";
@@ -22,6 +22,7 @@ it("renders the exact cited text returned by the API and keeps its video timesta
       "el-alert": true, "el-empty": true,
     } },
   });
+  await flushPromises();
   await wrapper.get("textarea").setValue("主要讲什么？");
   await wrapper.findAll("button")[0]!.trigger("click");
   await flushPromises();
@@ -43,13 +44,59 @@ it("removes a previous answer when a new question fails", async () => {
       "el-tag": true, "el-alert": true, "el-empty": true,
     } },
   });
+  await flushPromises();
   await wrapper.get("textarea").setValue("第一个问题");
   await wrapper.findAll("button")[0]!.trigger("click");
   await flushPromises();
   expect(wrapper.text()).toContain("旧问题的回答");
+  await flushPromises();
   await wrapper.get("textarea").setValue("第二个问题");
   await wrapper.findAll("button")[0]!.trigger("click");
   await flushPromises();
   expect(wrapper.find(".qa-answer").exists()).toBe(false);
   expect(wrapper.find("el-alert-stub").attributes("title")).toBe("error");
+});
+
+it("waits for background indexing and enables questions when ready", async () => {
+  vi.useFakeTimers();
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValueOnce({ status: "INDEXING" } as never)
+    .mockResolvedValueOnce({ status: "READY" } as never);
+  const wrapper = mount(CourseQaPanel, {
+    props: { taskId: "task" },
+    global: { stubs: {
+      "el-input": { props: ["modelValue"], emits: ["update:modelValue"],
+        template: `<textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
+      "el-button": { props: ["disabled"], template: `<button :disabled="disabled"><slot /></button>` },
+      "el-tag": true, "el-alert": true, "el-empty": true,
+    } },
+  });
+  try {
+    await flushPromises();
+    await wrapper.get("textarea").setValue("算法如何结束？");
+    expect(wrapper.get('[role="status"]').text()).toContain("正在准备");
+    expect(wrapper.findAll("button")[0]!.attributes("disabled")).toBeDefined();
+    await vi.advanceTimersByTimeAsync(3000);
+    await flushPromises();
+    expect(wrapper.get('[role="status"]').text()).toContain("已就绪");
+    expect(wrapper.findAll("button")[0]!.attributes("disabled")).toBeUndefined();
+  } finally {
+    wrapper.unmount();
+    vi.useRealTimers();
+  }
+});
+
+it("does not show the old course index state after switching tasks", async () => {
+  let resolveOld!: (value: never) => void;
+  vi.mocked(getEvidenceIndexStatus).mockImplementationOnce(() => new Promise(resolve => { resolveOld = resolve; }))
+    .mockResolvedValueOnce({ status: "FAILED" } as never);
+  const wrapper = mount(CourseQaPanel, {
+    props: { taskId: "old" },
+    global: { stubs: { "el-input": true, "el-button": true, "el-tag": true, "el-alert": true, "el-empty": true } },
+  });
+  await wrapper.setProps({ taskId: "new" });
+  await flushPromises();
+  resolveOld({ status: "READY" } as never);
+  await flushPromises();
+  expect(wrapper.get('[role="status"]').text()).toContain("自动重试");
+  wrapper.unmount();
 });

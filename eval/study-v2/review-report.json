@@ -1,0 +1,124 @@
+{
+  "expected_cases": 6,
+  "observed_cases": 6,
+  "structure_pass": 0,
+  "semantic_supported_pass": 0,
+  "supported_review_components": {
+    "grounded": 0,
+    "answers_correct": 0,
+    "questions_distinct": 0
+  },
+  "serious_unsupported_cases": 0,
+  "insufficient_pass": 0,
+  "successful_within_90s": 0,
+  "p50_all_seconds": 90.05249544599792,
+  "p95_all_seconds": 90.11269217500012,
+  "quantile_method": "nearest rank, all outcomes",
+  "status_counts": {
+    "budget_exceeded": 6
+  },
+  "model_calls": 18,
+  "tool_calls": 11,
+  "measured_model_calls": 12,
+  "model_calls_without_complete_usage": 6,
+  "reported_prompt_tokens": 14638,
+  "reported_completion_tokens": 1943,
+  "gates": {
+    "complete": true,
+    "structure": false,
+    "provenance": true,
+    "insufficient": false,
+    "semantic": false,
+    "no_serious_unsupported": true,
+    "latency": false
+  },
+  "passed": false,
+  "cases": [
+    {
+      "case_id": "return-01",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.04724673000237,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "生成草稿后进入复核，但 90 秒预算耗尽，复核未完成，没有产物可供语义评分。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "return-02",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.05249544599792,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "生成草稿后进入复核，但 90 秒预算耗尽，复核未完成，没有产物可供语义评分。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "return-03",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.06714088599983,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "生成草稿后进入复核，但 90 秒预算耗尽，复核未完成，没有产物可供语义评分。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "return-04",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.05214014599915,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "复核拒绝草稿，启动后续决策但超时；未发布产物。复核反馈存在误报：对 practice 标注 unjustified_abstention，并否认草稿中已正确解释的打印/返回区别；反馈提到两题缺乏区别，但未使用 duplicate_questions 代码。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "return-05",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.11269217500012,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "90 秒预算在决策/生成阶段耗尽，未进入复核，也没有正确的证据不足产物。",
+      "serious_unsupported": false
+    },
+    {
+      "case_id": "return-06",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "elapsed_seconds": 90.052694056998,
+      "structure_valid": false,
+      "semantic_review_pass": false,
+      "reviewer": "Codex source-based AI review (not human gold; not blind)",
+      "reason": "生成草稿后进入复核，但 90 秒预算耗尽，复核未完成，没有产物可供语义评分。",
+      "serious_unsupported": false
+    }
+  ],
+  "dataset_sha256": "ff0307b19a4adf1506c23ae89fbb7555dc9bbdff869321acde44367de9e34158",
+  "runtime": {
+    "label": "bounded-review",
+    "runtime_sha256": "fd5e6b7cc389836a84a8d4ab00745692da1852ab228de54c29ca09f7cb22eed5",
+    "dataset_sha256": "ff0307b19a4adf1506c23ae89fbb7555dc9bbdff869321acde44367de9e34158",
+    "source_sha256": "28abb23043ebb5aaf7a69d0aeff05d24a7604a91cdb60dbf30ccbc679300e85d",
+    "evidence_sha256": "9efc09db1b5740fbd67630412bb8fe75ba8e92b3dc32a58c9128c3fbd7d51673",
+    "protocol": "real-model-pg-runtime-fixed-evidence-replay",
+    "model": "lecturelens-local-qwen",
+    "deadline_seconds": 90
+  },
+  "results_sha256": "0c364a222200c177703a5a9e73b92fba2690b730bd516e5b686fe4f9506fc6e5",
+  "reviews_sha256": "292931f46753f983d361a54af6bea6256ed6bfe54f067a367b6a489b365217ce",
+  "full_l2_gate_assessed": false,
+  "scope": "Six-task fixed-Evidence replay pilot; real local model, production Python runtime and PG. No ingestion, dense retrieval, Java auth or browser acceptance.",
+  "assessment": "Source-based Codex AI review, not blind and not a human gold standard. Runtime model review is not used as semantic scoring.",
+  "quality_checks": 1,
+  "rejected_candidates": 1,
+  "runs_completed_after_rejection": 0,
+  "review_model_calls_started": 5
+}

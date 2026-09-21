@@ -1,0 +1,68 @@
+{
+  "candidate": "AT",
+  "source_sha256": "55925c1c3be68475aee302e200c1b9609fdfe914200a2d0764fbc8ac74f73b52",
+  "status": "failed gate",
+  "strict_pass": 7,
+  "total": 8,
+  "reviewed_at": 1789931446.0266187,
+  "reviewer": "Codex inspection of actual answers and field-owned sources; not blind human grading",
+  "data_status": "Originally fresh for AT; all eight now consumed development data. No failed trial relabeled.",
+  "cases": [
+    {
+      "case_id": "english-origin-two-lines",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "English and all fixed data preserved; 0=0 and 0!=2; own origin-check source inspected."
+    },
+    {
+      "case_id": "qr-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Absent topic, neutral refusal without QR teaching."
+    },
+    {
+      "case_id": "second-only-correction",
+      "status": "budget_exceeded",
+      "model_calls": 6,
+      "strict_pass": false,
+      "review_note": "FAILED: initial coverage falsely required a separate classroom demonstration for repeating the taught check. Extra window then mistaken refusal consumed calls; refusal reviewer corrected coverage, but no budget remained for final practice review."
+    },
+    {
+      "case_id": "three-points-three-outcomes",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "All six fixed substitutions correct, distinguishing both/first-only/neither; own joint-point and substitution passages inspected."
+    },
+    {
+      "case_id": "zero-x-coefficient-two-points",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Equivalent 2y=6 displayed; both private substitutions retain zero*x and yield 6=6 for each fixed point. Own row/method passages inspected."
+    },
+    {
+      "case_id": "mixed-string-operations-three-prints",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Exact A B -> ?+s[1:] -> done operations, outputs A B/? B/done. Own concept and operation passages inspected."
+    },
+    {
+      "case_id": "regex-backtracking-outside-clip",
+      "status": "succeeded",
+      "model_calls": 4,
+      "strict_pass": true,
+      "review_note": "Absent topic, neutral refusal without regex teaching."
+    },
+    {
+      "case_id": "single-character-empty-tail",
+      "status": "succeeded",
+      "model_calls": 3,
+      "strict_pass": true,
+      "review_note": "Exact one-character m and L+s[1:] preserved; empty-tail output m/L correct; own taught operations inspected."
+    }
+  ]
+}

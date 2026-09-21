@@ -1,0 +1,295 @@
+{
+  "version": "reviewer-probe-dev-20260917",
+  "scope": "Eight fixed source-annotated development candidates; labels are never sent to the provider. Not held-out, not human gold, not a full L2 gate.",
+  "source_manifest": "../study-v2/sources.json",
+  "order_seed": 917,
+  "cases": [
+    {
+      "id": "rp-01",
+      "split": "development",
+      "pair": "full_output",
+      "goal": "根据课程区分 return 与 print，给一道概念题和一道完整输出题。",
+      "candidate": {
+        "kind": "practice",
+        "title": "返回值与屏幕输出",
+        "explanation": "is_even_with_return 会在函数内部打印 with return，再返回余数是否为零的布尔值。直接调用不会自动显示返回值；用外层 print 打印调用结果时，还会显示返回的布尔值。",
+        "evidence_ids": [
+          "caption-2",
+          "caption-3",
+          "caption-4"
+        ],
+        "questions": [
+          {
+            "question": "函数返回一个值，与把这个值打印到屏幕上，有什么区别？",
+            "answer": "返回值交给调用处使用；打印才会把该值显示到屏幕上。",
+            "rubric": "能区分返回值与屏幕显示即可，不要求固定措辞。",
+            "evidence_ids": [
+              "caption-3",
+              "caption-4"
+            ]
+          },
+          {
+            "question": "按课程中包含内部打印的 is_even_with_return 定义，执行 print(is_even_with_return(9)) 后，屏幕上依次出现哪两行？",
+            "answer": "第一行是 with return，第二行是 False。",
+            "rubric": "两行顺序正确；9 除以 2 余 1，所以返回 False。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "caption-2/3 描述函数先打印 with return 再按余数返回布尔值，caption-4 支持外层打印；9 为奇数，两行完整。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-02",
+      "split": "development",
+      "pair": "full_output",
+      "goal": "根据课程区分 return 与 print，给一道概念题和一道完整输出题。",
+      "candidate": {
+        "kind": "practice",
+        "title": "返回值与屏幕输出",
+        "explanation": "is_even_with_return 会在函数内部打印 with return，再返回余数是否为零的布尔值。直接调用不会自动显示返回值；用外层 print 打印调用结果时，还会显示返回的布尔值。",
+        "evidence_ids": [
+          "caption-2",
+          "caption-3",
+          "caption-4"
+        ],
+        "questions": [
+          {
+            "question": "函数返回一个值，与把这个值打印到屏幕上，有什么区别？",
+            "answer": "返回值交给调用处使用；打印才会把该值显示到屏幕上。",
+            "rubric": "能区分返回值与屏幕显示即可，不要求固定措辞。",
+            "evidence_ids": [
+              "caption-3",
+              "caption-4"
+            ]
+          },
+          {
+            "question": "按课程中包含内部打印的 is_even_with_return 定义，执行 print(is_even_with_return(9)) 后，屏幕上依次出现哪两行？",
+            "answer": "只显示 False。",
+            "rubric": "回答 False 即为正确，无需写其他输出。",
+            "evidence_ids": [
+              "caption-2",
+              "caption-3",
+              "caption-4"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer"
+        ],
+        "reason": "第二题答案和评分点漏掉内部 with return 输出，与课程及题目两行要求不符。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-03",
+      "split": "development",
+      "pair": "rubric_consistency",
+      "goal": "解释课程中无 return 的情况，出一道概念题和一道应用题。",
+      "candidate": {
+        "kind": "practice",
+        "title": "没有显式返回值的函数",
+        "explanation": "函数没有显式 return 时会返回 None。None 属于 NoneType，表示缺失的值，不是字符串。",
+        "evidence_ids": [
+          "caption-1"
+        ],
+        "questions": [
+          {
+            "question": "函数执行到结尾没有 return 语句时，调用表达式的结果是什么？",
+            "answer": "None。",
+            "rubric": "正确回答 None 即可；补充 NoneType 类型说明是可选的。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "以下代码执行后，result 的值是什么？屏幕显示什么？\n```python\ndef f():\n    print('ready')\nresult = f()\n```",
+            "answer": "result 是 None；屏幕显示 ready。",
+            "rubric": "区分变量获得的 None 与函数内 print 显示的 ready。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "问题只问返回值，回答 None 足够；应用中内部打印与赋值是课程所支持的不同操作。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-04",
+      "split": "development",
+      "pair": "rubric_consistency",
+      "goal": "解释课程中无 return 的情况，出一道概念题和一道应用题。",
+      "candidate": {
+        "kind": "practice",
+        "title": "没有显式返回值的函数",
+        "explanation": "函数没有显式 return 时会返回 None。None 属于 NoneType，表示缺失的值，不是字符串。",
+        "evidence_ids": [
+          "caption-1"
+        ],
+        "questions": [
+          {
+            "question": "函数执行到结尾没有 return 语句时，调用表达式的结果是什么？",
+            "answer": "None。",
+            "rubric": "正确回答 None 即得分；但未提及 NoneType 类型的答案一律不得分。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "以下代码执行后，result 的值是什么？屏幕显示什么？\n```python\ndef f():\n    print('ready')\nresult = f()\n```",
+            "answer": "result 是 None；屏幕显示 ready。",
+            "rubric": "区分变量获得的 None 与函数内 print 显示的 ready。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "incorrect_answer",
+          "unsupported_question"
+        ],
+        "reason": "第一题评分点同时接受只答 None 又否定未提类型的同一答案，自相矛盾。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-05",
+      "split": "development",
+      "pair": "unsupported_claim",
+      "goal": "根据课程纠正把 None 当字符串的认识，并给两道不同练习。",
+      "candidate": {
+        "kind": "practice",
+        "title": "None 与字符串的区别",
+        "explanation": "函数没有显式 return 时会返回 None。None 属于 NoneType，表示缺失的值，不是字符串。",
+        "evidence_ids": [
+          "caption-1"
+        ],
+        "questions": [
+          {
+            "question": "函数执行到结尾没有 return 语句时，调用表达式的结果是什么？",
+            "answer": "None。",
+            "rubric": "正确回答 None 即可；补充 NoneType 类型说明是可选的。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "以下代码执行后，result 的值是什么？屏幕显示什么？\n```python\ndef f():\n    print('done')\nresult = f()\n```",
+            "answer": "result 是 None；屏幕显示 done。",
+            "rubric": "区分变量获得的 None 与函数内 print 显示的 done。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "解释仅包含字幕支持的 None、NoneType、缺失值与非字符串，不要求其他实现知识。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-06",
+      "split": "development",
+      "pair": "unsupported_claim",
+      "goal": "根据课程纠正把 None 当字符串的认识，并给两道不同练习。",
+      "candidate": {
+        "kind": "practice",
+        "title": "None 与字符串的区别",
+        "explanation": "函数没有显式 return 时会返回 None。None 属于 NoneType，表示缺失的值，不是字符串。None 是唯一的单例对象。",
+        "evidence_ids": [
+          "caption-1"
+        ],
+        "questions": [
+          {
+            "question": "函数执行到结尾没有 return 语句时，调用表达式的结果是什么？",
+            "answer": "None。",
+            "rubric": "正确回答 None 即可；补充 NoneType 类型说明是可选的。",
+            "evidence_ids": [
+              "caption-1"
+            ]
+          },
+          {
+            "question": "以下代码执行后，result 的值是什么？屏幕显示什么？\n```python\ndef f():\n    print('done')\nresult = f()\n```",
+            "answer": "result 是 None；屏幕显示 done。",
+            "rubric": "区分变量获得的 None 与函数内 print 显示的 done。",
+            "evidence_ids": [
+              "caption-1",
+              "caption-4",
+              "caption-5"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "unsupported_explanation"
+        ],
+        "reason": "新增唯一单例对象的事实未出现在引用的 caption-1；一般知识正确不能替代课程依据。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-07",
+      "split": "development",
+      "pair": "abstention",
+      "goal": "根据提供的课程解释数据库 B+ 树分裂并出题。",
+      "candidate": {
+        "kind": "insufficient_evidence",
+        "reason": "当前检索片段只讨论 Python 函数与返回值，没有 B+ 树分裂的依据，无法据此出题。"
+      },
+      "expected": {
+        "accept": true,
+        "issue_any_of": [],
+        "reason": "提供的全部片段都不涉及 B+ 树；拒答限定当前检索范围。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    },
+    {
+      "id": "rp-08",
+      "split": "development",
+      "pair": "abstention",
+      "goal": "根据提供的课程解释函数没有 return 时调用者得到什么，并给两道练习。",
+      "candidate": {
+        "kind": "insufficient_evidence",
+        "reason": "当前检索片段没有说明函数缺少 return 时的结果，因此无法据此解释或出题。"
+      },
+      "expected": {
+        "accept": false,
+        "issue_any_of": [
+          "unjustified_abstention"
+        ],
+        "reason": "caption-1/4/5 明确支持无 return 时返回 None，拒答不成立。",
+        "label_source": "Codex source-based annotation before calls; not blind human gold"
+      }
+    }
+  ]
+}
