@@ -293,3 +293,19 @@ docker compose --env-file .env down
 - 第三方 AI 可能接收字幕或视频帧；启用前应确认 Provider 条款、费用、数据区域与合规要求。
 - 不要在 Issue、PR、截图或故障日志中粘贴 API Key、Authorization、对象存储 key、本地路径或原始模型响应。
 - LectureLens 当前面向本地部署，不承诺商业多租户隔离、在线 SaaS 可用性或性能 SLA。
+
+## Study Agent 候选部署与回滚
+
+当前冻结 AU 已验收但未发布。不要把普通服务重启等同于发布候选；线上 Java 8080、Agent 8090 与本地模型 8091 保持原配置。完整验收见 ../eval/phase-completion/FINAL_AU.md。
+
+候选部署前：
+
+1. 记录当前 Java/Python 启动源、环境文件、模型路由哈希和数据库备份。
+2. 使用 agent-service/uv.lock 的锁定依赖，并确认独立 PostgreSQL/pgvector 可用；Agent 配置示例见 ../.env.agent.example 和 ../agent-service/README.md。
+3. 明确启用的学习功能开关；反馈默认保持关闭，除非有单独发布授权。
+4. 只切换到已经冻结并验收的源码身份，不以工作区临时状态替代冻结候选。
+5. 发布后先验证课程权属、Evidence revision、模型路由、取消/恢复和删除路径，再扩大流量。
+
+回滚时停止新学习 Run，恢复原 Python 启动源和模型路由；Java/MySQL 的课程权威事实不迁移到 Python。PostgreSQL 中的 Agent 派生状态按已发布版本的兼容策略保留或清理，不通过手工改表伪造成功状态。原始运行预算与权限边界不得因发布或回滚而放宽。
+
+本轮验收使用的隔离 8084/8094/8095/5184 与测试 Redis 16381 已关闭；开发数据库和私有回放记录保留用于审计。线上配置在验收结束时已核对未变化。

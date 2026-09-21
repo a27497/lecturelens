@@ -1,5 +1,7 @@
 # L1 首条检索链路：Java Evidence → Python → pgvector
 
+> 本文保留首条链路的历史设计和验证记录。2026-09-15 的当前实现已切换为后台增量/删除同步与独立索引状态，契约及部署变更见 [Evidence 同步](L1_EVIDENCE_SYNC.md)。以下按需全文缓存描述仅适用于首版。
+
 ## 本轮范围
 
 在保留原有 Java 摄取、权限和 QA 生成逻辑的基础上，新增 `agent-service/`，支持真实多语言 Embedding 与向量检索。默认 `DENSE_RETRIEVAL_ENABLED=false`，原关键词路径继续工作；开启后普通问答调用 Python，课程总览继续使用原有时间均匀采样。时间定位作为向量候选的硬过滤条件。
