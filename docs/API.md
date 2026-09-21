@@ -238,7 +238,7 @@ Authorization: Bearer access-token
 
 ### POST /api/uploads/sessions
 
-创建上传会话。当前 B7 只创建会话记录，不接收文件内容，不执行 chunk 上传、缺失分片查询、complete 合并或 MinIO 业务存储。`userId` 来自 Bearer access token 解析和数据库用户查询，不来自请求体。服务端会生成 `uploadId` 和内部 `objectKey`，但 `objectKey` 不返回给前端。
+本接口创建上传会话。分片上传、缺失分片查询和 complete 合并由下述独立接口处理；完成后保存到 MinIO。`userId` 来自 Bearer access token 解析和数据库用户查询，不来自请求体。服务端会生成 `uploadId` 和内部 `objectKey`，但 `objectKey` 不返回给前端。
 
 请求头示例：
 
@@ -1485,3 +1485,22 @@ R1 source boundaries:
 - treats `task_full_text_result` only as fallback/stats context, not as full text to stuff into a chunk.
 
 VIDEO-CONTEXT-R1 deliberately does not use OCR text, keyframe metadata, VLM output, QA history, object keys, local file paths, raw prompts, or raw provider responses. A chunk is a fixed time-window index for backend context organization; a chapter is a semantic timeline item generated separately by CHAPTER-R1.
+
+
+## C0–C3：版本化课程证据与任务交付
+
+`POST /api/tasks` 的 QUEUED 表示任务和 outbox 已提交，消息由后台重试投递；不表示模型已执行。禁用 Pipeline/MQ/Flyway 时拒绝创建任务。`POST /api/tasks/batch-delete` 提交逻辑删除及清理意图，物理对象清理可能仍在重试，已删除课程立即不可查询。
+
+### GET /api/tasks/{taskId}/evidence
+
+需要 Bearer access token，仅任务 owner 可读，已删除或不属于用户的任务返回 404。可选参数 `revision`（首次省略使用当前版本）、`after`（上页 nextCursor，首次为空）、`limit`（默认 100，最大 200）。返回 `data: {revision, stale, items, nextCursor}`。下一页必须带同一 revision；nextCursor 为 null 表示结束。指定旧版本时返回不可变旧快照并标记 stale，课程删除后旧版本同样不可访问。
+
+items 为统一 CourseEvidence，包含来源 ID 和引用链、task/course ID、owner、revision、时间范围、模态、原文/规范文本、派生标记、质量原因、内容 hash、规范化版本和 OCR 截断标记。字段及索引消费示例语义见 [C0–C3 执行记录](C0_C3_EXECUTION.md)。
+
+### GET /api/evidence/changes
+
+需要 Bearer access token；仅返回当前用户事件。参数 `after` 为已处理的 sequence_id（默认 0）、`limit` 默认 100/最大 200。返回事件数组，每项有 `sequence_id/task_id/revision/change_type/created_at`。类型：源变化 INVALIDATE、快照物化 UPSERT、删除 DELETE；revision 在 INVALIDATE/DELETE 时可为空。消费者只有在持久化处理成功后才推进游标。
+
+### QA 引文兼容
+
+`POST /api/tasks/{taskId}/qa` 的 evidence 新增 `evidenceId/revision`，新回答来自统一快照。snippet 是实际送入模型且被引用的片段，可能按提示词预算截断；用 evidenceId 与 revision 可定位完整规范文本。历史持久化 JSON 没有新字段时仍可读取。视觉来源 VISION 表示派生描述，OCR 表示画面文字，置信度为抽取置信度而非答案正确率。

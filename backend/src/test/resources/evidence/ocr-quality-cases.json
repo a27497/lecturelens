@@ -1,0 +1,8 @@
+[
+  {"course":"linear-algebra","text":"Matrix multiplication combines rows and columns of two matrices.","confidence":0.95,"retrievable":true},
+  {"course":"maritime-history","text":"The Ming dynasty expanded maritime trade through Zheng He's voyages.","confidence":0.92,"retrievable":true},
+  {"course":"biology","text":"Photosynthesis converts light energy into chemical energy in chloroplasts.","confidence":0.94,"retrievable":true},
+  {"course":"legitimate-similar-phrase","text":"The emcee introduces the lecture. The literal token ie ot appears in the example.","confidence":0.96,"retrievable":true},
+  {"course":"historical-noisy-frame","text":"{emcee ade hl ey ra Alans ei so wt rr asia ?","confidence":0.15,"retrievable":false},
+  {"course":"fragmented-ocr","text":"QO sD k 3 dl","confidence":0.95,"retrievable":false}
+]

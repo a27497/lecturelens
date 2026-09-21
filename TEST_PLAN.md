@@ -5,8 +5,8 @@ This document defines the current test strategy for LectureLens. It is a project
 ## Test Goals
 
 - Keep authentication, upload, task orchestration, AI provider abstractions, subtitle persistence, learning package generation, artifact generation, result overview, security, and observability behavior regression-testable.
-- Keep automated tests runnable without real external APIs or live infrastructure services.
-- Make CI boundaries explicit: backend tests and frontend build must pass, but CI does not deploy, publish artifacts, or connect to real MySQL, Redis, RocketMQ, MinIO, ASR, LLM, or FFmpeg services.
+- Keep backend unit/service and frontend unit tests runnable without paid external AI or live infrastructure. The separate E2E job intentionally uses Docker infrastructure.
+- CI runs backend tests, frontend tests/build/audit, and a no-key E2E with MySQL, Redis, RocketMQ, MinIO and FFmpeg. It does not deploy the application or call external AI.
 - Keep security assertions source-grounded: tests and manual checks must not expose tokens, secrets, API keys, object storage keys, local paths, raw prompts, raw responses, subtitle full text in logs, or learning package full text in logs.
 
 ## Test Layers
@@ -29,7 +29,7 @@ Scope:
 - Owner scope behavior for upload sessions, tasks, subtitles, learning packages, artifacts, AI call records, and result overview.
 - Failure handling and sanitized error summaries.
 
-External dependencies must be represented with fake clients, mock providers, in-memory collaborators, or disabled-mode configuration unless a future TODO explicitly requires live integration testing.
+External dependencies must be represented with fake clients, mock providers, in-memory collaborators, or disabled-mode configuration except in the dedicated infrastructure E2E suite.
 
 ### Backend Controller / API Tests
 
@@ -55,24 +55,22 @@ Scope:
 
 These tests must not require a developer to start real MySQL manually as a normal unit-test prerequisite.
 
-### Frontend Build / Type Check Boundary
+### Frontend Tests / Build / Audit
 
-Current frontend verification is build-oriented:
-
-- `npm run build` runs `vue-tsc -b` and `vite build`.
-- This covers TypeScript and Vue compile-time regressions.
-- There is no separate frontend unit-test suite in the current project state.
-
-Frontend verification must not require a real backend, real Docker Compose services, or real AI provider credentials.
+- `npm run test:unit` runs Vitest component, API and utility regressions.
+- `npm run build` runs TypeScript/Vue type checking and Vite bundling.
+- `npm audit` checks the complete frontend lockfile, including development dependencies.
+- Frontend unit tests do not require a live backend or AI credentials.
 
 ### CI Tests
 
-GitHub Actions workflow `CI` has two jobs:
+GitHub Actions workflow `CI` has three jobs:
 
-- `backend-test`: runs backend Maven Wrapper tests on Ubuntu with Java 21.
-- `frontend-build`: installs frontend dependencies with `npm ci` and runs `npm run build` on Node.js 24.
+- `backend-test`: Maven tests on Java 21 with FFmpeg installed, including H2 transaction and fault-window regressions.
+- `frontend-build`: Node.js 24, `npm ci`, unit tests, dependency audit and build.
+- `mock-infrastructure-e2e`: isolated Docker Compose services, empty MySQL/Flyway migration, backend startup and HTTP upload-to-QA/deletion verification. AI providers are deterministic mocks. The job removes only its own Compose resources and uploads a diagnostic log on failure.
 
-CI does not deploy, publish Docker images, push artifacts, configure secrets, or connect to real MySQL, Redis, RocketMQ, MinIO, ASR, LLM, or FFmpeg services.
+Reproduction commands and the distinction between tested infrastructure behavior and untested real model quality are in [C0–C3 execution](docs/C0_C3_EXECUTION.md).
 
 ### Manual Verification
 
@@ -129,11 +127,11 @@ git status --short
 - ASR and LLM tests must use fake clients, mock providers, disabled-mode configuration, or local parser/validator tests.
 - Tests must not call real OpenAI-compatible endpoints, SiliconFlow-compatible endpoints, LangChain4j remote services, or any external LLM / ASR service.
 - Tests must not require real API keys.
-- FFmpeg behavior should be tested through process abstractions, fake executors, validation tests, or small controlled fixtures rather than treating a real FFmpeg runtime as a unit-test prerequisite.
+- Process abstractions use fakes; media integration tests generate small fixtures with real FFmpeg/FFprobe. Install these tools to run the complete backend suite.
 - MinIO tests should use storage abstractions or fake storage where possible; real MinIO is not required for the default test suite.
 - Redis tests should cover enabled, disabled, fallback, and fail-open behavior without requiring a developer to start real Redis manually.
-- RocketMQ producer, consumer, and runner boundary tests should use mocks or configuration-controlled no-op behavior unless a future task explicitly introduces live integration testing.
-- Docker Compose is useful for local infrastructure smoke checks, but it is not a default automated test dependency.
+- RocketMQ boundary tests use mocks; the dedicated Mock E2E also verifies real producer/consumer delivery. A disabled analysis executor must fail explicitly rather than report successful work.
+- Docker Compose is required by the separate infrastructure E2E, and is not required by backend unit/service or frontend tests.
 
 ## Key Regression Areas
 
@@ -157,7 +155,7 @@ git status --short
 ### Task
 
 - Task creation validates authenticated owner access to an uploaded session.
-- Task creation only creates task state and sends the configured analysis message boundary; it does not run FFmpeg, ASR, LLM, LangChain4j, subtitle generation, learning package generation, or artifact generation in the HTTP request thread.
+- Task creation commits task state and an outbox event for asynchronous delivery; it does not run FFmpeg, ASR, LLM, LangChain4j, subtitle generation, learning package generation, or artifact generation in the HTTP request thread.
 - Task list and detail APIs return only the current user's tasks.
 - SSE stream sends snapshot, progress, heartbeat, and terminal events within the current safe response contract.
 - Retry and cancel enforce legal state transitions, retry limits, owner scope, and safe MQ message boundaries.
@@ -230,7 +228,7 @@ Use this list for local smoke checks when runtime validation is needed:
 - Check Actuator `health`, `info`, and `metrics`.
 - Confirm no UI, API response, log, metric, trace, or screenshot exposes secrets, object keys, local paths, raw prompts, or raw responses.
 
-The current Runner still does not execute the full real AI Pipeline. Do not treat a local smoke test as proof that FFmpeg, ASR, LLM, LangChain4j, and complete artifact production are wired end to end.
+The Runner executes the actual media/AI pipeline. Mock E2E verifies infrastructure, persistence and API contracts; it does not establish real ASR/OCR/VLM quality or reproduce historical long-video results.
 
 ## Known Warnings
 

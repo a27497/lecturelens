@@ -24,14 +24,20 @@ final class CourseQaPromptFactory {
         int maxPromptChars,
         int maxSnippetChars
     ) {
+        return prepare(question, evidence, maxPromptChars, maxSnippetChars).messages();
+    }
+
+    static PreparedPrompt prepare(String question, List<CourseQaEvidenceItem> evidence,
+                                  int maxPromptChars, int maxSnippetChars) {
         int safeLimit = Math.max(1000, Math.min(maxPromptChars, 12000));
         int safeSnippetLimit = Math.max(100, Math.min(maxSnippetChars, 1000));
         String system = systemPrompt();
-        String user = userPrompt(question, evidence, Math.max(200, safeLimit - system.length()), safeSnippetLimit);
-        return List.of(
+        var visible = new java.util.ArrayList<CourseQaEvidenceItem>();
+        String user = userPrompt(question, evidence, Math.max(200, safeLimit - system.length()), safeSnippetLimit, visible);
+        return new PreparedPrompt(List.of(
             new LlmMessage(LlmRole.SYSTEM, system),
             new LlmMessage(LlmRole.USER, user)
-        );
+        ), List.copyOf(visible));
     }
 
     private static String systemPrompt() {
@@ -50,7 +56,8 @@ final class CourseQaPromptFactory {
         String question,
         List<CourseQaEvidenceItem> evidence,
         int maxChars,
-        int maxSnippetChars
+        int maxSnippetChars,
+        List<CourseQaEvidenceItem> visible
     ) {
         StringBuilder builder = new StringBuilder();
         builder.append("Question: ").append(truncate(question, 500)).append('\n');
@@ -70,10 +77,16 @@ final class CourseQaPromptFactory {
                 break;
             }
             builder.append(line);
+            visible.add(new CourseQaEvidenceItem(item.sourceType(), item.sourceId(), item.startTimeMillis(),
+                item.endTimeMillis(), item.timeText(), truncate(item.snippet(), maxSnippetChars),
+                item.translatedSnippet() == null ? null : truncate(item.translatedSnippet(), maxSnippetChars),
+                item.confidence(), item.evidenceId(), item.revision()));
         }
         builder.append("Return JSON only.");
         return builder.length() <= maxChars ? builder.toString() : builder.substring(0, maxChars);
     }
+
+    record PreparedPrompt(List<LlmMessage> messages, List<CourseQaEvidenceItem> evidence) { }
 
     static int promptChars(List<LlmMessage> messages) {
         return messages == null ? 0 : messages.stream().mapToInt(message -> message.content().length()).sum();

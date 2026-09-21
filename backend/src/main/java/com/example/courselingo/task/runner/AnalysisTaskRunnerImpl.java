@@ -30,6 +30,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
 
+    private com.example.courselingo.task.service.TaskExecutionLease executionLease;
+
+    @Autowired
+    public void configureExecutionLease(com.example.courselingo.task.service.TaskExecutionLease lease) {
+        this.executionLease = lease;
+    }
+
+
     private static final Logger log = LoggerFactory.getLogger(AnalysisTaskRunnerImpl.class);
     private static final int ERROR_MESSAGE_LIMIT = 1024;
     private static final Pattern SENSITIVE_WORDS = Pattern.compile(
@@ -109,13 +117,19 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 }
 
                 acquireClaim(message);
+                boolean leaseOpened = false;
                 try {
+                    if (executionLease != null) {
+                        executionLease.open(message);
+                        leaseOpened = true;
+                    }
                     changeState(message, AnalysisTaskStatus.RUNNING, task.getProgressPercent(), AnalysisTaskStage.EXTRACT_AUDIO,
                         null, null);
                     executeWork(message);
                     outcome = "success";
                     logRunnerBoundary("runner_run_completed", message, "success");
                 } finally {
+                    if (leaseOpened) executionLease.close(message);
                     taskClaimService.release(message.taskId(), message.requestId());
                 }
             } finally {
@@ -251,7 +265,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             return;
         }
 
-        changeState(message, AnalysisTaskStatus.SUCCEEDED, 100, AnalysisTaskStage.DONE, null, null);
+        Runnable publish = () -> changeState(message, AnalysisTaskStatus.SUCCEEDED, 100, AnalysisTaskStage.DONE, null, null);
+        if (executionLease == null) publish.run(); else executionLease.publishSuccess(message, publish);
     }
 
     private boolean isCanceled(AnalysisTaskMessage message) {

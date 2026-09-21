@@ -265,77 +265,25 @@ class CourseQaServiceTest {
     }
 
     @Test
-    void askSanitizesEvidenceBeforePromptResponseAndRecord() {
-        when(currentUserService.currentUser("Bearer demo"))
-            .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+    void canonicalEvidenceIsIdenticalInPromptResponseAndStoredCitation() {
+        when(currentUserService.currentUser("Bearer demo")).thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
         when(rateLimitService.checkAndConsume(42L)).thenReturn(CourseQaRateLimitResult.allowed(10, 9));
-        CourseQaEvidenceItem dirtyVideoSegment = new CourseQaEvidenceItem(
-            "VIDEO_SEGMENT",
-            "10",
-            180000L,
-            240000L,
-            "00:03:00 - 00:04:00",
-            "本段主要讲解：Whatever the user types in becomes input tokens；画面文字包括：{emcee ade hl ey ra Alans ei so wt rr asia ?",
-            "",
-            0.9d
-        );
-        CourseQaEvidenceItem dirtyOcr = new CourseQaEvidenceItem(
-            "OCR",
-            "11",
-            180000L,
-            240000L,
-            "00:03:00 - 00:04:00",
-            "Parameter / Weight: ie ot me It was the best Sr of times",
-            "",
-            0.9d
-        );
-        CourseQaEvidenceItem reliableOcrOnly = new CourseQaEvidenceItem(
-            "OCR",
-            "12",
-            180000L,
-            240000L,
-            "00:03:00 - 00:04:00",
-            "Large Language Models for the curious beginner",
-            "",
-            0.95d
-        );
-        when(evidenceRetriever.retrieve("task_1", 42L, "zh-CN", "knowledge points"))
-            .thenReturn(List.of(dirtyVideoSegment, dirtyOcr, reliableOcrOnly));
+        CourseQaEvidenceItem item = new CourseQaEvidenceItem("OCR", "12", 0L, 1000L, "00:00:00",
+            "The emcee introduces a history course about maritime trade.", "", 0.95d, "evidence-12", 3L);
+        when(evidenceRetriever.retrieve("task_1", 42L, "zh-CN", "knowledge points")).thenReturn(List.of(item));
         when(recordMapper.insert(any(CourseQaRecord.class))).thenAnswer(invocation -> {
             invocation.getArgument(0, CourseQaRecord.class).setId(102L);
             return 1;
         });
         when(aiCallRecordService.startCall(any(StartAiCallRecordCommand.class))).thenReturn(startedCall());
-        llmProvider.content = "{\"answer\":\"The lesson explains input tokens.\",\"citedEvidenceIndexes\":[0]}";
-
+        llmProvider.content = "{\"answer\":\"The course covers maritime trade.\",\"citedEvidenceIndexes\":[0]}";
         CourseQaResponse response = service.ask("task_1", "Bearer demo", new CourseQaAskRequest("knowledge points"));
-
-        assertThat(response.evidence()).hasSize(1);
-        assertThat(response.evidence().getFirst().snippet())
-            .contains("本段语音原文：Whatever the user types in becomes input tokens")
-            .doesNotContain("本段主要讲解")
-            .doesNotContain("画面文字包括")
-            .doesNotContain("Large Language Models for the curious beginner")
-            .doesNotContain("{emcee")
-            .doesNotContain("ie ot");
-        String prompt = llmProvider.requests.getFirst().messages().getLast().content();
-        assertThat(prompt)
-            .contains("本段语音原文：Whatever the user types in becomes input tokens")
-            .doesNotContain("本段主要讲解")
-            .doesNotContain("画面文字包括")
-            .doesNotContain("Large Language Models for the curious beginner")
-            .doesNotContain("{emcee")
-            .doesNotContain("ie ot");
-        ArgumentCaptor<CourseQaRecord> recordCaptor = ArgumentCaptor.forClass(CourseQaRecord.class);
-        verify(recordMapper).insert(recordCaptor.capture());
-        assertThat(recordCaptor.getValue().getEvidenceJson())
-            .contains("本段语音原文")
-            .doesNotContain("本段主要讲解")
-            .doesNotContain("画面文字包括")
-            .doesNotContain("Large Language Models for the curious beginner")
-            .doesNotContain("{emcee")
-            .doesNotContain("ie ot");
+        assertThat(response.evidence()).containsExactly(item);
+        assertThat(llmProvider.requests.getFirst().messages().getLast().content()).contains(item.snippet());
+        ArgumentCaptor<CourseQaRecord> captured = ArgumentCaptor.forClass(CourseQaRecord.class);
+        verify(recordMapper).insert(captured.capture());
+        assertThat(captured.getValue().getEvidenceJson()).contains(item.snippet(), "evidence-12", "revision");
     }
 
     @Test

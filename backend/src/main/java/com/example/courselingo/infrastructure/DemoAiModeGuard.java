@@ -15,6 +15,24 @@ public final class DemoAiModeGuard {
         boolean openAiCompatibleLlm = enabled(environment, "courselingo.ai.llm.openai-compatible.enabled");
         boolean langChain4jLlm = enabled(environment, "courselingo.ai.llm.langchain4j.enabled");
 
+        if (openAiCompatibleLlm && langChain4jLlm) {
+            throw new IllegalStateException("Only one real text LLM provider may be enabled.");
+        }
+        boolean consumer = enabled(environment, "courselingo.mq.rocketmq.enabled");
+        if (consumer && !enabled(environment, "courselingo.task.runner.pipeline.enabled")) {
+            throw new IllegalStateException("An enabled task consumer requires the analysis pipeline.");
+        }
+
+        if (consumer && !enabled(environment, "spring.flyway.enabled")) {
+            throw new IllegalStateException("An enabled task consumer requires Flyway and durable task tables.");
+        }
+        if (consumer && !(mockAsr || siliconFlowAsr)) {
+            throw new IllegalStateException("An enabled task consumer requires an ASR provider.");
+        }
+        if (consumer && !(demoLlm || openAiCompatibleLlm || langChain4jLlm)) {
+            throw new IllegalStateException("An enabled task consumer requires a text LLM provider.");
+        }
+
         if (mockAsr && siliconFlowAsr) {
             throw new IllegalStateException(
                 "Invalid AI provider configuration: Demo Mock ASR and SiliconFlow ASR cannot both be enabled."

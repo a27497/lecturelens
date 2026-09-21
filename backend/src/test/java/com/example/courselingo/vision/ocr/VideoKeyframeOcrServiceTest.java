@@ -146,7 +146,7 @@ class VideoKeyframeOcrServiceTest {
     }
 
     @Test
-    void lowQualityOcrTextIsPersistedAsEmptyWithoutDisplayingGarbage() {
+    void lowQualityOcrRetainsRawTextWithNonRetrievableStatus() {
         when(keyframeMapper.selectByTaskIdAndUserId("task_1", 42L))
             .thenReturn(List.of(keyframe(9L, 0L), keyframe(10L, 1000L)));
         service = newService(new OcrProvider() {
@@ -186,7 +186,7 @@ class VideoKeyframeOcrServiceTest {
         assertThat(result.succeeded()).isEqualTo(1);
         assertThat(rows).extracting(VideoKeyframeOcr::getStatus)
             .containsExactly(OcrStatus.EMPTY.name(), OcrStatus.SUCCEEDED.name());
-        assertThat(rows.getFirst().getOcrText()).isEmpty();
+        assertThat(rows.getFirst().getOcrText()).isEqualTo("QO sD k");
         assertThat(rows.getLast().getOcrText()).isEqualTo("What is");
     }
 

@@ -51,29 +51,13 @@ function clear() {
 }
 
 function sourceLabel(sourceType: string): string {
-  const labels: Record<string, string> = { VIDEO_SEGMENT: "音画证据", SUBTITLE_TRANSLATION: "字幕译文", SUBTITLE: "字幕", OCR: "OCR" };
+  const labels: Record<string, string> = { VIDEO_SEGMENT: "音画证据", SUBTITLE_TRANSLATION: "字幕译文", SUBTITLE: "字幕", OCR: "画面文字", VISION: "视觉描述" };
   return labels[sourceType] || sourceType || "证据";
 }
 
-function evidenceText(item: CourseQaEvidenceItem): string { return sanitizeEvidence(item.translatedSnippet || item.snippet); }
+function evidenceText(item: CourseQaEvidenceItem): string { return item.translatedSnippet || item.snippet; }
 function originalText(item: CourseQaEvidenceItem): string {
-  if (!item.translatedSnippet || !item.snippet) return "";
-  const original = sanitizeEvidence(item.snippet);
-  return original && original !== evidenceText(item) ? original : "";
-}
-function sanitizeEvidence(value: string): string {
-  return (value || "").split(/[；;\r\n]+/).map((part) => sanitizePart(part.trim())).filter(Boolean).join("；");
-}
-function sanitizePart(part: string): string {
-  if (!part) return "";
-  if (part.startsWith("本段主要讲解：")) {
-    const body = part.slice("本段主要讲解：".length).trim();
-    const cjk = body.match(/[\u4e00-\u9fff]/g)?.length ?? 0;
-    const chars = body.replace(/[^\p{L}\p{N}]/gu, "").length;
-    return chars === 0 || cjk / chars < .25 ? `本段语音原文：${body}` : part;
-  }
-  if (part.startsWith("画面文字包括：")) return "";
-  return /(\{emcee|\bie\s+ot\b|call\s+me\s+h+m+a+a?l?i|�)/i.test(part) ? part.replace(/\{emcee[\s\S]*$/i, "").trim() : part;
+  return item.translatedSnippet && item.snippet !== item.translatedSnippet ? item.snippet : "";
 }
 </script>
 

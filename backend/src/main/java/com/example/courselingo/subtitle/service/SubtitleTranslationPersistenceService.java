@@ -13,6 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 class SubtitleTranslationPersistenceService {
 
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public void configureGenerationFence(com.example.courselingo.task.service.GenerationFence fence) {
+        this.generationFence = fence;
+    }
+
+
     private final SubtitleTranslationSegmentMapper translationMapper;
     private final TaskFullTextResultMapper fullTextResultMapper;
 
@@ -31,6 +39,7 @@ class SubtitleTranslationPersistenceService {
         String targetLanguage,
         List<SubtitleTranslationSegment> translations
     ) {
+        if (generationFence != null) generationFence.sourceChanging(taskId, userId);
         translationMapper.deleteByTaskIdUserIdAndTargetLanguage(taskId, userId, targetLanguage);
         insertTranslations(translations);
         return translations.size();
@@ -47,6 +56,7 @@ class SubtitleTranslationPersistenceService {
         if (fullTextResultMapper == null) {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Full text persistence is not configured");
         }
+        if (generationFence != null) generationFence.sourceChanging(taskId, userId);
         translationMapper.deleteByTaskIdUserIdAndTargetLanguage(taskId, userId, targetLanguage);
         fullTextResultMapper.deleteByTaskIdUserIdAndTargetLanguage(taskId, userId, targetLanguage);
         insertTranslations(translations);
@@ -57,6 +67,7 @@ class SubtitleTranslationPersistenceService {
 
     @Transactional
     int deleteTranslations(String taskId, Long userId, String targetLanguage) {
+        if (generationFence != null) generationFence.sourceChanging(taskId, userId);
         return translationMapper.deleteByTaskIdUserIdAndTargetLanguage(taskId, userId, targetLanguage);
     }
 

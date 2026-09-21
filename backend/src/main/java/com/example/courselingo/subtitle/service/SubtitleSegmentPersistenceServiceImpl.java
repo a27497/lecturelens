@@ -16,6 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPersistenceService {
 
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public void configureGenerationFence(com.example.courselingo.task.service.GenerationFence fence) {
+        this.generationFence = fence;
+    }
+
+
     private static final int MAX_TASK_ID_LENGTH = 64;
     private static final int MAX_LANGUAGE_LENGTH = 32;
     private static final int MAX_PROVIDER_LENGTH = 64;
@@ -37,6 +45,7 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
     @Transactional
     public int saveTranscriptionResult(SaveTranscriptionSegmentsCommand command) {
         ValidatedCommand validated = validateSaveCommand(command);
+        if (generationFence != null) generationFence.sourceChanging(validated.taskId(), validated.userId());
         mapper.deleteByTaskIdAndUserId(validated.taskId(), validated.userId());
 
         LocalDateTime now = LocalDateTime.ofInstant(clock.instant(), clock.getZone());
@@ -52,8 +61,10 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
     }
 
     @Override
+    @Transactional
     public int deleteByTaskId(String taskId, Long userId) {
         validateTaskAndUser(taskId, userId);
+        if (generationFence != null) generationFence.sourceChanging(taskId.strip(), userId);
         return mapper.deleteByTaskIdAndUserId(taskId.strip(), userId);
     }
 

@@ -48,6 +48,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
+    private com.example.courselingo.task.service.GenerationFence generationFence;
+    private org.springframework.transaction.support.TransactionTemplate persistenceTransaction;
+
+    @Autowired
+    public void configurePersistence(com.example.courselingo.task.service.GenerationFence fence,
+                                     org.springframework.transaction.PlatformTransactionManager manager) {
+        this.generationFence = fence;
+        this.persistenceTransaction = new org.springframework.transaction.support.TransactionTemplate(manager);
+    }
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoKeyframeScanServiceImpl.class);
     private static final String STORAGE_BACKEND = "MINIO";
@@ -453,12 +463,17 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
             long sizeBytes = Files.size(evidence);
             storageService.putObject(objectKey, evidence, sizeBytes, CONTENT_TYPE);
             VideoKeyframe row = toEntity(command, frameIndex, prepared, objectKey, sizeBytes);
+            Runnable persist = () -> {
+                if (generationFence != null) generationFence.sourceChanging(command.taskId(), command.userId());
             if (mapper.insert(row) != 1) {
                 throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Keyframe persistence failed");
             }
             if (ocrMapper != null && ocrMapper.insert(toOcrRow(row, prepared.ocr())) != 1) {
                 throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Keyframe OCR persistence failed");
             }
+            };
+            if (persistenceTransaction == null) persist.run();
+            else persistenceTransaction.executeWithoutResult(status -> persist.run());
             deleteFileBestEffort(evidence);
             deleteFileBestEffort(prepared.imagePath());
         } catch (IOException exception) {

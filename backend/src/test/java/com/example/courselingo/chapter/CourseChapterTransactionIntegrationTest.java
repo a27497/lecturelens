@@ -57,6 +57,11 @@ class CourseChapterTransactionIntegrationTest {
 
     @BeforeEach
     void createSchema() {
+        jdbc.execute("CREATE TABLE IF NOT EXISTS analysis_task (id VARCHAR(64) PRIMARY KEY, user_id BIGINT, status VARCHAR(32), deleted_at TIMESTAMP, content_revision BIGINT DEFAULT 0)");
+        jdbc.execute("CREATE TABLE IF NOT EXISTS task_generation (task_id VARCHAR(64), scope VARCHAR(128), generation_id VARCHAR(64), PRIMARY KEY(task_id,scope))");
+        jdbc.update("DELETE FROM task_generation");
+        jdbc.update("DELETE FROM analysis_task");
+        jdbc.update("INSERT INTO analysis_task(id,user_id,status) VALUES ('task_chapter_tx',42,'SUCCEEDED')");
         jdbc.execute("DROP TABLE IF EXISTS chapter_probe");
         jdbc.execute("CREATE TABLE chapter_probe (id BIGINT PRIMARY KEY, title VARCHAR(255) NOT NULL)");
         jdbc.update("INSERT INTO chapter_probe (id, title) VALUES (1, 'existing chapter')");
@@ -127,6 +132,11 @@ class CourseChapterTransactionIntegrationTest {
     @Configuration
     @EnableTransactionManagement(proxyTargetClass = true)
     static class Config {
+        @Bean
+        com.example.courselingo.task.service.GenerationFence generationFence(JdbcTemplate jdbc, PlatformTransactionManager manager) {
+            return new com.example.courselingo.task.service.GenerationFence(jdbc, manager);
+        }
+
 
         @Bean
         DataSource dataSource() {
@@ -181,6 +191,7 @@ class CourseChapterTransactionIntegrationTest {
             LlmProvider provider = new LlmProvider() {
                 @Override
                 public LlmResult generate(LlmRequest request) {
+                    assertThat(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
                     state.providerCalls++;
                     return new LlmResult(
                         "fake-chapter", "fictional-model", state.content, "stop", null,

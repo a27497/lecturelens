@@ -11,6 +11,8 @@ export interface CourseQaEvidenceItem {
   snippet: string;
   translatedSnippet: string;
   confidence: number | null;
+  evidenceId?: string | null;
+  revision?: number | null;
 }
 
 export interface CourseQaUsage {

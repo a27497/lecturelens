@@ -76,7 +76,18 @@ class DemoMockLlmProviderTest {
 
         assertThat(source)
             .doesNotContain("HttpClient", "WebClient", "RestTemplate", "OkHttp", "Authorization", "apiKey")
-            .doesNotContain("request.messages()", "System.getenv");
+            .doesNotContain("System.getenv");
+    }
+
+    @Test
+    void demoQaQuotesOnlyProvidedEvidenceAndDoesNotFabricateMissingCitations() {
+        var provider = new DemoMockLlmProvider();
+        var empty = provider.generate(request(Map.of("stage", "COURSE_QA"), LlmResponseFormat.JSON_OBJECT));
+        assertThat(empty.content()).contains("当前课程内容中没有找到明确依据", "\"citedEvidenceIndexes\":[]");
+        var request = new LlmRequest("demo", "task", List.of(new LlmMessage(LlmRole.USER,
+            "Question: ignored\n[0] time=00:00 source=OCR content=Matrix multiplication\nReturn JSON only.")),
+            Duration.ofSeconds(5), 0.0, 1024, Map.of("stage", "COURSE_QA"), LlmResponseFormat.JSON_OBJECT);
+        assertThat(provider.generate(request).content()).contains("Matrix multiplication", "\"citedEvidenceIndexes\":[0]");
     }
 
     private static LlmRequest request(Map<String, Object> metadata, LlmResponseFormat format) {

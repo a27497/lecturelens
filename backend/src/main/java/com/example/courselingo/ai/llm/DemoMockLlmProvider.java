@@ -19,7 +19,8 @@ public final class DemoMockLlmProvider implements LlmProvider {
     @Override
     public LlmResult generate(LlmRequest request) {
         LlmRequestValidator.validate(request);
-        String content = request.responseFormat() == LlmResponseFormat.TEXT
+        String content = "COURSE_QA".equals(request.metadata().get("stage")) ? qaContent(request)
+            : request.responseFormat() == LlmResponseFormat.TEXT
             ? "这是由本地 Demo Provider 生成的中文演示翻译。"
             : jsonContent(request.metadata());
         return new LlmResult(
@@ -41,6 +42,19 @@ public final class DemoMockLlmProvider implements LlmProvider {
     @Override
     public String modelNameForDiagnostics() {
         return MODEL_NAME;
+    }
+
+    private static String qaContent(LlmRequest request) {
+        String prompt = request.messages().getLast().content();
+        var match = java.util.regex.Pattern.compile("(?m)^\\[0\\].*? content=(.+)$").matcher(prompt);
+        boolean found = match.find();
+        String answer = found ? "本地演示引用：" + match.group(1) : "当前课程内容中没有找到明确依据";
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(Map.of(
+                "answer", answer, "citedEvidenceIndexes", found ? java.util.List.of(0) : java.util.List.of()));
+        } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
+            throw new IllegalStateException("Cannot encode demo QA", exception);
+        }
     }
 
     private static String jsonContent(Map<String, Object> metadata) {

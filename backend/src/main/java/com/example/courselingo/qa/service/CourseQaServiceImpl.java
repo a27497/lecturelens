@@ -45,9 +45,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class CourseQaServiceImpl implements CourseQaService {
+
+    private GenerationFence generationFence;
+
+    @Autowired
+    public void configureGenerationFence(GenerationFence generationFence) {
+        this.generationFence = generationFence;
+    }
+
 
     private static final Logger log = LoggerFactory.getLogger(CourseQaServiceImpl.class);
     private final CurrentUserService currentUserService;
@@ -157,7 +167,7 @@ public class CourseQaServiceImpl implements CourseQaService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public CourseQaResponse ask(String taskId, String authorizationHeader, CourseQaAskRequest request) {
         String normalizedTaskId = validateTaskId(taskId);
         String question = validateQuestion(request);
@@ -166,6 +176,8 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
+        GenerationFence.Ticket ticket = generationFence == null ? null
+            : generationFence.begin(normalizedTaskId, currentUser.userId(), null);
         CourseQaRateLimitResult rateLimit = rateLimitService.checkAndConsume(currentUser.userId());
         if (!rateLimit.allowed()) {
             throw new BusinessException(ErrorCode.TASK_RATE_LIMITED, "Course QA rate limit exceeded");
@@ -180,7 +192,7 @@ public class CourseQaServiceImpl implements CourseQaService {
             .limit(properties.getMaxEvidenceItems())
             .toList();
         if (evidence.isEmpty()) {
-            CourseQaRecord record = saveRecord(
+            CourseQaRecord record = saveRecord(ticket,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -200,7 +212,7 @@ public class CourseQaServiceImpl implements CourseQaService {
             );
         }
         if (llmProvider == null) {
-            saveRecord(
+            saveRecord(ticket,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -218,12 +230,14 @@ public class CourseQaServiceImpl implements CourseQaService {
         AiCallRecordView started = startAiCall(normalizedTaskId, currentUser.userId(), evidence.size());
         long startedNanos = System.nanoTime();
         try {
-            List<com.example.courselingo.ai.llm.LlmMessage> messages = CourseQaPromptFactory.buildMessages(
+            var prepared = CourseQaPromptFactory.prepare(
                 question,
                 evidence,
                 properties.getMaxPromptChars(),
                 properties.getMaxSnippetChars()
             );
+            var messages = prepared.messages();
+            var visibleEvidence = prepared.evidence();
             int promptChars = CourseQaPromptFactory.promptChars(messages);
             LlmRequest requestForProvider = new LlmRequest(
                 "qa_" + UUID.randomUUID(),
@@ -240,11 +254,11 @@ public class CourseQaServiceImpl implements CourseQaService {
                 ? requestForProvider
                 : routedRequestFactory.apply(AiModelStage.COURSE_QA, requestForProvider);
             LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
-            CourseQaResponseParser.ParsedCourseQaResponse parsed = parser.parse(result.content(), evidence.size());
-            List<CourseQaEvidenceItem> cited = evidenceSanitizer.sanitize(citedEvidence(evidence, parsed.citedEvidenceIndexes()));
+            CourseQaResponseParser.ParsedCourseQaResponse parsed = parser.parse(result.content(), visibleEvidence.size());
+            List<CourseQaEvidenceItem> cited = evidenceSanitizer.sanitize(citedEvidence(visibleEvidence, parsed.citedEvidenceIndexes()));
             String answer = cited.isEmpty() ? CourseQaMessages.INSUFFICIENT_EVIDENCE : parsed.answer();
             CourseQaUsage usage = usage(result);
-            CourseQaRecord record = saveRecord(
+            CourseQaRecord record = saveRecord(ticket,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -269,7 +283,7 @@ public class CourseQaServiceImpl implements CourseQaService {
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
             failAiCall(started, normalizedTaskId, currentUser.userId(), safeFailure, elapsedMillis(startedNanos));
-            saveRecord(
+            saveRecord(ticket,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -288,6 +302,10 @@ public class CourseQaServiceImpl implements CourseQaService {
                 elapsedMillis(startedNanos),
                 safeFailure.apiDetails().errorCode()
             );
+            if (exception instanceof BusinessException business
+                && (business.errorCode() == ErrorCode.TASK_INVALID_STATUS || business.errorCode() == ErrorCode.TASK_NOT_FOUND)) {
+                throw business;
+            }
             throw safeFailure;
         }
     }
@@ -307,6 +325,7 @@ public class CourseQaServiceImpl implements CourseQaService {
     }
 
     private CourseQaRecord saveRecord(
+        GenerationFence.Ticket ticket,
         String taskId,
         Long userId,
         String question,
@@ -337,10 +356,14 @@ public class CourseQaServiceImpl implements CourseQaService {
         LocalDateTime now = LocalDateTime.ofInstant(clock.instant(), clock.getZone());
         record.setCreatedAt(now);
         record.setUpdatedAt(now);
-        if (recordMapper.insert(record) != 1) {
-            throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Course QA record insert failed");
-        }
-        return record;
+        java.util.function.Supplier<CourseQaRecord> persist = () -> {
+            if (recordMapper.insert(record) != 1) {
+                throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Course QA record insert failed");
+            }
+            return record;
+        };
+        if (generationFence == null) return persist.get(); // Direct constructors support isolated unit tests.
+        return "FAILED".equals(status) ? generationFence.recordFailure(ticket, persist) : generationFence.commit(ticket, persist);
     }
 
     private AiCallRecordView startAiCall(String taskId, Long userId, int inputUnits) {

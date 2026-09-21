@@ -135,7 +135,14 @@ public class AnalysisTaskStateServiceImpl implements AnalysisTaskStateService {
             command.getStage() == null ? "" : command.getStage().name()
         );
         businessMetrics.incrementTaskStateTransition(currentStatus.name(), targetStatus.name(), "success");
-        refreshProgressSnapshot(task, now);
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                new org.springframework.transaction.support.TransactionSynchronization() {
+                    @Override public void afterCommit() { refreshProgressSnapshot(task, now); }
+                });
+        } else {
+            refreshProgressSnapshot(task, now);
+        }
     }
 
     private void validateCommand(AnalysisTaskStateChangeCommand command) {

@@ -66,7 +66,7 @@ LectureLens 是面向课程录屏、讲座和网课的本地部署学习工作�
 > 大文件上传与长耗时分析不占用请求主链路，任务状态可以恢复，也不会被重复消费。
 
 - **上传与存储**：分片上传支持缺失分片查询和断点续传；合并前核验大小、MD5、实际分片和媒体头，原始媒体与制品写入 MinIO。
-- **异步执行**：RocketMQ 投递分析任务，有界 Runner 控制并发；MySQL 保存业务事实，Redis claim 防止重复执行并记录短期进度。
+- **异步执行**：RocketMQ 投递分析任务，有界 Runner 控制并发；MySQL 保存业务事实、outbox 和执行租约，Redis claim 提供快速去重及短期进度缓存。
 - **任务控制**：支持取消、失败重试、状态筛选和终态逻辑删除；SSE 断开后按有界退避重连，终态只触发一次详情刷新。
 
 ### 2. 🧩 时序多模态课程理解
@@ -150,8 +150,8 @@ sequenceDiagram
     User->>Web: 选择课程并分片上传
     Web->>API: 上传分片并完成媒体校验
     API->>Store: 保存原始视频
-    API->>State: 创建任务事实
-    API->>MQ: 投递分析任务
+    API->>State: 同事务写任务与 outbox
+    State->>MQ: 后台发布已提交事件
     API-->>Web: 返回任务状态
     MQ->>Runner: 异步消费
     Runner->>MediaAI: FFmpeg / FFprobe 解析媒体
@@ -222,7 +222,7 @@ npm --prefix frontend run dev
 | Production build | passed |
 | Production dependency audit | passed，0 high vulnerabilities |
 
-默认自动化测试使用 Mock、Fake 或禁用配置，不依赖真实 AI Key。CI 在 `push` 和 `pull_request` 上运行 Backend Test 与 Frontend Build，完整策略见[测试计划](TEST_PLAN.md)。
+默认自动化测试使用 Mock、Fake 或禁用配置，不依赖真实 AI Key。CI 在 `push` 和 `pull_request` 上运行后端测试、前端单测/构建/依赖审计，以及使用真实 MySQL、Redis、MinIO、RocketMQ 的 Mock E2E。清理交付、复现命令和验证边界见 [C0–C3 执行记录](docs/C0_C3_EXECUTION.md)，原测试计划见 [TEST_PLAN.md](TEST_PLAN.md)。
 
 <details>
 <summary>查看本地测试命令</summary>
