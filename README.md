@@ -1,46 +1,45 @@
 <div align="center">
 
   <h1>LectureLens</h1>
-  <p><strong>基于课程证据的 Study Agent · 实验阶段</strong></p>
+  <p><strong>基于课程证据的 Study Agent</strong></p>
   <p>从学习目标出发，选择工具、读取课程证据，生成可追溯的解释与练习，并保存可恢复的执行状态</p>
   <p><em>A course-grounded Study Agent with bounded tools, persistent runs and measurable outcomes.</em></p>
   <p>
-    <a href="https://github.com/a27497/lecturelens/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/a27497/lecturelens?style=flat-square"></a>
     <img alt="Python 3.12" src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white">
     <img alt="LangGraph" src="https://img.shields.io/badge/Agent-LangGraph-1C3C3C?style=flat-square">
     <img alt="PostgreSQL and pgvector" src="https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?style=flat-square">
     <img alt="Java 21" src="https://img.shields.io/badge/Java-21-E76F00?style=flat-square&logo=openjdk&logoColor=white">
     <img alt="Spring Boot 3.5.15" src="https://img.shields.io/badge/Spring%20Boot-3.5.15-6DB33F?style=flat-square&logo=springboot&logoColor=white">
     <img alt="Vue 3.5" src="https://img.shields.io/badge/Vue-3.5-42B883?style=flat-square&logo=vuedotjs&logoColor=white">
-    <img alt="MySQL 8.4" src="https://img.shields.io/badge/MySQL-8.4-4479A1?style=flat-square&logo=mysql&logoColor=white">
-    <img alt="Redis 8.8" src="https://img.shields.io/badge/Redis-8.8-DC382D?style=flat-square&logo=redis&logoColor=white">
-    <img alt="RocketMQ 5.3.4" src="https://img.shields.io/badge/RocketMQ-5.3.4-D77310?style=flat-square">
     <a href="https://github.com/a27497/lecturelens/actions/workflows/ci.yml"><img alt="GitHub Actions CI" src="https://img.shields.io/github/actions/workflow/status/a27497/lecturelens/ci.yml?branch=main&style=flat-square&label=CI"></a>
     <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-2F855A?style=flat-square"></a>
   </p>
 </div>
 
-当前开发状态（2026-09-20）：学习闭环 Phase 开发与有限范围验收已完成，未发布。冻结 AU：开发严格31/31、新保留严格8/8、独立PostgreSQL机制547项及真实闭环／恢复／权限验收通过，见 [Phase 完成报告](eval/phase-completion/FINAL_AU.md) 为准。下方各冻结候选的结果是历史记录；线上 C、默认反馈关闭和原账号路由保持不变。
+
+当前状态：**Study Agent 学习闭环已完成有限范围验收，尚未发布。** 冻结 AU 在已见公开课程的新目标上开发集严格 **31/31**、冻结后的全新保留集严格 **8/8**；同时通过 **547** 项 Python/PostgreSQL 机制测试、**1366** 项 Java 测试、**79** 项前端测试与真实浏览器闭环／恢复／取消／越权／删除验收。完整证据见 [AU 完成报告](eval/phase-completion/FINAL_AU.md)。
 
 <p align="center">
   <strong>Model-selected Tools</strong> ·
+  <strong>Course-grounded Evidence</strong> ·
   <strong>Persistent Runs &amp; Checkpoints</strong> ·
-  <strong>Fresh Holdout 8/8</strong> ·
-  <strong>Bounded AU Gate: Passed · Not Released</strong>
+  <strong>Fresh Holdout 8/8</strong>
 </p>
 
 <p align="center">
   <a href="#项目预览">项目预览</a> ·
+  <a href="#项目定位">项目定位</a> ·
   <a href="#核心能力">核心能力</a> ·
-  <a href="#真实长视频验证">真实验证</a> ·
   <a href="#系统流程">系统流程</a> ·
-  <a href="#安装概览">安装使用</a>
+  <a href="#测试与质量保障">验证结果</a>
 </p>
 
-
-L2.1 已实现可恢复的解释／出题执行与学习助手入口，见 [Study Agent 实施说明](docs/L2_STUDY_AGENT.md)。经过 BC、feedback-P、X、AN、AT 等历史候选迭代后，当前冻结 AU 已完成本轮有限范围学习闭环验收：开发31/31、全新保留8/8、547项机制测试及真实作答反馈/恢复/权限边界通过；候选仍未发布，自动评分、长期记忆和复习调度尚未实现，见 [AU 完成报告](eval/phase-completion/FINAL_AU.md)。
-
-Evidence 后台增量更新、删除重试和索引状态已实现；部署及 L2 接入边界见 [Evidence 同步](docs/L1_EVIDENCE_SYNC.md)。
+| 想证明什么 | LectureLens 怎么做 | 当前证据 |
+| --- | --- | --- |
+| 不只是 RAG 问答 | 模型根据学习目标选择检索、补读、计算、保存练习/拒答等工具，工具观察会影响下一步 | 真实课程任务 + 冻结 AU 评测 |
+| Agent 能恢复而不是“跑一次算一次” | Session / Run / 工具结果 / checkpoint 持久化到 PostgreSQL，支持取消、幂等恢复和中断续跑 | 独立 PostgreSQL 机制测试与恢复验收 |
+| 模型不能越过业务边界 | Java/MySQL 保持课程权属、Evidence revision 和删除的权威判断，Python 只消费已授权证据 | 越权、版本围栏、删除和迟到结果验收 |
+| 效果可测而不是只看 Demo | 开发集与冻结后新保留集分开，失败候选不改判，真实模型质量与确定性机制测试分开报告 | 开发 31/31；fresh holdout 8/8；失败历史保留 |
 
 ## 项目预览
 
@@ -67,23 +66,25 @@ Evidence 后台增量更新、删除重试和索引状态已实现；部署及 L
 
 ## 项目定位
 
-LectureLens 以课程学习任务为主线：用户提出目标，Python Agent 根据证据和工具结果选择下一步，生成带引用的解释与练习；执行状态可追踪、取消和恢复。Java 提供课程摄取、权属与版本校验、Evidence 和鉴权入口，Vue 呈现学习任务与产物。
+LectureLens 是一个**基于课程证据的 Study Agent**。用户给出学习目标后，Python Agent 不直接“生成答案”，而是在受限工具集中选择下一步：检索课程 Evidence、补读上下文、执行受限计算、生成练习、复核草稿，或在证据不足时停止。工具结果会回到 Agent 状态并影响后续决策。
 
-当前已实现受限工具循环与持久 Session/Run，仍处于实验阶段。真实课程评测暴露了错误答案、引用支持不足与拒答失败；作答评分、长期学习记忆和复习调度尚未实现。项目职责与后续验收标准见 [Agent 项目约束](docs/AGENT_PRODUCT_CONTRACT.md)。
+系统把“模型决策”和“业务权威”分开：Python/LangGraph 负责任务规划与学习产物，Java/MySQL 继续负责账号、课程、Evidence 权属、revision 与删除边界；PostgreSQL 保存可恢复的 Agent Session/Run/checkpoint。Vue 负责学习目标、练习、作答、反馈和历史恢复。
+
+当前已实现解释 → 练习 → 作答 → 证据反馈 → 修改的真实学习闭环，但仍是实验阶段。**通用自动评分、长期学习记忆与复习调度尚未交付**；AU 的 8/8 fresh holdout 只代表本轮已测课程与任务，不代表未见课程泛化。项目职责与验收边界见 [Agent 项目约束](docs/AGENT_PRODUCT_CONTRACT.md)。
 
 ## 核心能力
 
 ### 1. 基于目标的 Agent 执行
 
-- **统一模型管理**：每个账号独立配置服务连接与密钥，分别指定决策和复核模型；新 Run 冻结所选版本。提供 25 个服务/地域预设、常用模型快捷添加、带用途说明和版本折叠的模型发现（默认筛选课程 Agent 候选）、主动工具调用测试；预设不代表兼容性或教学质量已通过验收，见 [模型管理](docs/MODEL_MANAGEMENT.md)。百炼最新六题开发回归完成 6/6、完整拒答 2/2，但课程内语义仅 1/4，质量仍未过关，见 [回归报告](eval/bailian-pilot/REGRESSION.md)。
-- **模型选择工具**：使用标准 `tool_calls`，检索后可以补读证据、保存解释与两道练习，或报告证据不足；工具结果回填下一次模型决策。
-- **草稿复核与修订（实验）**：模型提交答案要点，Python 同源生成答案与评分依据；代码输出题可由受限解释器计算答案。拒绝反馈保留课程证据并驱动预算内修订。线上仍为 C；此前冻结BC已完成本轮L2.2验收：20/20正确类型、16/16内容合格、4/4正确拒答，391项机制测试及恢复／浏览器／删除检查通过。该结果仅涵盖已见课程上的新目标，AI来源核查，不证明通用自动评分能力；候选未发布。见 [长任务进度](eval/l22-completion/README.md)、[验收条件](docs/L2_PHASE_COMPLETION.md)及 [历史复核试验](docs/L2_QUALITY_REVIEW.md)。
-- **受限且可恢复**：LangGraph + PostgreSQL 保存 Session、Run、工具结果、事件与 checkpoint；约束调用次数、时间、引用和课程版本，支持取消及幂等恢复。
-- **学习产物**：解释和练习带课程时间引用；参考答案按需读取，刷新后恢复服务端产物。
-- **学习交互（未发布）**：学习助手作为课程默认入口；真实作答可保存、刷新恢复和查看修改记录。证据反馈单独保存，支持核对与纠正；默认关闭；冻结 feedback-P 开发6/6、全新保留作答8/8通过（AI来源核查、已见课程），历史失败保留，质量验收独立于 BC，见 [L3.1 进度](docs/L3_LEARNING_FLOW.md) 与 [反馈评测](eval/feedback-v1/README.md)。
-- **效果可检查**：固定真实课程任务、逐题来源复核、失败记录及延迟报告。历史本地配置与 BC 等候选结果继续保留；当前冻结 AU 在已见课程的新目标上开发严格31/31、全新保留严格8/8，并完成547项机制测试与真实闭环/恢复/权限验收。该结果不代表未见课程泛化或自动评分能力，见 [AU 完成报告](eval/phase-completion/FINAL_AU.md)。
+- **模型选择工具，而不是固定 Workflow**：使用标准 `tool_calls`；模型可以检索、补读、调用受限计算、保存解释与两道练习，或报告证据不足。每次工具观察都会回填下一轮决策。
+- **课程证据约束**：所有教学结论和练习答案都要绑定当前课程 Evidence；Java 在进入 Agent 前后重新校验 owner、course、revision 和删除状态，防止模型扩大权限或引用失效内容。
+- **草稿复核与预算内修订**：生成候选后按学习目标条件、逐字段证据支持、答案一致性和课程方法范围做复核；失败反馈进入下一轮修订，但不能增加原始调用预算来“刷过”门槛。
+- **可恢复执行**：LangGraph + PostgreSQL 保存 Session、Run、模型/工具事件和 checkpoint；支持取消、重启恢复、调用中断恢复、迟到结果隔离和幂等重放。
+- **真实学习交互**：学习助手支持练习产物、真实作答、修改历史和证据反馈；刷新后从服务端恢复，不依赖前端内存维持状态。
+- **统一模型管理**：账号可分别绑定决策模型与复核模型，新 Run 冻结连接版本；连接测试与模型列表只验证可调用性，不等于教学质量通过。
+- **可复验质量门槛**：最终 AU 在开发集严格31/31、冻结后 fresh holdout 严格8/8；历史失败和旧候选保留在 `eval/` 与 evidence tag 中，机制测试不冒充真实模型效果。
 
-实现与复现入口：[Agent runtime](agent-service/src/lecturelens_agent/study/runtime.py)、[工具协议](agent-service/src/lecturelens_agent/study/contracts.py)、[L2 说明](docs/L2_STUDY_AGENT.md)、[真实评测](docs/L2_QUALITY_EVALUATION.md)。
+实现与复现入口：[Agent runtime](agent-service/src/lecturelens_agent/study/runtime.py)、[工具协议](agent-service/src/lecturelens_agent/study/contracts.py)、[产品边界](docs/AGENT_PRODUCT_CONTRACT.md)、[AU 完成报告](eval/phase-completion/FINAL_AU.md)。
 
 ### 2. 🎬 课程准备与视频任务链路
 
@@ -125,7 +126,10 @@ Evidence     timestamp / keyframe
 - **失败可追踪**：AI 调用记录保留阶段、Provider、模型、状态、次数与耗时；章节、视觉结果和学习资料通过校验后原子替换。
 - **敏感信息控制**：Credential Leak Detector 区分课程术语与真实凭据；日志和 API 不暴露密钥、对象存储 key、本地路径、Prompt 或原始响应。
 
-## 真实长视频验证
+## 课程摄取实测（补充）
+
+<details>
+<summary>查看 45:17 ASR + VLM 与 68:10 内嵌字幕长视频实测</summary>
 
 ### 场景 A｜45:17 真实外部 ASR + VLM
 
@@ -156,6 +160,8 @@ Evidence     timestamp / keyframe
 验证基线：`main@81a300a`
 
 上述长视频历史基线的自动化门禁：Backend `1308 tests`；Frontend `12 files / 36 tests`。当前 Agent/Python、Java 和前端验证见下方「测试与质量保障」；长视频摄取成功不代表 Agent 学习任务质量合格。
+
+</details>
 
 ## 系统流程
 
@@ -285,14 +291,14 @@ uv run --env-file ../.env.agent.local uvicorn lecturelens_agent.app:create_app -
 
 ## 测试与质量保障
 
-| 检查项 | 结果 |
+| 检查项 | 当前主干结果 |
 | --- | --- |
-| Agent / Python | 102 tests passed，含真实 PostgreSQL、模型隔离/快照与草稿修订恢复 |
-| Java 业务与证据服务 | 1365 tests passed |
-| Frontend | 16 files / 52 tests passed |
-| TypeScript | passed |
-| Production build | passed |
-| 真实模型质量 | 隔离冻结BC通过本轮小样本门槛；线上C未变，未证明跨课程泛化，独立于机制测试 |
+| Agent / Python | **547 passed**，使用独立 PostgreSQL/pgvector 测试库 |
+| Java 业务与证据服务 | **1366 passed** |
+| Frontend | **19 files / 79 tests passed** |
+| Production build / TypeScript | **passed** |
+| MySQL migrations + Mock AI E2E | **passed** |
+| 真实模型质量 | AU 开发集 **31/31**，冻结后 fresh holdout **8/8**；与机制测试分开报告 |
 
 默认自动化测试使用 Mock、Fake 或禁用配置，不依赖真实 AI Key。CI 在 `push` 和 `pull_request` 上运行 Agent Python lint/测试（真实 PostgreSQL/pgvector）、Java 测试、前端单测/构建/依赖审计，以及摄取基础设施的 Mock E2E。真实模型任务评测单独执行，不能用测试夹具代替模型质量。历史清理验证见 [C0–C3 执行记录](docs/C0_C3_EXECUTION.md)，课程质量评测见 [L2.2 验证摘要](eval/study-v1/verification.json)，本轮模型管理测试与真实本地连接验收见 [模型管理验证摘要](eval/model-management/verification.json)。
 
@@ -325,7 +331,7 @@ npm audit --omit=dev --audit-level=high
 ```text
 LectureLens/
 ├── agent-service/        # Python Agent 核心、工具、Context、Run、索引与测试
-├── eval/study-v1/        # 固定课程任务、来源与质量报告
+├── eval/                 # 精选公开评测证据、冻结任务与最终报告
 ├── backend/              # Java 鉴权、课程摄取、权威 Evidence 与签名网关
 ├── frontend/             # Vue 学习目标、执行状态、产物与课程阅读
 ├── infra/                # RocketMQ 本地配置
@@ -347,7 +353,7 @@ LectureLens/
 - 基础设施和第三方 AI 请求使用部署者自己的密码与 API Key；`.env`、媒体、日志和生成物不得提交到仓库。
 - 普通课程 QA 保持单轮 RAG 路径；学习助手由 Python Agent 负责受限工具循环和持久执行。
 - 已使用多语言 Embedding、pgvector 与 LangGraph；工具权限限定在当前用户、课程与证据版本。
-- 隔离BC通过本轮有限范围L2.2门槛；线上C仍未达标，候选未发布。自动评分、长期学习记忆与复习安排尚未实现。
+- 冻结 AU 已通过本轮有限范围质量门槛，但候选尚未发布；该结果不代表未见课程泛化。自动评分、长期学习记忆与复习安排尚未实现。
 - 当前仓库面向可复现的本地部署，不承诺商业多租户隔离、在线 SaaS 可用性或性能 SLA。
 
 漏洞报告和安全非目标见[安全策略](SECURITY.md)。启用 OCR 或视觉分析前，部署者应确认第三方服务条款、调用费用和数据合规要求。
@@ -381,10 +387,3 @@ LectureLens/
 ## License
 
 许可协议详见 [MIT License](LICENSE)。
-
-
-2026-09-20 真实闭环后续验收：实际浏览器上传→新执行出题→作答→反馈→修改→再次反馈，以及重启、调用中断恢复、取消、越权和删除检查已完成；补上取消后查看历史反馈的入口，前端79项及独立PostgreSQL作答/反馈46项通过。未见MIT线性代数课程严格质量仅4/6，提示调整候选Q未改善并已恢复P；四份新课程作答反馈正确不抵消出题/拒答问题。暂未开发同Session自适应后续练习，线上不变。见 [真实学习闭环结果](eval/learning-loop/RESULTS.md)。
-
-2026-09-20 字段支持修复后续：候选 T 已增加逐字段来源隔离、候选不可见的课程覆盖观察、相邻教学步骤补读和答案匹配记录；独立 PostgreSQL 的完整 Python 测试459项通过。R/S/T对七个已消费目标严格通过4/7、5/7、6/7，最终仍误接受课程未讲授的解集分类。新保留题未消耗，当时工作区T保持实验状态，线上C与原模型路由不变；先修复应用任务与已演示方法的范围对应，再推进新保留验收。见 [字段支持修复结果](eval/field-support/RESULTS.md)。
-
-2026-09-20 方法范围约束后续：实验候选X新增生成前的课程方法观察、模型选方法及独立范围判断，原交点越界开发问题已通过回归。完整Python测试467项、固定诊断4/4、已消费开发7/7；新保留八题严格质量5/8，仍有双点任务错误拒绝、明确条件遗漏和拒答夹带未教答案。当时的工作区X未发布，线上C和原路由不变；下一步先修复目标条件与拒答正文，再冻结新目标。见 [方法范围结果](eval/method-scope/RESULTS.md)。
