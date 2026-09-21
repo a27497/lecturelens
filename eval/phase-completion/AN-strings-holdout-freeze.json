@@ -1,6 +1,0 @@
-{
-  "source_sha256": "6531876524f0b0e40bc8e58c4b0d74f316b840f9214d1abee4d7071f4b6a72f3",
-  "tasks_sha256": "e8baeb7f53cc84bc78f432425bb6deddd113e1ae3dba5e3412339c0e7293f084",
-  "frozen_at": 1789927511.7342908,
-  "data_status": "Authored after frozen source and strict consumed-regression gate; never used for candidate development"
-}

@@ -29,7 +29,7 @@
 | 语义复核拒绝候选 | 0 | 0 | 0 |
 | 全结果 P50 / P95 | 10.81 / 12.64 秒 | 7.85 / 10.22 秒 | 9.37 / 20.24 秒 |
 
-独立报告：[B](regression-b-report.json)、[C](regression-c-report.json)。延迟含失败，由数据库 Run 创建至结束计算；单轮少量样本，不作受控性能结论。B 开始几秒与本地前端检查重叠。
+独立报告：[B](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/bailian-pilot/regression-b-report.json)、[C](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/bailian-pilot/regression-c-report.json)。延迟含失败，由数据库 Run 创建至结束计算；单轮少量样本，不作受控性能结论。B 开始几秒与本地前端检查重叠。
 
 B 的 02/03/04 因决策工具格式失败，没有产物；05/06 成功保存拒答，复核不再截断。随后单独重建 B02 决策上下文做了一次诊断：返回合法工具参数，未重现问题。它不是评测题通过记录，不替换 B02。该调用额外使用输入 2,201、输出 346 tokens，耗时约 8.11 秒。
 

@@ -21,7 +21,7 @@ L 的失败包括：评分规则错误时，复核器要求删除正确输出 No
 | 题组 | 判定正确 | 误接受 | 误拒绝 | 协议失败 | 连有效反馈一起验收 |
 | --- | --- | --- | --- | --- | --- |
 | [L 已见八题开发回放](report-m.json) | 5/8 | 0 | 0 | 3 | 5/8 |
-| [M 新八题](report-m-holdout.json) | 2/8 | 0 | 3 | 3 | 1/8 |
+| [M 新八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-m-holdout.json) | 2/8 | 0 | 3 | 3 | 1/8 |
 
 协议失败不算正确拒绝。逐题检查由 Codex 对照完整草稿和课程引用完成，不是盲评或人工金标。报告分别保留二元判定、反馈验收与对失败原始参数的离线诊断。
 
@@ -36,7 +36,7 @@ L 的失败包括：评分规则错误时，复核器要求删除正确输出 No
 
 ## 实际修订与持久化
 
-[两份种子草稿及验收要求](repair-m-cases.json)在任何 M 调用之前选定。它们是已见开发失败；检索和第一次提交由脚本固定，后续复核/决策才是真实模型。实际运行 LangGraph 和独立 `lecturelens_agent_test` PostgreSQL；固定公开 Evidence，不验证自主生成、Java 鉴权、召回、媒体摄取或浏览器。
+[两份种子草稿及验收要求](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/repair-m-cases.json)在任何 M 调用之前选定。它们是已见开发失败；检索和第一次提交由脚本固定，后续复核/决策才是真实模型。实际运行 LangGraph 和独立 `lecturelens_agent_test` PostgreSQL；固定公开 Evidence，不验证自主生成、Java 鉴权、召回、媒体摄取或浏览器。
 
 | 草稿 | 结果 | 外部真实调用 | Run 调用预留（含两次注入） | token 预留 | 耗时 |
 | --- | --- | --- | --- | --- | --- |
@@ -47,15 +47,15 @@ rl-04 的真实决策上下文包含正确的 `ready / ready / None` 求解与�
 
 rk-06 的原始参数现在可定位：课程求解为正确的 `with return / True`，但又对 question_2 重复报告 `unsupported_question`，额外 finding 还只有课程锚点、没有候选字段锚点。主校验先在重复字段处失败，未进入修订。L 同题失败时没有保存这些参数；本次结果不能倒推 L 当时具体失败原因。
 
-[修订报告](report-m-repair.json)记录了完整边界。四次真实调用合计输入 14,874、输出 745 tokens；解析后的四份原始响应全部留存。原始记录落盘后，脚本清理了本轮专属会话、Run、产物、工具结果、checkpoint、临时模型连接和路由，回查剩余零行。线上仅只读取得指定用户配置。
+[修订报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-m-repair.json)记录了完整边界。四次真实调用合计输入 14,874、输出 745 tokens；解析后的四份原始响应全部留存。原始记录落盘后，脚本清理了本轮专属会话、Run、产物、工具结果、checkpoint、临时模型连接和路由，回查剩余零行。线上仅只读取得指定用户配置。
 
 成功 Run 的 token 预留已达 62,260，接近原有 64,000 上限；不能假设更长草稿或额外补查仍能完成。本轮不扩大预算来掩盖这一限制。
 
 ## 冻结与验证
 
 - M 源码 SHA-256：`7c25036f8bf696fdd84afee01e45c7f70c0c6256dc4ecf91bf05ecbf7a20a043`。三组试验同源，源码与脚本身份均核对，评测后未修改候选。
-- [新八题](holdout-m.json)在冻结源码后、任何 M 调用前预标注，检查未打印的 None、规则强加额外输出、连续两次完整调用、部分给分和无据比较断言。仍使用已见片段、成对题组，不是独立课程抽样或完整 L2 保留集。现在已经消费，下轮不能再作为未见验收数据。
-- [L 回放副本](development-l-replay.json)明确标为已见开发；原 L/K 数据和成绩不改。快照、真实输入输出及失败记录保存在 `.data/reviewer-probe/20260919-m*`。
+- [新八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/holdout-m.json)在冻结源码后、任何 M 调用前预标注，检查未打印的 None、规则强加额外输出、连续两次完整调用、部分给分和无据比较断言。仍使用已见片段、成对题组，不是独立课程抽样或完整 L2 保留集。现在已经消费，下轮不能再作为未见验收数据。
+- [L 回放副本](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/development-l-replay.json)明确标为已见开发；原 L/K 数据和成绩不改。快照、真实输入输出及失败记录保存在 `.data/reviewer-probe/20260919-m*`。
 - **189 项 Python 测试通过，无跳过**，使用独立 PostgreSQL/pgvector。覆盖求解引用范围、缺失/重复信息、事实反馈边界、规范 ID、私有观察和 checkpoint 恢复，以及失败参数留存、密钥遮盖和客户端方法恢复。Ruff、格式及补丁空白检查通过，见 [验证摘要](verification-m.json)。未改 Java、前端或部署路径，未跑浏览器全栈；既有 Starlette/AnyIO 弃用提示仍在。
 
 本轮证明了一个评分冲突案例可以在真实修订中保留正确答案，但整体候选失败。工作区保留 M 作为未发布实验，线上仍为 C。下一步应先简化重复的问题报告通道，并单独验证条件评分规则是否适用；继续增加输出字段或只看求解正确率，不能解决当前验收问题。

@@ -20,12 +20,12 @@
 
 | 试验 | 判对 | 漏过错误草稿 | 误拒绝正确草稿 | 协议失败 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| [F](report-f.json) | 5/8 | 1 | 0 | 2 | 逐字段长输出出现一次截断、一次契约失败 |
-| [G](report-g.json) | 7/8 | 0 | 0 | 1 | 紧凑输出；评分矛盾虽被拒绝，纠正意见仍只扩充答案 |
-| [H](report-h.json) | 7/8 | 0 | 0 | 1 | 区分三类评分关系；仍将矛盾误当缺项，一条引用超过该版本长度限制 |
-| [I](report-i.json) | 7/8 | 0 | 0 | 1 | 识别原评分矛盾；完整输出题仍混淆评分关系 |
-| [J 开发集](report-j.json) | 7/8 | 0 | 0 | 1 | 补齐规范引用 ID 的持久化与恢复，最终工作区源码 |
-| [J 新草稿检查](report-j-holdout.json) | 6/8 | 1 | 0 | 1 | 仍漏过另一种评分矛盾，引文精确性也有失败 |
+| [F](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-f.json) | 5/8 | 1 | 0 | 2 | 逐字段长输出出现一次截断、一次契约失败 |
+| [G](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-g.json) | 7/8 | 0 | 0 | 1 | 紧凑输出；评分矛盾虽被拒绝，纠正意见仍只扩充答案 |
+| [H](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-h.json) | 7/8 | 0 | 0 | 1 | 区分三类评分关系；仍将矛盾误当缺项，一条引用超过该版本长度限制 |
+| [I](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-i.json) | 7/8 | 0 | 0 | 1 | 识别原评分矛盾；完整输出题仍混淆评分关系 |
+| [J 开发集](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-j.json) | 7/8 | 0 | 0 | 1 | 补齐规范引用 ID 的持久化与恢复，最终工作区源码 |
+| [J 新草稿检查](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-j-holdout.json) | 6/8 | 1 | 0 | 1 | 仍漏过另一种评分矛盾，引文精确性也有失败 |
 
 所有协议失败均记为错误，不算正确拒绝。F 的记录只有失败代码与 usage，不能追认其具体模型意见；从 G 起额外保存 `_request` 返回的工具参数，便于审查协议校验失败。截断发生在返回完整工具参数前时，仍只有安全诊断与 usage。历史 C/E 报告、原题标签与全部失败均保留。
 
@@ -45,7 +45,7 @@ rp-02 **仍失败**：模型指出应有两行输出，且引用了支持内部�
 
 ## 新样本与冻结边界
 
-[新八份草稿及预标注](holdout-j.json)包含第二题的评分矛盾、标准答案遗漏必需类型、课程文字定义的完整输出以及新增实现层断言。均未调用过模型；原文仍来自已见 MIT 函数课程片段，成对草稿也非独立抽样，只能称为小规模新草稿保留检查，不能代替新课程或完整 L2 保留集。
+[新八份草稿及预标注](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/holdout-j.json)包含第二题的评分矛盾、标准答案遗漏必需类型、课程文字定义的完整输出以及新增实现层断言。均未调用过模型；原文仍来自已见 MIT 函数课程片段，成对草稿也非独立抽样，只能称为小规模新草稿保留检查，不能代替新课程或完整 L2 保留集。
 
 题目与标签在查看其任何模型输出前写好。早期未执行的 H/I 候选绑定留在私有目录；只更新最终 J 源码绑定，没有修改这些草稿与预标注。调用前冻结题集、源码、脚本、Evidence、模型身份与顺序。J 开发集和新样本的完整源码摘要相同，且最终工作区 Python 源码与该摘要一致。评测后没有继续用这些新样本调参；它们现已成为已见数据。
 
@@ -55,6 +55,6 @@ rp-02 **仍失败**：模型指出应有两行输出，且引用了支持内部�
 
 ## 机制验证与下一步
 
-**170 项 Python 测试通过，无跳过**，使用独立 `lecturelens_agent_test` PostgreSQL/pgvector；Ruff 检查、格式检查与补丁空白检查通过。[验证摘要](verification-fix.json)。覆盖评分分类契约、伪造/错字段/未引用/截断外引文、失败 usage、安全诊断、拒绝观察持久化、规范 ID 恢复映射、取消/版本/预算与 checkpoint，以及保留集身份和防覆盖边界。既有 Starlette/AnyIO 弃用警告仍在。本轮未改 Java 或前端，未重跑浏览器/全栈。
+**170 项 Python 测试通过，无跳过**，使用独立 `lecturelens_agent_test` PostgreSQL/pgvector；Ruff 检查、格式检查与补丁空白检查通过。[验证摘要](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/verification-fix.json)。覆盖评分分类契约、伪造/错字段/未引用/截断外引文、失败 usage、安全诊断、拒绝观察持久化、规范 ID 恢复映射、取消/版本/预算与 checkpoint，以及保留集身份和防覆盖边界。既有 Starlette/AnyIO 弃用警告仍在。本轮未改 Java 或前端，未重跑浏览器/全栈。
 
 继续保持线上 C 和模型配置。下一步需解决逐条评分规则判断不稳定，以及正确内容纠正因错误评分分类或引文抄写而协议失败的问题；新的候选必须另取未见草稿检验。之后仍需证明完整 Agent 能根据意见修订，并通过正式内容与拒答门槛，才能考虑发布或 L3。

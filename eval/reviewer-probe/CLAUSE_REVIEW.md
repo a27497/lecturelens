@@ -19,9 +19,9 @@
 
 | 题组 | 判定正确 | 误接受 | 误拒绝 | 协议失败 |
 | --- | --- | --- | --- | --- |
-| [原开发八题](report-k.json) | 7/8 | 0 | 0 | 1 |
-| [上一轮已见八题](report-k-previous.json) | 6/8 | 1 | 0 | 1 |
-| [新八题](report-k-holdout.json) | 8/8 | 0 | 0 | 0 |
+| [原开发八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-k.json) | 7/8 | 0 | 0 | 1 |
+| [上一轮已见八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-k-previous.json) | 6/8 | 1 | 0 | 1 |
+| [新八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-k-holdout.json) | 8/8 | 0 | 0 | 0 |
 
 所有调用使用原配置 `qwen3-max`、temperature=0.2、30 秒单次上限、300 输出 tokens，无重试。合计输入 82,302、输出 1,366 tokens，无缺失 usage；这不是费用账单。三个题组串行运行、共享相同冻结源码。线上版本未重跑作同期对照，不能把不同题组或历史数据视为受控 A/B。
 
@@ -30,7 +30,7 @@
 - **rp-02 与 rh-06 协议失败**：模型提出了正确的完整输出纠正，却只选择课程片段，没有选择被批评的候选字段；rh-06 还多报了规则结果。验证器拒绝这类不完整或错位输出，失败不算正确拒绝。
 - **rh-02 仍漏检**：评分规则既奖励两行答案又把两行答案判零分，逐条分类仍未识别。增加逐条输出不能保证模型认真执行每个判断。
 
-新题逐项检查表保存在 [报告的 `manual_feedback_assessment`](report-k-holdout.json)。四份正确草稿全部接受；四份错误草稿都被拒绝，但其中两份最终意见有缺陷：
+新题逐项检查表保存在 [报告的 `manual_feedback_assessment`](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-k-holdout.json)。四份正确草稿全部接受；四份错误草稿都被拒绝，但其中两份最终意见有缺陷：
 
 | 新题 | 二元判定 | 最终反馈检查 |
 | --- | --- | --- |
@@ -47,14 +47,14 @@
 
 ## 冻结与数据边界
 
-- [K 新八题及预标注](holdout-k.json)在候选源码冻结后、任何 K 调用前写好，包含条件规则、分项计分、答案与错误规则相互一致，以及新无据操作断言。仍使用已见课程片段，成对样本非独立抽样，不替代新课程或完整 L2 保留集。
-- [上一轮八题的开发回放副本](development-j-replay.json)明确标为已见开发数据；原 `holdout-j.json`、原标签和历史分数没有修改。
+- [K 新八题及预标注](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/holdout-k.json)在候选源码冻结后、任何 K 调用前写好，包含条件规则、分项计分、答案与错误规则相互一致，以及新无据操作断言。仍使用已见课程片段，成对样本非独立抽样，不替代新课程或完整 L2 保留集。
+- [上一轮八题的开发回放副本](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/development-j-replay.json)明确标为已见开发数据；原 `holdout-j.json`、原标签和历史分数没有修改。
 - 新保留题检查除对照开发集外，也排除此前保留题的 ID/完全相同草稿。程序不能识别语义近似，报告不声称这些主题完全独立。
 - 三份公开报告包含源码、脚本、题集、Evidence、配置与运行顺序摘要。原始输入、输出、失败记录和源码在 Git 忽略目录 `.data/reviewer-probe/20260919-k*` 中。最终工作区 Python 源码与冻结摘要一致，评测后没有继续修改候选。
 - 新题现在也成为已见数据，下一候选不得再把它作为未见验收题。没有重计 J/K 的错误输出或用新成功覆盖旧失败。
 
 ## 验证与后续边界
 
-**177 项 Python 测试通过，无跳过**，使用独立 `lecturelens_agent_test` PostgreSQL/pgvector；最终源码的相关 70 项测试、Ruff、格式及补丁空白检查通过。[验证摘要](verification-k.json)。覆盖逐条结果完整性、遗漏/重复/未知/越权编号、原文回填、截断范围、条件/缺项/冲突汇总、规范 ID 和恢复，以及保留题防复用。既有 Starlette/AnyIO 弃用提示仍在。未改 Java、前端或线上启动路径，未执行浏览器全栈。
+**177 项 Python 测试通过，无跳过**，使用独立 `lecturelens_agent_test` PostgreSQL/pgvector；最终源码的相关 70 项测试、Ruff、格式及补丁空白检查通过。[验证摘要](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/verification-k.json)。覆盖逐条结果完整性、遗漏/重复/未知/越权编号、原文回填、截断范围、条件/缺项/冲突汇总、规范 ID 和恢复，以及保留题防复用。既有 Starlette/AnyIO 弃用提示仍在。未改 Java、前端或线上启动路径，未执行浏览器全栈。
 
 当前不发布 K。后续应先处理**错误规则分类覆盖有效事实纠正**这一已观察到的缺陷，并将规则判断与课程事实判断分别保留、分别验收；不能继续只优化二元拒绝率。完整真实 Agent 修订、预算内完成和新的保留任务质量仍须单独证明，不进入 L3。

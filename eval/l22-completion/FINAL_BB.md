@@ -24,8 +24,8 @@ BB已见开发此前16/16不能替代本轮13/16。两个正式队列原始输�
 
 后续BC收紧字符串和排序方法概念的生成契约；BB保留任务已消费，后续冻结后需另写保留题。Phase继续，未进入L3。
 
-- [候选身份与预算](final-bb-freeze.json)
-- [固定任务](final-bb-cases.json)
-- [C逐题结果](final-bb-baseline-c-report.json)
-- [BB逐题结果](final-bb-candidate-report.json)
-- [此前引用审阅更正](citation-review-errata.json)
+- [候选身份与预算](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bb-freeze.json)
+- [固定任务](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bb-cases.json)
+- [C逐题结果](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bb-baseline-c-report.json)
+- [BB逐题结果](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bb-candidate-report.json)
+- [此前引用审阅更正](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/citation-review-errata.json)

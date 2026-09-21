@@ -25,7 +25,7 @@
 <p align="center">
   <strong>Model-selected Tools</strong> ·
   <strong>Persistent Runs &amp; Checkpoints</strong> ·
-  <strong>20 Real-course Eval Tasks</strong> ·
+  <strong>Fresh Holdout 8/8</strong> ·
   <strong>Bounded AU Gate: Passed · Not Released</strong>
 </p>
 

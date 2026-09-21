@@ -20,7 +20,7 @@ AT 原开发部分内容合格5/8，新保留部分4/8；此前单独开发回�
 
 这十道保留题现已消费，后继候选必须冻结后再编写新的保留题。Phase保持进行中，不进入L3，不部署。
 
-- [冻结身份](final-at-freeze.json)与[任务](final-at-cases.json)
-- [C报告](final-at-baseline-c-report.json)与[逐题复核](final-at-baseline-c-reviews.json)
-- [AT报告](final-at-candidate-report.json)与[逐题复核](final-at-candidate-reviews.json)
-- [浏览器](at-formal-browser-report.json)、[重启恢复](at-formal-verify-report.json)、[取消](at-formal-cancel-report.json)
+- [冻结身份](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-freeze.json)与[任务](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-cases.json)
+- [C报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-baseline-c-report.json)与[逐题复核](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-baseline-c-reviews.json)
+- [AT报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-candidate-report.json)与[逐题复核](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-at-candidate-reviews.json)
+- [浏览器](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/at-formal-browser-report.json)、[重启恢复](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/at-formal-verify-report.json)、[取消](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/at-formal-cancel-report.json)

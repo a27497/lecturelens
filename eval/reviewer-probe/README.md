@@ -23,7 +23,7 @@
 | 协议失败 / 超时 | 0 | 0 |
 | 已知输入 / 输出 tokens | 12,471 / 122 | 14,075 / 513 |
 
-逐项结果和冻结摘要：[C 报告](report-c.json)、[E 报告](report-e.json)。16 次调用合计输入 26,546、输出 635 tokens，无缺失 usage；不是费用账单。题集、源码、脚本、实际配置、Evidence 和顺序均已核对，预标注未按输出修改。
+逐项结果和冻结摘要：[C 报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-c.json)、[E 报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-e.json)。16 次调用合计输入 26,546、输出 635 tokens，无缺失 usage；不是费用账单。题集、源码、脚本、实际配置、Evidence 和顺序均已核对，预标注未按输出修改。
 
 | 固定草稿 | C | E |
 | --- | --- | --- |

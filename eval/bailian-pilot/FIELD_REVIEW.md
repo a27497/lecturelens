@@ -19,7 +19,7 @@
 
 ## D：保留的中间失败
 
-[D 报告](regression-d-report.json)：3/6 Run 完成，课程内完整达标 0/4，完整拒答 0/2。D 没有部署。
+[D 报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/bailian-pilot/regression-d-report.json)：3/6 Run 完成，课程内完整达标 0/4，完整拒答 0/2。D 没有部署。
 
 - 01：格式规则过严，已换行的第二份草稿仍因缺少围栏被拒绝；同时两份解释的行内引用不匹配未被首个反馈包含。E 放宽排版要求并合并缺陷反馈。
 - 02：布尔答案正确，但评分点加入“逻辑值”等同义表述不得分的无据限制，不能完整达标。
@@ -31,7 +31,7 @@
 
 ## E：最终候选结果
 
-[E 完整报告](regression-e-report.json)。以下为 Codex 对照原始课程片段的独立 AI 复核，不是盲评或人工金标，运行时模型意见不作为评分依据。
+[E 完整报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/bailian-pilot/regression-e-report.json)。以下为 Codex 对照原始课程片段的独立 AI 复核，不是盲评或人工金标，运行时模型意见不作为评分依据。
 
 | 指标 | 线上 C | 中间 D | 最终 E |
 | --- | --- | --- | --- |

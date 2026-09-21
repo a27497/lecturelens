@@ -26,7 +26,7 @@ X 源码 SHA256：`c4c4725fc9c4e729c34be254b0a8cee3799e07c80b6604db3866b1d2bfa71
 | W | 4/4 | 6/7 | 范围判断改为独立必填；一题因模型重新空格化字幕引文而失败 |
 | X | 4/4 | 7/7 | 改为选择编号、Python回填原文；原交点任务保持点检查和纠错，没有再教学解集分类 |
 
-U/V 协议失败不计作正确拒绝。W 的逐字引文失败也保留，X 没有放宽原文存在性标准或自动接受模型改写。各版源码快照、原始输入、响应及失败日志均保留。见 [固定诊断记录](development-probe-results.json)、[W 回归](W-regression-review.json)、[X 回归](X-regression-review.json)。
+U/V 协议失败不计作正确拒绝。W 的逐字引文失败也保留，X 没有放宽原文存在性标准或自动接受模型改写。各版源码快照、原始输入、响应及失败日志均保留。见 [固定诊断记录](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/method-scope/development-probe-results.json)、[W 回归](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/method-scope/W-regression-review.json)、[X 回归](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/method-scope/X-regression-review.json)。
 
 ## 新保留八题
 
@@ -49,7 +49,7 @@ X 的七题开发核查结束后，才冻结五个线性代数目标和三个字
 
 最终 Python 完整测试 **467 passed，0 skipped**，使用独立 PostgreSQL `lecturelens_agent_test`。新增覆盖方法来源绑定、伪造来源/引文、方法切换、缺失或错误选择、任务范围与答案正确性分离、公共数据隔离，以及恢复后复用方法观察。Ruff 与差异空白检查通过。Java/前端本轮未改，未重跑其测试；上一轮浏览器验收不冒充本轮质量验收。
 
-外部调用 **97次，均取得响应**：完整 Agent 执行81次、固定诊断16次。部分响应未满足协议，已计为失败。已知输入175,395 token，输出16,398 token；原有 Run 总预算未提高。账本、源码/输入哈希与检查结果见 [审计记录](acceptance-audit.json)。私有原文、账号、调用请求/响应和源码快照位于忽略目录 `.data/method-scope-20260920/`；隔离服务在结束后停止，测试库和课程保留用于回放。
+外部调用 **97次，均取得响应**：完整 Agent 执行81次、固定诊断16次。部分响应未满足协议，已计为失败。已知输入175,395 token，输出16,398 token；原有 Run 总预算未提高。账本、源码/输入哈希与检查结果见 [审计记录](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/method-scope/acceptance-audit.json)。私有原文、账号、调用请求/响应和源码快照位于忽略目录 `.data/method-scope-20260920/`；隔离服务在结束后停止，测试库和课程保留用于回放。
 
 ## 下一入口
 

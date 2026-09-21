@@ -1,8 +1,0 @@
-{
-  "candidate": "feedback-A",
-  "source_sha256": "4e9926cf3edbbd6107515f7a7b3fd8239fda05bb90d55247a7964ed7b33e6a39",
-  "phase": "development",
-  "dataset_sha256": "128191d031fb9168c29d73c8a817f5d1dd6c04a8a383efbf905ca27a67fc382a",
-  "max_all_model_calls": 84,
-  "fresh_holdout_authored": false
-}

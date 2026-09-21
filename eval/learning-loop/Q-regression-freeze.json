@@ -1,6 +1,0 @@
-{
-  "source_sha256": "9b27b6edfcf1c1c0ee937e4cd110b438051cf6e2df6295902131c5ca9043a3bf",
-  "tasks_sha256": "5c78c1839d82b11f168bcdb920b885aa32d4c244fd02ec2cddc9d6cdeb62c477",
-  "data_status": "Consumed P tasks; regression only",
-  "changes": "Generation and review clarify demonstrated-method transfer, per-sentence own citations and explicit new-example requests."
-}

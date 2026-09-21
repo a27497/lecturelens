@@ -21,7 +21,7 @@
 
 - [冻结代码、模型与预算](final-bc-freeze.json)
 - [固定任务及预期要点](final-bc-cases.json)
-- [C逐题报告](final-bc-baseline-c-report.json)／[来源审阅](final-bc-baseline-c-reviews.json)
+- [C逐题报告](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bc-baseline-c-report.json)／[来源审阅](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/final-bc-baseline-c-reviews.json)
 - [BC逐题报告](final-bc-candidate-report.json)／[来源审阅](final-bc-candidate-reviews.json)
 
 候选源码SHA-256：`2c8f835c0a3b274e54cfa78b06e7c39e33ff8809915e44b58115bf75c4a152bd`。数据集SHA-256：`615200aaf74a0e619740532a149fe9e2ed96861638eecd3ad77260f2f6b24e2c`。工作区Python源码与冻结候选复核一致，旧C快照SHA未变。
@@ -43,7 +43,7 @@
 
 最终同一BC进程重启后，20份产物及私有答案、事件尾游标保持一致；重复START返回同一Run且模型次数不增加。另建取消Run验证没有发布产物。真实浏览器验证刷新恢复、两题、请求前隐藏答案；桌面与390px手机截图已核查，无页面横向溢出。这些检查独立于真实模型语义分数。
 
-删除前以0600权限私有备份完整PostgreSQL历史，归档目录与全量解码均验证成功。4个隔离课程即时HTTP 404；542个Session／Run及其产物、工具结果、事件、证据索引和checkpoint行全部清零，保留4个删除tombstone。线上课程未受影响。见 [最终验证摘要](verification.json)、[恢复](bc-formal-verify-report.json)、[浏览器](bc-formal-browser-report.json)、[取消](bc-formal-cancel-report.json)、[删除](bc-formal-cleanup-report.json)和[备份摘要](bc-history-backup-manifest.json)。
+删除前以0600权限私有备份完整PostgreSQL历史，归档目录与全量解码均验证成功。4个隔离课程即时HTTP 404；542个Session／Run及其产物、工具结果、事件、证据索引和checkpoint行全部清零，保留4个删除tombstone。线上课程未受影响。见 [最终验证摘要](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/verification.json)、[恢复](bc-formal-verify-report.json)、[浏览器](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/bc-formal-browser-report.json)、[取消](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/bc-formal-cancel-report.json)、[删除](bc-formal-cleanup-report.json)和[备份摘要](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/bc-history-backup-manifest.json)。
 
 ## 限制与失败历史
 
@@ -51,6 +51,6 @@
 
 BC已见开发仍有一次复核误读排序边界、后续修订预算耗尽（19/20结构、15/16内容、4/4拒答）；另有私有答案残留短引用编号的展示瑕疵。最终20题未复现，不能据此声称复核器永不误拒绝或预算内一定修复。固定概念技能与有界计算模板缩小了生成范围，通用讲解、长上下文、复杂规划、自动评分和学习记忆未被验证；L3未启动。
 
-[AT正式失败](FINAL_AT.md)、[BB正式失败](FINAL_BB.md)、全部开发失败和[引用审阅更正](citation-review-errata.json)保留。BA仅准备任务而未运行，未把其题目当作后续新保留材料。不同正式队列的保留题不同，只能在各自队列内与对应C比较，不把跨队列数字当固定基准的提升幅度。
+[AT正式失败](FINAL_AT.md)、[BB正式失败](FINAL_BB.md)、全部开发失败和[引用审阅更正](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/l22-completion/citation-review-errata.json)保留。BA仅准备任务而未运行，未把其题目当作后续新保留材料。不同正式队列的保留题不同，只能在各自队列内与对应C比较，不把跨队列数字当固定基准的提升幅度。
 
 线上仍运行C和原qwen-plus生成／qwen3-max复核配置；本次通过的是隔离max/max下的冻结BC。未部署候选，也未启动自动评分。

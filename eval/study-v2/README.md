@@ -3,8 +3,8 @@
 ## 范围与冻结
 
 - 来源：[MIT 6.0001 Fall 2016 第 4 讲](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-4-decomposition-abstraction-and-functions/)，Ana Bell；采用官方英文字幕中约 20:54–24:25 的函数返回值片段。许可、下载地址与 SHA-256 见 [sources.json](sources.json)。没有将模型生成的材料当作课程。
-- [cases.json](cases.json)：6 个新的保留任务，4 个课程内目标、2 个课程外目标；覆盖解释、对比、输入变化、纠错与证据不足。题目由 AI 根据字幕设计，未向运行模型提供评分要点。
-- 固定模型 Qwen2.5-3B-Instruct Q4_K_M，llama.cpp b10977，4 线程，单并发，8192 上下文；默认 90 秒和原有调用/token 预算不变。[完整配置](runtime.json)
+- [cases.json](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v2/cases.json)：6 个新的保留任务，4 个课程内目标、2 个课程外目标；覆盖解释、对比、输入变化、纠错与证据不足。题目由 AI 根据字幕设计，未向运行模型提供评分要点。
+- 固定模型 Qwen2.5-3B-Instruct Q4_K_M，llama.cpp b10977，4 线程，单并发，8192 上下文；默认 90 秒和原有调用/token 预算不变。[完整配置](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v2/runtime.json)
 - 旧候选是上一轮冻结运行时 `.data/l22-eval/final-src`；新候选在查看本轮任何模型产物前冻结至 `.data/study-v2/review-src`。每行记录候选、任务集、字幕和 Evidence 摘要；新 label 不得覆盖旧记录。
 
 这是 **真实本地模型 + 生产 Python LangGraph + 真实 PostgreSQL** 的运行时试验。Evidence 边界使用从官方字幕顺序合并的六条固定片段，检索时始终返回这个范围，包括课程外问题；没有用预设答案或 HTTP mock 替代模型。它不是媒体上传、向量召回、Java 权限或浏览器全链路验收。不能用固定片段的引用一致性证明真实检索质量。
@@ -15,7 +15,7 @@
 
 完整产物另由 Codex 对照原始字幕进行 AI 复核，包含私有答案和每题引用；不是盲评或人工金标。运行时模型自己的接受/拒绝判断不充当语义评分。沿用 Study v1 的解释/答案、引用支持、题型区别、正确拒答、严重错误与 90 秒要求，并保留全部失败。
 
-结果：[旧运行时](baseline-report.json)、[复核候选](review-report.json)。这些是六题诊断试验的分数；`full_l2_gate_assessed=false`，不替代完整的 L2.2 质量准入评测。新保留题经阅读后只能用于回归分析，后续调参需要另外选取未见任务。
+结果：[旧运行时](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v2/baseline-report.json)、[复核候选](review-report.json)。这些是六题诊断试验的分数；`full_l2_gate_assessed=false`，不替代完整的 L2.2 质量准入评测。新保留题经阅读后只能用于回归分析，后续调参需要另外选取未见任务。
 
 ## 本轮结果与决定
 

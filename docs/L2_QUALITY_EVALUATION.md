@@ -23,7 +23,7 @@ L3 尚未实现作答持久化、rubric 反馈或薄弱点记录；页面中的�
 
 每个片段有解释、比较、应用、错误观念纠正、课程外问题各一题：共 16 个可回答目标和 4 个证据不足目标，覆盖中英文。题目及要求在运行前冻结；最终候选冻结后才查看保留集产物，未根据其输出修改候选。
 
-来源 URL、下载 SHA-256、署名和裁剪偏移见 [sources.json](../eval/study-v1/sources.json)，模型与二进制固定版本见 [runtime.json](../eval/study-v1/runtime.json)。素材与其派生评测材料按 [MIT OCW 条款](https://ocw.mit.edu/pages/privacy-and-terms-of-use/) 使用 CC BY-NC-SA 4.0；本地非商业开发，视频不提交仓库，MIT 不为本项目背书。
+来源 URL、下载 SHA-256、署名和裁剪偏移见 [sources.json](../eval/study-v1/sources.json)，模型与二进制固定版本见 [runtime.json](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v1/runtime.json)。素材与其派生评测材料按 [MIT OCW 条款](https://ocw.mit.edu/pages/privacy-and-terms-of-use/) 使用 CC BY-NC-SA 4.0；本地非商业开发，视频不提交仓库，MIT 不为本项目背书。
 
 未使用 HTTP mock、固定答案或付费模型。视频使用真实官方嵌入字幕，OCR/VLM 关闭；本轮不是 ASR 或多模态准确率评测。接口片段字幕覆盖率为 78.2%，仅本次验收环境将嵌入字幕门槛设为 75%，未更改产品默认 80%。原失败课程与重试新课程均纳入清理。处理链路中已有的翻译/学习资料降级可能发生；Study 直接读取权威 Evidence，课程处理时长不计入 Study 生成延迟。
 
@@ -50,7 +50,7 @@ L3 尚未实现作答持久化、rubric 反馈或薄弱点记录；页面中的�
 
 ## 最终结果
 
-完整逐题记录：[基线](../eval/study-v1/baseline-report.json)、[最终候选](../eval/study-v1/final-report.json)。
+完整逐题记录：[基线](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v1/baseline-report.json)、[最终候选](../eval/study-v1/final-report.json)。
 
 | 指标 | 冻结基线 | 最终候选 |
 | --- | ---: | ---: |
@@ -95,9 +95,9 @@ L3 尚未实现作答持久化、rubric 反馈或薄弱点记录；页面中的�
 
 ## 保留的开发试验
 
-- [第一次开发试验，5 题](../eval/study-v1/development-v1-report.json)：schema 删除业务字段导致工具参数失败；模型自造时间过滤导致错误拒答。保留部分队列结果，未混入最终成绩。
-- [第二次开发试验，10 题](../eval/study-v1/development-v2-report.json)：可运行性提高，但出现将 50 与 100 的中点算成 63、把排除一半说成排除全部、编造课程外 transformer 学习率等错误。由开发题定位后修复证据输入，最终候选另用新 label 完整运行。
-- [冻结基线，20 题](../eval/study-v1/baseline-report.json)：6 次运行成功；运行成功的内容也有无据断言、错误或重复题型，因此不能用这 6 次当作品质合格。
+- [第一次开发试验，5 题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v1/development-v1-report.json)：schema 删除业务字段导致工具参数失败；模型自造时间过滤导致错误拒答。保留部分队列结果，未混入最终成绩。
+- [第二次开发试验，10 题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v1/development-v2-report.json)：可运行性提高，但出现将 50 与 100 的中点算成 63、把排除一半说成排除全部、编造课程外 transformer 学习率等错误。由开发题定位后修复证据输入，最终候选另用新 label 完整运行。
+- [冻结基线，20 题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/study-v1/baseline-report.json)：6 次运行成功；运行成功的内容也有无据断言、错误或重复题型，因此不能用这 6 次当作品质合格。
 
 ## 下一轮进入 L3 的条件
 

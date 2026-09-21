@@ -29,13 +29,13 @@ T 的 row picture 题使用新数值代入，原点题的各字段现在确实�
 
 T 的剩余失败不是计算错误：模型选择了 `x+y=3` 与 `2x+2y=6` 的重合方程例子，并讲解无穷多解及唯一性条件。实际引用只教了单条直线的解集和两线公共点，没有演示这种分类。复核把它当成简单迁移而接受。按既定“教学方法必须有课程依据”的门槛，仍记为失败，不以数学结论正确替代课程支持。
 
-逐题记录：[R](R-review.json)、[S](S-review.json)、[T](T-review.json)。冻结输入与 SHA 文件同目录；原始课程、账号凭据、模型请求/响应、源码快照及完整账本仅存忽略目录 `.data/field-support-20260920/`。**新保留题消耗为0**；这三轮不能称为未见课程泛化通过。
+逐题记录：[R](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/field-support/R-review.json)、[S](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/field-support/S-review.json)、[T](T-review.json)。冻结输入与 SHA 文件同目录；原始课程、账号凭据、模型请求/响应、源码快照及完整账本仅存忽略目录 `.data/field-support-20260920/`。**新保留题消耗为0**；这三轮不能称为未见课程泛化通过。
 
 ## 机制验证与调用
 
 最终 Python 完整测试 **459 passed、0 skipped**，使用独立 `lecturelens_agent_test` PostgreSQL 数据库。新增测试覆盖字段内引用、同源不同字段标识映射、缺失/重复字段、候选拒答理由隔离、答案比较契约、计算证明、精确预算预留、迟到取消及课程支持结果提交后恢复不重复调用。Ruff 与差异空白检查通过。Java/前端本轮未改，未重跑其测试，也未重复上一轮浏览器验收。
 
-真实外部调用 **86次，86次返回**：R30、S29、T27；已知输入139,541 token，输出9,730 token。课程准备使用的本地模型与此外部账本分开。见 [验收审计](acceptance-audit.json)。初始索引未就绪导致的执行前置检查失败也保留，未计为模型内容样本。隔离服务结束后停止，课程、测试库和私有回放记录保留。
+真实外部调用 **86次，86次返回**：R30、S29、T27；已知输入139,541 token，输出9,730 token。课程准备使用的本地模型与此外部账本分开。见 [验收审计](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/field-support/acceptance-audit.json)。初始索引未就绪导致的执行前置检查失败也保留，未计为模型内容样本。隔离服务结束后停止，课程、测试库和私有回放记录保留。
 
 ## 下一入口
 

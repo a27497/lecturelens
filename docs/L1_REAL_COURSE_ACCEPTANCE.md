@@ -18,7 +18,7 @@
 | 01:10 附近的时间问题 | 回答该时段的步骤与控制流程，2 条引用；时间满足后端范围过滤 |
 | 课程外 Kubernetes 节点数 | 固定证据不足回复；修复前附带 8 条无关引用，修复后为 0 |
 
-每个返回引用的 ID、revision、源文本前缀和起止时间均与实际 CourseEvidence 比对。复验单次请求耗时约 10–24 秒，包含本地 CPU 推理；这不是吞吐/P95 测量。完整问题、前后答案、引用数量、时间范围、运行时版本见 [机器可读记录](../eval/pilot-v1/acceptance-2026-09-15.json)。
+每个返回引用的 ID、revision、源文本前缀和起止时间均与实际 CourseEvidence 比对。复验单次请求耗时约 10–24 秒，包含本地 CPU 推理；这不是吞吐/P95 测量。完整问题、前后答案、引用数量、时间范围、运行时版本见 [机器可读记录](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/pilot-v1/acceptance-2026-09-15.json)。
 
 ## 本轮修复
 
@@ -51,7 +51,7 @@ Playwright 使用真实页面和真实后端响应，无 HTTP mock：
 
 ## 复现素材与命令
 
-原视频及字幕来源、署名和 CC BY-NC-SA 4.0 条款见 [素材清单](../eval/pilot-v1/sources.json)。片段以原片 810,000 ms 为起点，视频重编码，字幕裁剪/平移后封装为 MP4 mov_text。原始视频保持不变。派生课程材料及相应问答记录遵循素材许可，不改变项目源码许可。
+原视频及字幕来源、署名和 CC BY-NC-SA 4.0 条款见 [素材清单](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/pilot-v1/sources.json)。片段以原片 810,000 ms 为起点，视频重编码，字幕裁剪/平移后封装为 MP4 mov_text。原始视频保持不变。派生课程材料及相应问答记录遵循素材许可，不改变项目源码许可。
 
 本地运行时为 llama.cpp **b10977**、Qwen 官方 **Qwen2.5-3B-Instruct Q4_K_M**（固定 revision、下载链接与 SHA-256 见机器记录），以及之前锁定的多语言 MiniLM Embedding。仅把这个小模型用作无 Key 验收配置，没有将其设为项目生产推荐模型。
 

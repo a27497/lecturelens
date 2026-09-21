@@ -12,7 +12,7 @@ L 在 [quality.py](../../agent-service/src/lecturelens_agent/study/quality.py) �
 
 [决策提示](../../agent-service/src/lecturelens_agent/study/runtime.py)要求对照原题、答案和课程原文核对两类观察，区分部分得分与矛盾的总分规则，避免为了服从错误标签修改正确答案。两类观察都进入私有工具结果和 checkpoint，课程引用仍以规范 Evidence ID 保存、下一决策时再映射为短编号，公开事件不包含正文。
 
-复核器系统提示与模型输出契约保持 K 不变，同一输入的请求摘要已核对。[离线回归](offline-l-aggregation.json)将 K 原有两份失败响应交给 L 汇总：两份有效事实纠正及课程依据均保留。这是程序回归，**不重计 K 的成绩，也不是新模型效果**。保留建议同样可能保留模型的错误建议，必须继续评测语义。
+复核器系统提示与模型输出契约保持 K 不变，同一输入的请求摘要已核对。[离线回归](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/offline-l-aggregation.json)将 K 原有两份失败响应交给 L 汇总：两份有效事实纠正及课程依据均保留。这是程序回归，**不重计 K 的成绩，也不是新模型效果**。保留建议同样可能保留模型的错误建议，必须继续评测语义。
 
 学习目标仍是生成课程支持的概念题与应用题；拒绝观察供决策模型选择修订或补查，接受后持久化练习，协议失败、预算耗尽或两份候选都不合格时停止。原有 6 次调用、8 次工具、64,000 token 预留、90 秒 Run、两份候选上限不变。
 
@@ -20,8 +20,8 @@ L 在 [quality.py](../../agent-service/src/lecturelens_agent/study/quality.py) �
 
 | 题组 | 二元判定 | 连建议一起验收 | 误接受 / 误拒绝 / 协议失败 |
 | --- | --- | --- | --- |
-| [K 已见八题开发回放](report-l.json) | 8/8 | 7/8 | 0 / 0 / 0 |
-| [L 新八题](report-l-holdout.json) | 8/8 | 7/8 | 0 / 0 / 0 |
+| [K 已见八题开发回放](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-l.json) | 8/8 | 7/8 | 0 / 0 / 0 |
+| [L 新八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/report-l-holdout.json) | 8/8 | 7/8 | 0 / 0 / 0 |
 
 “连建议一起验收”要求接受判断正确，或拒绝时给出有用的纠正/待核对原文，并且没有误导性的具体修改指令；**不是所有原始规则标签都正确**。模型仍多次把分项得分标作整题得分。逐题评语存于两份报告的 `manual_feedback_assessment`，由 Codex 对照完整输入检查，不是盲评或人工金标。
 
@@ -33,7 +33,7 @@ L 在 [quality.py](../../agent-service/src/lecturelens_agent/study/quality.py) �
 
 ## 两条真实修订链路
 
-使用[预先选定的 rk-04、rk-06](repair-l-cases.json)，它们是已见开发失败，不是新保留题。[工具脚本](../../scripts/eval/pilot-managed-study.py)新增可选 `--seeded-candidates`：固定第一次检索及初稿，后续复核与决策使用真实配置的 `qwen3-max` / `qwen-plus`，运行实际 LangGraph 和独立 `lecturelens_agent_test` PostgreSQL。注入动作仍扣除正常调用预算；未扩大额度或增加重试。固定 Evidence 不验证 Java 鉴权、实际召回、媒体摄取或浏览器。
+使用[预先选定的 rk-04、rk-06](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/repair-l-cases.json)，它们是已见开发失败，不是新保留题。[工具脚本](../../scripts/eval/pilot-managed-study.py)新增可选 `--seeded-candidates`：固定第一次检索及初稿，后续复核与决策使用真实配置的 `qwen3-max` / `qwen-plus`，运行实际 LangGraph 和独立 `lecturelens_agent_test` PostgreSQL。注入动作仍扣除正常调用预算；未扩大额度或增加重试。固定 Evidence 不验证 Java 鉴权、实际召回、媒体摄取或浏览器。
 
 | 草稿 | 结果 | 外部真实调用 | Run 调用预留（含两次注入） | token 预留 | 耗时 |
 | --- | --- | --- | --- | --- | --- |
@@ -51,8 +51,8 @@ rk-06 在进入修订前以 `MODEL_REVIEW_CONTRACT` 停止。保留失败输入�
 ## 冻结、验证与后续
 
 - L 源码 SHA-256：`4f0b43b7d9a057cdbb9ff2b8352a7af3be8bee9395638c39b149a9243d61d5c3`。三组试验使用同一源码；看过输出后没有修改候选。
-- [新八题](holdout-l.json)在冻结源码后、任何 L 调用前预标注，覆盖三项部分给分、多次调用、条件总分、延后外层打印与额外无据操作。仍使用已见课程片段和成对样本，不是独立课程抽样或完整 L2 保留任务。现在已消费，后续候选不得当作未见验收数据。
-- [K 回放副本](development-k-replay.json)明确为已见开发数据，原保留题与历史分数未修改。所有公开报告附源码、脚本、题集、Evidence 与模型配置摘要；原始记录和快照在 Git 忽略目录 `.data/reviewer-probe/20260919-l*`。
-- **181 项 Python 测试通过，无跳过**，使用独立 PostgreSQL/pgvector；Ruff、格式检查及补丁空白检查通过。[验证摘要](verification-l.json)。覆盖建议与依据保留、最长完整答案、私有观察传递和 checkpoint 恢复、预置草稿编号映射及范围限制。已有 Starlette/AnyIO 弃用提示仍在。未改 Java、前端或部署路径，未跑浏览器全栈。
+- [新八题](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/holdout-l.json)在冻结源码后、任何 L 调用前预标注，覆盖三项部分给分、多次调用、条件总分、延后外层打印与额外无据操作。仍使用已见课程片段和成对样本，不是独立课程抽样或完整 L2 保留任务。现在已消费，后续候选不得当作未见验收数据。
+- [K 回放副本](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/development-k-replay.json)明确为已见开发数据，原保留题与历史分数未修改。所有公开报告附源码、脚本、题集、Evidence 与模型配置摘要；原始记录和快照在 Git 忽略目录 `.data/reviewer-probe/20260919-l*`。
+- **181 项 Python 测试通过，无跳过**，使用独立 PostgreSQL/pgvector；Ruff、格式检查及补丁空白检查通过。[验证摘要](https://github.com/a27497/lecturelens/blob/study-agent-au-evidence-2026-09-20/eval/reviewer-probe/verification-l.json)。覆盖建议与依据保留、最长完整答案、私有观察传递和 checkpoint 恢复、预置草稿编号映射及范围限制。已有 Starlette/AnyIO 弃用提示仍在。未改 Java、前端或部署路径，未跑浏览器全栈。
 
 本轮完成反馈覆盖缺陷修复，但不发布。下一轮优先处理**纠正建议与引用原文相反**及**评分规则污染事实判断**，并补齐真实修订试跑的协议失败原始参数记录。不能仅依靠接受/拒绝正确率放行，也不进入 L3。
