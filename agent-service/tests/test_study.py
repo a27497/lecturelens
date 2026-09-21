@@ -104,7 +104,8 @@ def test_explain_practice_persists_events_citations_and_hides_answers(setup):
     )
     assert read(setup, "ANSWERS")["questions"][0]["answer"]
     events = read(setup, "EVENTS")["events"]
-    assert [e["sequence"] for e in events] == list(range(1, len(events) + 1))
+    # Private trace events share the durable journal; public cursors may have gaps.
+    assert [e["sequence"] for e in events] == sorted({e["sequence"] for e in events})
     assert sum(e["event_type"] == "artifact_created" for e in events) == 1
     assert events[-1]["payload"]["status"] == "succeeded"
     assert "SEARCH" in authority.reads and "WINDOW" in authority.reads

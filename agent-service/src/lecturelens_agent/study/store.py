@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS study_event (
     event_type text NOT NULL, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY(run_id,sequence), UNIQUE(run_id,event_type,payload)
 );
+ALTER TABLE study_event ADD COLUMN IF NOT EXISTS trace_detail jsonb;
 CREATE TABLE IF NOT EXISTS study_tool_result (
     run_id text NOT NULL REFERENCES study_run ON DELETE CASCADE, call_id text NOT NULL,
     tool_name text NOT NULL, arguments jsonb NOT NULL, result jsonb NOT NULL,
@@ -194,9 +195,14 @@ class StudyStore:
                 return {"questions": artifact["content"]["questions"]}
             if command.operation == "EVENTS":
                 rows = conn.execute(
-                    "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s ORDER BY sequence LIMIT 100",
+                    "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s "
+                    "AND event_type NOT IN ('node_started','node_finished','node_failed','evidence_started','evidence_finished','evidence_failed','replay_linked') "
+                    "ORDER BY sequence LIMIT 100",
                     (run["run_id"], command.after),
                 ).fetchall()
+                # Preserve sequence/cursor semantics; private diagnostics never enter SSE.
+                for event in rows:
+                    event["payload"] = {k: v for k, v in event["payload"].items() if k != "_trace"}
                 return {"events": rows, "status": run["status"]}
             return self._view(conn, run)
 
@@ -253,11 +259,13 @@ class StudyStore:
     @staticmethod
     def _event(conn, run_id, name, payload):
         # Caller locks the run row. Event sequence and effect commit together.
+        detail = payload.get("_trace")
+        public = {k: v for k, v in payload.items() if k != "_trace"}
         conn.execute(
-            """INSERT INTO study_event(run_id,sequence,event_type,payload)
-            SELECT %s,COALESCE(MAX(sequence),0)+1,%s,%s FROM study_event WHERE run_id=%s
+            """INSERT INTO study_event(run_id,sequence,event_type,payload,trace_detail)
+            SELECT %s,COALESCE(MAX(sequence),0)+1,%s,%s,%s FROM study_event WHERE run_id=%s
             ON CONFLICT DO NOTHING""",
-            (run_id, name, Jsonb(payload), run_id),
+            (run_id, name, Jsonb(public), Jsonb(detail) if detail is not None else None, run_id),
         )
 
     def recent_context(self, session_id, run_id):

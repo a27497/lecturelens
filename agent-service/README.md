@@ -14,6 +14,12 @@ Study Agent 默认关闭，需在 Java/Python 两端显式启用并配置模型�
 
 后台索引、删除同步、状态与契约升级见 [Evidence 同步](../docs/L1_EVIDENCE_SYNC.md)。
 
+`lecturelens_agent.benchmark` 是隔离的 [Phase A 检索评测入口](../eval/retrieval-phase-a/README.md)，复用 Dense 模型、chunker 和 PostgreSQL 检索；BM25、RRF、多语言 Cross-Encoder 与固定读者仅用于离线消融。其 Torch/Transformers 依赖由独立 eval 环境锁定，生产 app 不导入此模块，默认检索不变。运行方式见 [复现说明](../eval/retrieval-phase-a/REPRODUCE.md)。
+
+运行诊断使用 `python -m lecturelens_agent.study.trace_cli`，支持按 run_id 导出私有 Trace、启动受权新 Run Replay 和对比；复用现有事件与 checkpoint，只增加非索引 `study_event.trace_detail`。CLI 同时需要运维数据库访问和 Java 用户登录；说明、真实失败 Case 和计量边界见 [Phase B](../eval/agent-trace-phase-b/README.md)。
+
+可选 `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用唯一 Course MCP stdio 集成；默认 `internal`。官方 MCP Client/Server 转发原 Java 签名请求，Server 不持有签名密钥，失败不回退直连。工具、真实端到端结果、故障与复现说明见 [Phase C](../eval/course-mcp-phase-c/README.md)。
+
 完整启动步骤、Java/Python 契约、验证与边界见 [L1 实施文档](../docs/L1_DENSE_RETRIEVAL.md)。
 
 ```bash

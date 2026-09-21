@@ -1,0 +1,289 @@
+{
+  "phase": "B",
+  "complete": true,
+  "deployed": false,
+  "phase_c_started": false,
+  "audit": "Existing study_run/session/event/tool_result/artifact/feedback and LangGraph checkpoints; only one nullable event diagnostic column added; no new execution table.",
+  "historical": {
+    "run_id": "189689f9-4e56-4fb9-87a5-2a673d1ee25b",
+    "status": "failed",
+    "error_code": "MODEL_TOOL_CONTRACT",
+    "failure_type": "tool selection",
+    "metrics": {
+      "input_tokens": {
+        "total": 2086,
+        "known_total": 2086,
+        "missing_calls": 0
+      },
+      "output_tokens": {
+        "total": 90,
+        "known_total": 90,
+        "missing_calls": 0
+      },
+      "reserved_tokens_are_not_usage": 9747,
+      "model_calls": 2,
+      "logical_tool_calls": 0,
+      "llm_latency_ms": [
+        1447,
+        2172
+      ],
+      "llm_unfinished_calls": 0,
+      "tool_node_latency_inclusive_ms": null,
+      "retrieval_latency_ms": null,
+      "retrieval_calls": null,
+      "retrieval_unfinished_calls": null,
+      "protocol_retries": 1,
+      "resumptions": 0,
+      "notes": "Tool node wall time includes guards, nested LLM and evidence calls; do not add these times. Missing historical/cancelled-call measurements are unknown, never zero or estimates."
+    },
+    "checkpoint_ids": [
+      "1f1b5247-41b6-61f6-bfff-e16da2846e06",
+      "1f1b5247-41ba-6697-8000-854de593adc6",
+      "1f1b5247-50fc-617d-8001-4bd3baf8ca19"
+    ]
+  },
+  "recorded_replay": {
+    "source_run_id": "189689f9-4e56-4fb9-87a5-2a673d1ee25b",
+    "replay_run_id": "3cb19140-a754-4f2a-8d5a-fc214b896f08",
+    "source_sha256": "1c8fe367ff3e1d205c8f4c9af4ade4b80fbb410332e36add1c3e07dc2bbde352",
+    "transport": "recorded_model_response",
+    "new_billable_model_calls": 0,
+    "response_sha256": [
+      "21eae4bbda915af9502638a26dce85341b5639453254fc1e3b8a1276f803b81a",
+      "032a5010a9db80723f222f48d1eced53dabad38815fe41e6ae9a7e05cb5987f0"
+    ],
+    "consumed_responses": 2,
+    "request_equivalence": [
+      {
+        "messages_equal": true,
+        "schemas_equal": true
+      },
+      {
+        "messages_equal": true,
+        "schemas_equal": true
+      }
+    ],
+    "worker_exit_code": 0,
+    "status": "failed",
+    "error_code": "MODEL_TOOL_CONTRACT",
+    "failure_type": "tool selection",
+    "reproduced": true,
+    "metrics": {
+      "input_tokens": {
+        "total": 2086,
+        "known_total": 2086,
+        "missing_calls": 0
+      },
+      "output_tokens": {
+        "total": 90,
+        "known_total": 90,
+        "missing_calls": 0
+      },
+      "reserved_tokens_are_not_usage": 9747,
+      "usage_origin": "historical_recording",
+      "model_calls": 2,
+      "logical_tool_calls": 0,
+      "llm_latency_ms": [
+        33,
+        36
+      ],
+      "llm_unfinished_calls": 0,
+      "tool_node_latency_inclusive_ms": null,
+      "retrieval_latency_ms": null,
+      "tool_node_unfinished_calls": null,
+      "retrieval_calls": null,
+      "retrieval_unfinished_calls": null,
+      "protocol_retries": 1,
+      "resumptions": 0,
+      "notes": "Tool node wall time includes guards, nested LLM and evidence calls; do not add these times. Missing historical/cancelled-call measurements are unknown, never zero or estimates."
+    }
+  },
+  "live_replay": {
+    "run_id": "166d4719-991f-4c65-bbcc-e3152fe6bd60",
+    "status": "succeeded",
+    "error_code": null,
+    "failure_type": null,
+    "metrics": {
+      "input_tokens": {
+        "total": 14327,
+        "known_total": 14327,
+        "missing_calls": 0
+      },
+      "output_tokens": {
+        "total": 771,
+        "known_total": 771,
+        "missing_calls": 0
+      },
+      "reserved_tokens_are_not_usage": 60814,
+      "usage_origin": "provider_reported",
+      "model_calls": 6,
+      "logical_tool_calls": 5,
+      "llm_latency_ms": [
+        1352,
+        1317,
+        1176,
+        5235,
+        3700,
+        6510
+      ],
+      "llm_unfinished_calls": 0,
+      "tool_node_latency_inclusive_ms": [
+        170.27,
+        134.695,
+        126.509,
+        169.709,
+        6727.126
+      ],
+      "retrieval_latency_ms": [
+        63.144
+      ],
+      "tool_node_unfinished_calls": 0,
+      "retrieval_calls": 1,
+      "retrieval_unfinished_calls": 0,
+      "protocol_retries": 0,
+      "resumptions": 0,
+      "notes": "Tool node wall time includes guards, nested LLM and evidence calls; do not add these times. Missing historical/cancelled-call measurements are unknown, never zero or estimates."
+    },
+    "checkpoint_ids": [
+      "1f1b5961-c712-6659-bfff-671c5a55e3c9",
+      "1f1b5961-c716-6efe-8000-21b3a7d2656c",
+      "1f1b5961-d531-6872-8001-757cebe8de1d",
+      "1f1b5961-d6f1-68f9-8002-cd95013d49b7",
+      "1f1b5961-e516-6a4f-8003-1d84138a52cd",
+      "1f1b5961-e680-656d-8004-e1161a1f08ec",
+      "1f1b5961-f337-6c87-8005-8d11623362c0",
+      "1f1b5961-f490-6023-8006-4eeed5a1d840",
+      "1f1b5962-281a-6b84-8007-9065bf8ec3bf",
+      "1f1b5962-29db-6a47-8008-5874b4460edf",
+      "1f1b5962-4ec9-601b-8009-dbf773ab9a1e",
+      "1f1b5962-8f0f-6abd-800a-e94d40aefe20"
+    ]
+  },
+  "live_source_sha256": "3a048e197b90cba6899143e0bfe454c920252751edddd643516acdf908046ac7",
+  "evidence_ids": [
+    "c07f9415f4cda956d0619c361f3b4e5215ab0cce3061753652ea3a10cffc5bf3",
+    "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84",
+    "92c7eb72b4bfba0f0f3e5b89891c3b28b86286a4535a79499434fb05206780f5",
+    "5be10f35ea9ffe0f80884221e6b45c3ecc31a994a61f068b2be9ee8fb5accd86",
+    "48ab70d162f2c5b7164d5b2cb1423b7205b55c5e93f4bd32a03e998af231f47d",
+    "d49fbeeb40e27ab63e18c555c83a7ac8fe8de2a72d11c1d4d1cae91d9c44d9a9",
+    "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d"
+  ],
+  "bad_cases": [
+    {
+      "run_id": "166d4719-991f-4c65-bbcc-e3152fe6bd60",
+      "call_id": "166d4719-991f-4c65-bbcc-e3152fe6bd60:3",
+      "issues": [
+        "goal_mismatch"
+      ],
+      "retained": true
+    },
+    {
+      "operation": "CREATE_SESSION",
+      "error": "STUDY_INDEX_NOT_READY",
+      "run_created": false,
+      "retained": true
+    }
+  ],
+  "semantic_review": {
+    "reviewer": "coding-agent source inspection, not independent grading",
+    "concept_supported": true,
+    "program_outputs_checked": [
+      "sample_9c9558f4",
+      "yello"
+    ],
+    "limits": [
+      "single consumed historical case",
+      "one rejected candidate retained",
+      "6-call model budget fully used",
+      "synthetic input readability is ordinary",
+      "live rerun is stochastic; recorded transport is deterministic",
+      "AS-to-current schema narrowing predated Phase B; no behavior repair introduced in B"
+    ]
+  },
+  "boundaries": {
+    "real_wrong_owner_trace": {
+      "error": "JAVA_AUTHORITY_REJECTED",
+      "status": 404
+    },
+    "idempotent_replay": true,
+    "historical_events_unchanged": true,
+    "historical_checkpoints_unchanged": true,
+    "live_trace_storage": {
+      "events": 71,
+      "event_payload_bytes": 14295,
+      "private_trace_bytes": 50622
+    },
+    "comparison_encoding": "Canonical JSON (database tuples serialize as arrays)"
+  },
+  "tests": {
+    "python_full": {
+      "passed": 579,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 137.39,
+      "warning": "Existing Starlette/AnyIO BlockingPortal deprecation"
+    },
+    "trace_targeted": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "java": [
+      {
+        "class": "StudyControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "StudyAuthorityTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "DenseEvidenceClientTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "DenseRetrievalRoutingTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "CourseQaEvidenceRetrieverTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "ruff_check": "passed",
+    "ruff_format_check": "passed"
+  },
+  "private_artifact_sha256": {
+    "historical.trace.json": "3d063eda4ee57d7acaf448b824d4c9c0ecf3c94a109ad81c65b7448e670fe618",
+    "recorded-v1/result.json": "8d6616b9412e63c503b91146cad7779aa779c10f1fc81ab23b03ba25d6c58fde",
+    "recorded-v1/trace.json": "b20c5839bc7b95e0b0d351642c0082932235f905d506d9006a311e749ba9129b",
+    "live.trace.json": "e8111d52cb0e50092a1d397c4513968ba8885170b14b198fb7e61c59c06eb02e",
+    "comparison.json": "8c768193b2c212ecb77705012d004d1dcbc472de1bb458438749ef0cbdcb8d44",
+    "boundaries.json": "3c853b1dd03db8a564a8b84b09c86ab573747f1f2571df02da126f1ed85b5f5f",
+    "initial-gate-rejection.json": "28153901dc0629906180c7fbefdbd36b034b6a3939985ab4e9a5278dc5a48ab3",
+    "python-regression.log": "f6c7a001a0dd6f5e83608c7334f452523731f769536be942243170fe62736365",
+    "java-regression.log": "8e9863b634d6e59f26688b5e6a387132823a0d44e612c25c7126a75a4b0c2716"
+  },
+  "notes": [
+    "Historical tool/retrieval latency absent: no backfill or estimate.",
+    "Recorded response usage is historical, not newly consumed tokens.",
+    "Tool wall time includes nested model/evidence calls. Model wall time includes post-response guard.",
+    "Raw prompts, responses, artifacts, traces and credentials stay outside Git."
+  ]
+}

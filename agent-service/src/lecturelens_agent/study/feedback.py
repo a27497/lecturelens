@@ -282,6 +282,8 @@ def observation_quotes(items, evidence, answer=""):
 
 
 def feedback_graph(runtime, run, token, saver, provider, state_type):
+    from .telemetry import model_detail, traced_node
+
     store, authority = runtime.store, runtime.authority
     source = feedback_source(store, run)
     # Feedback is grounded in the question and course, not a seeded answer key.
@@ -320,7 +322,16 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
         }
         if hasattr(provider, "identity"):
             metadata["model_selection"] = provider.identity(metadata["purpose"])
-        store.event(run["run_id"], token, "model_started", metadata)
+        timeout = max(0.1, (row["deadline"] - datetime.now(timezone.utc)).total_seconds())
+        store.event(
+            run["run_id"],
+            token,
+            "model_started",
+            {
+                **metadata,
+                "_trace": model_detail(messages, schemas, timeout),
+            },
+        )
         started = time.monotonic()
         try:
             response = provider.feedback(
@@ -352,6 +363,7 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
             | {
                 "duration_ms": round((time.monotonic() - started) * 1000),
                 **response.get("usage", {}),
+                "_trace": {"response": response},
             },
         )
         calls = response.get("calls", [])
@@ -554,8 +566,8 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
         }
 
     graph = StateGraph(state_type)
-    graph.add_node("feedback_decide", decide)
-    graph.add_node("feedback_tool", tool)
+    graph.add_node("feedback_decide", traced_node(store, run, token, "feedback_decide", decide))
+    graph.add_node("feedback_tool", traced_node(store, run, token, "feedback_tool", tool))
     graph.add_edge(START, "feedback_decide")
     graph.add_edge("feedback_decide", "feedback_tool")
     graph.add_conditional_edges("feedback_tool", lambda state: END if state["done"] else "feedback_decide")

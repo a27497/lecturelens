@@ -44,7 +44,7 @@ def create_app(retriever=None, secret=None, study_runtime=None, model_registry=N
         app.state.study = study_runtime
         app.state.models = model_registry
         if study_runtime is not None or os.environ.get("STUDY_AGENT_ENABLED", "false").lower() == "true":
-            from .study.authority import EvidenceAuthority
+            from .study.authority import course_authority
             from .study.models import ModelRegistry, RegistryProvider
             from .study.provider import MockProvider
             from .study.runtime import StudyRuntime
@@ -61,7 +61,7 @@ def create_app(retriever=None, secret=None, study_runtime=None, model_registry=N
                 await run_in_threadpool(app.state.models.initialize)
                 app.state.study = StudyRuntime(
                     StudyStore(os.environ["AGENT_DATABASE_URL"], model_resolver=app.state.models.freeze),
-                    EvidenceAuthority(os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080"), key),
+                    course_authority(os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080"), key),
                     MockProvider() if mode == "mock" else RegistryProvider(app.state.models),
                     seconds=seconds,
                 )

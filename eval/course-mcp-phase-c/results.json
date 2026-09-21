@@ -1,0 +1,368 @@
+{
+  "phase": "C",
+  "complete": true,
+  "deployed": false,
+  "phase_d_started": false,
+  "default_transport": "internal",
+  "mcp_sdk": "1.30.0",
+  "integration": "Study Agent -> MCP Client -> stdio Course MCP Server -> existing signed Java Authority API -> course Evidence",
+  "java_code_changed": false,
+  "server_holds_signing_secret": false,
+  "parity": [
+    {
+      "action": "CHECK",
+      "arguments": {},
+      "equal": true,
+      "result_sha256": "67a6ce9dc204ee6854066bcfb15985dceac8aedc1539f782a3c86e010d58706f",
+      "evidence_ids": [],
+      "direct_ms": 12.056,
+      "mcp_ms": 18.514
+    },
+    {
+      "action": "SEARCH",
+      "arguments": {
+        "query": "字符串不可变性与变量重新绑定"
+      },
+      "equal": true,
+      "result_sha256": "a2be31ea4c2b438cb7732f57d620200c2b1bd19b06d7bd7a7e074a085b53f52b",
+      "evidence_ids": [
+        "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d",
+        "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84",
+        "92c7eb72b4bfba0f0f3e5b89891c3b28b86286a4535a79499434fb05206780f5",
+        "48ab70d162f2c5b7164d5b2cb1423b7205b55c5e93f4bd32a03e998af231f47d",
+        "c07f9415f4cda956d0619c361f3b4e5215ab0cce3061753652ea3a10cffc5bf3",
+        "d49fbeeb40e27ab63e18c555c83a7ac8fe8de2a72d11c1d4d1cae91d9c44d9a9"
+      ],
+      "direct_ms": 50.703,
+      "mcp_ms": 61.015
+    },
+    {
+      "action": "SEARCH",
+      "arguments": {
+        "query": "string rebinding",
+        "start_ms": 30000,
+        "end_ms": 90000
+      },
+      "equal": true,
+      "result_sha256": "106651ecc37b67124f406811a0692464000bf0a52b6e282668080a903acd2268",
+      "evidence_ids": [
+        "48ab70d162f2c5b7164d5b2cb1423b7205b55c5e93f4bd32a03e998af231f47d",
+        "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84",
+        "d49fbeeb40e27ab63e18c555c83a7ac8fe8de2a72d11c1d4d1cae91d9c44d9a9",
+        "c07f9415f4cda956d0619c361f3b4e5215ab0cce3061753652ea3a10cffc5bf3"
+      ],
+      "direct_ms": 48.569,
+      "mcp_ms": 60.433
+    },
+    {
+      "action": "READ",
+      "arguments": {
+        "evidence_ids": [
+          "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d",
+          "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84"
+        ]
+      },
+      "equal": true,
+      "result_sha256": "c4d53feac3df47d49a0a35e46bc3c8d09e361d97fd7cca68ae6806ac3f1d8530",
+      "evidence_ids": [
+        "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84",
+        "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d"
+      ],
+      "direct_ms": 20.348,
+      "mcp_ms": 27.76
+    },
+    {
+      "action": "READ",
+      "arguments": {
+        "evidence_ids": []
+      },
+      "equal": true,
+      "result_sha256": "67a6ce9dc204ee6854066bcfb15985dceac8aedc1539f782a3c86e010d58706f",
+      "evidence_ids": [],
+      "direct_ms": 15.444,
+      "mcp_ms": 24.342
+    },
+    {
+      "action": "WINDOW",
+      "arguments": {
+        "evidence_id": "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d"
+      },
+      "equal": true,
+      "result_sha256": "d48b42cb78834a95de976a416d1f22a8595d3289715875f00514afbf06fc94c6",
+      "evidence_ids": [
+        "92c7eb72b4bfba0f0f3e5b89891c3b28b86286a4535a79499434fb05206780f5",
+        "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d"
+      ],
+      "direct_ms": 18.415,
+      "mcp_ms": 25.481
+    }
+  ],
+  "denials": [
+    {
+      "case": "wrong_owner",
+      "internal": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "mcp": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "equal": true
+    },
+    {
+      "case": "old_revision",
+      "internal": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "mcp": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "equal": true
+    },
+    {
+      "case": "deleted_course",
+      "internal": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "mcp": {
+        "code": "COURSE_UNAVAILABLE_OR_CHANGED",
+        "status": 409
+      },
+      "equal": true
+    }
+  ],
+  "runs": [
+    {
+      "case": "normal",
+      "run_id": "4b863c46-885a-4208-afc2-2e5fba8426d8",
+      "status": "succeeded",
+      "error_code": null,
+      "metrics": {
+        "input_tokens": {
+          "total": 11960,
+          "known_total": 11960,
+          "missing_calls": 0
+        },
+        "output_tokens": {
+          "total": 738,
+          "known_total": 738,
+          "missing_calls": 0
+        },
+        "reserved_tokens_are_not_usage": 50873,
+        "usage_origin": "provider_reported",
+        "model_calls": 5,
+        "logical_tool_calls": 4,
+        "llm_latency_ms": [
+          1573,
+          1125,
+          3907,
+          3663,
+          5846
+        ],
+        "llm_unfinished_calls": 0,
+        "tool_node_latency_inclusive_ms": [
+          183.746,
+          137.293,
+          183.397,
+          6124.835
+        ],
+        "retrieval_latency_ms": [
+          55.715
+        ],
+        "tool_node_unfinished_calls": 0,
+        "retrieval_calls": 1,
+        "retrieval_unfinished_calls": 0,
+        "protocol_retries": 0,
+        "resumptions": 0,
+        "notes": "Tool node wall time includes guards, nested LLM and evidence calls; do not add these times. Missing historical/cancelled-call measurements are unknown, never zero or estimates."
+      }
+    },
+    {
+      "case": "malformed",
+      "run_id": "64452d57-1de4-4e09-a240-c46b420201e3",
+      "status": "failed",
+      "error_code": "MCP_MALFORMED_RESPONSE",
+      "metrics": {
+        "input_tokens": {
+          "total": 989,
+          "known_total": 989,
+          "missing_calls": 0
+        },
+        "output_tokens": {
+          "total": 34,
+          "known_total": 34,
+          "missing_calls": 0
+        },
+        "reserved_tokens_are_not_usage": 4596,
+        "usage_origin": "provider_reported",
+        "model_calls": 1,
+        "logical_tool_calls": 1,
+        "llm_latency_ms": [
+          1264
+        ],
+        "llm_unfinished_calls": 0,
+        "tool_node_latency_inclusive_ms": [
+          213.915
+        ],
+        "retrieval_latency_ms": [
+          133.624
+        ],
+        "tool_node_unfinished_calls": 0,
+        "retrieval_calls": 1,
+        "retrieval_unfinished_calls": 0,
+        "protocol_retries": 0,
+        "resumptions": 0,
+        "notes": "Tool node wall time includes guards, nested LLM and evidence calls; do not add these times. Missing historical/cancelled-call measurements are unknown, never zero or estimates."
+      }
+    }
+  ],
+  "protocol": {
+    "event": "initialize",
+    "protocol_version": "2025-11-25",
+    "server": {
+      "name": "lecturelens-course",
+      "title": null,
+      "version": "1.0.0",
+      "websiteUrl": null,
+      "icons": null
+    },
+    "tools": [
+      "get_course_evidence",
+      "get_course_revision",
+      "get_evidence_context",
+      "search_course_evidence"
+    ]
+  },
+  "mcp_calls": 49,
+  "normal_trace": {
+    "events": 59,
+    "checkpoints": 10,
+    "evidence_ids": [
+      "c07f9415f4cda956d0619c361f3b4e5215ab0cce3061753652ea3a10cffc5bf3",
+      "5d1454946169229c09508fa3a8c4e9055491b6d32d3d1fd818295851b5a28e84",
+      "92c7eb72b4bfba0f0f3e5b89891c3b28b86286a4535a79499434fb05206780f5",
+      "5be10f35ea9ffe0f80884221e6b45c3ecc31a994a61f068b2be9ee8fb5accd86",
+      "48ab70d162f2c5b7164d5b2cb1423b7205b55c5e93f4bd32a03e998af231f47d",
+      "d49fbeeb40e27ab63e18c555c83a7ac8fe8de2a72d11c1d4d1cae91d9c44d9a9",
+      "73e51da6f68a9494a62e82f14d651b350bf904dd8e7ba3b6d0209ae9b278131d"
+    ],
+    "final_checkpoint_id": "1f1b59c5-7139-64be-8008-b8e02534bd17",
+    "rejected_candidates": [
+      {
+        "issues": [
+          "goal_mismatch"
+        ],
+        "source": "practice_input_check",
+        "call_id": "4b863c46-885a-4208-afc2-2e5fba8426d8:2",
+        "accepted": false
+      }
+    ]
+  },
+  "failure_trace": {
+    "injected": true,
+    "fault": "Malformed MCP result only after real Java SEARCH succeeded",
+    "failure_type": "infra",
+    "committed_tool_results": 0,
+    "artifact": null
+  },
+  "tests": {
+    "python": {
+      "passed": 605,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 175.74,
+      "warning": "Existing Starlette/AnyIO BlockingPortal deprecation"
+    },
+    "mcp_targeted": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 40.06
+    },
+    "java": [
+      {
+        "class": "StudyControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "StudyAuthorityTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "DenseEvidenceClientTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "DenseRetrievalRoutingTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "CourseQaEvidenceRetrieverTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "ruff_check": "passed",
+    "ruff_format": "passed"
+  },
+  "mechanism_checks": [
+    "MCP initialization/discovery and structured output",
+    "same internal/Java signed request",
+    "wrong owner/revision/deleted/signature rejected",
+    "revision changed during read rejected",
+    "cancel/deadline/revision/deletion during actual MCP I/O",
+    "new MCP session resumes committed checkpoint without duplicate tool",
+    "feedback through MCP",
+    "delete cascade includes events and framework checkpoints",
+    "MCP timeout/malformed/crash/contract mismatch fail the Run; no direct fallback"
+  ],
+  "unchanged_execution_component_sha256": {
+    "agent-service/src/lecturelens_agent/course_mcp/server.py": "082bcd49174879c1ed67fc011578aca96de264bd84113af4804833215290e0ed",
+    "agent-service/src/lecturelens_agent/course_mcp/__init__.py": "3a3151e0474414c889c9a1ac2c43bd6e82ba59d74cf4d32928fdb0db4404a74d",
+    "agent-service/src/lecturelens_agent/course_mcp/contracts.py": "f9cf61e80ebc3972383a37309db8a95bd784bb79dfb9abef72f141fd2d4d1c34",
+    "agent-service/src/lecturelens_agent/course_mcp/client.py": "1dd5b5c4ba5ca1cac273d5dcaecb6df319fefe448684a1bd844289cae7eb4123",
+    "agent-service/src/lecturelens_agent/app.py": "99e9360bd5b5562758f05407c6b75589bcf6d01c14b52a58306c5cba91d13db8",
+    "agent-service/src/lecturelens_agent/study/authority.py": "6475e5409c4d29f82a3d1f1ae28e50deea3277d3e8da566aeff4a5666ab7f8cb",
+    "agent-service/src/lecturelens_agent/study/runtime.py": "39d68f4210a1b71dd7d29a2d6076922a4de7441eaa92008b226b6dcf5eb067ce",
+    "agent-service/src/lecturelens_agent/study/telemetry.py": "1ffac52d9209468ff2ec5b9d2cb9edd31a20fd718ab96efa889d6accd8d8384c",
+    "agent-service/src/lecturelens_agent/study/provider.py": "abe9d9ed3bba7a67d9812cbdc2764e1ed0120f6267fb9f82680b4ddf4e500a75"
+  },
+  "identity_note": "Digests captured after acceptance for the listed integration execution files, unchanged since trial start. The Trace classifier subsequently gained a generic MCP infra rule (the measured malformed case was already infra). Future driver runs write full identity.json at start.",
+  "lock_sha256": "ce81aeee31149ff99055a7d1c2941f11f984b82e9d7fb0d455b60a87a444fe7f",
+  "private_artifact_sha256": {
+    "live-v1/mcp-calls.jsonl": "704265fae6b0b78f0e2f39f8c2fb03d585d880fed3ca861a151863cc757abe53",
+    "live-v1/normal.trace.json": "48a4c58579d46c6df1a7f3b8e3f77c52b253cb668fe289834d6a9e444b84f8b3",
+    "live-v1/malformed.trace.json": "4617478f1e4bae4481972261aced0552fbd6d949ce76a29488387069c078deed",
+    "live-v1/parity.json": "80a5b090ef3185cb204abce391bf5144124e783e752886f9e3adcca54af01ce2",
+    "live-v1/denials.json": "1bd6f1e0dfb4e1a05c5575c21a2e4cb2da20bb6d3db72e308d26a05e375ecefb",
+    "targeted-v1.log": "6b8d9b880c5d7137a0e80e8e785daf5a6927c801fa31b612a88bf08f9478fc92",
+    "targeted-v2.log": "4003f7203231d649e3d4d1ddfb00d0057b49cda5528fc15aab40d851709cdf69",
+    "python-regression.log": "d6dbfd2a9b7668c0be810f8c7439ba836585cbe5dcea705244790b96d90ece56",
+    "java-regression.log": "09f58745ad333fd81f58b1a3a7fbc5b1843a95846c3223ebca0c0e282e4926df"
+  },
+  "limitations": [
+    "One real consumed course goal, not a generalization or quality-improvement claim.",
+    "A goal_mismatch candidate was rejected and retained.",
+    "Malformed-response case is deliberate fault injection, separately labeled.",
+    "Latency measurements are a small single-host sample; spans overlap.",
+    "Raw traces and model/course data stay outside Git."
+  ]
+}
