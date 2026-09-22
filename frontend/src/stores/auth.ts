@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import {
   clearAuthTokens,
+  endAuthDocument,
   readOptionalAccessToken,
   saveAuthTokens,
   USER_EMAIL_KEY,
@@ -31,12 +32,12 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    async login(request: LoginRequest) {
+    async login(request: LoginRequest, nextPath?: string) {
       this.loading = true;
       this.errorMessage = "";
       try {
         const session = await login(request);
-        saveAuthTokens(session.accessToken, session.refreshToken, session.user.email);
+        saveAuthTokens(session.accessToken, session.refreshToken, session.user.email, nextPath);
         this.accessToken = session.accessToken;
         this.userEmail = session.user.email;
         this.user = session.user;
@@ -58,6 +59,7 @@ export const useAuthStore = defineStore("auth", {
 
     logout() {
       clearAuthTokens();
+      endAuthDocument("/login");
       this.accessToken = "";
       this.userEmail = "";
       this.user = null;

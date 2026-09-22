@@ -5,7 +5,7 @@ import test_study
 import test_study_attempts
 
 from lecturelens_agent.study.contracts import StudyCommand
-from lecturelens_agent.study.store import RunStopped, StudyError
+from lecturelens_agent.study.store import BudgetExceeded, RunStopped, StudyError
 
 setup = test_study.setup
 practice = test_study_attempts.practice
@@ -56,6 +56,49 @@ def feedback(practice, setup, monkeypatch):
 def view(feedback):
     store, scope, _, _, _, _, run, _ = feedback
     return store.command(StudyCommand(**(scope | {"run_id": run["run_id"]}), operation="READ"), "mock")
+
+
+def test_stalled_basis_retries_within_persisted_budget_and_still_reviews(feedback):
+    store, _, runtime, _, _, _, run, calls = feedback
+    original = runtime.provider.feedback
+    stalled = False
+    timeouts = []
+
+    def transient(messages, schemas, timeout, *, review=False):
+        nonlocal stalled
+        timeouts.append(timeout)
+        if schemas[0]["function"]["name"] == "derive_feedback_basis" and not stalled:
+            stalled = True
+            raise BudgetExceeded()
+        return original(messages, schemas, timeout, review=review)
+
+    runtime.provider.feedback = transient
+    runtime.execute(run)
+    result = view(feedback)
+    assert result["run"]["status"] == "succeeded"
+    assert result["run"]["model_calls"] == 5
+    assert result["feedback"] is not None
+    assert all(0 < value <= 20 for value in timeouts)
+    assert any(review and "candidate" in body for review, body in calls)
+    with store.connect() as conn:
+        failed = conn.execute(
+            "SELECT payload FROM study_event WHERE run_id=%s AND event_type='model_failed'", (run["run_id"],)
+        ).fetchall()
+    assert [row["payload"]["error_code"] for row in failed] == ["MODEL_TIMEOUT"]
+
+
+def test_repeated_transport_timeout_stops_after_one_retry_without_feedback(feedback):
+    _, _, runtime, _, _, _, run, _ = feedback
+
+    def unavailable(*args, **kwargs):
+        raise StudyError("MODEL_UNAVAILABLE")
+
+    runtime.provider.feedback = unavailable
+    runtime.execute(run)
+    result = view(feedback)
+    assert result["run"]["model_calls"] == 2
+    assert result["run"]["error_code"] == "MODEL_UNAVAILABLE"
+    assert result["feedback"] is None
 
 
 def test_feedback_is_separate_from_answer_and_is_recovered_with_parent_practice(feedback):

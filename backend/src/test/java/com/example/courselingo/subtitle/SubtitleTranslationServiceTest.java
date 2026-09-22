@@ -93,6 +93,30 @@ class SubtitleTranslationServiceTest {
     }
 
     @Test
+    void defaultTranslationIsolatesAdjacentUtterancesBeforeBindingTheirTimestamps() {
+        translationService = fullTextTranslationService(new SubtitleTranslationProperties());
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(6, 91330, 107210, "Bind the variable to a new object."),
+            sourceSegment(7, 107210, 112590, "Remember that strings are immutable.")
+        ));
+        when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
+        when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
+        fakeLlmProvider.nextContents(alignedJson("把变量绑定到一个新对象。"), alignedJson("请记住字符串不可变。"));
+
+        translationService.translateTaskSubtitlesWithAiCallRecord(command());
+
+        assertThat(fakeLlmProvider.requests).hasSize(2);
+        assertThat(fakeLlmProvider.requests.get(0).messages().get(1).content())
+            .contains("Bind the variable").doesNotContain("Remember that");
+        assertThat(fakeLlmProvider.requests.get(1).messages().get(1).content())
+            .contains("Remember that").doesNotContain("Bind the variable");
+        assertThat(captureInsertedSegments(2))
+            .extracting(SubtitleTranslationSegment::getSegmentIndex, SubtitleTranslationSegment::getTranslatedText)
+            .containsExactly(org.assertj.core.groups.Tuple.tuple(6, "把变量绑定到一个新对象。"),
+                org.assertj.core.groups.Tuple.tuple(7, "请记住字符串不可变。"));
+    }
+
+    @Test
     void translateTaskSubtitlesCallsLlmPerSegmentAndSavesOriginalIndexes() {
         when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(sourceSegments());
         when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
@@ -166,15 +190,7 @@ class SubtitleTranslationServiceTest {
 
     @Test
     void fullTextModePersistsAlignedSegmentsAndDerivedFullTextFromOneBatchResponse() {
-        translationService = new SubtitleTranslationServiceImpl(
-            sourceMapper,
-            translationMapper,
-            fullTextResultMapper,
-            fakeLlmProvider,
-            FIXED_CLOCK,
-            new SubtitleTranslationResponseParser(),
-            new SubtitleTranslationProperties()
-        );
+        translationService = fullTextTranslationService();
         when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(sourceSegments());
         when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
         when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
@@ -1124,6 +1140,7 @@ class SubtitleTranslationServiceTest {
         SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
         FullText fullText = new FullText();
         fullText.setEnabled(true);
+        fullText.setBatchMaxSegments(20);
         properties.setFullText(fullText);
         translationService = new SubtitleTranslationServiceImpl(
             sourceMapper,
@@ -1801,6 +1818,8 @@ class SubtitleTranslationServiceTest {
         SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
         FullText fullText = new FullText();
         fullText.setEnabled(true);
+        // These legacy batching cases deliberately exercise explicit multi-segment mode.
+        fullText.setBatchMaxSegments(20);
         properties.setFullText(fullText);
         return fullTextTranslationService(properties);
     }

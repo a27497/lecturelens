@@ -24,7 +24,10 @@ public class SubtitleTranslationProperties {
         private static final int DEFAULT_MAX_ATTEMPTS = 3;
         private static final int DEFAULT_SEMANTIC_MAX_ATTEMPTS = 2;
         private static final int DEFAULT_MAX_SOURCE_SEGMENTS = 10000;
-        private static final int DEFAULT_BATCH_MAX_SEGMENTS = 20;
+        // A model can merge neighboring utterances while returning valid indices.
+        // Isolate timestamped source segments by default so translation cannot
+        // borrow the next segment's content and silently shift evidence timing.
+        private static final int DEFAULT_BATCH_MAX_SEGMENTS = 1;
         private static final int DEFAULT_BATCH_MAX_INPUT_CHARS = 1000;
         private static final int DEFAULT_BATCH_CONCURRENCY = 1;
         private static final int DEFAULT_SINGLE_SEGMENT_MAX_PIECE_CHARS = 600;

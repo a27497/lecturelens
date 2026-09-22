@@ -13,7 +13,7 @@ it("enters through normal Java authentication without uploading or injecting a t
   const wrapper = create();
   expect(mocks.login).not.toHaveBeenCalled();
   await wrapper.find("button").trigger("click"); await flushPromises();
-  expect(mocks.login).toHaveBeenCalledWith({ email: "demo@example.com", password: "public-demo" });
+  expect(mocks.login).toHaveBeenCalledWith({ email: "demo@example.com", password: "public-demo" }, "/tasks/sample");
   expect(mocks.push).toHaveBeenCalledWith("/tasks/sample");
   expect(wrapper.text()).toContain("共享演示账号");
 });

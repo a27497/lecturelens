@@ -12,7 +12,7 @@ async function enter() {
   if (busy.value || !recruiterDemoEnabled) return;
   busy.value = true; error.value = "";
   try {
-    await auth.login({ email: recruiterDemo.email, password: recruiterDemo.password });
+    await auth.login({ email: recruiterDemo.email, password: recruiterDemo.password }, `/tasks/${encodeURIComponent(recruiterDemo.taskId)}`);
     await router.push(`/tasks/${encodeURIComponent(recruiterDemo.taskId)}`);
   } catch (failure) { error.value = toReadableAuthError(failure); }
   finally { busy.value = false; }

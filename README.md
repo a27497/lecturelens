@@ -4,6 +4,8 @@
 
 项目处于实验阶段，学习闭环已完成有限课程范围验收，**尚未发布，线上配置保持不变**。验收不代表未见课程泛化；自动评分、长期记忆和复习调度尚未交付。测量结果与证据见下文。
 
+**求职版冻结（2026-09-22）**：4 个 Major 修复已通过定向浏览器回归，Recruiter 主链路完整跑通；保留 5 个 Minor，不继续开发功能。原失败记录、修复边界和最终验证见 [验收与收口报告](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze)。
+
 [架构](docs/ARCHITECTURE.md) · [部署](docs/DEPLOYMENT.md) · [Python 服务](agent-service/README.md) · [评测证据](eval/README.md) · [CI](https://github.com/a27497/lecturelens/actions/workflows/ci.yml)
 
 ## 学习流程与架构
@@ -59,6 +61,8 @@ CI 覆盖 Python lint/真实 PostgreSQL 测试、Java 测试、前端单测/构�
 ## 演示与截图
 
 本机演示路径：**Sample Course → Evidence IDs → 无证据拒答 → 保存作答与反馈 → View Trace**。演示尚未公网发布，准备与验收步骤见 [演示说明](eval/recruiter-demo-phase-d/README.md)。
+
+本机恢复后的演示使用 `.data/recruiter-demo/runtime.local.json`：启动 `eval/recruiter-demo-phase-d/serve.py` 的 backend、agent、frontend 时均显式传入 `--runtime .data/recruiter-demo/runtime.local.json`。该私有配置的 `UPLOAD_CHUNK_STAGING_DIR` 与课程源视频一起持久化在 `.data/recruiter-demo/media/chunks`；复用课程数据库时不能切换到空媒体目录。原始验收与冻结 evidence 保留，修复回归见 `HUMAN_ACCEPTANCE_REPORT.md`。
 
 以下截图使用合成测试数据，不包含真实账号或私人课程。
 

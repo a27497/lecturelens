@@ -1,6 +1,6 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { ElMessage } from "element-plus";
-import { clearAuthTokens } from "./authToken";
+import { checkAuthSession, clearAuthTokens, readOptionalAccessToken } from "./authToken";
 import { AUTH_EXPIRED_MESSAGE } from "../utils/errorMessage";
 
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || "";
@@ -154,10 +154,20 @@ export const http = axios.create({
   timeout: 30_000,
 });
 
+http.interceptors.request.use((config) => {
+  if (!checkAuthSession()) throw new axios.CanceledError("Authentication session changed");
+  return config;
+});
+
 http.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (!checkAuthSession()) throw new axios.CanceledError("Authentication session changed");
+    return response;
+  },
   (error: AxiosError) => {
-    if (isAuthInvalidError(error)) {
+    const bearer = error.config?.headers?.Authorization;
+    if (checkAuthSession() && isAuthInvalidError(error)
+        && (!bearer || bearer === `Bearer ${readOptionalAccessToken()}`)) {
       handleAuthInvalidation();
     }
 
