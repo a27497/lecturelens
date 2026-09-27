@@ -10,6 +10,7 @@ const router = useRouter();
 const appStore = useAppStore();
 const authStore = useAuthStore();
 const mobileOpen = ref(false);
+const github = "https://github.com/a27497/lecturelens";
 
 const navItems = computed(() =>
   authStore.isAuthenticated
@@ -18,7 +19,7 @@ const navItems = computed(() =>
         { label: "上传课程", to: "/upload" },
         { label: "模型管理", to: "/settings/models" },
       ]
-    : [{ label: "首页", to: "/" }],
+    : [],
 );
 
 watch(
@@ -42,9 +43,15 @@ function logout() {
       </RouterLink>
 
       <nav class="app-header__nav" aria-label="主导航">
-        <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">
-          {{ item.label }}
-        </RouterLink>
+        <template v-if="authStore.isAuthenticated">
+          <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">{{ item.label }}</RouterLink>
+        </template>
+        <template v-else>
+          <a href="/#product">Product</a>
+          <a href="/#engineering">Engineering</a>
+          <RouterLink to="/demo">Demo</RouterLink>
+          <a :href="github" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </template>
       </nav>
 
       <div class="app-header__account">
@@ -56,7 +63,7 @@ function logout() {
         </template>
         <template v-else>
           <RouterLink class="app-header__login" to="/login">登录</RouterLink>
-          <RouterLink class="app-header__register" to="/register">创建账号</RouterLink>
+          <RouterLink class="app-header__register" to="/demo">Try Demo <span aria-hidden="true">↗</span></RouterLink>
         </template>
       </div>
 
@@ -76,16 +83,23 @@ function logout() {
     </div>
 
     <nav v-if="mobileOpen" id="mobile-navigation" class="app-header__mobile" aria-label="移动端导航">
-      <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">
-        {{ item.label }}
-      </RouterLink>
+      <template v-if="authStore.isAuthenticated">
+        <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">{{ item.label }}</RouterLink>
+      </template>
+      <template v-else>
+        <a href="/#product">Product</a>
+        <a href="/#engineering">Engineering</a>
+        <RouterLink to="/demo">Demo</RouterLink>
+        <a :href="github" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <RouterLink class="app-header__mobile-demo" to="/demo">Try Demo ↗</RouterLink>
+      </template>
       <template v-if="authStore.isAuthenticated">
         <span class="app-header__mobile-email">{{ authStore.displayEmail }}</span>
         <button type="button" @click="logout">退出登录</button>
       </template>
       <template v-else>
         <RouterLink to="/login">登录</RouterLink>
-        <RouterLink to="/register">创建账号</RouterLink>
+        <RouterLink class="app-header__mobile-register" to="/register">创建账号</RouterLink>
       </template>
     </nav>
   </header>
@@ -103,7 +117,7 @@ function logout() {
 
 .app-header__inner {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
+  grid-template-columns: minmax(130px, 1fr) auto minmax(130px, 1fr);
   align-items: center;
   width: min(calc(100% - 48px), 1360px);
   height: var(--header-height);
@@ -172,6 +186,7 @@ function logout() {
   font-size: 14px;
   font-weight: 650;
   text-decoration: none;
+  gap: 10px;
 }
 
 .app-header__menu-button,
@@ -228,6 +243,18 @@ function logout() {
   .app-header__mobile a.router-link-active {
     background: var(--color-brand-soft);
     color: var(--color-brand-strong);
+  }
+
+  .app-header__mobile-demo {
+    margin-top: 8px;
+    background: var(--color-brand-strong) !important;
+    color: #fff !important;
+    font-weight: 700;
+  }
+
+  .app-header__mobile-register {
+    color: var(--color-ink-muted) !important;
+    font-size: 13px !important;
   }
 
   .app-header__mobile button {
