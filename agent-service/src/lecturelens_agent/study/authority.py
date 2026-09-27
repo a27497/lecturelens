@@ -1,8 +1,10 @@
 import hashlib
 import hmac
+import ipaddress
 import json
 import os
 import time
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -46,7 +48,23 @@ def forward_signed(url, payload, timestamp, signed):
 
 class EvidenceAuthority:
     def __init__(self, url, secret):
-        if not url.startswith(("https://", "http://127.0.0.1:", "http://localhost:")):
+        parsed = urlsplit(url)
+        try:
+            address = ipaddress.ip_address(parsed.hostname or "")
+        except ValueError:
+            address = None
+        local_http = parsed.hostname == "localhost" or address == ipaddress.ip_address("127.0.0.1")
+        tailscale_http = address is not None and address in ipaddress.ip_network("100.64.0.0/10")
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+            or parsed.path not in {"", "/"}
+            or parsed.query
+            or parsed.fragment
+            or (parsed.scheme == "http" and (not parsed.port or not (local_http or tailscale_http)))
+        ):
             raise RuntimeError("Invalid AGENT_JAVA_BASE_URL")
         self.url, self.secret = url.rstrip("/"), secret
 

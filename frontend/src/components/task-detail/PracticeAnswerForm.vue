@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
 import type { StudyAttempt, StudyCommand } from "../../api/study";
+import { randomUuid } from "../../utils/randomUuid";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
@@ -41,7 +42,7 @@ async function save() {
   if (!canSave.value) return;
   const current = generation; const task = props.taskId;
   if (!pending || pending.answer_text !== text.value) pending = {
-    ...scope(), operation: "SAVE_ATTEMPT", request_key: crypto.randomUUID(),
+    ...scope(), operation: "SAVE_ATTEMPT", request_key: randomUuid(),
     expected_version: latest.value?.version ?? 0, answer_text: text.value,
   };
   const command = pending;

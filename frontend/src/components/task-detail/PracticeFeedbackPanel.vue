@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
 import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun } from "../../api/study";
+import { randomUuid } from "../../utils/randomUuid";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
@@ -86,7 +87,7 @@ async function start() {
   const current = generation;
   const answer = props.attempt;
   if (!pendingStart || pendingStart.attempt_id !== answer.attempt_id) pendingStart = {
-    ...scope(), operation: "START_FEEDBACK", attempt_id: answer.attempt_id, request_key: crypto.randomUUID(),
+    ...scope(), operation: "START_FEEDBACK", attempt_id: answer.attempt_id, request_key: randomUuid(),
   };
   const command = pendingStart;
   starting.value = true; message.value = "";
@@ -126,7 +127,7 @@ async function saveNote() {
   const current = generation;
   if (!pendingNote || pendingNote.note_text !== noteText.value || pendingNote.disposition !== disposition.value) pendingNote = {
     operation: "SAVE_FEEDBACK_NOTE", session_id: props.sessionId, run_id: currentRun.value.run_id,
-    feedback_id: feedback.value.feedback_id, request_key: crypto.randomUUID(), expected_version: feedback.value.note?.version ?? 0,
+    feedback_id: feedback.value.feedback_id, request_key: randomUuid(), expected_version: feedback.value.note?.version ?? 0,
     note_text: noteText.value, disposition: disposition.value,
   };
   const command = pendingNote;

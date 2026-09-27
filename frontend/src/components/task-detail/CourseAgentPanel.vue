@@ -10,6 +10,7 @@ import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
 import { modelError } from "../../api/models";
 import { formatMillisRange } from "../../utils/time";
+import { randomUuid } from "../../utils/randomUuid";
 
 const props = defineProps<{ taskId: string; status?: string }>();
 defineEmits<{ seek: [startTimeMillis: number]; navigate: [workspace: "overview" | "content"] }>();
@@ -55,7 +56,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
   enabled.value = null; ready.value = false; loading.value = true; error.value = "";
   submitting.value = false; revealing.value = false;
   sessionId.value = ""; run.value = null; artifact.value = null; events.value = []; answers.value = null; attempts.value = [];
-  requestKey = ""; requestGoal = ""; sessionKey = crypto.randomUUID();
+  requestKey = ""; requestGoal = ""; sessionKey = randomUuid();
   recentRuns.value = [];
   sessions.value = []; feedbackRuns.value = []; feedbackEnabled.value = false;
   if (selectedSession || fresh) goal.value = "";
@@ -102,7 +103,7 @@ async function start() {
   const current = ++version; const task = props.taskId; const text = goal.value.trim();
   controller?.abort(); clearTimeout(timer); revealing.value = false;
   submitting.value = true; error.value = ""; artifact.value = null; answers.value = null; events.value = []; attempts.value = []; cursor = 0;
-  if (requestGoal !== text || !requestKey) { requestKey = crypto.randomUUID(); requestGoal = text; }
+  if (requestGoal !== text || !requestKey) { requestKey = randomUuid(); requestGoal = text; }
   try {
     if (!sessionId.value) {
       const response = await studyCommand(task, { operation: "CREATE_SESSION", request_key: sessionKey });
