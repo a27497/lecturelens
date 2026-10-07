@@ -1,0 +1,19 @@
+{
+  "split": "development",
+  "course": "MIT 6.0002 Fall 2016",
+  "lecture": "Lecture 1: Introduction and Optimization Problems",
+  "instructor": "John Guttag",
+  "source_page": "https://ocw.mit.edu/courses/6-0002-introduction-to-computational-thinking-and-data-science-fall-2016/resources/lecture-1-introduction-and-optimization-problems/",
+  "video_url": "https://archive.org/download/MIT6.0002F16/MIT6_0002F16_lec01_300k.mp4",
+  "subtitle_url": "https://ocw.mit.edu/courses/6-0002-introduction-to-computational-thinking-and-data-science-fall-2016/663807dc409052db97795d0016d6ffe1_C1lhuz6pZC0.vtt",
+  "source_offset_ms": 570000,
+  "end_ms": 769000,
+  "sha256": {
+    "optimization-original.mp4": "de228b907e6b82e9810c7ffc2d63da4452d5f9881780595f47f6deed6589b350",
+    "optimization.vtt": "207efdc75fe34f5a3046e23556ad3cd2333349bbcc751958d1e23c8a67f6c5e2",
+    "knapsack-dev.srt": "d0a625a2a2c88aa4c142637e205b31e19a1bb988ad92b7813cdf6a2a1639077a",
+    "knapsack-dev.mp4": "3b8cbdef9e67875dbb8452fc2f46720e614521a36401992005e44edb96833379"
+  },
+  "license": "MIT OCW CC BY-NC-SA 4.0; noncommercial evaluation; clip and caption time adaptation",
+  "prior_source_scan": "No match in historical JSON/Markdown/Python source records; now consumed as development data."
+}

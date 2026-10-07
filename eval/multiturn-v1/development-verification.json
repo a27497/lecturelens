@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-02",
+  "status": "DEVELOPMENT_FAILED_HOLDOUT_NOT_STARTED",
+  "candidate": {
+    "candidate": "followup-time-v2",
+    "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+    "java_jar_sha256": "0b5003c26d72f41fa83b42dcf5b576d30c4c64d814b5325b1a4db78640747148",
+    "harness_sha256": "b16aaf222273d5e022f890f815da511d3794690611d963a28071e749da56c6ed",
+    "model": "qwen3-max",
+    "review_model": "qwen3-max",
+    "deadline_seconds": 90,
+    "model_call_limit": 6,
+    "tool_call_limit": 8,
+    "token_reservation_limit": 64000,
+    "candidate_limit": 2,
+    "resource_sha256": {
+      "lecturelens_agent/study/model_presets.json": "8780250f6ee49f5fcf1ebfa7a9c56c107f691f0057e306bf0c8b0b2192c0d07e"
+    }
+  },
+  "mechanisms": {
+    "python_postgresql": {
+      "passed": 1214,
+      "failed": 0,
+      "skipped": 0,
+      "elapsed_seconds": 286.03,
+      "database": "new isolated pgvector/pg17 container; backed up and removed"
+    },
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "eval_harness_tests": {
+      "passed": 6,
+      "skipped": 0
+    },
+    "java_agent_boundary_tests": {
+      "passed": 78,
+      "skipped": 0,
+      "scope": "Prior preflight of unchanged Java code; not full Java/Frontend validation"
+    }
+  },
+  "study_trials": [
+    {
+      "id": "historical-t6-before-time-fix",
+      "source_sha256": "069f9890502d7cf7a662589864e617f890b8816a49e1986e4f97789834045c88",
+      "status": "budget_exceeded",
+      "error_code": "RUN_BUDGET_EXCEEDED",
+      "artifact_kind": null,
+      "semantic_review": "FAIL_NO_ARTIFACT",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 29207,
+      "elapsed_seconds": 25.922,
+      "known_usage": {
+        "prompt_tokens": 5168,
+        "completion_tokens": 165
+      },
+      "usage_unknown_calls": 1,
+      "private_record_sha256": "c690bc89b4133d725c8e26a2299813bcdf00ec5db8afd03bbaf3ce158640cfed"
+    },
+    {
+      "id": "historical-t6-time-v2-attempt-1",
+      "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+      "status": "failed",
+      "error_code": "EXPLANATION_PATH_TIMEOUT",
+      "artifact_kind": null,
+      "semantic_review": "FAIL_NO_ARTIFACT",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 29012,
+      "elapsed_seconds": 52.818,
+      "known_usage": {
+        "prompt_tokens": 5168,
+        "completion_tokens": 156
+      },
+      "usage_unknown_calls": 1,
+      "private_record_sha256": "accd076e4fc1ab6604fb9a3df36f599568bc983577789ec55ab56c6a08174175"
+    },
+    {
+      "id": "historical-t6-time-v2-attempt-2",
+      "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_review": "PASS",
+      "model_calls": 5,
+      "tool_calls": 3,
+      "reserved_tokens": 44550,
+      "elapsed_seconds": 14.259,
+      "known_usage": {
+        "prompt_tokens": 10927,
+        "completion_tokens": 462
+      },
+      "usage_unknown_calls": 0,
+      "private_record_sha256": "8f26f62dd848661b818e8abd942c01ae874fe0e125aaf82b8edfd798c2f84664"
+    },
+    {
+      "id": "knapsack-variants-turn-1",
+      "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_review": "FAIL_SOURCE_SUPPORT",
+      "model_calls": 5,
+      "tool_calls": 3,
+      "reserved_tokens": 44224,
+      "elapsed_seconds": 15.768,
+      "known_usage": {
+        "prompt_tokens": 11018,
+        "completion_tokens": 916
+      },
+      "usage_unknown_calls": 0,
+      "private_record_sha256": "91eea7ff5971daf7a9bf28980a370d8ca7fa58d7bbb39929e60abf3cd74813c1"
+    },
+    {
+      "id": "knapsack-variants-turn-2",
+      "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+      "status": "failed",
+      "error_code": "EXPLANATION_PATH_TIMEOUT",
+      "artifact_kind": null,
+      "semantic_review": "FAIL_NO_ARTIFACT",
+      "model_calls": 2,
+      "tool_calls": 1,
+      "reserved_tokens": 21003,
+      "elapsed_seconds": 52.318,
+      "known_usage": {
+        "prompt_tokens": 2491,
+        "completion_tokens": 49
+      },
+      "usage_unknown_calls": 1,
+      "private_record_sha256": "f8d5bf10885eb36cda93cf6b3a2494df0896982a1394dd1088754775d77304cc"
+    }
+  ],
+  "aggregate": {
+    "executed_runs": 5,
+    "succeeded_runs": 2,
+    "failed_runs": 3,
+    "strict_semantic_passed_runs": 1,
+    "historical_t6": {
+      "attempts": 3,
+      "strict_passed": 1,
+      "all_failures_preserved": true
+    },
+    "new_course_development": {
+      "planned_goals": 9,
+      "executed_goals": 2,
+      "succeeded_runs": 1,
+      "strict_semantic_passed_goals": 0,
+      "not_started_goals": 7
+    },
+    "fresh_holdout": {
+      "selected_courses": 0,
+      "executed_goals": 0
+    }
+  },
+  "transport_diagnostics": [
+    {
+      "mode": "stream",
+      "status": "response_received",
+      "duration_seconds": 2.898,
+      "http_status": 200,
+      "request_sha256": "c0371ad610cd478b7c0ad288da30729195fc36833b547baa5f09a388a85cecfe",
+      "not_study_acceptance": true
+    },
+    {
+      "mode": "nonstream",
+      "status": "response_received",
+      "duration_seconds": 2.896,
+      "http_status": 200,
+      "request_sha256": "2d2dd94b06407523b6a80a38e030c1a008313170e986d795a50cbea9aabfa4e0",
+      "not_study_acceptance": true
+    }
+  ],
+  "quality_review": "AI source review; blind human review absent",
+  "release": false,
+  "online_configuration_changed": false
+}

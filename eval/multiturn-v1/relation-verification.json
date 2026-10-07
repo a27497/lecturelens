@@ -1,0 +1,1007 @@
+{
+  "date": "2026-10-03",
+  "status": "PROTOTYPE_BINARY_PASS_FEEDBACK_CLASSIFICATION_INCOMPLETE",
+  "runtime_changed": false,
+  "runtime_source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+  "prototype_harness_sha256": "bb352624e68ad07b9ceeed3603ac6f585ab5b463c0fd83f3e8df0d485ef7c935",
+  "model": "qwen3-max",
+  "labels": "Pre-recorded AI source judgments; synthetic/consumed development only; no blind human gold",
+  "diagnostic_limits": {
+    "timeout_seconds": 30,
+    "max_output_tokens": 900
+  },
+  "model_calls": 86,
+  "batches": [
+    {
+      "id": "fresh-baseline",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "1939fe9c0260e5f496f557adc03e8eb41835e7d8192bdd93f2bd689a5d6fc2d8",
+      "harness_sha256": "4064b6d5b4c384e87d92312eb70a0f2ce872cd43eed24350021e5b6b9eca8ff6",
+      "freeze_sha256": "a14c65f3dbb8cc40b5a8b7004d80f4f47be7473f83be7e04c142c01bbf4449f5",
+      "correct": 10,
+      "total": 12,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 18160,
+        "completion_tokens": 1180
+      },
+      "trials": [
+        {
+          "id": "class-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.328,
+          "private_record_sha256": "d0ad89e30572a7453633abdcc2a3cbcc0beab197ee5a788b80986a9e83c75213"
+        },
+        {
+          "id": "instance-property",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.069,
+          "private_record_sha256": "cc3bbd8fb3172a29c9c26c11ef8b983483e60b1300ec70cc8796ddfbc88dd7e8"
+        },
+        {
+          "id": "conjunctive-condition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.872,
+          "private_record_sha256": "22139014c62ed50861319c78d3fc4225076ec13b0e0a3ab20bdef36463bf1408"
+        },
+        {
+          "id": "missing-conjunct",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.588,
+          "private_record_sha256": "2abec54180ac5e236b641d573997c55c26e5eaf0205b4daeb6a0707e1ed53c51"
+        },
+        {
+          "id": "antecedent-narrowing",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.572,
+          "private_record_sha256": "cce77031d0548816e11789774a7cf5688ce08e991de2260dcaf3615f28e9a3c9"
+        },
+        {
+          "id": "necessary-converse",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.916,
+          "private_record_sha256": "16550f21badad4c4145df60907107da1e8765022395deec923963583206eb10b"
+        },
+        {
+          "id": "stop-and-continue",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.732,
+          "private_record_sha256": "ebc0d7c7cf39ec1b08e66bc4efba729f97c1e8b4637fdd871e0165cb7432ee81"
+        },
+        {
+          "id": "stop-implies-continue",
+          "correct": false,
+          "accepted": true,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.161,
+          "private_record_sha256": "4aefea21e98116a4e47bb154c798b2f33f89a8e2fe179c7f46883d4769ca00b6"
+        },
+        {
+          "id": "stated-order",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.525,
+          "private_record_sha256": "d912e2002698c220268d192a6d9aa2dd9604006cb9b1b10d045f04de54b9c51d"
+        },
+        {
+          "id": "inferred-ranking",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.613,
+          "private_record_sha256": "7232f2f7f74e598afbb224eb376539239a06f3b578956ed503c7812a4591ef52"
+        },
+        {
+          "id": "definition-not-example",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.665,
+          "private_record_sha256": "a69a6f3629e3d55dd2766454288ca2f1e21ebe9845b79571e255bb41c79119e4"
+        },
+        {
+          "id": "example-as-only-if",
+          "correct": false,
+          "accepted": true,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.858,
+          "private_record_sha256": "a9998d03c49456f92d15fc54536ba6151916da7d82aa0d191f70658760106f91"
+        }
+      ]
+    },
+    {
+      "id": "known-prototype",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "harness_sha256": "20a973c3c9a1c1ea040cec249580c374b3056428771e232f0a5622db722f9a8d",
+      "freeze_sha256": "0e891c35c1fe7cdcf711a3e8fcff5799fbe80cf331af45021f9072c977dc24c0",
+      "correct": 6,
+      "total": 10,
+      "protocol_failures": 4,
+      "known_usage": {
+        "prompt_tokens": 8401,
+        "completion_tokens": 1133
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.877,
+          "private_record_sha256": "828356e8b1989ca1dd38ac536bf7fc335a5473efaf2d3ede4fc04e1ff8a6150b"
+        },
+        {
+          "id": "fractional",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.937,
+          "private_record_sha256": "ce0fd9d82b5455e71965b8d170be7ae968f48acd893f5651b562b982505b163f"
+        },
+        {
+          "id": "priority",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.326,
+          "private_record_sha256": "914d4ebce761a6683aa7553f35727e3158c959435a6ba9ed5c533d7cd5087207"
+        },
+        {
+          "id": "conditional",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": true,
+          "protocol_valid": false,
+          "seconds": 2.511,
+          "private_record_sha256": "8d5847664b09e7f3b94a0017bff734d338717f61bc4590a778bcd50d8e761f17",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "generic-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.232,
+          "private_record_sha256": "8c309a0ebea601b318b8376a8d90da0974524d9e41192d4c963c153e89fc4d8f"
+        },
+        {
+          "id": "untaught-criterion",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 3.055,
+          "private_record_sha256": "bfb2ed42121cf4de2239d691f1278d771d70e7387adb181dba268d2bfdff1ad7",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "modal-strengthening",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 1.985,
+          "private_record_sha256": "701a58b2f93a17b41559ad521deb67e1b011cec21e20d810e417fbe61a0ce6ee",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "wrong-variant",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.042,
+          "private_record_sha256": "b0c825df46725adeafdb13906fedf0f8d45a4f367de7ba9e49e701f4357d5fb4"
+        },
+        {
+          "id": "dropped-condition",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 2.362,
+          "private_record_sha256": "329cad85829c6e41a75dd00bdc14704ca614761187e1b8de5be1343e5f421a90",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "named-example",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.523,
+          "private_record_sha256": "88b439c0ebbc290ddbf133cb576e9e78fd24de6c9349df7eb78bbbfeaabdca8a"
+        }
+      ]
+    },
+    {
+      "id": "fresh-prototype",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "1939fe9c0260e5f496f557adc03e8eb41835e7d8192bdd93f2bd689a5d6fc2d8",
+      "harness_sha256": "20a973c3c9a1c1ea040cec249580c374b3056428771e232f0a5622db722f9a8d",
+      "freeze_sha256": "5c94a7bbf68f9ce7d3a8546da8a585d5546dfc3b753c1a82a8fa2471dcac1838",
+      "correct": 6,
+      "total": 12,
+      "protocol_failures": 6,
+      "known_usage": {
+        "prompt_tokens": 9985,
+        "completion_tokens": 1150
+      },
+      "trials": [
+        {
+          "id": "class-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.616,
+          "private_record_sha256": "c391a11c2c8b0877a4a5d233cb0b6cd39da7166ccf031ee3c8a51b4462a1d733"
+        },
+        {
+          "id": "instance-property",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 1.891,
+          "private_record_sha256": "6068f0ea63349af3ecd49c9524e862884436f48d4425dbc8801680544a5dd7b5",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "conjunctive-condition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.627,
+          "private_record_sha256": "883e35b60a3c8108fd3b156fb70acb33b09087cdad4c7ae9042c00bf60099456"
+        },
+        {
+          "id": "missing-conjunct",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.83,
+          "private_record_sha256": "1974b06ae53701fa27d2c4ac4fb863e3b2ab28999e4bc271d58ec2532da29109"
+        },
+        {
+          "id": "antecedent-narrowing",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": true,
+          "protocol_valid": false,
+          "seconds": 4.046,
+          "private_record_sha256": "b04c8051da2494ebd6a9b2e0a600434a57ed82c181307bfca4e363be93bbfb66",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "necessary-converse",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.582,
+          "private_record_sha256": "e1f60157cac11ff45f2bdea7836acbdbaec5c884fcbf111c4ec618e57f8f0327"
+        },
+        {
+          "id": "stop-and-continue",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": true,
+          "protocol_valid": false,
+          "seconds": 2.284,
+          "private_record_sha256": "e566829476087cb1ecdf814bba602f50b17555e121c90fee0540e6293876d5dd",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "stop-implies-continue",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 2.914,
+          "private_record_sha256": "308960e53bc44c55f39de9b3eb399b3ceefa3352f5e10be0e5d9ea14e8501da3",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "stated-order",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.701,
+          "private_record_sha256": "1f43c44435d2279a2239a75ac893762639fc1049d83ceaf88a44b87e8084a991"
+        },
+        {
+          "id": "inferred-ranking",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.248,
+          "private_record_sha256": "2986462d2a837b159d9aeeafcc35ff88cfabc62e55f41c9afb56f3d6cf758ef9"
+        },
+        {
+          "id": "definition-not-example",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": true,
+          "protocol_valid": false,
+          "seconds": 2.175,
+          "private_record_sha256": "1103ca1877d3299d101c821e651d551d191944f3393040dc1a244769a5ae4e58",
+          "error_type": "ValidationError"
+        },
+        {
+          "id": "example-as-only-if",
+          "correct": false,
+          "accepted": null,
+          "expected_accepted": false,
+          "protocol_valid": false,
+          "seconds": 2.053,
+          "private_record_sha256": "026acad4382a81d65bef803d3755742406bcd2f2edfaec60d69ffc19f63ab55e",
+          "error_type": "ValidationError"
+        }
+      ]
+    },
+    {
+      "id": "known-prototype-v2",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "harness_sha256": "b97c8c807777ae05457ec1fe9e5b409fa5bf6d93f25a81b3795dd7d82e7def25",
+      "freeze_sha256": "1e6fa2297304bd6e833ac46bde63e4a754522273225a57679767fb4b9372d09b",
+      "correct": 10,
+      "total": 10,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 9221,
+        "completion_tokens": 886
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.552,
+          "private_record_sha256": "d76df6ba9d4eb07da0f8e41465a29cf36c3d57291c9540e8c1583b4c11c8b948"
+        },
+        {
+          "id": "fractional",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.377,
+          "private_record_sha256": "e6bdad25e2bd4186a17184f1f1da2f3c3d22147df53988a2d9e9eafc31cf76a9"
+        },
+        {
+          "id": "priority",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.076,
+          "private_record_sha256": "ad28d43177c8ce403e1a0e3fc5e732f0284589d702bfce8a11397e2007d1cdcd"
+        },
+        {
+          "id": "conditional",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.026,
+          "private_record_sha256": "868d320f176fc6969493cdd744e7971d758d9acd3f996281a9615988d78363e9"
+        },
+        {
+          "id": "generic-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.592,
+          "private_record_sha256": "d83dd08f73b273eb891eb409eed38d6b8e2cf6d405492f8230574bba8c743795"
+        },
+        {
+          "id": "untaught-criterion",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.828,
+          "private_record_sha256": "3e5ef0ac9ef30a22711dcacd8f6653c8c47472ec6d3fea30b54c9a2c1da6f410"
+        },
+        {
+          "id": "modal-strengthening",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.636,
+          "private_record_sha256": "3d16a069e4e49a38c6d931608ee6d3a7ea844b170aa387ec0345e7319dd850a4"
+        },
+        {
+          "id": "wrong-variant",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.595,
+          "private_record_sha256": "91a9957b994889750b257da08cd1d227c53c5f9f2e9139c366672c7c4f0de5d1"
+        },
+        {
+          "id": "dropped-condition",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.801,
+          "private_record_sha256": "96de96d5b7022ed2eb88b9f20edb03b4dd59c4bdbcd2165a4052e562ae0b1daa"
+        },
+        {
+          "id": "named-example",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.556,
+          "private_record_sha256": "657e82af5cfe83cd43e61478802d53d7f5bbe1fd2bb89decf58d237d9670e3ab"
+        }
+      ]
+    },
+    {
+      "id": "fresh-prototype-v2",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "1939fe9c0260e5f496f557adc03e8eb41835e7d8192bdd93f2bd689a5d6fc2d8",
+      "harness_sha256": "b97c8c807777ae05457ec1fe9e5b409fa5bf6d93f25a81b3795dd7d82e7def25",
+      "freeze_sha256": "905f316af4cc3d335e1e0e9663e0425fad7c1746999755c37e26a6de31f03aad",
+      "correct": 11,
+      "total": 12,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 10969,
+        "completion_tokens": 944
+      },
+      "trials": [
+        {
+          "id": "class-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.473,
+          "private_record_sha256": "89c7ca7304da1b8c09452c4a81739df113028385eef451c155332b42d3ebd8a0"
+        },
+        {
+          "id": "instance-property",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.68,
+          "private_record_sha256": "c6c263c386ca8b4bd5c962c021cedb592643f621245a25473ee80845fda807aa"
+        },
+        {
+          "id": "conjunctive-condition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.67,
+          "private_record_sha256": "0372307437b89d6c60288a5bbeeb32f5bc1f755b43fb06b22e2d13f8dbf312af"
+        },
+        {
+          "id": "missing-conjunct",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.618,
+          "private_record_sha256": "f425e32ebaac017ddca1fc76320c346da31c97c26ece272e9b40afc6fe7bd02a"
+        },
+        {
+          "id": "antecedent-narrowing",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.295,
+          "private_record_sha256": "ea36c4b84b38588efd0ae75bedd652df036d2416d26a3ca538168a3e6e8aa5e3"
+        },
+        {
+          "id": "necessary-converse",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.43,
+          "private_record_sha256": "263d0de602f6601f334f25a8975825b06136c834e795b9a3433fcd8b016968b0"
+        },
+        {
+          "id": "stop-and-continue",
+          "correct": false,
+          "accepted": false,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.728,
+          "private_record_sha256": "feadb13a2b32b227ee9f757c080bb65b74c3c17d4cad81629ffce5552aa51cc8"
+        },
+        {
+          "id": "stop-implies-continue",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.158,
+          "private_record_sha256": "df10ff050677d240151a58708d28c40b6b4e327788a04d431f184555601fd699"
+        },
+        {
+          "id": "stated-order",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.422,
+          "private_record_sha256": "04a43127f75a4f525c1f69c6824f12856601af112762ba8e8496a794616176b7"
+        },
+        {
+          "id": "inferred-ranking",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.807,
+          "private_record_sha256": "2b40448a9a4f95ea340ac0d9edf874e740e59e263deaea7a92cb39f3d2311b47"
+        },
+        {
+          "id": "definition-not-example",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.707,
+          "private_record_sha256": "4552f7a9e5f6e7c8bd193094902011395a61a5dde76fcc27e8385b953480719b"
+        },
+        {
+          "id": "example-as-only-if",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.619,
+          "private_record_sha256": "20b083ba844c038c844d0e4134c00dea668c616b004447f54f5d11fc9db1aff7"
+        }
+      ]
+    },
+    {
+      "id": "known-prototype-v3",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "harness_sha256": "bb352624e68ad07b9ceeed3603ac6f585ab5b463c0fd83f3e8df0d485ef7c935",
+      "freeze_sha256": "1d62f6a496b925f067d8f2e1c4c2785cfec9ff18f7cde3282f3b35fa2ab4f7b9",
+      "correct": 10,
+      "total": 10,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 10720,
+        "completion_tokens": 957
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.792,
+          "private_record_sha256": "db9cf35626dcd19fe012619bef466e54584a7265a72ff52c6494564910c1011a",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "fractional",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.763,
+          "private_record_sha256": "a5a0227d5126fff39f5c4a468d8ea10a8ecf42e23422203205f5663e0ef06653",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "priority",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.211,
+          "private_record_sha256": "f0dafe322b1292cdfbb3cf0ecbac664754fe136ad4077d05822e7d1adee93e86",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "conditional",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 2.202,
+          "private_record_sha256": "17569226978606c04d3ed9d398c6368df7bcaa4262393813b951b893e8f5e9e0",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "generic-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.456,
+          "private_record_sha256": "11442105e11f69719273a69e03b25b3f3037e7ca4e1ad9fce7ec5f64d583925f",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "untaught-criterion",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.602,
+          "private_record_sha256": "6df335bc90624a548b9d1d5e9703541e39557ec5da08ea422455e08d6b1948ba",
+          "feedback_correct": true,
+          "gap": "untaught_property"
+        },
+        {
+          "id": "modal-strengthening",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.686,
+          "private_record_sha256": "27f6c2a401ae1ffd5ef773aa5ee927b4c87e534e96ee0d5fb374a69926f37579",
+          "feedback_correct": true,
+          "gap": "changed_scope"
+        },
+        {
+          "id": "wrong-variant",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.698,
+          "private_record_sha256": "c9ef82de7c3a6db5d36ef9d432868f62b52d07c81b7befb5b1513c21262a7779",
+          "feedback_correct": false,
+          "gap": "reversed_relation"
+        },
+        {
+          "id": "dropped-condition",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.666,
+          "private_record_sha256": "80b166096b8d0d3ad76bda620cfec237ff053fe8d850d3e21973a42bb7fb83fe",
+          "feedback_correct": true,
+          "gap": "omitted_condition"
+        },
+        {
+          "id": "named-example",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.462,
+          "private_record_sha256": "29b72d06df10fe6b76d30db11da502fee238957e74bd7e28d65a91082ab493f1",
+          "feedback_correct": true,
+          "gap": "changed_scope"
+        }
+      ]
+    },
+    {
+      "id": "fresh-prototype-v3",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "1939fe9c0260e5f496f557adc03e8eb41835e7d8192bdd93f2bd689a5d6fc2d8",
+      "harness_sha256": "bb352624e68ad07b9ceeed3603ac6f585ab5b463c0fd83f3e8df0d485ef7c935",
+      "freeze_sha256": "30fc8e777a68fd3902f6585d970d0b091ca7c9af818191aafedb5924a4d6121d",
+      "correct": 12,
+      "total": 12,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 12756,
+        "completion_tokens": 995
+      },
+      "trials": [
+        {
+          "id": "class-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.609,
+          "private_record_sha256": "6cd634cf1260cd60e727fc6999f96422888ba00d36d4de46a06d7b213900506e",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "instance-property",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.541,
+          "private_record_sha256": "ac165f5eec552acda817d7ba75c7018f06ef30f4321f9331d2320901a3126f1d",
+          "feedback_correct": true,
+          "gap": "changed_scope"
+        },
+        {
+          "id": "conjunctive-condition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.9,
+          "private_record_sha256": "0dd0d1b1529e0750151afecd7b585f09a8c94eefbc27e9acbe356947cd3b637b",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "missing-conjunct",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.933,
+          "private_record_sha256": "e0da0058da9f9de8910be2e0088739bcbaf50fc9279f8bbb607b3b0820c6b8c7",
+          "feedback_correct": true,
+          "gap": "omitted_condition"
+        },
+        {
+          "id": "antecedent-narrowing",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.878,
+          "private_record_sha256": "ed15a77aa5c4699e2a70712ece513aef903bf2112f8c03647ef9c48850f834f9",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "necessary-converse",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.633,
+          "private_record_sha256": "da1e7f090d4440bfe360d5e55e3ab849d87543bcdd6faf1ae761b214701f4199",
+          "feedback_correct": true,
+          "gap": "reversed_relation"
+        },
+        {
+          "id": "stop-and-continue",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.78,
+          "private_record_sha256": "d840f57c5bc881b30022068a92ab1a7e783cccfd94a657a47e4c6e6a56a6673c",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "stop-implies-continue",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.81,
+          "private_record_sha256": "5aadc6083877dde7e891d2ce62e32a92a30e252230933b72d618e180d73184e2",
+          "feedback_correct": true,
+          "gap": "omitted_condition"
+        },
+        {
+          "id": "stated-order",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.965,
+          "private_record_sha256": "fc9c0b0d037bec8cbecc0e2440f3b1f0bc3a4a7623b7a2cf1edb754e13bcd705",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "inferred-ranking",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 2.441,
+          "private_record_sha256": "4783330c1d194426a53d255730b86ce661717c97d18bd3f81bc425cb7eaef253",
+          "feedback_correct": true,
+          "gap": "untaught_property"
+        },
+        {
+          "id": "definition-not-example",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.599,
+          "private_record_sha256": "5e4222a8bf56c414b64e7d3b3e875ac728adf150c40d3393559a84cb346d2114",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "example-as-only-if",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.753,
+          "private_record_sha256": "7a224745f66bd8024b934fea3203d59faa752a293185b968cbacc62cb23cdd77",
+          "feedback_correct": true,
+          "gap": "changed_scope"
+        }
+      ]
+    },
+    {
+      "id": "confirmation-prototype-v3",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "cases_sha256": "232a8a2cdd8967642940d0b57964cf6fc31364d78448923e6742bf2992fe7cb3",
+      "harness_sha256": "bb352624e68ad07b9ceeed3603ac6f585ab5b463c0fd83f3e8df0d485ef7c935",
+      "freeze_sha256": "cebf2cdf52d3e21cb31080bea7c3b24769806f253cca1eb9cd61f8f80189e237",
+      "correct": 8,
+      "total": 8,
+      "protocol_failures": 0,
+      "known_usage": {
+        "prompt_tokens": 8476,
+        "completion_tokens": 649
+      },
+      "trials": [
+        {
+          "id": "checksum-definition",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.518,
+          "private_record_sha256": "86713e6252e4bd96f213915caf1fed264aaf0849c3b0331c914e0c78dc265516",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "attachment-restriction",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.511,
+          "private_record_sha256": "5f3dc236e86ddc5f030be1f6bcd9022af84a67cfea2df3f14c15798322a3336a",
+          "feedback_correct": true,
+          "gap": "changed_scope"
+        },
+        {
+          "id": "channel-guard",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.705,
+          "private_record_sha256": "c30b9da2b0115aa001adb6a08069053b31c5c6e12751f7a48730ca14e13912ab",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "timer-sufficient",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.423,
+          "private_record_sha256": "568d13cb68e4fefbe1bcbf173cb0ed6e4033e72623cfb4fa99188afadf09e19a",
+          "feedback_correct": true,
+          "gap": "omitted_condition"
+        },
+        {
+          "id": "flag-narrowing",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.424,
+          "private_record_sha256": "a62c7420d7d00cd71c9d89f3e7a7f9756c7602d522052b1e9ccd4d8bec2877fd",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "flag-necessity",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.555,
+          "private_record_sha256": "c794cf6761b1e256ee22e47aa6f90792fb0bef6b6958d28d248555808af91a49",
+          "feedback_correct": true,
+          "gap": "reversed_relation"
+        },
+        {
+          "id": "literal-folder-order",
+          "correct": true,
+          "accepted": true,
+          "expected_accepted": true,
+          "protocol_valid": true,
+          "seconds": 1.605,
+          "private_record_sha256": "a717fc59855687d21150f78fb970e20d1c1c1700b52c82944e45af86b20b98dc",
+          "feedback_correct": true,
+          "gap": "none"
+        },
+        {
+          "id": "folder-ranking",
+          "correct": true,
+          "accepted": false,
+          "expected_accepted": false,
+          "protocol_valid": true,
+          "seconds": 1.712,
+          "private_record_sha256": "acaa4c165525ec59218f9bb61247f8b4148fea31a2edbedff8117c191e8b228c",
+          "feedback_correct": true,
+          "gap": "untaught_property"
+        }
+      ]
+    }
+  ],
+  "final_prototype": {
+    "binary_decisions_correct": 30,
+    "binary_decisions_total": 30,
+    "decision_with_bound_quotes_and_correct_gap": 29,
+    "audited_total": 30,
+    "source_audit_sha256": "73c812108f073bac543c8045d225d4edf2a62a178c893e6341e071f72dac37bd",
+    "limitation": "Wrong variant is rejected correctly but its gap is misclassified as reversed_relation. New confirmation 8/8 is synthetic development, not an unseen-course holdout."
+  },
+  "checks": {
+    "eval_harness_tests_passed": 15,
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "runtime_and_existing_test_hashes_unchanged": true,
+    "python_postgresql_not_rerun": "No runtime changes; prior 1224-test result remains attached to source 11d3d02d, not a new test run."
+  },
+  "new_study_runs": 0,
+  "new_course_holdout_trials": 0,
+  "deployment_changed": false,
+  "local_service_stack_started": false
+}

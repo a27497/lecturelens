@@ -1,0 +1,408 @@
+{
+  "date": "2026-10-03",
+  "status": "DEVELOPMENT_DIAGNOSTIC_FAILED_HOLDOUT_NOT_STARTED",
+  "candidate": {
+    "name": "course-entailment-v1",
+    "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+    "support_policy": "course_entailment_v1",
+    "ledger_version": "atomic_ledger_v5",
+    "runtime_limits_unchanged": {
+      "deadline_seconds": 90,
+      "model_calls": 6,
+      "tool_calls": 8,
+      "reserved_tokens": 64000,
+      "candidates": 2
+    }
+  },
+  "mechanisms": {
+    "python_postgresql": {
+      "passed": 1224,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 288.7,
+      "database": "Dedicated pgvector/pg17 test container; backed up and removed",
+      "junit_sha256": "6a95ff220011fc0427a70160040b16faed263c4ef7c9d77e800e9886b94be2c1"
+    },
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "eval_run_harness_tests": {
+      "passed": 6,
+      "skipped": 0
+    },
+    "inputs_unchanged_since_full_regression": true,
+    "initial_targeted_failures_preserved": 2
+  },
+  "model": "qwen3-max",
+  "labels": "Pre-recorded AI source judgments; development only; no blind human gold",
+  "diagnostic_model_calls": 34,
+  "diagnostics": [
+    {
+      "id": "baseline-probe",
+      "kind": "runtime-review-diagnostic",
+      "correct": 6,
+      "total": 10,
+      "supported_correct": 3,
+      "unsupported_correct": 3,
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "freeze_record_sha256": "7799d888300ed13d84b0d55876d865c17957ee519a3cabd1e50b6440c1124f3a",
+      "source_sha256": "5d3981c4d056a6b24153a94690fc9856d97ea2d70b092d60859ab11f162ca35c",
+      "known_usage": {
+        "prompt_tokens": 14176,
+        "completion_tokens": 1127
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "expected_accepted": true,
+          "accepted": false,
+          "correct": false,
+          "seconds": 1.855,
+          "private_record_sha256": "c1ffe4494193700c27fc455390258666ff9635b301949e8d06a8046204ae3122"
+        },
+        {
+          "id": "fractional",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.894,
+          "private_record_sha256": "d2ce7ba669ed7d04b3985a4606bcbfea8b8d0963b0dbc47a862485f555253d6d"
+        },
+        {
+          "id": "priority",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.741,
+          "private_record_sha256": "13dc8809044e72bfb7902dacc450a6fa3d61823bc6afa65b87d0ac0c40211213"
+        },
+        {
+          "id": "conditional",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.712,
+          "private_record_sha256": "6e7685ce4a9b19fd952980b75bc47520f14b9545b7f0856a55a6010ea708b0bb"
+        },
+        {
+          "id": "generic-definition",
+          "expected_accepted": true,
+          "accepted": false,
+          "correct": false,
+          "seconds": 1.865,
+          "private_record_sha256": "33c88922ca165136446be59b4d52ecca666dcf723032fb147e4cf0ca94084164"
+        },
+        {
+          "id": "untaught-criterion",
+          "expected_accepted": false,
+          "accepted": true,
+          "correct": false,
+          "seconds": 2.22,
+          "private_record_sha256": "f53a14b15ff3e24d603cdd6f6d9c8ee9685132abd54bf2f608d128a3367f2886"
+        },
+        {
+          "id": "modal-strengthening",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 2.619,
+          "private_record_sha256": "741740c613ff3883b170fa0393854e8ff94091a3f42df98736176a1437cf5f63"
+        },
+        {
+          "id": "wrong-variant",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 2.92,
+          "private_record_sha256": "d351f777e84046f3deedfb4e9f13dcafd7fbd189657d582aa6970ce73da6b742"
+        },
+        {
+          "id": "dropped-condition",
+          "expected_accepted": false,
+          "accepted": true,
+          "correct": false,
+          "seconds": 2.726,
+          "private_record_sha256": "4f38f6fbd3e74bff869670dff8d747d4539f5dc500d7ebe54f38b639d83240ac"
+        },
+        {
+          "id": "named-example",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.727,
+          "private_record_sha256": "47077c50d6c4f9bd2d0b55f1760044e438bee67e14c5f8015876edbc55eede2a"
+        }
+      ]
+    },
+    {
+      "id": "candidate-probe",
+      "kind": "runtime-review-diagnostic",
+      "correct": 8,
+      "total": 10,
+      "supported_correct": 5,
+      "unsupported_correct": 3,
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "freeze_record_sha256": "25d95aa1b35d2a49d8c28d29ec9a2885ff4e12ce57a60906c32922f3cba13e0e",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "known_usage": {
+        "prompt_tokens": 15426,
+        "completion_tokens": 1121
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.783,
+          "private_record_sha256": "08af7d8450b60c8dfc681d2a007cc0de1eca4d6f16e27d856574d074dfb465aa"
+        },
+        {
+          "id": "fractional",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.728,
+          "private_record_sha256": "a75069827932914013ffb9a3fab0fa01414bc63895d0b653736e951900eb6c55"
+        },
+        {
+          "id": "priority",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.319,
+          "private_record_sha256": "db35f9207c81d2857f62f67f8c88e207a80d03ed6f47e741b3ec869db7afe948"
+        },
+        {
+          "id": "conditional",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.09,
+          "private_record_sha256": "109048ab3944352d93d6bec2448dcef20ee68eae7e3846a6233e30b0e958af7f"
+        },
+        {
+          "id": "generic-definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.583,
+          "private_record_sha256": "09a18c0f6c027d8288716451db8c4c14cd837c7189151443772d41d7dbdf7971"
+        },
+        {
+          "id": "untaught-criterion",
+          "expected_accepted": false,
+          "accepted": true,
+          "correct": false,
+          "seconds": 1.514,
+          "private_record_sha256": "65de3a9a7d0497f531597958e5e670643f7e90848e9107c5d357adcb90bba41c"
+        },
+        {
+          "id": "modal-strengthening",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.593,
+          "private_record_sha256": "5e4f930f946ba41b92494e3ce3b6df01b191410600d5d8bceb422da50e22b1e8"
+        },
+        {
+          "id": "wrong-variant",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.914,
+          "private_record_sha256": "f54c64238e7da0850ce139c08d7b20c041a2aeca63f84faa2e91717c24f908e4"
+        },
+        {
+          "id": "dropped-condition",
+          "expected_accepted": false,
+          "accepted": true,
+          "correct": false,
+          "seconds": 1.829,
+          "private_record_sha256": "2f70fa5b2f5b85dd839fc7229fb8a2a76e8eeb03f589711ce0e07ef154441e79"
+        },
+        {
+          "id": "named-example",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.841,
+          "private_record_sha256": "0fac8d5096ce40cf48b9a73b0a24cadfffbd53d3c7176fe8ba769426a21e7e12"
+        }
+      ]
+    },
+    {
+      "id": "quote-contract-probe",
+      "kind": "unintegrated-contract-prototype",
+      "correct": 3,
+      "total": 4,
+      "supported_correct": 2,
+      "unsupported_correct": 1,
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "freeze_record_sha256": null,
+      "source_sha256": null,
+      "known_usage": {
+        "prompt_tokens": 2055,
+        "completion_tokens": 232
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.139,
+          "private_record_sha256": "169e5a68c790120d321ff1918bd491c9de744be742beabb115cf16853f714f8c"
+        },
+        {
+          "id": "generic-definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.326,
+          "private_record_sha256": "318d10c9b262743f251a999b289b70fbff72a659117a6f6bfd462c7965454c6f"
+        },
+        {
+          "id": "untaught-criterion",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.433,
+          "private_record_sha256": "5bc3abaef35d5b5d65a60876886859b2543a8c2dfedfd1114d4dd6c4c4072e88"
+        },
+        {
+          "id": "dropped-condition",
+          "expected_accepted": false,
+          "accepted": true,
+          "correct": false,
+          "seconds": 1.325,
+          "private_record_sha256": "36b8e502491460e84b6ab1973d6c0b135ee51cd584a8b8e06eea9127275a3df5"
+        }
+      ]
+    },
+    {
+      "id": "prerequisite-contract-probe",
+      "kind": "unintegrated-contract-prototype",
+      "correct": 8,
+      "total": 10,
+      "supported_correct": 3,
+      "unsupported_correct": 5,
+      "cases_sha256": "6ba1af357285404dfc3833de1d7a6e5242b10c5da0dac9c7a02ba61f533af322",
+      "freeze_record_sha256": "7e28f2ecb4fbc9e44a1d76585071bec21b8a6b39cb51a05dab7242dc571224e5",
+      "source_sha256": "11d3d02d6deb63b2814ecfd4eabf54c112dae857dff25d4a41e6aed9729d6e16",
+      "known_usage": {
+        "prompt_tokens": 7271,
+        "completion_tokens": 1620
+      },
+      "trials": [
+        {
+          "id": "definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.2,
+          "private_record_sha256": "1bb0f2ac39bb61905dc26a43b6aaf561fd3f1b50c9e5e94290eb2c087e3dcb58"
+        },
+        {
+          "id": "fractional",
+          "expected_accepted": true,
+          "accepted": false,
+          "correct": false,
+          "seconds": 3.097,
+          "private_record_sha256": "fcb770b3dfef64f8e7742987f7f11c39c625574375836f73754b9efdf29274f6"
+        },
+        {
+          "id": "priority",
+          "expected_accepted": true,
+          "accepted": false,
+          "correct": false,
+          "seconds": 3.769,
+          "private_record_sha256": "0b832ff96aa40f3cd8ccb82133ab410ca49675e83c0c5d332763ec8eff054863"
+        },
+        {
+          "id": "conditional",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 2.874,
+          "private_record_sha256": "19d22a7710eb5456c56757edc4fdc62bdb67a45cf788f4898aefdc580e99bf02"
+        },
+        {
+          "id": "generic-definition",
+          "expected_accepted": true,
+          "accepted": true,
+          "correct": true,
+          "seconds": 1.894,
+          "private_record_sha256": "27cbb43870d05a5d1685dfa189a27ae1a654e124998944e131e6a8d8918c3bb8"
+        },
+        {
+          "id": "untaught-criterion",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 3.444,
+          "private_record_sha256": "c261a9ed9454d29cb8e0894ba4a86d7e3a590a0773f37eae443b818cae4ab3c6"
+        },
+        {
+          "id": "modal-strengthening",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 3.378,
+          "private_record_sha256": "84d04b247af58e4a59a2c9b434cacff8f5358f919e23080aa04176ab4e57dd76"
+        },
+        {
+          "id": "wrong-variant",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 2.975,
+          "private_record_sha256": "5199a724da43b32b2a44228beee4ddb3414b245ded44b2a44f3c8e2e8bc703d3"
+        },
+        {
+          "id": "dropped-condition",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 2.455,
+          "private_record_sha256": "76d78e4a33a7fb07aa69cf7b8bc356b6f6a47902391d3c4437a161fe6874aae3"
+        },
+        {
+          "id": "named-example",
+          "expected_accepted": false,
+          "accepted": false,
+          "correct": true,
+          "seconds": 1.877,
+          "private_record_sha256": "04b9ce5f696972e316ba0738a89c25a28bedffa917a9f6076c4b26f429bdc93c"
+        }
+      ]
+    }
+  ],
+  "new_study_runs": 0,
+  "new_holdout_trials": 0,
+  "deployment_changed": false,
+  "accepted_candidate_remains": "Frozen AU, unreleased, bounded prior evaluation only",
+  "prototype_limitations": "Adaptive probes on already consumed cases; no integrated Study budget or revision/ledger acceptance; quote-only prototype requests/schema recorded individually, no separate freeze manifest",
+  "cleanup": {
+    "active_runs_before_cleanup": 0,
+    "redis_restored": "stopped",
+    "mechanism_container_removed": true,
+    "backups": [
+      {
+        "name": "mechanism-db",
+        "database": "lecturelens_agent_test",
+        "bytes": 36891,
+        "sha256": "b3b818cb779b6975359e1c4baaa6c83bb088dbf9de03bf2b2b14626866e88eb2",
+        "toc_verified": true
+      },
+      {
+        "name": "agent-loop-db",
+        "database": "lecturelens_agent_loop_test",
+        "bytes": 20658558,
+        "sha256": "ca4aeb4563359236d3a40fadc2b0d538686bea4a5a1586e0ce488d0965a2ec81",
+        "toc_verified": true
+      }
+    ],
+    "evaluation_services_stopped": true,
+    "existing_online_processes_alive": true
+  }
+}

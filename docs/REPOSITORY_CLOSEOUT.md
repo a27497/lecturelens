@@ -25,3 +25,9 @@ The complete Phase 1 archive was verified in place, without a new backup. All or
 Follow the locked install and checks in [CI](../.github/workflows/ci.yml): `uv sync --locked`, Ruff check/format, pytest with `AGENT_TEST_DATABASE_URL` pointing to an independent `lecturelens_agent_test` database, `mvn test` and package, and `npm ci`, unit tests, audit and build. Use distinct ports and explicit full service URLs for supplementary Mock E2E; changing a database port variable does not override `MYSQL_JDBC_URL`.
 
 No additional cloud-ASR transcription or real-model task-quality trial was run during closeout. Existing acceptance scope and known product limitations remain in the README and evaluation records.
+
+## Experimental branch verification
+
+This branch additionally preserves the Evidence, frozen `candidate-7` runtime, explanation Frontend and Eval/Docs groups. Final closeout checks passed **1,235 Python/PostgreSQL**, **1,465 Java**, **95 Frontend** and **15 offline Eval harness** tests, all with zero skips; lint, package/build and dependency audit passed. These results verify mechanics and packaging. **DEVELOPMENT_GATE_FAILED / unreleased** and the original failed quality trials remain unchanged. See [the separate closeout record](../eval/repository-closeout/verification.json); the historical candidate records were not rewritten.
+
+The new experiment worktree shares access to the retained ignored evidence through links in its `.data` directory. The original evidence root stays in the primary worktree and in the verified Phase 1 archive; no failed evidence is copied into Git or replaced.

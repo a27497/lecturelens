@@ -69,6 +69,7 @@ flowchart LR
 
 - **实验版本，尚未发布。** 求职版已冻结，线上配置未因验收改变；`/demo` 需要维护者准备公开课程和隔离演示配置。
 - 已见公开课程的验收不证明未见课程泛化。自动评分、长期记忆和复习调度未交付；证据反馈不作为成绩。
+- 未发布的多轮解释候选已接入结构化来源复核、修订观察与有来源的事实复用；真实多轮开发仍有误接受、协议失败及预算停止，未通过质量门槛。机制测试、全部失败和当前候选见[关系复核集成 Phase](eval/multiturn-v1/PHASE_RELATIONS.md)。
 - Phase E 的并发检索出现真实 503 与失败 Run，不能据实验 worker 数宣称生产规模并发。[失败与瓶颈](eval/multi-user-phase-e/README.md)
 - 崩溃恢复保留已提交工具结果和预算；未持久化的外部模型请求可能重发，不承诺 Provider exactly-once。[恢复语义](docs/ARCHITECTURE.md#持久状态与恢复)
 - 求职版仍保留 5 个 Minor；原始失败和修复记录未改判。[已知问题](HUMAN_ACCEPTANCE_REPORT.md#仍保留的-5-个-minor)

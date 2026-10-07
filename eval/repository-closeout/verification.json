@@ -1,0 +1,107 @@
+{
+  "phase": "Repository Closeout",
+  "date": "2026-10-07",
+  "stable_head": "0e93c4ff59afd342484a02975c2d9f32a8c390cb",
+  "split_commits": {
+    "recruiter_demo": [
+      "24fa878e92cfb22c9c453c2b283bb896e80bb6f8",
+      "90be6d8e1cfba1988d46d463a8d9fac4114aafdf"
+    ],
+    "asr": "29f69a27251618f33e0b1e9bc29411190fd806a9",
+    "frontend_dependencies": "8268daa3b45c2af8c8376385ecf26dad50c4c9b4",
+    "stable_head": "0e93c4ff59afd342484a02975c2d9f32a8c390cb",
+    "evidence": "94eaa452bde221e2765ee523dce62fc310e656d6",
+    "multiturn": "e20b94369f2114b16f9552be691a2d736320e8bf",
+    "experimental_frontend": "877e9ca181ecca5b52df34355ce2db4667b127ea"
+  },
+  "quality": {
+    "candidate": "candidate-7",
+    "status": "DEVELOPMENT_GATE_FAILED",
+    "historical_status": "INTEGRATED_DEVELOPMENT_GATE_FAILED",
+    "released": false,
+    "source_sha256": "80087ae04f195ae3c6cd1291ba9044a1aaeaf7b008ad778c283722d744d7d134",
+    "new_real_model_trials": 0,
+    "new_heldout_courses": 0,
+    "model_budgets_changed": false
+  },
+  "checks": {
+    "stable_python_postgresql": {
+      "tests": 618,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "asr_java": {
+      "tests": 1449,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "evidence_python_postgresql": {
+      "tests": 65,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "experiment_java": {
+      "tests": 1465,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "experiment_python_postgresql": {
+      "tests": 1235,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "stable_frontend": {
+      "tests": 95,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "experiment_frontend": {
+      "tests": 95,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "offline_eval_harness": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ruff_lint_format": "PASS",
+    "python_wheel": "PASS",
+    "java_package": "PASS",
+    "frontend_typecheck_build": "PASS",
+    "npm_audit_vulnerabilities": 0,
+    "isolated_mock_e2e": "PASS",
+    "secret_privacy_review": "PASS"
+  },
+  "preservation": {
+    "original_dirty_files": 121,
+    "original_dirty_hashes_match_phase1": true,
+    "primary_data_files": 52407,
+    "legacy_asr_data_files": 961,
+    "historical_evidence_unchanged": true,
+    "existing_refs_retained": true,
+    "previous_archive_verified_checksums": 41
+  },
+  "initial_mock_e2e_issue": {
+    "shared_mysql_connection": true,
+    "stopped_at_first_database_assertion": true,
+    "test_course_created": false,
+    "migration_log": "No migration necessary",
+    "failed_logs_retained": true,
+    "corrected_isolated_run": "PASS"
+  },
+  "limitations": [
+    "Mechanism passes do not change candidate-7 quality failure.",
+    "No new real-cloud ASR or model-quality acceptance.",
+    "Private data remains ignored and retained locally/in the original archive; it is not uploaded.",
+    "Local demo profiles reuse public example placeholders; replace them for production."
+  ]
+}

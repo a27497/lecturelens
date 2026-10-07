@@ -1,0 +1,36 @@
+{
+  "candidate": "multiturn-v1-preflight-20261002",
+  "date": "2026-10-02",
+  "source_sha256": "069f9890502d7cf7a662589864e617f890b8816a49e1986e4f97789834045c88",
+  "runtime_behavior_unchanged_by_preflight": true,
+  "runtime_comments_preserved": true,
+  "python_postgresql": {
+    "tests": 1207,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "java_agent_boundaries": {
+    "tests": 78,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "initial_trial": {
+    "python_postgresql": {
+      "tests": 1207,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failure": "Managed pilot rejected the new non-allowlisted test database name; original failure retained. A dedicated PostgreSQL container with an allowed database name resolved the environment mismatch.",
+    "initial_ruff_errors": 4,
+    "initial_unformatted_files": 54
+  },
+  "database_isolation": "New dedicated PostgreSQL/pgvector container using lecturelens_agent_test; existing test databases preserved.",
+  "real_model_quality": "not evaluated",
+  "fresh_unseen_course_holdout": "not created or executed",
+  "deployment": "unchanged"
+}

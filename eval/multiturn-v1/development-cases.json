@@ -1,0 +1,75 @@
+{
+  "split": "development",
+  "source": "development-source.json",
+  "cases": [
+    {
+      "id": "knapsack-variants",
+      "turns": [
+        {
+          "goal": "请按课程的顺序，先解释 0/1 背包，再解释 continuous/fractional 背包，两者有什么区别？只需要解释。",
+          "expected": "explanation",
+          "necessary_conditions": ["先说明 0/1 整件拿或不拿，再说明 continuous/fractional 允许拿一部分", "保持课程示例与每个变体的对应关系"],
+          "source_ranges_ms": [[6210, 46800]]
+        },
+        {
+          "goal": "你刚才说的第二种，能不能只拿金条的一部分？为什么？",
+          "expected": "explanation",
+          "necessary_conditions": ["第二种指 continuous/fractional 背包", "允许拿一部分；课程举的是金条磨成金粉、整块放不下但一部分能放下"],
+          "source_ranges_ms": [[31480, 46800]]
+        },
+        {
+          "goal": "那这是否意味着第一种也允许把一件物品切开，只拿一部分？",
+          "expected": "explanation",
+          "necessary_conditions": ["第一种仍指 0/1 背包", "纠正错误推论：整件拿或完全不拿，不把 fractional 的条件迁移到 0/1"],
+          "source_ranges_ms": [[22160, 31480]]
+        }
+      ]
+    },
+    {
+      "id": "greedy-continuation",
+      "turns": [
+        {
+          "goal": "课程用黄金、白银和葡萄干说明 continuous 背包怎么选。请解释老师给出的步骤。",
+          "expected": "explanation",
+          "necessary_conditions": ["先黄金，黄金耗尽或背包满时停止装黄金", "仍有空间则白银，再有空间则葡萄干", "不补充字幕没有讲的代码、比例公式或新数值"],
+          "source_ranges_ms": [[59650, 105320]]
+        },
+        {
+          "goal": "如果你刚才说的黄金已经装完，但背包还有空间，老师接下来怎么做？",
+          "expected": "explanation",
+          "necessary_conditions": ["解析黄金耗尽且仍有空间的条件", "接着装白银直到空间耗尽；仍有空间才装能容纳的葡萄干"],
+          "source_ranges_ms": [[78130, 87660]]
+        },
+        {
+          "goal": "那如果背包已经装满了，还能继续装下一类吗？",
+          "expected": "explanation",
+          "necessary_conditions": ["解析当前 continuous 背包流程", "空间耗尽则停止；后续物品选择以仍有空间为前提"],
+          "source_ranges_ms": [[72100, 87660]]
+        }
+      ]
+    },
+    {
+      "id": "choice-scope-and-stop",
+      "turns": [
+        {
+          "goal": "老师为什么说 0/1 背包的一次选择会影响后面的选择？请解释课程中 1500 卡路里限制下先选 1200 卡路里食物的例子。",
+          "expected": "explanation",
+          "necessary_conditions": ["保留 0/1 背包和 1500 卡路里上限", "先选 1200 后剩余 300；课程假设其余选项都超过 300 时，不能再选它们", "不能把课程的条件例子改成所有后续食物必然超过 300"],
+          "source_ranges_ms": [[105320, 116950], [143830, 196670]]
+        },
+        {
+          "goal": "这是不是说明贪心在这个 0/1 背包问题里一定能给出最好的答案？",
+          "expected": "explanation",
+          "necessary_conditions": ["纠正一定最优的推论", "本片段明确说 0/1 背包的贪心选择不保证最好答案", "不把这个限制扩大为 continuous 背包不能由贪心解决"],
+          "source_ranges_ms": [[176380, 196670]]
+        },
+        {
+          "goal": "那请给出老师在本片段里讲的 Kubernetes 集群部署命令，并解释它们如何解决这个背包问题。",
+          "expected": "insufficient_evidence",
+          "necessary_conditions": ["指出本片段没有 Kubernetes 部署依据", "不输出部署命令或未经支持的求解方案", "拒答正文不夹带课程未教的操作"],
+          "source_ranges_ms": []
+        }
+      ]
+    }
+  ]
+}

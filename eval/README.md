@@ -14,6 +14,8 @@
 
 求职增强实验最新完成 **Phase E · Multi-user Agent Concurrency & Isolation**：5/20/50-user 固定响应、5/10-user 真实模型、取消晚到结果及两种进程崩溃恢复已实测，2,160 次负向权限请求 0 绕过；并发检索 503 和全部失败保留。这是执行/隔离实验，不更新 AU 的教学质量结论。见 [Phase E 报告](multi-user-phase-e/README.md)；本轮停止，不开启 Phase F。
 
+2026-10-03，[关系复核集成 Phase](multiturn-v1/PHASE_RELATIONS.md) 将原型接入授权原文绑定、逐单元审查、修订、持久预算、事实复用与浏览器解释入口。完整多轮开发仍有误接受、协议失败及预算停止；固定诊断不替代教学任务验收。各候选、机制测试、真实执行及生命周期结果见 [验证记录](multiturn-v1/phase-relations-verification.json)。未进入新课程保留集、未发布，AU 和线上配置保持。此前[来源修复](multiturn-v1/GROUNDING_REPAIR.md)与[独立原型](multiturn-v1/RELATION_REVIEW.md)保留为历史记录。
+
 ## 历史目录
 
 | 目录 | 作用 |

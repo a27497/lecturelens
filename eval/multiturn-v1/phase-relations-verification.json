@@ -1,0 +1,814 @@
+{
+  "date": "2026-10-03",
+  "phase": "Structured source review integration",
+  "status": "INTEGRATED_DEVELOPMENT_GATE_FAILED",
+  "released": false,
+  "online_configuration_changed": false,
+  "final_candidate": {
+    "candidate": "candidate-7",
+    "source_sha256": "80087ae04f195ae3c6cd1291ba9044a1aaeaf7b008ad778c283722d744d7d134",
+    "runtime_config_sha256": "d727652e568f92a729b5051bba1f4b9de0acb46bcef166a093d2350429c3c113",
+    "jar_sha256": "0b5003c26d72f41fa83b42dcf5b576d30c4c64d814b5325b1a4db78640747148"
+  },
+  "resource_hashes": {
+    "lecturelens_agent/study/model_presets.json": "8780250f6ee49f5fcf1ebfa7a9c56c107f691f0057e306bf0c8b0b2192c0d07e"
+  },
+  "limits": {
+    "deadline_seconds": 90,
+    "model_calls": 6,
+    "tool_calls": 8,
+    "reserved_tokens": 64000,
+    "candidates": 2,
+    "relation_review_output_tokens": 1600
+  },
+  "policies": {
+    "support": "course_relations_v2",
+    "ledger": "atomic_ledger_v7"
+  },
+  "mechanism": {
+    "full_python_postgresql": [
+      {
+        "batch": "full-1",
+        "tests": 1232,
+        "passed": 1229,
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 308.788,
+        "junit_sha256": "9308e49e43668b2c882ee537d72da78f4356b94d863a42d52490a0d1eeeacd02"
+      },
+      {
+        "batch": "full-2",
+        "tests": 1234,
+        "passed": 1233,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 289.983,
+        "junit_sha256": "4d3ecdf3f4456d834dedffea65d9e0356c9b98b8989d352d9342917507b586e5"
+      },
+      {
+        "batch": "full-3",
+        "tests": 1234,
+        "passed": 1234,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 286.445,
+        "junit_sha256": "9923c8813c8453a6a035abcc9e1726e2ddcc7c27238f9f5fe7a426b12c623ba8"
+      },
+      {
+        "batch": "full-4",
+        "tests": 1235,
+        "passed": 1235,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 298.227,
+        "junit_sha256": "d6f9fd86c8ac854cb56db75833719d8671d4e58e62d0f03542a41c9babcd7c9c"
+      }
+    ],
+    "final_input_proof": {
+      "unchanged_during_test": true,
+      "snapshot_matches_workspace": true,
+      "source_sha256": "80087ae04f195ae3c6cd1291ba9044a1aaeaf7b008ad778c283722d744d7d134",
+      "backup_bytes": 43263,
+      "backup_sha256": "49663f869631738b1e2fa5a3332550b12ee4d7a8321596d518beebd2b0f03cfe"
+    },
+    "ruff": {
+      "lint_passed": true,
+      "format_passed": true
+    },
+    "frontend": {
+      "tests_passed": 95,
+      "test_files": 25,
+      "production_build_passed": true,
+      "initial_build_failure_retained": true
+    },
+    "java_changes_in_this_phase": false,
+    "java_tests_rerun_in_this_phase": false
+  },
+  "diagnostic_batches": [
+    {
+      "batch": "candidate-1-known",
+      "source_sha256": "13815390800f38378d8831a764e867bd56f6636b2edef54225217cfbbaa112f5",
+      "calls": 10,
+      "strict_correct": 4,
+      "false_accepts": 2,
+      "protocol_failures": 4,
+      "failures": [
+        {
+          "case": "priority",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        },
+        {
+          "case": "untaught-criterion",
+          "accepted": true
+        },
+        {
+          "case": "modal-strengthening",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        },
+        {
+          "case": "wrong-variant",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        },
+        {
+          "case": "dropped-condition",
+          "accepted": true
+        },
+        {
+          "case": "named-example",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        }
+      ],
+      "summary_sha256": "0722dfb577a1eb2d0a918fbc2c89d304acc410a662d5e04679ab06aeb73ead02"
+    },
+    {
+      "batch": "candidate-2-confirmation",
+      "source_sha256": "588bcdd04ad16138e292a4c7e07cd2e6455a79220cd7c99aefe68f2f247a264a",
+      "calls": 8,
+      "strict_correct": 8,
+      "false_accepts": 0,
+      "protocol_failures": 0,
+      "failures": [],
+      "summary_sha256": "1fc4f61a087b3bb096e2cabddfacd27e3ee87d5128f01092449dbb948133167b"
+    },
+    {
+      "batch": "candidate-2-development",
+      "source_sha256": "588bcdd04ad16138e292a4c7e07cd2e6455a79220cd7c99aefe68f2f247a264a",
+      "calls": 12,
+      "strict_correct": 11,
+      "false_accepts": 0,
+      "protocol_failures": 1,
+      "failures": [
+        {
+          "case": "definition-not-example",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        }
+      ],
+      "summary_sha256": "c6de475429b49a2ab186d08790efb1ad388f03df7423f37f8d23bac3afbaf185"
+    },
+    {
+      "batch": "candidate-2-known",
+      "source_sha256": "588bcdd04ad16138e292a4c7e07cd2e6455a79220cd7c99aefe68f2f247a264a",
+      "calls": 10,
+      "strict_correct": 10,
+      "false_accepts": 0,
+      "protocol_failures": 0,
+      "failures": [],
+      "summary_sha256": "9e0c9d2ad73f162a9c75c2d8966afa922c1bb7272b626188a76d8a14e351170b"
+    },
+    {
+      "batch": "candidate-3-development",
+      "source_sha256": "48c49681320d9f96d32535d99365c557c3102e1174997c1c4bae84dd5e365b15",
+      "calls": 30,
+      "strict_correct": 29,
+      "false_accepts": 1,
+      "protocol_failures": 0,
+      "failures": [
+        {
+          "case": "untaught-criterion",
+          "accepted": true
+        }
+      ],
+      "summary_sha256": "2d45755f5a906c15aa586d85ed2d633a4a149da0fa6cb149adcd4d1d3ffbc865"
+    },
+    {
+      "batch": "candidate-6-diagnostic",
+      "source_sha256": "d7d448f172c898b93d100a05b80c825f13521b0d871790e6060b47db42f3c3ba",
+      "calls": 30,
+      "strict_correct": 25,
+      "false_accepts": 1,
+      "protocol_failures": 3,
+      "failures": [
+        {
+          "case": "priority",
+          "accepted": false
+        },
+        {
+          "case": "untaught-criterion",
+          "accepted": true
+        },
+        {
+          "case": "dropped-condition",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        },
+        {
+          "case": "stop-implies-continue",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        },
+        {
+          "case": "definition-not-example",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        }
+      ],
+      "summary_sha256": "ebecdc9a08bfd9a176bc92e474957e317ce235dc0577fbce2459316b6a1c4855"
+    },
+    {
+      "batch": "candidate-7-diagnostic",
+      "source_sha256": "80087ae04f195ae3c6cd1291ba9044a1aaeaf7b008ad778c283722d744d7d134",
+      "calls": 30,
+      "strict_correct": 29,
+      "false_accepts": 0,
+      "protocol_failures": 1,
+      "failures": [
+        {
+          "case": "definition-not-example",
+          "error_code": "MODEL_REVIEW_CONTRACT"
+        }
+      ],
+      "summary_sha256": "1d6e8f683a511a05e557b4ad60521f0845f73dbc53a38ea609555d65710acf1d"
+    }
+  ],
+  "model_trials": [
+    {
+      "candidate": "candidate-4",
+      "case": "choice-scope-and-stop",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 41745,
+      "observed_seconds": 36.1,
+      "usage": {
+        "prompt_tokens": 10064,
+        "completion_tokens": 2750
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 1,
+      "private_record_sha256": "c887169fe52a4301e6916f186c4c9d31945df7bf3c81d0e4acda0b6a0ef3af11"
+    },
+    {
+      "candidate": "candidate-4",
+      "case": "greedy-continuation",
+      "turn": 1,
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_pass": false,
+      "semantic_reason": "Incorrect source acceptance: item order does not establish unit-value ranking or relative-value attributes; some drafts additionally guarantee final bag fullness without enough remaining items.",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 29715,
+      "observed_seconds": 22.774,
+      "usage": {
+        "prompt_tokens": 7255,
+        "completion_tokens": 1764
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "5950c99ef9ed1b002c9348c6d50e48327fc2902de67e9ecb27f83bad2b771d78"
+    },
+    {
+      "candidate": "candidate-4",
+      "case": "greedy-continuation",
+      "turn": 2,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 7581,
+      "observed_seconds": 3.178,
+      "usage": {
+        "prompt_tokens": 1697,
+        "completion_tokens": 44
+      },
+      "tools": [
+        "read_evidence_window"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "0c4bc4f5704c88738167be7091592b524ee823f98ce1ead18994067ebe36ec1a"
+    },
+    {
+      "candidate": "candidate-4",
+      "case": "knapsack-variants",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 29854,
+      "observed_seconds": 19.677,
+      "usage": {
+        "prompt_tokens": 7338,
+        "completion_tokens": 1441
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 1,
+      "private_record_sha256": "6bfc2456bc1911068fde0bc1ccdea36ea761e27da5c128285ef14994d829fd78"
+    },
+    {
+      "candidate": "candidate-5",
+      "case": "choice-scope-and-stop",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "QUALITY_REPAIR_EXHAUSTED",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: QUALITY_REPAIR_EXHAUSTED",
+      "model_calls": 5,
+      "tool_calls": 3,
+      "reserved_tokens": 44950,
+      "observed_seconds": 18.562,
+      "usage": {
+        "prompt_tokens": 11186,
+        "completion_tokens": 1015
+      },
+      "tools": [
+        "search_course_evidence",
+        "report_insufficient_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 2,
+      "private_record_sha256": "336e501db0ff78f767f1dc28192e1e33ddb55bd982b8a9805c5d312f175d6165"
+    },
+    {
+      "candidate": "candidate-5",
+      "case": "greedy-continuation",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: MODEL_REVIEW_CONTRACT",
+      "model_calls": 6,
+      "tool_calls": 3,
+      "reserved_tokens": 60381,
+      "observed_seconds": 42.233,
+      "usage": {
+        "prompt_tokens": 14140,
+        "completion_tokens": 3395
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 1,
+      "private_record_sha256": "65e9f929d73e597464943c92ae12babb1d0b76222a076563d06b05eb0cfcf81b"
+    },
+    {
+      "candidate": "candidate-5",
+      "case": "knapsack-variants",
+      "turn": 1,
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_pass": true,
+      "semantic_reason": "Complete variant distinction in course order; all substantive claims supported by own cited sources.",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 28942,
+      "observed_seconds": 20.676,
+      "usage": {
+        "prompt_tokens": 7125,
+        "completion_tokens": 1394
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "7a90b9039cd2d2b92dba35a8e619bc7f71eb3753e9c252621ed8147c35245a40"
+    },
+    {
+      "candidate": "candidate-5",
+      "case": "knapsack-variants",
+      "turn": 2,
+      "status": "failed",
+      "error_code": "STUDY_EXECUTION_FAILED",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: STUDY_EXECUTION_FAILED",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "reserved_tokens": 10022,
+      "observed_seconds": 3.42,
+      "usage": {
+        "prompt_tokens": 2405,
+        "completion_tokens": 77
+      },
+      "tools": [],
+      "review_rejections": 0,
+      "private_record_sha256": "2fffdb45fb1b644faca97823a417fd43cb00426542ccfa017615fb5460fb7b98"
+    },
+    {
+      "candidate": "candidate-6",
+      "case": "choice-scope-and-stop",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "QUALITY_REPAIR_EXHAUSTED",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: QUALITY_REPAIR_EXHAUSTED",
+      "model_calls": 5,
+      "tool_calls": 3,
+      "reserved_tokens": 45161,
+      "observed_seconds": 19.597,
+      "usage": {
+        "prompt_tokens": 11258,
+        "completion_tokens": 1124
+      },
+      "tools": [
+        "search_course_evidence",
+        "report_insufficient_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 2,
+      "private_record_sha256": "f17abde195eab40141eb5a58534974f8c94726928739894f5c3e8424cc0143f2"
+    },
+    {
+      "candidate": "candidate-6",
+      "case": "greedy-continuation",
+      "turn": 1,
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_pass": false,
+      "semantic_reason": "Incorrect source acceptance: item order does not establish unit-value ranking or relative-value attributes; some drafts additionally guarantee final bag fullness without enough remaining items.",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 27590,
+      "observed_seconds": 15.496,
+      "usage": {
+        "prompt_tokens": 6613,
+        "completion_tokens": 992
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "891a699511582411935a97d36470093e8b54101a41e42b72e24a49a3c4d226b4"
+    },
+    {
+      "candidate": "candidate-6",
+      "case": "greedy-continuation",
+      "turn": 2,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 7497,
+      "observed_seconds": 3.152,
+      "usage": {
+        "prompt_tokens": 1677,
+        "completion_tokens": 44
+      },
+      "tools": [
+        "read_evidence_window"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "420a492148b382bf2e5d92a9c3621563347a76c8c772204b9544d0dc1dc7283b"
+    },
+    {
+      "candidate": "candidate-6",
+      "case": "knapsack-variants",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "MODEL_REVIEW_CONTRACT",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: MODEL_REVIEW_CONTRACT",
+      "model_calls": 6,
+      "tool_calls": 3,
+      "reserved_tokens": 60280,
+      "observed_seconds": 30.961,
+      "usage": {
+        "prompt_tokens": 14333,
+        "completion_tokens": 2092
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 1,
+      "private_record_sha256": "752f5bb0aaae9db2ec5dfb25cac8c62dae310f1eef9fce88afe8c7cdb078b77e"
+    },
+    {
+      "candidate": "candidate-6",
+      "case": "historical-t6-follow",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 8889,
+      "observed_seconds": 4.567,
+      "usage": {
+        "prompt_tokens": 2112,
+        "completion_tokens": 46
+      },
+      "tools": [
+        "read_evidence_window"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "98298121f274fbdbad6ad6bf6a4fb574c7dbbc743546cef517752a893608a9bd"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "choice-scope-and-stop",
+      "turn": 1,
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "insufficient_evidence",
+      "semantic_pass": false,
+      "semantic_reason": "Incorrect refusal: the task asks the taught 1500/1200/remaining-300 conditional example; canonical course Evidence supplies it.",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 21671,
+      "observed_seconds": 8.283,
+      "usage": {
+        "prompt_tokens": 5261,
+        "completion_tokens": 269
+      },
+      "tools": [
+        "search_course_evidence",
+        "report_insufficient_evidence"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "1e5df274181d31dff57d69abc2edded955c5e0d703bb41b5aa796b17ca140818"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "choice-scope-and-stop",
+      "turn": 2,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 4673,
+      "observed_seconds": 3.15,
+      "usage": {
+        "prompt_tokens": 1061,
+        "completion_tokens": 77
+      },
+      "tools": [
+        "search_course_evidence"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "5d814e4d26414b235e2357cfb6a3398e1cfe4e453d78f2aed8943526ad9a394c"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "greedy-continuation",
+      "turn": 1,
+      "status": "succeeded",
+      "error_code": null,
+      "artifact_kind": "explanation",
+      "semantic_pass": false,
+      "semantic_reason": "Incorrect source acceptance: item order does not establish unit-value ranking or relative-value attributes; some drafts additionally guarantee final bag fullness without enough remaining items.",
+      "model_calls": 3,
+      "tool_calls": 2,
+      "reserved_tokens": 29520,
+      "observed_seconds": 22.647,
+      "usage": {
+        "prompt_tokens": 7155,
+        "completion_tokens": 1700
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "8656875f8c868173b0ec051079a025064267ef38763553e5bf5471996f9b8238"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "greedy-continuation",
+      "turn": 2,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 7179,
+      "observed_seconds": 3.147,
+      "usage": {
+        "prompt_tokens": 1567,
+        "completion_tokens": 44
+      },
+      "tools": [
+        "read_evidence_window"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "ebcaf4e036a433082e29442301bbc0b278588db72da826a93be87edbeba4ec6f"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "knapsack-variants",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 4,
+      "tool_calls": 2,
+      "reserved_tokens": 44395,
+      "observed_seconds": 37.028,
+      "usage": {
+        "prompt_tokens": 10758,
+        "completion_tokens": 2631
+      },
+      "tools": [
+        "search_course_evidence",
+        "create_explanation"
+      ],
+      "review_rejections": 1,
+      "private_record_sha256": "45b72e30d9c60c0c7d617b471396da50b390bde69636c8fa8bb06bfa50ab3209"
+    },
+    {
+      "candidate": "candidate-7",
+      "case": "historical-t6-follow",
+      "turn": 1,
+      "status": "failed",
+      "error_code": "FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "artifact_kind": null,
+      "semantic_pass": false,
+      "semantic_reason": "No accepted artifact: FINAL_REVIEW_BUDGET_UNAVAILABLE",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "reserved_tokens": 8889,
+      "observed_seconds": 4.357,
+      "usage": {
+        "prompt_tokens": 2112,
+        "completion_tokens": 46
+      },
+      "tools": [
+        "read_evidence_window"
+      ],
+      "review_rejections": 0,
+      "private_record_sha256": "716b6a2a1c85c5f9f4b69eb3ce869bce1c0227a882a3199cdb93edb0580fbf33"
+    }
+  ],
+  "model_trial_totals": {
+    "started": 19,
+    "execution_succeeded": 5,
+    "strict_semantic_passed": 1
+  },
+  "final_development": {
+    "new_course_goals_planned": 9,
+    "new_course_goals_started": 5,
+    "new_course_execution_succeeded": 2,
+    "new_course_strict_semantic_passed": 0,
+    "new_course_goals_not_started": 4,
+    "historical_goals_started": 1,
+    "historical_strict_semantic_passed": 0,
+    "gate_passed": false,
+    "course_split": "Previously consumed knapsack development data; not unseen or held out"
+  },
+  "initialization_failures_before_start": {
+    "http_503": 3,
+    "records_preserved": true
+  },
+  "evaluation_boundary": {
+    "labels": "AI source audit; no independent blind human gold",
+    "diagnostic_data": "consumed development and synthetic controls",
+    "new_holdout_courses_selected": 0,
+    "new_holdout_goals_started": 0,
+    "historical_failed_trials_relabelled": false
+  },
+  "browser": {
+    "restored_after_reload": true,
+    "citation_count": 8,
+    "empty_practice_controls_hidden": true,
+    "explanation_status": true,
+    "mobile_no_horizontal_overflow": true,
+    "page_errors": 0,
+    "semantic_quality_evaluated_here": false,
+    "artifact_candidate": "candidate-5",
+    "source_audited_artifact": true
+  },
+  "ownership": {
+    "checks": [
+      {
+        "route": "evidence",
+        "status": 404
+      },
+      {
+        "route": "status",
+        "status": 404
+      },
+      {
+        "route": "command",
+        "status": 404
+      }
+    ],
+    "passed": true
+  },
+  "lifecycle": {
+    "capture": {
+      "phase": "capture",
+      "successful_artifacts_checked": 3,
+      "hidden_answers": true,
+      "event_tail_empty": true,
+      "semantic_quality_evaluated_here": false
+    },
+    "restart": {
+      "phase": "verify",
+      "successful_artifacts_checked": 3,
+      "hidden_answers": true,
+      "event_tail_empty": true,
+      "semantic_quality_evaluated_here": false
+    },
+    "cancel": {
+      "phase": "cancel",
+      "successful_artifacts_checked": 3,
+      "hidden_answers": true,
+      "event_tail_empty": true,
+      "semantic_quality_evaluated_here": false
+    },
+    "deletion_initial": {
+      "task_created_here": true,
+      "synthetic_mechanism_only": true,
+      "passed": false,
+      "error_type": "RuntimeError",
+      "cleanup": 1,
+      "reason": "Single-cue fixture did not meet embedded subtitle minimum; ASR fallback failed; disposable task deleted. A separate two-cue fixture passed."
+    },
+    "deletion": {
+      "task_created_here": true,
+      "synthetic_mechanism_only": true,
+      "index_ready": true,
+      "session_created": true,
+      "deleted_evidence_denied": true,
+      "deleted_session_denied": true,
+      "idempotent_delete": true,
+      "passed": true,
+      "cleanup": 0
+    },
+    "version_fence_evidence": "Python/PostgreSQL mechanism tests; no separate live course-revision mutation in this phase"
+  },
+  "cleanup": {
+    "active_runs_remaining": 0,
+    "deleted_fixture_session_rows": 0,
+    "deleted_fixture_index_rows": 0,
+    "cancelled_run_still_has_no_artifact": true,
+    "isolated_agent_backend_frontend_stopped": true,
+    "redis_restored_stopped": true,
+    "mechanism_test_container_removed": true,
+    "shared_databases_retained": true,
+    "evaluation_database_archive_verified": true,
+    "evaluation_backup_sha256": "b2940246d7e2ec3b3c516be5161a1a614dc43258fc10bd8c5fd294d217dc32b3",
+    "evaluation_backup_bytes": 21081912,
+    "existing_online_processes_present": true,
+    "online_configuration_writes": false
+  },
+  "changed_python_files_in_phase": [
+    "agent-service/src/lecturelens_agent/study/atomic.py",
+    "agent-service/src/lecturelens_agent/study/atomic_delta.py",
+    "agent-service/src/lecturelens_agent/study/atomic_review.py",
+    "agent-service/src/lecturelens_agent/study/goal_scope.py",
+    "agent-service/src/lecturelens_agent/study/ledger.py",
+    "agent-service/src/lecturelens_agent/study/provider.py",
+    "agent-service/src/lecturelens_agent/study/quality.py",
+    "agent-service/src/lecturelens_agent/study/relation_support.py",
+    "agent-service/src/lecturelens_agent/study/request_budget.py",
+    "agent-service/src/lecturelens_agent/study/runtime.py",
+    "agent-service/src/lecturelens_agent/study/support_review.py",
+    "agent-service/tests/test_study.py",
+    "agent-service/tests/test_study_atomic.py",
+    "agent-service/tests/test_study_delta.py",
+    "agent-service/tests/test_study_fact_projection.py",
+    "agent-service/tests/test_study_followup_budget.py",
+    "agent-service/tests/test_study_goal_completion.py",
+    "agent-service/tests/test_study_goal_scope.py",
+    "agent-service/tests/test_study_goal_spans.py",
+    "agent-service/tests/test_study_grounding.py",
+    "agent-service/tests/test_study_ledger.py",
+    "agent-service/tests/test_study_relation_support.py",
+    "agent-service/tests/test_study_review_budget.py"
+  ],
+  "private_artifacts": ".data/relations-phase-20261003/"
+}

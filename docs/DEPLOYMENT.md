@@ -1,5 +1,7 @@
 # LectureLens 本地部署指南
 
+工作区的多轮解释与 `course_relations_v2` / `atomic_ledger_v7` 仍未通过真实多轮质量验收，不能作为部署验收候选。集成验证仅运行在隔离网关、Agent 与独立测试数据库；线上配置和个人模型路由保持不变，见[集成 Phase](../eval/multiturn-v1/PHASE_RELATIONS.md)。
+
 本文说明如何在本机部署 LectureLens，并使用部署者自己的基础设施密码和 AI Provider 凭据。产品能力与验证数据见[项目主页](../README.md)。
 
 ## 部署说明
