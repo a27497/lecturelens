@@ -107,6 +107,10 @@ class SyncRequest(Scope):
 class Hit(Contract):
     evidence_id: Identifier
     score: Annotated[float, Field(ge=-1.000001, le=1.000001, allow_inf_nan=False)]
+    chunk_id: Annotated[int, Field(ge=0)] | None = None
+    chunk_hash: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")] | None = None
+    match_start: Annotated[int, Field(ge=0)] | None = None
+    match_end: Annotated[int, Field(ge=1)] | None = None
 
 
 class RetrieveResponse(Contract):

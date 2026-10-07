@@ -291,13 +291,16 @@ class VectorStore:
         window = request.time_window
         with self.connect() as conn:
             rows = conn.execute(
-                """SELECT v.evidence_id,max(1-(v.embedding <=> %s::vector)) AS score
+                """SELECT evidence_id,score,chunk_id,chunk_hash FROM (
+                   SELECT DISTINCT ON (v.evidence_id) v.evidence_id,
+                   1-(v.embedding <=> %s::vector) AS score,v.chunk_id,v.chunk_hash
                    FROM evidence_vector v JOIN indexed_evidence e USING(owner_id,course_id,evidence_id)
                    JOIN evidence_index i USING(owner_id,course_id)
                    WHERE i.snapshot_id=%s AND i.owner_id=%s AND i.course_id=%s AND i.revision=%s
                    AND i.index_version=%s AND i.state='READY' AND v.evidence_id=ANY(%s)
                    AND e.start_ms<=%s AND e.end_ms>=%s
-                   GROUP BY v.evidence_id ORDER BY score DESC,v.evidence_id LIMIT %s""",
+                   ORDER BY v.evidence_id,score DESC,v.chunk_id
+                   ) matches ORDER BY score DESC,evidence_id LIMIT %s""",
                 (
                     json.dumps(vector),
                     snapshot_id,
@@ -319,4 +322,10 @@ class VectorStore:
             ).fetchone()
             if not active:
                 raise StaleSync("Index changed during retrieval")
-            return [{"evidence_id": row[0], "score": row[1]} for row in rows]
+            # chunk_id is a batch identity, not an Evidence-local position. The
+            # existing projection has no text or offsets. Java verifies this
+            # winning chunk hash against the owned canonical text before hydration.
+            return [
+                {"evidence_id": row[0], "score": row[1], "chunk_id": row[2], "chunk_hash": row[3]}
+                for row in rows
+            ]

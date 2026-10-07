@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field, model_validator
 
@@ -21,11 +21,30 @@ class SearchRequest(CourseRequest):
     end_ms: Annotated[int, Field(ge=0)] | None = None
 
 
-class ReadRequest(CourseRequest):
+class HitSpan(Contract):
+    start: Annotated[int, Field(ge=0)]
+    end: Annotated[int, Field(gt=0)]
+
+    @model_validator(mode="after")
+    def bounded(self):
+        if not 0 < self.end - self.start <= 240:
+            raise ValueError("Invalid Evidence hit span")
+        return self
+
+
+class LocatedRequest(CourseRequest):
+    hit_spans: Annotated[dict[Identifier, HitSpan], Field(max_length=8)] | None = None
+    hit_hashes: (
+        Annotated[dict[Identifier, Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]], Field(max_length=8)]
+        | None
+    ) = None
+
+
+class ReadRequest(LocatedRequest):
     evidence_ids: Annotated[list[Identifier], Field(max_length=8)]
 
 
-class WindowRequest(CourseRequest):
+class WindowRequest(LocatedRequest):
     evidence_id: Identifier
 
 
@@ -35,11 +54,29 @@ class CourseEvidence(Contract):
     start_ms: Annotated[int, Field(ge=0)]
     end_ms: Annotated[int, Field(ge=0)]
     source_type: Annotated[str, Field(min_length=1, max_length=64)]
+    text_start: Annotated[int, Field(ge=0)] | None = None
+    text_end: Annotated[int, Field(ge=0)] | None = None
+    match_start: Annotated[int, Field(ge=0)] | None = None
+    match_end: Annotated[int, Field(gt=0)] | None = None
+    match_hash: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")] | None = None
+    canonical_length: Annotated[int, Field(ge=0)] | None = None
+    match_resolution: Literal["UNIQUE_HASH", "AMBIGUOUS_TEXT"] | None = None
 
     @model_validator(mode="after")
     def interval(self):
         if self.end_ms < self.start_ms:
             raise ValueError("Invalid Evidence interval")
+        for start, end in ((self.text_start, self.text_end), (self.match_start, self.match_end)):
+            if (start is None) != (end is None) or (start is not None and end < start):
+                raise ValueError("Invalid Evidence text interval")
+        if self.text_start is not None and self.text_end - self.text_start != len(self.text):
+            raise ValueError("Evidence window offsets must match its Unicode text")
+        if self.match_start is not None and not 0 < self.match_end - self.match_start <= 240:
+            raise ValueError("Invalid Evidence hit span")
+        if self.canonical_length is not None and any(
+            end is not None and end > self.canonical_length for end in (self.text_end, self.match_end)
+        ):
+            raise ValueError("Evidence offsets exceed the canonical source")
         return self
 
 

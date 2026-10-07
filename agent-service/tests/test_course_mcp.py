@@ -134,6 +134,47 @@ def test_actual_stdio_discovery_and_internal_contract_parity(setup, java_fixture
         mcp.close()
 
 
+def test_mcp_preserves_signed_hit_locations_and_authoritative_window_metadata(setup, java_fixture):
+    url, state = java_fixture
+    authority = setup[1]
+    original = authority.read
+
+    def located(scope, action="CHECK", **arguments):
+        result = original(scope, action, **arguments)
+        for item in result["evidence"]:
+            item.update(
+                text_start=0,
+                text_end=len(item["text"]),
+                match_start=0,
+                match_end=5,
+                match_hash="a" * 64,
+                canonical_length=len(item["text"]),
+                match_resolution="UNIQUE_HASH",
+            )
+        return result
+
+    authority.read = located
+    mcp = McpEvidenceAuthority(url, SECRET)
+    direct = EvidenceAuthority(url, SECRET)
+    try:
+        for action, selector in [("READ", {"evidence_ids": ["e1"]}), ("WINDOW", {"evidence_id": "e1"})]:
+            arguments = {
+                **selector,
+                "hit_spans": {"e1": {"start": 0, "end": 5}},
+                "hit_hashes": {"e1": "a" * 64},
+            }
+            assert mcp.read(setup[3], action, **arguments) == direct.read(setup[3], action, **arguments)
+            assert state["seen"][-1] == state["seen"][-2]
+            assert state["seen"][-1]["hit_spans"] == arguments["hit_spans"]
+            assert state["seen"][-1]["hit_hashes"] == arguments["hit_hashes"]
+        before = len(state["seen"])
+        with pytest.raises(StudyError, match="MCP_MALFORMED_RESPONSE"):
+            mcp.read(setup[3], "READ", evidence_ids=["e1"], hit_spans={"e1": {"start": 5, "end": 5}})
+        assert len(state["seen"]) == before
+    finally:
+        mcp.close()
+
+
 @pytest.mark.parametrize("change", ["owner_id", "revision", "deleted", "signature"])
 def test_java_rejects_authority_violation_with_same_error_as_internal(setup, java_fixture, change):
     url, state = java_fixture

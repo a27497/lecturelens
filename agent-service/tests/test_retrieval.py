@@ -385,3 +385,66 @@ def test_manifest_hash_cannot_disagree_with_source_or_existing_id(store):
     conflicting["upserts"] = []
     with pytest.raises(ValueError):
         retriever.sync(SyncRequest.model_validate(conflicting))
+
+
+@pytest.mark.parametrize("position", [0, 800, 1700])
+def test_winning_chunk_hash_preserves_beginning_middle_and_tail(store, position):
+    direct = "bread: base case has one element; repeated halving gives log2(n) levels."
+    text = "x" * position + direct + "z" * (2000 - position)
+    source = Evidence(evidence_id="tail", text=text, start_ms=30, end_ms=3000)
+    query = RetrieveRequest.model_validate({**payload(), "allowed_evidence_ids": ["tail"]})
+    retriever = Retriever(store, FakeEmbedding())
+    retriever.sync(sync_request(query, items=[source]))
+    hit = retriever.search(query).hits[0]
+    chunks = split_evidence([source])
+    matched = [chunk for _, chunk in chunks if hashlib.sha256(chunk.encode()).hexdigest() == hit.chunk_hash]
+    assert len(matched) == 1 and "bread" in matched[0]
+    assert hit.match_start is None and hit.match_end is None
+    assert (
+        store.ready_snapshot(
+            query.model_copy(update={"owner_id": query.owner_id + 1}), FakeEmbedding.index_version
+        )
+        is None
+    )
+    assert (
+        store.ready_snapshot(
+            query.model_copy(update={"revision": query.revision + 1}), FakeEmbedding.index_version
+        )
+        is None
+    )
+
+
+@pytest.mark.parametrize("target", ["B", "C"])
+def test_global_batch_ids_do_not_claim_local_positions_in_legacy_index(store, target):
+    # A has 14 chunks; B is the 190-char regression at global ID 14.
+    items = [
+        Evidence(evidence_id="A", text="a" * 2840, start_ms=0, end_ms=1),
+        Evidence(
+            evidence_id="B", text=("bread" if target == "B" else "bbbbb") + "b" * 185, start_ms=2, end_ms=3
+        ),
+        Evidence(
+            evidence_id="C", text=("bread" if target == "C" else "ccccc") + "c" * 1400, start_ms=4, end_ms=5
+        ),
+    ]
+    query = RetrieveRequest.model_validate({**payload(), "allowed_evidence_ids": ["A", "B", "C"], "top_k": 1})
+    retriever = Retriever(store, FakeEmbedding())
+    retriever.sync(sync_request(query, items=items))
+    with store.connect() as conn:
+        rows = conn.execute(
+            "SELECT evidence_id,chunk_id,chunk_hash FROM evidence_vector WHERE course_id=%s ORDER BY chunk_id",
+            (query.course_id,),
+        ).fetchall()
+    assert [row[1] for row in rows] == list(range(len(rows)))
+    assert next(row[1] for row in rows if row[0] == "B") == 14
+    assert next(row[1] for row in rows if row[0] == "C") == 15
+    hit = retriever.search(query).hits[0]
+    assert hit.evidence_id == target
+    assert hit.chunk_id == (14 if target == "B" else 15)
+    # Old candidate returns B.start=2800: this assertion must fail it.
+    assert hit.match_start is None and hit.match_end is None
+    assert hit.chunk_hash == hashlib.sha256(items[1 if target == "B" else 2].text[:240].encode()).hexdigest()
+    # A revision-only copy retains legacy batch identity and its proof.
+    revised = query.model_copy(update={"revision": 2})
+    retriever.sync(sync_request(revised, 2, items=items))
+    copied = retriever.search(revised).hits[0]
+    assert (copied.chunk_id, copied.chunk_hash) == (hit.chunk_id, hit.chunk_hash)

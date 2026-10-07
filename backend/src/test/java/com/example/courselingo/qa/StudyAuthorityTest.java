@@ -57,9 +57,9 @@ class StudyAuthorityTest {
         assertThatThrownBy(()->authority.execute(request("HTTP",List.of(),null))).isInstanceOf(BusinessException.class);
     }
     @Test void sourceChangeDuringDenseCallPreventsReturningContext() {
-        when(dense.retrieve(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4))).thenAnswer(call->{
+        when(dense.retrieveMatches(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4))).thenAnswer(call->{
             jdbc.update("UPDATE analysis_task SET content_revision=2");
-            return List.of(item("e1",0));
+            return List.of(new DenseEvidenceClient.Match(item("e1",0),null,null));
         });
         assertThatThrownBy(()->authority.execute(request("SEARCH",null,null))).isInstanceOf(BusinessException.class);
     }
@@ -70,8 +70,8 @@ class StudyAuthorityTest {
     @Test void searchUsesOriginalSpeechAndCompletesAdjacentContextWithoutDuplicateTranslation() {
         var original=item("e2",1000); var translation=item("t2",1000,"SUBTITLE_TRANSLATION");
         when(evidence.current("task",42L)).thenReturn(List.of(item("e3",2000),translation,item("e1",0),original));
-        when(dense.retrieve(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4)))
-            .thenReturn(List.of(translation,original));
+        when(dense.retrieveMatches(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4)))
+            .thenReturn(List.of(new DenseEvidenceClient.Match(translation,null,null),new DenseEvidenceClient.Match(original,null,null)));
         assertThat(ids(authority.execute(request("SEARCH",null,null)))).containsExactly("e2","e3","e1");
     }
     @Test void windowUsesSameModalityInTimeOrderAndDoesNotWrapToTranslation() {
@@ -81,8 +81,8 @@ class StudyAuthorityTest {
     @Test void searchContextKeepsVisualSourcesAndRequestedTimeBoundary() {
         var visual=item("ocr",1000,"OCR"); var first=item("e1",0);
         when(evidence.current("task",42L)).thenReturn(List.of(first,item("e2",1000),item("e3",2000),visual));
-        when(dense.retrieve(eq("task"),eq(42L),anyList(),anyString(),eq(1000L),eq(1999L),eq(4)))
-            .thenReturn(List.of(item("e2",1000),visual));
+        when(dense.retrieveMatches(eq("task"),eq(42L),anyList(),anyString(),eq(1000L),eq(1999L),eq(4)))
+            .thenReturn(List.of(new DenseEvidenceClient.Match(item("e2",1000),null,null),new DenseEvidenceClient.Match(visual,null,null)));
         var bounded=new StudyEvidenceAuthority.Request(42L,"task",1,"SEARCH","topic",1000L,1999L,null,null);
         assertThat(ids(authority.execute(bounded))).containsExactly("e2","ocr","e1");
     }
@@ -103,4 +103,52 @@ class StudyAuthorityTest {
             assertThatThrownBy(()->client.verify(path,"0",signature,body)).isInstanceOf(BusinessException.class);
         }
     }
+    @Test void matchedBeginningMiddleAndTailSurviveSearchAndSubsequentRead() {
+        for(int offset:new int[]{0,800,1700}) {
+            String fact="base case: one element array; log2(n) recursion levels";
+            String text="x".repeat(offset)+fact+"z".repeat(2000-offset);
+            var source=new CourseEvidence("long","task",42L,1,"SUBTITLE","long",List.of("long"),0,180000,"en",text,text,null,false,"v1","hash",true,"source",null,false);
+            when(evidence.current("task",42L)).thenReturn(List.of(source));
+            when(dense.retrieveMatches(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4)))
+                .thenReturn(List.of(new DenseEvidenceClient.Match(source,offset,offset+fact.length())));
+            var search=authority.execute(request("SEARCH",null,null));
+            @SuppressWarnings("unchecked") var row=((List<Map<String,Object>>)search.get("evidence")).getFirst();
+            assertThat((String)row.get("text")).contains(fact).hasSize(1200);
+            assertThat(row.get("start_ms")).isEqualTo(0L);assertThat(search.get("revision")).isEqualTo(1L);
+            var read=new StudyEvidenceAuthority.Request(42L,"task",1,"READ",null,null,null,List.of("long"),null,
+                Map.of("long",new StudyEvidenceAuthority.Span(offset,offset+fact.length())));
+            assertThat(authority.execute(read)).isEqualTo(search);
+            var foreign=new StudyEvidenceAuthority.Request(42L,"task",1,"READ",null,null,null,List.of("long"),null,
+                Map.of("foreign",new StudyEvidenceAuthority.Span(0,1)));
+            assertThatThrownBy(()->authority.execute(foreign)).isInstanceOf(BusinessException.class);
+        }
+    }
+    @Test void ambiguousLegacyMatchSurvivesSearchReadAndWindowWithoutFakePosition() {
+        String text="prefix "+"a".repeat(1200);
+        String matched="a".repeat(240),hash=EvidenceChunkMatch.fingerprint(matched);
+        var source=new CourseEvidence("long","task",42L,1,"SUBTITLE","long",List.of("long"),123,456,"en",text,text,null,false,"v1","hash",true,"source",null,false);
+        when(evidence.current("task",42L)).thenReturn(List.of(source));
+        when(dense.retrieveMatches(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4)))
+            .thenReturn(List.of(new DenseEvidenceClient.Match(source,null,null,hash,matched)));
+        var search=authority.execute(request("SEARCH",null,null));
+        @SuppressWarnings("unchecked") var row=((List<Map<String,Object>>)search.get("evidence")).getFirst();
+        assertThat(row).containsEntry("text",matched).containsEntry("match_resolution","AMBIGUOUS_TEXT")
+            .containsEntry("start_ms",123L).containsEntry("end_ms",456L).doesNotContainKeys("match_start","match_end","text_start","text_end");
+        for(String action:List.of("READ","WINDOW")) {
+            var request=new StudyEvidenceAuthority.Request(42L,"task",1,action,null,null,null,List.of("long"),"long",null,Map.of("long",hash));
+            assertThat(authority.execute(request)).isEqualTo(search);
+        }
+        var invented=new StudyEvidenceAuthority.Request(42L,"task",1,"READ",null,null,null,List.of("long"),null,
+            Map.of("long",new StudyEvidenceAuthority.Span(200,440)),Map.of("long",hash));
+        assertThatThrownBy(()->authority.execute(invented)).isInstanceOf(BusinessException.class);
+        var foreign=new StudyEvidenceAuthority.Request(42L,"task",1,"READ",null,null,null,List.of("long"),null,null,Map.of("foreign",hash));
+        assertThatThrownBy(()->authority.execute(foreign)).isInstanceOf(BusinessException.class);
+    }
+    @Test void rangeGuardStillRejectsNegativeAndPastCanonicalEnd() {
+        for(var span:List.of(new StudyEvidenceAuthority.Span(-1,2),new StudyEvidenceAuthority.Span(0,7),new StudyEvidenceAuthority.Span(2800,3040))) {
+            var request=new StudyEvidenceAuthority.Request(42L,"task",1,"READ",null,null,null,List.of("e1"),null,Map.of("e1",span));
+            assertThatThrownBy(()->authority.execute(request)).isInstanceOf(BusinessException.class);
+        }
+    }
+
 }

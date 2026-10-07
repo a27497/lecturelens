@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.CourseEvidence;
+import com.example.courselingo.evidence.EvidenceChunkMatch;
 import com.example.courselingo.qa.service.DenseEvidenceClient;
 import com.example.courselingo.qa.service.DenseRetrievalProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,6 +86,61 @@ class DenseEvidenceClientTest {
         assertThat(received.get().has("evidence")).isFalse();
         assertThat(received.get().path("allowed_evidence_ids").get(0).asText()).isEqualTo("e1");
         assertThat(signature.get()).matches("[0-9a-f]{64}");
+    }
+
+    static CourseEvidence textEvidence(String text) {
+        return new CourseEvidence("e1", "task-1", 42L, 7, "SUBTITLE", "source-1", List.of("source-1"),
+            1000, 2000, "en", text, text, null, false, "evidence-v1", "hash", true, "source_text", null, false);
+    }
+
+    @Test
+    void globalChunk14Of190CharacterEvidenceResolvesToLocalZeroWithoutReindexing() {
+        String text="bread"+"b".repeat(185);
+        mutate=response->((ObjectNode)response.path("hits").get(0))
+            .put("chunk_id",14).put("chunk_hash",EvidenceChunkMatch.fingerprint(text));
+        var match=client.retrieveMatches("task-1",42L,List.of(textEvidence(text)),"bread",null,null,4).getFirst();
+        assertThat(match.start()).isEqualTo(0);assertThat(match.end()).isEqualTo(190);
+        assertThat(match.text()).isEqualTo(text);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints={0,800,1800})
+    void resolvesActualBeginningMiddleAndFinalChunkInsteadOfClamping(int start) {
+        String text="x".repeat(start)+"base case one element log2(n)"+"z".repeat(2000-start);
+        String chunk=text.substring(start,Math.min(start+240,text.length()));
+        mutate=response->((ObjectNode)response.path("hits").get(0))
+            .put("chunk_id",999).put("chunk_hash",EvidenceChunkMatch.fingerprint(chunk));
+        var match=client.retrieveMatches("task-1",42L,List.of(textEvidence(text)),"base",null,null,4).getFirst();
+        assertThat(match.start()).isEqualTo(start);assertThat(match.end()).isEqualTo(start+chunk.length());
+        assertThat(text.substring(match.start(),match.end())).isEqualTo(chunk);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints={-1,190,2800})
+    void malformedOrGlobalDerivedPositionIsRejectedEvenWithValidHash(int start) {
+        String text="bread"+"b".repeat(185);
+        mutate=response->((ObjectNode)response.path("hits").get(0))
+            .put("chunk_hash",EvidenceChunkMatch.fingerprint(text)).put("match_start",start).put("match_end",start+240);
+        assertUnavailable(()->client.retrieveMatches("task-1",42L,List.of(textEvidence(text)),"bread",null,null,4));
+    }
+
+    @Test void claimedFinalEndIsNotClamped() {
+        String text="bread"+"b".repeat(185);
+        mutate=response->((ObjectNode)response.path("hits").get(0))
+            .put("chunk_hash",EvidenceChunkMatch.fingerprint(text)).put("match_start",0).put("match_end",240);
+        assertUnavailable(()->client.retrieveMatches("task-1",42L,List.of(textEvidence(text)),"bread",null,null,4));
+    }
+
+    @Test void unresolvableLegacyHashCannotFallBackToPrefix() {
+        mutate=response->((ObjectNode)response.path("hits").get(0)).put("chunk_hash","0".repeat(64));
+        assertUnavailable(()->client.retrieveMatches("task-1",42L,List.of(evidence("e1",7)),"bread",null,null,4));
+    }
+
+    @Test
+    void rejectsMatchedRangeOutsideCanonicalText() {
+        mutate = response -> ((ObjectNode) response.path("hits").get(0))
+            .put("match_start", 100).put("match_end", 200);
+        assertUnavailable(() -> client.retrieveMatches("task-1", 42L, List.of(evidence("e1", 7)), "question", null, null, 8));
     }
 
     @ParameterizedTest

@@ -3,6 +3,7 @@ package com.example.courselingo.qa.service;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.CourseEvidence;
+import com.example.courselingo.evidence.EvidenceChunkMatch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -121,6 +122,17 @@ public class DenseEvidenceClient implements AutoCloseable {
 
     public List<CourseEvidence> retrieve(String taskId, Long ownerId, List<CourseEvidence> evidence,
                                         String question, Long startMs, Long endMs, int topK) {
+        return retrieveMatches(taskId,ownerId,evidence,question,startMs,endMs,topK).stream().map(Match::evidence).toList();
+    }
+
+    public record Match(CourseEvidence evidence,Integer start,Integer end,String hash,String text) {
+        public Match(CourseEvidence evidence,Integer start,Integer end) {
+            this(evidence,start,end,null,null);
+        }
+    }
+
+    public List<Match> retrieveMatches(String taskId, Long ownerId, List<CourseEvidence> evidence,
+                                        String question, Long startMs, Long endMs, int topK) {
         if (evidence.isEmpty()) return List.of();
         String requestId = UUID.randomUUID().toString();
         long started = System.nanoTime();
@@ -153,7 +165,7 @@ public class DenseEvidenceClient implements AutoCloseable {
                 throw new IllegalStateException("Retrieval response contract mismatch");
             }
             Map<String, CourseEvidence> allowed = evidence.stream().collect(Collectors.toMap(CourseEvidence::evidenceId, Function.identity()));
-            List<CourseEvidence> selected = new ArrayList<>();
+            List<Match> selected = new ArrayList<>();
             var seen = new HashSet<String>();
             for (var hit : result.path("hits")) {
                 String id = hit.path("evidence_id").asText();
@@ -163,7 +175,25 @@ public class DenseEvidenceClient implements AutoCloseable {
                         || (startMs != null && endMs != null && (item.startMs() > endMs || item.endMs() < startMs))) {
                     throw new IllegalStateException("Retrieval returned evidence outside request scope");
                 }
-                selected.add(item); // Source text and citation times always come from Java's canonical snapshot.
+                if(hit.hasNonNull("chunk_hash") && !hit.path("chunk_hash").isTextual())
+                    throw new IllegalStateException("Invalid chunk fingerprint");
+                String hash=hit.path("chunk_hash").isTextual()?hit.path("chunk_hash").asText():null;
+                var position=hash==null?null:EvidenceChunkMatch.resolve(item.normalizedText(),hash);
+                Integer start=null,end=null;
+                if (hit.hasNonNull("match_start") || hit.hasNonNull("match_end")) {
+                    int size=item.normalizedText().codePointCount(0,item.normalizedText().length());
+                    if (!hit.path("match_start").isIntegralNumber() || !hit.path("match_end").isIntegralNumber()
+                            || !hit.path("match_start").canConvertToInt() || !hit.path("match_end").canConvertToInt()) {
+                        throw new IllegalStateException("Invalid evidence match range");
+                    }
+                    start=hit.path("match_start").asInt();end=hit.path("match_end").asInt();
+                    if(start<0 || start>=size || end<=start || end-start>240) throw new IllegalStateException("Invalid evidence match range");
+                    if(position==null || !start.equals(position.start()) || !end.equals(position.end())) {
+                        throw new IllegalStateException("Unverified evidence match range");
+                    }
+                }
+                selected.add(position==null?new Match(item,null,null):
+                    new Match(item,position.start(),position.end(),hash,position.text()));
             }
             log.info("Dense retrieval: requestId={}, cacheHit={}, hits={}, elapsedMs={}", requestId,
                 result.path("cache_hit").asBoolean(), selected.size(), (System.nanoTime() - started) / 1_000_000);
