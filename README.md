@@ -96,6 +96,8 @@ test -e .env.agent.local || cp .env.agent.example .env.agent.local
 
 按[部署指南](docs/DEPLOYMENT.md)配置基础设施、Java 与 Agent 的共同服务密钥、Dense 检索及可用的模型连接，再分别启动服务；不要将示例配置或本机演示凭据直接当成可用部署。无 Key 的确定性演示见 `.env.demo.example`，Python 验证命令见[服务说明](agent-service/README.md)。
 
+媒体转写支持显式选择 SiliconFlow、百炼或 Mock。百炼同步 ASR 的凭据、分片配置与验证边界见[百炼 ASR](docs/ASR_BAILIAN.md)；转写成功不代表翻译或完整课程 Pipeline 已通过验收。
+
 ## More Documentation
 
 [产品与职责契约](docs/AGENT_PRODUCT_CONTRACT.md) · [架构与故障语义](docs/ARCHITECTURE.md) · [部署](docs/DEPLOYMENT.md) · [API](docs/API.md) · [数据库](docs/DB_SCHEMA.md) · [评测索引](eval/README.md) · [CI](https://github.com/a27497/lecturelens/actions/workflows/ci.yml)

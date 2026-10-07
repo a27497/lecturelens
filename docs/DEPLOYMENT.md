@@ -15,7 +15,7 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 - Docker Desktop 或 Docker Engine，以及 Docker Compose v2
 - 可在终端调用的 FFmpeg 与 FFprobe
 - Tesseract OCR（可选；不启用 OCR 时无需安装）
-- 部署者自己的 SiliconFlow ASR 与 OpenAI-compatible LLM/VLM 凭据
+- 部署者自己的 SiliconFlow 或百炼 ASR 与 OpenAI-compatible LLM/VLM 凭据
 
 ## 1. 克隆仓库
 
@@ -65,6 +65,8 @@ JWT_ACCESS_SECRET
 模板还包含数据库名、bucket、RocketMQ topic/group、Host Port 和后端连接地址。使用默认端口时无需调整；需要改端口时按第 8 节同步修改。
 
 ## 4. ASR 配置
+
+下面保留 SiliconFlow 配置。百炼同步转写、显式 provider 选择及推荐分片参数见[百炼 ASR](ASR_BAILIAN.md)。凭据由运行环境注入；启用百炼需要包含该实现的新构建产物，仅修改环境变量不能升级旧 JAR。
 
 ```dotenv
 SILICONFLOW_ASR_ENABLED=true

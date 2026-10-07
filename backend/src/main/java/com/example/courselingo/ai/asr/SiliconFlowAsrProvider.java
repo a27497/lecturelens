@@ -110,7 +110,7 @@ public class SiliconFlowAsrProvider implements SpeechToTextProvider {
         }
         boolean retryable = isRetryableStatus(response.statusCode());
         throw new SiliconFlowAsrException(
-            "SiliconFlow ASR request failed with HTTP " + response.statusCode() + ": " + response.body(),
+            "SiliconFlow ASR request failed with HTTP " + response.statusCode(),
             retryable,
             response.statusCode()
         );
@@ -191,12 +191,13 @@ public class SiliconFlowAsrProvider implements SpeechToTextProvider {
             || statusCode == 504;
     }
 
-    private static java.util.Optional<String> traceId(SiliconFlowAsrClientResponse response) {
+    private java.util.Optional<String> traceId(SiliconFlowAsrClientResponse response) {
         return response.headers().entrySet().stream()
             .filter(entry -> "x-siliconcloud-trace-id".equalsIgnoreCase(entry.getKey()))
             .flatMap(entry -> entry.getValue().stream())
             .map(String::strip)
             .filter(value -> !value.isBlank())
+            .filter(value -> !value.contains(properties.getApiKey()))
             .filter(value -> !AsrErrorSanitizer.containsSensitiveData(value))
             .findFirst();
     }

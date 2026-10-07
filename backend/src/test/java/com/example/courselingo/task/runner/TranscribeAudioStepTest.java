@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
-import com.example.courselingo.ai.asr.SiliconFlowAsrException;
+import com.example.courselingo.ai.asr.AsrProviderException;
 import com.example.courselingo.ai.asr.SpeechToTextProvider;
 import com.example.courselingo.ai.asr.SpeechToTextRequest;
 import com.example.courselingo.ai.asr.SpeechToTextResult;
@@ -596,7 +596,7 @@ class TranscribeAudioStepTest {
                 } catch (InterruptedException exception) {
                     Thread.currentThread().interrupt();
                 }
-                throw new SiliconFlowAsrException("safe provider failure", false);
+                throw new AsrProviderException("safe provider failure", false);
             }
 
             @Override
@@ -608,7 +608,7 @@ class TranscribeAudioStepTest {
         context.setAudioExtractionResult(new AudioExtractionResult(audio, "wav", 16000, 1));
 
         assertThatThrownBy(() -> new TranscribeAudioStep(provider, authoritativeDuration(1200L)).execute(context))
-            .isInstanceOf(SiliconFlowAsrException.class);
+            .isInstanceOf(AsrProviderException.class);
         assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
             assertThat(record.durationMillis()).isGreaterThanOrEqualTo(20L);
             assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED");
@@ -1100,7 +1100,7 @@ class TranscribeAudioStepTest {
             requests.add(request);
             String name = request.audioFile().getFileName().toString();
             if (!name.contains("001") && firstChunkAttempts.incrementAndGet() == 1) {
-                throw new SiliconFlowAsrException("SiliconFlow ASR request failed with HTTP 502", true, 502);
+                throw new AsrProviderException("SiliconFlow ASR request failed with HTTP 502", true, 502);
             }
             return chunkResult(name);
         }
@@ -1118,7 +1118,7 @@ class TranscribeAudioStepTest {
         @Override
         public SpeechToTextResult transcribe(SpeechToTextRequest request) {
             requests.add(request);
-            throw new SiliconFlowAsrException("SiliconFlow ASR request failed with HTTP 502", true, 502);
+            throw new AsrProviderException("SiliconFlow ASR request failed with HTTP 502", true, 502);
         }
 
         @Override
@@ -1134,7 +1134,7 @@ class TranscribeAudioStepTest {
         @Override
         public SpeechToTextResult transcribe(SpeechToTextRequest request) {
             requests.add(request);
-            throw new SiliconFlowAsrException("SiliconFlow ASR request failed with HTTP 401", false, 401);
+            throw new AsrProviderException("SiliconFlow ASR request failed with HTTP 401", false, 401);
         }
 
         @Override
@@ -1150,7 +1150,7 @@ class TranscribeAudioStepTest {
         @Override
         public SpeechToTextResult transcribe(SpeechToTextRequest request) {
             requests.add(request);
-            throw new SiliconFlowAsrException(
+            throw new AsrProviderException(
                 "SiliconFlow ASR configuration is invalid: audio file exceeds configured limit",
                 false
             );
@@ -1174,7 +1174,7 @@ class TranscribeAudioStepTest {
         @Override
         public SpeechToTextResult transcribe(SpeechToTextRequest request) {
             requests.add(request);
-            throw new SiliconFlowAsrException(
+            throw new AsrProviderException(
                 "SiliconFlow ASR request failed with HTTP " + statusCode,
                 false,
                 statusCode
@@ -1331,7 +1331,7 @@ class TranscribeAudioStepTest {
 
         @Override
         public SpeechToTextResult transcribe(SpeechToTextRequest request) {
-            throw new SiliconFlowAsrException(
+            throw new AsrProviderException(
                 "HTTP 500 at " + syntheticWindowsPath() + " "
                     + sensitiveWord("object", "Key") + "=abc "
                     + sensitiveWord("to", "ken") + "=raw "

@@ -3,7 +3,7 @@ package com.example.courselingo.task.runner;
 import com.example.courselingo.ai.asr.SpeechToTextProvider;
 import com.example.courselingo.ai.asr.SpeechToTextRequest;
 import com.example.courselingo.ai.asr.SpeechToTextResult;
-import com.example.courselingo.ai.asr.SiliconFlowAsrException;
+import com.example.courselingo.ai.asr.AsrProviderException;
 import com.example.courselingo.ai.asr.SpeechToTextProviderException;
 import com.example.courselingo.ai.asr.TranscribedSegment;
 import com.example.courselingo.ai.asr.AsrTextNormalizer;
@@ -441,7 +441,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 } catch (InterruptedException exception) {
                     Thread.currentThread().interrupt();
                     executor.shutdownNow();
-                    throw new SiliconFlowAsrException("SiliconFlow ASR chunk wait was interrupted", true, exception);
+                    throw new AsrProviderException("ASR chunk wait was interrupted", true, exception);
                 } catch (ExecutionException exception) {
                     executor.shutdownNow();
                     Throwable cause = exception.getCause();
@@ -598,7 +598,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             Thread.sleep(backoff.toMillis());
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new SiliconFlowAsrException("SiliconFlow ASR retry wait was interrupted", true, exception);
+            throw new AsrProviderException("ASR retry wait was interrupted", true, exception);
         }
     }
 
@@ -616,15 +616,15 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         if (exception instanceof BusinessException) {
             return new AsrRetryFailure(false, "business", null);
         }
-        if (exception instanceof SiliconFlowAsrException siliconFlowException) {
-            Integer statusCode = siliconFlowException.statusCode().orElse(null);
+        if (exception instanceof AsrProviderException providerException) {
+            Integer statusCode = providerException.statusCode().orElse(null);
             if (statusCode != null && NON_RETRYABLE_ASR_STATUS_CODES.contains(statusCode)) {
                 return new AsrRetryFailure(false, "http_" + statusCode, statusCode);
             }
             if (statusCode != null && RETRYABLE_ASR_STATUS_CODES.contains(statusCode)) {
                 return new AsrRetryFailure(true, "http_" + statusCode, statusCode);
             }
-            if (!siliconFlowException.retryable()) {
+            if (!providerException.retryable()) {
                 return new AsrRetryFailure(false, "provider_non_retryable", statusCode);
             }
             return new AsrRetryFailure(true, "provider_retryable", statusCode);

@@ -16,4 +16,8 @@ public record SiliconFlowAsrClientResponse(
         headers = headers == null ? Map.of() : Map.copyOf(headers);
         duration = duration == null ? Duration.ZERO : duration;
     }
+    @Override
+    public String toString() {
+        return "SiliconFlowAsrClientResponse[redacted]";
+    }
 }

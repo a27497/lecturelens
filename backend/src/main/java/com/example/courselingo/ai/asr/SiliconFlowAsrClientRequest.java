@@ -18,4 +18,8 @@ public record SiliconFlowAsrClientRequest(
         headers = headers == null ? Map.of() : Map.copyOf(headers);
         formFields = formFields == null ? Map.of() : Map.copyOf(formFields);
     }
+    @Override
+    public String toString() {
+        return "SiliconFlowAsrClientRequest[redacted]";
+    }
 }

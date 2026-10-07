@@ -16,4 +16,8 @@ public record SiliconFlowHttpRequest(
         headers = headers == null ? Map.of() : Map.copyOf(headers);
         body = body == null ? new byte[0] : body.clone();
     }
+    @Override
+    public String toString() {
+        return "SiliconFlowHttpRequest[redacted]";
+    }
 }

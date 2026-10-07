@@ -1,6 +1,6 @@
 package com.example.courselingo.ai.asr;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class MockAsrConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = "courselingo.ai.asr.mock", name = "enabled", havingValue = "true")
+    @Conditional(AsrProviderSelection.Mock.class)
     MockAsrProvider mockAsrProvider(MockAsrProperties properties) {
         return new MockAsrProvider(properties);
     }

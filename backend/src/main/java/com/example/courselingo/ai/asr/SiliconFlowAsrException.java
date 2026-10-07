@@ -1,35 +1,17 @@
 package com.example.courselingo.ai.asr;
 
-import java.util.Optional;
-
-public class SiliconFlowAsrException extends SpeechToTextProviderException {
-
-    private final boolean retryable;
-    private final Integer statusCode;
-
+/** Compatibility type for existing SiliconFlow clients. */
+public class SiliconFlowAsrException extends AsrProviderException {
     public SiliconFlowAsrException(String message, boolean retryable) {
-        this(message, retryable, null, null);
+        super(message, retryable);
     }
-
     public SiliconFlowAsrException(String message, boolean retryable, Integer statusCode) {
-        this(message, retryable, statusCode, null);
+        super(message, retryable, statusCode);
     }
-
     public SiliconFlowAsrException(String message, boolean retryable, Throwable cause) {
-        this(message, retryable, null, cause);
+        super(message, retryable, cause);
     }
-
     public SiliconFlowAsrException(String message, boolean retryable, Integer statusCode, Throwable cause) {
-        super(message, cause);
-        this.retryable = retryable;
-        this.statusCode = statusCode;
-    }
-
-    public boolean retryable() {
-        return retryable;
-    }
-
-    public Optional<Integer> statusCode() {
-        return Optional.ofNullable(statusCode);
+        super(message, retryable, statusCode, cause);
     }
 }

@@ -327,6 +327,17 @@ courselingo:
           max-attempts: ${OPENAI_COMPATIBLE_VISION_MAX_ATTEMPTS:1}
           enabled: true
     asr:
+      provider: ${ASR_PROVIDER:}
+      bailian:
+        enabled: ${BAILIAN_ASR_ENABLED:false}
+        endpoint: ${BAILIAN_ASR_ENDPOINT:https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation}
+        api-key: ${BAILIAN_ASR_API_KEY:}
+        model: ${BAILIAN_ASR_MODEL:qwen-audio-3.1-asr-flash}
+        connect-timeout: ${BAILIAN_ASR_CONNECT_TIMEOUT:5s}
+        request-timeout: ${BAILIAN_ASR_REQUEST_TIMEOUT:180s}
+        max-audio-file-size: ${BAILIAN_ASR_MAX_AUDIO_FILE_SIZE:7MB}
+        language-hint-enabled: ${BAILIAN_ASR_LANGUAGE_HINT_ENABLED:false}
+        context: ${BAILIAN_ASR_CONTEXT:}
       silicon-flow:
         enabled: ${SILICONFLOW_ASR_ENABLED:false}
         base-url: ${SILICONFLOW_ASR_BASE_URL:https://api.siliconflow.cn}
@@ -338,7 +349,7 @@ courselingo:
       chunking:
         enabled: ${ASR_CHUNKING_ENABLED:true}
         chunk-duration: ${ASR_CHUNK_DURATION:60s}
-        max-audio-file-size: ${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}
+        max-audio-file-size: ${ASR_MAX_AUDIO_FILE_SIZE:${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}}
         max-chunk-file-size: ${ASR_CHUNK_MAX_FILE_SIZE:4MB}
         max-chunks: ${ASR_CHUNK_MAX_CHUNKS:180}
         concurrency: ${ASR_CHUNK_CONCURRENCY:2}
