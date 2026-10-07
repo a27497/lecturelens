@@ -42,8 +42,8 @@ let sessionKey = "";
 let cursor = 0;
 const active = computed(() => run.value !== null && ["queued", "running"].includes(run.value.status));
 const canStart = computed(() => enabled.value && ready.value && !active.value && !submitting.value && goal.value.trim().length > 0);
-const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
-const toolText: Record<string, string> = { search_course_evidence: "查找课程证据", read_evidence_window: "补读片段上下文", check_python_example: "核算例题", create_practice_set: "生成解释与练习", create_python_practice: "生成代码练习", create_interval_practice: "生成区间练习", create_sequence_practice: "生成排序步骤练习", report_insufficient_evidence: "确认课程证据不足" };
+const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ queued: "等待开始", running: "正在学习课程内容", succeeded: artifact.value?.kind === "explanation" ? "课程解释已完成" : "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
+const toolText: Record<string, string> = { search_course_evidence: "查找课程证据", read_evidence_window: "补读片段上下文", check_python_example: "核算例题", create_explanation: "生成课程解释", create_practice_set: "生成解释与练习", create_python_practice: "生成代码练习", create_interval_practice: "生成区间练习", create_sequence_practice: "生成排序步骤练习", report_insufficient_evidence: "确认课程证据不足" };
 
 watch(() => [props.taskId, props.status], () => { void load(); }, { immediate: true });
 onBeforeUnmount(() => { version++; controller?.abort(); clearTimeout(timer); });
@@ -172,7 +172,7 @@ async function reveal() {
 
 <template>
   <section class="agent-panel workspace-panel" aria-labelledby="agent-title">
-    <header><h2 id="agent-title">学习助手</h2><p>提出一个学习目标，结合课程证据获得解释与两道自测题。<RouterLink to="/settings/models">管理模型</RouterLink></p></header>
+    <header><h2 id="agent-title">学习助手</h2><p>提出一个学习目标，结合课程证据解释概念、继续追问或生成自测题。<RouterLink to="/settings/models">管理模型</RouterLink></p></header>
     <p v-if="loading" role="status">正在读取学习会话…</p>
     <div v-else-if="preparing" role="status"><p>课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。</p><el-button @click="$emit('navigate', 'overview')">查看处理进度</el-button></div>
     <div v-else-if="enabled === false" role="status">
@@ -186,7 +186,7 @@ async function reveal() {
       <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
       <div class="actions">
-        <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">解释并出题</el-button>
+        <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">开始学习</el-button>
         <el-button v-if="active" :disabled="submitting" @click="cancel">取消本次执行</el-button>
         <el-button v-else :disabled="submitting" @click="load(true)">新会话</el-button>
       </div>
@@ -197,7 +197,7 @@ async function reveal() {
             <option v-for="(session, index) in sessions" :key="session.session_id" :value="session.session_id">{{ session.created_at ? new Date(session.created_at).toLocaleString() : `会话 ${index + 1}` }}</option>
           </select>
         </label>
-        <p>显示最近 20 次执行，选择后可继续查看练习和已保存作答。</p>
+        <p>显示最近 20 次执行，选择后可继续查看解释、练习和已保存作答。</p>
         <ol><li v-for="previous in recentRuns" :key="previous.run_id"><el-button text @click="load(false, sessionId, previous.run_id)">{{ previous.goal }}</el-button></li></ol>
       </details>
       <div v-if="run" class="run-progress" aria-live="polite">
@@ -210,7 +210,7 @@ async function reveal() {
           </li>
         </ol>
         <p v-if="run.error_code === 'COURSE_UNAVAILABLE_OR_CHANGED'">课程已更新或不可用，请检查课程后开启新会话。</p>
-        <p v-else-if="run.error_code === 'QUALITY_REPAIR_EXHAUSTED'">草稿修订后仍未通过复核，本次未生成练习。可以缩小学习目标后重试。</p>
+        <p v-else-if="run.error_code === 'QUALITY_REPAIR_EXHAUSTED'">草稿修订后仍未通过复核，本次未生成学习产物。可以缩小学习目标后重试。</p>
         <p v-else-if="run.error_code === 'INVALID_TOOL_ARGUMENTS'">模型返回的工具或复核参数不符合要求，本次未保存产物。可检查模型兼容性后重试。</p>
         <p v-else-if="run.error_code?.startsWith('MODEL_')">{{ modelError(new Error(run.error_code), '模型调用未完成，请检查模型管理中的配置后重试。') }}</p>
         <p v-else-if="run.status === 'failed'">本次没有完成学习产物，可开启新会话重试。</p>

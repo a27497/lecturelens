@@ -34,7 +34,7 @@ async function enter() {
       <p v-if="error" role="alert">{{ error }}</p>
     </section>
     <ol>
-      <li><strong>解释概念</strong>：选中示例目标，点击「解释并出题」。</li>
+      <li><strong>解释概念</strong>：选中示例目标，点击「开始学习」。</li>
       <li><strong>核对 Evidence</strong>：展开「查看课程证据」，检查 Evidence ID、原文与视频时间。</li>
       <li><strong>测试边界</strong>：选择课程外问题，观察证据不足时的拒答或澄清。</li>
       <li><strong>作答与反馈</strong>：完成一道题、保存作答，再点击「获取证据反馈」。</li>

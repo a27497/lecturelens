@@ -79,7 +79,7 @@ it("does not restore an older artifact when starting a new goal fails", async ()
   await flushPromises();
   expect(wrapper.find(".study-artifact").exists()).toBe(true);
   await wrapper.findAll("textarea")[0]!.setValue("新的学习目标");
-  await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
+  await wrapper.findAll("button").find(button => button.text() === "开始学习")!.trigger("click");
   await flushPromises();
   expect(wrapper.find(".study-artifact").exists()).toBe(false);
   wrapper.unmount();
@@ -98,7 +98,7 @@ it("ignores late answers from a completed run after a new run starts", async () 
   await flushPromises();
   await wrapper.findAll("button").find(button => button.text().includes("查看参考答案"))!.trigger("click");
   await wrapper.findAll("textarea")[0]!.setValue("新的学习目标");
-  await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
+  await wrapper.findAll("button").find(button => button.text() === "开始学习")!.trigger("click");
   await flushPromises();
   resolveAnswers({ questions: [{ question: "old", evidence_ids: ["e1"], answer: "OLD PRIVATE ANSWER" }] });
   await flushPromises();
@@ -148,10 +148,10 @@ it("keeps learning unavailable while evidence is being prepared and can refresh"
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
   await flushPromises();
   await wrapper.findAll("textarea")[0]!.setValue("解释停止条件");
-  expect(wrapper.findAll("button").find(button => button.text() === "解释并出题")!.attributes("disabled")).toBeDefined();
+  expect(wrapper.findAll("button").find(button => button.text() === "开始学习")!.attributes("disabled")).toBeDefined();
   await wrapper.findAll("button").find(button => button.text() === "刷新状态")!.trigger("click");
   await flushPromises();
-  expect(wrapper.findAll("button").find(button => button.text() === "解释并出题")!.attributes("disabled")).toBeUndefined();
+  expect(wrapper.findAll("button").find(button => button.text() === "开始学习")!.attributes("disabled")).toBeUndefined();
   wrapper.unmount();
 });
 

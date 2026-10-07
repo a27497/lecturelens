@@ -11,7 +11,7 @@ export interface StudyRun {
 export interface Citation { evidence_id: string; text: string; start_ms: number; end_ms: number; source_type: string }
 export interface PracticeQuestion { question: string; evidence_ids: string[]; answer?: string; rubric?: string }
 export interface StudyArtifact {
-  kind?: "practice" | "insufficient_evidence"; artifact_id: string; title: string; explanation: string; evidence_ids: string[];
+  kind?: "explanation" | "practice" | "insufficient_evidence"; artifact_id: string; title: string; explanation: string; evidence_ids: string[];
   questions: PracticeQuestion[]; citations: Citation[]; revision: number; mode: string;
 }
 export interface StudyResponse {
