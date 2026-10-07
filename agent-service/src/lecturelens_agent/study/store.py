@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS study_run (
 CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_run ON study_run(session_id)
     WHERE status IN ('queued','running');
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS model_config jsonb;
+ALTER TABLE study_run ADD COLUMN IF NOT EXISTS final_review_reservation jsonb;
+ALTER TABLE study_run ADD COLUMN IF NOT EXISTS explanation_path_reservation jsonb;
 CREATE TABLE IF NOT EXISTS study_event (
     run_id text NOT NULL REFERENCES study_run ON DELETE CASCADE, sequence bigint NOT NULL,
     event_type text NOT NULL, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(),
@@ -272,17 +274,35 @@ class StudyStore:
         with self.connect() as conn:
             rows = conn.execute(
                 """SELECT r.goal,a.artifact_id,a.content FROM study_run r
-                JOIN study_artifact a USING(run_id) WHERE r.session_id=%s AND r.run_id<>%s
+                JOIN study_artifact a USING(run_id)
+                JOIN study_run current_run ON current_run.run_id=%s AND current_run.session_id=r.session_id
+                WHERE r.session_id=%s AND r.created_at<current_run.created_at
                 AND r.status='succeeded' ORDER BY r.created_at DESC LIMIT 2""",
-                (session_id, run_id),
+                (run_id, session_id),
             ).fetchall()
             return [
                 {
                     "goal": row["goal"],
                     "artifact_id": row["artifact_id"],
                     "title": row["content"]["title"],
+                    "kind": row["content"].get("kind", "practice"),
                     "explanation": row["content"]["explanation"][:800],
                     "evidence_ids": row["content"]["evidence_ids"],
+                    "evidence_references": [
+                        {
+                            key: item[key]
+                            for key in (
+                                "evidence_id",
+                                "start_ms",
+                                "end_ms",
+                                "match_start",
+                                "match_end",
+                                "match_hash",
+                            )
+                            if key in item
+                        }
+                        for item in row["content"].get("citations", [])[:8]
+                    ],
                 }
                 for row in reversed(rows)
             ]
@@ -291,6 +311,27 @@ class StudyStore:
         with self.connect() as conn:
             return conn.execute("""SELECT r.*,s.owner_id,s.course_id,s.revision FROM study_run r JOIN study_session s USING(session_id)
                 WHERE r.status IN ('queued','running') ORDER BY r.created_at LIMIT 20""").fetchall()
+
+    def supported_facts(self, scope):
+        from .ledger import valid_fact
+
+        with self.connect() as conn:
+            rows = conn.execute(
+                """SELECT r.run_id,t.result->'supported_facts' AS facts FROM study_tool_result t
+                JOIN study_run r USING(run_id) JOIN study_session s USING(session_id)
+                JOIN study_run current_run ON current_run.run_id=%s AND current_run.session_id=s.session_id
+                WHERE s.owner_id=%s AND s.course_id=%s AND s.revision=%s AND s.session_id=%s
+                AND r.created_at<=current_run.created_at AND r.status!='cancelled'
+                AND t.result ? 'supported_facts' ORDER BY r.created_at DESC,t.call_id DESC LIMIT 12""",
+                (scope["run_id"], *(scope[k] for k in ("owner_id", "course_id", "revision", "session_id"))),
+            ).fetchall()
+        facts = {}
+        for row in rows:
+            for value in row["facts"]:
+                fact = valid_fact(value, scope)
+                if fact and fact.source_run_id == row["run_id"]:
+                    facts.setdefault(fact.fact_id, fact.model_dump())
+        return list(facts.values())[:24]
 
     @contextmanager
     def execution_lock(self, session_id):
@@ -332,9 +373,85 @@ class StudyStore:
         with self.connect() as conn:
             return self._active(conn, run_id, token)
 
-    def reserve(self, run_id, token, kind, tokens=0):
+    def reserve_final_review(self, run_id, token, *, correction=True):
+        from .review_budget import REVIEW_SECONDS, reservation, timeout
+
         with self.connect() as conn:
             row = self._active(conn, run_id, token)
+            if row.get("explanation_path_reservation"):
+                conn.execute(
+                    "UPDATE study_run SET explanation_path_reservation=NULL WHERE run_id=%s", (run_id,)
+                )
+            if row.get("final_review_reservation"):
+                timeout(row)
+                allocation = row["final_review_reservation"]
+                if allocation.get("version") != "dynamic_final_review_v2":
+                    from .review_budget import priced
+
+                    # A legacy forecast reserved only one scoped request. The
+                    # live row's calls/tokens/deadline are never replenished;
+                    # the next priced plan must now cover correction as well.
+                    allocation = priced(
+                        {
+                            **allocation,
+                            "model_calls": 2 if correction else 1,
+                            "correction_pending": correction,
+                        },
+                        {"cost": allocation.get("estimated") or allocation["tokens"]},
+                    )
+                    conn.execute(
+                        "UPDATE study_run SET final_review_reservation=%s WHERE run_id=%s",
+                        (Jsonb(allocation), run_id),
+                    )
+                    return {**row, "final_review_reservation": allocation}
+                return row
+            path = row.get("explanation_path_reservation")
+            allocation = reservation(
+                row,
+                correction=correction,
+                review_seconds=path.get("final_review_seconds", REVIEW_SECONDS) if path else REVIEW_SECONDS,
+            )
+            if row.get("explanation_path_reservation"):
+                path = row["explanation_path_reservation"]
+                allocation["generation_envelope"] = {
+                    k: path[k] for k in ("max_chars", "max_claims", "max_citations", "max_title")
+                }
+                allocation["path_final_estimate"] = path["final_estimate"]
+            conn.execute(
+                "UPDATE study_run SET final_review_reservation=%s WHERE run_id=%s",
+                (Jsonb(allocation), run_id),
+            )
+            self._event(conn, run_id, "final_review_reserved", allocation)
+            return {**row, "final_review_reservation": allocation}
+
+    def reserve(self, run_id, token, kind, tokens=0, *, final_review=False, review_estimate=None):
+        from .review_budget import check_spend, margin, priced, timeout
+
+        with self.connect() as conn:
+            row = self._active(conn, run_id, token)
+            path = row.get("explanation_path_reservation")
+            if path and kind == "model":
+                from .generation_budget import check_path
+
+                next_path = check_path(row, path, tokens)
+                conn.execute(
+                    "UPDATE study_run SET explanation_path_reservation=%s WHERE run_id=%s",
+                    (Jsonb(next_path), run_id),
+                )
+            if row.get("final_review_reservation"):
+                timeout(row, final_review=final_review)
+                allocation = row["final_review_reservation"]
+                if final_review and allocation.get("version") != "dynamic_final_review_v2":
+                    allocation = {**allocation, "model_calls": 2, "correction_pending": True}
+                if final_review and (
+                    allocation["pending"] or allocation.get("version") != "dynamic_final_review_v2"
+                ):
+                    # An older checkpoint may already contain an admitted
+                    # revision. Price its assembled request without resetting
+                    # deadline, calls, or previously charged tokens.
+                    allocation = priced(allocation, review_estimate or {"cost": tokens})
+                    row = {**row, "final_review_reservation": allocation}
+                check_spend(row, kind, tokens, final_review)
             if (
                 (kind == "model" and row["model_calls"] >= 6)
                 or (kind == "tool" and row["tool_calls"] >= 8)
@@ -346,6 +463,79 @@ class StudyStore:
                 f"UPDATE study_run SET {column}={column}+1,reserved_tokens=reserved_tokens+%s WHERE run_id=%s",
                 (tokens, run_id),
             )
+            if final_review and row.get("final_review_reservation"):
+                allocation = row["final_review_reservation"]
+                conn.execute(
+                    "UPDATE study_run SET final_review_reservation=%s WHERE run_id=%s",
+                    (
+                        Jsonb(
+                            {
+                                **allocation,
+                                "pending": False,
+                                "correction_pending": allocation["pending"] and allocation["model_calls"] > 1,
+                                "actual": tokens,
+                                "actual_within_reserve": tokens
+                                <= allocation["estimated"] + margin(allocation["estimated"]),
+                                "reconciled_reserved": allocation["tokens"],
+                            }
+                        ),
+                        run_id,
+                    ),
+                )
+
+    def plan_final_review(self, run_id, token, estimate, revision_cost):
+        from .review_budget import check_spend, priced, timeout
+
+        with self.connect() as conn:
+            row = self._active(conn, run_id, token)
+            timeout(row)
+            allocation = row["final_review_reservation"]
+            floor = allocation.get("path_final_estimate")
+            if floor and floor["cost"] > estimate["cost"]:
+                estimate = floor
+            planned = priced(allocation, estimate)
+            check_spend({**row, "final_review_reservation": planned}, "model", revision_cost, False)
+            conn.execute(
+                "UPDATE study_run SET final_review_reservation=%s WHERE run_id=%s", (Jsonb(planned), run_id)
+            )
+            self._event(
+                conn,
+                run_id,
+                "final_review_estimated",
+                {
+                    **estimate,
+                    "estimated": estimate["cost"],
+                    "reserved": planned["tokens"],
+                    "safety_margin": planned["safety_margin"],
+                    "finish_tokens": planned["finish_tokens"],
+                    "revision_cost": revision_cost,
+                    "used": row["reserved_tokens"],
+                },
+            )
+            return {**row, "final_review_reservation": planned}
+
+    def plan_explanation_path(self, run_id, token, allocation):
+        from .generation_budget import check_path, time_allocation
+
+        with self.connect() as conn:
+            row = self._active(conn, run_id, token)
+            path = {
+                **allocation,
+                "stage": "generation",
+                "version": "followup_path_v2",
+                **time_allocation(row, allocation),
+            }
+            check_path(row, path, allocation["generation_cost"])
+            conn.execute(
+                "UPDATE study_run SET explanation_path_reservation=%s WHERE run_id=%s", (Jsonb(path), run_id)
+            )
+            self._event(conn, run_id, "explanation_path_reserved", path)
+            return {**row, "explanation_path_reservation": path}
+
+    def release_explanation_path(self, run_id, token):
+        with self.connect() as conn:
+            self._active(conn, run_id, token)
+            conn.execute("UPDATE study_run SET explanation_path_reservation=NULL WHERE run_id=%s", (run_id,))
 
     def tool_result(self, run_id, call_id):
         with self.connect() as conn:

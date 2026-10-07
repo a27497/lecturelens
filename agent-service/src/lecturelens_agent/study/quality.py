@@ -8,6 +8,8 @@ from typing import Annotated, Literal
 from pydantic import Field, PrivateAttr, ValidationInfo, model_validator
 
 from ..contracts import Contract
+from .atomic import AtomicAssessment
+from .atomic_delta import AtomicBasis, DeltaSummary
 from .context import aliases_in, compact_json
 from .goals import CLAIM_SYSTEM, GOAL_SYSTEM, ClaimCheck, GoalCheck
 from .method_scope import MethodAlignment, MethodObservation
@@ -73,7 +75,12 @@ class IndependentSolution(Contract):
 class QualityReview(Contract):
     rule_observations: Annotated[list[Annotated[str, Field(max_length=240)]], Field(max_length=8)] = []
     explanation_assessments: Annotated[list[ClaimCheck], Field(max_length=6)] = []
+    atomic_assessments: Annotated[list[AtomicAssessment], Field(max_length=24)] = []
+    atomic_basis: AtomicBasis | None = None
+    atomic_delta: DeltaSummary | None = None
+    goal_answer_claim_ids: dict[str, list[str]] = {}
     goal_assessments: Annotated[list[GoalCheck], Field(max_length=6)] = []
+    goal_scope_assessments: Annotated[list[dict], Field(max_length=9)] = []
     method_assessment: MethodAlignment | None = None
     method_observations: Annotated[list[MethodObservation], Field(max_length=2)] = []
     issues: Annotated[list[Issue], Field(max_length=10)]
@@ -325,6 +332,22 @@ ABSTENTION_SYSTEM = """Judge ONLY whether the supplied passages support the lear
 
 
 def review_contract(kind=None, rubric_policy=None, review_mode=None):
+    if review_mode in {"atomic_answer_spans_v2", "atomic_delta_spans_v2"}:
+        from .atomic_goal_spans import AtomicSpanVerdict, DeltaAtomicSpanVerdict
+
+        return DeltaAtomicSpanVerdict if review_mode == "atomic_delta_spans_v2" else AtomicSpanVerdict
+    if review_mode == "atomic_delta_support_v1":
+        from .atomic_review import DeltaAtomicAnswerVerdict
+
+        return DeltaAtomicAnswerVerdict
+    if review_mode == "atomic_answer_support_v1":
+        from .atomic_review import AtomicAnswerVerdict
+
+        return AtomicAnswerVerdict
+    if review_mode == "answer_support_v1":
+        from .answer_review import ExplanationVerdict
+
+        return ExplanationVerdict
     if review_mode in {
         "field_support_goals_v1",
         "field_support_computed_goals_v1",
@@ -366,6 +389,18 @@ def review_contract(kind=None, rubric_policy=None, review_mode=None):
 def review_schema(kind=None, rubric_policy=None, review_mode=None, *, method_scope=False, context=None):
     schema = review_contract(kind, rubric_policy, review_mode)
     parameters = schema.model_json_schema()
+    if "AtomicCheck" in parameters.get("$defs", {}):
+        check = parameters["$defs"]["AtomicCheck"]
+        if context and context.get("relation_review"):
+            check["properties"]["relation"] = {"$ref": "#/$defs/RelationSupport"}
+            check["required"].append("relation")
+            check["required"] = ["id", "relation", "supported", "evidence_ids"]
+            parameters["$defs"]["RelationSupport"]["required"].append("gap")
+            parameters["required"] = ["claim_checks", "goal_checks"]
+        else:
+            check["properties"].pop("relation", None)
+            parameters["$defs"].pop("RelationSupport", None)
+            parameters["$defs"].pop("SourceQuote", None)
     if not method_scope and review_mode in {
         "field_support_v1",
         "field_support_computed_v1",
@@ -434,16 +469,93 @@ def review_schema(kind=None, rubric_policy=None, review_mode=None, *, method_sco
                     strip_titles(nested)
 
         strip_titles(parameters)
-    if "goal_checks" in parameters.get("properties", {}):
+    if "goal_checks" in parameters.get("properties", {}) and not (context and context.get("relation_review")):
         checks = parameters["properties"].pop("goal_checks")
         parameters["properties"] = {"goal_checks": checks, **parameters["properties"]}
+    if review_mode in {"atomic_answer_spans_v2", "atomic_delta_spans_v2"} and context:
+        parameters["$defs"]["GoalClaimCheck"]["properties"]["answer_claim_ids"]["items"]["enum"] = [
+            c["id"] for c in context["atomic_claims"]
+        ]
+    if context and review_mode in {
+        "atomic_answer_support_v1",
+        "atomic_delta_support_v1",
+        "atomic_answer_spans_v2",
+        "atomic_delta_spans_v2",
+    }:
+        # Express the existing validators on the wire. All-reused revisions
+        # ask only for whole-goal review, without rechecking cached claims.
+        ids = context.get("review_claim_ids", [c["id"] for c in context["atomic_claims"]])
+        parameters["properties"]["claim_checks"].update(minItems=len(ids), maxItems=len(ids))
+        if ids:
+            check = parameters["$defs"]["AtomicCheck"]
+            check["properties"]["id"]["enum"] = ids
+            check["allOf"] = [
+                {
+                    "if": {"properties": {"supported": {"const": True}}, "required": ["supported"]},
+                    "then": {"properties": {"evidence_ids": {"minItems": 1}}},
+                }
+            ]
+        else:
+            parameters["properties"]["claim_checks"] = {
+                "type": "array",
+                "const": [],
+                "minItems": 0,
+                "maxItems": 0,
+                "description": "All current claims are verified and reused: return [], reviewing only goal_checks.",
+            }
+            parameters["$defs"].pop("AtomicCheck")
+    if review_mode in {"atomic_answer_support_v1", "atomic_delta_support_v1"} and context:
+        # Bound quotations are transport anchors, not model-written summaries.
+        # Offer exact contiguous answer strings; semantic goal judgment still
+        # examines the entire answer and the validator still checks substrings.
+        options = list(
+            dict.fromkeys(claim["source_text"].strip()[:400] for claim in context["atomic_claims"])
+        )
+        if options:
+            parameters["$defs"]["AnswerGoalCheck"]["properties"]["answer_quotes"]["items"]["enum"] = options
     if "factual_check" in parameters.get("properties", {}):
         parameters["required"].insert(0, "factual_check")
+    if review_mode in {"atomic_answer_spans_v2", "atomic_delta_spans_v2"}:
+        # Cosmetic schema labels duplicate keys; validation constraints remain
+        # intact, as do legacy schemas used by recorded protocol replays.
+        def compact_labels(value):
+            if isinstance(value, dict):
+                value.pop("title", None)
+                for nested in value.values():
+                    compact_labels(nested)
+            elif isinstance(value, list):
+                for nested in value:
+                    compact_labels(nested)
+
+        compact_labels(parameters)
+    if context and context.get("goal_scope_binding"):
+        from .goal_scope import scoped_schema
+
+        parameters = scoped_schema(parameters, context)
+    if context and context.get("relation_review"):
+        parameters["properties"] = {
+            "claim_checks": parameters["properties"]["claim_checks"],
+            "goal_checks": parameters["properties"]["goal_checks"],
+        }
     return {
         "type": "function",
         "function": {
             "name": "assess_study_candidate",
-            "description": "Assess the candidate against its own course citations using the supplied review contract.",
+            "description": (
+                "Verify every supplied exact atomic claim against its own allowed course Evidence. No course_fact."
+                if review_mode
+                in {
+                    "atomic_answer_support_v1",
+                    "atomic_delta_support_v1",
+                    "atomic_answer_spans_v2",
+                    "atomic_delta_spans_v2",
+                }
+                else "Assess the answer using answer_support_v1. Every explanation_checks evidence_ids item "
+                "must belong to allowed_evidence_ids_for_answer_support, including supported=false; "
+                "observed_evidence_ids alone does not authorize a citation."
+                if review_mode == "answer_support_v1"
+                else "Assess the candidate against its own course citations using the supplied review contract."
+            ),
             "parameters": parameters,
         },
     }
@@ -541,6 +653,12 @@ def review_messages(
     observe_methods=False,
     application_method=None,
     check_goal=False,
+    semantic=None,
+    answer_review_mode="atomic_answer_spans_v2",
+    prior_atomic_review=None,
+    ledger_facts=None,
+    ledger_scope=None,
+    relation_review=True,
 ):
     derived = candidate.get("rubric_policy") == "answer_points_v1"
     if derived:
@@ -560,10 +678,20 @@ def review_messages(
         "goal": goal,
         "candidate": aliases_in(candidate, aliases),
         "evidence": [
-            {"evidence_id": aliases[item["evidence_id"]], "text": item["text"][:1200]}
+            {
+                "evidence_id": aliases[item["evidence_id"]],
+                "text": item["text"][:1200],
+                **(
+                    {k: item[k] for k in ("source_type", "start_ms", "end_ms") if k in item}
+                    if candidate.get("kind") == "explanation"
+                    else {}
+                ),
+            }
             for item in course_order(evidence)
         ],
     }
+    if semantic is not None and semantic.get("previous_turns"):
+        body["semantic_context"] = semantic
     if application_method is not None:
         body["application_method"] = aliases_in(application_method, aliases)
     if example_checks:
@@ -580,6 +708,70 @@ def review_messages(
             ]
         }
     abstention = candidate.get("kind") == "insufficient_evidence"
+    if candidate.get("kind") == "explanation":
+        from .answer_review import ANSWER_SYSTEM, answer_source_sets
+        from .goals import explanation_claims, goal_constraints
+
+        observed, allowed = answer_source_sets(body)
+        if answer_review_mode not in {
+            "atomic_answer_support_v1",
+            "atomic_answer_spans_v2",
+            "answer_support_v1",
+        }:
+            raise ValueError("Unknown answer review version")
+        body.update(
+            review_mode=answer_review_mode,
+            observed_evidence_ids=observed,
+            allowed_evidence_ids_for_answer_support=allowed,
+            goal_constraints=goal_constraints(goal),
+            explanation_claims=explanation_claims(candidate["explanation"]),
+        )
+        if answer_review_mode in {"atomic_answer_support_v1", "atomic_answer_spans_v2"}:
+            from .atomic import atomic_claims
+            from .atomic_goal_spans import SPAN_DELTA_MODE, SPAN_SYSTEM
+            from .atomic_review import ATOMIC_SYSTEM
+
+            body.pop("explanation_claims")
+            body["atomic_claims"] = atomic_claims(body["candidate"]["explanation"])
+            if relation_review:
+                from .relation_support import POLICY
+
+                body["relation_review"] = POLICY
+            # The verifier cannot borrow uncited retrieved text even as context.
+            body["evidence"] = [item for item in body["evidence"] if item["evidence_id"] in allowed]
+            if prior_atomic_review is not None or ledger_facts:
+                from .atomic_delta import DELTA_MODE, delta_plan
+                from .ledger import span_view
+
+                if prior_atomic_review is not None:
+                    body["prior_atomic_review"] = aliases_in(prior_atomic_review, aliases)
+                if ledger_facts:
+                    body.update(
+                        ledger_facts=ledger_facts[:24],
+                        ledger_scope=ledger_scope,
+                        ledger_aliases=aliases,
+                        ledger_evidence_bindings={e["evidence_id"]: span_view(e) for e in evidence},
+                    )
+                _, plan = delta_plan(body)
+                body["review_mode"] = (
+                    SPAN_DELTA_MODE if answer_review_mode == "atomic_answer_spans_v2" else DELTA_MODE
+                )
+                body["review_claim_ids"] = plan.rechecked_ids
+            ANSWER_SYSTEM = SPAN_SYSTEM if answer_review_mode == "atomic_answer_spans_v2" else ATOMIC_SYSTEM
+            if relation_review:
+                from .relation_support import review_system
+
+                ANSWER_SYSTEM = review_system(ANSWER_SYSTEM)
+            from .explanation_intent import concrete_actions
+
+            if answer_review_mode == "atomic_answer_spans_v2" and concrete_actions(goal):
+                ANSWER_SYSTEM = (
+                    "CURRENT goal requests concrete actions. For goal_checks explicitly identify WHAT values/objects the answer compares/transforms, not just 'constant comparisons' or a recurrence. If source-given operands/actions are omitted, matches=false; name that omission. Missing branch details must be acknowledged, never invented.\n"
+                    + ANSWER_SYSTEM
+                )
+            if body.get("review_claim_ids") == []:
+                ANSWER_SYSTEM += "\nAll answer claims have verified support and are reused. Return claim_checks: [] EXACTLY. Judge only the complete current goal with goal_checks; goal anchors may reference reused claims."
+        return [{"role": "system", "content": ANSWER_SYSTEM}, {"role": "user", "content": compact_json(body)}]
     system = ABSTENTION_SYSTEM if abstention else REVIEW_SYSTEM
     if derived:
         from .grounded import COURSE_REVIEW_SYSTEM
@@ -702,6 +894,95 @@ def review_wire_messages(messages):
     except (IndexError, KeyError, ValueError, TypeError):
         return messages
     if isinstance(body, dict) and body.get("review_mode") in {
+        "atomic_answer_support_v1",
+        "atomic_delta_support_v1",
+        "atomic_answer_spans_v2",
+        "atomic_delta_spans_v2",
+    }:
+        # The locally validated prior verdict stays in checkpoints, not in the
+        # model's review input. Only changed/new/unsupported targets are offered.
+        from .atomic_delta import DELTA_MODE, delta_plan
+
+        if body["review_mode"] in {"atomic_answer_spans_v2", "atomic_delta_spans_v2"}:
+            # The full answer is present once. Unicode offsets identify every
+            # current goal anchor, including reused targets, without copying
+            # their prose. Local validation still binds the complete units.
+            body["goal_answer_claims"] = [[c["id"], c["start"], c["end"]] for c in body["atomic_claims"]]
+        if body["review_mode"] in {DELTA_MODE, "atomic_delta_spans_v2"}:
+            _, plan = delta_plan(body)
+            body["atomic_claims"] = [c for c in body["atomic_claims"] if c["id"] in plan.rechecked_ids]
+            body["review_claim_ids"] = plan.rechecked_ids
+            body["reused_claim_ids"] = plan.reused_ids
+        # The full answer already supplies every context character. Retain
+        # exact target text and context offsets; omit duplicate normalized and
+        # containing sentence copies only from the provider wire projection.
+        # Validation and checkpoints still use the complete server-bound units.
+        body["atomic_claims"] = [
+            {
+                key: value
+                for key, value in claim.items()
+                if key
+                not in (
+                    {"normalized_claim", "context_text", "start", "end", "claim_type"}
+                    if body["review_mode"] in {"atomic_answer_spans_v2", "atomic_delta_spans_v2"}
+                    else {"normalized_claim", "context_text"}
+                )
+            }
+            for claim in body["atomic_claims"]
+        ]
+        if body.get("goal_scope_binding"):
+            # One immutable coverage scope; legacy fields stay available to
+            # local Atomic/provenance validators, not as competing wire goals.
+            body.pop("revision_goal_obligations", None)
+            body.pop("goal_constraints", None)
+            body.pop("goal_answer_claims", None)
+            body.pop("goal", None)  # Whole-goal text is in the frozen scope.
+            body.pop("observed_evidence_ids", None)  # Visible sources have IDs.
+            # Digests fence local validation/publication, not model decisions.
+            body["goal_scope_binding"] = {"obligations": body["goal_scope_binding"]["obligations"]}
+            # Exact Unicode offsets address the full answer, already present.
+            # Retain the original claim units locally for lossless validation.
+            claims = json.loads(messages[-1]["content"])["atomic_claims"]
+            offsets = {c["id"]: (c["start"], c["end"]) for c in claims}
+            for claim in body["atomic_claims"]:
+                claim.pop("source_text")
+                claim["start"], claim["end"] = offsets[claim["id"]]
+        body.pop("prior_atomic_review", None)
+        for key in ("ledger_facts", "ledger_scope", "ledger_aliases", "ledger_evidence_bindings"):
+            body.pop(key, None)
+        context = body.get("semantic_context")
+        if context:
+            # Previous answers resolve the learner's referent, not source support.
+            # Their duplicate citation passages are not needed for delta entailment.
+            body["semantic_context"] = {
+                key: context[key] for key in ("raw_question", "resolved_goal") if key in context
+            }
+            body["semantic_context"]["previous_turns"] = [
+                {
+                    key: turn[key]
+                    for key in ("raw_question", "resolved_goal", "goal", "title", "explanation")
+                    if key in turn
+                }
+                for turn in context.get("previous_turns", [])
+            ]
+            for turn in body["semantic_context"]["previous_turns"]:
+                # Identical strings carry no additional referent information;
+                # complete prior turns remain in the local validation input.
+                if turn.get("raw_question") == turn.get("resolved_goal", turn.get("goal")):
+                    turn.pop("raw_question", None)
+                if turn.get("goal") == turn.get("resolved_goal"):
+                    turn.pop("goal", None)
+        wire = [*messages[:-1], {**messages[-1], "content": compact_json(body)}]
+        if body.get("goal_scope_binding"):
+            wire[0] = {
+                **wire[0],
+                "content": wire[0]["content"].replace(
+                    "Judge its FULL exact source_text; goal_answer_claims binds its Unicode start/end.",
+                    "Judge the FULL exact candidate.explanation[start:end] for each atomic_claims ID (Unicode offsets).",
+                ),
+            }
+        return wire
+    if isinstance(body, dict) and body.get("review_mode") in {
         "field_support_v1",
         "field_support_computed_v1",
         "course_coverage_v1",
@@ -722,6 +1003,8 @@ def review_wire_messages(messages):
             if "goals_v1" in body["review_mode"]
             else field_view(body)
         )
+        if "semantic_context" in body:
+            visible["semantic_context"] = body["semantic_context"]
         if "protocol_feedback" in body:
             visible["protocol_feedback"] = {
                 "instruction": "Return the declared schema with every required answer check, each field once, own evidence only. Obey character limits and use the learner language. For coverage: missing_goal_quote is empty for direct/demonstrated_method, an exact goal quote only for absent."

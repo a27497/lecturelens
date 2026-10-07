@@ -16,6 +16,11 @@ from .method_scope import MethodAlignment, MethodObservation, MethodSelection
 from .quality import QualityReview
 
 MODES = {
+    "atomic_delta_support_v1",
+    "atomic_answer_support_v1",
+    "atomic_answer_spans_v2",
+    "atomic_delta_spans_v2",
+    "answer_support_v1",
     "field_support_v1",
     "field_support_computed_v1",
     "course_coverage_v1",
@@ -29,7 +34,9 @@ MODES = {
 }
 
 
-def output_tokens(mode):
+def output_tokens(mode, relation_review=False):
+    if relation_review:
+        return 1600
     return 1200 if mode and "goals_v1" in mode else 900 if mode in MODES else 300
 
 

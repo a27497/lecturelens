@@ -67,6 +67,19 @@ class StudyCommand(StudyScope):
 
 
 class SearchArgs(Contract):
+    output_kind: Annotated[
+        Literal["explanation", "practice"],
+        Field(
+            description="Choose explanation for an answer/explanation/comparison; practice only when the learner requests exercises. This selects the tool workflow, not the search subject."
+        ),
+    ] = "practice"
+    resolved_goal: Annotated[
+        str | None,
+        Field(
+            max_length=1000,
+            description="For a follow-up, supply the COMPLETE standalone current learning goal using semantic_context.previous_turns. Resolve references to earlier answers/evidence while preserving every current demand. This is not the search keyword query. It is frozen and shared by all later reviewers.",
+        ),
+    ] = None
     linear_request: Annotated[
         LinearRequest | None,
         Field(
@@ -104,11 +117,33 @@ class SearchArgs(Contract):
 
 class ReadArgs(Contract):
     evidence_id: Identifier
+    resolved_goal: Annotated[
+        str | None,
+        Field(
+            min_length=1,
+            max_length=1000,
+            description="For a follow-up's first tool, resolve the complete standalone learner goal BEFORE reading the cited window; no redundant SEARCH is required.",
+        ),
+    ] = None
 
 
 class CheckExampleArgs(Contract):
     program: Annotated[str, Field(min_length=1, max_length=1200)]
     evidence_ids: Annotated[list[Identifier], Field(min_length=1, max_length=4)]
+
+
+class GrowthScaleArgs(Contract):
+    input_sizes: Annotated[
+        list[Annotated[int, Field(strict=True, ge=1, le=2**20)]], Field(min_length=1, max_length=4)
+    ]
+    evidence_ids: Annotated[list[Identifier], Field(min_length=1, max_length=4)]
+    resolved_goal: Annotated[str | None, Field(min_length=1, max_length=1000)] = None
+
+    @model_validator(mode="after")
+    def distinct_sizes(self):
+        if len(set(self.input_sizes)) != len(self.input_sizes):
+            raise ValueError("Use distinct hypothetical input sizes")
+        return self
 
 
 class Question(Contract):
@@ -222,8 +257,8 @@ class PythonPracticeArgs(Contract):
     @model_validator(mode="after")
     def explanation_contract(self):
         if isinstance(self.concept, StringConcept):
-            if self.explanation:
-                raise ValueError("String mode generates its own conceptual explanation")
+            if self.explanation and len(self.explanation) < 10:
+                raise ValueError("An explicit answer must contain an explanation")
         elif len(self.explanation) < 10:
             raise ValueError("General Python practice needs an explanation")
         return self
@@ -231,6 +266,7 @@ class PythonPracticeArgs(Contract):
 
 class StringPracticePlanArgs(Contract):
     title: Annotated[str, Field(min_length=1, max_length=120)]
+    explanation: Annotated[str, Field(max_length=1500)] = ""
     evidence_ids: Annotated[list[Identifier], Field(min_length=1, max_length=8)]
     language: Literal["en", "zh"]
     concept: StringConcept
@@ -352,7 +388,10 @@ def python_practice(arguments, observation):
     if "skill" in data["concept"]:
         from .strings import string_concept
 
-        data["explanation"], data["concept"] = string_concept(data["concept"], data["language"])
+        template, data["concept"] = string_concept(data["concept"], data["language"])
+        # Historical replays retain their template. A current answer is never
+        # overwritten by the exercise's conceptual scaffold.
+        data["explanation"] = data["explanation"] or template
     if observation.get("status") != "computed" or not observation.get("stdout"):
         raise ValueError("An output exercise needs a successfully computed nonempty output")
     if len(observation["stdout"]) > 300:
@@ -390,12 +429,41 @@ class InsufficientArgs(Contract):
     reason: Annotated[str, Field(min_length=10, max_length=400)]
 
 
+class ExplanationArgs(Contract):
+    title: Annotated[str, Field(min_length=1, max_length=120)]
+    explanation: Annotated[
+        str,
+        Field(
+            min_length=10,
+            max_length=1500,
+            description="Answer the new request directly, usually in two to four short sentences; add more only for requested steps/reasoning. Do not recap the previous answer in a follow-up. Omit unrequested examples, benchmarks, mechanisms and side topics. Every assertion must be supported by this candidate's own cited passages. On repair remove dependent sentence residue when deleting an unsupported qualifier changes its meaning; preserve other supported facts.",
+        ),
+    ]
+    evidence_ids: Annotated[list[Identifier], Field(min_length=1, max_length=8)]
+    resolved_goal: Annotated[
+        str | None,
+        Field(
+            min_length=1,
+            max_length=1000,
+            description="For a direct supported-fact follow-up, resolve the complete standalone learner goal. Frozen before final verification.",
+        ),
+    ] = None
+
+
 TOOLS = {
+    "compare_growth_scales": (
+        GrowthScaleArgs,
+        "Compute a simple hypothetical linear-versus-logarithmic scale example from course-cited formulas. Choose 1-4 powers of two (1..2^20). Returns n, log2(n), exact halving levels and sizes; these are mathematical scales, never measured timing or exact comparisons. Use for numeric illustrations or explaining an exponential/logarithmic relationship. Cite course passages supporting the compared growth forms and halving operation; computation alone does not prove teaching support or algorithm details.",
+    ),
     "search_course_evidence": (
         SearchArgs,
         "Search this course for relevant evidence. Use before creating practice.",
     ),
     "read_evidence_window": (ReadArgs, "Read an already selected passage and its immediate neighbors."),
+    "create_explanation": (
+        ExplanationArgs,
+        "Answer the current resolved question directly from selected course passages. No exercises or fixed conceptual template. State every requested relationship or outcome in explanation; citations alone do not answer. Independent goal and source review applies.",
+    ),
     "check_python_example": (
         CheckExampleArgs,
         "Compute a small course-related Python example before drafting. Supports bounded strings, slicing, arithmetic, lists, simple functions, return and print. No imports, loops or external access. Returns actual output/variables or an explicit unsupported/error/limit observation; this does not establish course support. Cite the course passages justifying the example's operations.",
@@ -511,6 +579,8 @@ def tool_schemas(include_time_window=True, cost_mode=False, string_mode=False):
     parameters = python_tool["parameters"]
     if string_mode:
         python_tool["parameters"] = compact(StringPracticePlanArgs.model_json_schema())
+        python_tool["parameters"]["required"].append("explanation")
+        python_tool["parameters"]["properties"]["explanation"]["minLength"] = 10
         python_tool["description"] = (
             "Create course-grounded string practice from a bounded program_plan: one variable, initial literal, up to three literal or prefix+slice rebindings, and chosen print positions. No raw code, methods or mutation. The tool safely renders code and computes exact outputs. Preserve requested literals, order and counts. Concept, operations, citations and goals still require independent review."
         )

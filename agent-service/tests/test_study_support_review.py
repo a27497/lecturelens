@@ -271,11 +271,11 @@ def test_runtime_reserves_wire_budget_and_keeps_review_observations_private(setu
         schema = review_schema(
             body["candidate"]["kind"], body.get("rubric_policy"), body["review_mode"], context=body
         )
-        expected = (
-            len(json.dumps(wire, ensure_ascii=False).encode())
-            + len(json.dumps([schema]).encode())
-            + output_tokens(body["review_mode"])
-        )
+        from lecturelens_agent.study.request_budget import request_cost
+
+        expected = request_cost(
+            runtime.provider, "review", wire, [schema], output_tokens(body["review_mode"])
+        )["cost"]
         assert reservations[-1][2:] == ("model", expected)
         data = accepted(body)
         for check in data["checks"]:

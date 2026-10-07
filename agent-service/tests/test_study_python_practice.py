@@ -202,9 +202,10 @@ def test_string_scaffold_preserves_own_sources_and_computed_program(language, sk
     assert all(q["answer"] == q["rubric"] for q in artifact["questions"])
     for claim in ("TypeError", "memory", "内存", "garbage"):
         assert claim not in json.dumps(artifact, ensure_ascii=False)
-    args["explanation"] = "An unsolicited error-class or memory-lifetime assertion."
-    with pytest.raises(ValidationError):
-        PythonPracticeArgs.model_validate(args)
+    args["explanation"] = "A separate current answer whose source support is checked by semantic review."
+    current = python_practice(args, check_example(args["program"]))
+    assert current["explanation"] == args["explanation"]
+    assert current["questions"] == artifact["questions"]
 
 
 def test_string_schema_selected_by_model_search_kind_preserves_general_python():
@@ -222,7 +223,7 @@ def test_string_schema_selected_by_model_search_kind_preserves_general_python():
         )
 
     structured = schema("python_strings")
-    assert "explanation" not in structured["properties"]
+    assert "explanation" in structured["required"]
     assert "AnswerPointsQuestion" not in structured["$defs"]
     assert structured["properties"]["concept"] == {"$ref": "#/$defs/StringConcept"}
     general = schema("python_strings_or_code")

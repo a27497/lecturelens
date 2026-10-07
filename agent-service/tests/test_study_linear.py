@@ -646,6 +646,7 @@ def test_budget_policy_reserves_review_and_plan_schema_omits_already_bound_decis
     )
     schemas = decision_schemas(messages)
     assert {s["function"]["name"] for s in schemas} == {
+        "create_explanation",
         "create_linear_practice",
         "report_insufficient_evidence",
     }

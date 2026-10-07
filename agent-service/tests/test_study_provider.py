@@ -4,8 +4,23 @@ import httpx
 import pytest
 
 from lecturelens_agent.study.contracts import tool_schemas
-from lecturelens_agent.study.provider import ChatProvider
+from lecturelens_agent.study.provider import ChatProvider, constrain_explanation_schemas
 from lecturelens_agent.study.store import BudgetExceeded, StudyError
+
+
+def test_growth_creation_schema_names_own_derivation_without_unrelated_guards():
+    source = "Linear and logarithmic growth differ greatly for large inputs."
+    context = {
+        "example_check": {"semantics": "growth_scales_v1"},
+        "evidence": [{"evidence_id": "e1", "text": source}],
+    }
+    schemas = constrain_explanation_schemas(tool_schemas(), context, "Explain the growth gap", [])
+    explanation = next(s for s in schemas if s["function"]["name"] == "create_explanation")
+    field = explanation["function"]["parameters"]["properties"]["explanation"]
+    assert "YOUR derivation" in field["description"]
+    assert "never credit it to the course" in field["description"]
+    patterns = [item["not"]["pattern"] for item in field.get("allOf", []) if "not" in item]
+    assert not any("garbage" in pattern or "中间元素" in pattern for pattern in patterns)
 
 
 def test_compacted_tool_schema_preserves_every_required_business_field():
@@ -65,6 +80,7 @@ def test_standard_chat_tool_protocol_accepts_bounded_batches(monkeypatch):
     assert recorded[0]["tool_choice"] == "required"
     assert recorded[0]["parallel_tool_calls"] is False
     assert {tool["function"]["name"] for tool in recorded[0]["tools"]} == {
+        "create_explanation",
         "search_course_evidence",
         "read_evidence_window",
         "check_python_example",
@@ -557,7 +573,7 @@ def test_model_selected_practice_kind_bounds_tools_but_allows_evidence_and_stop(
     ]:
         messages = [*first, {"role": "tool", "content": json.dumps({"practice_kind": kind})}]
         names = {s["function"]["name"] for s in decision_schemas(messages)}
-        assert {n for n in names if n.startswith("create_")} == {expected}
+        assert {n for n in names if n.startswith("create_")} == {expected, "create_explanation"}
         assert {"search_course_evidence", "read_evidence_window", "report_insufficient_evidence"} <= names
         messages.append({"role": "user", "content": "Retry the invalid tool format."})
         assert names == {s["function"]["name"] for s in decision_schemas(messages)}

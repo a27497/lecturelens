@@ -19,6 +19,20 @@ def compact_json(value):
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
+def evidence_text(item, limit=600):
+    """Preserve the authorized match when shortening its canonical context window."""
+    text = item["text"]
+    offset = item.get("text_start", 0)
+    start, end = item.get("match_start"), item.get("match_end")
+    if start is None or end is None:
+        return text[:limit]
+    start, end = start - offset, end - offset
+    if not 0 <= start < end <= len(text) or end - start > limit:
+        raise ValueError("Authorized evidence window does not contain its match")
+    left = max(0, min(start - (limit - (end - start)) // 2, len(text) - limit))
+    return text[left : left + limit]
+
+
 def aliases_in(value, mapping):
     if isinstance(value, dict):
         return {
@@ -32,8 +46,11 @@ def aliases_in(value, mapping):
                 "reported_evidence_ids",
                 "application_evidence_ids",
                 "concept_evidence_ids",
+                "verified_source_ids",
             }
             and isinstance(item, list)
+            else {field: [mapping.get(ref, ref) for ref in refs] for field, refs in item.items()}
+            if key == "field_evidence_ids" and isinstance(item, dict)
             else aliases_in(item, mapping)
             for key, item in value.items()
         }
@@ -125,9 +142,9 @@ def evidence_gaps(evidence, *, general=False):
     return (sorted(gaps, key=(lambda gap: (gap[2], gap[0])) if general else None) + tails)[:2]
 
 
-def repair_observation(quality):
+def repair_observation(quality, *, compact=False):
     """Keep full observations in the journal; avoid re-sending repeated course quotes."""
-    if not quality.get("goal_assessments"):
+    if not compact and not quality.get("goal_assessments"):
         return quality  # Historical replay contracts retain their original view.
     visible = {
         k: quality[k]
@@ -140,6 +157,7 @@ def repair_observation(quality):
             "goal_assessments",
             "rule_observations",
             "explanation_assessments",
+            "atomic_assessments",
             "method_assessment",
         )
         if k in quality
@@ -151,12 +169,47 @@ def repair_observation(quality):
         {k: v for k, v in answer.items() if k != "grounds"}
         for answer in quality.get("answer_observations", [])
     ]
+    if quality.get("atomic_basis"):
+        visible["verified_source_ids"] = sorted(
+            {
+                ref
+                for check in quality.get("atomic_assessments", [])
+                if check.get("supported")
+                and check.get("model_supported") is True
+                and not check.get("strengthening_guards")
+                for ref in check.get("evidence_ids", [])
+            }
+        )
+        # Exact prior answer and complete observations remain in the journal.
+        # Revision needs rejected spans, not repeated containing sentence copies.
+        visible["atomic_assessments"] = [
+            {
+                key: check[key]
+                for key in (
+                    "id",
+                    "source_text",
+                    "normalized_claim",
+                    "claim_type",
+                    "supported",
+                    "evidence_ids",
+                    "strengthening_guards",
+                )
+                if key in check
+            }
+            for check in quality.get("atomic_assessments", [])
+            if not check["supported"]
+        ]
     return visible
 
 
 def decision_observation(result):
     # The journal keeps raw source quotes. Visible Evidence already supplies the text.
     visible = dict(result)
+    visible.pop("evidence_contexts", None)
+    visible.pop("evidence_fingerprint", None)
+    visible.pop("coverage_input_fingerprint", None)
+    if visible.get("no_progress") is False:
+        visible.pop("no_progress")
     if visible.get("linear_request"):
         from .linear import effective_linear_request
 
@@ -189,8 +242,11 @@ def visible_references(value, selected):
             "application_evidence_ids",
             "concept_evidence_ids",
             "context_windows",
+            "verified_source_ids",
         } and isinstance(item, list):
             result[key] = [ref for ref in item if ref in selected]
+        elif key == "field_evidence_ids" and isinstance(item, dict):
+            result[key] = {field: [ref for ref in refs if ref in selected] for field, refs in item.items()}
         elif key == "evidence_id" and isinstance(item, str):
             result[key] = item if item in selected else "not_selected"
         elif key == "methods" and isinstance(item, dict):
@@ -204,18 +260,88 @@ def visible_references(value, selected):
     return result
 
 
-def build_messages(system, goal, evidence, history, previous_turns, budget=None):
+def build_messages(system, goal, evidence, history, previous_turns, budget=None, *, semantic=None):
+    from .explanation_intent import growth_scales_needed
+
     # Source and translated evidence often cover the identical video interval.
     # Keep one copy in the prompt; canonical IDs remain in the runtime checkpoint.
     visible, intervals = [], set()
+    mathematical = growth_scales_needed(goal, previous_turns)
+    clarification = bool(previous_turns and previous_turns[-1].get("kind") == "explanation")
+    explanation = clarification or any(
+        h["result"].get("output_kind") == "explanation"
+        or h["tool"] in {"create_explanation", "compare_growth_scales"}
+        for h in history
+    )
+    window_ids = None
+    for observation in reversed(history):
+        if observation["tool"] == "search_course_evidence":
+            if clarification and observation["result"].get("output_kind") == "explanation":
+                window_ids = set(observation["result"].get("evidence_ids", [])) or None
+            break
+        if observation["tool"] == "read_evidence_window":
+            if clarification or observation["result"].get("output_kind") == "explanation":
+                window_ids = set(observation["result"].get("evidence_ids", [])) or None
+            break
+    originals = {
+        (e["start_ms"], e["end_ms"])
+        for e in evidence
+        if e.get("source_type") == "SUBTITLE" and (window_ids is None or e["evidence_id"] in window_ids)
+    }
+    translations = {
+        (e["start_ms"], e["end_ms"])
+        for e in evidence
+        if e.get("source_type") == "SUBTITLE_TRANSLATION"
+        and e.get("match_resolution") != "AMBIGUOUS_TEXT"
+        and (window_ids is None or e["evidence_id"] in window_ids)
+    }
     for item in evidence:
         source = item.get("source_type", "SUBTITLE")
-        group = "speech" if source in {"SUBTITLE", "SUBTITLE_TRANSLATION"} else item["evidence_id"]
+        if window_ids is not None and item["evidence_id"] not in window_ids:
+            # The learner's context and all canonical records remain durable.
+            # The model selected this fresh authorized window; old citation
+            # neighbours must not crowd its procedural clarification/repair.
+            continue
+        if (
+            mathematical
+            and source == "SUBTITLE_TRANSLATION"
+            and (item["start_ms"], item["end_ms"]) in originals
+            and item.get("match_resolution") != "AMBIGUOUS_TEXT"
+        ):
+            # Mathematical wording uses the original when both tracks cover
+            # the same interval. Translation is still stored/authorized; do not
+            # merge identities or transfer its match offsets to the original.
+            continue
+        if (
+            clarification
+            and not mathematical
+            and re.search(r"[\u4e00-\u9fff]", goal)
+            and source == "SUBTITLE"
+            and (item["start_ms"], item["end_ms"]) in translations
+            and item.get("match_resolution") != "AMBIGUOUS_TEXT"
+        ):
+            # Offer one language track for the same interval. This is context
+            # selection, never transferred support: originals remain authorized
+            # in the checkpoint and each citation is independently rechecked.
+            continue
+        group = (
+            (source if explanation and not mathematical else "speech")
+            if source in {"SUBTITLE", "SUBTITLE_TRANSLATION"}
+            else item["evidence_id"]
+        )
         interval = (group, item["start_ms"], item["end_ms"])
-        if interval not in intervals:
+        if (
+            interval not in intervals
+            or item.get("match_start") is not None
+            or item.get("match_hash") is not None
+        ):
             intervals.add(interval)
             visible.append(item)
     visible = visible[-8:]
+    repair = bool(history and history[-1]["result"].get("quality", {}).get("atomic_basis"))
+    excerpt_limit = (
+        240 if repair else 300 if clarification and not mathematical else 1200 if explanation else 600
+    )
     forward = {item["evidence_id"]: f"e{i + 1}" for i, item in enumerate(evidence)}
     selected = {item["evidence_id"] for item in visible}
     # Earlier tool results may refer to deduplicated candidates. Keep those references short,
@@ -230,18 +356,35 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         "evidence": [
             {
                 "evidence_id": forward[item["evidence_id"]],
-                "text": item["text"][:600],
+                "source_type": item.get("source_type", "SUBTITLE"),
+                "text": evidence_text(item, excerpt_limit),
+                **(
+                    {"more_context": True}
+                    if max(len(item["text"]), item.get("canonical_length") or 0) > excerpt_limit
+                    else {}
+                ),
                 "start_ms": item["start_ms"],
                 "end_ms": item["end_ms"],
             }
             for item in visible
         ],
     }
+    if growth_scales_needed(goal, previous_turns):
+        context["growth_scales_required"] = not any(
+            h["tool"] == "compare_growth_scales"
+            and h["result"].get("example_check", {}).get("status") == "computed"
+            for h in history
+        )
     if budget is not None:
         context["budget"] = budget
+        # Planning reserves the actual full source view used by final review,
+        # even when unchanged repair context is displayed more compactly.
+        context["review_source_bytes"] = sum(len(item["text"][:1200].encode()) + 128 for item in visible)
     for item in reversed(history):
         if item["tool"] == "search_course_evidence":
             context["practice_kind"] = item["result"].get("practice_kind", "auto")
+            if item["result"].get("output_kind"):
+                context["output_kind"] = item["result"]["output_kind"]
             if item["result"].get("concept_evidence_ids"):
                 context["concept_evidence_ids"] = [
                     forward[ref] for ref in item["result"]["concept_evidence_ids"] if ref in selected
@@ -269,8 +412,55 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         )
     if history and "example_check" in history[-1]["result"]:
         context["example_check"] = aliases_in(history[-1]["result"]["example_check"], forward)
+    elif repair:
+        computed = next(
+            (
+                h
+                for h in reversed(history)
+                if h["tool"] == "compare_growth_scales"
+                and h["result"].get("example_check", {}).get("status") == "computed"
+            ),
+            None,
+        )
+        if computed and set(computed["result"]["example_check"].get("evidence_ids", [])) <= selected:
+            context["example_check"] = aliases_in(computed["result"]["example_check"], forward)
+    if any(item["tool"] in {"create_explanation", "compare_growth_scales"} for item in history):
+        # A model-selected explanation computation also selects this workflow
+        # in a direct follow-up which legitimately did not SEARCH again.
+        context["output_kind"] = "explanation"
+    if history and history[0]["tool"] == "read_evidence_window" and history[0]["result"].get("output_kind"):
+        context.setdefault("output_kind", history[0]["result"]["output_kind"])
     if history and "quality" in history[-1]["result"]:
-        context["quality"] = aliases_in(repair_observation(history[-1]["result"]["quality"]), forward)
+        context["quality"] = aliases_in(
+            visible_references(
+                repair_observation(history[-1]["result"]["quality"], compact=explanation), selected
+            ),
+            forward,
+        )
+    if explanation and semantic is not None:
+        from .revision import freeze_revision, obligation_view
+
+        frozen = freeze_revision(history, semantic, evidence)
+        if frozen is not None:
+            context["revision_transaction"] = {
+                "supported": [{"id": c["id"], "text": c["source_text"]} for c in frozen["supported"]],
+                "rejected": [{"id": c["id"], "text": c["source_text"]} for c in frozen["rejected"]],
+                "required_goals": frozen["required_goals"],
+                "resolved_goal": frozen["resolved_goal"],
+                "goal_obligations": aliases_in(obligation_view(frozen), forward),
+                "goal_obligations_sha256": frozen["transaction_sha256"],
+            }
+            # The frozen transaction already carries every supported/rejected
+            # span and immutable goal. Keep the rejection signal, without a
+            # second copy of the same claims in review observations. Full
+            # provenance and guards remain in the journal and local assembly.
+            context["quality"] = {
+                key: value
+                for key, value in context.get("quality", {}).items()
+                if key in {"accepted", "source", "issues", "feedback"}
+            }
+    if history and history[-1]["result"].get("no_progress"):
+        context["no_progress"] = True
     # Keep the learner's requirements after source/context observations as well.
     context["goal"] = context.pop("goal")
     context["goal_constraints"] = context.pop("goal_constraints")
@@ -279,12 +469,72 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         {
             "role": "user",
             "content": compact_json(
-                {"goal": goal, "previous_turns": previous_turns, "history": [], "evidence": []}
+                {**context, "previous_turns": previous_turns}
+                if not history
+                and evidence
+                and previous_turns
+                and previous_turns[-1].get("kind") == "explanation"
+                else {"goal": goal, "previous_turns": previous_turns, "history": [], "evidence": []}
                 if previous_turns
                 else {"goal": goal, "history": [], "evidence": []}
             ),
         },
     ]
+    if semantic is not None and semantic.get("previous_turns"):
+        first = json.loads(messages[1]["content"])
+        # Prior prose resolves the referent. Its provenance remains in durable
+        # context; current authorized Evidence supplies source text and aliases.
+        # Do not offer historical opaque citation IDs as current tool inputs.
+        first["semantic_context"] = {
+            key: semantic[key] for key in ("raw_question", "resolved_goal", "resolved") if key in semantic
+        }
+        first["semantic_context"]["previous_turns"] = [
+            {
+                **{
+                    key: turn[key]
+                    for key in (
+                        "artifact_id",
+                        "goal",
+                        "raw_question",
+                        "resolved_goal",
+                        "kind",
+                        "title",
+                        "explanation",
+                    )
+                    if key in turn
+                },
+                # Time anchors are necessary for "what came next". Translation
+                # and source often share an interval; retain it once.
+                "evidence_references": [
+                    {"start_ms": start, "end_ms": end}
+                    for start, end in dict.fromkeys(
+                        (ref["start_ms"], ref["end_ms"]) for ref in turn.get("evidence_references", [])
+                    )
+                ],
+            }
+            for turn in semantic["previous_turns"]
+        ]
+        first.pop("previous_turns", None)
+        messages[1]["content"] = compact_json(first)
+    if context.get("growth_scales_required") and previous_turns:
+        first = json.loads(messages[1]["content"])
+        first["growth_scales_required"] = True
+        messages[1]["content"] = compact_json(first)
+    if context.get("revision_transaction") and clarification:
+        # Frozen spans/obligations replace the old draft, tool transcript and
+        # repeated review feedback only on the model wire. The original journal
+        # and source-bound assembly/verification remain authoritative.
+        current = {
+            **context,
+            "semantic_context": json.loads(messages[1]["content"]).get("semantic_context", {}),
+        }
+        current["quality"] = {
+            k: v for k, v in current.get("quality", {}).items() if k in {"accepted", "source", "issues"}
+        }
+        current["goal_constraints"] = context["revision_transaction"]["required_goals"]
+        current["revision_transaction"].pop("required_goals", None)
+        current["revision_transaction"].pop("resolved_goal", None)
+        return [messages[0], {"role": "user", "content": compact_json(current)}], reverse
     for index, item in enumerate(history):
         call_id = f"c{index}"
         wire_arguments = dict(item["arguments"])

@@ -34,16 +34,45 @@ def traced_node(store, run, token, name, function):
             "step": config.get("metadata", {}).get("langgraph_step"),
             "call_id": (state.get("pending") or {}).get("call_id"),
         }
-        context = _span.set({**span, "store": store, "run_id": run["run_id"], "token": token})
+        context = _span.set(
+            {**span, "store": store, "run_id": run["run_id"], "token": token, "session_id": run["session_id"]}
+        )
         started = time.monotonic()
         try:
+            detail = {"pending": state.get("pending"), "evidence_ids": state.get("selected", [])}
+            previous = (state.get("history") or [{}])[-1]
+            quality = previous.get("result", {}).get("quality", {})
+            if (
+                name == "decide"
+                and previous.get("tool") == "create_explanation"
+                and "unsupported_explanation" in quality.get("issues", [])
+            ):
+                from .review_diagnostics import atomic_review_detail, enabled, semantic_review_detail
+
+                if enabled({"review_mode": "answer_support_v1"}):
+                    try:
+                        detail["semantic_review"] = {
+                            "review_call_id": previous["call_id"],
+                            **(
+                                atomic_review_detail
+                                if quality.get("atomic_assessments")
+                                else semantic_review_detail
+                            )(
+                                previous["arguments"]["explanation"],
+                                quality.get("atomic_assessments")
+                                or quality.get("explanation_assessments", []),
+                                revision_triggered=True,
+                            ),
+                        }
+                    except Exception as error:  # noqa: BLE001 -- observation cannot change execution
+                        detail["semantic_capture_failed"] = type(error).__name__
             store.event(
                 run["run_id"],
                 token,
                 "node_started",
                 {
                     **span,
-                    "_trace": {"pending": state.get("pending"), "evidence_ids": state.get("selected", [])},
+                    "_trace": detail,
                 },
             )
             result = function(state)

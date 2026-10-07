@@ -784,8 +784,6 @@ def test_tool_format_retry_is_visible_counted_and_bounded(setup, always_fail, fa
                 {"prompt_tokens": 8, "completion_tokens": 3},
                 {"stage": "tool_contract", "reason": "arguments_json"},
             )
-        if messages[-1]["role"] == "user" and "NO tools" in messages[-1]["content"]:
-            messages = messages[:-1]
         return original(messages, timeout)
 
     runtime.provider.decide = decide
@@ -794,6 +792,7 @@ def test_tool_format_retry_is_visible_counted_and_bounded(setup, always_fail, fa
     events = read(setup, "EVENTS")["events"]
     assert sum(e["event_type"] == "protocol_retry_scheduled" for e in events) == 1
     assert "NO tools" in calls[1][-1]["content"]
+    assert json.loads(calls[1][-1]["content"])["tool_contract_feedback"]["instruction"]
     assert response["run"]["model_calls"] == (2 if always_fail else 5)
     assert response["run"]["status"] == ("failed" if always_fail else "succeeded")
     if always_fail:

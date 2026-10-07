@@ -12,7 +12,9 @@ from pydantic import ValidationError
 
 from .context import has_time_request
 from .contracts import TOOLS, tool_schemas
+from .protocol import protocol_shape
 from .quality import AbstentionVerdict, repair_review, review_contract, review_schema, review_wire_messages
+from .request_budget import chat_payload
 from .store import BudgetExceeded, StudyError
 
 
@@ -50,10 +52,13 @@ def bailian_nonthinking(url, model):
 class ModelResponseError(StudyError):
     """Only bounded codes and usage may cross the runtime event boundary."""
 
-    def __init__(self, code, usage=None, diagnostics=None):
+    def __init__(self, code, usage=None, diagnostics=None, protocol=None):
         super().__init__(code)
         self.usage = usage or {}
         self.diagnostics = diagnostics or {}
+        self.private_diagnostics = (
+            {**protocol, "parser_error": self.diagnostics.get("stage", "schema")} if protocol else {}
+        )
 
 
 def safe_usage(response):
@@ -109,15 +114,208 @@ def tool_arguments(raw):
     return json.loads(value), repairs
 
 
+def constrain_explanation_schemas(schemas, context, goal, prior):
+    from .explanation_intent import growth_scales_needed
+
+    growth_observation = context.get("example_check", {}).get("semantics") == "growth_scales_v1"
+    reasons = {
+        "position_specialization": "删除没有证据的元素位置，例如中间元素；只保留材料明确给出的比较对象。",
+        "branch_specialization": "删除没有证据的递归方向或较大邻居一侧的选择；只保留材料明确给出的半规模子问题。",
+        "branch_condition_specialization": "Do not assert which half contains the target without its taught selection rule.",
+        "exhaustive_scan": "Complexity alone proves no all-element execution or linear traversal rule.",
+        "numeric_operation_count": "Computed scales are not actual operation counts.",
+        "symbolic_operation_count": "Use sourced recursion levels/halvings rather than exact total operations.",
+        "subproblem_merge": "Remove untaught merge requirements or no-merge claims; retain the sourced subproblem and stopping behaviour.",
+        "recursive_fanout": "Preserve the taught recursive call count; one half-size subproblem does not establish recursively solving every subproblem.",
+        "exponential_speedup": "Explain exponential versus linear only under the named logarithmic reparameterization; no exponential efficiency improvement in original input size.",
+        "existence_specialization": "Checking whether a named element satisfies a predicate is not a global existence test; preserve the source subject.",
+        "subject_specialization": "Preserve which element is being tested; comparison neighbours are not automatically the tested subjects.",
+        "predicate_condition_specialization": "删除没有证据的“若未找到/若不是峰值”分支；只描述已观察到的操作。",
+        "predicate_definition": "Checking whether an element satisfies a predicate does not teach its exact inequality criterion. Keep the taught comparisons without inventing an unstated predicate definition.",
+        "single_element_base": "Cite an observed source that actually describes the single-element stopping case. A complexity or timing passage alone does not establish that case; read/search the missing detail if necessary.",
+        "asymptotic_value": "Theta denotes a growth class, not a scalar value. Give representative n/k scales, or map classes to Theta classes; never Theta(n)=n, Theta(log n)=k or numeric Theta values.",
+        "immutability": "Cite an allowed source stating immutability for that cause/property, or remove the extra immutability claim. Rebinding alone does not prove a general mutation restriction.",
+        "garbage_collection": "Remove garbage collection speculation unless an own allowed source teaches that mechanism. A lost named reference establishes neither collection nor global unreachability, even with 'may'.",
+        "input_mutation_policy": "Describe the recursive input size only. It does not prove whether the original array is modified, copied, unchanged or deleted; omit an untaught mutation policy.",
+        "derivation_attribution": "Label a new mathematical substitution as your derivation, not a step performed by the instructor unless the cited source actually teaches that substitution.",
+        "input_precision": "保留来源中输入规模的约数表达；不要把约数或左右范围改写成精确等于。",
+        "count_modality": "来源说比较次数可能达到某数时，只能说最多或可能，不要改成每步固定次数。",
+    }
+    rejected = {
+        guard
+        for check in context.get("quality", {}).get("atomic_assessments", [])
+        if not check.get("supported")
+        for guard in check.get("strengthening_guards", [])
+    }
+    for tool in schemas:
+        if tool["function"]["name"] != "create_explanation":
+            continue
+        transaction = context.get("revision_transaction")
+        if transaction:
+            params = tool["function"]["parameters"]
+            rejected_ids = [c["id"] for c in transaction["rejected"]]
+            params["properties"] = {
+                "revision_edits": {
+                    "type": "array",
+                    "minItems": len(rejected_ids),
+                    "maxItems": len(rejected_ids),
+                    "description": "For each rejected span delete, literally narrow, or reuse an exact supported_fact. Preserve immutable goal_obligations as well as protected spans. Remove unsourced positions/conditions/branches without deleting the sourced operation, input change or stopping case. Empty replacement deletes; unproved paraphrases are deleted by the server. If an obligation lacks Evidence, report insufficient evidence. The assembled answer receives full goal/atomic/Evidence/Ledger checks.",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "properties": {
+                            "id": {"type": "string", "enum": rejected_ids},
+                            "replacement": {"type": "string", "maxLength": 1000},
+                        },
+                        "required": ["id", "replacement"],
+                    },
+                },
+            }
+            params["required"] = ["revision_edits"]
+            params["additionalProperties"] = False
+            tool["function"]["description"] = (
+                "Repair only rejected spans while preserving immutable goal_obligations and all protected supported text. Use deletion, literal narrowing or exact supported_facts; never invent missing details. Independently recheck the whole goal and sourced answer after assembly."
+            )
+            continue
+        tool["function"]["parameters"]["properties"]["evidence_ids"]["description"] = (
+            "Select sources covering EVERY premise in this answer, including operations as well as conclusions. "
+            "A result or timing passage alone does not support procedural details. Original formulas govern conflicting translations; cite the track that actually states each detail, including a translation where the original excerpt is truncated."
+        )
+        citations = tool["function"]["parameters"]["properties"]["evidence_ids"]
+        verified = context.get("quality", {}).get("verified_source_ids", [])
+        if verified:
+            # Preserve positive premises and their authorized sources
+            # during minimal revision. A new READ releases this view;
+            # independent review still checks the complete answer.
+            citations["description"] = (
+                "REPAIR retain previously verified sources: "
+                + ",".join(verified)
+                + ". "
+                + citations["description"]
+            )
+            citations.setdefault("allOf", []).extend({"contains": {"const": ref}} for ref in verified)
+        from .explanation_intent import omitted_comparison_operands
+
+        field = tool["function"]["parameters"]["properties"]["explanation"]
+        from .strengthening import _SIGNALS
+
+        sources = [e["text"] for e in context.get("evidence", [])]
+        if growth_observation:
+            field["description"] = (
+                "A mathematical substitution or new numeric example is YOUR derivation unless a cited passage explicitly performs it; never credit it to the course. Keep Theta on BOTH sides of class substitution: Theta(n) -> Theta(2^k), Theta(log2 n) -> Theta(k). Rows describe n and k, never Theta values, operation counts or timings. "
+                + field["description"]
+            )
+        if sources:
+            if growth_observation:
+                # Keep the generation schema focused on this observed task.
+                # Every Atomic/strengthening guard still runs on the answer;
+                # pruning irrelevant schema prose neither accepts nor reuses it.
+                domain = {"derivation_attribution", "asymptotic_value", "exponential_speedup"}
+            else:
+                domain = {
+                    "position_specialization",
+                    "branch_specialization",
+                    "recursive_fanout",
+                    "subproblem_merge",
+                    "existence_specialization",
+                    "predicate_condition_specialization",
+                    "predicate_definition",
+                    "garbage_collection",
+                    "input_mutation_policy",
+                    "derivation_attribution",
+                }
+                if any(re.search(r"峰值|\bpeak\b", text, re.I) for text in sources):
+                    domain.add("subject_specialization")
+                if any(re.search(r"算法|递归|\balgorithm\b|\brecurs", text, re.I) for text in sources):
+                    domain.add("single_element_base")
+                    field["description"] = (
+                        "Use sourced operands/actions/stopping only; no textbook positions or branches. "
+                        + field["description"]
+                    )
+                if growth_scales_needed(goal, prior) or any(
+                    re.search(r"Θ|θ|\btheta\b", text, re.I) for text in sources
+                ):
+                    domain.add("asymptotic_value")
+            absent = {g for g in domain if not any(_SIGNALS[g].search(text) for text in sources)}
+            from .strengthening import derivation_action_observed
+
+            if derivation_action_observed(sources):
+                absent.discard("derivation_attribution")
+            if absent:
+                field["description"] = "Respect source gaps in the negative patterns. " + field["description"]
+                field.setdefault("allOf", []).extend(
+                    {"not": {"pattern": _SIGNALS[g].pattern}} for g in sorted(absent)
+                )
+            if "garbage_collection" in absent:
+                field["description"] = "No sourced GC: no speculation, even may. " + field["description"]
+        if (
+            sources
+            and not growth_observation
+            and not any(_SIGNALS["exhaustive_scan"].search(e["text"]) for e in context.get("evidence", []))
+        ):
+            field["description"] = (
+                "Complexity alone teaches no exhaustive traversal/count. " + field["description"]
+            )
+            field.setdefault("allOf", []).append({"not": {"pattern": _SIGNALS["exhaustive_scan"].pattern}})
+        if omitted_comparison_operands(
+            goal, "constant comparisons", [e["text"] for e in context.get("evidence", [])]
+        ):
+            field["description"] = (
+                "具体步骤须说清材料中的比较对象（某个元素与左、右邻居）；不能只说常数次比较。若材料没有命名元素位置或递归方向，删除这些细节，保留真实比较对象。 "
+                + field["description"]
+            )
+            field.setdefault("allOf", []).append(
+                {
+                    "pattern": r"左右|左.{0,24}右|邻居|相邻|\b[Ll]eft\b.{0,60}\b[Rr]ight\b|\b[Nn]eighbou?r(?:s|ing)?\b"
+                }
+            )
+        if rejected:
+            field = tool["function"]["parameters"]["properties"]["explanation"]
+            field["description"] = (
+                "REPAIR: "
+                + " ".join(reasons[g] for g in sorted(rejected) if g in reasons)
+                + " "
+                + field["description"]
+            )
+            from .strengthening import _SIGNALS
+
+            field["description"] = (
+                "Keep supported answer spans VERBATIM; edit only rejected spans and dependent residue. "
+                + field["description"]
+            )
+            restricted = rejected & {
+                "position_specialization",
+                "branch_specialization",
+                "branch_condition_specialization",
+            }
+            for g in sorted(restricted):
+                clause = {"not": {"pattern": _SIGNALS[g].pattern}}
+                if clause not in field.setdefault("allOf", []):
+                    field["allOf"].append(clause)
+    return schemas
+
+
 def decision_schemas(messages):
     first_user = next(
         (message.get("content", "") for message in messages if message.get("role") == "user"), ""
     )
     try:
-        goal = json.loads(first_user).get("goal", "")
+        first = json.loads(first_user)
+        goal = first.get("goal", "")
     except (ValueError, AttributeError, TypeError):
         goal = ""
+        first = {}
+    from .explanation_intent import growth_scales_needed
+
+    prior = first.get("semantic_context", {}).get("previous_turns", [])
     schemas = tool_schemas(include_time_window=has_time_request(goal))
+    context = first
+    observed = any(message.get("role") == "tool" for message in messages) or bool(
+        first.get("revision_transaction")
+    )
+    if not first.get("semantic_context", {}).get("previous_turns"):
+        search = next(s for s in schemas if s["function"]["name"] == "search_course_evidence")
+        search["function"]["parameters"]["properties"].pop("resolved_goal", None)
     from .goals import missing_explicit_correction_task
 
     if missing_explicit_correction_task(goal, ""):
@@ -125,10 +323,77 @@ def decision_schemas(messages):
         search["function"]["parameters"]["properties"]["linear_request"]["properties"]["task"]["enum"] = [
             "correct"
         ]
-    if not any(message.get("role") == "tool" for message in messages):
-        schemas = [tool for tool in schemas if tool["function"]["name"] == "search_course_evidence"]
+    if not observed:
+        prior = first.get("semantic_context", {}).get("previous_turns", [])
+        direct = bool(
+            prior
+            and (
+                first.get("supported_facts")
+                or (prior[-1].get("kind") == "explanation" and first.get("evidence"))
+            )
+        )
+        names = (
+            {"search_course_evidence", "create_explanation", "read_evidence_window", "compare_growth_scales"}
+            if direct
+            else {"search_course_evidence"}
+        )
+        if direct and re.search(
+            r"具体|详细|细节|步骤|怎么做|\b(?:concrete|detailed|steps)\b|more detail", goal, re.I
+        ):
+            # A request to expand a previous answer needs an observation of its
+            # taught actions, not another draft from its concise fact ledger.
+            # Avoid charging an unused creation schema to that first decision;
+            # READ/SEARCH still belong to the model and exercise routing stays.
+            names.discard("create_explanation")
+            if (
+                prior[-1].get("kind") == "explanation"
+                and first.get("evidence")
+                and re.search(
+                    r"刚才|之前|上述|第二(?:种|个)|那个|这种|这样|\b(?:second|previous|that one|it)\b",
+                    goal,
+                    re.I,
+                )
+                and not re.search(
+                    r"练习|出题|自测|题目|\d+\s*道|两道|\b(?:practice|quiz|exercises?)\b", goal, re.I
+                )
+            ):
+                # The existing referent already has authorized source handles.
+                # Inspect one before deciding whether a new topic search is
+                # needed; that choice is restored after the observation. This
+                # leaves the bounded budget for independent repair/review.
+                names = {"read_evidence_window"}
+        schemas = [tool for tool in schemas if tool["function"]["name"] in names]
+        try:
+            first = json.loads(first_user)
+        except (ValueError, TypeError):
+            first = {}
+        if first.get("semantic_context", {}).get("previous_turns"):
+            for schema in schemas:
+                if schema["function"]["name"] in {
+                    "search_course_evidence",
+                    "read_evidence_window",
+                    "create_explanation",
+                    "compare_growth_scales",
+                }:
+                    schema["function"]["parameters"]["required"].append("resolved_goal")
+                    field = {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000,
+                        "description": "Use the NAME of the referenced whole entity/method from previous_turns, replacing contextual words only. Preserve the entire learner request; do not narrow it to a formula term or add textbook demands. Return a standalone goal, not the raw contextual question.",
+                    }
+                    schema["function"]["parameters"]["properties"]["resolved_goal"] = field
+                    if re.search(
+                        r"刚才|之前|上述|第二(?:种|个)|那个|这种|这样|\b(?:second|previous|that one|it)\b",
+                        goal,
+                        re.I,
+                    ):
+                        field.setdefault("allOf", []).append({"not": {"const": goal}})
     else:
-        latest = next(message for message in reversed(messages) if message.get("role") == "tool")
+        latest = next(
+            (message for message in reversed(messages) if message.get("role") == "tool"),
+            next((message for message in messages if message.get("role") == "user"), {}),
+        )
         try:
             context = json.loads(latest["content"])
             kind = context.get("practice_kind", "auto")
@@ -245,11 +510,8 @@ def decision_schemas(messages):
             # A rejected draft can request missing context; no quality gate is bypassed.
             schemas = [tool for tool in schemas if tool["function"]["name"] != "read_evidence_window"]
         calls_left = context.get("budget", {}).get("model_calls_left_after_response")
-        if (
-            kind in {"linear_points", "python_strings"}
-            and type(calls_left) is int
-            and calls_left <= 2
-            and any(tool["function"]["name"].startswith("create_") for tool in schemas)
+        if (context.get("no_progress") or (type(calls_left) is int and calls_left <= 2)) and any(
+            tool["function"]["name"].startswith("create_") for tool in schemas
         ):
             # Reserve the remaining calls for a candidate and its independent
             # review. Refusal is still available; no gate is skipped or widened.
@@ -257,7 +519,142 @@ def decision_schemas(messages):
                 tool
                 for tool in schemas
                 if tool["function"]["name"]
-                not in {"search_course_evidence", "read_evidence_window", "check_python_example"}
+                not in {
+                    "search_course_evidence",
+                    "read_evidence_window",
+                    "check_python_example",
+                    "compare_growth_scales",
+                }
+            ]
+    if not growth_scales_needed(goal, prior) and not context.get("growth_scales_required"):
+        # A computation observation serves a requested numerical relationship,
+        # not an optional expansion of an ordinary comparison or explanation.
+        schemas = [s for s in schemas if s["function"]["name"] != "compare_growth_scales"]
+    if context.get("growth_scales_required"):
+        # The required numerical observation must precede a free explanation.
+        # The model still selects its cited premises and hypothetical inputs;
+        # absent support can be reported, never supplied by this task guard.
+        schemas = [s for s in schemas if s["function"]["name"] != "create_explanation"]
+        from .explanation_intent import scale_forms_observed
+
+        if not context.get("example_check") and any(
+            scale_forms_observed(e["text"]) for e in context.get("evidence", [])
+        ):
+            # A requested mathematical illustration needs its bounded
+            # observation before deciding no explanation is possible. Lexical
+            # forms select this tool; they never prove teaching support.
+            schemas = [
+                s
+                for s in schemas
+                if s["function"]["name"]
+                not in {"search_course_evidence", "read_evidence_window", "report_insufficient_evidence"}
+            ]
+    if observed:
+        if context.get("output_kind") == "explanation":
+            # Method planning belongs to exercise construction. Explanations
+            # retain retrieval/read choices and independent atomic verification.
+            schemas = [
+                tool
+                for tool in schemas
+                if tool["function"]["name"]
+                in {
+                    "search_course_evidence",
+                    "read_evidence_window",
+                    "create_explanation",
+                    "report_insufficient_evidence",
+                    "compare_growth_scales",
+                }
+            ]
+            for tool in schemas:
+                if tool["function"]["name"] == "search_course_evidence":
+                    # The model already chose this Run's explanation flow.
+                    # Retrieval needs no exercise-construction plan. A new
+                    # learner exercise request starts with the full schema.
+                    params = tool["function"]["parameters"]
+                    params["properties"].pop("linear_request", None)
+                    params["properties"]["practice_kind"] = {"type": "string", "const": "general"}
+                    params["properties"]["output_kind"] = {"type": "string", "const": "explanation"}
+            schemas = constrain_explanation_schemas(schemas, context, goal, prior)
+        elif not any(h.get("tool") == "create_explanation" for h in context.get("history", [])):
+            schemas = [s for s in schemas if s["function"]["name"] != "compare_growth_scales"]
+    if not observed and prior and prior[-1].get("kind") == "explanation":
+        # Prior authorized observations already support a direct follow-up.
+        # Apply the same source constraints before its first tool, without
+        # fabricating an observation or forcing another READ/SEARCH.
+        schemas = constrain_explanation_schemas(schemas, context, goal, prior)
+    if (
+        prior
+        and prior[-1].get("kind") == "explanation"
+        and not any(h.get("tool") == "search_course_evidence" for h in context.get("history", []))
+    ):
+        # Runtime requires a new topic search before refusal. A direct READ
+        # can support an explanation, but cannot bypass that existing fence.
+        schemas = [s for s in schemas if s["function"]["name"] != "report_insufficient_evidence"]
+    for tool in schemas:
+        if tool["function"]["name"] == "search_course_evidence":
+            params = tool["function"]["parameters"]
+            if "output_kind" not in params["required"]:
+                params["required"].append("output_kind")
+        if tool["function"]["name"] == "create_explanation" and context.get("generation_max_chars"):
+            properties = tool["function"]["parameters"]["properties"]
+            if "revision_edits" in properties:
+                tool["function"]["description"] += (
+                    f" Assembled answer must remain within {context['generation_max_chars']} "
+                    f"characters and {context['generation_max_claims']} atomic spans, retaining supported spans verbatim."
+                )
+            if "evidence_ids" in properties:
+                properties["evidence_ids"]["maxItems"] = context["generation_max_citations"]
+                properties["title"]["maxLength"] = context["generation_max_title"]
+            field = properties.get("explanation")
+            if field is not None:
+                field["maxLength"] = min(field["maxLength"], context["generation_max_chars"])
+                field["description"] = (
+                    f"Complete the current goal in at most {context['generation_max_chars']} characters "
+                    f"and {context['generation_max_claims']} atomic assertion/qualification spans, "
+                    f"using at most {context['generation_max_citations']} own sources. "
+                    "Every span and the whole goal are independently verified; no omitted demands or extras."
+                )
+    if context.get("observe_before_generation"):
+        schemas = [
+            s for s in schemas if s["function"]["name"] in {"search_course_evidence", "read_evidence_window"}
+        ]
+    remaining = context.get("budget", {}).get("reserved_bytes_and_output_left")
+    explanation_flow = context.get("output_kind") == "explanation" or any(
+        h.get("tool") == "create_explanation" for h in context.get("history", [])
+    )
+    if type(remaining) is int and explanation_flow:
+        request_bytes = (
+            len(json.dumps(messages, ensure_ascii=False).encode()) + len(json.dumps(schemas).encode()) + 900
+        )
+        review_floor = (
+            len(json.dumps(review_schema("explanation", review_mode="atomic_answer_spans_v2")).encode()) + 900
+        )
+        from .atomic_goal_spans import SPAN_SYSTEM
+
+        # A final review also needs its verifier instructions and a bounded
+        # candidate, even when the current observation has no source text yet.
+        review_floor += len(SPAN_SYSTEM.encode()) + 4500 + context.get("review_source_bytes", 0)
+        future = 2 * request_bytes + review_floor
+        if context.get("budget", {}).get("candidates_left") == 2:
+            # An optional observation must leave room for both the first
+            # verification and one bounded repair, not just a perfect draft.
+            future += (
+                review_floor + len(json.dumps(schemas).encode()) + len(messages[0]["content"].encode()) + 900
+            )
+        if remaining < future:
+            # Another observation requires another decision and final review.
+            # This is an optimistic planning floor, not an added budget or a
+            # semantic acceptance rule; actual reservations still fail closed.
+            schemas = [
+                s
+                for s in schemas
+                if s["function"]["name"]
+                not in {
+                    "search_course_evidence",
+                    "read_evidence_window",
+                    "check_python_example",
+                    "compare_growth_scales",
+                }
             ]
     return schemas
 
@@ -380,7 +777,36 @@ class ChatProvider:
                                     "repair": "Preserve the original learner goal. If the stored point count/outcomes misread it, supply request_revision with an exact goal_quote, corrected point_count and one outcome per new point (or [] for specified coordinates). Otherwise keep the stored plan.",
                                 },
                             ) from None
-                TOOLS[call["name"]][0].model_validate(arguments)
+                revision_schema = next(
+                    (
+                        s["function"]["parameters"]
+                        for s in schemas
+                        if s["function"]["name"] == "create_explanation"
+                    ),
+                    {},
+                )
+                if call["name"] == "create_explanation" and "revision_edits" in revision_schema.get(
+                    "required", []
+                ):
+                    from .revision import validated_edits
+
+                    try:
+                        if set(arguments) != {"revision_edits"}:
+                            raise ValueError("Revision may only contain edits")
+                        latest = next(
+                            (m for m in reversed(messages) if m.get("role") == "tool"),
+                            next((m for m in messages if m.get("role") == "user"), {}),
+                        )
+                        frozen = json.loads(latest["content"])["revision_transaction"]
+                        validated_edits({c["id"] for c in frozen["rejected"]}, arguments["revision_edits"])
+                    except (KeyError, ValueError, TypeError, StopIteration) as error:
+                        raise ModelResponseError(
+                            "MODEL_TOOL_CONTRACT",
+                            response["usage"],
+                            {"stage": "tool_schema", "reason": "bounded_revision_edits"},
+                        ) from error
+                else:
+                    TOOLS[call["name"]][0].model_validate(arguments)
         except ValidationError as error:
             allowed_fields = {
                 "query",
@@ -422,6 +848,7 @@ class ChatProvider:
                         for f in failures[:10]
                     ],
                 },
+                response.get("protocol_telemetry"),
             ) from None
         return response
 
@@ -436,51 +863,135 @@ class ChatProvider:
         review_mode = body.get("review_mode") if isinstance(body, dict) else None
         from .support_review import output_tokens
 
+        expected_schema = review_schema(
+            kind,
+            policy,
+            review_mode,
+            method_scope=isinstance(body, dict) and bool(body.get("application_method")),
+            context=body,
+        )
         response = self._request(
             review_wire_messages(messages),
-            [
-                review_schema(
-                    kind,
-                    policy,
-                    review_mode,
-                    method_scope=isinstance(body, dict) and bool(body.get("application_method")),
-                    context=body,
-                )
-            ],
+            [expected_schema],
             timeout,
-            output_tokens(review_mode),
+            output_tokens(review_mode, body.get("relation_review") if body else False),
         )
+        from .review_diagnostics import contract_detail, enabled
+
+        trace_review = enabled(body)
+
+        def capture_detail(errors=()):
+            try:
+                return contract_detail(body, response["calls"], expected_schema, errors, secrets=(self.key,))
+            except Exception as capture_error:  # noqa: BLE001 -- observation cannot alter a verdict
+                return {
+                    "telemetry_version": "private-review-contract-v1",
+                    "capture_failed": type(capture_error).__name__,
+                }
+
+        def failure_detail(failure, errors=()):
+            if body and body.get("goal_scope_binding"):
+                from .review_diagnostics import goal_scope_detail
+
+                failure.private_diagnostics["goal_scope"] = goal_scope_detail(
+                    body,
+                    response["calls"][0].get("arguments") if response["calls"] else None,
+                    errors,
+                )
+            if (
+                review_mode
+                in {
+                    "answer_support_v1",
+                    "atomic_answer_support_v1",
+                    "atomic_delta_support_v1",
+                    "atomic_answer_spans_v2",
+                    "atomic_delta_spans_v2",
+                }
+                and errors
+            ):
+                if review_mode in {
+                    "atomic_answer_support_v1",
+                    "atomic_delta_support_v1",
+                    "atomic_answer_spans_v2",
+                    "atomic_delta_spans_v2",
+                }:
+                    from .atomic_review import citation_contract_errors
+                else:
+                    from .answer_review import citation_contract_errors
+
+                failure.private_diagnostics["answer_support_contract_errors"] = citation_contract_errors(
+                    body,
+                    response["calls"][0]["arguments"],
+                    errors,
+                )
+            if trace_review:
+                failure.private_diagnostics["review_contract"] = capture_detail(errors)
+            return failure
+
         calls = response["calls"]
         if len(calls) != 1 or calls[0]["name"] != "assess_study_candidate":
-            raise ModelResponseError("MODEL_REVIEW_CONTRACT", response["usage"], {"stage": "review_schema"})
+            raise failure_detail(
+                ModelResponseError(
+                    "MODEL_REVIEW_CONTRACT",
+                    response["usage"],
+                    {"stage": "review_schema"},
+                    response.get("protocol_telemetry"),
+                )
+            )
         try:
-            schema = review_contract(kind, policy, review_mode)
+            if body and body.get("goal_scope_binding"):
+                from .goal_scope import ScopedGoalVerdict
+
+                schema = ScopedGoalVerdict
+            else:
+                schema = review_contract(kind, policy, review_mode)
             verdict = schema.model_validate(calls[0]["arguments"], context=body)
         except ValidationError as error:
             # Do not log input values, model prose, arbitrary extra-field names or credentials.
             failures = error.errors(include_input=False, include_url=False)
+            from .review_diagnostics import validation_diagnostics
+
             diagnostics = {
                 "stage": "review_schema",
-                "validation": [
-                    {
-                        "field": "issues" if failure["loc"] and failure["loc"][0] == "issues" else "other",
-                        "type": failure["type"],
-                    }
-                    for failure in failures[:10]
-                ],
+                "validation": validation_diagnostics(failures),
             }
-            raise ModelResponseError("MODEL_REVIEW_CONTRACT", response["usage"], diagnostics) from None
+            if (
+                body
+                and body.get("goal_scope_binding")
+                and any(
+                    f.get("loc", ())[:1] == ("goal_checks",) or "GOAL_SCOPE_VIOLATION" in f.get("msg", "")
+                    for f in failures
+                )
+            ):
+                diagnostics["goal_scope"] = "INVALID_OUTPUT_REQUIRES_BOUNDED_CORRECTION"
+            raise failure_detail(
+                ModelResponseError(
+                    "MODEL_REVIEW_CONTRACT",
+                    response["usage"],
+                    diagnostics,
+                    response.get("protocol_telemetry"),
+                ),
+                failures,
+            ) from None
         if review_mode == "independent_solution":
             return {
                 "solution": verdict.solution(body).model_dump(),
                 "usage": response["usage"],
                 "protocol_repairs": response.get("protocol_repairs", []),
+                "protocol_telemetry": response.get("protocol_telemetry", {}),
             }
         review = repair_review(verdict.issues) if isinstance(verdict, AbstentionVerdict) else verdict.review()
+        private = {"private_review_contract": capture_detail()} if trace_review else {}
+        if body and body.get("goal_scope_binding"):
+            from .review_diagnostics import goal_scope_detail
+
+            private["private_goal_scope"] = goal_scope_detail(body, calls[0]["arguments"])
         return {
+            **private,
             "review": review.model_dump(),
             "usage": response["usage"],
             "protocol_repairs": response.get("protocol_repairs", []),
+            "protocol_telemetry": response.get("protocol_telemetry", {}),
         }
 
     def feedback(self, messages, schemas, timeout, *, review=False):
@@ -488,24 +999,9 @@ class ChatProvider:
 
     def _request(self, messages, schemas, timeout, max_tokens):
         deadline = time.monotonic() + timeout
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "tools": schemas,
-            "tool_choice": "required",
-            "parallel_tool_calls": False,
-            "temperature": 0
-            if len(schemas) == 1 and schemas[0]["function"]["name"] == "assess_study_candidate"
-            else 0.2,
-            "max_tokens": max_tokens,
-        }
-        if bailian_nonthinking(self.url, self.model):
-            payload["enable_thinking"] = False
-            payload["tool_choice"] = (
-                {"type": "function", "function": {"name": schemas[0]["function"]["name"]}}
-                if len(schemas) == 1
-                else "auto"
-            )
+        payload = chat_payload(
+            self.model, messages, schemas, max_tokens, nonthinking=bailian_nonthinking(self.url, self.model)
+        )
         headers = {"Authorization": "Bearer " + self.key} if self.key else {}
         try:
             with httpx.Client(timeout=timeout, follow_redirects=False, trust_env=False) as client:
@@ -544,6 +1040,17 @@ class ChatProvider:
         if observer is not None:
             observer(bytes(body))
         usage = {}
+
+        def protocol_error(code, diagnostics):
+            error = ModelResponseError(code, usage, diagnostics)
+            error.private_diagnostics = protocol_shape(
+                bytes(body),
+                schemas,
+                tool_arguments,
+                diagnostics.get("reason", diagnostics.get("finish_reason", diagnostics["stage"])),
+            )
+            return error
+
         try:
             response_data = json.loads(body)
             usage = safe_usage(response_data)
@@ -553,45 +1060,48 @@ class ChatProvider:
             if not isinstance(calls, list) or any(not isinstance(call, dict) for call in calls):
                 raise ValueError("Invalid calls")
         except (ValueError, KeyError, IndexError, TypeError, AttributeError):
-            raise ModelResponseError("MODEL_INVALID_RESPONSE", usage, {"stage": "response"}) from None
+            raise protocol_error("MODEL_INVALID_RESPONSE", {"stage": "response"}) from None
         if choice.get("finish_reason") == "length":
-            raise ModelResponseError(
-                "MODEL_OUTPUT_TRUNCATED", usage, {"stage": "response", "finish_reason": "length"}
-            )
+            raise protocol_error("MODEL_OUTPUT_TRUNCATED", {"stage": "response", "finish_reason": "length"})
         if not 1 <= len(calls) <= 3 or any(call.get("type") != "function" for call in calls):
             logging.getLogger(__name__).warning(
                 "model_tool_contract calls=%s has_content=%s",
                 len(calls),
                 bool(message.get("content")),
             )
-            raise ModelResponseError(
-                "MODEL_TOOL_CONTRACT", usage, {"stage": "tool_contract", "reason": "call_count_or_type"}
+            raise protocol_error(
+                "MODEL_TOOL_CONTRACT", {"stage": "tool_contract", "reason": "call_count_or_type"}
             )
         parsed_calls, protocol_repairs = [], []
         allowed = {schema["function"]["name"] for schema in schemas}
         for call in calls:
             function = call.get("function")
             if not isinstance(function, dict) or not isinstance(function.get("name"), str):
-                raise ModelResponseError(
-                    "MODEL_TOOL_CONTRACT", usage, {"stage": "tool_contract", "reason": "function_shape"}
+                raise protocol_error(
+                    "MODEL_TOOL_CONTRACT", {"stage": "tool_contract", "reason": "function_shape"}
                 )
             if function["name"] not in allowed:
-                raise ModelResponseError(
-                    "MODEL_TOOL_CONTRACT", usage, {"stage": "tool_contract", "reason": "unoffered_tool"}
+                raise protocol_error(
+                    "MODEL_TOOL_CONTRACT", {"stage": "tool_contract", "reason": "unoffered_tool"}
                 )
             try:
                 arguments, repairs = tool_arguments(function.get("arguments"))
                 protocol_repairs.extend(repairs)
             except (ValueError, TypeError):
-                raise ModelResponseError(
-                    "MODEL_TOOL_CONTRACT", usage, {"stage": "tool_contract", "reason": "arguments_json"}
+                raise protocol_error(
+                    "MODEL_TOOL_CONTRACT", {"stage": "tool_contract", "reason": "arguments_json"}
                 ) from None
             if not isinstance(arguments, dict):
-                raise ModelResponseError(
-                    "MODEL_TOOL_CONTRACT", usage, {"stage": "tool_contract", "reason": "arguments_not_object"}
+                raise protocol_error(
+                    "MODEL_TOOL_CONTRACT", {"stage": "tool_contract", "reason": "arguments_not_object"}
                 )
             parsed_calls.append({"name": function["name"], "arguments": arguments})
-        return {"usage": usage, "calls": parsed_calls, "protocol_repairs": sorted(set(protocol_repairs))}
+        return {
+            "usage": usage,
+            "calls": parsed_calls,
+            "protocol_repairs": sorted(set(protocol_repairs)),
+            "protocol_telemetry": protocol_shape(bytes(body), schemas, tool_arguments),
+        }
 
 
 class MockProvider:
@@ -664,7 +1174,10 @@ class MockProvider:
         context = json.loads(messages[-1]["content"])
         evidence = context["evidence"]
         if not evidence:
-            return {"name": "search_course_evidence", "arguments": {"query": context["goal"][:500]}}
+            arguments = {"query": context["goal"][:500]}
+            if context.get("semantic_context", {}).get("previous_turns"):
+                arguments["resolved_goal"] = context["goal"]
+            return {"name": "search_course_evidence", "arguments": arguments}
         if not any(h["tool"] == "read_evidence_window" for h in context["history"]):
             return {"name": "read_evidence_window", "arguments": {"evidence_id": evidence[0]["evidence_id"]}}
         ids = [evidence[0]["evidence_id"]]

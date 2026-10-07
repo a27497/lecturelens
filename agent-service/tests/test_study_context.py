@@ -145,6 +145,63 @@ def test_latest_search_choice_survives_intermediate_observations_and_can_change(
     assert json.loads(messages[-1]["content"])["practice_kind"] == "general"
 
 
+def test_explanation_excerpt_signals_truncation_and_retains_authorized_match():
+    text = "a" * 1300 + "MATCH" + "b" * 100
+    evidence = [
+        dict(
+            evidence_id="own",
+            text=text,
+            start_ms=0,
+            end_ms=10,
+            source_type="SUBTITLE",
+            match_start=1300,
+            match_end=1305,
+        )
+    ]
+    history = [dict(tool="search_course_evidence", arguments={}, result=dict(output_kind="explanation"))]
+    messages, aliases = build_messages("system", "Explain the actions.", evidence, history, [])
+    visible = json.loads(messages[-1]["content"])["evidence"][0]
+    assert visible["more_context"] is True and len(visible["text"]) == 1200
+    assert "MATCH" in visible["text"] and visible["source_type"] == "SUBTITLE"
+    assert aliases == {"e1": "own"} and evidence[0]["match_start"] == 1300
+
+
+def test_abstention_repair_cannot_resurrect_hidden_translation_alias_or_quotes():
+    evidence = [
+        dict(evidence_id="own", text="Visible source.", start_ms=0, end_ms=10),
+        dict(evidence_id="hidden", text="Old translated source.", start_ms=20, end_ms=30),
+    ]
+    history = [
+        dict(
+            tool="read_evidence_window",
+            arguments=dict(evidence_id="own"),
+            result=dict(evidence_ids=["own"], output_kind="explanation"),
+        ),
+        dict(
+            tool="report_insufficient_evidence",
+            arguments={},
+            result=dict(
+                quality={
+                    "accepted": False,
+                    "issues": ["unjustified_abstention"],
+                    "grounds": {
+                        "explanation": [
+                            {"source": "hidden", "quote": "PRIVATE DUPLICATED QUOTE"},
+                            {"source": "own", "quote": "Visible source."},
+                        ]
+                    },
+                    "goal_assessments": [],
+                }
+            ),
+        ),
+    ]
+    messages, aliases = build_messages("system", "Explain the actions.", evidence, history, [])
+    body = json.loads(messages[-1]["content"])
+    assert body["quality"]["field_evidence_ids"] == {"explanation": ["e1"]}
+    assert "grounds" not in body["quality"] and "PRIVATE DUPLICATED QUOTE" not in messages[-1]["content"]
+    assert aliases == {"e1": "own"}
+
+
 def test_unfinished_speech_requests_a_bounded_tail_and_citations_follow_only_its_sentence():
     from lecturelens_agent.study.context import evidence_gaps, include_citation_neighbors
 
