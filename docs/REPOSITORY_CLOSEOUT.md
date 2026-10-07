@@ -20,6 +20,12 @@ An initial supplementary Mock E2E startup used the unchanged example MySQL URL a
 
 The complete Phase 1 archive was verified in place, without a new backup. All original dirty file hashes and both worktrees' ignored `.data` files matched it before splitting. Historical failed trials, candidate identity and private evidence remain unchanged. The older dirty ASR worktree and all existing refs are retained.
 
+## Remote CI and infrastructure blocker
+
+On 2026-10-07, remote CI passed Python/PostgreSQL, Java and Frontend on both runtime heads: [stable `0e93c4f`](https://github.com/a27497/lecturelens/actions/runs/37575434702) and [experiment `c4b4f1f`](https://github.com/a27497/lecturelens/actions/runs/37575436667). Both Mock E2E jobs failed before application packaging or execution because Quay denied access to the pinned MinIO image (`401 unauthorized`). These workflows are **failed**, not complete CI passes.
+
+Anonymous authenticated manifest requests for the fixed MinIO server/client digests also returned 401 from Quay and Docker Hub; the matching official archived binary checksum endpoints returned 410. The successful local Mock E2E used the existing cached images at the original pinned digests. Fresh-environment infrastructure reproduction therefore remains blocked by image availability. Closeout does not substitute another image, change MinIO versions or relax the E2E gate. All failed attempts are retained in private closeout evidence.
+
 ## Reproduction
 
 Follow the locked install and checks in [CI](../.github/workflows/ci.yml): `uv sync --locked`, Ruff check/format, pytest with `AGENT_TEST_DATABASE_URL` pointing to an independent `lecturelens_agent_test` database, `mvn test` and package, and `npm ci`, unit tests, audit and build. Use distinct ports and explicit full service URLs for supplementary Mock E2E; changing a database port variable does not override `MYSQL_JDBC_URL`.
