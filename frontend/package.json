@@ -11,11 +11,11 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "axios": "1.18.1",
+    "axios": "1.20.0",
     "element-plus": "2.14.2",
     "pinia": "3.0.4",
     "spark-md5": "^3.0.2",
-    "vue": "3.5.39",
+    "vue": "3.5.43",
     "vue-router": "5.1.0"
   },
   "devDependencies": {
