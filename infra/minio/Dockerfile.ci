@@ -1,0 +1,32 @@
+# CI builds the original releases from official source; no third-party MinIO image.
+FROM golang:1.24.2-bookworm@sha256:79390b5e5af9ee6e7b1173ee3eac7fadf6751a545297672916b59bfa0ecf6f71 AS build
+ARG SOURCE_REPO
+ARG SOURCE_COMMIT
+ARG SOURCE_SHA256
+ARG SOURCE_DATE
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local GOPROXY=https://proxy.golang.org GOSUMDB=sum.golang.org
+WORKDIR /src
+RUN curl --fail --location --retry 3 --output /tmp/source.tar.gz \
+      "https://codeload.github.com/minio/${SOURCE_REPO}/tar.gz/${SOURCE_COMMIT}" \
+    && echo "${SOURCE_SHA256}  /tmp/source.tar.gz" | sha256sum --check --strict \
+    && tar -xzf /tmp/source.tar.gz --strip-components=1 \
+    && rm /tmp/source.tar.gz
+# Read-only modules and the upstream go.sum fence dependency contents. DEVELOPMENT
+# identifies a local source build rather than impersonating a vendor release binary.
+RUN go mod download \
+    && go mod verify \
+    && release_tag="$(printf '%s' "${SOURCE_DATE}" | tr ':' '-')" \
+    && go build -mod=readonly -buildvcs=false -trimpath -tags kqueue \
+      -ldflags "-s -w -X github.com/minio/${SOURCE_REPO}/cmd.Version=${SOURCE_DATE} -X github.com/minio/${SOURCE_REPO}/cmd.ReleaseTag=DEVELOPMENT.${release_tag} -X github.com/minio/${SOURCE_REPO}/cmd.CommitID=${SOURCE_COMMIT} -X github.com/minio/${SOURCE_REPO}/cmd.ShortCommitID=$(printf '%.12s' "${SOURCE_COMMIT}") -X github.com/minio/${SOURCE_REPO}/cmd.CopyrightYear=2025" \
+      -o /out/${SOURCE_REPO} .
+
+FROM busybox:1.37.0-musl@sha256:5cec3fc171c87218698e85a52af7087de727372aae264a787b8112901a5b0092
+ARG SOURCE_REPO
+ARG SOURCE_COMMIT
+LABEL org.opencontainers.image.source="https://github.com/minio/${SOURCE_REPO}" \
+      org.opencontainers.image.revision="${SOURCE_COMMIT}" \
+      org.opencontainers.image.licenses="AGPL-3.0-or-later"
+COPY --from=build /out/ /usr/local/bin/
+COPY --from=build /src/LICENSE /usr/share/licenses/minio/LICENSE
+COPY --from=build /src/NOTICE /src/CREDITS /usr/share/licenses/minio/
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt

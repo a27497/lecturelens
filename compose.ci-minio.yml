@@ -1,0 +1,28 @@
+# Explicit opt-in for Mock E2E; compose.yaml retains the deployment image pins.
+services:
+  minio:
+    image: lecturelens-ci-minio:0d7408fc9969caf07de6a8c3a84f9fbb10a6739e
+    pull_policy: never
+    build:
+      context: ./infra/minio
+      dockerfile: Dockerfile.ci
+      args:
+        SOURCE_REPO: minio
+        SOURCE_COMMIT: 0d7408fc9969caf07de6a8c3a84f9fbb10a6739e
+        SOURCE_SHA256: 7eb30a913fea30f18069abf194e1e78e4983b558cc526911ae1c11396a9859a5
+        SOURCE_DATE: "2025-04-22T22:12:26Z"
+    entrypoint: ["/usr/local/bin/minio"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:9000/minio/health/live"]
+
+  minio-init:
+    image: lecturelens-ci-mc:b00526b153a31b36767991a4f5ce2cced435ee8e
+    pull_policy: never
+    build:
+      context: ./infra/minio
+      dockerfile: Dockerfile.ci
+      args:
+        SOURCE_REPO: mc
+        SOURCE_COMMIT: b00526b153a31b36767991a4f5ce2cced435ee8e
+        SOURCE_SHA256: 4cd13e34daeeb8481c3ba8686b082f161b8dc1f7aad52d715a706a587349c6ae
+        SOURCE_DATE: "2025-04-16T18:13:26Z"
