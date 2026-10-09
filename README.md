@@ -1,105 +1,131 @@
+<div align="center">
+
 # LectureLens
 
-**Evidence-grounded, recoverable Study Agent for course learning.**
+### 把课程视频，变成可以追问的学习过程
 
-LectureLens 将课程视频整理为可检索、可引用的学习材料。学习者提出目标后，Study Agent 通过有界工具查找和补读课程 Evidence，生成解释与练习；证据不足时拒答或澄清。作答、证据反馈与执行历史保存在服务端，可取消、追踪和恢复。
+从课程视频到字幕、译文和学习资料；从一个问题到有时间戳的课程证据、AI 解释、练习与反馈。
 
-[Recruiter Demo](#recruiter-demo) · [Engineering Highlights](#engineering-highlights) · [Architecture](#architecture) · [Engineering Evidence](#engineering-evidence) · [Scope & Limits](#scope--limits) · [Quick Start](#quick-start)
+**LectureLens 是一个围绕课程内容工作的 AI 学习平台。**
 
-![LectureLens 课程工作区：视频、课程内容与学习材料](docs/images/lecturelens-course-workspace.webp)
+[查看产品界面](#产品体验) · [了解核心能力](#核心能力) · [技术实现](#技术实现) · [从源码运行](#从源码运行)
 
-*课程工作区截图使用公开的合成测试数据。下面的 Agent 截图来自已验收的真实模型 Sample Course。*
+[![CI](https://github.com/a27497/lecturelens/actions/workflows/ci.yml/badge.svg)](https://github.com/a27497/lecturelens/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-447566.svg)](LICENSE)
 
-## Why a Study Agent
+<img src="docs/images/lecturelens-course-workspace.webp" alt="LectureLens 课程学习工作区：视频、课程内容和学习材料" width="960">
 
-课程准备会生成字幕、翻译、时间线和学习材料；普通课程 QA 是独立的单轮 RAG 路径。Study Agent 则围绕一个学习目标，依据工具观察继续检索、补读、解释或停止，并把练习、作答、反馈及 Run 历史接成学习闭环。
+<sub>课程工作区 · 基于合成测试数据的真实产品界面。下面展示已保存真实模型结果在原生界面中的呈现。</sub>
 
-**Course → Evidence → model-selected bounded tools → answer & practice → answer attempt → evidence feedback.** 模型决定下一步工具调用，程序控制课程访问、版本、预算、取消和产物提交。检索命中只是一组候选，不能授予课程访问权，也不能替代最终答案的证据支持。[设计与职责边界](docs/AGENT_PRODUCT_CONTRACT.md)
+</div>
 
-## Recruiter Demo
+## 为什么做 LectureLens？
 
-已有 MIT OpenCourseWare 公开 Python 课程片段演示：**提问 → 查看 Evidence ID、原文和视频时间 → 解释与练习 → 课程外问题拒答 → 保存作答与反馈 → 查看历史 Trace**。真实模型浏览器验收覆盖这五个场景；这是一门已知课程上的演示，不是未见课程质量测试。[演示步骤与验收](eval/recruiter-demo-phase-d/README.md) · [后续求职版回归](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze)
+看课程视频时，遇到一个不懂的知识点，往往需要反复拖动进度条、查找字幕，再切换到其他工具提问。即使得到解释，也很难立刻找到它对应的课程原文。
 
-![真实 Sample Course：问题、Agent 解释及带时间戳的课程原文 Evidence](docs/images/recruiter-agent-evidence.webp)
+LectureLens 将**视频、课程内容与学习交互放在同一个工作区**：不仅回答「这个知识点是什么」，还帮助你找到「课程在哪讲过」，并通过练习和反馈继续学习。
 
-[![真实 Agent Trace：Run、模型调用、工具调用、token 与延迟事件](docs/images/recruiter-agent-trace.webp)](docs/images/recruiter-agent-trace.webp)
+## 产品体验
 
-*两张截图分别来自同一 Sample Course 的不同真实验收 Run，裁图未包含账号栏。课程片段来自 Ana Bell / [MIT OCW 6.0001 Lecture 3](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/)，按 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 署名，用于非商业项目展示；MIT 不为本项目背书。*
+### 01 · 视频变成可阅读的课程
 
-`/demo` 是**已配置的本机演示环境**入口，当前没有公开部署的可点击 Demo。普通构建若未配置 Sample Course，会在页面显示不可用状态；准备、登录和课程权限仍走原有业务链路。[本机演示准备说明](eval/recruiter-demo-phase-d/README.md#启动--复现)
+上传课程录屏、讲座或网课视频，系统处理媒体内容并组织字幕、中文译文、课程学习材料和时间线。可以一边观看视频，一边按时间阅读和定位内容。
 
-## Engineering Highlights
+<img src="docs/images/lecturelens-course-reading.webp" alt="LectureLens 课程阅读工作区" width="900">
 
-| 设计 | 实际约束与用途 |
+<sub>课程阅读界面使用合成测试数据，不代表一次真实模型处理的质量评测。</sub>
+
+### 02 · 向 Study Agent 提问，答案能回到原视频
+
+围绕一段课程提出学习目标，Study Agent 会在当前课程的 Evidence 中检索和补读，再生成解释与练习。展开引用可以看到**原文、证据编号和时间范围**，并从对应位置返回视频。当材料不足以支持问题时，Agent 可以澄清或拒答，而不是把无关命中拼成答案。
+
+<img src="docs/images/product-agent-evidence.png" alt="LectureLens 原生界面：公开课程视频、真实历史 Agent 解释和带时间戳的 Evidence" width="960">
+
+<sub>真实历史 qwen3-max 结果在原生课程工作区中展示；这是已保存的解释与引用，并非截图当天新发起的模型运行。</sub>
+
+### 03 · 练习不是终点，还有证据反馈
+
+解释之后可以完成自测题、保存作答并查看针对该版本作答的证据反馈。反馈引用课程内容，方便核对与修订，而不是用一个分数替代学习过程。
+
+<img src="docs/images/product-practice-feedback.png" alt="LectureLens 原生界面：已保存作答和对应版本的真实历史证据反馈" width="960">
+
+### 04 · 学习过程可追踪，也可恢复
+
+学习会话、运行记录、练习和反馈保存在服务端。可以回看公开的 Agent 执行事件，包括工具调用、模型调用、Evidence ID 和终态；对于取消或中断的执行，系统还提供持久状态与恢复机制。
+
+<img src="docs/images/product-agent-trace.png" alt="LectureLens 原生界面：已保存的公开 Agent Trace" width="960">
+
+<sub>这些原生界面截图均来自同一公开课程的已保存历史学习记录。原始来源、版本、截图范围与授权说明见 [产品截图说明](docs/PRODUCT_GALLERY.md)。</sub>
+
+## 核心能力
+
+| 模块 | 能做什么 |
 | --- | --- |
-| **Evidence & Authority** | Java 按 owner、course、revision 和删除状态重查 Evidence；Python 检索索引只返回候选，旧快照与检索结果不能授予访问权。[架构](docs/ARCHITECTURE.md#evidence-与检索边界) |
-| **Bounded tools** | Agent 的模型工具调用被预算和可见 Evidence 集合约束；课程读取通过 CHECK / SEARCH / READ / WINDOW 等受权接口。证据不足时走拒答或澄清路径。[执行说明](docs/L2_STUDY_AGENT.md) |
-| **Recoverable execution** | PostgreSQL 保存 Session、Run、持久预算、幂等工具结果和 LangGraph checkpoint。取消后的晚到结果不能覆盖终态；崩溃恢复回读已提交结果。[恢复机制](docs/ARCHITECTURE.md#持久状态与恢复) · [故障实验](eval/multi-user-phase-e/README.md#隔离和故障实验) |
-| **Observable Agent** | 当前及历史 Run 展示公开模型/工具事件、实际 token、延迟、Evidence ID 和终态；完整 checkpoint 诊断与 Replay 由受权运维 CLI 提供，网页不暴露私有上下文。[Trace / Replay](eval/agent-trace-phase-b/README.md) |
-| **Practice & Feedback** | 解释与练习成为服务端产物；作答保存为不可变版本，独立反馈 Run 引用精确作答版本。反馈是可核对的学习建议，不是自动评分。[学习交互](docs/L3_LEARNING_FLOW.md) |
-| **Retrieval evaluation** | 独立离线基准比较 24 个问题、70 条真实 Evidence。Cross-Encoder 提高排名指标却未带来对应的答案收益，因此默认仍为 Dense；失败题与协议失败保留。[检索评测](eval/retrieval-phase-a/README.md) |
+| **课程处理** | 视频上传与处理、字幕和译文、课程材料、时间线与进度查看 |
+| **课程问答** | 按当前课程检索相关内容，回答并引用可定位的 Evidence |
+| **Study Agent** | 围绕学习目标选择有界工具进行检索、补读、解释与出题 |
+| **学习反馈** | 保存不可变的作答版本，生成与具体作答对应的证据反馈 |
+| **执行记录** | 查看 Session、Run、公开 Trace，支持取消、恢复和历史查看 |
+| **访问隔离** | 课程所有权、Evidence 版本与删除状态校验，避免跨课程混用材料 |
 
-可选的 [Course MCP stdio 适配](eval/course-mcp-phase-c/README.md)沿用 Java Authority，演示默认仍用 internal 工具通道。媒体准备使用事务 outbox、RocketMQ 和有界 Runner；它为课程 Evidence 提供输入，不充当 Agent 决策循环。[媒体可靠性](docs/C0_C3_EXECUTION.md)
+**一条学习路径：**
 
-## Architecture
+`上传视频 → 阅读课程 → 提出问题 → 查看 Evidence → 完成练习 → 获取反馈 → 回看 Trace`
+
+## 技术实现
+
+LectureLens 不只是把视频内容放进一次模型调用。课程事实由 Java 服务管理，Study Agent 则负责学习过程与受约束的工具使用。
 
 ```mermaid
 flowchart LR
-    V[Vue learning workspace] --> J[Java gateway & Evidence authority]
-    J -->|signed Study command| A[Python Study Agent]
-    A -->|bounded Evidence tools| J
-    A <--> L[LLM decisions & review]
-    A <--> P[(PostgreSQL: Session / Run / checkpoint / artifacts)]
-    J <--> M[(MySQL: users / courses / Evidence facts)]
+    U["Vue 3 学习工作区"] --> J["Java / Spring Boot\n课程与 Evidence 权威"]
+    J --> A["Python / FastAPI\nLangGraph Study Agent"]
+    A -->|受权限约束的工具| J
+    A --> M["LLM 决策与复核"]
+    J --> D[("MySQL\n课程业务数据")]
+    A --> P[("PostgreSQL\nSession / Run / checkpoint")]
 ```
 
-**Java 是课程访问的权威来源。** 它处理登录、课程与 Evidence 的 owner/revision/deletion 校验；Python 负责学习任务、模型工具循环、Session/Run 与反馈。PostgreSQL 保存 Agent 执行状态和派生索引，MySQL 保存课程业务事实；两侧不跨服务写对方的表。媒体摄取另连接 MinIO、RocketMQ 和 Redis。[完整架构与故障边界](docs/ARCHITECTURE.md)
+- **Java 21 / Spring Boot 3.5 / MySQL**：课程、用户与 Evidence 的权限和版本权威；媒体处理使用事务 Outbox、RocketMQ、MinIO、Redis 与 FFmpeg。
+- **Python / FastAPI / LangGraph / PostgreSQL / pgvector**：Study Agent、课程检索、有界工具、持久化执行与反馈。
+- **Vue 3 / TypeScript / Vite**：视频学习工作区、Agent 交互、引用跳转、作答和 Trace。
+- **验证与防护**：独立的检索对照、授权负向测试、取消和晚到结果隔离、自动化回归。默认 Dense 检索的选择有离线评测依据，不将检索指标等同于答案质量。
 
-## Engineering Evidence
+[完整架构](docs/ARCHITECTURE.md) · [Study Agent 产品契约](docs/AGENT_PRODUCT_CONTRACT.md) · [检索实验](eval/retrieval-phase-a/README.md) · [可靠性设计](docs/C0_C3_EXECUTION.md)
 
-| 已有证据 | 结论范围 |
+## 验证过什么？
+
+以下是**有来源的历史验证结果**，不是当前提交重新运行的测试成绩：
+
+| 证据 | 已确认范围 |
 | --- | --- |
-| **2,067 automated tests passed** | 2026-09-22 求职版冻结时的本地 Python/PostgreSQL、Java 与前端验证合计；这是该冻结版本记录，不是当前工作树的新测试成绩。[验收与收口](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze) |
-| **2,160 negative authorization requests, 0 bypass** | Phase E 所测跨用户、课程、Run、Evidence 与签名/版本路径；不是所有授权路径的穷举证明。[隔离审计](eval/multi-user-phase-e/README.md) |
-| **Real-model recruiter flow verified** | 已知公开课程上，真实 Chromium 走原登录/Study 链路完成解释、Evidence、无证据拒答、反馈和历史 Trace；失败试次与后续定向修复均保留。[演示验收](eval/recruiter-demo-phase-d/README.md) · [求职版回归](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze) |
+| **2,067 项自动化测试通过** | 2026-09-22 求职版冻结时的 Java、Python/PostgreSQL 和前端测试合计；[验收记录](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze) |
+| **2,160 次负向授权请求，0 次绕过** | 指定跨用户、课程、Evidence、Run 等测试路径；[隔离评测](eval/multi-user-phase-e/README.md) |
+| **真实模型学习闭环验收** | 在已知 MIT OCW 公开课程片段上完成解释、引用、无证据拒答、保存作答、反馈及 Trace；[浏览器验收](eval/recruiter-demo-phase-d/README.md) |
 
-**Execution / isolation ≠ teaching quality ≠ production concurrency.** 确定性 Provider 测机制；真实模型样例只支持其实际课程和目标范围的结论。完整候选、失败历史和保留集边界见[评测索引](eval/README.md)。
+这些结果证明的是各自的测试范围，不代表对所有课程的教学效果或生产级并发能力做出保证。
 
-## Scope & Limits
+## 从源码运行
 
-- **实验版本，尚未发布。** 求职版已冻结，线上配置未因验收改变；`/demo` 需要维护者准备公开课程和隔离演示配置。
-- 已见公开课程的验收不证明未见课程泛化。自动评分、长期记忆和复习调度未交付；证据反馈不作为成绩。
-- Phase E 的并发检索出现真实 503 与失败 Run，不能据实验 worker 数宣称生产规模并发。[失败与瓶颈](eval/multi-user-phase-e/README.md)
-- 崩溃恢复保留已提交工具结果和预算；未持久化的外部模型请求可能重发，不承诺 Provider exactly-once。[恢复语义](docs/ARCHITECTURE.md#持久状态与恢复)
-- 求职版仍保留 5 个 Minor；原始失败和修复记录未改判。[已知问题](HUMAN_ACCEPTANCE_REPORT.md#仍保留的-5-个-minor)
-
-## Tech Stack
-
-| 层 | 技术 |
-| --- | --- |
-| Agent 与执行状态 | Python 3.12、FastAPI、LangGraph / PostgresSaver、PostgreSQL / pgvector |
-| 课程与权威 Evidence | Java 21、Spring Boot 3.5、MyBatis-Plus、Flyway、MySQL 8.4 |
-| 工作区 | Vue 3.5、TypeScript、Vite、Pinia、Element Plus |
-| 媒体与基础设施 | FFmpeg、ASR / OCR、MinIO、RocketMQ、Redis、SSE |
-| 验证 | pytest、JUnit、Vitest、Ruff、GitHub Actions |
-
-## Quick Start
-
-完整环境需要 Java 21、Node.js 24 LTS、Python 3.12、uv、Docker Compose、FFmpeg/FFprobe，以及单独配置的基础设施和模型连接。示例配置默认关闭 Study Agent 与实验反馈；首次启动也不会自动获得已准备的 Sample Course。
+项目目前是**可自行部署的实验性版本，尚未提供面向公众的在线服务**。完整环境涉及 Java 21、Python 3.12、Node.js 24 LTS、Docker Compose、FFmpeg，以及单独配置的模型和基础服务。
 
 ```bash
 git clone https://github.com/a27497/lecturelens.git
 cd lecturelens
-test -e .env || cp .env.real-ai.example .env
-test -e .env.agent.local || cp .env.agent.example .env.agent.local
+cp .env.real-ai.example .env
+cp .env.agent.example .env.agent.local
 ```
 
-按[部署指南](docs/DEPLOYMENT.md)配置基础设施、Java 与 Agent 的共同服务密钥、Dense 检索及可用的模型连接，再分别启动服务；不要将示例配置或本机演示凭据直接当成可用部署。无 Key 的确定性演示见 `.env.demo.example`，Python 验证命令见[服务说明](agent-service/README.md)。
+以上仅用于准备配置文件，不等于完成启动。后续请按 [部署指南](docs/DEPLOYMENT.md) 配置服务、密钥、模型和课程处理管线；不应将示例凭据用于实际部署。
 
-媒体转写支持显式选择 SiliconFlow、百炼或 Mock。百炼同步 ASR 的凭据、分片配置与验证边界见[百炼 ASR](docs/ASR_BAILIAN.md)；转写成功不代表翻译或完整课程 Pipeline 已通过验收。
+[部署说明](docs/DEPLOYMENT.md) · [API 文档](docs/API.md) · [Agent 服务](agent-service/README.md) · [更多产品截图](docs/PRODUCT_GALLERY.md)
 
-## More Documentation
+## 项目范围
 
-[产品与职责契约](docs/AGENT_PRODUCT_CONTRACT.md) · [架构与故障语义](docs/ARCHITECTURE.md) · [部署](docs/DEPLOYMENT.md) · [API](docs/API.md) · [数据库](docs/DB_SCHEMA.md) · [评测索引](eval/README.md) · [CI](https://github.com/a27497/lecturelens/actions/workflows/ci.yml)
+本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆、自动复习调度尚未交付。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。
 
-`agent-service/` 保存 Agent 核心，`backend/` 保存业务与 Evidence 服务，`frontend/` 保存学习工作区，`eval/` 保存公开评测证据。原始 Provider 响应、凭据、下载媒体和私有验收记录不入 Git。
+## License & credits
+
+代码使用 [MIT License](LICENSE)。
+
+产品截图中的历史课程片段来自 Ana Bell 的 [MIT OpenCourseWare 6.0001, Lecture 3](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/)，按 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 用于非商业展示；MIT 不为本项目背书。图片与课程内容不因代码采用 MIT License 而改变原有授权。
