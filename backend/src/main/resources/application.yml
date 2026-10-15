@@ -232,6 +232,7 @@ courselingo:
   ai:
     system-models:
       enabled: ${SYSTEM_MODEL_CONFIG_ENABLED:false}
+      probe-allowed-origins: ${SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS:}
     model-routing:
       enabled: ${COURSELINGO_AI_MODEL_ROUTING_ENABLED:true}
       default-text-model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}

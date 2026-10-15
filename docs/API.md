@@ -48,7 +48,7 @@ B5 当前已实现 `POST /api/auth/register`、`POST /api/auth/login`、`POST /a
 
 P1-4 新增 USER/ADMIN：登录和刷新响应的 `user.role`、`GET /api/me` 的 `data.role` 返回当前账号角色；注册固定为 USER，并拒绝额外请求字段（包括 role）。JWT 中的角色不替代管理员接口的数据库实时检查。
 
-系统模型接口位于 `/api/admin/system-models`，每个端点均校验管理员，未登录 401、普通用户 403。`GET /capabilities` 返回协议与功能目录；启用配置层后提供供应商、模型、绑定、历史和执行接口。协议仅为 OPENAI_CHAT、BAILIAN_ASR、SILICONFLOW_ASR；FUSION_SUMMARY 的 connected=false；ASR_TRANSCRIPTION 可绑定声明 ASR 能力的 BAILIAN_ASR/SILICONFLOW_ASR 模型。历史和执行接口不返回配置原文或密文，密钥只显示 hasKey/keyLast4。完整路径和请求语义见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
+系统模型接口位于 `/api/admin/system-models`，每个端点均校验管理员，未登录 401、普通用户 403。`GET /capabilities` 返回协议与功能目录；启用配置层后提供供应商、模型、绑定、历史和执行接口。协议仅为 OPENAI_CHAT、BAILIAN_ASR、SILICONFLOW_ASR；FUSION_SUMMARY 的 connected=false；ASR_TRANSCRIPTION 可绑定声明 ASR 能力的 BAILIAN_ASR/SILICONFLOW_ASR 模型。历史和执行接口不返回配置原文或密文，密钥只显示 hasKey/keyLast4。管理员页面 `/admin/settings/models` 的 `/status?version=...` 不发供应商请求；`GET /probe-policy` 查看部署白名单和限额，`POST /probes` 只接受 expectedVersion/modelId，管理员点击才测试。测试结果只返回固定类别、耗时、版本、模型 ID 及最终地址。完整路径和请求语义见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
 
 ### POST /api/auth/register
 

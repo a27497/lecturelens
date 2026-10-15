@@ -408,6 +408,17 @@ public class SystemModelRegistry {
                         ? config.defaults().get(feature).route().asr() : null);
     }
 
+    SystemModelResolvedRoute probeRoute(long version, long modelId) {
+        var config = load(version);
+        var model = model(config, modelId);
+        var provider = provider(config, model.providerId());
+        String feature = provider.protocol() != SystemModelProtocol.OPENAI_CHAT ? "ASR_TRANSCRIPTION"
+                : model.capabilities().contains("TEXT_CHAT") ? "COURSE_QA" : "VISION_FRAME_ANALYSIS";
+        return resolve(new SystemModelStoredConfig(config.providers(), config.models(),
+                Map.of(feature, modelId), config.defaults(), config.environmentFingerprint(),
+                config.fullTextTranslation()), feature);
+    }
+
     String credential(long version, SystemModelResolvedRoute route) {
         var config = load(version);
         String encrypted;

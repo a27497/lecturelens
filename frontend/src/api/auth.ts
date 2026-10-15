@@ -1,4 +1,5 @@
 import { http } from "./http";
+import { authHeader } from "./authToken";
 import { toAuthEntryError } from "../utils/errorMessage";
 
 export interface ApiResponse<T> {
@@ -13,6 +14,7 @@ export interface AuthUser {
   userId: number;
   email: string;
   status: string;
+  role?: "ADMIN" | "USER";
 }
 
 export interface LoginRequest {
@@ -41,6 +43,11 @@ export interface RegisterResponse {
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
   const response = await http.post<ApiResponse<LoginResponse>>("/api/auth/login", request);
+  return response.data.data;
+}
+
+export async function currentUser(): Promise<AuthUser> {
+  const response = await http.get<ApiResponse<AuthUser>>("/api/me", { headers: authHeader() });
   return response.data.data;
 }
 

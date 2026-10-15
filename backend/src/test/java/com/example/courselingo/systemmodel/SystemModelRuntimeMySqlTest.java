@@ -668,6 +668,10 @@ class SystemModelRuntimeMySqlTest {
     void visualCallsUseFrozenIndependentKeyAndExactEndpoint(@TempDir Path directory)
             throws Exception {
         Target visual = target("vision-model", "https://api.deepseek.com", KEY_B);
+        // Extra declarations must not break the existing vision capability adapter.
+        registry.saveModel(visual.model(), visual.provider(), new SystemModelCommands.Model(
+                registry.currentVersion(), "vision-model", Set.of("TEXT_CHAT", "JSON_OUTPUT", "VISION", "ASR"),
+                null, true), user);
         bind("VISION_FRAME_ANALYSIS", visual.model());
         var ref = executions.freezePipeline(task, user);
         var image = directory.resolve("frame.png");
