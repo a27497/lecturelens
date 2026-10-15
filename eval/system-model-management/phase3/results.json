@@ -1,0 +1,297 @@
+{
+  "phase": 3,
+  "base_commit": "55ef3b8e07697f28e82e6d5046851a6c7ad0614d",
+  "branch": "codex/p14-system-model-management",
+  "backend_full": {
+    "exit_code": 0,
+    "suite_count": 223,
+    "tests": 1571,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase3/backend-full-final.log",
+    "junit_xml": ".data/system-model-management/phase3/full-final-reports"
+  },
+  "targeted": {
+    "exit_code": 0,
+    "tests": 280,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase3/targeted-fourth.log"
+  },
+  "receipt_verification": {
+    "exit_code": 0,
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase3/asr-receipts-final.log",
+    "junit_xml": ".data/system-model-management/phase3/asr-receipts-final.xml",
+    "note": "Narrow rerun after adding scenario metadata to the sanitized receipt recorder; production code unchanged since full run."
+  },
+  "system_model_suites": [
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAsrMySqlTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelSecretCipherTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelActivationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAdminBoundaryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelHttpClientTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelUrlPolicyTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "real_mysql_tests": 54,
+  "asr_mock_requests": [
+    {
+      "finalUrl": "https://silicon.example/v1/audio/transcriptions",
+      "version": 32,
+      "snapshotId": "a0beaeb3-e975-49f2-af17-27d29995355a",
+      "status": 200,
+      "provider": "siliconflow",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://silicon.example/v1/audio/transcriptions",
+      "version": 32,
+      "snapshotId": "a0beaeb3-e975-49f2-af17-27d29995355a",
+      "status": 200,
+      "provider": "siliconflow",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "version": 31,
+      "snapshotId": "dca1bd08-dec6-4c72-8fae-b559e6708d88",
+      "status": 200,
+      "provider": "bailian",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "version": 31,
+      "snapshotId": "dca1bd08-dec6-4c72-8fae-b559e6708d88",
+      "status": 429,
+      "provider": "bailian",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "version": 31,
+      "snapshotId": "dca1bd08-dec6-4c72-8fae-b559e6708d88",
+      "status": 200,
+      "provider": "bailian",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "version": 33,
+      "snapshotId": "40053052-de60-4009-bdc2-1a392988c5fb",
+      "status": 200,
+      "provider": "bailian",
+      "scenario": "runtime-switch",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "version": 37,
+      "snapshotId": "8d98f474-1c0c-4e77-8472-d033d2231020",
+      "status": 200,
+      "provider": "BAILIAN_ASR",
+      "scenario": "serialization",
+      "transport": "mock"
+    },
+    {
+      "finalUrl": "https://silicon.example/v1/audio/transcriptions",
+      "version": 41,
+      "snapshotId": "e8734307-1606-4801-9763-00b2d12bd7d6",
+      "status": 200,
+      "provider": "SILICONFLOW_ASR",
+      "scenario": "serialization",
+      "transport": "mock"
+    }
+  ],
+  "asr_mock_version_switch": [
+    {
+      "snapshotId": "dca1bd08-dec6-4c72-8fae-b559e6708d88",
+      "version": 31,
+      "provider": "bailian",
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "statuses": [
+        200,
+        200,
+        429
+      ],
+      "request_count": 3
+    },
+    {
+      "snapshotId": "a0beaeb3-e975-49f2-af17-27d29995355a",
+      "version": 32,
+      "provider": "siliconflow",
+      "finalUrl": "https://silicon.example/v1/audio/transcriptions",
+      "statuses": [
+        200,
+        200
+      ],
+      "request_count": 2
+    },
+    {
+      "snapshotId": "40053052-de60-4009-bdc2-1a392988c5fb",
+      "version": 33,
+      "provider": "bailian",
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation",
+      "statuses": [
+        200
+      ],
+      "request_count": 1
+    }
+  ],
+  "observations": {
+    "full": ".data/system-model-management/phase3/observations-final",
+    "final_asr_receipts": ".data/system-model-management/phase3/asr-receipts-final"
+  },
+  "credential_log_scan": {
+    "files_scanned": 231,
+    "canary_count": 10,
+    "matching_files": [],
+    "scope": "Final full and receipt logs/XML, package log and all sanitized full/receipt observations; synthetic master-key canary included."
+  },
+  "packaging": {
+    "exit_code": 0,
+    "log": ".data/system-model-management/phase3/package-final.log",
+    "command": [
+      "bash",
+      "./mvnw",
+      "-B",
+      "-DskipTests",
+      "package"
+    ]
+  },
+  "checks": [
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "name": "mysql-version",
+      "command": [
+        "docker",
+        "exec",
+        "lecturelens-p14-phase3-mysql",
+        "mysql",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)\n"
+    },
+    {
+      "name": "remove-isolated-test-container",
+      "command": [
+        "docker",
+        "rm",
+        "--force",
+        "--volumes",
+        "lecturelens-p14-phase3-mysql"
+      ],
+      "exit_code": 0,
+      "output": "lecturelens-p14-phase3-mysql\n"
+    }
+  ],
+  "prior_records": [
+    {
+      "log": ".data/system-model-management/phase3/compile-first.log",
+      "outcome": "failed: local provider variable duplicated; fixed before tests"
+    },
+    {
+      "log": ".data/system-model-management/phase3/compile-second.log",
+      "outcome": "compile passed"
+    },
+    {
+      "log": ".data/system-model-management/phase3/targeted-first.log",
+      "outcome": "failed: new fixture lacked text routing; retained"
+    },
+    {
+      "log": ".data/system-model-management/phase3/targeted-second.log",
+      "outcome": "failed: WAV chunk fixture exceeded effective chunk size; retained"
+    },
+    {
+      "log": ".data/system-model-management/phase3/targeted-third.log",
+      "outcome": "failed test compilation: incorrect fixture deletion method names; retained"
+    }
+  ],
+  "real_provider_calls": false,
+  "production_deployment": false,
+  "online_configuration_changed": false,
+  "not_run_in_phase3": [
+    "Python/PostgreSQL full suite and Ruff",
+    "Frontend tests/build",
+    "Real-provider task quality"
+  ],
+  "remaining_phases": [
+    "Admin frontend and active connectivity probes",
+    "Aggregate final verification"
+  ],
+  "known_limits": [
+    "DNS resolution is validated without pinning the connection IP",
+    "Drain pre-phase3 frozen snapshots before upgrading; missing ASR route fails explicitly",
+    "Chunk duration remains deployment configuration; oversized chunks fail explicitly"
+  ]
+}

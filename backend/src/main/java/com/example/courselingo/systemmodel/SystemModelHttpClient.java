@@ -47,21 +47,31 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
 
     @Override
     public OpenAiCompatibleClientResponse complete(OpenAiCompatibleChatCompletionRequest request) {
+        return post(
+                request.uri(),
+                request.headers(),
+                request.contentType(),
+                request.body().getBytes(StandardCharsets.UTF_8),
+                request.timeout());
+    }
+
+    public OpenAiCompatibleClientResponse post(
+            URI uri,
+            java.util.Map<String, String> headers,
+            String contentType,
+            byte[] body,
+            Duration timeout) {
         long start = System.nanoTime();
         CompletableFuture<HttpResponse<byte[]>> pending = null;
         try {
             var builder =
-                    HttpRequest.newBuilder(request.uri())
-                            .timeout(request.timeout())
-                            .header("Content-Type", request.contentType());
-            request.headers().forEach(builder::header);
-            var httpRequest =
-                    builder.POST(
-                                    HttpRequest.BodyPublishers.ofString(
-                                            request.body(), StandardCharsets.UTF_8))
-                            .build();
+                    HttpRequest.newBuilder(uri)
+                            .timeout(timeout)
+                            .header("Content-Type", contentType);
+            headers.forEach(builder::header);
+            var httpRequest = builder.POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
             pending = http.sendAsync(httpRequest, ignored -> new LimitedBody(responseLimit));
-            var response = pending.get(request.timeout().toMillis(), TimeUnit.MILLISECONDS);
+            var response = pending.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
             if (response.statusCode() >= 300 && response.statusCode() < 400)
                 throw failure("REDIRECT_FORBIDDEN", LlmProviderFailureCategory.INVALID_REQUEST);
             if (response.headers()

@@ -8,7 +8,7 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 
 系统优先读取视频内覆盖充分的字幕，只有字幕缺失或覆盖不足时才调用外部 ASR。OCR 与 VLM 均为可选能力，关闭后不影响字幕、翻译、章节、学习资料和导出主链路。
 
-[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本和视觉，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；管理页面、ASR 动态切换尚未交付。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
+[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本、视觉和 ASR，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；ASR 绑定支持热切换，管理页面尚未交付。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
 
 系统层启用后，启动会把当前部署默认及加密凭据写为不可变版本；新任务创建时冻结版本，运行中的任务继续原版本。多实例应提供相同主密钥和部署默认。切换回未启用系统层的旧 worker 前应先排空已冻结任务，不让旧 worker 忽略新快照；现有无快照任务首次接管标记 ADOPTED。普通配置保存不需要重启。历史及执行查询不会返回版本原文或密文；本次实现仅在隔离测试环境验收，没有修改线上配置。
 
@@ -70,7 +70,7 @@ JWT_ACCESS_SECRET
 
 ## 4. ASR 配置
 
-下面保留 SiliconFlow 配置。百炼同步转写、显式 provider 选择及推荐分片参数见[百炼 ASR](ASR_BAILIAN.md)。凭据由运行环境注入；启用百炼需要包含该实现的新构建产物，仅修改环境变量不能升级旧 JAR。
+系统配置层开启时，`ASR_TRANSCRIPTION` 绑定可切换百炼/SiliconFlow；任务创建时冻结供应商，新绑定仅影响新任务。无绑定沿用下方 provider/enabled/Mock 配置；绑定失败不回退 Mock。完整端点、分片限制与旧快照升级要求见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md#asr-运行时选择)。下面保留 SiliconFlow 配置。百炼同步转写、显式 provider 选择及推荐分片参数见[百炼 ASR](ASR_BAILIAN.md)。凭据由运行环境注入；启用百炼需要包含该实现的新构建产物，仅修改环境变量不能升级旧 JAR。
 
 ```dotenv
 SILICONFLOW_ASR_ENABLED=true
