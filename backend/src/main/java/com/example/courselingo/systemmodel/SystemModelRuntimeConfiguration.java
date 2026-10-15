@@ -108,6 +108,26 @@ public class SystemModelRuntimeConfiguration {
         return new SystemModelVisionProvider(executions, http, properties, urls);
     }
 
+    @Bean
+    com.example.courselingo.ai.asr.AsrAdapterFactory bailianAsrAdapterFactory(
+            SystemModelHttpClient http, SystemModelUrlPolicy urls) {
+        return com.example.courselingo.ai.asr.AsrAdapterFactories.bailian(http, urls);
+    }
+
+    @Bean
+    com.example.courselingo.ai.asr.AsrAdapterFactory siliconFlowAsrAdapterFactory(
+            SystemModelHttpClient http, SystemModelUrlPolicy urls) {
+        return com.example.courselingo.ai.asr.AsrAdapterFactories.siliconFlow(http, urls);
+    }
+
+    @Bean
+    @Primary
+    com.example.courselingo.ai.asr.SpeechToTextProvider systemModelAsrProvider(
+            SystemModelExecutionService executions,
+            java.util.List<com.example.courselingo.ai.asr.AsrAdapterFactory> factories) {
+        return new SystemModelAsrProvider(executions, factories);
+    }
+
     @Bean(destroyMethod = "close")
     SystemModelVersionNotifications systemModelVersionNotifications(
             SystemModelRegistry registry,

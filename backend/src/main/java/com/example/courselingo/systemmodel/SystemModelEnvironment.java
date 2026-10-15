@@ -105,7 +105,69 @@ final class SystemModelEnvironment {
                             route, encrypted == null ? null : encrypted.ciphertext()));
             identity.append('\n').append(route).append('\n').append(key == null ? "" : key);
         }
+        captureAsr(defaults, identity);
         return new Captured(
                 Map.copyOf(defaults), SystemModelConfigCodec.sha256(identity.toString()), fullText);
+    }
+
+    private void captureAsr(
+            Map<String, SystemModelStoredConfig.Default> defaults, StringBuilder identity) {
+        var binder = org.springframework.boot.context.properties.bind.Binder.get(environment);
+        var bailian =
+                binder.bind(
+                                "courselingo.ai.asr.bailian",
+                                com.example.courselingo.ai.asr.BailianAsrProperties.class)
+                        .orElseGet(com.example.courselingo.ai.asr.BailianAsrProperties::new);
+        var silicon =
+                binder.bind(
+                                "courselingo.ai.asr.silicon-flow",
+                                com.example.courselingo.ai.asr.SiliconFlowAsrProperties.class)
+                        .orElseGet(com.example.courselingo.ai.asr.SiliconFlowAsrProperties::new);
+        var mock =
+                binder.bind(
+                                "courselingo.ai.asr.mock",
+                                com.example.courselingo.ai.asr.MockAsrProperties.class)
+                        .orElseGet(com.example.courselingo.ai.asr.MockAsrProperties::new);
+        String selected = com.example.courselingo.ai.asr.AsrProviderSelection.selected(environment);
+        boolean isBailian = selected.equals("bailian"), isSilicon = selected.equals("siliconflow");
+        String key = isBailian ? bailian.getApiKey() : isSilicon ? silicon.getApiKey() : "";
+        String credentialId = "env-ASR_TRANSCRIPTION";
+        var encrypted = key != null && !key.isBlank() ? cipher.encrypt(credentialId, key) : null;
+        var route =
+                new SystemModelResolvedRoute(
+                        "ASR_TRANSCRIPTION",
+                        isBailian || isSilicon
+                                ? "ENV"
+                                : selected.equals("mock") ? "MOCK" : "UNCONFIGURED",
+                        isBailian
+                                ? SystemModelProtocol.BAILIAN_ASR
+                                : isSilicon ? SystemModelProtocol.SILICONFLOW_ASR : null,
+                        credentialId,
+                        null,
+                        null,
+                        isBailian ? bailian.getEndpoint() : isSilicon ? silicon.getBaseUrl() : null,
+                        isBailian ? bailian.getModel() : isSilicon ? silicon.getModel() : null,
+                        Set.of("ASR"),
+                        null,
+                        null,
+                        isBailian
+                                ? bailian.getRequestTimeout().toMillis()
+                                : silicon.getRequestTimeout().toMillis(),
+                        null,
+                        encrypted != null,
+                        encrypted == null ? null : encrypted.keyLast4(),
+                        com.example.courselingo.ai.asr.AsrConfigurationSnapshot.capture(
+                                bailian, silicon, mock));
+        defaults.put(
+                "ASR_TRANSCRIPTION",
+                new SystemModelStoredConfig.Default(
+                        route, encrypted == null ? null : encrypted.ciphertext()));
+        // Stable map ordering prevents identical vocabulary from creating another startup version.
+        identity.append('\n')
+                .append(route)
+                .append('\n')
+                .append(new java.util.TreeMap<>(route.asr().vocabulary()))
+                .append('\n')
+                .append(key == null ? "" : key);
     }
 }

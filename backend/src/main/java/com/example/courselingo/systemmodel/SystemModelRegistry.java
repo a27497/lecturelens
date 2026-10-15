@@ -399,10 +399,13 @@ public class SystemModelRegistry {
                 model.capabilities(),
                 p.temperature(),
                 p.maxTokens(),
-                p.timeoutMillis(),
+                p.timeoutMillis() != null ? p.timeoutMillis()
+                        : feature.equals("ASR_TRANSCRIPTION") ? 180_000L : null,
                 p.maxAttempts(),
                 provider.ciphertext() != null,
-                provider.keyLast4());
+                provider.keyLast4(),
+                feature.equals("ASR_TRANSCRIPTION")
+                        ? config.defaults().get(feature).route().asr() : null);
     }
 
     String credential(long version, SystemModelResolvedRoute route) {
@@ -561,9 +564,12 @@ public class SystemModelRegistry {
         if (!model.enabled()
                 || !provider.enabled()
                 || provider.ciphertext() == null
-                || provider.protocol() != SystemModelProtocol.OPENAI_CHAT) throw conflict();
+                || (feature.equals("ASR_TRANSCRIPTION")
+                    ? provider.protocol() == SystemModelProtocol.OPENAI_CHAT
+                    : provider.protocol() != SystemModelProtocol.OPENAI_CHAT)) throw conflict();
         Set<String> required =
-                feature.equals("VISION_FRAME_ANALYSIS")
+                feature.equals("ASR_TRANSCRIPTION") ? Set.of("ASR")
+                        : feature.equals("VISION_FRAME_ANALYSIS")
                         ? Set.of("VISION", "JSON_OUTPUT")
                         : Set.of("TEXT_CHAT", "JSON_OUTPUT");
         if (!model.capabilities().containsAll(required)) throw invalid();
@@ -572,7 +578,7 @@ public class SystemModelRegistry {
     private static void bindable(String key) {
         try {
             var feature = SystemModelFeature.valueOf(key);
-            if (!feature.connected() || feature == SystemModelFeature.ASR_TRANSCRIPTION)
+            if (!feature.connected())
                 throw invalid();
         } catch (RuntimeException ignored) {
             throw invalid();

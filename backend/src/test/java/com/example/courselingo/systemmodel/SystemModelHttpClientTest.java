@@ -40,6 +40,23 @@ class SystemModelHttpClientTest {
     }
 
     @Test
+    void binaryMultipartPostPreservesAllBytes() {
+        byte[] body = new byte[] {0, 1, 13, 10, (byte) 255};
+        var received = new java.util.concurrent.atomic.AtomicReference<byte[]>();
+        server.createContext("/binary", exchange -> {
+            received.set(exchange.getRequestBody().readAllBytes());
+            exchange.sendResponseHeaders(200, 2);
+            exchange.getResponseBody().write("{}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            exchange.close();
+        });
+        server.start();
+        var response = client.post(request("/binary", 3000).uri(), Map.of(),
+                "multipart/form-data; boundary=test", body, Duration.ofSeconds(3));
+        assertThat(received.get()).containsExactly(body);
+        assertThat(response.statusCode()).isEqualTo(200);
+    }
+
+    @Test
     void redirectsAreNeverFollowed() {
         var followed = new AtomicInteger();
         server.createContext(

@@ -217,7 +217,10 @@ class SystemModelRuntimeMySqlTest {
     @Test
     void enabledRuntimeBootstrapsAndSelectsRoutingProviders() {
         new org.springframework.boot.test.context.runner.ApplicationContextRunner()
-                .withUserConfiguration(SystemModelRuntimeConfiguration.class)
+                .withUserConfiguration(SystemModelRuntimeConfiguration.class,
+                        com.example.courselingo.ai.asr.BailianAsrConfiguration.class,
+                        com.example.courselingo.ai.asr.SiliconFlowAsrConfiguration.class,
+                        com.example.courselingo.ai.asr.MockAsrConfiguration.class)
                 .withBean(SystemModelSecretCipher.class, () -> cipher)
                 .withBean(org.springframework.jdbc.core.JdbcTemplate.class, () -> db.jdbc)
                 .withBean(
@@ -231,12 +234,18 @@ class SystemModelRuntimeMySqlTest {
                         VisionModelProvider.class,
                         () -> new OpenAiCompatibleVisionProvider(new VisionAnalysisProperties()))
                 .withPropertyValues(
-                        "courselingo.ai.system-models.enabled=true", "spring.flyway.enabled=true")
+                        "courselingo.ai.system-models.enabled=true", "spring.flyway.enabled=true",
+                        "courselingo.ai.asr.provider=mock", "courselingo.ai.asr.bailian.enabled=true",
+                        "courselingo.ai.asr.silicon-flow.enabled=true")
                 .run(
                         context -> {
                             assertThat(context).hasNotFailed();
                             assertThat(context.getBean(LlmProvider.class))
                                     .isInstanceOf(SystemModelLlmProvider.class);
+                            assertThat(context.getBeansOfType(com.example.courselingo.ai.asr.AsrAdapterFactory.class)).hasSize(2);
+                            assertThat(context).hasSingleBean(com.example.courselingo.ai.asr.SpeechToTextProvider.class);
+                            assertThat(context.getBean(com.example.courselingo.ai.asr.SpeechToTextProvider.class))
+                                    .isInstanceOf(SystemModelAsrProvider.class);
                             assertThat(context.getBean(VisionModelProvider.class))
                                     .isInstanceOf(SystemModelVisionProvider.class);
                             assertThat(

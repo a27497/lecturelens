@@ -21,7 +21,43 @@ public record SystemModelResolvedRoute(
         Long timeoutMillis,
         Integer maxAttempts,
         boolean hasKey,
-        String keyLast4) {
+        String keyLast4,
+        com.example.courselingo.ai.asr.AsrConfigurationSnapshot asr) {
+    public SystemModelResolvedRoute(
+            String feature,
+            String source,
+            SystemModelProtocol protocol,
+            String credentialId,
+            Long providerId,
+            Long modelId,
+            String baseUrl,
+            String model,
+            Set<String> capabilities,
+            Double temperature,
+            Integer maxTokens,
+            Long timeoutMillis,
+            Integer maxAttempts,
+            boolean hasKey,
+            String keyLast4) {
+        this(
+                feature,
+                source,
+                protocol,
+                credentialId,
+                providerId,
+                modelId,
+                baseUrl,
+                model,
+                capabilities,
+                temperature,
+                maxTokens,
+                timeoutMillis,
+                maxAttempts,
+                hasKey,
+                keyLast4,
+                null);
+    }
+
     public SystemModelResolvedRoute {
         capabilities = java.util.Collections.unmodifiableSet(new java.util.TreeSet<>(capabilities));
     }
