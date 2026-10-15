@@ -1,0 +1,12 @@
+{
+  "planned_before_annotation_or_scoring": true,
+  "created_at_utc": "2026-10-14",
+  "development_courses": ["algorithms", "linear", "calculus", "probability"],
+  "holdout_courses": ["economics", "quantum"],
+  "questions_per_course": 20,
+  "answerable_per_course": 16,
+  "cross_lecture_per_course": 4,
+  "no_answer_per_course": 4,
+  "chinese_per_course": 10,
+  "holdout_policy": "Course-disjoint; no retrieval scores before freeze; one scored holdout pass. No config/label changes after scores. Dataset author is AI and sees source material, not a blind human annotator."
+}

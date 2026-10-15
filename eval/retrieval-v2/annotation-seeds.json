@@ -1,0 +1,789 @@
+{
+  "annotation_type": "model-assisted; Codex authored and source-reviewed; no human gold, no independent blind review",
+  "single": {
+    "algorithms": [
+      [
+        "What does BFS level i mean about the number of edges from the start?",
+        "广度优先搜索中第 i 层的顶点与起点相隔多少条边？",
+        "l1-p04-e00",
+        "Level i means reachable in i edges but not fewer."
+      ],
+      [
+        "How are outgoing neighbors represented by an adjacency list?",
+        "有向图的邻接表为每个顶点存储什么？",
+        "l1-p03-e00",
+        "Adj[u] contains outgoing neighbors."
+      ],
+      [
+        "What time bound includes discovering unreachable vertices in BFS?",
+        "BFS 连同列出不可达顶点一起计算时，时间复杂度是多少？",
+        "l1-p06-e00",
+        "O(V+E) including unreachable vertices."
+      ],
+      [
+        "How do parent pointers recover a shortest BFS path?",
+        "用 BFS 的父指针怎样恢复从目标回到起点的最短路径？",
+        "l1-p06-e00",
+        "Follow parents from target back to s."
+      ],
+      [
+        "What search behavior is compared to exploring a maze?",
+        "哪种图搜索会走到受阻处再沿痕迹回溯探索新邻居？",
+        "l2-p02-e00",
+        "DFS follows a path, backtracks, recursively explores unvisited neighbors."
+      ],
+      [
+        "How is a DFS back edge different from a forward edge?",
+        "DFS 中返回祖先和指向后代的非树边分别叫什么？",
+        "l2-p03-e00",
+        "Back edges go to ancestors, forward edges to descendants."
+      ],
+      [
+        "Why does reversing DFS finishing order give a topological order?",
+        "为什么拓扑排序使用 DFS 完成时间的逆序？",
+        "l2-p05-e00",
+        "Topological sort uses reverse DFS finishing times."
+      ],
+      [
+        "Is a cross edge by itself the cycle certificate taught here?",
+        "根据本讲的环检测条件，仅出现 cross edge 就能判定有环吗？",
+        "l2-p04-e00",
+        "The criterion is a DFS back edge, not an arbitrary cross edge."
+      ],
+      [
+        "What edge-weight assumption does Dijkstra require?",
+        "Dijkstra 对每条边的权重有什么前提？",
+        "l3-p04-e00",
+        "All weights nonnegative."
+      ],
+      [
+        "Which unsettled vertex does the greedy shortest-path algorithm choose?",
+        "贪心最短路算法每次从未确定顶点中挑选哪个？",
+        "l3-p05-e00",
+        "Choose minimum tentative shortest-path distance."
+      ],
+      [
+        "How does the array priority queue affect Dijkstra complexity?",
+        "Dijkstra 使用数组实现优先队列时，总时间复杂度是什么？",
+        "l3-p06-e00",
+        "Array gives quadratic total cost."
+      ],
+      [
+        "Does the DAG shortest-path procedure need the same nonnegative-edge restriction?",
+        "DAG 最短路是否也必须禁止负权边，为什么没有负环？",
+        "l3-p02-e00",
+        "DAGs have no cycles; topological relaxation supports negative edges."
+      ]
+    ],
+    "linear": [
+      [
+        "How is the error vector oriented relative to the line of projection?",
+        "向一条直线投影时，误差向量与这条直线有什么几何关系？",
+        "l1-p01-e01",
+        "The residual is perpendicular to a."
+      ],
+      [
+        "What is the rank of the projection matrix onto a nonzero line?",
+        "投影到非零向量张成的一条直线，其投影矩阵秩是多少？",
+        "l1-p06-e01",
+        "Rank one and column space is that line."
+      ],
+      [
+        "Why does applying a projection matrix twice have the same effect as once?",
+        "为什么投影矩阵作用两次与一次相同？",
+        "l1-p07-e01",
+        "A projected point stays fixed; P squared equals P."
+      ],
+      [
+        "What transpose property does an orthogonal projection matrix have?",
+        "正交投影矩阵的转置有什么性质？",
+        "l1-p07-e00",
+        "Projection matrix is symmetric."
+      ],
+      [
+        "What do least squares minimize when Ax=b has no exact solution?",
+        "Ax=b 无精确解时，最小二乘优化什么量？",
+        "l2-p05-e02",
+        "Sum of squared residuals."
+      ],
+      [
+        "Which projection gives the residual rather than the fitted component?",
+        "如果 P 给出拟合投影，哪个矩阵给出垂直方向的残差？",
+        "l2-p04-e00",
+        "I-P projects to the perpendicular subspace."
+      ],
+      [
+        "How are the fitted and residual components related to the original vector?",
+        "最小二乘几何解释中，投影部分和误差部分与原向量有什么关系？",
+        "l2-p03-e01",
+        "Projection plus error equals b."
+      ],
+      [
+        "Does least squares require the original right-hand side to already lie in the column space?",
+        "最小二乘是否要求 b 本来就在列空间内，精确解对应什么特殊情况？",
+        "l2-p06-e00",
+        "Zero residual is the special case b in column space; otherwise minimize length."
+      ],
+      [
+        "What two conditions define an orthonormal basis?",
+        "标准正交基的向量满足哪两个条件？",
+        "l3-p01-e01",
+        "Pairwise perpendicular, each unit length."
+      ],
+      [
+        "What does Q transpose Q become for orthonormal columns even if Q is rectangular?",
+        "即使 Q 不是方阵，标准正交列为何使 Q 转置乘 Q 等于单位矩阵？",
+        "l3-p03-e00",
+        "Column inner products form identity."
+      ],
+      [
+        "What must be removed from the second vector in Gram-Schmidt?",
+        "Gram-Schmidt 怎样从第二个原始向量得到与第一个垂直的方向？",
+        "l3-p15-e00",
+        "Subtract its projection onto the first vector."
+      ],
+      [
+        "What kind of input vectors does Gram-Schmidt start with?",
+        "Gram-Schmidt 在这里从什么性质的原始向量开始构造标准正交向量？",
+        "l3-p13-e00",
+        "Starts with independent vectors."
+      ]
+    ],
+    "calculus": [
+      [
+        "What is the geometric formula for a dot product?",
+        "点积怎样用两向量长度和夹角表达？",
+        "l1-p06-e01",
+        "Product of lengths times cosine."
+      ],
+      [
+        "Why is the dot product of a vector with itself its squared length?",
+        "为什么向量与自身的点积等于长度平方？",
+        "l1-p07-e00",
+        "The angle is zero and cosine is one."
+      ],
+      [
+        "How is a three-component vector length computed?",
+        "三维向量怎样用各分量求长度？",
+        "l1-p03-e02",
+        "Square root of sum of squared components."
+      ],
+      [
+        "What does orthogonality mean geometrically?",
+        "orthogonality 在几何中是什么意思？",
+        "l1-p10-e03",
+        "It means perpendicularity."
+      ],
+      [
+        "What does the sign of a planar determinant tell us in an area computation?",
+        "二维行列式用来算平行四边形面积时，符号与方向有什么关系？",
+        "l2-p06-e01",
+        "Determinant is signed area, sign depends on orientation."
+      ],
+      [
+        "How does dotting with a unit vector obtain a directional component?",
+        "如何用单位方向向量的点积得到某方向上的分量？",
+        "l2-p02-e00",
+        "Dot with the unit direction."
+      ],
+      [
+        "Which hand gives the direction of A cross B?",
+        "A 叉乘 B 的方向用哪只手和什么动作判断？",
+        "l2-p12-e00",
+        "Right hand points along A, curls toward B, thumb gives direction."
+      ],
+      [
+        "How does a three-dimensional determinant relate to volume?",
+        "三维行列式在这里为什么能用于体积计算？",
+        "l2-p09-e01",
+        "Signed volume; changing orientation changes sign."
+      ],
+      [
+        "What changes when the order of a cross product is reversed?",
+        "交换叉乘中 A 与 B 的顺序，方向会发生什么变化？",
+        "l3-p01-e03",
+        "Cross product order matters; opposite direction."
+      ],
+      [
+        "What output shape results from a 3x4 matrix times a 4x2 matrix?",
+        "3×4 矩阵乘 4×2 矩阵的结果是什么形状？",
+        "l3-p02-e10",
+        "Output is 3x2."
+      ],
+      [
+        "What operation transposes a matrix?",
+        "矩阵转置怎样交换行和列？",
+        "l3-p04-e08",
+        "Read rows as columns and vice versa."
+      ],
+      [
+        "Is the identity matrix the same transformation as the zero matrix?",
+        "单位矩阵与零矩阵是相同的变换吗？",
+        "l3-p03-e03",
+        "Identity preserves X; zero sends X to zero."
+      ]
+    ],
+    "probability": [
+      [
+        "What two requirements should the list of outcomes in a sample space satisfy?",
+        "样本空间中的结果列表应满足哪两项要求？",
+        "l1-p01-e01",
+        "Mutually exclusive and collectively exhaustive."
+      ],
+      [
+        "What is an event in the probability model?",
+        "概率模型中的事件与样本空间有什么关系？",
+        "l1-p02-e00",
+        "An event is a subset of the sample space."
+      ],
+      [
+        "How does a finite discrete uniform law compute an event probability?",
+        "有限离散均匀模型如何用计数算事件概率？",
+        "l1-p03-e00",
+        "Count outcomes in A divided by total outcomes."
+      ],
+      [
+        "What extra additivity condition is used for countably many disjoint events?",
+        "可数无限个互斥事件的并集概率，需要什么可加性条件？",
+        "l1-p03-e01",
+        "Countable additivity."
+      ],
+      [
+        "What becomes the new universe when conditioning on event B?",
+        "给定事件 B 后，条件概率把什么作为新的范围？",
+        "l2-p01-e01",
+        "B is the new universe."
+      ],
+      [
+        "What probabilities does Bayes rule infer from likelihoods?",
+        "贝叶斯规则怎样从似然和先验转为观察 B 之后的信念？",
+        "l2-p02-e01",
+        "Infer P(Ai given B) from prior and conditional likelihood."
+      ],
+      [
+        "Which partitioning approach underlies the total probability theorem?",
+        "全概率公式怎样利用对样本空间的划分？",
+        "l2-p02-e00",
+        "Divide and conquer over a partition with conditional probabilities."
+      ],
+      [
+        "Why is conditioning on a zero-probability event undefined in this definition?",
+        "在这里的定义中，为什么零概率事件不能作为条件？",
+        "l2-p01-e01",
+        "Definition divides by the conditioning probability; zero is undefined."
+      ],
+      [
+        "How is independence expressed as no information about another event?",
+        "事件独立性怎样用一个事件不提供另一个事件的信息来解释？",
+        "l3-p01-e01",
+        "Occurrence of A provides no information about B."
+      ],
+      [
+        "Must independent events remain independent after conditioning?",
+        "原来独立的事件在给定额外条件后必然还独立吗？",
+        "l3-p01-e01",
+        "Conditioning may affect independence."
+      ],
+      [
+        "Does pairwise independence alone establish independence of a collection?",
+        "两两独立就能推出一组事件相互独立吗？",
+        "l3-p02-e01",
+        "Pairwise versus full independence are different."
+      ],
+      [
+        "What information condition characterizes an independent collection of events?",
+        "相互独立的一组事件，对观察其中某些事件有什么信息限制？",
+        "l3-p02-e00",
+        "Information about some gives no information about remaining events."
+      ]
+    ],
+    "economics": [
+      [
+        "What choice principle is the building block of consumer behavior?",
+        "本讲用什么选择原则作为消费者行为的基础？",
+        "l1-p01-e02",
+        "Utility maximization."
+      ],
+      [
+        "How is transitivity of preferences stated using x,y,z?",
+        "如果偏好 x 胜于 y、y 胜于 z，传递性要求什么？",
+        "l1-p03-e03",
+        "Prefer x to z."
+      ],
+      [
+        "What is marginal utility in calculus terms?",
+        "边际效用用微积分语言是什么？",
+        "l1-p10-e00",
+        "Derivative of utility with respect to a good."
+      ],
+      [
+        "Does the later correction allow indifference, contrary to the early completeness claim?",
+        "讲者后来是否纠正了“完备性不允许无差异”的说法？",
+        "l1-p04-e02",
+        "Explicit correction: of course one can be indifferent."
+      ],
+      [
+        "Where are the intercepts of a two-good budget line?",
+        "两种商品预算线的截距由收入和各自价格怎样决定？",
+        "l2-p02-e02",
+        "Spend all income on each good: income divided by price."
+      ],
+      [
+        "What condition identifies the best affordable bundle graphically?",
+        "图形上怎样找预算约束内最好的消费组合？",
+        "l2-p08-e00",
+        "Tangency of highest reachable indifference curve and budget constraint."
+      ],
+      [
+        "What does the slope of the budget constraint represent?",
+        "预算线斜率代表哪两个价格的相对关系？",
+        "l2-p03-e01",
+        "Negative price ratio, called marginal rate of transformation."
+      ],
+      [
+        "Why can an ordinal utility transformation leave choices unchanged?",
+        "为什么效用只表示顺序时，去掉例子中的平方根可能不改变选择？",
+        "l2-p08-e02",
+        "In this example ordinal transformation does not change choice."
+      ],
+      [
+        "What distinguishes normal and inferior goods by income elasticity?",
+        "收入弹性的符号怎样区分正常品和劣等品？",
+        "l3-p11-e00",
+        "Positive for normal, negative for inferior."
+      ],
+      [
+        "What does the substitution effect hold constant?",
+        "替代效应在价格变化时保持什么不变？",
+        "l3-p13-e01",
+        "Hold utility constant."
+      ],
+      [
+        "What is held fixed when defining the income effect here?",
+        "这里定义收入效应时，改变收入并保持什么不变？",
+        "l3-p13-e02",
+        "Hold prices constant."
+      ],
+      [
+        "Why might restricted food stamps provide less utility than cash?",
+        "为什么限制用途的食品券可能比等额现金给消费者带来更低效用？",
+        "l3-p05-e01",
+        "Restriction may force a lower indifference curve; paternalism is stated reason."
+      ]
+    ],
+    "quantum": [
+      [
+        "What can quantum mechanics predict when experiment outcomes are not deterministic?",
+        "当实验结果不能被确定预测时，量子力学仍能预测什么？",
+        "l1-p01-e03",
+        "Probabilities of outcomes."
+      ],
+      [
+        "What is the meaning of superposing two solutions of a linear equation?",
+        "在线性方程中，把两个解叠加的含义是什么？",
+        "l1-p02-e04",
+        "A linear combination of solutions is another solution."
+      ],
+      [
+        "How can a light beam gain energy without changing color?",
+        "光束保持颜色不变时，怎样增加其总能量？",
+        "l1-p06-e01",
+        "More photons, same photon frequency/energy."
+      ],
+      [
+        "Do two photons need to interfere with each other in the one-at-a-time experiment?",
+        "逐个发送光子的干涉实验，需要两个光子彼此干涉吗？",
+        "l1-p09-e02",
+        "Each photon interferes with itself, not another photon."
+      ],
+      [
+        "What do the two complex components encode in the interferometer state?",
+        "干涉仪状态的两个复数分量分别编码什么？",
+        "l2-p01-e01",
+        "Upper/lower branch amplitudes; norm squares give probabilities."
+      ],
+      [
+        "What does a phase shifter do to a probability amplitude?",
+        "相移器怎样改变光子的概率幅？",
+        "l2-p02-e01",
+        "Multiplies amplitude by a phase factor."
+      ],
+      [
+        "Which detector can identify a functioning bomb without its explosion?",
+        "哪个探测器的点击可以在没有爆炸时确认炸弹是可用的？",
+        "l2-p07-e01",
+        "D1 outcome certifies working bomb without explosion."
+      ],
+      [
+        "What three probabilities are listed for testing a working EV bomb?",
+        "检测一个可用的 EV 炸弹时，爆炸、D0、D1 三种结果的概率各是多少？",
+        "l2-p07-e01",
+        "Explosion 1/2, D0 1/4, D1 1/4."
+      ],
+      [
+        "Why does increasing intensity not increase photoelectron energy at fixed frequency?",
+        "固定频率时，提高光强为何增加光电流却不增加光电子能量？",
+        "l3-p02-e01",
+        "More photons arrive, but energy per photon is unchanged."
+      ],
+      [
+        "What is the work function of a material?",
+        "材料的逸出功在光电效应中是什么意思？",
+        "l3-p01-e02",
+        "Minimum energy needed to eject an electron."
+      ],
+      [
+        "Which momentum belongs in the de Broglie wavelength rather than mc?",
+        "德布罗意波长使用真实动量还是 mc，这与康普顿波长有何区别？",
+        "l3-p03-e01",
+        "de Broglie uses true momentum, Compton uses mc."
+      ],
+      [
+        "When is the classical approximation appropriate relative to obstacle size?",
+        "相对障碍物尺度，德布罗意波长多小时可以忽略波动效应？",
+        "l3-p06-e04",
+        "Wavelength much smaller than object size."
+      ]
+    ]
+  },
+  "cross": {
+    "algorithms": [
+      [
+        "Combine the BFS level definition in lecture 13 with Dijkstra selection in lecture 16: how do their notions of distance differ?",
+        "结合第13讲 BFS 的分层和第16讲 Dijkstra 的选择规则，两者衡量距离的方式有什么不同？",
+        [
+          0,
+          9
+        ]
+      ],
+      [
+        "How do lecture 13 parent pointers recover a path, and how does lecture 14 use back edges to detect a cycle?",
+        "第13讲父指针怎样恢复路径，第14讲又怎样用回边识别环？",
+        [
+          3,
+          7
+        ]
+      ],
+      [
+        "Explain how lecture 14 orders DAG vertices and how lecture 16 uses that order for shortest paths.",
+        "第14讲怎样给 DAG 做拓扑排序，第16讲如何利用此顺序求最短路？",
+        [
+          6,
+          11
+        ]
+      ],
+      [
+        "Compare the BFS bound in lecture 13 with array-based Dijkstra in lecture 16.",
+        "比较第13讲 BFS 的复杂度与第16讲数组实现 Dijkstra 的复杂度。",
+        [
+          2,
+          10
+        ]
+      ]
+    ],
+    "linear": [
+      [
+        "Connect lecture 15 perpendicular projection error with lecture 17 removing a projection in Gram-Schmidt.",
+        "联系第15讲投影误差的垂直性与第17讲 Gram-Schmidt 减去投影的步骤。",
+        [
+          0,
+          10
+        ]
+      ],
+      [
+        "Compare lecture 15 projection rank with lecture 17 inner products of orthonormal columns.",
+        "比较第15讲投影到一条线的秩与第17讲标准正交列的内积矩阵。",
+        [
+          1,
+          9
+        ]
+      ],
+      [
+        "Combine lecture 16 least-squares objective with lecture 17 input requirements for Gram-Schmidt.",
+        "结合第16讲最小二乘目标与第17讲 Gram-Schmidt 对输入向量的要求。",
+        [
+          4,
+          11
+        ]
+      ],
+      [
+        "Relate lecture 16 residual projection I-P to lecture 17 unit orthogonal basis vectors.",
+        "第16讲的残差投影 I-P 与第17讲单位正交基分别表达什么？",
+        [
+          5,
+          8
+        ]
+      ]
+    ],
+    "calculus": [
+      [
+        "Compare lecture 1 dot-product angle information with lecture 2 signed-area determinant.",
+        "比较第1讲点积表示的夹角信息和第2讲行列式表示的有向面积。",
+        [
+          0,
+          4
+        ]
+      ],
+      [
+        "Combine lecture 2 cross-product hand rule with lecture 3 explanation of reversing its arguments.",
+        "结合第2讲叉乘右手规则与第3讲交换参数顺序的解释。",
+        [
+          6,
+          8
+        ]
+      ],
+      [
+        "What lecture 1 identity computes squared vector length, and what lecture 3 transformation preserves a vector?",
+        "第1讲哪个点积恒等式给出长度平方，第3讲哪个矩阵变换保持向量不变？",
+        [
+          1,
+          11
+        ]
+      ],
+      [
+        "How does lecture 2 obtain a directional component, while lecture 3 chooses the output size of a matrix product?",
+        "第2讲怎样提取方向分量，第3讲矩阵乘积的输出维度怎样确定？",
+        [
+          5,
+          9
+        ]
+      ]
+    ],
+    "probability": [
+      [
+        "Connect lecture 1 exhaustive sample-space outcomes with lecture 2 partitioning in total probability.",
+        "把第1讲样本空间的穷尽性与第2讲全概率公式的划分方法联系起来。",
+        [
+          0,
+          6
+        ]
+      ],
+      [
+        "Compare lecture 1 countable additivity with lecture 3 full independence of a collection.",
+        "比较第1讲可数可加性与第3讲一组事件的相互独立性。",
+        [
+          3,
+          11
+        ]
+      ],
+      [
+        "Distinguish lecture 2 Bayesian belief revision from lecture 3 independence as lack of information.",
+        "区分第2讲贝叶斯更新信念与第3讲独立性所说的不提供信息。",
+        [
+          5,
+          8
+        ]
+      ],
+      [
+        "Combine lecture 1 event-as-subset definition and lecture 3 warning about conditioning changing independence.",
+        "结合第1讲事件是子集的定义与第3讲条件可能改变独立性的警告。",
+        [
+          1,
+          9
+        ]
+      ]
+    ],
+    "economics": [
+      [
+        "Connect lecture 4 utility maximization with lecture 6 welfare effects of restricted food stamps.",
+        "联系第4讲效用最大化与第6讲限制食品券用途的福利影响。",
+        [
+          0,
+          11
+        ]
+      ],
+      [
+        "Compare lecture 5 budget price ratio with lecture 6 substitution at constant utility.",
+        "比较第5讲预算线价格比与第6讲保持效用不变的替代效应。",
+        [
+          6,
+          9
+        ]
+      ],
+      [
+        "Combine lecture 4 marginal utility with lecture 6 income elasticity classification of goods.",
+        "结合第4讲边际效用与第6讲按收入弹性区分商品。",
+        [
+          2,
+          8
+        ]
+      ],
+      [
+        "Relate lecture 5 tangency criterion to lecture 6 distinction between income and substitution effects.",
+        "联系第5讲相切最优条件与第6讲收入效应和替代效应的区分。",
+        [
+          5,
+          10
+        ]
+      ]
+    ],
+    "quantum": [
+      [
+        "Relate lecture 1 nondeterminism to the lecture 2 probabilities for a working EV bomb.",
+        "联系第1讲量子非确定性与第2讲可用炸弹检测的三种概率结果。",
+        [
+          0,
+          7
+        ]
+      ],
+      [
+        "Combine lecture 1 same-color photon energy with lecture 3 intensity versus photoelectron energy.",
+        "联系第1讲同颜色光子的能量与第3讲光强和光电子能量的区别。",
+        [
+          2,
+          8
+        ]
+      ],
+      [
+        "Explain lecture 1 single-photon self-interference together with lecture 2 branch amplitudes.",
+        "结合第1讲单光子自干涉与第2讲两条路径的概率幅解释实验。",
+        [
+          3,
+          4
+        ]
+      ],
+      [
+        "Compare lecture 2 phase-shifter action with lecture 3 classical-limit wavelength condition.",
+        "比较第2讲相移器的作用与第3讲忽略物质波的尺度条件。",
+        [
+          5,
+          11
+        ]
+      ]
+    ]
+  },
+  "no_answer": {
+    "algorithms": [
+      [
+        "What Bellman-Ford negative-cycle detection pseudocode is given in these three lectures?",
+        "这三讲给出的 Bellman-Ford 负环检测伪代码是什么？",
+        "Only BFS, DFS and Dijkstra/DAG notes selected; no Bellman-Ford pseudocode."
+      ],
+      [
+        "What exact Fibonacci-heap potential function proves its amortized decrease-key bound here?",
+        "这里用哪个确切的斐波那契堆势函数证明 decrease-key 的摊还界？",
+        "Bound is listed but implementation/potential proof explicitly not covered."
+      ],
+      [
+        "Which parallel BFS GPU kernel and measured speedup do these notes provide?",
+        "这些讲义提供哪个并行 BFS GPU 内核及其实测加速比？",
+        "No GPU implementation or measurement exists in snapshot."
+      ],
+      [
+        "What shortest-path distances are returned for the separately uploaded graph file roads.csv?",
+        "另上传的 roads.csv 图文件各点最短距离是多少？",
+        "No roads.csv is present; graph inputs and outputs absent."
+      ]
+    ],
+    "linear": [
+      [
+        "What singular values does the lecture compute for the externally supplied matrix sales.csv?",
+        "讲中为外部提供的 sales.csv 矩阵算出的奇异值是什么？",
+        "No external matrix or SVD computation in selected lectures."
+      ],
+      [
+        "What ridge penalty value is selected by cross-validation for least squares in these lectures?",
+        "这些讲中最小二乘的岭回归惩罚参数通过交叉验证选成多少？",
+        "No ridge regression parameter or validation exercise."
+      ],
+      [
+        "What is the full Gram-Schmidt output for the new vectors stored in vectors.csv?",
+        "对新增 vectors.csv 里的向量，Gram-Schmidt 的完整结果是什么？",
+        "No file or specified numerical vectors."
+      ],
+      [
+        "What exact floating-point reorthogonalization tolerance does the implementation use?",
+        "该实现使用什么确切的浮点重正交化容差？",
+        "No implementation tolerance is specified in snapshot."
+      ]
+    ],
+    "calculus": [
+      [
+        "What Stokes theorem boundary orientation is proved in these first three lectures?",
+        "前这三讲证明的斯托克斯定理边界取向规则是什么？",
+        "Only vectors/determinants/matrices; no Stokes theorem proof."
+      ],
+      [
+        "What numerical flux is computed through the surface in the missing file surface.json?",
+        "缺失的 surface.json 中曲面的数值通量是多少？",
+        "Surface and vector field not supplied."
+      ],
+      [
+        "What error bound does the lecture give for Simpson quadrature on a triple integral?",
+        "讲中三重积分用 Simpson 求积的误差界是多少？",
+        "No quadrature error bound in selected snapshot."
+      ],
+      [
+        "Which GPU matrix-multiplication library version was used to benchmark the examples?",
+        "例题基准使用哪一版本的 GPU 矩阵乘法库？",
+        "No computational benchmark/version record."
+      ]
+    ],
+    "probability": [
+      [
+        "What conjugate posterior density is derived for a Beta-Binomial parameter?",
+        "这里推导的 Beta-Binomial 参数共轭后验密度是什么？",
+        "No Beta distribution or conjugate density in selected first three lectures."
+      ],
+      [
+        "What independence test p-value is obtained from observations.csv?",
+        "对 observations.csv 做独立性检验得出的 p 值是多少？",
+        "No observations or hypothesis-test result."
+      ],
+      [
+        "What numerical stationary distribution is computed for the Markov chain?",
+        "讲中马尔可夫链的数值平稳分布是多少？",
+        "No Markov chain transition matrix or stationary computation."
+      ],
+      [
+        "What posterior airplane probability is obtained after radar calibration parameters change to the new unspecified values?",
+        "雷达校准参数改成未给定的新值后，飞机存在的后验概率是多少？",
+        "Old example probabilities do not specify new parameters."
+      ]
+    ],
+    "economics": [
+      [
+        "What 2026 food-stamp eligibility dollar threshold does this historical course report?",
+        "这门历史课程报告的 2026 年食品券资格金额门槛是多少？",
+        "Historical lecture has no 2026 policy update; no current-policy inference."
+      ],
+      [
+        "What utility optimum is obtained for the new household in household.csv?",
+        "新的 household.csv 家庭数据对应什么最优消费组合？",
+        "No new household data or utility parameters."
+      ],
+      [
+        "What exact Giffen-good empirical elasticity estimate and confidence interval are reported?",
+        "讲中给出哪项吉芬品实测弹性估计及其置信区间？",
+        "No empirical estimate with CI in selected lectures."
+      ],
+      [
+        "What monetary welfare loss is estimated after the unprovided price reform?",
+        "未提供的价格改革后估计损失多少货币福利？",
+        "No reform inputs or welfare estimate."
+      ]
+    ],
+    "quantum": [
+      [
+        "What detection-efficiency corrected probability is measured for this interferometer in 2026?",
+        "这个干涉仪在 2026 年测得的探测效率校正概率是多少？",
+        "Ideal course model has no 2026 experiment/detection efficiency."
+      ],
+      [
+        "What hydrogen spectrum energy eigenvalues are derived in these three lectures?",
+        "这三讲推导出的氢原子谱能量本征值是什么？",
+        "No hydrogen spectrum derivation in selected lectures 1-3."
+      ],
+      [
+        "What Compton scattering angle was measured for the unpublished detector file?",
+        "未公开探测器数据文件中测到的康普顿散射角是多少？",
+        "No detector file/data or specified angle."
+      ],
+      [
+        "Which finite-square-well bound-state energies are tabulated for the new unspecified potential?",
+        "新的未指定有限深方势阱势能对应哪些列出的束缚态能量？",
+        "No finite-well problem parameters or solution in selected snapshot."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "worker": 0,
+    "files": [
+      "tests/test_course_mcp.py",
+      "tests/test_study_quality.py",
+      "tests/test_study_computed_review.py",
+      "tests/test_study_support_review.py",
+      "tests/test_authority_url.py",
+      "tests/test_study_costs.py",
+      "tests/test_study_connections.py",
+      "tests/test_study_metrics_report.py",
+      "tests/test_benchmark_v2.py"
+    ],
+    "expected_cases": 160,
+    "port": 16609,
+    "database_name": "lecturelens_agent_test"
+  },
+  {
+    "worker": 1,
+    "files": [
+      "tests/test_study.py",
+      "tests/test_study_sequences.py",
+      "tests/test_models.py",
+      "tests/test_study_answer_points.py",
+      "tests/test_study_trace.py",
+      "tests/test_study_method_scope.py",
+      "tests/test_study_example_runtime.py"
+    ],
+    "expected_cases": 149,
+    "port": 16610,
+    "database_name": "lecturelens_agent_test"
+  },
+  {
+    "worker": 2,
+    "files": [
+      "tests/test_study_provider.py",
+      "tests/test_study_resilience.py",
+      "tests/test_study_feedback.py",
+      "tests/test_study_intervals.py",
+      "tests/test_benchmark.py",
+      "tests/test_study_context.py",
+      "tests/test_reviewer_probe.py",
+      "tests/test_study_solution.py"
+    ],
+    "expected_cases": 198,
+    "port": 16611,
+    "database_name": "lecturelens_agent_test"
+  },
+  {
+    "worker": 3,
+    "files": [
+      "tests/test_study_examples.py",
+      "tests/test_study_linear.py",
+      "tests/test_retrieval.py",
+      "tests/test_study_python_practice.py",
+      "tests/test_study_goals.py",
+      "tests/test_study_attempts.py",
+      "tests/test_study_eval.py",
+      "tests/test_feedback_eval.py"
+    ],
+    "expected_cases": 197,
+    "port": 16612,
+    "database_name": "lecturelens_agent_test"
+  }
+]
