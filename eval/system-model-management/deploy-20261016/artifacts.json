@@ -1,0 +1,82 @@
+[
+  {
+    "path": ".data/system-model-management/deploy-20261016/BACKUP_SHA256SUMS",
+    "bytes": 771,
+    "sha256": "dc94cdfcb1293e55ee2f17a17766c998a36f07f34c691d8e3b5f5b4291267a74"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/backend-before.jar",
+    "bytes": 91640018,
+    "sha256": "a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/frontend-before.tar.gz",
+    "bytes": 599903,
+    "sha256": "9e4eafaa63b0ebb94cddbdf2ac44227afd46ade9ae35219df132704edb17a7c3"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/mysql-before.sql.gz",
+    "bytes": 55528,
+    "sha256": "26e4c1d7a6e208b6dcada5fd103ae94c7d6592f3e3177373a9efe70e5a1be55f"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/backend.jar",
+    "bytes": 91827784,
+    "sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/backend-build.log",
+    "bytes": 2298,
+    "sha256": "797c5d21e1e36e4c144a72b313044eadcd4b839081b526d84e382cd1e3b73977"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/frontend-build.log",
+    "bytes": 3589,
+    "sha256": "b348eae99919bffe37cad16bf26eba8293d94a494746c6963714106aa2daaf50"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/flyway-validate-first.log",
+    "bytes": 498,
+    "sha256": "a5fda7be1b3fe3e07a844c13bcb310472a449c761310042a37f38ec16f42b332"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/flyway-migrate.log",
+    "bytes": 1448,
+    "sha256": "223207bb8dd664383237dbab0976357ead251b02cfe8048c8546bb1898baebcf"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/flyway-recovery.log",
+    "bytes": 1953,
+    "sha256": "f0d281146366d26c68590d9fed83e46824b8be28ff363c08f5f851e2ddb4b281"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/grant-admin.log",
+    "bytes": 28,
+    "sha256": "b88929c7f536f1d6ebb9f5a994a88240ac7c84825f2ead984594709e0521d92d"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/backend-startup.log",
+    "bytes": 26996,
+    "sha256": "bdbb623f07a8ff7b2ebe2d1581279efae87bcadf6dce0523cf2e046d266ffc05"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/rollback.sh",
+    "bytes": 1528,
+    "sha256": "b5a57f27d852a926b8216546f67907f06638af4a6169c485c24f6248fccde950"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/run-backend-new.py",
+    "bytes": 1685,
+    "sha256": "92af175d1d0fa02a6399f176814a930619645a06cf84c75f50c95fcff389dee9"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/browser-check.mjs",
+    "bytes": 2266,
+    "sha256": "161d5ebc9b44de82aa88a48cd3c31efa19780cc811b6f17dbc25c9b0d1f23b1a"
+  },
+  {
+    "path": ".data/system-model-management/deploy-20261016/admin-live.png",
+    "bytes": 436276,
+    "sha256": "152c0ecc21d90b747dc244af9df2e2732458da4745f0dc38f7af85f3d682b39d"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "migrated_at": "2026-10-15T17:31:30.164679+00:00",
+  "flyway_version": 25,
+  "offline_cli": "grant --user-id 9",
+  "role": "ADMIN",
+  "new_jar_sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+  "new_jar_bytes": 91827784,
+  "master_key_generated": true,
+  "master_key_bytes": 32,
+  "deployment_env_mode": "0o600",
+  "probe_allowed_origins": [
+    "https://api.deepseek.com"
+  ],
+  "no_real_provider_call": true,
+  "migration_recovery": {
+    "initial_app_error": 1419,
+    "partial_new_tables_empty": true,
+    "app_global_privileges_unchanged": true,
+    "method": "Removed only partial V25 objects and role column, Flyway repair removed failed V25 marker, then migrated V25 using root credentials in memory. Existing business rows preserved."
+  }
+}

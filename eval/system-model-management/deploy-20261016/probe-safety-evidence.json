@@ -1,0 +1,8 @@
+{
+  "scope": "Previously accepted deterministic provider tests, reverified by frozen hashes; no live provider requests. Live exact-origin policy checked separately in verification.json.",
+  "junit_xml": ".data/system-model-management/phase4/full-final-reports/TEST-com.example.courselingo.systemmodel.SystemModelProbeMySqlTest.xml",
+  "junit_sha256": "22cbba7ca722354a4861255ff1879a8882345426984016d2a7657e5ac9f0d9c8",
+  "testcase": "missingWhitelistAndDifferentOriginsNeverSendRequests",
+  "result": "passed",
+  "assertions": "Empty, lookalike host, different protocol and different port all return ORIGIN_NOT_ALLOWED; HTTP client verified never called."
+}
