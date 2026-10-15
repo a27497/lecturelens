@@ -1,5 +1,7 @@
 package com.example.courselingo.subtitle.service;
 
+import com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics;
+
 import com.example.courselingo.ai.llm.LlmProvider;
 import com.example.courselingo.ai.llm.LlmProviderException;
 import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
@@ -86,6 +88,17 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         "has", "have", "in", "is", "it", "manages", "of", "on", "or", "provides", "that", "the",
         "this", "to", "used", "uses", "using", "with"
     );
+
+    private TranslationCallDiagnostics diagnostics;
+
+    @Autowired(required = false)
+    public void setTranslationDiagnostics(TranslationCallDiagnostics diagnostics) {
+        this.diagnostics = diagnostics;
+    }
+
+    private void observeValidation(ValidatedTranslationCommand command, LlmResult result, String reason) {
+        if (diagnostics != null) diagnostics.validation(command.execution(), result, reason);
+    }
 
     private final SubtitleSegmentMapper sourceMapper;
     private final Supplier<LlmProvider> llmProviderSupplier;
@@ -321,9 +334,23 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         LlmProvider llmProvider = resolveLlmProvider();
         long wallStartedNanos = System.nanoTime();
         AlignedTranslationRun run = generateAlignedTranslations(llmProvider, validated, sourceSegments);
-        validateTranslationCoverage(sourceSegments, run.translations());
+        try {
+            validateTranslationCoverage(sourceSegments, run.translations());
+        } catch (RuntimeException failure) {
+            if (diagnostics != null) diagnostics.finalValidation(validated.execution(), "COVERAGE_MISMATCH");
+            throw failure;
+        }
         String translatedFullText = buildTranslatedFullText(run.translations());
-        validateFullTextTranslation(validated, sourceSegments, run.translations(), sourceFullText, translatedFullText);
+        try {
+            validateFullTextTranslation(validated, sourceSegments, run.translations(), sourceFullText, translatedFullText);
+        } catch (RuntimeException failure) {
+            if (diagnostics != null) diagnostics.finalValidation(validated.execution(),
+                failure.getMessage() != null && failure.getMessage().contains("EMPTY_RESPONSE") ? "EMPTY_RESPONSE"
+                : failure.getMessage() != null && failure.getMessage().contains("untranslated text") ? "UNTRANSLATED_TEXT"
+                : failure.getMessage() != null && failure.getMessage().contains("non-Chinese text") ? "TARGET_LANGUAGE_MISMATCH" : "UNKNOWN");
+            throw failure;
+        }
+        if (diagnostics != null) diagnostics.finalValidation(validated.execution(), "PASSED");
         LlmResult firstResult = run.results().getFirst();
         String provider = normalizeProvider(firstNonBlank(firstResult.provider(), llmProvider.providerName()));
         persistDualOutput(validated, sourceSegments, run.translations(), sourceFullText, translatedFullText, provider);
@@ -581,6 +608,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 throw ex;
             }
             if (result == null || isTruncatedResult(result)) {
+                observeValidation(command, result, "OUTPUT_TRUNCATED");
                 return splitAndRetryAlignedBatch(
                     llmProvider,
                     command,
@@ -608,6 +636,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                     ));
                 }
             } catch (BusinessException ex) {
+                observeValidation(command, result, ex.getMessage());
                 if (SubtitleTranslationResponseParser.classifyBatchOutputException(ex).retryable()) {
                     return splitAndRetryAlignedBatch(llmProvider, command, batch, depth, observedResults, ex);
                 }
@@ -615,8 +644,10 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             }
             SemanticValidation validation = validateAlignedBatchSemantics(command, batch, generated);
             if (validation.valid()) {
+                observeValidation(command, result, "PASSED");
                 return List.copyOf(generated);
             }
+            observeValidation(command, result, validation.reason());
             logSemanticRetry(command, batch, generated, validation, semanticAttempt, depth);
             semanticRetryReason = validation.reason();
             if (semanticAttempt == semanticMaxAttempts) {

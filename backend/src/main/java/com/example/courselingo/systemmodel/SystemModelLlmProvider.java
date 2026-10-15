@@ -1,5 +1,7 @@
 package com.example.courselingo.systemmodel;
 
+import com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics;
+
 import com.example.courselingo.ai.llm.*;
 import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 
@@ -16,8 +18,14 @@ public final class SystemModelLlmProvider implements LlmProvider {
             OpenAiCompatibleLlmClient http,
             SystemModelUrlPolicy addresses,
             OpenAiCompatibleLlmClient legacy) {
+        this(executions, http, addresses, legacy, null);
+    }
+
+    SystemModelLlmProvider(SystemModelExecutionService executions, OpenAiCompatibleLlmClient http,
+            SystemModelUrlPolicy addresses, OpenAiCompatibleLlmClient legacy,
+            TranslationCallDiagnostics diagnostics) {
         this.executions = executions;
-        this.chat = new SystemModelChatClient(http, addresses);
+        this.chat = new SystemModelChatClient(http, addresses, diagnostics);
         this.legacy = legacy;
     }
 

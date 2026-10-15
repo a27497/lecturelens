@@ -117,6 +117,9 @@ final class SubtitleTranslationPromptFactory {
             metadata.put("semanticRetryReason", semanticRetryReason);
         }
         metadata.put("sourceSegmentCount", sourceSegments.size());
+        metadata.put("translationDiagnostic.inputChars", sourceSegments.stream().mapToInt(s -> s.getText().length()).sum());
+        metadata.put("translationDiagnostic.indexes", sourceSegments.stream().map(s -> String.valueOf(s.getSegmentIndex()))
+            .collect(java.util.stream.Collectors.joining(",")));
         return new LlmRequest(
             command.requestId(),
             command.taskId(),

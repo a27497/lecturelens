@@ -1,5 +1,7 @@
 package com.example.courselingo.systemmodel;
 
+import com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics;
+
 import com.example.courselingo.ai.llm.*;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
@@ -88,6 +90,7 @@ public class SystemModelRuntimeConfiguration {
     @Bean
     @Primary
     LlmProvider systemModelLlmProvider(
+            TranslationCallDiagnostics diagnostics,
             SystemModelExecutionService executions,
             SystemModelHttpClient http,
             SystemModelUrlPolicy urls) {
@@ -95,7 +98,7 @@ public class SystemModelRuntimeConfiguration {
                 executions,
                 http,
                 urls,
-                new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5)));
+                new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5)), diagnostics);
     }
 
     @Bean
