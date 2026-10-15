@@ -26,6 +26,20 @@
 - 在 A7 建立 MySQL 容器前，默认 `FLYWAY_ENABLED=false`，避免本地没有 MySQL 时阻塞应用启动和测试；A7 之后再开启迁移验证。
 - 服务器标准部署通过 `scripts/server/apply-db-migrations.sh` 在后端重启前执行 Flyway，并验证 `flyway_schema_history` 至少包含成功的 V11 记录。脚本不得清空数据库、删除上传文件、手工插入 history 记录或输出密码、token、object key、API key。
 
+## 系统模型配置基础
+
+V25 另建立系统模型配置基础表，尚未接入运行时。详见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
+
+| 表 | 当前存储约束 |
+| --- | --- |
+| `system_model_provider` | 三种协议；凭据密文与后四位成对存在 |
+| `system_model` | 供应商外键、精确模型 ID、能力和参数 |
+| `system_model_binding` | 七个已接通功能；拒绝 FUSION_SUMMARY；被引用模型不能直接删除 |
+| `system_model_config_version` | 完整配置 JSON 和 SHA-256；初始化空版本 0；更新和删除由 trigger 拒绝 |
+| `system_model_config_state` | 唯一当前版本指针 |
+| `system_model_audit` | 追加式脱敏变更；保留历史操作者 ID，不保存邮箱 |
+| `system_model_execution_snapshot` | 任务、owner、操作、版本和无凭据解析结果；硬删除任务时级联清理 |
+
 ## user_account
 
 用户账号表。
@@ -36,6 +50,7 @@
 | email | VARCHAR(255) | 登录邮箱，唯一 |
 | password_hash | VARCHAR(255) | BCrypt 哈希后的密码，不保存明文 |
 | status | VARCHAR(32) | 用户状态，例如 ACTIVE / DISABLED / LOCKED；本阶段只建字段，不实现业务枚举 |
+| role | VARCHAR(16) | V25 新增；仅 USER / ADMIN，大小写严格，非空且默认 USER |
 | created_at | DATETIME(3) | 创建时间，默认 `CURRENT_TIMESTAMP(3)` |
 | updated_at | DATETIME(3) | 更新时间，默认 `CURRENT_TIMESTAMP(3)`，更新时自动刷新 |
 

@@ -118,6 +118,8 @@ cp .env.agent.example .env.agent.local
 
 以上仅用于准备配置文件，不等于完成启动。后续请按 [部署指南](docs/DEPLOYMENT.md) 配置服务、密钥、模型和课程处理管线；不应将示例凭据用于实际部署。
 
+[系统模型管理](docs/SYSTEM_MODEL_MANAGEMENT.md)正在分阶段实现：当前提供管理员角色、离线授权、存储及加密基础，运行时配置切换和管理页面尚未接入。
+
 [部署说明](docs/DEPLOYMENT.md) · [API 文档](docs/API.md) · [Agent 服务](agent-service/README.md) · [更多产品截图](docs/PRODUCT_GALLERY.md)
 
 ## 项目范围

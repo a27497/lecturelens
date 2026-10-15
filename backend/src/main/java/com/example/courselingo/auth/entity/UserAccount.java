@@ -21,6 +21,9 @@ public class UserAccount {
     @TableField("status")
     private String status;
 
+    @TableField("role")
+    private UserRole role = UserRole.USER;
+
     @TableField("created_at")
     private LocalDateTime createdAt;
 
@@ -57,6 +60,14 @@ public class UserAccount {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {

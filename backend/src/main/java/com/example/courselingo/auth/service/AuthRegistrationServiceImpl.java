@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.courselingo.auth.dto.RegisterRequest;
 import com.example.courselingo.auth.dto.RegisterResponse;
 import com.example.courselingo.auth.entity.UserAccount;
+import com.example.courselingo.auth.entity.UserRole;
 import com.example.courselingo.auth.mapper.UserAccountMapper;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
@@ -38,6 +39,7 @@ public class AuthRegistrationServiceImpl implements AuthRegistrationService {
         userAccount.setEmail(email);
         userAccount.setPasswordHash(passwordEncoder.encode(request.password()));
         userAccount.setStatus(ACTIVE_STATUS);
+        userAccount.setRole(UserRole.USER);
 
         try {
             userAccountMapper.insert(userAccount);

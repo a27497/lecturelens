@@ -55,7 +55,7 @@ public class AuthLoginServiceImpl implements AuthLoginService {
             refreshToken,
             TOKEN_TYPE,
             jwtAccessTokenService.expiresIn(),
-            new LoginResponse.User(userAccount.getId(), userAccount.getEmail(), userAccount.getStatus())
+            new LoginResponse.User(userAccount.getId(), userAccount.getEmail(), userAccount.getStatus(), userAccount.getRole())
         );
     }
 

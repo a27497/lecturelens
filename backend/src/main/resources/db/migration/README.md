@@ -7,5 +7,6 @@ These versioned migrations define the application schema. Enable Flyway for all 
 - Never repair, clean, or delete migration history automatically.
 - The historical, private-development V21 recovery procedure is documented in `../../../../../../docs/LOCAL_FLYWAY_V21_RECOVERY.md`; it is not a deployment step.
 - CI validates migrations against an empty MySQL database, independently of H2 unit tests.
+- V25 adds USER/ADMIN roles and system model configuration foundations. Its version/audit immutability triggers require trigger-creation privileges; it does not switch AI providers. See [system model management](../../../../../../docs/SYSTEM_MODEL_MANAGEMENT.md).
 
 V22/V23 introduce durable task boundaries and immutable evidence. Stop old workers before upgrading. V22 marks pre-upgrade in-flight tasks FAILED (`TASK_UPGRADE_INTERRUPTED`); retry creates a new task ID. Completed courses are preserved. See [the execution record](../../../../../../docs/C0_C3_EXECUTION.md).

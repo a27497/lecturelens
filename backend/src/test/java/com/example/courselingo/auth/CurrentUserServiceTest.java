@@ -41,6 +41,7 @@ class CurrentUserServiceTest {
             .thenReturn(new AccessTokenClaims(1L));
         UserAccount databaseUser = activeUser();
         databaseUser.setEmail("database@example.com");
+        databaseUser.setRole(com.example.courselingo.auth.entity.UserRole.ADMIN);
         when(userAccountMapper.selectById(1L)).thenReturn(databaseUser);
 
         CurrentUserResponse response = currentUserService.currentUser("Bearer access-token");
@@ -48,6 +49,7 @@ class CurrentUserServiceTest {
         assertThat(response.userId()).isEqualTo(1L);
         assertThat(response.email()).isEqualTo("database@example.com");
         assertThat(response.status()).isEqualTo("ACTIVE");
+        assertThat(response.role()).isEqualTo(com.example.courselingo.auth.entity.UserRole.ADMIN);
     }
 
     @Test
@@ -96,7 +98,7 @@ class CurrentUserServiceTest {
     void currentUserResponseDoesNotExposeSensitiveFields() {
         assertThat(CurrentUserResponse.class.getRecordComponents())
             .extracting(component -> component.getName())
-            .containsExactly("userId", "email", "status");
+            .containsExactly("userId", "email", "status", "role");
     }
 
     private UserAccount activeUser() {

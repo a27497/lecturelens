@@ -109,6 +109,7 @@ class RefreshTokenServiceTest {
     @Test
     void refreshRevokesOldTokenCreatesNewTokenAndReturnsNewAccessToken() {
         UserAccount userAccount = activeUser();
+        userAccount.setRole(com.example.courselingo.auth.entity.UserRole.ADMIN);
         RefreshToken oldToken = activeRefreshToken(userAccount.getId(), "old-refresh-token");
         when(refreshTokenMapper.selectOne(anyRefreshTokenWrapper())).thenReturn(oldToken);
         when(userAccountMapper.selectById(userAccount.getId())).thenReturn(userAccount);
@@ -128,6 +129,7 @@ class RefreshTokenServiceTest {
         assertThat(response.tokenType()).isEqualTo("Bearer");
         assertThat(response.expiresIn()).isEqualTo(3600L);
         assertThat(response.user().email()).isEqualTo("demo@example.com");
+        assertThat(response.user().role()).isEqualTo(com.example.courselingo.auth.entity.UserRole.ADMIN);
     }
 
     @Test

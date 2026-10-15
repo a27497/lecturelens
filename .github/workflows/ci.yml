@@ -46,6 +46,21 @@ jobs:
   backend-test:
     name: Backend Test
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-test-only
+          MYSQL_DATABASE: lecturelens_system_model_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -pci-test-only --silent"
+          --health-interval 3s --health-timeout 3s --health-retries 30
+    env:
+      SYSTEM_MODEL_TEST_JDBC_URL: jdbc:mysql://127.0.0.1:3306/lecturelens_system_model_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SYSTEM_MODEL_TEST_MYSQL_USER: root
+      SYSTEM_MODEL_TEST_MYSQL_PASSWORD: ci-test-only
 
     steps:
       - name: Checkout

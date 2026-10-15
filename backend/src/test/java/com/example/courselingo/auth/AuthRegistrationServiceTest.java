@@ -61,6 +61,7 @@ class AuthRegistrationServiceTest {
 
         assertThat(saved.getEmail()).isEqualTo("demo@example.com");
         assertThat(saved.getStatus()).isEqualTo("ACTIVE");
+        assertThat(saved.getRole()).isEqualTo(com.example.courselingo.auth.entity.UserRole.USER);
         assertThat(saved.getPasswordHash()).isNotEqualTo("Password123!");
         assertThat(passwordEncoder.matches("Password123!", saved.getPasswordHash())).isTrue();
         assertThat(response.userId()).isEqualTo(1L);

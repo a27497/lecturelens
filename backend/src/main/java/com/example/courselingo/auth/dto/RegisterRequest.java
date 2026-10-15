@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 
 public record RegisterRequest(
     @NotBlank(message = "邮箱不能为空")
@@ -18,4 +21,8 @@ public record RegisterRequest(
     )
     String password
 ) {
+    @JsonAnySetter
+    public void rejectUnknownField(String name, Object value) {
+        throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+    }
 }

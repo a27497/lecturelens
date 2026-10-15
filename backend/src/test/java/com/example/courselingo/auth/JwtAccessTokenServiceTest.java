@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.auth.entity.UserAccount;
+import com.example.courselingo.auth.entity.UserRole;
 import com.example.courselingo.auth.service.AccessTokenClaims;
 import com.example.courselingo.auth.service.JwtAccessTokenService;
 import com.example.courselingo.common.error.ErrorCode;
@@ -37,6 +38,7 @@ class JwtAccessTokenServiceTest {
         assertThat(claims.get("email", String.class)).isEqualTo("demo@example.com");
         assertThat(claims.get("status", String.class)).isEqualTo("ACTIVE");
         assertThat(claims.get("type", String.class)).isEqualTo("access");
+        assertThat(claims.get("role", String.class)).isEqualTo("USER");
         assertThat(claims.getIssuedAt()).isNotNull();
         assertThat(claims.getExpiration()).isAfter(claims.getIssuedAt());
         assertThat(token).doesNotContain(SECRET);
@@ -50,6 +52,25 @@ class JwtAccessTokenServiceTest {
         AccessTokenClaims claims = service.parseAccessToken(token);
 
         assertThat(claims.userId()).isEqualTo(1L);
+    }
+
+    @Test
+    void adminRoleIsSignedAndParsed() {
+        JwtAccessTokenService service = new JwtAccessTokenService(new JwtAccessTokenProperties(SECRET, 3600L));
+        UserAccount user = activeUser();
+        user.setRole(UserRole.ADMIN);
+
+        AccessTokenClaims claims = service.parseAccessToken(service.generate(user));
+
+        assertThat(claims.role()).isEqualTo(UserRole.ADMIN);
+    }
+
+    @Test
+    void legacyTokenWithoutRoleRemainsUser() {
+        JwtAccessTokenService service = new JwtAccessTokenService(new JwtAccessTokenProperties(SECRET, 3600L));
+        String token = buildToken("1", "access", Instant.now(), Instant.now().plusSeconds(3600));
+
+        assertThat(service.parseAccessToken(token).role()).isEqualTo(UserRole.USER);
     }
 
     @Test

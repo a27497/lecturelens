@@ -32,7 +32,7 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         if (!ACTIVE_STATUS.equals(userAccount.getStatus())) {
             throw new BusinessException(ErrorCode.AUTH_USER_DISABLED);
         }
-        return new CurrentUserResponse(userAccount.getId(), userAccount.getEmail(), userAccount.getStatus());
+        return new CurrentUserResponse(userAccount.getId(), userAccount.getEmail(), userAccount.getStatus(), userAccount.getRole());
     }
 
     private String extractBearerToken(String authorizationHeader) {
