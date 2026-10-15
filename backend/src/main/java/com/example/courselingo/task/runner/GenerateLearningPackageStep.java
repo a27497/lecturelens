@@ -1,9 +1,8 @@
 package com.example.courselingo.task.runner;
-
-import com.example.courselingo.common.error.ErrorCode;
-import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.learning.service.GenerateLearningPackageCommand;
 import com.example.courselingo.learning.service.LearningPackageAiCallResult;
 import com.example.courselingo.learning.service.LearningPackageService;
@@ -50,7 +49,8 @@ final class GenerateLearningPackageStep implements PipelineAnalysisTaskStep {
                     context.userId(),
                     sourceLanguage,
                     context.targetLanguage(),
-                    context.requestId()
+                    context.requestId(),
+                                    context.taskContext().systemModels()
                 )
             );
             context.addAiCallRecord(PipelineAiCallRecord.succeeded(

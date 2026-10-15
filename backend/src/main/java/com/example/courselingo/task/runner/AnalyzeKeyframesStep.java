@@ -5,10 +5,11 @@ import com.example.courselingo.task.entity.TaskLog;
 import com.example.courselingo.task.mapper.TaskLogMapper;
 import com.example.courselingo.vision.analysis.VisionAnalysisProperties;
 import com.example.courselingo.vision.analysis.VisionAnalysisService;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 public class AnalyzeKeyframesStep implements PipelineAnalysisTaskStep {
 
@@ -54,7 +55,15 @@ public class AnalyzeKeyframesStep implements PipelineAnalysisTaskStep {
             return;
         }
         try {
-            if (workspace == null) {
+            if (context.taskContext().systemModels() != null) {
+                visionAnalysisService.scan(
+                        context.taskId(),
+                        context.userId(),
+                        workspace == null ? null : context.requireUploadedSourcePath(),
+                        workspace == null ? null : workspace.visionAnalysisDirectory(context),
+                        context.targetLanguage(),
+                        context.taskContext().systemModels());
+            } else if (workspace == null) {
                 visionAnalysisService.scan(context.taskId(), context.userId());
             } else {
                 visionAnalysisService.scan(
