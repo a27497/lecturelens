@@ -1,0 +1,6 @@
+{
+  "frozen_before_first_full_trial_scoring_utc": "2026-10-15T09:01:25.432141+00:00",
+  "score_sha256": "d04b4e92adbeef31f7b1cbc61d6d7e24672e9e781ba9f5042d5cb66b45dc0330",
+  "normalization_protocol": "protocol.json (unchanged since before trials)",
+  "note": "Missing-index and missing-token fields remain unavailable; failed stage duration is included and flagged. No corpus/reference/model tuning."
+}

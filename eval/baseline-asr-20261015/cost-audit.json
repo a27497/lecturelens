@@ -1,0 +1,43 @@
+{
+  "scopes": {
+    "formal_batch": {
+      "observed_transport_calls": 134,
+      "http_status_counts": {
+        "None": 2,
+        "200": 132
+      },
+      "usage_complete_calls": 132,
+      "usage_missing_calls": 2,
+      "known_response_list_price_cny": 0.4106304,
+      "complete_scope_list_price_cny": null
+    },
+    "invalid_proxy_forwarded_calls_excluded_from_baseline": {
+      "observed_transport_calls": 2,
+      "http_status_counts": {
+        "None": 2
+      },
+      "usage_complete_calls": 0,
+      "usage_missing_calls": 2,
+      "known_response_list_price_cny": 0,
+      "complete_scope_list_price_cny": null
+    },
+    "diagnostics_excluded_from_baseline": {
+      "observed_transport_calls": 3,
+      "http_status_counts": {
+        "400": 1,
+        "200": 2
+      },
+      "usage_complete_calls": 2,
+      "usage_missing_calls": 1,
+      "known_response_list_price_cny": 0.003216,
+      "complete_scope_list_price_cny": null
+    }
+  },
+  "all_observed_known_list_price_cny": 0.4138464,
+  "all_observed_usage_missing_calls": 5,
+  "actual_invoice_cny": null,
+  "local_translation_and_embedding_external_api_fee_cny": 0,
+  "machine_and_electricity_cost_cny": null,
+  "budget_guard": "Before each new formal trial: known usage fees + 1 CNY per missing formal response + 3 CNY diagnostic/invalid reserve <=15 CNY. Reserves are control headroom, never measured costs. User cap 30 CNY.",
+  "availability": "Unknown failed-request charges are not priced at zero. Catalog usage totals are not invoice amounts. Legacy local proxy guard 402 responses did not forward ASR requests; these are not extra provider-call observations."
+}

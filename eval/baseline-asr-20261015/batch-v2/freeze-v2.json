@@ -1,0 +1,12 @@
+{
+  "frozen_before_trials_utc": "2026-10-15T08:34:07.838353+00:00",
+  "files": {
+    "assets.lock.json": "e9f93adf31c4a3acf0918c26ce7efa7ef8a2f5391e64c825d651362a38be1a52",
+    "batch-v2/protocol.json": "417d15a5f813402719b03c6a1f541adb33f86acfa26fbb3ffcccb0e9ff751750",
+    "BaselineBootstrap.java": "bc8fbc0551a1f7ce2809de1f146a0006491a409ebf58650216dc31e0442a57f3",
+    "run-v2.py": "e980481232ae47fde06bbb6a3392ac6ba507a513d64be6807fca4c1d80adbe67",
+    "runtime-identity.json": "fa97e75ecf96d1ea956dc64ac7403ef4eba4ee4941b0b34e161d13b336122680"
+  },
+  "original_jar_sha256": "a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08",
+  "previous_freeze_invalid_driver": "freeze.json; syntax error before any trial, source retained in driver-development-failure.json"
+}

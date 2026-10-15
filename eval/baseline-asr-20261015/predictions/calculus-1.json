@@ -1,0 +1,26 @@
+{
+  "taskId": "task_403a88351c96472bb82698467415d8be",
+  "sourceFullText": "",
+  "subtitles": [],
+  "translationStatus": "NOT_STARTED",
+  "aiCallRecords": [
+    {
+      "id": 2,
+      "callType": "ASR",
+      "stage": "TRANSCRIPTION",
+      "provider": "bailian",
+      "model": null,
+      "status": "FAILED",
+      "durationMillis": 1345,
+      "providerDurationMillis": null,
+      "batchCount": null,
+      "retryCount": null,
+      "promptTokens": null,
+      "completionTokens": null,
+      "totalTokens": null,
+      "inputUnits": null,
+      "outputUnits": null,
+      "createdAt": "2026-10-15T08:27:51.004Z"
+    }
+  ]
+}

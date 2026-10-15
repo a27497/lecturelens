@@ -1,0 +1,13 @@
+{
+  "kind": "readiness_probe_not_baseline_trial",
+  "started_at_utc": "2026-10-15T08:18:06.683095+00:00",
+  "elapsed_ms": 1668.348,
+  "model": "qwen-audio-3.1-asr-flash",
+  "audio_seconds": 3,
+  "http_status": 400,
+  "response": {
+    "request_id": "45700daf-bdd9-981c-9943-0cde2f4d5b94",
+    "code": "CLIENT_ERROR",
+    "message": "ASR_RESPONSE_HAVE_NO_WORDS"
+  }
+}

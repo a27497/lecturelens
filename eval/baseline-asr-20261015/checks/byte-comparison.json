@@ -1,0 +1,12 @@
+{
+  "command": [
+    "cmp",
+    "-",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/summary.json"
+  ],
+  "started_at_utc": "2026-10-15T11:12:49.848954+00:00",
+  "finished_at_utc": "2026-10-15T11:12:49.853043+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

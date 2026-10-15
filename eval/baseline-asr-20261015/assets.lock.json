@@ -1,0 +1,136 @@
+{
+  "frozen_at_utc": "2026-10-15T08:20:26.904363+00:00",
+  "sources": [
+    {
+      "id": "algorithms",
+      "speaker": "Erik Demaine",
+      "video_url": "https://archive.org/download/MIT6.006F11/MIT6_006F11_lec01_300k.mp4",
+      "captions_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/f219ea40335d59aca990a5e0d99cdc6d_HtSuA80QTyo.vtt",
+      "course_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-1-algorithmic-thinking-peak-finding/",
+      "captions_file": "eval/baseline-asr-20261015/references/algorithms.vtt.txt",
+      "captions_sha256": "212567739ef0eddfc7bb04c5fa5e7dca027ede4edd57828d701e8deb5a76551f",
+      "video_file": ".data/baseline-asr-20261015/algorithms.mp4",
+      "video_sha256": "513cff6f27675e2ea5726a5cca98aeaff6f2e78fd7eca5c194d4d3834ac5f8c3",
+      "video_bytes": 121291539,
+      "duration_ms": 3201045,
+      "embedded_caption_streams": 1,
+      "evaluation_video_file": ".data/baseline-asr-20261015/algorithms-audio-video-only.mp4",
+      "evaluation_video_sha256": "14654a86b1f2954a09818a0abaea6442ec2c84ca909619d1213d83fb837d817a",
+      "evaluation_video_bytes": 121139855,
+      "stream_sha256": {
+        "audio": "SHA256=b02ffd46cc4ebd77deec9f9e0bebe446784154736e57e7747cb9f2bbfd8c6205",
+        "video": "SHA256=5e6fcdeae05846734ea22b2b5b75f0735b08b5b7ea5c26f64a409b8f31ca14fc"
+      },
+      "audio_video_packets_unchanged": true,
+      "evaluation_has_subtitles": false,
+      "license": "CC BY-NC-SA 4.0"
+    },
+    {
+      "id": "calculus",
+      "speaker": "Denis Auroux",
+      "video_url": "https://archive.org/download/MIT18.02F07/ocw-18_02-f07-lec01_300k.mp4",
+      "captions_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/2f9ef0629b7454e091bcdb9f8c1eaa9a_PxCxlsl_YwY.vtt",
+      "course_page": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/resources/lecture-1-dot-product/",
+      "captions_file": "eval/baseline-asr-20261015/references/calculus.vtt.txt",
+      "captions_sha256": "0d97c43f08e675f6ecaf4d8b81dc1d8a4e43d7d58ab8b9f74f3b1cc5bd3431dd",
+      "video_file": ".data/baseline-asr-20261015/calculus.mp4",
+      "video_sha256": "bfdcd45df714492ca8f8a7abdde4977c43a975754ba0fae476b9785805df191e",
+      "video_bytes": 89598573,
+      "duration_ms": 2320300,
+      "embedded_caption_streams": 1,
+      "evaluation_video_file": ".data/baseline-asr-20261015/calculus-audio-video-only.mp4",
+      "evaluation_video_sha256": "d46c4aee5f5104c2e642c6dbbb8df813aebd20e84f6bc2b88070b3c6f8098750",
+      "evaluation_video_bytes": 89203111,
+      "stream_sha256": {
+        "audio": "SHA256=285f111320cd5cd72874bc07335ed337779f835b55881da2466e2b8390e4401c",
+        "video": "SHA256=ce4383ac2ea525bb9d03bc655cfb56888bc219f09a1baacc6b07f4047a6ba777"
+      },
+      "audio_video_packets_unchanged": true,
+      "evaluation_has_subtitles": false,
+      "license": "CC BY-NC-SA 4.0"
+    },
+    {
+      "id": "economics",
+      "speaker": "Jonathan Gruber",
+      "video_url": "https://archive.org/download/MIT14.01SCF10/MIT14_01SCF10_lec01_300k.mp4",
+      "captions_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/98c229a432ca5f4a8aaec139c0893e4f_Vss3nofHpZI.vtt",
+      "course_page": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/resources/lecture-1-introduction-to-microeconomics/",
+      "captions_file": "eval/baseline-asr-20261015/references/economics.vtt.txt",
+      "captions_sha256": "85e969bbccf4aa67a045be0ab5a0f4f7bb5b110595046060a6979b72694268eb",
+      "video_file": ".data/baseline-asr-20261015/economics.mp4",
+      "video_sha256": "6881e36bc296e0017c20e2204523128d807ba099f270a4a85217c345cf8975d4",
+      "video_bytes": 78531902,
+      "duration_ms": 2053931,
+      "embedded_caption_streams": 1,
+      "evaluation_video_file": ".data/baseline-asr-20261015/economics-audio-video-only.mp4",
+      "evaluation_video_sha256": "116afb01df8dc39dc048273a91ce9e03df793a6cda12364d19b165da43e56222",
+      "evaluation_video_bytes": 78301654,
+      "stream_sha256": {
+        "audio": "SHA256=31949064415f4db5a75664487eca9b1094090e9a4d264ec2f87cc5c24f59aa94",
+        "video": "SHA256=679ea8421008511cf40fef1a797ec22f80ef335dd2c8a7763c2784db628ddbc0"
+      },
+      "audio_video_packets_unchanged": true,
+      "evaluation_has_subtitles": false,
+      "license": "CC BY-NC-SA 4.0"
+    },
+    {
+      "id": "linear",
+      "speaker": "Gilbert Strang",
+      "video_url": "https://archive.org/download/MIT18.06S05_MP4/01.mp4",
+      "captions_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/d292ec07b3ed5124ae1409dc520e61fe_J7DzL2_Na80.vtt",
+      "course_page": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/resources/lecture-1-the-geometry-of-linear-equations/",
+      "captions_file": "eval/baseline-asr-20261015/references/linear.vtt.txt",
+      "captions_sha256": "9fa6200af463b9e099735faf930e08ff55d4f9e13e09e107be19fe870d6e3d93",
+      "video_file": ".data/baseline-asr-20261015/linear.mp4",
+      "video_sha256": "a3fa5bb22fa65d96f95452ae8ef80cd0a743f24ff6d47b7a24332598fa316a31",
+      "video_bytes": 92409278,
+      "duration_ms": 2388842,
+      "embedded_caption_streams": 1,
+      "evaluation_video_file": ".data/baseline-asr-20261015/linear-audio-video-only.mp4",
+      "evaluation_video_sha256": "e547ab7cfa64c44cd53b246089d2fa531f83dcce5123ccb136bd92e801f1e2db",
+      "evaluation_video_bytes": 92213820,
+      "stream_sha256": {
+        "audio": "SHA256=8eabfb267c1ee2228954b16df8e3aac4c36bcd3fbb7e6fee3c27c6840a8eb021",
+        "video": "SHA256=ed23b7fd24b72f24f29d22fa73a5ad3f059f094d4fd353dab3071996bab50e50"
+      },
+      "audio_video_packets_unchanged": true,
+      "evaluation_has_subtitles": false,
+      "license": "CC BY-NC-SA 4.0"
+    },
+    {
+      "id": "probability",
+      "speaker": "John Tsitsiklis",
+      "video_url": "https://archive.org/download/MIT6.041F10/MIT6_041F11_lec01_300k.mp4",
+      "captions_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/acc5eb69c9965c95a173fba91252bcc7_j9WZyLZCBzs.vtt",
+      "course_page": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/resources/lecture-1-probability-models-and-axioms/",
+      "captions_file": "eval/baseline-asr-20261015/references/probability.vtt.txt",
+      "captions_sha256": "05f56af0e0da508262c89576be326d5c47805e71a95da5606125b04bea1f694a",
+      "video_file": ".data/baseline-asr-20261015/probability.mp4",
+      "video_sha256": "a42903aa02113d39f0bb1d4de9bd749a2d19141ad74f5cdfbeaff4f1ae392cbe",
+      "video_bytes": 118062027,
+      "duration_ms": 3070640,
+      "embedded_caption_streams": 1,
+      "evaluation_video_file": ".data/baseline-asr-20261015/probability-audio-video-only.mp4",
+      "evaluation_video_sha256": "ab0e133be2fde82f0b86bdb3a92c18578e9c58a2d8c1961ff9fa65fa528ce934",
+      "evaluation_video_bytes": 117799230,
+      "stream_sha256": {
+        "audio": "SHA256=9b2b172f56497439114c621be04969b32c10b9bdda326771231990fd99d5437d",
+        "video": "SHA256=ac20bff461394c47a9afcaf52d814f61d84464a6c7ac3b0e3d04acf841660e96"
+      },
+      "audio_video_packets_unchanged": true,
+      "evaluation_has_subtitles": false,
+      "license": "CC BY-NC-SA 4.0"
+    }
+  ],
+  "lecture_count": 5,
+  "total_duration_ms": 13034758,
+  "media_transformation": "ffmpeg stream copy first audio/video only; no transcoding, trimming, silence removal or time modification; remove embedded captions to prevent reference leakage",
+  "reference_status": "official MIT OCW English captions; professional human correction workflow documented by MIT News; individual editor audit logs unavailable",
+  "price_source": "https://help.aliyun.com/zh/model-studio/model-pricing",
+  "price_checked_date": "2026-10-15",
+  "asr_model": "qwen-audio-3.1-asr-flash",
+  "rates_cny_per_million_tokens": {
+    "input": 0.8,
+    "output": 2.7
+  }
+}

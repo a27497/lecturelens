@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/coverage_asr.py"
+  ],
+  "started_at_utc": "2026-10-15T11:16:31.510679+00:00",
+  "finished_at_utc": "2026-10-15T11:16:31.611102+00:00",
+  "exit_code": 0,
+  "stdout": "{\n  \"attempted_trials\": 10,\n  \"completed_transcription_scored_trials\": 9,\n  \"unavailable_transcription_trials\": [\n    \"v2-probability-2\"\n  ],\n  \"edit_distance\": 9014,\n  \"reference_characters\": 216217,\n  \"completed_transcription_weighted_cer\": 0.04168959887520408,\n  \"per_lecture_completed_transcription_cer\": {\n    \"algorithms\": {\n      \"n\": 2,\n      \"mean\": 0.03240319305370773,\n      \"sample_sd\": 7.427072136263817e-05,\n      \"min\": 0.03235067572298859,\n      \"max\": 0.032455710384426864\n    },\n    \"calculus\": {\n      \"n\": 2,\n      \"mean\": 0.06671270718232045,\n      \"sample_sd\": 0.0011329335168182256,\n      \"min\": 0.06591160220994476,\n      \"max\": 0.06751381215469614\n    },\n    \"economics\": {\n      \"n\": 2,\n      \"mean\": 0.05082241318971886,\n      \"sample_sd\": 0.00021996555778249375,\n      \"min\": 0.05066687405218338,\n      \"max\": 0.05097795232725435\n    },\n    \"linear\": {\n      \"n\": 2,\n      \"mean\": 0.042110231265404585,\n      \"sample_sd\": 0.0018540741024347036,\n      \"min\": 0.04079920289475064,\n      \"max\": 0.04342125963605852\n    },\n    \"probability\": {\n      \"n\": 1,\n      \"mean\": 0.01584586296929864,\n      \"sample_sd\": null,\n      \"min\": 0.01584586296929864,\n      \"max\": 0.01584586296929864\n    }\n  },\n  \"frozen_all_output_cer_including_empty_task_results\": 0.16965351970441375,\n  \"interpretation\": \"Additional availability view; original summary and all failed trials are unchanged. A completed ASR with a genuine empty hypothesis still scores 100% CER. A task that never executed TRANSCRIBE has no ASR CER; its failure remains in the 10-attempt denominator and the frozen empty-output penalty metric.\"\n}\n",
+  "stderr": ""
+}

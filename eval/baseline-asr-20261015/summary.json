@@ -1,0 +1,1619 @@
+{
+  "lecture_count": 5,
+  "unique_audio_hours": 3.620766111111111,
+  "finished_trials": 10,
+  "time_range_utc": {
+    "from": "2026-10-15T08:34:13.340709+00:00",
+    "to": "2026-10-15T11:12:38.648837+00:00"
+  },
+  "pending_trials": [],
+  "cer_scored_trials": 10,
+  "weighted_cer": 0.16965351970441375,
+  "reference_characters": 249538,
+  "edit_distance": 42335,
+  "processing_ms": {
+    "n": 10,
+    "mean": 947371.2965,
+    "sample_sd": 242866.85540266344,
+    "min": 261057.525,
+    "max": 1070140.525
+  },
+  "stage_ms": {
+    "ANALYZE_KEYFRAMES": {
+      "n": 1,
+      "mean": 5,
+      "sample_sd": null,
+      "min": 5,
+      "max": 5
+    },
+    "EXTRACT_AUDIO": {
+      "n": 9,
+      "mean": 12256.888888888889,
+      "sample_sd": 4606.4359988076585,
+      "min": 7654,
+      "max": 22177
+    },
+    "EXTRACT_KEYFRAMES": {
+      "n": 9,
+      "mean": 7.333333333333333,
+      "sample_sd": 4.358898943540674,
+      "min": 4,
+      "max": 15
+    },
+    "FUSE_VIDEO_SEGMENTS": {
+      "n": 1,
+      "mean": 4,
+      "sample_sd": null,
+      "min": 4,
+      "max": 4
+    },
+    "GENERATE_LEARNING_PACKAGE": {
+      "n": 1,
+      "mean": 109,
+      "sample_sd": null,
+      "min": 109,
+      "max": 109
+    },
+    "OCR_KEYFRAMES": {
+      "n": 1,
+      "mean": 4,
+      "sample_sd": null,
+      "min": 4,
+      "max": 4
+    },
+    "PERSIST_SUBTITLES": {
+      "n": 9,
+      "mean": 55.666666666666664,
+      "sample_sd": 30.430248109405877,
+      "min": 34,
+      "max": 119
+    },
+    "RESOLVE_UPLOADED_SOURCE": {
+      "n": 9,
+      "mean": 13.222222222222221,
+      "sample_sd": 8.135996831639282,
+      "min": 7,
+      "max": 27
+    },
+    "TRANSCRIBE": {
+      "n": 9,
+      "mean": 114712.66666666667,
+      "sample_sd": 22012.00056219334,
+      "min": 90563,
+      "max": 157173
+    },
+    "TRANSLATE_SUBTITLES": {
+      "n": 9,
+      "mean": 895527,
+      "sample_sd": 13477.129136058615,
+      "min": 859588,
+      "max": 900046
+    },
+    "VALIDATE_TASK": {
+      "n": 9,
+      "mean": 7.111111111111111,
+      "sample_sd": 4.48454134902457,
+      "min": 4,
+      "max": 17
+    }
+  },
+  "index_http_ms": {
+    "n": 0,
+    "mean": null,
+    "sample_sd": null,
+    "min": null,
+    "max": null
+  },
+  "successful_index_ready_ms": {
+    "n": 0,
+    "mean": null,
+    "sample_sd": null,
+    "min": null,
+    "max": null
+  },
+  "asr_list_price_cny": {
+    "n": 8,
+    "mean": 0.044403175,
+    "sample_sd": 0.00707112692609884,
+    "min": 0.0397416,
+    "max": 0.056237800000000004
+  },
+  "known_trial_api_fee_cny": 0.3552254,
+  "known_successful_asr_call_fee_cny": 0.4106304,
+  "asr_usage_missing_calls": 2,
+  "asr_failed_calls": 2,
+  "asr_chunk_retries": 2,
+  "task_status_counts": {
+    "FAILED": 10
+  },
+  "translation_status_counts": {
+    "FAILED": 8,
+    "SUCCEEDED": 1,
+    "NOT_STARTED": 1
+  },
+  "per_lecture": {
+    "algorithms": {
+      "n": 2,
+      "cer": {
+        "n": 2,
+        "mean": 0.03240319305370773,
+        "sample_sd": 7.427072136263817e-05,
+        "min": 0.03235067572298859,
+        "max": 0.032455710384426864
+      },
+      "processing_ms": {
+        "n": 2,
+        "mean": 1060488.0559999999,
+        "sample_sd": 13650.652570185759,
+        "min": 1050835.587,
+        "max": 1070140.525
+      },
+      "stage_ms": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 12675,
+          "sample_sd": 560.0285706997456,
+          "min": 12279,
+          "max": 13071
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 8.5,
+          "sample_sd": 6.363961030678928,
+          "min": 4,
+          "max": 13
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 66,
+          "sample_sd": 35.35533905932738,
+          "min": 41,
+          "max": 91
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 17.5,
+          "sample_sd": 13.435028842544403,
+          "min": 8,
+          "max": 27
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 146662.5,
+          "sample_sd": 14864.091647322415,
+          "min": 136152,
+          "max": 157173
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 900030,
+          "sample_sd": 22.627416997969522,
+          "min": 900014,
+          "max": 900046
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 7.5,
+          "sample_sd": 4.949747468305833,
+          "min": 4,
+          "max": 11
+        }
+      },
+      "index_http_ms": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "asr_list_price_cny": {
+        "n": 1,
+        "mean": 0.05538610000000001,
+        "sample_sd": null,
+        "min": 0.05538610000000001,
+        "max": 0.05538610000000001
+      }
+    },
+    "calculus": {
+      "n": 2,
+      "cer": {
+        "n": 2,
+        "mean": 0.06671270718232045,
+        "sample_sd": 0.0011329335168182256,
+        "min": 0.06591160220994476,
+        "max": 0.06751381215469614
+      },
+      "processing_ms": {
+        "n": 2,
+        "mean": 1013987.8035,
+        "sample_sd": 9714.86864893706,
+        "min": 1007118.354,
+        "max": 1020857.253
+      },
+      "stage_ms": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 8820,
+          "sample_sd": 535.986940139403,
+          "min": 8441,
+          "max": 9199
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 6.5,
+          "sample_sd": 3.5355339059327378,
+          "min": 4,
+          "max": 9
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 76.5,
+          "sample_sd": 60.10407640085654,
+          "min": 34,
+          "max": 119
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 9.5,
+          "sample_sd": 3.5355339059327378,
+          "min": 7,
+          "max": 12
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 103797,
+          "sample_sd": 9649.179136071627,
+          "min": 96974,
+          "max": 110620
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 900014.5,
+          "sample_sd": 2.1213203435596424,
+          "min": 900013,
+          "max": 900016
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 5,
+          "sample_sd": 1.4142135623730951,
+          "min": 4,
+          "max": 6
+        }
+      },
+      "index_http_ms": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "asr_list_price_cny": {
+        "n": 2,
+        "mean": 0.03977265000000001,
+        "sample_sd": 4.391133111168632e-05,
+        "min": 0.0397416,
+        "max": 0.039803700000000004
+      }
+    },
+    "economics": {
+      "n": 2,
+      "cer": {
+        "n": 2,
+        "mean": 0.05082241318971886,
+        "sample_sd": 0.00021996555778249375,
+        "min": 0.05066687405218338,
+        "max": 0.05097795232725435
+      },
+      "processing_ms": {
+        "n": 2,
+        "mean": 1028060.932,
+        "sample_sd": 6622.450985609522,
+        "min": 1023378.152,
+        "max": 1032743.712
+      },
+      "stage_ms": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 14915.5,
+          "sample_sd": 10269.31178317223,
+          "min": 7654,
+          "max": 22177
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 9.5,
+          "sample_sd": 7.7781745930520225,
+          "min": 4,
+          "max": 15
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 55.5,
+          "sample_sd": 13.435028842544403,
+          "min": 46,
+          "max": 65
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 15,
+          "sample_sd": 11.313708498984761,
+          "min": 7,
+          "max": 23
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 112173,
+          "sample_sd": 16939.450050104933,
+          "min": 100195,
+          "max": 124151
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 900020,
+          "sample_sd": 4.242640687119285,
+          "min": 900017,
+          "max": 900023
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 10.5,
+          "sample_sd": 9.192388155425117,
+          "min": 4,
+          "max": 17
+        }
+      },
+      "index_http_ms": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "asr_list_price_cny": {
+        "n": 2,
+        "mean": 0.040663500000000005,
+        "sample_sd": 3.818376618404306e-06,
+        "min": 0.040660800000000004,
+        "max": 0.0406662
+      }
+    },
+    "linear": {
+      "n": 2,
+      "cer": {
+        "n": 2,
+        "mean": 0.042110231265404585,
+        "sample_sd": 0.0018540741024347036,
+        "min": 0.04079920289475064,
+        "max": 0.04342125963605852
+      },
+      "processing_ms": {
+        "n": 2,
+        "mean": 986566.002,
+        "sample_sd": 36939.630187352195,
+        "min": 960445.739,
+        "max": 1012686.265
+      },
+      "stage_ms": {
+        "ANALYZE_KEYFRAMES": {
+          "n": 1,
+          "mean": 5,
+          "sample_sd": null,
+          "min": 5,
+          "max": 5
+        },
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 12669,
+          "sample_sd": 5023.286573549233,
+          "min": 9117,
+          "max": 16221
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 6.5,
+          "sample_sd": 3.5355339059327378,
+          "min": 4,
+          "max": 9
+        },
+        "FUSE_VIDEO_SEGMENTS": {
+          "n": 1,
+          "mean": 4,
+          "sample_sd": null,
+          "min": 4,
+          "max": 4
+        },
+        "GENERATE_LEARNING_PACKAGE": {
+          "n": 1,
+          "mean": 109,
+          "sample_sd": null,
+          "min": 109,
+          "max": 109
+        },
+        "OCR_KEYFRAMES": {
+          "n": 1,
+          "mean": 4,
+          "sample_sd": null,
+          "min": 4,
+          "max": 4
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 34.5,
+          "sample_sd": 0.7071067811865476,
+          "min": 34,
+          "max": 35
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 14,
+          "sample_sd": 9.899494936611665,
+          "min": 7,
+          "max": 21
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 93135,
+          "sample_sd": 3637.3572824236003,
+          "min": 90563,
+          "max": 95707
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 879800,
+          "sample_sd": 28584.084522684996,
+          "min": 859588,
+          "max": 900012
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 7,
+          "sample_sd": 2.8284271247461903,
+          "min": 5,
+          "max": 9
+        }
+      },
+      "index_http_ms": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "asr_list_price_cny": {
+        "n": 2,
+        "mean": 0.0413646,
+        "sample_sd": 3.436538956566329e-05,
+        "min": 0.0413403,
+        "max": 0.0413889
+      }
+    },
+    "probability": {
+      "n": 2,
+      "cer": {
+        "n": 2,
+        "mean": 0.5079229314846493,
+        "sample_sd": 0.6959020640272037,
+        "min": 0.01584586296929864,
+        "max": 1.0
+      },
+      "processing_ms": {
+        "n": 2,
+        "mean": 647753.689,
+        "sample_sd": 546870.9596464506,
+        "min": 261057.525,
+        "max": 1034449.853
+      },
+      "stage_ms": {
+        "EXTRACT_AUDIO": {
+          "n": 1,
+          "mean": 12153,
+          "sample_sd": null,
+          "min": 12153,
+          "max": 12153
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 1,
+          "mean": 4,
+          "sample_sd": null,
+          "min": 4,
+          "max": 4
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 1,
+          "mean": 36,
+          "sample_sd": null,
+          "min": 36,
+          "max": 36
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 1,
+          "mean": 7,
+          "sample_sd": null,
+          "min": 7,
+          "max": 7
+        },
+        "TRANSCRIBE": {
+          "n": 1,
+          "mean": 120879,
+          "sample_sd": null,
+          "min": 120879,
+          "max": 120879
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 1,
+          "mean": 900014,
+          "sample_sd": null,
+          "min": 900014,
+          "max": 900014
+        },
+        "VALIDATE_TASK": {
+          "n": 1,
+          "mean": 4,
+          "sample_sd": null,
+          "min": 4,
+          "max": 4
+        }
+      },
+      "index_http_ms": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "asr_list_price_cny": {
+        "n": 1,
+        "mean": 0.056237800000000004,
+        "sample_sd": null,
+        "min": 0.056237800000000004,
+        "max": 0.056237800000000004
+      }
+    }
+  },
+  "trials": [
+    {
+      "trial_id": "v2-algorithms-1",
+      "source_id": "algorithms",
+      "task_id": "task_d50a858fcd4a48ac863357fc39dde8c3",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T08:34:13.340709+00:00",
+      "finished_at_utc": "2026-10-15T08:51:44.176298+00:00",
+      "reference_characters": 28562,
+      "edit_distance": 927,
+      "cer": 0.032455710384426864,
+      "task_terminal_ms": 1050750.533,
+      "processing_to_index_ms": 1050835.587,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 4656.647,
+      "upload_inclusive_ms": 1055492.2340000002,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 20,
+      "asr_failed_calls": 2,
+      "asr_tokens": {
+        "input_tokens": 41048,
+        "output_tokens": 8358
+      },
+      "asr_usage_missing_calls": 2,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 3193,
+      "asr_list_price_cny": null,
+      "known_successful_asr_call_fee_cny": 0.055405,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 2,
+      "translation_batches_started": 12,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 11,
+        "RESOLVE_UPLOADED_SOURCE": 27,
+        "EXTRACT_KEYFRAMES": 13,
+        "EXTRACT_AUDIO": 13071,
+        "TRANSCRIBE": 136152,
+        "PERSIST_SUBTITLES": 91,
+        "TRANSLATE_SUBTITLES": 900046
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 8,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 136130,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 3202,
+          "outputUnits": 18,
+          "createdAt": "2026-10-15T08:51:43.311Z"
+        },
+        {
+          "id": 9,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900038,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T08:51:43.370Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-calculus-1",
+      "source_id": "calculus",
+      "task_id": "task_5abe016bef254b4884edd1e3c2146867",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T08:51:48.846032+00:00",
+      "finished_at_utc": "2026-10-15T09:08:35.964385+00:00",
+      "reference_characters": 18100,
+      "edit_distance": 1193,
+      "cer": 0.06591160220994476,
+      "task_terminal_ms": 1006912.077,
+      "processing_to_index_ms": 1007118.354,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2377.801,
+      "upload_inclusive_ms": 1009496.155,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 13,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 29751,
+        "output_tokens": 5904
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2312,
+      "asr_list_price_cny": 0.0397416,
+      "known_successful_asr_call_fee_cny": 0.0397416,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 8,
+      "translation_batches_failed": 2,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 6,
+        "RESOLVE_UPLOADED_SOURCE": 12,
+        "EXTRACT_KEYFRAMES": 9,
+        "EXTRACT_AUDIO": 9199,
+        "TRANSCRIBE": 96974,
+        "PERSIST_SUBTITLES": 119,
+        "TRANSLATE_SUBTITLES": 900016
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 10,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 96966,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2321,
+          "outputUnits": 13,
+          "createdAt": "2026-10-15T09:08:35.353Z"
+        },
+        {
+          "id": 11,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900009,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T09:08:35.536Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-economics-1",
+      "source_id": "economics",
+      "task_id": "task_3be63a6fef0f4ed598985bcc4c5fb96a",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T09:08:44.935131+00:00",
+      "finished_at_utc": "2026-10-15T09:25:48.313286+00:00",
+      "reference_characters": 25717,
+      "edit_distance": 1311,
+      "cer": 0.05097795232725435,
+      "task_terminal_ms": 1023347.733,
+      "processing_to_index_ms": 1023378.152,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 8967.244,
+      "upload_inclusive_ms": 1032345.396,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 12,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 26364,
+        "output_tokens": 7250
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2052,
+      "asr_list_price_cny": 0.0406662,
+      "known_successful_asr_call_fee_cny": 0.0406662,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 9,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 17,
+        "RESOLVE_UPLOADED_SOURCE": 23,
+        "EXTRACT_KEYFRAMES": 15,
+        "EXTRACT_AUDIO": 22177,
+        "TRANSCRIBE": 100195,
+        "PERSIST_SUBTITLES": 65,
+        "TRANSLATE_SUBTITLES": 900023
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 12,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 100179,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2054,
+          "outputUnits": 12,
+          "createdAt": "2026-10-15T09:25:48.126Z"
+        },
+        {
+          "id": 13,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900011,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T09:25:48.153Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-linear-1",
+      "source_id": "linear",
+      "task_id": "task_a4b06448ec134edcad5549f7e847898b",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T09:25:51.604950+00:00",
+      "finished_at_utc": "2026-10-15T09:42:44.291218+00:00",
+      "reference_characters": 19069,
+      "edit_distance": 828,
+      "cer": 0.04342125963605852,
+      "task_terminal_ms": 1012656.477,
+      "processing_to_index_ms": 1012686.265,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 3290.535,
+      "upload_inclusive_ms": 1015976.8,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 14,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 30666,
+        "output_tokens": 6243
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2380,
+      "asr_list_price_cny": 0.0413889,
+      "known_successful_asr_call_fee_cny": 0.0413889,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 12,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 9,
+        "RESOLVE_UPLOADED_SOURCE": 21,
+        "EXTRACT_KEYFRAMES": 9,
+        "EXTRACT_AUDIO": 16221,
+        "TRANSCRIBE": 95707,
+        "PERSIST_SUBTITLES": 34,
+        "TRANSLATE_SUBTITLES": 900012
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 14,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 95701,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2389,
+          "outputUnits": 14,
+          "createdAt": "2026-10-15T09:42:44.001Z"
+        },
+        {
+          "id": 15,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900005,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T09:42:44.030Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-probability-1",
+      "source_id": "probability",
+      "task_id": "task_9a87f5be4f5a43f38c7cb83735eabbad",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T09:42:47.278353+00:00",
+      "finished_at_utc": "2026-10-15T10:00:01.728208+00:00",
+      "reference_characters": 33321,
+      "edit_distance": 528,
+      "cer": 0.01584586296929864,
+      "task_terminal_ms": 1034430.173,
+      "processing_to_index_ms": 1034449.853,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2985.827,
+      "upload_inclusive_ms": 1037435.68,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 18,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 39416,
+        "output_tokens": 9150
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 3068,
+      "asr_list_price_cny": 0.056237800000000004,
+      "known_successful_asr_call_fee_cny": 0.056237800000000004,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 11,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 4,
+        "RESOLVE_UPLOADED_SOURCE": 7,
+        "EXTRACT_KEYFRAMES": 4,
+        "EXTRACT_AUDIO": 12153,
+        "TRANSCRIBE": 120879,
+        "PERSIST_SUBTITLES": 36,
+        "TRANSLATE_SUBTITLES": 900014
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 16,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 120872,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 3071,
+          "outputUnits": 18,
+          "createdAt": "2026-10-15T10:00:00.878Z"
+        },
+        {
+          "id": 17,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900009,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T10:00:00.904Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-algorithms-2",
+      "source_id": "algorithms",
+      "task_id": "task_b339b9b1541e44a7a0157019a916f4ea",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T10:00:04.450543+00:00",
+      "finished_at_utc": "2026-10-15T10:17:54.591082+00:00",
+      "reference_characters": 28562,
+      "edit_distance": 924,
+      "cer": 0.03235067572298859,
+      "task_terminal_ms": 1070118.754,
+      "processing_to_index_ms": 1070140.525,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2721.053,
+      "upload_inclusive_ms": 1072861.578,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 18,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 41048,
+        "output_tokens": 8351
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 3193,
+      "asr_list_price_cny": 0.05538610000000001,
+      "known_successful_asr_call_fee_cny": 0.05538610000000001,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 8,
+      "translation_batches_failed": 2,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 4,
+        "RESOLVE_UPLOADED_SOURCE": 8,
+        "EXTRACT_KEYFRAMES": 4,
+        "EXTRACT_AUDIO": 12279,
+        "TRANSCRIBE": 157173,
+        "PERSIST_SUBTITLES": 41,
+        "TRANSLATE_SUBTITLES": 900014
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 18,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 157168,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 3202,
+          "outputUnits": 18,
+          "createdAt": "2026-10-15T10:17:54.264Z"
+        },
+        {
+          "id": 19,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900010,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T10:17:54.292Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-calculus-2",
+      "source_id": "calculus",
+      "task_id": "task_f090137e928e44adbea11007d3d75601",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T10:17:56.921503+00:00",
+      "finished_at_utc": "2026-10-15T10:34:57.778764+00:00",
+      "reference_characters": 18100,
+      "edit_distance": 1222,
+      "cer": 0.06751381215469614,
+      "task_terminal_ms": 1020841.671,
+      "processing_to_index_ms": 1020857.253,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2328.358,
+      "upload_inclusive_ms": 1023185.611,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 13,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 29751,
+        "output_tokens": 5927
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2312,
+      "asr_list_price_cny": 0.039803700000000004,
+      "known_successful_asr_call_fee_cny": 0.039803700000000004,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 12,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 4,
+        "RESOLVE_UPLOADED_SOURCE": 7,
+        "EXTRACT_KEYFRAMES": 4,
+        "EXTRACT_AUDIO": 8441,
+        "TRANSCRIBE": 110620,
+        "PERSIST_SUBTITLES": 34,
+        "TRANSLATE_SUBTITLES": 900013
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 20,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 110612,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2321,
+          "outputUnits": 13,
+          "createdAt": "2026-10-15T10:34:56.865Z"
+        },
+        {
+          "id": 21,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900007,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T10:34:56.881Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-economics-2",
+      "source_id": "economics",
+      "task_id": "task_d636cdc9867c4781b679b15231632a44",
+      "status": "FAILED",
+      "translation_status": "FAILED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T10:34:59.485077+00:00",
+      "finished_at_utc": "2026-10-15T10:52:12.228783+00:00",
+      "reference_characters": 25717,
+      "edit_distance": 1303,
+      "cer": 0.05066687405218338,
+      "task_terminal_ms": 1032723.49,
+      "processing_to_index_ms": 1032743.712,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 1703.979,
+      "upload_inclusive_ms": 1034447.6910000001,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 12,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 26364,
+        "output_tokens": 7248
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2052,
+      "asr_list_price_cny": 0.040660800000000004,
+      "known_successful_asr_call_fee_cny": 0.040660800000000004,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 11,
+      "translation_batches_failed": 1,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 4,
+        "RESOLVE_UPLOADED_SOURCE": 7,
+        "EXTRACT_KEYFRAMES": 4,
+        "EXTRACT_AUDIO": 7654,
+        "TRANSCRIBE": 124151,
+        "PERSIST_SUBTITLES": 46,
+        "TRANSLATE_SUBTITLES": 900017
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 22,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 124143,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2054,
+          "outputUnits": 12,
+          "createdAt": "2026-10-15T10:52:12.117Z"
+        },
+        {
+          "id": 23,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "subtitle-translation-service",
+          "model": null,
+          "status": "FAILED",
+          "durationMillis": 900011,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T10:52:12.133Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-linear-2",
+      "source_id": "linear",
+      "task_id": "task_8f4c251ced84477d8adee4b0e1181a3a",
+      "status": "FAILED",
+      "translation_status": "SUCCEEDED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T10:52:14.417688+00:00",
+      "finished_at_utc": "2026-10-15T11:08:14.863424+00:00",
+      "reference_characters": 19069,
+      "edit_distance": 778,
+      "cer": 0.04079920289475064,
+      "task_terminal_ms": 960414.586,
+      "processing_to_index_ms": 960445.739,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2186.64,
+      "upload_inclusive_ms": 962632.379,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 14,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 30666,
+        "output_tokens": 6225
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 2380,
+      "asr_list_price_cny": 0.0413403,
+      "known_successful_asr_call_fee_cny": 0.0413403,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 14,
+      "translation_batches_failed": 0,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": 0,
+      "model_tokens": {
+        "promptTokens": 9031,
+        "completionTokens": 5068
+      },
+      "model_token_samples": {
+        "promptTokens": 1,
+        "completionTokens": 1
+      },
+      "model_usage_missing_records": 1,
+      "stage_ms": {
+        "VALIDATE_TASK": 5,
+        "RESOLVE_UPLOADED_SOURCE": 7,
+        "EXTRACT_KEYFRAMES": 4,
+        "EXTRACT_AUDIO": 9117,
+        "TRANSCRIBE": 90563,
+        "PERSIST_SUBTITLES": 35,
+        "TRANSLATE_SUBTITLES": 859588,
+        "OCR_KEYFRAMES": 4,
+        "ANALYZE_KEYFRAMES": 5,
+        "FUSE_VIDEO_SEGMENTS": 4,
+        "GENERATE_LEARNING_PACKAGE": 109
+      },
+      "stage_outcomes": {
+        "VALIDATE_TASK": "completed",
+        "RESOLVE_UPLOADED_SOURCE": "completed",
+        "EXTRACT_KEYFRAMES": "completed",
+        "EXTRACT_AUDIO": "completed",
+        "TRANSCRIBE": "completed",
+        "PERSIST_SUBTITLES": "completed",
+        "TRANSLATE_SUBTITLES": "completed",
+        "OCR_KEYFRAMES": "completed",
+        "ANALYZE_KEYFRAMES": "completed",
+        "FUSE_VIDEO_SEGMENTS": "completed",
+        "GENERATE_LEARNING_PACKAGE": "failed"
+      },
+      "pipeline_failed_steps": 1,
+      "ai_call_records": [
+        {
+          "id": 24,
+          "callType": "ASR",
+          "stage": "TRANSCRIPTION",
+          "provider": "bailian",
+          "model": null,
+          "status": "SUCCEEDED",
+          "durationMillis": 90556,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": 2389,
+          "outputUnits": 14,
+          "createdAt": "2026-10-15T11:08:14.365Z"
+        },
+        {
+          "id": 25,
+          "callType": "LLM",
+          "stage": "TRANSLATION",
+          "provider": "openai-compatible",
+          "model": "lecturelens-local-qwen",
+          "status": "SUCCEEDED",
+          "durationMillis": 859575,
+          "providerDurationMillis": 859488,
+          "batchCount": 14,
+          "retryCount": 0,
+          "promptTokens": 9031,
+          "completionTokens": 5068,
+          "totalTokens": 14099,
+          "inputUnits": 14,
+          "outputUnits": 14,
+          "createdAt": "2026-10-15T11:08:14.379Z"
+        },
+        {
+          "id": 26,
+          "callType": "LLM",
+          "stage": "LEARNING_PACKAGE",
+          "provider": "openai-compatible",
+          "model": "lecturelens-local-qwen",
+          "status": "FAILED",
+          "durationMillis": 104,
+          "providerDurationMillis": null,
+          "batchCount": null,
+          "retryCount": null,
+          "promptTokens": null,
+          "completionTokens": null,
+          "totalTokens": null,
+          "inputUnits": null,
+          "outputUnits": null,
+          "createdAt": "2026-10-15T11:08:14.393Z"
+        }
+      ]
+    },
+    {
+      "trial_id": "v2-probability-2",
+      "source_id": "probability",
+      "task_id": "task_a6466fb49ebe4d7e840dc11f220e3b4e",
+      "status": "FAILED",
+      "translation_status": "NOT_STARTED",
+      "index_status": null,
+      "submitted_at_utc": "2026-10-15T11:08:17.591303+00:00",
+      "finished_at_utc": "2026-10-15T11:12:38.648837+00:00",
+      "reference_characters": 33321,
+      "edit_distance": 33321,
+      "cer": 1.0,
+      "task_terminal_ms": 261048.692,
+      "processing_to_index_ms": 261057.525,
+      "successful_index_ready_ms": null,
+      "latency_interpretation": "observed_failure_or_unready_stop_not_success_latency",
+      "upload_ms": 2725.231,
+      "upload_inclusive_ms": 263782.756,
+      "index_wait_ms": null,
+      "index_http_ms": null,
+      "asr_http_calls": 0,
+      "asr_failed_calls": 0,
+      "asr_tokens": {
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "asr_usage_missing_calls": 0,
+      "asr_token_measurement": "Observed responses only; missing-request tokens unavailable",
+      "asr_usage_duration_seconds": 0,
+      "asr_list_price_cny": null,
+      "known_successful_asr_call_fee_cny": 0,
+      "local_llm_external_api_fee_cny": 0,
+      "local_embedding_external_api_fee_cny": 0,
+      "machine_cost_cny": null,
+      "task_retry_count": 0,
+      "asr_chunk_retries": 0,
+      "translation_batches_started": 0,
+      "translation_batches_failed": 0,
+      "translation_semantic_retries": 0,
+      "translation_provider_retry_count": null,
+      "model_tokens": {
+        "promptTokens": null,
+        "completionTokens": null
+      },
+      "model_token_samples": {
+        "promptTokens": 0,
+        "completionTokens": 0
+      },
+      "model_usage_missing_records": 0,
+      "stage_ms": {},
+      "stage_outcomes": {},
+      "pipeline_failed_steps": 0,
+      "ai_call_records": []
+    }
+  ]
+}
