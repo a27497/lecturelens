@@ -1,0 +1,15 @@
+{
+  "browser": "real Chrome, no mocked HTTP",
+  "checks": [
+    {
+      "case": "feedback_edit",
+      "passed": true
+    },
+    {
+      "case": "feedback_reject",
+      "passed": true
+    }
+  ],
+  "n": 2,
+  "passed": 2
+}

@@ -1,0 +1,58 @@
+{
+  "ruff_agent": {
+    "exit_code": 0,
+    "output": "All checks passed!"
+  },
+  "ruff_format": {
+    "exit_code": 0,
+    "output": "89 files already formatted"
+  },
+  "ruff_scripts": {
+    "exit_code": 0,
+    "output": "All checks passed!"
+  },
+  "java_suites": [
+    {
+      "suite": "com.example.courselingo.qa.StudyAuthorityTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.example.courselingo.qa.StudyControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "frontend": {
+    "numTotalTests": 99,
+    "numPassedTests": 99,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "frontend_build": "npm run build succeeded; existing dependency PURE-annotation and chunk-size warnings",
+  "source_sha256": {
+    "agent-service/src/lecturelens_agent/study/runtime.py": "868ab533c0318eec64aeb13432f369a90a8fbf7ad5521787a8ebf86f752c928f",
+    "agent-service/src/lecturelens_agent/study/store.py": "72dfc938c44e89d11802736db329fafb668df7d945cf3cfded1297d952eff1aa",
+    "agent-service/src/lecturelens_agent/study/approval.py": "45783ec9818a65c3a1842e61d3a16e43783f2f7ecbd66dadcf4728764a85df1c",
+    "agent-service/src/lecturelens_agent/study/call_journal.py": "0d4e465490c01126c168749e5ce6aa2d6c513fa3e16c16cf306f2b56f6428337",
+    "agent-service/src/lecturelens_agent/study/telemetry.py": "1367cb6651fab065e92f8504b720076987e72d4da4aada03e0d4ae81e6f786de",
+    "agent-service/src/lecturelens_agent/study/resilience.py": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671",
+    "agent-service/src/lecturelens_agent/study/feedback.py": "633b65af64829b1ca3e9d158ef95bb9d487b1acdb5a825bdf095106c2ea5627d",
+    "agent-service/src/lecturelens_agent/study/feedback_store.py": "1653a53a222626bf23df4af3edf8e53ff5f75544c52aa146d57b73daf01ad85e",
+    "agent-service/src/lecturelens_agent/study/contracts.py": "cdb51920df6eea12c04d0501f028cf4efc1b3a0ad15bb560426a5e96fdca29d9",
+    "agent-service/src/lecturelens_agent/study/connections.py": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317",
+    "agent-service/src/lecturelens_agent/study/failures.py": "2f427a06033c18782f70b305097a65ef43176b6f9dfed953fdf8f1793ae1b403",
+    "backend/src/main/java/com/example/courselingo/study/StudyController.java": "3fb6dc7c905a5d6804e50493899e9dbb1c96a52c9425834992217b2a16c5cd56",
+    "frontend/src/api/study.ts": "d013a2e9d01c556e459ebd1cf0e3cf6bed4e8d8d7bb8a222291828007bac0e5e",
+    "frontend/src/components/task-detail/CourseAgentPanel.vue": "a12adab05992a5eea571d8963816b9cda650067d4dda14d9d03f94a6f3aa9f0a",
+    "frontend/src/components/task-detail/PracticeFeedbackPanel.vue": "a7351272c5a638f0f4d42d3461eae773547a9a4240b09e8a827bd7383a551910",
+    "frontend/src/components/task-detail/StudyApprovalPanel.vue": "9e2fa38ca72ca13d4dfeeeaed15d1aec57445524e3669127064ac99505b6ea16",
+    "scripts/eval/check-study-crash-matrix.py": "e8f60af2cc2326dfae754dfe06405416a8022b501fd9672b351100b5cb56693f",
+    "scripts/eval/check-study-approval-recovery.py": "3f1770c827b05b998135b2dba155e9aa3b50b14e8fde8c009b5090c372b246a6"
+  }
+}

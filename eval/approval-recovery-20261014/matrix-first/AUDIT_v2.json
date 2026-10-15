@@ -1,0 +1,7 @@
+{
+  "n_original": 523,
+  "budget_violations": 69,
+  "strong_assertion": "Successful deterministic controls use four model slots; failures may consume a prefix, never more than four",
+  "not_final_acceptance": true,
+  "original_raw_and_summary_preserved": true
+}

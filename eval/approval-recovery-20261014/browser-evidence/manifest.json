@@ -1,0 +1,62 @@
+{
+  "screenshots": "previous final browser run; no new capture",
+  "playwright_trace": "not saved",
+  "files": [
+    {
+      "file": "browser-evidence/final-approve.png",
+      "source": ".data/approval-browser-20261014/final-approve.png",
+      "source_mtime_utc": "2026-10-14T16:58:32.173632+00:00",
+      "sha256": "25c284e167b47e9fda281efe16bd2ce45dcb48be17cdea25d41ef5f91e9a76cb",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/final-edit.png",
+      "source": ".data/approval-browser-20261014/final-edit.png",
+      "source_mtime_utc": "2026-10-14T16:58:39.317635+00:00",
+      "sha256": "90a38f0a3be10925bfc886fc101f4d0a436dc30bde8aedd3bd73c49e982e8d33",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/final-feedback-edit.png",
+      "source": ".data/approval-browser-20261014/final-feedback-edit.png",
+      "source_mtime_utc": "2026-10-14T16:58:51.231329+00:00",
+      "sha256": "630e19a4bf4e7bcbceef2f7f3b11770558df30d40aad90faea59673186e8e486",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/final-feedback-reject.png",
+      "source": ".data/approval-browser-20261014/final-feedback-reject.png",
+      "source_mtime_utc": "2026-10-14T16:58:55.152925+00:00",
+      "sha256": "c85af1bc2073fb9aedbb4df5c4da8afd5c8f907b414d54dffc7f6b3880fbf2c7",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/final-feedback.png",
+      "source": ".data/approval-browser-20261014/final-feedback.png",
+      "source_mtime_utc": "2026-10-14T16:58:36.189276+00:00",
+      "sha256": "6bed8b336945eaa7618058f7027644645df23e5d5c02e05b1dc0df79c914f78d",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/final-reject.png",
+      "source": ".data/approval-browser-20261014/final-reject.png",
+      "source_mtime_utc": "2026-10-14T16:58:42.366008+00:00",
+      "sha256": "a60348d2f255cce558a9f937346842889f2569ff88a22f8c3d00b26bea0254ce",
+      "copied_without_editing": true
+    },
+    {
+      "file": "browser-evidence/java/TEST-com.example.courselingo.qa.StudyAuthorityTest.xml",
+      "source": "backend/target/surefire-reports/TEST-com.example.courselingo.qa.StudyAuthorityTest.xml",
+      "source_sha256": "a5155ae7c01a928722ff61a31a22f2ebce7a36e945d236abbfe15671804083cd",
+      "sha256": "7bff4d234286839367f3a0d9ee5f72590b995f2f8cb53033f221c35acca8dff3",
+      "projection": "suite attributes and unmodified testcase elements; environment properties and system logs omitted"
+    },
+    {
+      "file": "browser-evidence/java/TEST-com.example.courselingo.qa.StudyControllerTest.xml",
+      "source": "backend/target/surefire-reports/TEST-com.example.courselingo.qa.StudyControllerTest.xml",
+      "source_sha256": "ef14d722759d045ea37e9126a7d4eba9cc8cbf9b3f57c4a60d29bdf814f0acb8",
+      "sha256": "342f0b93ddbe22e42043c3dc043706e5534f035c6259a498df8c1f4363a29a8f",
+      "projection": "suite attributes and unmodified testcase elements; environment properties and system logs omitted"
+    }
+  ]
+}

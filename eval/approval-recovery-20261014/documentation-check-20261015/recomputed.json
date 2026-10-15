@@ -1,0 +1,61 @@
+{
+  "matrix": {
+    "n": 523,
+    "passed": 523,
+    "p50_ms": 1658.319,
+    "p95_ms": 2641.105,
+    "outcomes": {
+      "succeeded": 420,
+      "MODEL_OUTCOME_UNKNOWN": 96,
+      "USER_CANCELLED": 2,
+      "deleted": 4,
+      "READ_CHECKPOINT_REPLAY": 1
+    }
+  },
+  "approval": {
+    "n": 54,
+    "passed": 54,
+    "p50_ms": 1140.497,
+    "p95_ms": 1214.51,
+    "outcomes": {
+      "succeeded": 36,
+      "APPROVAL_REJECTED": 18
+    }
+  },
+  "planned_trials": 577,
+  "passed": 577,
+  "outcomes": {
+    "succeeded": 456,
+    "MODEL_OUTCOME_UNKNOWN": 96,
+    "USER_CANCELLED": 2,
+    "deleted": 4,
+    "READ_CHECKPOINT_REPLAY": 1,
+    "APPROVAL_REJECTED": 18
+  },
+  "main_distinct_points": 523,
+  "approval_combinations": 18,
+  "approval_trials_per_combination": 3,
+  "retry_cap": {
+    "n": 1,
+    "same_run_sigkill_count_checked": 3,
+    "three_injections": true,
+    "driver_sha256_matches_original": true
+  },
+  "python": {
+    "tests": 727,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "approval_tests_in_full_suite": 23,
+  "java": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "frontend_passed": 99,
+  "browser_passed": 7,
+  "saved_screenshots": 6,
+  "summaries_match_raw": true
+}

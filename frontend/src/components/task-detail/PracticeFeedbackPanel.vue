@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
-import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun } from "../../api/study";
+import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun, StudyResponse } from "../../api/study";
+import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import { randomUuid } from "../../utils/randomUuid";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
-  enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
+  approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
 defineEmits<{ seek: [startMillis: number] }>();
 const currentRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
+const approval = ref<StudyResponse["approval"]>(null);
 const starting = ref(false);
 const savingNote = ref(false);
 const message = ref("");
@@ -23,7 +25,7 @@ let generation = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let pendingStart: StudyCommand | null = null;
 let pendingNote: StudyCommand | null = null;
-const active = computed(() => currentRun.value && ["queued", "running"].includes(currentRun.value.status));
+const active = computed(() => currentRun.value && ["queued", "running", "awaiting_approval"].includes(currentRun.value.status));
 const feedback = computed(() => currentRun.value?.feedback);
 const historyRuns = computed(() => {
   const rows = new Map((props.history ?? []).map(row => [row.run_id, row]));
@@ -31,14 +33,14 @@ const historyRuns = computed(() => {
   if (currentRun.value) rows.set(currentRun.value.run_id, currentRun.value);
   return [...rows.values()].filter(row => row.question_index === props.questionIndex);
 });
-const historyStatus = { queued: "等待开始", running: "进行中", succeeded: "已完成", cancelled: "已取消", failed: "未完成", budget_exceeded: "达到执行上限" };
+const historyStatus = { awaiting_approval: "等待发布审批", queued: "等待开始", running: "进行中", succeeded: "已完成", cancelled: "已取消", failed: "未完成", budget_exceeded: "达到执行上限" };
 const scope = () => ({ session_id: props.sessionId, run_id: props.runId, artifact_id: props.artifactId, question_index: props.questionIndex });
 
 watch(() => [props.taskId, props.sessionId, props.runId, props.artifactId, props.questionIndex], () => {
   generation++; clearTimeout(timer); pendingStart = null; pendingNote = null;
   observedRuns.value = []; currentRun.value = props.initial; starting.value = false; savingNote.value = false;
   message.value = ""; noteText.value = ""; notes.value = null; nextBefore.value = null;
-  if (active.value) schedule();
+  if (active.value || currentRun.value?.status === "awaiting_approval") schedule();
 }, { immediate: true });
 watch(() => props.initial, value => {
   if (value && !starting.value && !active.value) currentRun.value = value;
@@ -70,6 +72,7 @@ async function refresh() {
     const result = await studyCommand(props.taskId, { operation: "READ", session_id: props.sessionId, run_id: id });
     if (current !== generation || currentRun.value?.run_id !== id) return;
     if (result.run) currentRun.value = { ...currentRun.value, status: result.run.status, error_code: result.run.error_code, feedback: result.feedback ?? null };
+    approval.value = result.approval ?? null;
     message.value = "";
   } catch (error) {
     if (current === generation) {
@@ -83,11 +86,11 @@ async function refresh() {
   finally { if (current === generation && active.value) schedule(); }
 }
 async function start() {
-  if (!props.enabled || !props.attempt || active.value || starting.value || savingNote.value) return;
+  if (!props.enabled || !props.attempt || active.value || currentRun.value?.status === "awaiting_approval" || starting.value || savingNote.value) return;
   const current = generation;
   const answer = props.attempt;
   if (!pendingStart || pendingStart.attempt_id !== answer.attempt_id) pendingStart = {
-    ...scope(), operation: "START_FEEDBACK", attempt_id: answer.attempt_id, request_key: randomUuid(),
+    ...scope(), operation: "START_FEEDBACK", attempt_id: answer.attempt_id, request_key: randomUuid(), approval_required: props.approvalRequired ?? false,
   };
   const command = pendingStart;
   starting.value = true; message.value = "";
@@ -169,11 +172,12 @@ async function showNotes(more = false) {
       </select>
     </label>
     <div class="feedback-actions">
-      <el-button v-if="enabled" :disabled="!attempt || Boolean(active) || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
+      <el-button v-if="enabled" :disabled="!attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
       <span v-if="!attempt">先保存作答，再结合课程证据获取建议。</span>
-      <span v-if="active" role="status">正在阅读证据并复核反馈…</span>
+      <span v-if="active" role="status">{{ currentRun?.status === 'awaiting_approval' ? '等待发布审批' : '正在阅读证据并复核反馈…' }}</span>
       <el-button v-if="active" @click="cancel">取消反馈</el-button>
     </div>
+    <StudyApprovalPanel v-if="currentRun?.status === 'awaiting_approval' && approval" :task-id="taskId" :session-id="sessionId" :run-id="currentRun.run_id" :approval="approval" @decided="refresh" />
     <p v-if="currentRun && ['failed', 'cancelled', 'budget_exceeded'].includes(currentRun.status)" role="status">{{ currentRun.status === 'cancelled' ? '反馈已取消。' : '本次未完成可靠反馈，可以重试。' }}已保存作答不受影响。</p>
     <article v-if="feedback">
       <h4>第 {{ feedback.answer_version }} 版作答的证据反馈</h4>
@@ -182,6 +186,7 @@ async function showNotes(more = false) {
       <p v-if="attempt && feedback.attempt_id !== attempt.attempt_id" role="status">你已保存新版作答，下面反馈仅对应旧版。</p>
       <details><summary>查看本次反馈对应的作答</summary><p>{{ feedback.answer_text }}</p></details>
       <p v-if="feedback.content.kind === 'insufficient_evidence'">{{ feedback.content.reason }}</p>
+      <p v-if="feedback.content.human_guidance">人工修改建议：{{ feedback.content.human_guidance }}</p>
       <div v-for="(item, index) in feedback.content.observations" :key="index" class="feedback-observation">
         <p>你的表述：“{{ item.learner_quote }}”</p><p>{{ item.observation }}</p><p>下一步：{{ item.next_step }}</p>
         <details :open="(item.evidence_ids?.length ?? 1) === 1">

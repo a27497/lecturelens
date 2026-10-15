@@ -1,0 +1,17 @@
+{
+  "all_required_artifacts_present": true,
+  "candidate_runtime_sources_unchanged": true,
+  "exact_collected_case_ids_match_junit_once": true,
+  "python_cases": 727,
+  "database_skips": 0,
+  "final_matrix": {
+    "n": 523,
+    "passed": 523
+  },
+  "approval_repeats": {
+    "n": 54,
+    "passed": 54
+  },
+  "original_evaluation_assets_not_modified": true,
+  "no_push_or_deployment": true
+}

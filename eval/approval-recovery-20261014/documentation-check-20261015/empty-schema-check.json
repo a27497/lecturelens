@@ -1,0 +1,15 @@
+{
+  "executed_at_utc": "2026-10-14T19:07:04.848330+00:00",
+  "command": [
+    "agent-service/.venv/bin/python",
+    "scripts/eval/check-study-approval-recovery.py",
+    "--trials",
+    "1",
+    "--output",
+    "eval/approval-recovery-20261014/documentation-check-20261015/empty-schema-must-not-be-created"
+  ],
+  "exit_code": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"/home/dev/projects/lecturelens/scripts/eval/check-study-approval-recovery.py\", line 159, in <module>\n    main()\n  File \"/home/dev/projects/lecturelens/scripts/eval/check-study-approval-recovery.py\", line 36, in main\n    raise ValueError(\nValueError: Evaluation schema missing: first run check-study-crash-matrix.py --smoke --trials 1 --output NEW_DIRECTORY on this test database\n",
+  "clear_prerequisite_error": true,
+  "output_directory_not_created": true
+}

@@ -8,6 +8,8 @@ import psycopg
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
+from .failures import failure_category
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS study_session (
     session_id text PRIMARY KEY, owner_id bigint NOT NULL, course_id text NOT NULL,
@@ -23,7 +25,7 @@ CREATE TABLE IF NOT EXISTS study_run (
     finished_at timestamptz, UNIQUE(session_id,request_key)
 );
 CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_run ON study_run(session_id)
-    WHERE status IN ('queued','running');
+    WHERE status IN ('queued','running','awaiting_approval');
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS model_config jsonb;
 CREATE TABLE IF NOT EXISTS study_event (
     run_id text NOT NULL REFERENCES study_run ON DELETE CASCADE, sequence bigint NOT NULL,
@@ -65,7 +67,28 @@ class StudyStore:
         self.model_resolver = model_resolver
 
     def connect(self, **kwargs):
+        from .connections import execution_connection
+
+        scope = execution_connection.get()
+        if scope is not None and scope[0] is self and not kwargs:
+            return scope[1].borrow()
+        # Explicit autocommit connections include the Session advisory lock;
+        # they must retain their dedicated connection and lifetime.
         return psycopg.connect(self.dsn, connect_timeout=5, row_factory=dict_row, **kwargs)
+
+    @contextmanager
+    def execution_connections(self):
+        from .connections import RunConnection, execution_connection
+
+        lease = RunConnection(
+            lambda: psycopg.connect(self.dsn, connect_timeout=5, row_factory=dict_row, autocommit=True)
+        )
+        context = execution_connection.set((self, lease))
+        try:
+            yield
+        finally:
+            execution_connection.reset(context)
+            lease.close()
 
     def initialize(self):
         from .attempts import SCHEMA as ATTEMPT_SCHEMA
@@ -76,6 +99,9 @@ class StudyStore:
             conn.execute(SCHEMA)
             conn.execute(ATTEMPT_SCHEMA)
             conn.execute(FEEDBACK_SCHEMA)
+            from .approval import SCHEMA as APPROVAL_SCHEMA
+
+            conn.execute(APPROVAL_SCHEMA)
 
     @staticmethod
     def _session(conn, command):
@@ -128,11 +154,15 @@ class StudyStore:
                     (command.session_id, command.request_key),
                 ).fetchone()
                 if prior:
-                    if prior["goal"] != command.goal or prior["task_kind"] != "practice":
+                    if (
+                        prior["goal"] != command.goal
+                        or prior["task_kind"] != "practice"
+                        or prior["approval_required"] != command.approval_required
+                    ):
                         raise StudyError("REQUEST_KEY_CONFLICT")
                     return self._view(conn, prior)
                 if conn.execute(
-                    "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running')",
+                    "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running','awaiting_approval')",
                     (command.session_id,),
                 ).fetchone():
                     raise StudyError("SESSION_BUSY")
@@ -141,8 +171,8 @@ class StudyStore:
                     self.model_resolver(command.owner_id) if mode == "real" and self.model_resolver else None
                 )
                 row = conn.execute(
-                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config)
-                    VALUES (%s,%s,%s,%s,%s,%s) RETURNING *""",
+                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
                     (
                         run_id,
                         command.session_id,
@@ -150,6 +180,7 @@ class StudyStore:
                         command.goal,
                         mode,
                         Jsonb(config) if config else None,
+                        command.approval_required,
                     ),
                 ).fetchone()
                 self._event(conn, run_id, "run_queued", {})
@@ -168,6 +199,12 @@ class StudyStore:
                 if command.operation == "READ" and command.run_id is None:
                     return {"run": None, "mode": mode}
                 raise StudyError("RUN_NOT_FOUND", 404)
+            if command.operation == "DECIDE_APPROVAL":
+                from .approval import decide
+
+                decide(self, conn, run, command)
+                run = conn.execute("SELECT * FROM study_run WHERE run_id=%s", (run["run_id"],)).fetchone()
+                return self._view(conn, run)
             if command.operation == "START_FEEDBACK":
                 from .feedback_store import start_feedback
 
@@ -196,7 +233,7 @@ class StudyStore:
             if command.operation == "EVENTS":
                 rows = conn.execute(
                     "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s "
-                    "AND event_type NOT IN ('node_started','node_finished','node_failed','evidence_started','evidence_finished','evidence_failed','replay_linked') "
+                    "AND event_type NOT IN ('node_started','node_finished','node_failed','evidence_started','evidence_finished','evidence_failed','replay_linked','read_attempt_reserved','read_attempt_succeeded') "
                     "ORDER BY sequence LIMIT 100",
                     (run["run_id"], command.after),
                 ).fetchall()
@@ -208,6 +245,7 @@ class StudyStore:
 
     @staticmethod
     def _view(conn, row):
+        from .approval import approval_view
         from .attempts import current_attempts
         from .feedback_store import enabled, feedback_runs, feedback_view
 
@@ -241,6 +279,7 @@ class StudyStore:
                     "created_at",
                     "finished_at",
                     "task_kind",
+                    "approval_required",
                 )
             }
             | {
@@ -249,6 +288,7 @@ class StudyStore:
                     for role, config in (row.get("model_config") or {}).items()
                 }
             },
+            "approval": approval_view(conn, row),
             "artifact": public,
             "attempts": current_attempts(conn, artifact["artifact_id"]) if artifact else [],
             "feedback_enabled": enabled(),
@@ -310,11 +350,11 @@ class StudyStore:
     def claim(self, run_id, token, seconds):
         with self.connect() as conn:
             row = conn.execute("SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (run_id,)).fetchone()
-            if not row or row["status"] in TERMINAL:
+            if not row or row["status"] in TERMINAL or row["status"] == "awaiting_approval":
                 raise RunStopped()
             conn.execute(
                 """UPDATE study_run SET status='running',worker_token=%s,
-                deadline=COALESCE(deadline,now()+(%s * interval '1 second')) WHERE run_id=%s""",
+                deadline=COALESCE(deadline,now()+(COALESCE(approval_seconds,%s) * interval '1 second')) WHERE run_id=%s""",
                 (token, seconds, run_id),
             )
             self._event(conn, run_id, "run_started" if row["status"] == "queued" else "run_resumed", {})
@@ -332,9 +372,28 @@ class StudyStore:
         with self.connect() as conn:
             return self._active(conn, run_id, token)
 
-    def reserve(self, run_id, token, kind, tokens=0):
+    def reserve(self, run_id, token, kind, tokens=0, *, key=None):
         with self.connect() as conn:
             row = self._active(conn, run_id, token)
+            if (
+                key
+                and conn.execute(
+                    "SELECT 1 FROM study_reservation WHERE run_id=%s AND kind=%s AND operation_key=%s",
+                    (run_id, kind, key),
+                ).fetchone()
+            ):
+                return
+            if (
+                key
+                and conn.execute(
+                    "SELECT 1 FROM study_event WHERE run_id=%s AND event_type='tool_started' "
+                    "AND payload->>'call_id'=%s",
+                    (run_id, key),
+                ).fetchone()
+            ):
+                # Legacy checkpoints already charged the logical tool before journal keys existed.
+                conn.execute("INSERT INTO study_reservation VALUES (%s,%s,%s)", (run_id, kind, key))
+                return
             if (
                 (kind == "model" and row["model_calls"] >= 6)
                 or (kind == "tool" and row["tool_calls"] >= 8)
@@ -347,11 +406,58 @@ class StudyStore:
                 (tokens, run_id),
             )
 
+            if key:
+                conn.execute("INSERT INTO study_reservation VALUES (%s,%s,%s)", (run_id, kind, key))
+
     def tool_result(self, run_id, call_id):
         with self.connect() as conn:
             return conn.execute(
                 "SELECT * FROM study_tool_result WHERE run_id=%s AND call_id=%s", (run_id, call_id)
             ).fetchone()
+
+    def reserve_read_attempt(self, run_id, token, key, metadata):
+        # The journal and retry charge commit together. Re-entering an unfinished
+        # checkpoint cannot reset the per-read cap or obtain a free retry.
+        with self.connect() as conn:
+            row = self._active(conn, run_id, token)
+            completed = conn.execute(
+                "SELECT COALESCE(max(sequence),0) AS sequence FROM study_event WHERE run_id=%s "
+                "AND event_type='read_attempt_succeeded' AND payload->>'operation_key'=%s",
+                (run_id, key),
+            ).fetchone()["sequence"]
+            count = conn.execute(
+                "SELECT count(*) AS n FROM study_event WHERE run_id=%s "
+                "AND event_type='read_attempt_reserved' AND payload->>'operation_key'=%s AND sequence>%s",
+                (run_id, key, completed),
+            ).fetchone()["n"]
+            failed = conn.execute(
+                "SELECT payload->>'error_code' AS code FROM study_event WHERE run_id=%s "
+                "AND event_type='tool_read_failed' AND payload->>'operation_key'=%s AND sequence>%s "
+                "ORDER BY sequence DESC LIMIT 1",
+                (run_id, key, completed),
+            ).fetchone()
+            # Successful reads can be freshly authorized on replay. A reservation
+            # precedes even that fresh call, fencing crashes before failure logging.
+            code = (failed or {}).get("code") or ("READ_CHECKPOINT_REPLAY" if count else None)
+            if count >= 3:
+                raise StudyError(code or "READ_RETRY_EXHAUSTED", 503)
+            if count:
+                if row["tool_calls"] >= 8:
+                    raise BudgetExceeded()
+                conn.execute("UPDATE study_run SET tool_calls=tool_calls+1 WHERE run_id=%s", (run_id,))
+            payload = {
+                **metadata,
+                "operation_key": key,
+                "attempt": count + 1,
+                "reservation_id": str(uuid.uuid4()),
+            }
+            if code:
+                payload["error_code"] = code
+                payload["failure_category"] = failure_category(code)
+            self._event(conn, run_id, "read_attempt_reserved", payload)
+            if count:
+                self._event(conn, run_id, "tool_retry_started", payload)
+            return count + 1, code
 
     def event(self, run_id, token, name, payload):
         with self.connect() as conn:
@@ -381,6 +487,11 @@ class StudyStore:
                         "source": result["quality"].get("source", "model_review"),
                     },
                 )
+            if run["approval_required"] and (artifact is not None or feedback is not None):
+                from .approval import stage
+
+                result = stage(self, conn, run, call_id, result, artifact, feedback)
+                artifact = feedback = None
             if artifact:
                 artifact_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{run_id}:{call_id}"))
                 conn.execute(
@@ -410,7 +521,16 @@ class StudyStore:
             "UPDATE study_run SET status=%s,error_code=%s,finished_at=now() WHERE run_id=%s",
             (status, error, run_id),
         )
-        cls._event(conn, run_id, "run_finished", {"status": status, "error_code": error})
+        cls._event(
+            conn,
+            run_id,
+            "run_finished",
+            {
+                "status": status,
+                "error_code": error,
+                "failure_category": failure_category(error) if error else None,
+            },
+        )
 
     def finish(self, run_id, token, status, error=None):
         with self.connect() as conn:

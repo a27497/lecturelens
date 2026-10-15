@@ -2,9 +2,10 @@ import { authHeader } from "./authToken";
 import { http } from "./http";
 import type { ApiResponse } from "../types/task";
 
-export type RunStatus = "queued" | "running" | "succeeded" | "failed" | "cancelled" | "budget_exceeded";
+export type RunStatus = "queued" | "running" | "awaiting_approval" | "succeeded" | "failed" | "cancelled" | "budget_exceeded";
 export interface StudyRun {
   run_id: string; session_id: string; goal: string; request_key?: string; status: RunStatus;
+  approval_required?: boolean;
   model_mode: "real" | "mock"; model_calls: number; tool_calls: number; error_code: string | null;
   model_selection?: Record<string, { name: string; model: string; version: number }>;
 }
@@ -12,9 +13,16 @@ export interface Citation { evidence_id: string; text: string; start_ms: number;
 export interface PracticeQuestion { question: string; evidence_ids: string[]; answer?: string; rubric?: string }
 export interface StudyArtifact {
   kind?: "practice" | "insufficient_evidence"; artifact_id: string; title: string; explanation: string; evidence_ids: string[];
+  human_edited?: boolean; edited_by?: number;
   questions: PracticeQuestion[]; citations: Citation[]; revision: number; mode: string;
 }
+export interface StudyApproval {
+  kind: "practice" | "feedback"; decision: "approve" | "edit" | "reject" | null;
+  preview?: { explanation?: string; title?: string; reason?: string; questions?: PracticeQuestion[];
+    observations?: { observation: string; next_step?: string }[] };
+}
 export interface StudyResponse {
+  approval?: StudyApproval | null;
   session_id?: string; mode?: string; events?: StudyEvent[];
   sessions?: { session_id: string; revision: number; created_at?: string }[];
   runs?: { run_id: string; goal: string; status: RunStatus; created_at: string }[];
@@ -32,7 +40,7 @@ export interface FeedbackNote {
 }
 export interface StudyFeedback {
   feedback_id: string; attempt_id: string; answer_version: number; question_index: number; answer_text: string;
-  content: { kind: "guidance" | "insufficient_evidence"; reason?: string; mode: string; citations: Citation[];
+  content: { kind: "guidance" | "insufficient_evidence"; reason?: string; human_guidance?: string; human_edited?: boolean; mode: string; citations: Citation[];
     observations?: { learner_quote: string; observation: string; next_step: string; action?: "revise" | "retain" | "clarify"; evidence_id: string; evidence_ids?: string[]; anchor_evidence_ids?: string[]; evidence_quote: string }[] };
   note: FeedbackNote | null;
 }
@@ -42,6 +50,7 @@ export interface StudyFeedbackRun {
 }
 export interface StudyEvent { sequence: number; event_type: string; payload: { [key: string]: unknown; tool?: string; status?: RunStatus; error_code?: string; accepted?: boolean } }
 export interface StudyCommand {
+  approval_required?: boolean; approval_decision?: "approve" | "edit" | "reject"; approval_edit?: string;
   operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
   attempt_id?: string; feedback_id?: string; note_text?: string; disposition?: "disputed" | "acknowledged";

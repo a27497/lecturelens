@@ -1,0 +1,23 @@
+{
+  "n": 1,
+  "passed": 1,
+  "case": "real Java deletion while Agent SIGKILLed at approval wait, restart and tombstone cleanup",
+  "read_http_status": 404,
+  "late_approval_http_status": 404,
+  "remaining": {
+    "study_run": 0,
+    "study_event": 0,
+    "study_artifact": 0,
+    "study_feedback": 0,
+    "study_approval": 0,
+    "study_model_call": 0,
+    "study_reservation": 0,
+    "study_session": 0,
+    "checkpoints": 0,
+    "checkpoint_writes": 0,
+    "checkpoint_blobs": 0
+  },
+  "index_state": "DELETED",
+  "cleanup_ms": 7296.182,
+  "source": "synthetic isolated local Java/MySQL/Agent/PostgreSQL; HTTP has no mocks"
+}

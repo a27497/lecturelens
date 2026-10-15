@@ -1,0 +1,7 @@
+{
+  "phase": "development",
+  "failed_check": "feedback gate after browser reload",
+  "cause": "Frontend did not restore the persisted approval_required choice after reload; feedback START defaulted to false",
+  "fix": "Restore the Run's frozen approval_required field in CourseAgentPanel.refresh",
+  "not_counted_as_final_acceptance": true
+}

@@ -1,0 +1,19 @@
+{
+  "stopped_local_services": [
+    "java",
+    "agent",
+    "frontend"
+  ],
+  "removed_ephemeral_test_containers": [
+    "lecturelens-approval-tests-0-20261014",
+    "lecturelens-approval-tests-1-20261014",
+    "lecturelens-approval-tests-2-20261014",
+    "lecturelens-approval-tests-3-20261014"
+  ],
+  "retained_for_review": [
+    "lecturelens-approval-pg-20261014:16618",
+    "lecturelens-approval-browser-pg-20261014:16620"
+  ],
+  "prior_metrics_demo_15508_untouched": true,
+  "no_production_service_or_configuration_changed": true
+}

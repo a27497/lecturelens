@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.courselingo.qa.StudyControllerTest" time="1.705" tests="4" errors="0" skipped="0" failures="0" flakes="0"><testcase name="attemptsForwardRealTextWithServerScopeAndRejectBlankOrUnscopedWrites" classname="com.example.courselingo.qa.StudyControllerTest" time="1.646">
+    <system-err>Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/home/dev/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</system-err>
+  </testcase>
+  <testcase name="feedbackUsesAuthenticatedScopeAndNotesDoNotRequireAReadyIndex" classname="com.example.courselingo.qa.StudyControllerTest" time="0.011" />
+  <testcase name="publicRequestsUseServerOwnedScopeAndRecheckAfterTransport" classname="com.example.courselingo.qa.StudyControllerTest" time="0.007" />
+  <testcase name="approvalRequiresOwnedReadyCourseAndExplicitDecisionScope" classname="com.example.courselingo.qa.StudyControllerTest" time="0.01" />
+</testsuite>

@@ -36,7 +36,7 @@ async function load() {
 // Project only the existing public event fields. Private model prompts and
 // checkpoint contents remain in the Phase B operator CLI.
 function details(event: StudyEvent) {
-  const fields = ["tool", "call_id", "purpose", "attempt", "duration_ms", "prompt_tokens", "completion_tokens", "input_tokens", "output_tokens", "accepted", "status", "error_code"];
+  const fields = ["tool", "call_id", "purpose", "attempt", "duration_ms", "prompt_tokens", "completion_tokens", "input_tokens", "output_tokens", "accepted", "status", "error_code", "failure_category", "decision", "actor_id", "edited", "policy"];
   return fields.filter(key => event.payload[key] !== undefined).map(key => `${key}: ${String(event.payload[key])}`).join(" · ");
 }
 </script>

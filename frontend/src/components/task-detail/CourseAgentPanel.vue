@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
 import { studyCommand, studyEvents, studyStatus } from "../../api/study";
 import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun } from "../../api/study";
+import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
@@ -30,6 +31,8 @@ const revealing = ref(false);
 const attempts = ref<StudyAttempt[]>([]);
 const sessions = ref<NonNullable<StudyResponse['sessions']>>([]);
 const recentRuns = ref<NonNullable<StudyResponse['runs']>>([]);
+const approvalRequired = ref(false);
+const approval = ref<StudyResponse["approval"]>(null);
 const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
 const preparing = computed(() => Boolean(props.status && props.status !== "SUCCEEDED"));
@@ -40,9 +43,9 @@ let requestKey = "";
 let requestGoal = "";
 let sessionKey = "";
 let cursor = 0;
-const active = computed(() => run.value !== null && ["queued", "running"].includes(run.value.status));
+const active = computed(() => run.value !== null && ["queued", "running", "awaiting_approval"].includes(run.value.status));
 const canStart = computed(() => enabled.value && ready.value && !active.value && !submitting.value && goal.value.trim().length > 0);
-const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
+const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ awaiting_approval: "等待发布审批", queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
 const toolText: Record<string, string> = { search_course_evidence: "查找课程证据", read_evidence_window: "补读片段上下文", check_python_example: "核算例题", create_practice_set: "生成解释与练习", create_python_practice: "生成代码练习", create_interval_practice: "生成区间练习", create_sequence_practice: "生成排序步骤练习", report_insufficient_evidence: "确认课程证据不足" };
 
 watch(() => [props.taskId, props.status], () => { void load(); }, { immediate: true });
@@ -92,6 +95,8 @@ async function refresh(current: number, task: string, expectedKey?: string, sele
   const response = await studyCommand(task, { operation: "READ", session_id: sessionId.value, ...(id ? { run_id: id } : {}) });
   if (current !== version || (expectedKey && response.run?.request_key !== expectedKey)) return;
   run.value = response.run ?? null; artifact.value = response.artifact ?? null;
+  approvalRequired.value = response.run?.approval_required ?? approvalRequired.value;
+  approval.value = response.approval ?? null;
   attempts.value = response.attempts ?? [];
   feedbackEnabled.value = response.feedback_enabled ?? false;
   feedbackRuns.value = response.feedback_runs ?? [];
@@ -110,10 +115,11 @@ async function start() {
       if (current !== version) return;
       sessionId.value = response.session_id!;
     }
-    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text });
+    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value });
     if (current !== version) return;
     run.value = response.run ?? null; artifact.value = response.artifact ?? null;
-    attempts.value = response.attempts ?? [];
+    approval.value = response.approval ?? null;
+  attempts.value = response.attempts ?? [];
     feedbackEnabled.value = response.feedback_enabled ?? false;
     feedbackRuns.value = response.feedback_runs ?? [];
     requestKey = "";
@@ -130,6 +136,7 @@ async function start() {
 }
 
 function connect(current: number, task: string) {
+  if (run.value?.status === "awaiting_approval") return;
   controller?.abort();
   const connection = new AbortController(); controller = connection;
   const session = sessionId.value; const id = run.value!.run_id;
@@ -138,7 +145,7 @@ function connect(current: number, task: string) {
     cursor = Math.max(cursor, event.sequence);
     if (!events.value.some(e => e.sequence === event.sequence)) events.value.push(event);
     if (event.event_type === "run_started" || event.event_type === "run_resumed") run.value!.status = "running";
-    if (event.event_type === "run_finished") void refresh(current, task);
+    if (["run_finished", "approval_waiting"].includes(event.event_type)) void refresh(current, task);
   }).catch(failure => {
     if (current === version && !connection.signal.aborted) error.value = failure instanceof Error ? failure.message : "正在重新连接…";
   }).finally(async () => {
@@ -185,6 +192,8 @@ async function reveal() {
       <p v-if="run?.model_mode === 'mock'" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
       <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
+      <label><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active)" />发布前由我审批</label>
+      <StudyApprovalPanel v-if="run?.status === 'awaiting_approval' && approval" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :approval="approval" @decided="async () => { await refresh(version, taskId); if (active) connect(version, taskId); }" />
       <div class="actions">
         <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">解释并出题</el-button>
         <el-button v-if="active" :disabled="submitting" @click="cancel">取消本次执行</el-button>
@@ -216,7 +225,8 @@ async function reveal() {
         <p v-else-if="run.status === 'failed'">本次没有完成学习产物，可开启新会话重试。</p>
       </div>
       <article v-if="artifact" class="study-artifact">
-        <h3>{{ artifact.title }}</h3><p class="explanation">{{ artifact.explanation }}</p>
+        <h3>{{ artifact.title }}</h3><p v-if="artifact.human_edited">说明经课程所有者人工修改。</p>
+        <p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
             <el-button text @click="$emit('seek', citation.start_ms)">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
@@ -227,7 +237,7 @@ async function reveal() {
         <div v-for="(question, index) in artifact.questions" :key="index" class="practice-question">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
           <PracticeAnswerForm v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
-          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :enabled="feedbackEnabled" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @seek="$emit('seek', $event)" />
+          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :enabled="feedbackEnabled" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @seek="$emit('seek', $event)" />
           <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>

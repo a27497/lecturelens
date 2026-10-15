@@ -1,0 +1,43 @@
+{
+  "ruff_check": {
+    "command": [
+      "agent-service/.venv/bin/ruff",
+      "check",
+      "agent-service",
+      "scripts/eval/check-study-approval-recovery.py",
+      "scripts/eval/check-study-crash-matrix.py",
+      "eval/approval-recovery-20261014/verify.py"
+    ],
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  "ruff_format": {
+    "command": [
+      "agent-service/.venv/bin/ruff",
+      "format",
+      "--check",
+      "agent-service",
+      "scripts/eval/check-study-approval-recovery.py",
+      "scripts/eval/check-study-crash-matrix.py",
+      "eval/approval-recovery-20261014/verify.py"
+    ],
+    "exit_code": 0,
+    "stdout": "92 files already formatted\n",
+    "stderr": ""
+  },
+  "repeat_recompute_identical": true,
+  "approval_tests": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_database": {
+    "isolated_instance": "lecturelens-approval-doc-tests-20261015",
+    "database": "lecturelens_agent_test",
+    "skip_count": 0
+  },
+  "evaluated_at_utc": "2026-10-14T19:07:05.153570+00:00",
+  "evaluator_sha256": "ec3be5ee299a8fe8dbf7f510d5b38852f1682c84b56799cb71abfa60a86ff411"
+}

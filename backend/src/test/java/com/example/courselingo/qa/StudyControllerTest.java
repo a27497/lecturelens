@@ -11,6 +11,40 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class StudyControllerTest {
+    @Test void approvalRequiresOwnedReadyCourseAndExplicitDecisionScope() {
+        var users=mock(CurrentUserService.class);
+        var current=mock(CurrentUserResponse.class);
+        when(current.userId()).thenReturn(42L);
+        when(users.currentUser("Bearer owner")).thenReturn(current);
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);
+        when(authority.current("course",42L,true)).thenReturn(7L);
+        when(authority.current("course",42L,false)).thenReturn(7L);
+        var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var edit=new StudyController.Command("DECIDE_APPROVAL","session","run","key",null,0,
+            null,null,null,null,null,null,null,null,null,null,"edit","Human explanation");
+        controller.command("course","Bearer owner",edit);
+        var captured=org.mockito.ArgumentCaptor.forClass(Map.class);
+        verify(transport).command(captured.capture());
+        assertThat(captured.getValue()).containsEntry("owner_id",42L).containsEntry("revision",7L)
+            .containsEntry("approval_decision","edit").containsEntry("approval_edit","Human explanation");
+        verify(authority).current("course",42L,true);
+        verify(authority).current("course",42L,false);
+        clearInvocations(transport);
+        var invalid=new StudyController.Command("DECIDE_APPROVAL","session","run","key",null,0,
+            null,null,null,null,null,null,null,null,null,null,"edit",null);
+        assertThatThrownBy(()->controller.command("course","Bearer owner",invalid))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        verifyNoInteractions(transport);
+        when(authority.current("course",42L,true)).thenThrow(new com.example.courselingo.common.exception.BusinessException(
+            com.example.courselingo.common.error.ErrorCode.TASK_NOT_FOUND));
+        assertThatThrownBy(()->controller.command("course","Bearer owner",edit))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        verifyNoInteractions(transport);
+    }
+
     @Test void feedbackUsesAuthenticatedScopeAndNotesDoNotRequireAReadyIndex() {
         var users=mock(CurrentUserService.class);
         var current=mock(CurrentUserResponse.class);
