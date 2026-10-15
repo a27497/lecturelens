@@ -1,0 +1,165 @@
+# Study Agent 持久记录指标
+
+输入 1260 Run；选中 1260 Run。
+
+以下均为执行指标，不认证内容质量。金额无持久化记录，标为不可得。
+
+|来源 / 标签 / 场景|N|成功 / 拒答 / 失败 / 取消 / 预算 / 其他|UTC 范围|持久化端到端 P50/P95 ms (N)|执行计时 P50/P95 ms (N)|模型调用总数 (Run N)|完整 token (Run N)|
+|---|---:|---|---|---|---|---|---|
+|baseline.jsonl / baseline-final-56bc07a / check_unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T06:55:45.226292+00:00 → 2026-10-14T06:57:31.868376+00:00|1121.687/1236.014 (20)|1107.129/1219.857 (20)|0 (20)|0 (20)|
+|baseline.jsonl / baseline-final-56bc07a / healthy|20|20/0/0/0/0/0|2026-10-14T06:55:32.707808+00:00 → 2026-10-14T06:57:19.915733+00:00|1885.370/2648.419 (20)|1868.372/2632.698 (20)|80 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / illegal_call_shape|20|0/0/20/0/0/0|2026-10-14T06:55:55.403170+00:00 → 2026-10-14T06:57:42.501938+00:00|350.560/375.242 (20)|330.033/360.176 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / integer_overflow|20|20/0/0/0/0/0|2026-10-14T06:55:53.039942+00:00 → 2026-10-14T06:57:41.575015+00:00|1865.984/2055.327 (20)|1850.073/2041.006 (20)|80 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / malformed_response|20|0/0/20/0/0/0|2026-10-14T06:55:46.307240+00:00 → 2026-10-14T06:57:33.696879+00:00|1538.628/1826.280 (20)|1523.682/1817.950 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / negative_parameter|20|20/0/0/0/0/0|2026-10-14T06:55:47.939309+00:00 → 2026-10-14T06:57:36.700049+00:00|2661.609/2996.761 (20)|2650.424/2968.533 (20)|80 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / oversized_parameter|20|0/0/20/0/0/0|2026-10-14T06:55:52.636002+00:00 → 2026-10-14T06:57:39.434974+00:00|346.825/406.223 (20)|322.572/391.902 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / protocol_once|20|20/0/0/0/0/0|2026-10-14T06:55:55.840901+00:00 → 2026-10-14T06:57:44.749961+00:00|2165.361/2458.714 (20)|2148.973/2442.365 (20)|100 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / protocol_persistent|20|0/0/20/0/0/0|2026-10-14T06:55:58.010461+00:00 → 2026-10-14T06:57:45.396994+00:00|622.126/677.516 (20)|605.221/660.662 (20)|40 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / reversed_window|20|20/0/0/0/0/0|2026-10-14T06:55:50.607711+00:00 → 2026-10-14T06:57:38.954122+00:00|1919.008/2098.848 (20)|1904.812/2082.366 (20)|80 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / timeout_once|20|0/0/20/0/0/0|2026-10-14T06:55:35.446675+00:00 → 2026-10-14T06:57:22.965528+00:00|2811.685/2951.310 (20)|2799.875/2939.039 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / timeout_persistent|20|0/0/20/0/0/0|2026-10-14T06:55:38.332342+00:00 → 2026-10-14T06:57:26.863215+00:00|3587.633/3726.862 (20)|3569.635/3711.423 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / unavailable_once|20|0/0/20/0/0/0|2026-10-14T06:55:41.982622+00:00 → 2026-10-14T06:57:28.775904+00:00|1557.921/1795.720 (20)|1542.317/1777.196 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T06:55:43.691114+00:00 → 2026-10-14T06:57:30.522421+00:00|1573.578/1828.611 (20)|1553.695/1814.502 (20)|20 (20)|不可得 (0)|
+|baseline.jsonl / baseline-final-56bc07a / unknown_tool|20|0/0/20/0/0/0|2026-10-14T06:55:54.948607+00:00 → 2026-10-14T06:57:42.061239+00:00|371.211/425.803 (20)|354.865/391.962 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / check_unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T06:59:38.870051+00:00 → 2026-10-14T07:03:17.858337+00:00|3869.757/4742.882 (20)|3850.399/4713.305 (20)|0 (20)|0 (20)|
+|candidate.jsonl / candidate-final / healthy|20|20/0/0/0/0/0|2026-10-14T06:59:08.263198+00:00 → 2026-10-14T07:02:41.917133+00:00|4560.257/5420.212 (20)|4538.540/5364.307 (20)|80 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / illegal_call_shape|20|0/0/20/0/0/0|2026-10-14T06:59:48.791007+00:00 → 2026-10-14T07:03:26.310472+00:00|733.860/929.015 (20)|719.841/902.564 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / integer_overflow|20|0/0/20/0/0/0|2026-10-14T06:59:47.430986+00:00 → 2026-10-14T07:03:24.522603+00:00|709.008/1063.790 (20)|687.776/1041.047 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / malformed_response|20|0/0/20/0/0/0|2026-10-14T06:59:42.342297+00:00 → 2026-10-14T07:03:20.209942+00:00|2171.968/2815.073 (20)|2141.192/2771.669 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / negative_parameter|20|0/0/20/0/0/0|2026-10-14T06:59:44.406814+00:00 → 2026-10-14T07:03:21.981804+00:00|1591.085/2003.085 (20)|1575.871/1984.186 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / oversized_parameter|20|0/0/20/0/0/0|2026-10-14T06:59:46.630335+00:00 → 2026-10-14T07:03:23.673205+00:00|742.522/999.773 (20)|733.867/984.261 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / protocol_once|20|20/0/0/0/0/0|2026-10-14T06:59:49.575678+00:00 → 2026-10-14T07:03:30.950305+00:00|4540.833/6301.669 (20)|4521.216/6270.922 (20)|100 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / protocol_persistent|20|0/0/20/0/0/0|2026-10-14T06:59:53.700593+00:00 → 2026-10-14T07:03:32.140141+00:00|1186.649/1917.170 (20)|1171.119/1879.867 (20)|40 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / reversed_window|20|0/0/20/0/0/0|2026-10-14T06:59:45.887688+00:00 → 2026-10-14T07:03:22.805981+00:00|710.549/1001.904 (20)|690.241/984.347 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / timeout_once|20|20/0/0/0/0/0|2026-10-14T06:59:12.917514+00:00 → 2026-10-14T07:02:50.830854+00:00|6760.070/8787.706 (20)|6740.994/8766.127 (20)|80 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / timeout_persistent|20|0/0/20/0/0/0|2026-10-14T06:59:19.714288+00:00 → 2026-10-14T07:03:01.552200+00:00|9832.104/10685.498 (20)|9818.648/10669.172 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / unavailable_once|20|20/0/0/0/0/0|2026-10-14T06:59:29.430729+00:00 → 2026-10-14T07:03:09.673210+00:00|7387.399/7995.254 (20)|7354.556/7973.902 (20)|80 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T06:59:35.176597+00:00 → 2026-10-14T07:03:13.886944+00:00|4097.384/5045.404 (20)|4079.797/5018.490 (20)|20 (20)|不可得 (0)|
+|candidate.jsonl / candidate-final / unknown_tool|20|0/0/20/0/0/0|2026-10-14T06:59:48.101902+00:00 → 2026-10-14T07:03:25.386992+00:00|720.869/945.283 (20)|707.969/919.426 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / check_unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T07:56:47.014813+00:00 → 2026-10-14T08:03:15.683672+00:00|804.395/893.454 (20)|793.222/881.918 (20)|0 (20)|0 (20)|
+|faults-baseline.jsonl / faults-baseline / healthy|20|20/0/0/0/0/0|2026-10-14T07:56:36.229189+00:00 → 2026-10-14T08:03:06.280814+00:00|1401.597/1596.489 (20)|1389.841/1583.617 (20)|80 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / illegal_call_shape|20|0/0/20/0/0/0|2026-10-14T07:56:55.122880+00:00 → 2026-10-14T08:03:22.978262+00:00|253.807/266.973 (20)|244.088/254.830 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / integer_overflow|20|20/0/0/0/0/0|2026-10-14T07:56:53.221817+00:00 → 2026-10-14T08:03:22.298598+00:00|1393.878/1450.842 (20)|1380.723/1440.389 (20)|80 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / malformed_response|20|0/0/20/0/0/0|2026-10-14T07:56:48.027321+00:00 → 2026-10-14T08:03:16.888015+00:00|1143.510/1218.144 (20)|1131.859/1203.856 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / negative_parameter|20|20/0/0/0/0/0|2026-10-14T07:56:49.319113+00:00 → 2026-10-14T08:03:19.023812+00:00|2005.046/2127.856 (20)|1993.862/2116.977 (20)|80 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / oversized_parameter|20|0/0/20/0/0/0|2026-10-14T07:56:52.896950+00:00 → 2026-10-14T08:03:20.803420+00:00|254.935/273.599 (20)|241.828/257.422 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / protocol_once|20|20/0/0/0/0/0|2026-10-14T07:56:55.446866+00:00 → 2026-10-14T08:03:24.666667+00:00|1606.186/1647.019 (20)|1590.522/1635.593 (20)|100 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / protocol_persistent|20|0/0/20/0/0/0|2026-10-14T07:56:57.117136+00:00 → 2026-10-14T08:03:25.252161+00:00|481.329/510.756 (20)|469.055/499.514 (20)|40 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / reversed_window|20|20/0/0/0/0/0|2026-10-14T07:56:51.422586+00:00 → 2026-10-14T08:03:20.472061+00:00|1394.298/1424.775 (20)|1383.587/1413.658 (20)|80 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / timeout_once|20|0/0/20/0/0/0|2026-10-14T07:56:38.384517+00:00 → 2026-10-14T08:03:08.990001+00:00|2643.801/2675.715 (20)|2632.691/2664.166 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / timeout_persistent|20|0/0/20/0/0/0|2026-10-14T07:56:41.091453+00:00 → 2026-10-14T08:03:12.298930+00:00|3255.256/3330.006 (20)|3243.368/3317.674 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / unavailable_once|20|0/0/20/0/0/0|2026-10-14T07:56:44.454431+00:00 → 2026-10-14T08:03:13.574965+00:00|1150.259/1201.897 (20)|1134.478/1191.133 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T07:56:45.654922+00:00 → 2026-10-14T08:03:14.839196+00:00|1146.756/1193.620 (20)|1137.616/1183.355 (20)|20 (20)|不可得 (0)|
+|faults-baseline.jsonl / faults-baseline / unknown_tool|20|0/0/20/0/0/0|2026-10-14T07:56:54.785288+00:00 → 2026-10-14T08:03:22.656302+00:00|270.211/288.538 (20)|259.088/277.813 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / check_unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T08:03:45.787651+00:00 → 2026-10-14T08:11:52.619894+00:00|2550.121/2626.699 (20)|2536.281/2612.728 (20)|0 (20)|0 (20)|
+|faults-candidate.jsonl / faults-candidate / healthy|20|20/0/0/0/0/0|2026-10-14T08:03:27.201806+00:00 → 2026-10-14T08:11:32.720682+00:00|869.990/967.148 (20)|855.390/954.089 (20)|80 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / illegal_call_shape|20|0/0/20/0/0/0|2026-10-14T08:03:51.455387+00:00 → 2026-10-14T08:11:56.016370+00:00|207.489/236.761 (20)|193.334/224.315 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / integer_overflow|20|0/0/20/0/0/0|2026-10-14T08:03:50.938293+00:00 → 2026-10-14T08:11:55.458323+00:00|188.804/219.970 (20)|175.562/204.349 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / malformed_response|20|0/0/20/0/0/0|2026-10-14T08:03:48.469461+00:00 → 2026-10-14T08:11:53.745769+00:00|1040.553/1094.575 (20)|1026.479/1076.394 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / negative_parameter|20|0/0/20/0/0/0|2026-10-14T08:03:49.522892+00:00 → 2026-10-14T08:11:54.634036+00:00|815.181/852.179 (20)|799.516/837.650 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / oversized_parameter|20|0/0/20/0/0/0|2026-10-14T08:03:50.673362+00:00 → 2026-10-14T08:11:55.194831+00:00|203.760/223.786 (20)|187.913/208.258 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / protocol_once|20|20/0/0/0/0/0|2026-10-14T08:03:51.728077+00:00 → 2026-10-14T08:11:57.052878+00:00|985.700/1041.264 (20)|970.925/1027.126 (20)|100 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / protocol_persistent|20|0/0/20/0/0/0|2026-10-14T08:03:52.774815+00:00 → 2026-10-14T08:11:57.484434+00:00|336.952/352.395 (20)|322.859/338.448 (20)|40 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / reversed_window|20|0/0/20/0/0/0|2026-10-14T08:03:50.414702+00:00 → 2026-10-14T08:11:54.908774+00:00|196.375/215.693 (20)|181.873/202.278 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / timeout_once|20|20/0/0/0/0/0|2026-10-14T08:03:28.782488+00:00 → 2026-10-14T08:11:36.662081+00:00|3819.744/3878.274 (20)|3805.370/3866.605 (20)|80 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / timeout_persistent|20|0/0/20/0/0/0|2026-10-14T08:03:32.672488+00:00 → 2026-10-14T08:11:45.247357+00:00|8472.584/8511.888 (20)|8457.979/8497.141 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / unavailable_once|20|20/0/0/0/0/0|2026-10-14T08:03:41.202760+00:00 → 2026-10-14T08:11:47.678651+00:00|2346.432/2393.579 (20)|2329.839/2378.932 (20)|80 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / unavailable_persistent|20|0/0/20/0/0/0|2026-10-14T08:03:43.573139+00:00 → 2026-10-14T08:11:49.936334+00:00|2159.210/2220.477 (20)|2144.440/2207.489 (20)|20 (20)|不可得 (0)|
+|faults-candidate.jsonl / faults-candidate / unknown_tool|20|0/0/20/0/0/0|2026-10-14T08:03:51.203346+00:00 → 2026-10-14T08:11:55.736023+00:00|192.820/213.562 (20)|178.162/199.885 (20)|20 (20)|不可得 (0)|
+|healthy-baseline.jsonl / healthy-baseline / healthy|20|20/0/0/0/0/0|2026-10-14T07:53:17.874042+00:00 → 2026-10-14T07:53:50.525333+00:00|1528.927/1609.390 (20)|1514.622/1591.813 (20)|80 (20)|不可得 (0)|
+|healthy-before.jsonl / healthy-before / healthy|20|20/0/0/0/0/0|2026-10-14T07:53:52.503484+00:00 → 2026-10-14T07:54:49.273730+00:00|2677.884/3269.230 (20)|2668.664/3257.275 (20)|80 (20)|不可得 (0)|
+|healthy-candidate.jsonl / healthy-candidate / healthy|20|20/0/0/0/0/0|2026-10-14T07:54:51.244019+00:00 → 2026-10-14T07:55:11.204459+00:00|886.935/956.287 (20)|871.212/941.159 (20)|80 (20)|不可得 (0)|
+
+工具请求与执行口径（S/F/R/U = 成功/失败/拒绝/未知；百分比顺序为成功/失败/拒绝，分母不含未知）：
+
+|来源 / 标签 / 场景|请求 N，S/F/R/U|请求比率 %|执行 N，S/F/R/U|执行比率 %|
+|---|---|---|---|---|
+|baseline.jsonl / baseline-final-56bc07a / check_unavailable_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|baseline.jsonl / baseline-final-56bc07a / illegal_call_shape|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / integer_overflow|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|baseline.jsonl / baseline-final-56bc07a / malformed_response|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / negative_parameter|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|baseline.jsonl / baseline-final-56bc07a / oversized_parameter|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / protocol_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|baseline.jsonl / baseline-final-56bc07a / protocol_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / reversed_window|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|baseline.jsonl / baseline-final-56bc07a / timeout_once|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / timeout_persistent|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / unavailable_once|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / unavailable_persistent|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|baseline.jsonl / baseline-final-56bc07a / unknown_tool|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / check_unavailable_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|candidate.jsonl / candidate-final / illegal_call_shape|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / integer_overflow|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / malformed_response|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|candidate.jsonl / candidate-final / negative_parameter|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / oversized_parameter|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / protocol_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|candidate.jsonl / candidate-final / protocol_persistent|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / reversed_window|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|candidate.jsonl / candidate-final / timeout_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|candidate.jsonl / candidate-final / timeout_persistent|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|candidate.jsonl / candidate-final / unavailable_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|candidate.jsonl / candidate-final / unavailable_persistent|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|candidate.jsonl / candidate-final / unknown_tool|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / check_unavailable_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-baseline.jsonl / faults-baseline / illegal_call_shape|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / integer_overflow|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-baseline.jsonl / faults-baseline / malformed_response|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / negative_parameter|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-baseline.jsonl / faults-baseline / oversized_parameter|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / protocol_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-baseline.jsonl / faults-baseline / protocol_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / reversed_window|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-baseline.jsonl / faults-baseline / timeout_once|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / timeout_persistent|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / unavailable_once|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / unavailable_persistent|20，0/0/0/20|不可得/不可得/不可得|20，0/0/0/20|不可得/不可得/不可得|
+|faults-baseline.jsonl / faults-baseline / unknown_tool|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / check_unavailable_persistent|0，0/0/0/0|不可得/不可得/不可得|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-candidate.jsonl / faults-candidate / illegal_call_shape|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / integer_overflow|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / malformed_response|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|faults-candidate.jsonl / faults-candidate / negative_parameter|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / oversized_parameter|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / protocol_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-candidate.jsonl / faults-candidate / protocol_persistent|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / reversed_window|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|faults-candidate.jsonl / faults-candidate / timeout_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-candidate.jsonl / faults-candidate / timeout_persistent|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|faults-candidate.jsonl / faults-candidate / unavailable_once|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|faults-candidate.jsonl / faults-candidate / unavailable_persistent|20，0/20/0/0|0.00/100.00/0.00|20，0/20/0/0|0.00/100.00/0.00|
+|faults-candidate.jsonl / faults-candidate / unknown_tool|20，0/0/20/0|0.00/0.00/100.00|0，0/0/0/0|不可得/不可得/不可得|
+|healthy-baseline.jsonl / healthy-baseline / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|healthy-before.jsonl / healthy-before / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+|healthy-candidate.jsonl / healthy-candidate / healthy|60，60/0/0/0|100.00/0.00/0.00|60，60/0/0/0|100.00/0.00/0.00|
+
+完整的每 Run 用量、每工具成功率/失败类别、每节点 P50/P95、各指标样本与时间范围见 report.json。
+
+- 运行成功不等于教学质量通过；故障注入与 mock 只验证机制。各来源/实现/模型/场景分别统计，不合并宣传。
+- 端到端=持久化 created_at→finished_at，含排队/恢复；evaluation_execute_ms 是评测执行计时，两者不混用。
+- 工具请求=requested_tools，含执行前 tool_rejected；执行口径=executed_tools，仅有 tool_started 的逻辑调用；logical_tools 是后者的兼容别名。
+- 两种工具口径分别以成功+失败+拒绝为比率分母，unknown 单列；读取重试不新增逻辑调用。缺失/非法工具名归 unknown。
+- 请求口径仅统计可观察的执行起点与拒绝边界，不重建未记录的模型响应；匿名/整段协议拒绝计一个边界，无法取得其中原始工具数/名称。
+- MCP 传输成功仅表示调用返回；响应内容校验失败见 tool_read_failed，不能视为依赖语义成功。
+- public EVENTS 导出可能分页/截断，缺失工具结束记 unknown；分节点延迟需要已保存的 node 事件。
+- 延迟 population_count 为队列 Run 数，sample_count 为已记录调用/节点次数；嵌套耗时不可相加。
+- 部分 token 已知总量单列；无完整 usage 的 Run 不进入完整 token 总量/P50/P95。预留 token 不是用量。
+- model_calls/tool_calls 是现有持久预算计数；model_events_started/completed 是记录到的调用事件，取消窗口可能不一致。
+- time_range 为贡献样本所属 Run 的 UTC 生命周期；时间戳缺失数量明确列出，未推算事件时间。
+- 拒答以最终产物 kind=insufficient_evidence 判断；成功但产物类型缺失归 unknown。
+- 数据库历史记录未存代码 SHA 时 source_sha256 不可得；已记录模型路由仅输出安全字段指纹，不推断代码版本。
+
+数据来源（SHA256 与逐项身份保存在 report.json）：
+
+- eval/tool-resilience-20261014/baseline.jsonl：300 Run
+- eval/tool-resilience-20261014/candidate.jsonl：300 Run
+- eval/tool-resilience-latency-20261014/serial-clean/healthy-baseline.jsonl：20 Run
+- eval/tool-resilience-latency-20261014/serial-clean/healthy-before.jsonl：20 Run
+- eval/tool-resilience-latency-20261014/serial-clean/healthy-candidate.jsonl：20 Run
+- eval/tool-resilience-latency-20261014/serial-clean/faults-baseline.jsonl：300 Run
+- eval/tool-resilience-latency-20261014/serial-clean/faults-candidate.jsonl：300 Run
