@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-15T19:32:27.255142+00:00",
+  "observer_group": 3026781,
+  "signal": "TERM",
+  "only_evaluation_observer_stopped": true,
+  "service_stop_or_restart": false,
+  "remaining_live_processes": []
+}

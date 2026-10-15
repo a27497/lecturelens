@@ -1,0 +1,176 @@
+[
+  {
+    "event": "completed",
+    "step": "VALIDATE_TASK",
+    "duration_ms": 3
+  },
+  {
+    "event": "completed",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "duration_ms": 5
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_KEYFRAMES",
+    "duration_ms": 3
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_AUDIO",
+    "duration_ms": 11898
+  },
+  {
+    "event": "completed",
+    "step": "TRANSCRIBE",
+    "duration_ms": 149091
+  },
+  {
+    "event": "completed",
+    "step": "PERSIST_SUBTITLES",
+    "duration_ms": 37
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3574
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 11498
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 11496,
+    "totalTokens": 3234
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3592
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 6828
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 6826,
+    "totalTokens": 1955
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3606
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 13173
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 13171,
+    "totalTokens": 3731
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3417
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 10347
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 10345,
+    "totalTokens": 2836
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3544
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 11818
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 11816,
+    "totalTokens": 3624
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3338
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "NONE",
+    "durationMillis": 12349
+  },
+  {
+    "event": "llm_aligned_batch_translation_completed",
+    "segmentCount": 1,
+    "durationMillis": 12347,
+    "totalTokens": 3609
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3457
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "OUTPUT_INVALID",
+    "durationMillis": 15085
+  },
+  {
+    "event": "llm_aligned_batch_translation_failed",
+    "providerErrorCategory": "OUTPUT_INVALID",
+    "httpStatus": "null",
+    "providerErrorCode": "null",
+    "retryable": "false",
+    "responseFormatUsed": "JSON_OBJECT",
+    "attempt": 1,
+    "batchSegmentCount": 1,
+    "batchInputChars": 2551,
+    "durationMillis": 15085
+  },
+  {
+    "event": "failed",
+    "step": "TRANSLATE_SUBTITLES",
+    "duration_ms": 81142
+  }
+]

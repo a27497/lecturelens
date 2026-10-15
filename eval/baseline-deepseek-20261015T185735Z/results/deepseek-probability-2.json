@@ -1,0 +1,45 @@
+{
+  "taskId": "task_6544116ea9e448a1b12d57e5786fe74a",
+  "translationStatus": "FAILED",
+  "source_characters": 42168,
+  "source_sha256": "237f70ab64e4e7a9c1c200b1c50dd4aba9d9565042fef7fc7d8e1af412b831f7",
+  "source_segment_count": 18,
+  "aiCallRecords": [
+    {
+      "id": 49,
+      "callType": "ASR",
+      "stage": "TRANSCRIPTION",
+      "provider": "bailian",
+      "model": null,
+      "status": "SUCCEEDED",
+      "durationMillis": 149087,
+      "providerDurationMillis": null,
+      "batchCount": null,
+      "retryCount": null,
+      "promptTokens": null,
+      "completionTokens": null,
+      "totalTokens": null,
+      "inputUnits": 3071,
+      "outputUnits": 18,
+      "createdAt": "2026-10-15T19:31:29.053Z"
+    },
+    {
+      "id": 50,
+      "callType": "LLM",
+      "stage": "TRANSLATION",
+      "provider": "subtitle-translation-service",
+      "model": null,
+      "status": "FAILED",
+      "durationMillis": 81138,
+      "providerDurationMillis": null,
+      "batchCount": null,
+      "retryCount": null,
+      "promptTokens": null,
+      "completionTokens": null,
+      "totalTokens": null,
+      "inputUnits": null,
+      "outputUnits": null,
+      "createdAt": "2026-10-15T19:31:29.063Z"
+    }
+  ]
+}

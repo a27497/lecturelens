@@ -1,0 +1,56 @@
+[
+  {
+    "topic": "%RETRY%baseline-asr-20261015-consumer_baseline-asr-20261015",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "topicStatus",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-t",
+      "%RETRY%baseline-asr-20261015-consumer_baseline-asr-20261015"
+    ],
+    "returncode": 0,
+    "stdout": "#Broker Name                      #QID  #Min Offset           #Max Offset             #Last Updated\nbroker-a                          0     0                     15                      2026-10-15 10:52:15,284\n\nTopic Put TPS: 0.0\n",
+    "stderr": ""
+  },
+  {
+    "topic": "%RETRY%lecturelens-learning-loop-consumer_lecturelens-learning-loop",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "topicStatus",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-t",
+      "%RETRY%lecturelens-learning-loop-consumer_lecturelens-learning-loop"
+    ],
+    "returncode": 0,
+    "stdout": "#Broker Name                      #QID  #Min Offset           #Max Offset             #Last Updated\nbroker-a                          0     0                     5                       2026-10-02 18:31:00,871\n\nTopic Put TPS: 0.0\n",
+    "stderr": ""
+  },
+  {
+    "topic": "%RETRY%lecturelens-demo-consumer-group_courselingo-analysis-task",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "topicStatus",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-t",
+      "%RETRY%lecturelens-demo-consumer-group_courselingo-analysis-task"
+    ],
+    "returncode": 0,
+    "stdout": "#Broker Name                      #QID  #Min Offset           #Max Offset             #Last Updated\nbroker-a                          0     0                     6                       2026-09-26 18:45:26,591\n\nTopic Put TPS: 0.0\n",
+    "stderr": ""
+  }
+]

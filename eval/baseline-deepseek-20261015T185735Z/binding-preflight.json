@@ -1,0 +1,14 @@
+{
+  "checked_utc": "2026-10-15T18:58:05.754127+00:00",
+  "previous_version": 9,
+  "bound_version": 10,
+  "feature": "TRANSLATION_FULL_TEXT",
+  "model_id": 1,
+  "model": "deepseek-flash",
+  "source": "DATABASE",
+  "base_url": "https://api.deepseek.com",
+  "other_effective_routes_unchanged": true,
+  "keep_binding_after_measurement": true,
+  "business_code_changes": [],
+  "driver_preflight_correction": "Initial checker expected source label DB; actual API enum is DATABASE. Binding succeeded once at version 10. Re-read version 9 and current catalog without saving a second binding."
+}
