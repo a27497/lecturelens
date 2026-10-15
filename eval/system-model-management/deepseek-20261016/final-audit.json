@@ -1,0 +1,102 @@
+[
+  {
+    "id": 10,
+    "version": 9,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDING_ROLLED_BACK",
+    "objectType": "BINDING",
+    "objectId": "TRANSLATION_FULL_TEXT:3",
+    "createdAt": "2026-10-15 18:06:29.930"
+  },
+  {
+    "id": 9,
+    "version": 8,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDINGS_SAVED",
+    "objectType": "BINDING",
+    "objectId": "features",
+    "createdAt": "2026-10-15 18:06:29.793"
+  },
+  {
+    "id": 8,
+    "version": 7,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDING_ROLLED_BACK",
+    "objectType": "BINDING",
+    "objectId": "TRANSLATION_FULL_TEXT:5",
+    "createdAt": "2026-10-15 18:02:21.480"
+  },
+  {
+    "id": 7,
+    "version": 6,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDINGS_SAVED",
+    "objectType": "BINDING",
+    "objectId": "features",
+    "createdAt": "2026-10-15 18:02:00.827"
+  },
+  {
+    "id": 6,
+    "version": 5,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDING_ROLLED_BACK",
+    "objectType": "BINDING",
+    "objectId": "TRANSLATION_FULL_TEXT:3",
+    "createdAt": "2026-10-15 17:55:09.887"
+  },
+  {
+    "id": 5,
+    "version": 4,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "BINDINGS_SAVED",
+    "objectType": "BINDING",
+    "objectId": "features",
+    "createdAt": "2026-10-15 17:55:09.585"
+  },
+  {
+    "id": 4,
+    "version": 3,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "MODEL_SAVED",
+    "objectType": "MODEL",
+    "objectId": "1",
+    "createdAt": "2026-10-15 17:50:46.805"
+  },
+  {
+    "id": 3,
+    "version": 2,
+    "actorType": "ADMIN",
+    "actorUserId": 9,
+    "action": "PROVIDER_SAVED",
+    "objectType": "PROVIDER",
+    "objectId": "1",
+    "createdAt": "2026-10-15 17:50:28.749"
+  },
+  {
+    "id": 2,
+    "version": 1,
+    "actorType": "SYSTEM",
+    "actorUserId": null,
+    "action": "ENVIRONMENT_CAPTURED",
+    "objectType": "CONFIG",
+    "objectId": "environment",
+    "createdAt": "2026-10-15 17:32:08.609"
+  },
+  {
+    "id": 1,
+    "version": null,
+    "actorType": "LOCAL_CLI",
+    "actorUserId": null,
+    "action": "ROLE_GRANTED",
+    "objectType": "USER",
+    "objectId": "9",
+    "createdAt": "2026-10-15 17:31:30.071"
+  }
+]

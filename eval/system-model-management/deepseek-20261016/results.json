@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-10-15T18:11:43.226220+00:00",
+  "runtime_commit": "13f8fc03d61d608157be1b7c3c0b5d474536acfd",
+  "documentation_base_commit": "ceb03219eab4ee909418d3859ea32976a0e0bfa4",
+  "probe": "OK",
+  "probe_elapsed_millis": 663,
+  "accepted_tasks": {
+    "a": "task_70ec3dd6189843979174ed6d32d1237f",
+    "b": "task_95c8e25dc07944cd82f20d567745738f"
+  },
+  "accepted_task_frozen_versions": {
+    "a": 6,
+    "b": 9
+  },
+  "current_config_version": 9,
+  "current_bindings": {},
+  "same_input": true,
+  "other_routes_unchanged": true,
+  "encrypted_provider_model_default_blocks_unchanged": true,
+  "real_translation_batches": 6,
+  "translation_retries": 0,
+  "translation_prompt_tokens": 1737,
+  "translation_completion_tokens": 2719,
+  "translation_total_tokens": 4456,
+  "json_probe_requests": 1,
+  "probe_token_usage": "not exposed by probe API; not estimated",
+  "real_asr_requests": 0,
+  "failed_delivery_tasks_preserved": [
+    "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "task_fb81356012b143bd9b986fe0dae24c7c"
+  ],
+  "unfinished_tasks": 0,
+  "broker_restarted_with_user_approval": true,
+  "broker_thresholds_restored": true,
+  "java_agent_llama_not_restarted": true,
+  "disk_used_ratio": 0.8996287123607374,
+  "disk_free_bytes": 15530151936,
+  "scope": "One previously seen MIT OCW excerpt; configuration/protocol and smoke acceptance, not a quality benchmark.",
+  "rollback_during_a_translation": true
+}

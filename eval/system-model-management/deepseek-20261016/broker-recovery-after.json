@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "diskSpaceCleanForciblyRatio": 85,
+    "diskSpaceWarningLevelRatio": 90
+  },
+  "temporary_clear_ratio": 90,
+  "wait_seconds": 15,
+  "restored": true,
+  "service_restarts": 0
+}

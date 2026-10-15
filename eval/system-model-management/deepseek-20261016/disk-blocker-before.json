@@ -1,0 +1,8 @@
+{
+  "total_bytes": 154894188544,
+  "used_bytes": 141104308224,
+  "free_bytes": 13773103104,
+  "queue_error_category": "ROCKETMQ_DISK_FULL_50001",
+  "queued_task_calls_started": false,
+  "binding_already_rolled_back": true
+}

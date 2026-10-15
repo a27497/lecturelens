@@ -1,0 +1,15 @@
+{
+  "request": {
+    "expectedVersion": 3,
+    "modelId": 1
+  },
+  "response": {
+    "ok": true,
+    "category": "OK",
+    "elapsedMillis": 663,
+    "version": 3,
+    "modelId": 1,
+    "finalUrl": "https://api.deepseek.com/chat/completions"
+  },
+  "clientElapsedMillis": 701
+}

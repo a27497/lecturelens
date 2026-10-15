@@ -1,0 +1,15 @@
+{
+  "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+  "uploadId": "up_70822cba4da94391bdeefdb12e184014",
+  "targetLanguage": "zh-CN",
+  "status": "FAILED",
+  "progressPercent": 0,
+  "currentStage": "QUEUED",
+  "errorCode": "MQ_DELIVERY_EXHAUSTED",
+  "errorMessage": "Task delivery failed; create a retry task",
+  "retryCount": 0,
+  "maxRetryCount": 3,
+  "createdAt": "2026-10-15T17:55:10.035Z",
+  "updatedAt": "2026-10-15T17:59:31.948Z",
+  "finishedAt": "2026-10-15T17:59:31Z"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "FOUND",
+  "tracks": [
+    {
+      "streamIndex": 2,
+      "codecName": "mov_text",
+      "language": "eng",
+      "title": "",
+      "defaultTrack": true,
+      "supported": true,
+      "unsupportedReason": ""
+    }
+  ],
+  "selectedStreamIndex": 2
+}
