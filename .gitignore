@@ -67,6 +67,8 @@ agent-service/.cache/
 .pytest_cache/
 .ruff_cache/
 *.py[cod]
+work/
+*.pstats
 
 # OS
 .DS_Store
