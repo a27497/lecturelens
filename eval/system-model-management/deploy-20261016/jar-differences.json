@@ -1,0 +1,747 @@
+[
+  {
+    "path": "BOOT-INF/classes/application-asr-bailian.yml",
+    "before_sha256": null,
+    "after_sha256": "d6b99e43495ee377e8ebc54b520f89a6beff87e2c03b3f660348d34019406e54"
+  },
+  {
+    "path": "BOOT-INF/classes/application.yml",
+    "before_sha256": "4d5dfe164806d4ea1fe6f31debe0db486f134bb8120d37a8cdf06f807f1a4aa7",
+    "after_sha256": "97621a955e62eae5c0afdeee25195f4858ccef5f07ceb023ce405fec1502655f"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrAdapterFactories$1.class",
+    "before_sha256": null,
+    "after_sha256": "b8bd7428bcc6a4d3a52c63b45f77b3ff030b55823bd2690d4018c0c74bf5bee3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrAdapterFactories$2.class",
+    "before_sha256": null,
+    "after_sha256": "ac04ec2021f18c90b044d76d6cc4d97b87a6767d195cb2eec878ca31916abbb2"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrAdapterFactories.class",
+    "before_sha256": null,
+    "after_sha256": "b2b87787fa6b72037be6985800ea1e7f510c365c2cec8e5d7aef27327025d3fb"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrAdapterFactory.class",
+    "before_sha256": null,
+    "after_sha256": "e27a71f05f68ea1f74e9f7117895b95276515b4858daccdf57c603f649d80517"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrCallFailure$Category.class",
+    "before_sha256": null,
+    "after_sha256": "b42f509f9939fd9c802ef8b06ca95f4ae66a93422c88e1c6e0f8490642ec0661"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrCallFailure.class",
+    "before_sha256": null,
+    "after_sha256": "e16158f70bcab2ec281f4668915fe9823caab1014e45764658dac517d4fc3d86"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrConfigurationSnapshot.class",
+    "before_sha256": null,
+    "after_sha256": "08f215a30a69f84b8d31eaba1ad0eb5350462812f6160842a3d11aab184f825f"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrProviderSelection$Bailian.class",
+    "before_sha256": "1516fc8e240bd145b38aea8281c7128fb66fac04cf3bab9d1ab8892667151adc",
+    "after_sha256": "79e5632d40feee6cb1ac967903d72ce33f7108be1ab447e1e45b602782c0e24b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrProviderSelection$Mock.class",
+    "before_sha256": "f2cf1807832eb87167f3ce9a6725bc554e5f580e2f0a7437faa0d803bd74ceb8",
+    "after_sha256": "39895528be09fe85360d8a7ff6bc0e517ac8e91fd908d4f00b6979f542fa1de5"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrProviderSelection$Selected.class",
+    "before_sha256": "4f95a135e8549221cdcb7abded4e4439a96616f648275acfdf8ab0e6d06c99ee",
+    "after_sha256": "a50894e281dc0dbb2aa50d2a951932dde63bd6e03bc07e77afe3fbf1982be273"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrProviderSelection$SiliconFlow.class",
+    "before_sha256": "c6828af3cb6525e10a9ebad4b2214f4e85aa894cc75e5361014f4de599618079",
+    "after_sha256": "e1a0e0d9ebb496a70e5845e927760ba5f8dfce170007da0551a37a8ae30a6398"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/AsrProviderSelection.class",
+    "before_sha256": "e5fc2fc0f63a4d475861ec2916e4e2d7fcb58cf3e467f0d979c7faa5e7543af3",
+    "after_sha256": "deedb80e6f574742ba34b7ffd8307c1adf534a795e1cffe3d90741f0acc3696e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/BailianAsrProvider.class",
+    "before_sha256": "544f79189995c3462a15bf10dc125808b102fdc174a2c0f988522f295e8ff0d0",
+    "after_sha256": "15bd7c496f1386c80009e2276ed39fb2c6d63331a7b79d9eac5f9759e477acc4"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/SiliconFlowAsrProvider$ValidatedSettings.class",
+    "before_sha256": "3e4e722f77e452bf206c136a547f6e4ae89d1fd9a1e8cce672dfaebeb8b623a4",
+    "after_sha256": "458ab1b67eeab5eb69673310b5716278b8e95de4bb8e11e8dc214b56a10c9649"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/SiliconFlowAsrProvider.class",
+    "before_sha256": "1ab3a620490dfd7a3e02cb721aa67db66ea5b249d59f6d7ec3ba9ce1c9c38ac8",
+    "after_sha256": "79123d3a8b76d58616d54c59be2915e4cb56b5be4c2044c94b73be959a6f3e3a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/asr/SpeechToTextProvider.class",
+    "before_sha256": "319d9c529c56bb277910b8fbdb0581531e8ca71097f56a590ac12ee5c2b75c59",
+    "after_sha256": "af5dfa0e2064a634957bba9987830c791d4a872e50c7be1f5d4024ee799c56d9"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/llm/LlmProviderFailureClassifier.class",
+    "before_sha256": "ed3045ec45fbe5609767da0e2c9c2f276f559ed0bb2f9d73fe6949cb769395ac",
+    "after_sha256": "c2d8271eb261c21bbdf251af8653a36f6b37d144af713e68e93694bf4fc35c77"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/ai/llm/LlmRequest.class",
+    "before_sha256": "3a7151a802f34e01410ba40b4abe5088d7491b3b34712dea7cd40de154bc2674",
+    "after_sha256": "3df09bfac2ada23582f8e56cee00663fd9c1750d0106bf11f1b2f0bdae0f7bd4"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/dto/CurrentUserResponse.class",
+    "before_sha256": "c46ea13775d386dff5eb173e7974e9ba14e846d13dd694bb881aeb42c6d3bb4b",
+    "after_sha256": "7ca9e730ec716339c87ad1a34c813d332c84cd148a29b9250eb6550e43ed0226"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/dto/LoginResponse$User.class",
+    "before_sha256": "54aefbe568396dbf54861062790fde7aae211e180ee35bbb868c2d94c5410ec0",
+    "after_sha256": "4099e6ddf71db3952b181eff389e629fc1f03e4f0bb7effd77845fbbb1bf17bd"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/dto/LoginResponse.class",
+    "before_sha256": "180df4d152409d2888d8e726b6d23a0ee81be64bbaedab26b52525b319e3bd02",
+    "after_sha256": "f3f0dcd4e41bee5f9dc6895b6952ff9f04d00100e3eb511865d7e78bee6fe54c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/dto/RegisterRequest.class",
+    "before_sha256": "40be64e6971e17578adfc42fc298c298f3a025d4093c3c0def46d420c80b87d8",
+    "after_sha256": "281161bf54bdbab1db4f2c174836805ff4af874b8e9bced5691f142887eefcf5"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/entity/UserAccount.class",
+    "before_sha256": "418a28c0ef5a31ff8d0c49adb9261ddb10deae965ecd732b84fd96d1008a0666",
+    "after_sha256": "aa2c4baba8d2b47bb0ad61c4d0d1f66ad42376f34c5f5432476c4ad916ea464c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/entity/UserRole.class",
+    "before_sha256": null,
+    "after_sha256": "4df915232bab47c2856a6e5fb42fb5bffa1eed9bce5c1a45f764a59a36776baa"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/AccessTokenClaims.class",
+    "before_sha256": "5f3f233c583ffb18defa34bdb8bbc300f0ebbcd4a27d0f08d94d86f6d28f8751",
+    "after_sha256": "b35d0ed5fc3c4f53657abae783eaf6d37f7d5c765c15de402172a90a93e1942a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/AdminAuthorizationService.class",
+    "before_sha256": null,
+    "after_sha256": "5d845c705ad407240e69a5ef605eff2e22a5dd223dbe730b56005a39e2be635a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/AuthLoginServiceImpl.class",
+    "before_sha256": "c0cd9355f39bc6c14d1862e9bd96067a3cd7dbd80e6f2c8ad8682aef7e54df5a",
+    "after_sha256": "16777f53d0605eb12920a9b2c952e67cc88b963cbe69804072effccaf2a7337b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/AuthRegistrationServiceImpl.class",
+    "before_sha256": "81de2923cf072b8df25c99004fbcef14a2c413b48376cdbcd450620d8a822c5d",
+    "after_sha256": "67119601b3dd7757a63613fe832bf35295d427df78be251777f9e7cc2b2b6b52"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/CurrentUserServiceImpl.class",
+    "before_sha256": "bd8ed56e20c72bc3d687937ba2d93a7d909b88436d9564325bf13bde8da50f3e",
+    "after_sha256": "2146f6d9ce86407dd221699644288e860dbadef514c6ebef3811cd965f6ad9c0"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/JwtAccessTokenService.class",
+    "before_sha256": "062545421cb89d9f3952caeda87e2b461c862d3c76b88f7606535dfa0ef0869e",
+    "after_sha256": "bbc93e3fcb6e6d58d73b8545ce2b8899edf876964263a72448188bad96dabe3e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/auth/service/RefreshTokenServiceImpl.class",
+    "before_sha256": "001c82d0066aff9ac1f8f83a8c0a5b169f94413f0f8283d5002e34efd35c399c",
+    "after_sha256": "93d36d33d27495d28878baff9ad06e845409803372e464fad4e57995bf836790"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/chapter/service/CourseChapterServiceImpl$1.class",
+    "before_sha256": "1d5d31119fd7cd47f1abb715d9bff30a9d47d41bb280e917bafb47d751849260",
+    "after_sha256": "9e695624f8ecc2a61047e91a384879af9ce34fa35742dd727a9c2f40791e78a7"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/chapter/service/CourseChapterServiceImpl$2.class",
+    "before_sha256": "a7a9357ca352d7b03e68ac7219a5ee3b508ebceb1c556af8e8aac74ed59f7a09",
+    "after_sha256": "aefbb05fbeaa283c77eb236d1d96cdff40b344e834dbdd5a2a562be1768abbac"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/chapter/service/CourseChapterServiceImpl.class",
+    "before_sha256": "304d5f9c5cf519aa6042af8c14cd2ed8d6006a04509a4300c9abdcbb37431ae0",
+    "after_sha256": "f0871d999d747fbb6e25088b67537b956d9c40f83af0cdda7684ce5dba9fe339"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/common/error/ErrorCode.class",
+    "before_sha256": "78205fbb3479fb4834a2f2204ef95cf2effb58960593512273b966e7be1fa7ea",
+    "after_sha256": "ca8a48698e3dcfc0bef9c78df90081fa9839308d7a3113c10421359e80ea7a79"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/learning/service/GenerateLearningPackageCommand.class",
+    "before_sha256": "ae8bcbc65ee21992f64c8e88b4c616bb26e793b35bcbdbb7415b239bb215e84c",
+    "after_sha256": "d327f5a7c81c2a4303c3a4100788985264bdf941a6c27eff124611f1b11a95e3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/learning/service/LearningPackagePromptFactory.class",
+    "before_sha256": "c547a964ca2599755fb1e19056746faaf991dd58213cf017fd3243ab83cfdf80",
+    "after_sha256": "1ed967a60b97c2662c1b21c5afcc48d3a0aaca644d889b568aed7d2a8170c2cf"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/learning/service/LearningPackageServiceImpl.class",
+    "before_sha256": "b0f606b9ffa59ea809983c34a10b4b7811a6bdca57bf82c976eabadcd47883a9",
+    "after_sha256": "98e66549293c9a514057845fb84f4e665ec6da5d3aa0195d2b531012e1a99f59"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/learning/service/LearningPackageValidators.class",
+    "before_sha256": "c6de4a3db9eaa00e5963cd3d3c17270d7914aee8bc5d8bf03072a27d1588c5f8",
+    "after_sha256": "9079417c65e5d2f564000abad39d10db27b0906ccd57af79714f09b4bfd548aa"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/learning/service/ValidatedLearningPackageCommand.class",
+    "before_sha256": "7c9f5729de0784daf5cebb83cc8a5592b484dbf0807afeb5393c8ed6b258694d",
+    "after_sha256": "ea4f915ffd2fb7bee5db640c698b0b13db2e7daf435f0e687ce443ccb362a72b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/modelrouting/AiModelRoute.class",
+    "before_sha256": "cdf487679e22cb9c00dcb9a12e6d1827ebd02099f03d5845b379ad98692cc8d8",
+    "after_sha256": "f7dca1e4c7ec724978c152718054f6adccab892a0915a2681e56d29c936c78d0"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/modelrouting/AiModelRoutedLlmRequestFactory.class",
+    "before_sha256": "5e71190d6796246a7cde9bd5ac7b31ab5a4dfb23545286f1985f72ac48148ca0",
+    "after_sha256": "4869659393b5d46d1931a66744a3d50839827b6aa54a64f4ed5768c5b4522e50"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/modelrouting/ModelRoutingConfiguration.class",
+    "before_sha256": "e707354b96ea1e62530d8c5cb5237a57258aca31da4ac1ff521beb137f453634",
+    "after_sha256": "a390cadccf75374ce88d46e06babe305604a8d5f3e224aa97d22b18808e1009d"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/qa/service/CourseQaServiceImpl.class",
+    "before_sha256": "1ecc37c6ecb98918507b15351b809ef77c0f8c67101e73d1b2960c7b24768935",
+    "after_sha256": "218f327f71b6d7cea3ca3d1457ac3087168f8db46e96bdfd0a8fb1b0f5da23e2"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/study/StudyController$Command.class",
+    "before_sha256": "e99bd3276eaa7a9c8e1a5578a02fab142b7e6266d66cfc248b139c2c6afee213",
+    "after_sha256": "e8e65ed71f9a85c653530d5f11877b1a70262345b28f71d1d5fe1cda69b2e2ee"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/study/StudyController.class",
+    "before_sha256": "2f11cb7e92964d86492ed431425dab741b607edaaae7e99f66d7eb79c1361098",
+    "after_sha256": "075a325f0e1bfd2bc4dbbb12da74abc84cda80cc4df9eee052710e92597cadff"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/study/StudyTransport.class",
+    "before_sha256": "945c1bc7fe69ce597c8c7c1a5ce7612a08e3134239042ff95ccaa6af6785fd75",
+    "after_sha256": "4b8da145e0719678d49a8dc601dcb2087acea1630aae0253531fe26f0116fda3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationPromptFactory.class",
+    "before_sha256": "1a06d971856c9a86db888be90c22716bb40f20cd78c353acd1c3422a0dd06cde",
+    "after_sha256": "3f8cafa2968ab1fb63582e203501da6084ba5e1803cfc312ed83a24748e49cba"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationProperties$FullText.class",
+    "before_sha256": "4b0d61bde370bf468b121a157ca6eb260b117e7e0b47f73eff21971c8332a115",
+    "after_sha256": "1bb481d142bb1b14a88700ef5183a4f1318afac25a84b2a38918fbb23f08f56b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl$AlignedTranslationRun.class",
+    "before_sha256": "2ccd750896a2902d57cd9836bf003738e5bbcb8a3ede9609929c5540a445a302",
+    "after_sha256": "f19599dc21f52d82050a220b7ab59ca897a062246e5621c81d19e8aac6855ab3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl$GeneratedSubtitleTranslation.class",
+    "before_sha256": "7c8819bcd670333dd67341591254b060405eee885d06aaaf799b504b661bcd9b",
+    "after_sha256": "47d53b79cc227bf169b5394a108f1352ed4f59db4fdc22dcdaea86d2e6e2430a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl$SemanticMetrics.class",
+    "before_sha256": "ca99ecd96d26df8b4e86c9b2ffcefd9a7b93c5e7a9df0e2eb7a01e24c39d7b4a",
+    "after_sha256": "cc84cb535c61b1b834d17aff67918c2f7e7283ef304da129bda12d3fca073ac4"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl$SemanticValidation.class",
+    "before_sha256": "5108417b406aa874846bfd5621321c174fa0fec0e44ada3951a0151510d1bb9e",
+    "after_sha256": "b6c630cf452425f77701ba0c4b14214b4bb70894a55f1ccfa1de8bf1e8a436e6"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl$UsageTotals.class",
+    "before_sha256": "1b00c515109d4345d95cd929acf8f4b87492d611890a9764a99bdd17ec605b66",
+    "after_sha256": "8e9d206611b49f77dcdafdf1462ae524a6fc12505c4ef0a4e9058347d1b60a44"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.class",
+    "before_sha256": "a87eb07593a64d5ba2ed14d57ecc083ec21ce1985feff64d51d8da21c6b2acce",
+    "after_sha256": "7b6e045e08d5f95b267ff608bae50d99f990350c91de8b31a97bc977f4a07e0e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationValidators.class",
+    "before_sha256": "4eba350fcc7464ae3eceb8d0c6881bd4a9ab02fe5fa6ea6aac7a3fa6ce42b3ca",
+    "after_sha256": "fb14ba45c4310d06261211bafbc2bfb0fae603db016c76fe5b9038035b463bbe"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/TranslateSubtitleCommand.class",
+    "before_sha256": "95a464c74ac3ee291e4bef274404f22f7f4cd802f8671cf9ec715cd33f028bca",
+    "after_sha256": "42888ed48b4073f10304f2aa39e22dc714ffc08f30af420cc8ae23ae19779c02"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/subtitle/service/ValidatedTranslationCommand.class",
+    "before_sha256": "35b91ffbad4033a808c6b01e9419fd8102ec4522ed739258d6aac62f22b57ebf",
+    "after_sha256": "fac81a9fd55a7341de240b047d1b4909150e9da394bbeec6b0f7049ac4fedac0"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/",
+    "before_sha256": null,
+    "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAdminCli.class",
+    "before_sha256": null,
+    "after_sha256": "549446b01e857d9d2c57e22867ad79a4735d0000741bac53d4d2426cef6efa79"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAdminController.class",
+    "before_sha256": null,
+    "after_sha256": "b26deb4649ea3a1b362ab725959620a07937c08a3300083d7147e82666a01f33"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAdminWebConfiguration$1.class",
+    "before_sha256": null,
+    "after_sha256": "9a600b1a83329410315b05d81ceb2b5a781d541fec078253ff9e8c50b55d5cff"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAdminWebConfiguration.class",
+    "before_sha256": null,
+    "after_sha256": "3e1428a82bf138fec113197dfaee0fd953367b8e9a7033e0142a5bdb62c86018"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAsrProvider$1.class",
+    "before_sha256": null,
+    "after_sha256": "e1b91f3efa1a54c3c403549148197da10310d23e99d9228578d0fffe68939668"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelAsrProvider.class",
+    "before_sha256": null,
+    "after_sha256": "e16550f6b3d29525f775e6a57acc2898127317fe2411bfb9b806e0c715f6d101"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCallFailure.class",
+    "before_sha256": null,
+    "after_sha256": "1688a8a014e3ac684512ae7af110d357b30804b3dd5977e814aed7ee6a65e790"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCapabilitiesController$Capabilities.class",
+    "before_sha256": null,
+    "after_sha256": "65010d8b6ee861eeacc6379289e69e3f99721652d22c2be4e2921edb0bb36a1e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCapabilitiesController$Feature.class",
+    "before_sha256": null,
+    "after_sha256": "f6a4a1e6579a54e08ac4c027b67c64cdfad358ed7c4b825704a030b7a6a80919"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCapabilitiesController.class",
+    "before_sha256": null,
+    "after_sha256": "09b64efbd34a200611246f68d738f280e27671364e9cddb6cc6d6ea41b8ee18e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelChatClient.class",
+    "before_sha256": null,
+    "after_sha256": "d2d414323eb3e5801c40da953f1e9c18ea95a4473f358403992a6c567ff71492"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCommands$Bindings.class",
+    "before_sha256": null,
+    "after_sha256": "aeb6118471568db61b30e371ce6efca887e9136ce737e1a0c3400c30443a11fe"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCommands$Model.class",
+    "before_sha256": null,
+    "after_sha256": "6da787687cae74b313b386298511322f3dcdca2d69167aeb7bd52aa77ae250da"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCommands$Provider.class",
+    "before_sha256": null,
+    "after_sha256": "2959a688939f72cb2f8c672324fedb08d88b0847ad1242c80dd4a01f7213ee14"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCommands$Rollback.class",
+    "before_sha256": null,
+    "after_sha256": "ae775565f374869cf37d5184ba8bc2ae911ff2481c9bec3ed9325e4386965794"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelCommands.class",
+    "before_sha256": null,
+    "after_sha256": "affe5c7606e99ad14c11f063b085259d86c2f2fe1870e137a225083b09366d7c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelConfigCodec.class",
+    "before_sha256": null,
+    "after_sha256": "3b81b13ccb8bbcbf67b3047fb3e21822a80870d8d2fa689a8b0889b8caa29f10"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelEndpoints.class",
+    "before_sha256": null,
+    "after_sha256": "a4f59b42d581fe81a433b1522926070b5fc0c448d3a0d9d45528358137e575b3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelEnvironment$Captured.class",
+    "before_sha256": null,
+    "after_sha256": "42fbcee9ddb60bea7c393edcc54fe18e6ae2a4ded563270a74031d900d7bec02"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelEnvironment.class",
+    "before_sha256": null,
+    "after_sha256": "0f220934e915465c2a52ea7a3caca177c037aee69c9f49ec9f6295200a22c6fd"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelExecutionRef.class",
+    "before_sha256": null,
+    "after_sha256": "f27d1a71bf2a50f7d102969cd9b869e44c5f7742cea73fe557e8c8063cd0144f"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelExecutionService$Payload.class",
+    "before_sha256": null,
+    "after_sha256": "d7caeff558a42e2bd6daac25777ca3441436be6abbd9885ea72e2df1143e234e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelExecutionService.class",
+    "before_sha256": null,
+    "after_sha256": "3a7b26ed45ec48647ada880a432a095fa06d2f093449e8c9aa7ba590506b029d"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelFeature.class",
+    "before_sha256": null,
+    "after_sha256": "03e1c9421bd0cb54f5485f9c5bc601aa594cdea64f01a37fd70ffff74d454a84"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelHttpClient$1.class",
+    "before_sha256": null,
+    "after_sha256": "aa089706c2987305a4f1b3b7151e43c7bbb18c41d0d4dfa6aa452f55a123aa40"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelHttpClient$LimitedBody.class",
+    "before_sha256": null,
+    "after_sha256": "e7afbb10ae27bdb4070dc63a7f9664476fea7c797648b859b81b3fd218ad22d1"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelHttpClient.class",
+    "before_sha256": null,
+    "after_sha256": "b5c11f27bb77553bddb28c530df9743781da1a4e89fb603daec9f241f7757600"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelLlmProvider.class",
+    "before_sha256": null,
+    "after_sha256": "2d4a6a21968bbe92ab930379218cc6d788acc19f5940e9e34ec3cbc67b127466"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelOperationsController.class",
+    "before_sha256": null,
+    "after_sha256": "5bfcdd55b9fdc86d38bbd4877192723e35cd44007875ea7e085b4a34f4c7b99f"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProbeService$1.class",
+    "before_sha256": null,
+    "after_sha256": "98384b165af85eb69249758d8881839ae69e3d074c1f2f9f21869aba46466581"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProbeService$Command.class",
+    "before_sha256": null,
+    "after_sha256": "88fc1450aa50d802229213f69722eb84df2e119fd79da170b116d0b87371a17b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProbeService$Policy.class",
+    "before_sha256": null,
+    "after_sha256": "305371d90e0fa721e7cf2e9090fa80abc13e5214879ecc3053f1d1ebaaf46540"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProbeService$Result.class",
+    "before_sha256": null,
+    "after_sha256": "def3568bc9d2de3aae0eb1b8ef32a4ecb20af0b6e49848783582095ba517147c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProbeService.class",
+    "before_sha256": null,
+    "after_sha256": "0d1c1bb5c6f874eab1a974b9f3d9f1ad5a73ad3f6eda00c2537b104f3b95ae17"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelProtocol.class",
+    "before_sha256": null,
+    "after_sha256": "bd48d3d86f032b8d057f344ae567df956d9a602830b0e169d3cd841c50c29c71"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelRegistry$1.class",
+    "before_sha256": null,
+    "after_sha256": "4ff90490ea7cacfed54459fc08223c0f48741b6144b0cf14cbce639d000534e6"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelRegistry.class",
+    "before_sha256": null,
+    "after_sha256": "373a69ccae27f072b610d48f47713cee21a1813ca98fec326339660ef24b4a89"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelResolvedRoute.class",
+    "before_sha256": null,
+    "after_sha256": "bf46c9431171e45f57f33b7288341b3b770554cf94ace7838a2fbfadeb3094f7"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration$SystemModelActivation.class",
+    "before_sha256": null,
+    "after_sha256": "da86ee5c6210c4477b46543440017b5f384e7946c590abd6ce3f96b9673c2ff6"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration.class",
+    "before_sha256": null,
+    "after_sha256": "7d28cc092eb422ec4748e282f416746ae014a9ab529b3f3e03599e84e646d85d"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelSecretCipher$EncryptedCredential.class",
+    "before_sha256": null,
+    "after_sha256": "8188849ee44616cda849db5557ad59bee0af65dafcb413bf65d83523d726e924"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelSecretCipher.class",
+    "before_sha256": null,
+    "after_sha256": "37206ac2b9c8b2ff3d697d68226fe4cc3430f2013b9bce494174c3f06e8a4edb"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStatusService$1.class",
+    "before_sha256": null,
+    "after_sha256": "c728c4f456ac8c6a78381b503fd00136cdb3e2c2fb80ee4693ff3ad4a377d566"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStatusService$Feature.class",
+    "before_sha256": null,
+    "after_sha256": "16a055196c09d99618a782599cb591243bbd1a080f0184d2bfb73d9eb3522011"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStatusService$Status.class",
+    "before_sha256": null,
+    "after_sha256": "b35df91d282709a759c4fdfa8f8c02c7db9401a395eee03d5a3c4c4fcb1b480a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStatusService.class",
+    "before_sha256": null,
+    "after_sha256": "1c4f33368fddf38f3101943bcd8133def3aba44122993619ce8f5c4d8f46207d"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStoredConfig$Default.class",
+    "before_sha256": null,
+    "after_sha256": "bfdd049dc707fa48058c29d81e6de51ecb52fd48e913ffca6834f0fd83a33d1c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStoredConfig$Model.class",
+    "before_sha256": null,
+    "after_sha256": "867cc0c5d85129a80007f5b9a95065dafed5cb89c51d9c706057b952b1ec6917"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStoredConfig$Parameters.class",
+    "before_sha256": null,
+    "after_sha256": "52a68279f3119ceb5d67f2e8858bbb8b5946298421511a56e19242c740353d98"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStoredConfig$Provider.class",
+    "before_sha256": null,
+    "after_sha256": "cbbc4797adefce7c46e58a000efde955184c8a3fdc5bc4958afcd2bb0d77106e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelStoredConfig.class",
+    "before_sha256": null,
+    "after_sha256": "689236f8bd4d15f121c295257953340d7e2eeb26c526c91f166bf23787b149da"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelUrlPolicy$Resolver.class",
+    "before_sha256": null,
+    "after_sha256": "134a7e993308624559b885b96390b80d2d3902ff4206dad9c4ed17751c1be039"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelUrlPolicy.class",
+    "before_sha256": null,
+    "after_sha256": "dcad5e02c43d01f15937618ebf32fe75233bd93a2aa3d78137dbab8e5e1639ab"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelVersionNotifications.class",
+    "before_sha256": null,
+    "after_sha256": "0b9472e6e9cb5d20ee0cf042f63ea60f26c657e4fc359c719dcf28dff5f33774"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Audit.class",
+    "before_sha256": null,
+    "after_sha256": "cc27538e1c53312efdc18096eca12f3b6d26aad4691e4024a5d93db699898eca"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Catalog.class",
+    "before_sha256": null,
+    "after_sha256": "57d7f2d3e2d4a6cb9da683ecf25a77767f3241956aead81cf7cb0403c05338e7"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Execution.class",
+    "before_sha256": null,
+    "after_sha256": "7e7dadea8c6c2441e8e5ebf474562c30445aab6d0331a67b5e974ad5494a18be"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Model.class",
+    "before_sha256": null,
+    "after_sha256": "a34628c7a1c7b97d5adab56775186618081d41ecabbde42402c879138631271a"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Parameters.class",
+    "before_sha256": null,
+    "after_sha256": "2778c6263421119ae62f0e7e763da05097bc955eea6a971eec3bb84c5c1e19db"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Provider.class",
+    "before_sha256": null,
+    "after_sha256": "591760c7f0dd1fb17c353cfaddc5a34c6ddd7558f59508723d1179a74c34d2ec"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$Version.class",
+    "before_sha256": null,
+    "after_sha256": "10ba43d1790beddebb507f9e090980b1a8ac7d449d987f459bb18466f7b2b54b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews$VersionSummary.class",
+    "before_sha256": null,
+    "after_sha256": "a195c080630674ff086ea1da9d44b8564074ff0c8957142308cf90c281127d65"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelViews.class",
+    "before_sha256": null,
+    "after_sha256": "a4ac77b9bfaceaf256fd01d4f18bc8c5887071a4550c9abe0d19ee0f63be9faf"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelVisionProvider.class",
+    "before_sha256": null,
+    "after_sha256": "e9768150c5ff6a9f3b1584a61aca3abbad7b8218c12adce0d7d20137b178743b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/AnalysisTaskExecutionContext.class",
+    "before_sha256": "c0433bf56ab5f68269d52dbb68cd15612208880659deb40cac051ac3893c1194",
+    "after_sha256": "06f824bb18414b6a3fb9d9187399a2805ffb352ede80ba3dd5aa72d826452ab8"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/AnalysisTaskRunnerImpl$1.class",
+    "before_sha256": "c6bfc6249d30f935685fa2488313b7326f9f3225981899552a280e6730235567",
+    "after_sha256": "646695c66fbae01d062fc7e6c70e2105f7e1fad45e507b5a033c6be5da037819"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/AnalysisTaskRunnerImpl.class",
+    "before_sha256": "31788d09ebc868d3082dd58fb7e26d622036c7f801a699b3980b38fefe95833e",
+    "after_sha256": "4a7e972b913cc66fac5c31573fc3eaa12fcb44820722e4e8c34c52b1e94c38f9"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/AnalyzeKeyframesStep.class",
+    "before_sha256": "8d753616d1f54a4c1b59338baa7bc8dc955f2600ed66f8567e20e4bcfaf9beb1",
+    "after_sha256": "9ad0fb09f20d4b241947caeb9dcc1e9f031266ca2803d7030b2ab24b73fa375c"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/GenerateLearningPackageStep.class",
+    "before_sha256": "e48b46385fb64f5d75c41278d3c248b3e50a903773d52824272b513cafc8cb87",
+    "after_sha256": "5123e9181b01a66d7d6902b3157a65f3145de558d1e68aedea0b911255dee308"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep$AsrChunkThreadFactory.class",
+    "before_sha256": "23fa5b80d5a61223240a4c0f4409e4abc902149b7aa59761e0f0f8ee3eb15fe8",
+    "after_sha256": "8a2434037926fea62b7eff64e6ad70f01636d89edd50dfdcb500ca23aeb78842"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep$AsrRetryFailure.class",
+    "before_sha256": "348000f55315206a00fad97e54ab5f05d5cdbb213bf73a061890cfad956eab38",
+    "after_sha256": "8ede9dc8547e533cd2531a12522b40ff1dff07f7588af5d6d39e54497b773a71"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep$ChunkSizeStats.class",
+    "before_sha256": "960a8be311acdaeab292c21ab3c66fbac3756a854b045ee2b5f53968b2b74f68",
+    "after_sha256": "4b1d77cd4cbace4770dd44ca0251e72f4eb280279eccb8d941309277834131f7"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep$ChunkTranscriptionResult.class",
+    "before_sha256": "748f41456e084a24da1f9cb8eb5b534036e649e28388186ea5946ba8429d1c19",
+    "after_sha256": "9ecc13d4f5d3f84a3319fdc955a7363792959da8e9e0f2f2cecc2cba5968d0e3"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep$SegmentTimeRange.class",
+    "before_sha256": "6816f17b62eab6855d2316fb148e6ca6c94098a0eadbceade32cb010fb68e4b2",
+    "after_sha256": "f36b149cbc765ff91f323d1e86f65980c827927a5257fbcaef26e014f1f06a83"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranscribeAudioStep.class",
+    "before_sha256": "a610e217d11a93b568f692816e2703741097440b5300f0da2f9f8abde328da94",
+    "after_sha256": "af4bfd1f36f37ba4833b5690e535625a77bbf95c8828c34767d2bd95e992c47e"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/runner/TranslateSubtitleSegmentsStep.class",
+    "before_sha256": "db629ce117de1d9eb2c3e8b789eda93f9befd684ed57a5380459e02603cf3814",
+    "after_sha256": "6f24c54d093fc6a068426bad0795fddaf64c0fba05b53b700ea6db34482a4671"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/task/service/TaskCreationServiceImpl.class",
+    "before_sha256": "1be336c8912b47b024d4b797bc58336429ac570f936b491adc368a74009307f2",
+    "after_sha256": "dabb9dbe0a527572131b7f4c78922cfb6aca8e6f4a4dd2428c82cc39a66d08b0"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/OpenAiCompatibleVisionProvider$ImagePayload.class",
+    "before_sha256": "2495a8b8aae8695fded53cfc3a3df1a02391dccdc6bbce82ec7ea7e4cacdea2c",
+    "after_sha256": "8ab392ccde7f25c72e6ceada59f425469403a294362e375aea85f75ca3a7648b"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/OpenAiCompatibleVisionProvider.class",
+    "before_sha256": "dfd682180d518e6718472b3c07fcc79190f8124d5f70e416c631314482c4dda4",
+    "after_sha256": "ee55e42bfc3d50aa2c4ce15c00eba3303266805f8960f949fba7e33894e3af08"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/VisionAnalysisService.class",
+    "before_sha256": "368e6cdb52e2fee073bf79655eac73430b571dbdcf759366e8a6a52fd36c0c81",
+    "after_sha256": "ffb2849995c7fe01e9c88f6ea62dde557525868a73e44684cb6c0403a0e8b8f6"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/VisionAnalysisServiceImpl$1.class",
+    "before_sha256": "d100cdb216c5be74cb743604780c4a6b0ca0f8a76d8b64a84fb33cb8d11d44cc",
+    "after_sha256": "36f9e9b99c5a2b22f42c64c7955a7cb9873729801b5d093157b45bb683b886eb"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/VisionAnalysisServiceImpl$AnalysisOutcome.class",
+    "before_sha256": "a195719918f51956f2b0f138069a9ab84b89ae797d4d09e92e017b3a40e60d4a",
+    "after_sha256": "bee209ded9a876b5cc0c1312066d48c3c4a051fc62a6b404d2d085be70ee50ee"
+  },
+  {
+    "path": "BOOT-INF/classes/com/example/courselingo/vision/analysis/VisionAnalysisServiceImpl.class",
+    "before_sha256": "7f2b9cd183d9d8cff0cfbc3d06b4fa139a378682c586c8df4a4217c604ca0948",
+    "after_sha256": "c334a5d73213ee614ae43f3ceb0100bde41778f5d4e1f162f578e3988b4542b4"
+  },
+  {
+    "path": "BOOT-INF/classes/db/migration/README.md",
+    "before_sha256": "2d4b196bf98532040a7380b290d0e29309e3e5e4bb6cd97050992b63743acf89",
+    "after_sha256": "8e47142f2d9e39063eab7d57bd98f4a69d7c2e7b1a803a0d070ff5c11e0045fd"
+  },
+  {
+    "path": "BOOT-INF/classes/db/migration/V25__system_model_foundations.sql",
+    "before_sha256": null,
+    "after_sha256": "667b7759bae87ec60a4e16469a7f6d17ec7debd98abdb1e3c7c3eb4117b9ff1e"
+  },
+  {
+    "path": "BOOT-INF/classes/system-model-probe/",
+    "before_sha256": null,
+    "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "BOOT-INF/classes/system-model-probe/NOTICE.md",
+    "before_sha256": null,
+    "after_sha256": "085a116210dadbf321bcebe90b02ae9b84531f5259834c9b59863d15dd5255a0"
+  },
+  {
+    "path": "BOOT-INF/classes/system-model-probe/tone.wav",
+    "before_sha256": null,
+    "after_sha256": "b0d37d5e191ec3a1aac79f780279c4180573be25c4e53a4844e6690a515c51e7"
+  }
+]
