@@ -10,25 +10,33 @@ import com.example.courselingo.common.tracing.TracingContextHolder;
 import com.example.courselingo.common.tracing.TracingScope;
 import com.example.courselingo.dispatch.BoundedTaskExecutor;
 import com.example.courselingo.mq.AnalysisTaskMessage;
-import com.example.courselingo.task.dto.AnalysisTaskStateChangeCommand;
-import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.claim.TaskClaimResult;
 import com.example.courselingo.task.claim.TaskClaimService;
+import com.example.courselingo.task.dto.AnalysisTaskStateChangeCommand;
+import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.model.AnalysisTaskStage;
 import com.example.courselingo.task.model.AnalysisTaskStatus;
 import com.example.courselingo.task.service.AnalysisTaskStateService;
 import com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private com.example.courselingo.task.service.TaskExecutionLease executionLease;
 
@@ -226,8 +234,10 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             message.userId(),
             message.sourceLanguage(),
             message.targetLanguage(),
-            message.requestId()
-        );
+            message.requestId(),
+                        systemModels == null
+                                ? null
+                                : systemModels.pipeline(message.taskId(), message.userId()));
 
         AnalysisTaskWorkResult result;
         try {

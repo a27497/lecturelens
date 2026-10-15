@@ -4,13 +4,55 @@
 
 ## 当前实现
 
-第①提交实现角色、管理员接口边界、存储迁移、加密工具和离线管理员命令。尚未提供配置编辑页面、配置写接口、热生效或运行时切换；新增表不改变现有 AI 调用选择。
+已实现管理员权限、离线管理员命令、配置写接口、Java 文本/视觉解析、两路翻译绑定、不可变配置版本与执行快照。系统层默认关闭；管理员前端、主动连通性测试和 ASR 运行时切换留待后续提交。
 
 - `user_account.role` 仅允许 `USER/ADMIN`，存量和新注册用户默认 `USER`。注册请求拒绝额外字段，包括客户端提交的 `role`。
 - 登录、刷新和 `GET /api/me` 返回角色。新 JWT 签入角色；旧 JWT 没有角色时解析为 `USER`。管理授权始终重新读取数据库角色和账号状态，提权、撤权和禁用不依赖令牌到期。
-- `/api/admin/system-models` 及其所有子路径经过统一管理员拦截器。未登录返回 401，普通用户返回 403。当前只有 `GET /api/admin/system-models/capabilities`，返回协议与功能目录，不包含凭据。
+- `/api/admin/system-models` 及其所有子路径经过统一管理员拦截器。未登录返回 401，普通用户返回 403。所有当前配置、版本和执行查询使用专用 DTO 投影，密钥字段仅有 `hasKey/keyLast4`；不返回版本 JSON、密文、凭据内部引用或环境指纹。
 - Flyway V25 创建供应商、模型、功能绑定、当前版本指针、不可变配置版本、追加式审计和执行快照表。配置版本与审计的 UPDATE/DELETE 由 MySQL trigger 拒绝；迁移账号需要创建 trigger 的权限。
 - `FUSION_SUMMARY` 的目录状态为 `connected=false`，数据库约束禁止绑定。首版协议仅有 `OPENAI_CHAT`、`BAILIAN_ASR`、`SILICONFLOW_ASR`。
+
+当前可以绑定 `TRANSLATION_FULL_TEXT`、`SUBTITLE_TRANSLATION`、`LEARNING_PACKAGE`、`COURSE_QA`、`COURSE_CHAPTER` 和 `VISION_FRAME_ANALYSIS`，均走 OPENAI_CHAT。全文和逐段翻译分别解析绑定，保留各自的 JSON/纯文本输出契约；全文模式仍默认开启。视觉绑定要求 VISION/JSON_OUTPUT 声明，不会自动开启业务侧 VLM 开关。模型能力声明不代表真实可用性或课程质量认证。
+
+供应商最多 100 个、模型最多 500 个；模型参数只接受 temperature、maxTokens、timeoutMillis、maxAttempts，分别限制到 0–2、1–32768、100–180000 毫秒、1–3 次。请求自身的 token/时间/重试限制继续约束实际调用。配置保存不产生供应商请求。
+
+## 启用与版本冻结
+
+显式设置 `SYSTEM_MODEL_CONFIG_ENABLED=true`、`FLYWAY_ENABLED=true` 并向进程提供有效的 `SYSTEM_MODEL_MASTER_KEY`。主密钥缺失在启动期间报错，不等待第一次加解密。关闭该层时，不要求新增主密钥，不查询配置表，也不改变原 provider 选择。
+
+首次启用时，服务把当前 YAML/环境默认及其加密凭据捕获为不可变版本。以后默认变化也生成新版本；多实例应使用相同主密钥和部署默认。当前表是管理索引，完整版本是执行依据，两者与变更审计在同一事务更新。
+
+- 分析任务在创建事务内冻结整个文本/视觉配置及翻译模式，冻结失败不投递新任务。自动重投/恢复读取原快照，异步分支和批次显式传递执行引用。
+- 普通课程问答、章节和手动资料生成按操作冻结新版本；内容修订与协议内重试继续使用同一引用。
+- 执行快照只有版本号和无密钥解析结果，没有明文或密文。调用前按版本号从不可变版本解密；编辑、轮换密钥或删除当前对象不改旧快照。
+- 创建新快照直接读取并锁定当前版本，不能以缓存或 Redis 作为当前版本权威；Redis 在提交后通知缓存失效。漏通知不影响新任务版本，`expectedVersion` 防止并发覆盖。
+- 旧任务首次接管标记 ADOPTED，不追认为创建时已冻结。取消、删除或 owner 不匹配的任务不能继续解析；原 generation fence、租约及晚到结果保护保留。
+- 原 worker 不支持新快照。部署升级或关闭该层前需要排空相关任务，避免旧 worker 接管新任务；本次没有执行部署操作。
+
+没有数据库绑定时，使用冻结的原部署配置；原 OpenAI 路径的 `/v1` 补全和兼容语义保留。数据库绑定存在时，配置、认证、模型、解密和协议失败均明确报错，不回退其他供应商；数据库绑定的 JSON 调用不降级纯文本。LangChain4j 默认仍关闭；本层启用时要求关闭该独立旧路径，绑定使用直接 Chat Completions 适配器。
+
+数据库 OPENAI_CHAT 地址只追加 `/chat/completions`，不补 `/v1`：DeepSeek 前缀 `https://api.deepseek.com` 生成 `https://api.deepseek.com/chat/completions`；已有 `/v1` 或 `/compatible-mode/v1` 前缀保留。成功文本结果元数据记录最终 URL、快照、版本与功能；执行日志只记录标识、结果类别和耗时。
+
+## 当前 API
+
+下列路径均相对于 `/api/admin/system-models`。除 capabilities 外，配置层启用后才注册这些端点。
+
+| 方法与路径 | 行为 |
+| --- | --- |
+| GET `/catalog` | 当前版本、供应商、模型、绑定及脱敏有效配置 |
+| POST `/providers`；PATCH `/providers/{id}` | 创建/编辑供应商及密钥；返回脱敏 catalog |
+| DELETE `/providers/{id}?expectedVersion=...` | 删除没有模型引用的供应商 |
+| POST `/providers/{id}/models`；PATCH `/providers/{providerId}/models/{id}` | 创建/编辑精确模型 ID、能力和允许参数 |
+| DELETE `/models/{id}?expectedVersion=...` | 删除未绑定模型 |
+| PUT `/bindings` | 原子更新指定功能，值为模型 ID；null 恢复部署默认 |
+| POST `/rollbacks` | 指定 feature/targetVersion，恢复历史模型引用并生成新版本 |
+| GET `/versions?before=...`；GET `/versions/{version}` | 分页版本概要/专用脱敏配置投影 |
+| GET `/audit?before=...` | 分页变更审计元数据，不透传任意存储 JSON |
+| GET `/executions?taskId=...`；GET `/executions/{id}` | 按课程查找或读取脱敏执行快照 |
+
+版本、审计和执行列表每次最多 50 条。写操作使用 `expectedVersion`，版本冲突为 409；provider 请求字段为 name/protocol/baseUrl/enabled/apiKey/clearKey，model 为 model/capabilities/parameters/enabled。apiKey 缺省保留、clearKey 显式清除，两者不能同时提交。改变地址或协议须重新提交密钥或明确清除；不能清除或停用被绑定对象，也不能静默删除绑定。
+
+绑定例：`{"expectedVersion":7,"bindings":{"TRANSLATION_FULL_TEXT":12,"SUBTITLE_TRANSLATION":null}}`。回滚例：`{"expectedVersion":8,"feature":"TRANSLATION_FULL_TEXT","targetVersion":6}`。所有保存都生成版本和审计；回滚记录独立动作及目标历史版本。不支持幂等键和回滚预览。
 
 ## 首个管理员与撤权
 
@@ -32,25 +74,23 @@ bash scripts/admin/system-model-admin.sh revoke --user-id 123
 - 主密钥应随机生成并通过部署 secret 管理，生成值和备份不得提交 Git。
 - 每次加密使用独立 12 字节 nonce 和 128-bit 认证标签，AAD 绑定 LectureLens 用途、格式版本和凭据 ID。数据库密文采用 `v1.` 加 Base64URL 封装。
 - API key 接受 8–4096 个可打印 ASCII 字符，不接受空白或控制字符。保存结果的公开投影只包含 `hasKey` 与 `keyLast4`，不序列化密文；内部对象的 `toString()` 也不输出密文。
-- 缺少主密钥不影响当前旧部署启动，但加解密操作拒绝执行；非空且无效的主密钥在初始化时失败。后续启用系统配置层和完整持久化冻结前，必须提供有效主密钥。
+- 系统层关闭时缺少主密钥不影响旧部署；启用时缺失主密钥直接启动失败。非空且无效的主密钥在初始化时失败。工具本身也拒绝未配置密钥时的加解密。
 - 密文损坏、凭据 ID 不匹配或错误主密钥返回固定的解密错误类别，不保留底层异常原因，不回退到其他凭据。
 - 主密钥轮换工具不在首版范围。需要保留主密钥以读取历史版本，直接换掉它会使旧密文及依赖该版本的任务失效。
 
-当前工具和存储约束的测试验证加密边界，不代表尚未交付的管理写接口已完成验收。
+管理写接口、历史和执行查询已用 Mock 供应商与独立真实 MySQL 验证；没有进行真实模型调用或任务质量评测。历史版本继续保留加密凭据，首版不提供历史版本清理或主密钥轮换工具。
 
 ## 后续提交的已确认约束
 
-第②提交接入文本、视觉、两种翻译功能绑定及执行快照；第③提交接入 ASR 运行时切换；第④提交完成管理员前端与总验收 VERIFY.md。每个提交完成测试后暂停，等待用户验收。
+第③提交接入 ASR 运行时切换；第④提交完成管理员前端、主动连通性测试与总验收 VERIFY.md。每个提交完成测试后暂停，等待用户验收。当前 ASR 仍按原启动配置选择，禁止给它写入系统绑定。
 
-配置保存以 `expectedVersion` 做并发控制。不可变配置版本保留加密凭据；执行快照只保存配置版本号和无密钥解析结果，不复制明文或密文。执行时通过冻结的版本和凭据 ID 解密。自动重试、分片及恢复继续旧快照；手动新任务使用最新版本。配置读取失败不能当作无绑定而回退。
+多实例相关验收只模拟漏通知和 `expectedVersion` 并发冲突，不要求启动多实例。
 
-无数据库绑定时保留现有 YAML/环境变量的请求行为；新数据库 OPENAI_CHAT 地址只追加 `/chat/completions`，不补 `/v1`。LangChain4j 保持默认关闭，系统绑定不经过该路径。
+数据库供应商地址仅允许 HTTP/HTTPS，禁止私有、回环、链路本地等非公网 IP。**已知局限：首版不固定已校验的 IP 到实际连接，DNS 校验与连接之间仍存在重绑定窗口。** 本次不实现该防护。
 
-Redis 仅通知版本失效；新任务冻结前读取数据库当前版本以覆盖漏通知。多实例相关验收只模拟漏通知和 `expectedVersion` 并发冲突，不要求启动多实例。
+数据库绑定的运行时传输禁用重定向和环境/JVM 默认代理，连接限时 3 秒，响应上限 2 MiB，异步请求的总等待包括慢响应体；压缩响应明确拒绝。DNS 查询使用有界工作队列和 3 秒等待。保存地址和每次调用均检查全部解析 IP；环境默认路径保留原传输兼容行为。
 
-地址检查仅允许 HTTP/HTTPS，解析并校验所有地址，禁止私有、回环、链路本地等非公网 IP；禁用重定向和环境代理。**已知局限：首版不固定已校验的 IP 到实际连接，DNS 校验与连接之间仍存在重绑定窗口。** 本次不实现该防护。
-
-连通性测试使用固定小请求及授权音频夹具，限制超时、响应大小和并发，返回错误类别、耗时及脱敏最终地址。只用 Mock 供应商验收；真实 DeepSeek/ASR 调用必须另行得到用户授权和凭据。
+主动连通性测试尚未开放，后续使用固定小请求及授权音频夹具，另外限制并发与响应上限，返回错误类别、耗时及脱敏最终地址。本次只用 Mock 供应商验收；真实 DeepSeek/ASR 调用必须另行得到用户授权和凭据。
 
 首版不创建 `system_model_probe_record`，不实现幂等键和回滚预览。回滚仅把指定功能恢复到指定历史版本的模型引用，生成新版本；不连带回退供应商或模型记录，历史引用的对象不存在或失效时明确冲突失败。已有任务仍通过自己的不可变配置版本解析旧配置。
 

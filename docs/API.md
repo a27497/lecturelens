@@ -48,7 +48,7 @@ B5 当前已实现 `POST /api/auth/register`、`POST /api/auth/login`、`POST /a
 
 P1-4 新增 USER/ADMIN：登录和刷新响应的 `user.role`、`GET /api/me` 的 `data.role` 返回当前账号角色；注册固定为 USER，并拒绝额外请求字段（包括 role）。JWT 中的角色不替代管理员接口的数据库实时检查。
 
-系统模型基础接口 `GET /api/admin/system-models/capabilities` 仅管理员可访问，未登录 401、普通用户 403；返回 `protocols` 和 `features[{key, connected}]`。协议仅为 OPENAI_CHAT、BAILIAN_ASR、SILICONFLOW_ASR；FUSION_SUMMARY 的 connected=false。当前尚未开放模型配置写接口，后续范围见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
+系统模型接口位于 `/api/admin/system-models`，每个端点均校验管理员，未登录 401、普通用户 403。`GET /capabilities` 返回协议与功能目录；启用配置层后提供供应商、模型、绑定、历史和执行接口。协议仅为 OPENAI_CHAT、BAILIAN_ASR、SILICONFLOW_ASR；FUSION_SUMMARY 的 connected=false，当前也禁止绑定 ASR（待下一阶段）。历史和执行接口不返回配置原文或密文，密钥只显示 hasKey/keyLast4。完整路径和请求语义见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
 
 ### POST /api/auth/register
 

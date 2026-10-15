@@ -1,9 +1,8 @@
 package com.example.courselingo.task.runner;
-
-import com.example.courselingo.common.error.ErrorCode;
-import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.subtitle.service.SubtitleTranslationAiCallResult;
 import com.example.courselingo.subtitle.service.SubtitleTranslationService;
 import com.example.courselingo.subtitle.service.TranslateSubtitleCommand;
@@ -56,7 +55,8 @@ final class TranslateSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
                     context.userId(),
                     sourceLanguage,
                     context.targetLanguage(),
-                    context.requestId()
+                    context.requestId(),
+                                    context.taskContext().systemModels()
                 )
             );
             context.addAiCallRecord(PipelineAiCallRecord.succeededWithMetrics(

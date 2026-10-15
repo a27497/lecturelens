@@ -20,6 +20,10 @@ final class SubtitleTranslationValidators {
             throw validationFailure("Task ID is invalid");
         }
         validateUserId(command.userId());
+        if (command.execution() != null
+                && (!taskId.equals(command.execution().taskId())
+                        || command.userId() != command.execution().userId()))
+            throw validationFailure("Execution scope is invalid");
         String sourceLanguage = validateLanguage(command.sourceLanguage(), "Source language is required");
         String targetLanguage = validateLanguage(command.targetLanguage(), "Target language is required");
         String requestId = requiredText(command.requestId(), "Request ID is required");
@@ -28,8 +32,8 @@ final class SubtitleTranslationValidators {
             command.userId(),
             sourceLanguage,
             targetLanguage,
-            requestId
-        );
+            requestId,
+                command.execution());
     }
 
     static ValidatedTranslationScope validateScope(String taskId, Long userId, String targetLanguage) {

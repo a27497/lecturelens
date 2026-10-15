@@ -14,7 +14,10 @@ public class ModelRoutingConfiguration {
     }
 
     @Bean
-    AiModelRoutedLlmRequestFactory aiModelRoutedLlmRequestFactory(AiModelRouter router) {
-        return new AiModelRoutedLlmRequestFactory(router);
+    AiModelRoutedLlmRequestFactory aiModelRoutedLlmRequestFactory(AiModelRouter router,
+            org.springframework.beans.factory.ObjectProvider<
+                            com.example.courselingo.systemmodel.SystemModelExecutionService>
+                    executions) {
+        return new AiModelRoutedLlmRequestFactory(router, executions.getIfAvailable());
     }
 }

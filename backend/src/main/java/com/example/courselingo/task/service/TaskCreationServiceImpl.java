@@ -23,16 +23,24 @@ import com.example.courselingo.task.ratelimit.AnalysisRateLimitResult;
 import com.example.courselingo.task.ratelimit.AnalysisRateLimitService;
 import com.example.courselingo.upload.entity.UploadSession;
 import com.example.courselingo.upload.mapper.UploadSessionMapper;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.Set;
-import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 @Service
 public class TaskCreationServiceImpl implements TaskCreationService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private Boolean submissionEnabled;
 
@@ -156,6 +164,8 @@ public class TaskCreationServiceImpl implements TaskCreationService {
         if (inserted != 1) {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR);
         }
+
+        if (systemModels != null) systemModels.freezePipeline(task.getId(), task.getUserId());
 
         stateService.changeState(AnalysisTaskStateChangeCommand.builder()
             .taskId(task.getId())

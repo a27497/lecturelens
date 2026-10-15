@@ -28,7 +28,7 @@
 
 ## 系统模型配置基础
 
-V25 另建立系统模型配置基础表，尚未接入运行时。详见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
+V25 建立系统模型配置表，已接入可选的 Java 文本/视觉运行时，未新增迁移版本。详见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)。
 
 | 表 | 当前存储约束 |
 | --- | --- |
@@ -38,7 +38,7 @@ V25 另建立系统模型配置基础表，尚未接入运行时。详见[系统
 | `system_model_config_version` | 完整配置 JSON 和 SHA-256；初始化空版本 0；更新和删除由 trigger 拒绝 |
 | `system_model_config_state` | 唯一当前版本指针 |
 | `system_model_audit` | 追加式脱敏变更；保留历史操作者 ID，不保存邮箱 |
-| `system_model_execution_snapshot` | 任务、owner、操作、版本和无凭据解析结果；硬删除任务时级联清理 |
+| `system_model_execution_snapshot` | 任务、owner、操作、版本和无凭据解析结果；CREATED 与存量 ADOPTED 区分；硬删除任务时级联清理 |
 
 ## user_account
 

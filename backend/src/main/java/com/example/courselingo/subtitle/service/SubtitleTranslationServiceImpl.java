@@ -1,9 +1,9 @@
 package com.example.courselingo.subtitle.service;
 
 import com.example.courselingo.ai.llm.LlmProvider;
+import com.example.courselingo.ai.llm.LlmProviderException;
 import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
 import com.example.courselingo.ai.llm.LlmProviderFailureClassifier;
-import com.example.courselingo.ai.llm.LlmProviderException;
 import com.example.courselingo.ai.llm.LlmRequest;
 import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmStageException;
@@ -14,11 +14,17 @@ import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 import com.example.courselingo.modelrouting.AiModelStage;
 import com.example.courselingo.subtitle.domain.SubtitleSegment;
-import com.example.courselingo.subtitle.domain.TaskFullTextResult;
 import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
+import com.example.courselingo.subtitle.domain.TaskFullTextResult;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
-import com.example.courselingo.subtitle.mapper.TaskFullTextResultMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
+import com.example.courselingo.subtitle.mapper.TaskFullTextResultMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -30,21 +36,23 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SubtitleTranslationServiceImpl implements SubtitleTranslationService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private static final Logger log = LoggerFactory.getLogger(SubtitleTranslationServiceImpl.class);
     private static final int MAX_SOURCE_SEGMENTS = 200;
@@ -207,8 +215,15 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
     public SubtitleTranslationAiCallResult translateTaskSubtitlesWithAiCallRecord(TranslateSubtitleCommand command) {
         long wallStartedNanos = System.nanoTime();
         ValidatedTranslationCommand validated = SubtitleTranslationValidators.validateCommand(command);
+        if (systemModels != null && validated.execution() == null)
+            validated =
+                    validated.withExecution(
+                            systemModels.operation(
+                                    validated.taskId(), validated.userId(), "TRANSLATION"));
         List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated);
-        if (isFullTextMode()) {
+        if (validated.execution() == null
+                ? isFullTextMode()
+                : systemModels.fullText(validated.execution())) {
             return translateFullText(validated, sourceSegments);
         }
         LlmProvider llmProvider = resolveLlmProvider();
@@ -316,7 +331,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         Duration wallDuration = elapsedDuration(wallStartedNanos);
         int retryCount = retryCount(run.results(), run.plannedBatchCount());
         log.info(
-            "event=llm_full_text_translation_completed taskId={} wallDurationMillis={} providerDurationMillis={} batchCount={} retryCount={} totalTokens={}",
+                "event=llm_full_text_translation_completed taskId={} wallDurationMillis={}"
+                    + " providerDurationMillis={} batchCount={} retryCount={} totalTokens={}",
             SafeLogSanitizer.sanitize(validated.taskId()),
             wallDuration.toMillis(),
             usage.duration().toMillis(),
@@ -348,7 +364,9 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         String sourceFullText
     ) {
         log.info(
-            "event=llm_full_text_translation_skipped taskId={} sourceLanguage={} targetLanguage={} sourceFullTextLength={} skipTranslation=true reason=source_already_target_language",
+                "event=llm_full_text_translation_skipped taskId={} sourceLanguage={}"
+                    + " targetLanguage={} sourceFullTextLength={} skipTranslation=true"
+                    + " reason=source_already_target_language",
             SafeLogSanitizer.sanitize(validated.taskId()),
             SafeLogSanitizer.sanitize(validated.sourceLanguage()),
             SafeLogSanitizer.sanitize(validated.targetLanguage()),
@@ -643,7 +661,9 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 )
         );
         log.info(
-            "event=llm_aligned_batch_translation_started taskId={} mode=alignedBatch segmentCount={} inputCharCount={} requestTimeoutMillis={} maxTokens={} maxAttempts={} promptChars={} model={} stream=false",
+                "event=llm_aligned_batch_translation_started taskId={} mode=alignedBatch"
+                    + " segmentCount={} inputCharCount={} requestTimeoutMillis={} maxTokens={}"
+                    + " maxAttempts={} promptChars={} model={} stream=false",
             SafeLogSanitizer.sanitize(command.taskId()),
             batch.size(),
             inputCharCount(batch),
@@ -657,7 +677,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         try {
             LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, request);
             log.info(
-                "event=llm_aligned_batch_translation_completed taskId={} mode=alignedBatch segmentCount={} durationMillis={} totalTokens={} outputLength={}",
+                    "event=llm_aligned_batch_translation_completed taskId={} mode=alignedBatch"
+                        + " segmentCount={} durationMillis={} totalTokens={} outputLength={}",
                 SafeLogSanitizer.sanitize(command.taskId()),
                 batch.size(),
                 elapsedMillis(startedNanos, result == null ? null : result.duration()),
@@ -687,7 +708,9 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         LlmStageException failure
     ) {
         log.warn(
-            "event=llm_aligned_batch_translation_failed taskId={} providerErrorCategory={} httpStatus={} providerErrorCode={} retryable={} responseFormatUsed={} attempt={} batchSegmentCount={} batchInputChars={} durationMillis={}",
+                "event=llm_aligned_batch_translation_failed taskId={} providerErrorCategory={}"
+                    + " httpStatus={} providerErrorCode={} retryable={} responseFormatUsed={}"
+                    + " attempt={} batchSegmentCount={} batchInputChars={} durationMillis={}",
             SafeLogSanitizer.sanitize(command.taskId()),
             failure.details().category(),
             failure.details().httpStatus(),
@@ -901,7 +924,9 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         int depth
     ) {
         log.info(
-            "event=llm_aligned_batch_semantic_retry taskId={} reason={} semanticAttempt={} segmentCount={} inputCharCount={} translatedCharCount={} cjkCharCount={} cjkRatio={} depth={}",
+                "event=llm_aligned_batch_semantic_retry taskId={} reason={} semanticAttempt={}"
+                    + " segmentCount={} inputCharCount={} translatedCharCount={} cjkCharCount={}"
+                    + " cjkRatio={} depth={}",
             SafeLogSanitizer.sanitize(command.taskId()),
             validation.reason(),
             semanticAttempt,

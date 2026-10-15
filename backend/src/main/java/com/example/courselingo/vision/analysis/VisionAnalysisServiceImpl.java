@@ -10,18 +10,26 @@ import com.example.courselingo.ai.record.service.AiCallRecordService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
+import com.example.courselingo.media.VideoFrameSampler;
 import com.example.courselingo.modelrouting.AiModelRoute;
 import com.example.courselingo.modelrouting.AiModelRouter;
 import com.example.courselingo.modelrouting.AiModelStage;
-import com.example.courselingo.media.VideoFrameSampler;
 import com.example.courselingo.storage.StorageService;
 import com.example.courselingo.vision.analysis.mapper.VideoKeyframeAnalysisMapper;
 import com.example.courselingo.vision.keyframe.VideoKeyframe;
 import com.example.courselingo.vision.keyframe.mapper.VideoKeyframeMapper;
-import com.example.courselingo.vision.ocr.VideoKeyframeOcr;
 import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
+import com.example.courselingo.vision.ocr.VideoKeyframeOcr;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -32,16 +40,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 public class VisionAnalysisServiceImpl implements VisionAnalysisService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private com.example.courselingo.task.service.GenerationFence generationFence;
 
@@ -226,6 +234,27 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
         Path analysisWorkspace,
         String targetLanguage
     ) {
+        return scanInternal(taskId, userId, sourceVideo, analysisWorkspace, targetLanguage, null);
+    }
+
+    @Override
+    public VisionAnalysisScanResult scan(
+            String taskId,
+            Long userId,
+            Path sourceVideo,
+            Path workspace,
+            String language,
+            com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
+        return scanInternal(taskId, userId, sourceVideo, workspace, language, execution);
+    }
+
+    private VisionAnalysisScanResult scanInternal(
+            String taskId,
+            Long userId,
+            Path sourceVideo,
+            Path analysisWorkspace,
+            String targetLanguage,
+            com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
         if (!properties.isEnabled()) {
             return new VisionAnalysisScanResult(0, 0, 0, 0, 0);
         }
@@ -238,7 +267,15 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             ? List.of()
             : ocrMapper.selectByKeyframeIds(normalizedTaskId, userId, keyframes.stream().map(VideoKeyframe::getId).toList());
         List<VideoKeyframe> selected = selector.select(keyframes, ocrRows, properties);
-        AiModelRoute route = aiModelRouter.route(AiModelStage.VISION_FRAME_ANALYSIS);
+        if (systemModels != null && execution == null)
+            execution = systemModels.operation(normalizedTaskId, userId, "VISION_FRAME_ANALYSIS");
+        if (execution != null
+                && (!normalizedTaskId.equals(execution.taskId()) || userId != execution.userId()))
+            throw new BusinessException(ErrorCode.SYSTEM_MODEL_SNAPSHOT_INVALID);
+        AiModelRoute route =
+                execution == null
+                        ? aiModelRouter.route(AiModelStage.VISION_FRAME_ANALYSIS)
+                        : systemModels.visionRoute(execution);
         AiCallRecordView call = startAiCall(normalizedTaskId, userId, selected.size(), route);
         long scanStartedNanos = System.nanoTime();
         int saved = 0;
@@ -279,7 +316,8 @@ public class VisionAnalysisServiceImpl implements VisionAnalysisService {
             completeAiCall(call, normalizedTaskId, userId, wallDurationMillis, providerDurationMillis,
                 providerCalls, selected.size(), succeeded + empty);
             LOGGER.info(
-                "event=adaptive_vlm_completed availableKeyframes={} vlmPlanned={} vlmAttempted={} vlmSucceeded={} vlmEmpty={} vlmFailed={} vlmSkipped={}",
+                    "event=adaptive_vlm_completed availableKeyframes={} vlmPlanned={}"
+                        + " vlmAttempted={} vlmSucceeded={} vlmEmpty={} vlmFailed={} vlmSkipped={}",
                 keyframes.size(), selected.size(), saved, succeeded, empty, failed, skipped
             );
             return new VisionAnalysisScanResult(saved, succeeded, empty, failed, skipped);

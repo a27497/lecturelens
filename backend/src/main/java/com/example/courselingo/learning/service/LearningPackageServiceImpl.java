@@ -15,14 +15,23 @@ import com.example.courselingo.learning.mapper.LearningPackageMapper;
 import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 import com.example.courselingo.modelrouting.AiModelStage;
 import com.example.courselingo.subtitle.domain.SubtitleSegment;
-import com.example.courselingo.subtitle.domain.TaskFullTextResult;
 import com.example.courselingo.subtitle.domain.SubtitleTranslationSegment;
+import com.example.courselingo.subtitle.domain.TaskFullTextResult;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
-import com.example.courselingo.subtitle.mapper.TaskFullTextResultMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
+import com.example.courselingo.subtitle.mapper.TaskFullTextResultMapper;
+import com.example.courselingo.task.service.GenerationFence;
 import com.example.courselingo.vision.ocr.OcrTextQualityEvaluator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,17 +41,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
-import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class LearningPackageServiceImpl implements LearningPackageService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private GenerationFence generationFence;
 
@@ -189,7 +197,13 @@ public class LearningPackageServiceImpl implements LearningPackageService {
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public LearningPackageAiCallResult generateLearningPackageWithAiCallRecord(GenerateLearningPackageCommand command) {
-        ValidatedLearningPackageCommand validated = LearningPackageValidators.validateCommand(command);
+        ValidatedLearningPackageCommand initial = LearningPackageValidators.validateCommand(command);
+        ValidatedLearningPackageCommand validated =
+                systemModels != null && initial.execution() == null
+                        ? initial.withExecution(
+                                systemModels.operation(
+                                        initial.taskId(), initial.userId(), "LEARNING_PACKAGE"))
+                        : initial;
         GenerationFence.Ticket ticket = generationFence == null ? null
             : generationFence.begin(validated.taskId(), validated.userId(), "learning:" + validated.targetLanguage());
         List<VideoSegment> multimodalSegments = loadMultimodalSegments(validated);
@@ -774,7 +788,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         long startedNanos = System.nanoTime();
         LlmResult result = llmProvider.generate(request);
         log.info(
-            "event=learning_package_llm_completed taskId={} inputSource={} inputLength={} durationMillis={} totalTokens={} outputLength={}",
+                "event=learning_package_llm_completed taskId={} inputSource={} inputLength={}"
+                    + " durationMillis={} totalTokens={} outputLength={}",
             SafeLogSanitizer.sanitize(command.taskId()),
             SafeLogSanitizer.sanitize(inputSource),
             inputLength,
@@ -875,7 +890,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         }
         String errorCode = isJsonParseError(exception) ? "JSON_PARSE_ERROR" : "VALIDATION_FAILED";
         log.warn(
-            "event=learning_package_parse_failed taskId={} provider={} model={} errorCode={} retry={} rawContentPreview={}",
+                "event=learning_package_parse_failed taskId={} provider={} model={} errorCode={}"
+                    + " retry={} rawContentPreview={}",
             SafeLogSanitizer.sanitize(command.taskId()),
             SafeLogSanitizer.sanitize(provider),
             SafeLogSanitizer.sanitize(result.model()),
