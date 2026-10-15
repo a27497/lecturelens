@@ -12,6 +12,7 @@ import ModelManagementView from "../views/ModelManagementView.vue";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: "/admin/settings/models", name: "admin-models", component: () => import("../views/AdminModelManagementView.vue"), meta: { requiresAuth: true, requiresAdmin: true } },
     { path: "/demo", name: "recruiter-demo", component: RecruiterDemoView },
     { path: "/settings/models", name: "models", component: ModelManagementView, meta: { requiresAuth: true } },
     {
@@ -52,7 +53,7 @@ export const router = createRouter({
   ],
 });
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
 
@@ -61,6 +62,12 @@ router.beforeEach((to) => {
       path: "/login",
       query: { redirect: to.fullPath },
     };
+  }
+
+  if (to.meta.requiresAdmin) {
+    try { await authStore.loadCurrentUser(true); }
+    catch { return { path: "/tasks" }; }
+    if (!authStore.isAdmin) return { path: "/tasks" };
   }
 
   if (to.meta.guestOnly && isAuthenticated) {

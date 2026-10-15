@@ -1,0 +1,84 @@
+{
+  "project": "LectureLens P1-4 system model management",
+  "base_commit": "fd8ece82a3eef8d0c71cf63aa49ce2b211e843d3",
+  "stages": [
+    {
+      "phase": 1,
+      "commit": "91fcb319fc39ca906a1ebd8dcbb61be5f65f0947",
+      "record": "eval/system-model-management/phase1/README.md"
+    },
+    {
+      "phase": 2,
+      "commit": "55ef3b8e07697f28e82e6d5046851a6c7ad0614d",
+      "record": "eval/system-model-management/phase2/VERIFY.md"
+    },
+    {
+      "phase": 3,
+      "commit": "40f3a8b17527061731cdfb507f9173083f7fc858",
+      "record": "eval/system-model-management/phase3/VERIFY.md"
+    },
+    {
+      "phase": 4,
+      "commit_command": "git log --diff-filter=A --format=%H -- eval/system-model-management/VERIFY.md",
+      "parent_commit": "40f3a8b17527061731cdfb507f9173083f7fc858",
+      "record": "eval/system-model-management/VERIFY.md",
+      "note": "Resolve after this single phase-4 commit; avoids self-referential commit hashes."
+    }
+  ],
+  "final_results": {
+    "backend_full": {
+      "exit_code": 0,
+      "suite_count": 225,
+      "tests": 1602,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".data/system-model-management/phase4/backend-full-final.log",
+      "junit_xml": ".data/system-model-management/phase4/full-final-reports"
+    },
+    "frontend": {
+      "exit_code": 0,
+      "tests": 119,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "test_files": 29,
+      "log": ".data/system-model-management/phase4/frontend-full-final.log",
+      "junit_xml": ".data/system-model-management/phase4/frontend-final.xml",
+      "build_log": ".data/system-model-management/phase4/frontend-build-final.log",
+      "build_exit_code": 0
+    },
+    "python": {
+      "exit_code": 0,
+      "tests": 727,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".data/system-model-management/phase4/python-final.log",
+      "junit_xml": ".data/system-model-management/phase4/python-final.xml",
+      "database": "isolated PostgreSQL 17.11 / pgvector 0.8.6",
+      "warnings": 1
+    },
+    "ruff": {
+      "check_exit_code": 0,
+      "format_exit_code": 0,
+      "formatted_files": 88,
+      "check_log": ".data/system-model-management/phase4/ruff-check-final.log",
+      "format_log": ".data/system-model-management/phase4/ruff-format-final.log",
+      "scope": "agent-service/src and agent-service/tests",
+      "verifier_check_log": ".data/system-model-management/phase4/verifier-lint-final.log",
+      "verifier_format_log": ".data/system-model-management/phase4/verifier-format-check-final.log"
+    },
+    "personal_models": {
+      "frontend_tests": 8,
+      "python_tests": 26
+    }
+  },
+  "phase4_results": "eval/system-model-management/phase4/results.json",
+  "source_hashes": "eval/system-model-management/SHA256SUMS",
+  "phase4_raw_hashes": "eval/system-model-management/phase4/RAW_SHA256SUMS",
+  "real_provider_calls": false,
+  "push": false,
+  "deployment": false,
+  "online_restart": false
+}

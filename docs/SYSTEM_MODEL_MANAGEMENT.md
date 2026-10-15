@@ -4,7 +4,7 @@
 
 ## 当前实现
 
-已实现管理员权限、离线管理员命令、配置写接口、Java 文本/视觉解析、两路翻译绑定、ASR 运行时切换、不可变配置版本与执行快照。系统层默认关闭；管理员前端与主动连通性测试留待第④提交。
+已实现管理员权限、离线管理员命令、配置写接口、Java 文本/视觉解析、两路翻译绑定、ASR 运行时切换、不可变配置版本与执行快照。系统层默认关闭；管理员页面位于 `/admin/settings/models`，与个人学习 Agent 的 `/settings/models` 分开。
 
 - `user_account.role` 仅允许 `USER/ADMIN`，存量和新注册用户默认 `USER`。注册请求拒绝额外字段，包括客户端提交的 `role`。
 - 登录、刷新和 `GET /api/me` 返回角色。新 JWT 签入角色；旧 JWT 没有角色时解析为 `USER`。管理授权始终重新读取数据库角色和账号状态，提权、撤权和禁用不依赖令牌到期。
@@ -46,6 +46,16 @@
 
 数据库绑定共用禁止重定向/代理、3 秒连接与 2 MiB 响应上限的有界传输；原环境默认继续原传输兼容行为。模型/认证、429、超时、无效 JSON、地址与响应上限失败不回退其他供应商。第三阶段使用实际适配器组装请求并替换 HTTP 发送验证机制，不代表真实识别质量；验收记录见 [第③阶段 VERIFY](../eval/system-model-management/phase3/VERIFY.md)。
 
+## 管理员页面
+
+`/admin/settings/models` 的入口只对 `/api/me` 返回 ADMIN 的账号显示，直接导航也重新读取角色；最终授权由每个管理 API 的后端拦截器执行。管理 API 的 403 保留普通用户的有效登录会话；管理页收到 403 后移除管理员内容并清空密钥。角色不存入浏览器存储。
+
+页面复用中性标题、面板、状态与模型选项组件，不修改个人页的 decision/review 绑定或命令。供应商/模型增改删、独立功能绑定、历史脱敏查看、单功能恢复绑定、任务快照和审计查询均走 Java 管理 API。
+
+页面把“配置可解析”与“连通性测试通过”分开：前者只检查本地解析、地址格式和密钥解密，不能证明认证、模型或 DNS 可用；同时标记当前翻译模式、章节/视觉部署开关与 FUSION_SUMMARY 未接通。最终地址按当前协议规则展示，环境默认保留原 `/v1` 行为。
+
+密钥表单只保存在组件内存，不写 localStorage/sessionStorage；提交（含失败）、切换供应商、刷新、pagehide、撤权及离开组件后清空。重新打开只显示 `hasKey/keyLast4` 掩码。测试结果只留在当前页面，配置版本变化或重新打开后清除，避免把旧测试当作当前配置保证。
+
 ## 当前 API
 
 下列路径均相对于 `/api/admin/system-models`。除 capabilities 外，配置层启用后才注册这些端点。
@@ -53,6 +63,9 @@
 | 方法与路径 | 行为 |
 | --- | --- |
 | GET `/catalog` | 当前版本、供应商、模型、绑定及脱敏有效配置 |
+| GET `/status?version=...` | 指定版本的本地状态、实际来源、最终地址、功能模式/部署开关；不发供应商请求 |
+| GET `/probe-policy` | 测试 origin 白名单、固定限额及 ASR 夹具哈希 |
+| POST `/probes` | 管理员手动测试已保存模型，参数 expectedVersion/modelId |
 | POST `/providers`；PATCH `/providers/{id}` | 创建/编辑供应商及密钥；返回脱敏 catalog |
 | DELETE `/providers/{id}?expectedVersion=...` | 删除没有模型引用的供应商 |
 | POST `/providers/{id}/models`；PATCH `/providers/{providerId}/models/{id}` | 创建/编辑精确模型 ID、能力和允许参数 |
@@ -93,9 +106,9 @@ bash scripts/admin/system-model-admin.sh revoke --user-id 123
 
 管理写接口、历史和执行查询已用 Mock 供应商与独立真实 MySQL 验证；没有进行真实模型调用或任务质量评测。历史版本继续保留加密凭据，首版不提供历史版本清理或主密钥轮换工具。
 
-## 后续提交的已确认约束
+## 运行边界与连通性测试
 
-第③提交已接入 ASR 运行时切换；第④提交完成管理员前端、主动连通性测试与总验收 VERIFY.md。每个提交完成测试后暂停，等待用户验收。
+四阶段已交付；整体改动、冻结提交与验收证据见 [VERIFY.md](../eval/system-model-management/VERIFY.md)。本次只做本地提交，没有发布。
 
 多实例相关验收只模拟漏通知和 `expectedVersion` 并发冲突，不要求启动多实例。
 
@@ -103,7 +116,14 @@ bash scripts/admin/system-model-admin.sh revoke --user-id 123
 
 数据库绑定的运行时传输禁用重定向和环境/JVM 默认代理，连接限时 3 秒，响应上限 2 MiB，异步请求的总等待包括慢响应体；压缩响应明确拒绝。DNS 查询使用有界工作队列和 3 秒等待。保存地址和每次调用均检查全部解析 IP；环境默认路径保留原传输兼容行为。
 
-主动连通性测试尚未开放，后续使用固定小请求及授权音频夹具，另外限制并发与响应上限，返回错误类别、耗时及脱敏最终地址。本次只用 Mock 供应商验收；真实 DeepSeek/ASR 调用必须另行得到用户授权和凭据。
+主动连通性测试只有管理员点击后发送，读取 `expectedVersion/modelId` 指定的已保存数据库配置，不接收临时地址、密钥或任意音频；当前版本不匹配返回 409。测试不改变绑定、配置版本、审计或任务快照，也不保存测试记录表。结果仅有通过状态、固定错误类别、耗时、版本、模型 ID 及最终地址，不返回原始错误、正文、转写或凭据。
+
+- 部署设置 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS`（逗号分隔的精确 HTTP(S) origin），默认空即禁止测试。白名单区分协议、域名和端口，不允许 path、查询、fragment 或 userinfo；默认端口规范化。示例：`https://api.deepseek.com,https://api.siliconflow.cn`。名单由部署者管理，页面不能修改。
+- 命中 origin 后仍检查 DNS 的全部 IP，禁止私有、回环、链路本地等地址；白名单不能绕过地址策略。传输禁用重定向和环境/JVM 代理，不固定连接 IP，DNS 重绑定窗口仍是已知限制。
+- 测试整次等待最多 10 秒，连接最多 3 秒，响应最多 64 KiB（含慢响应体），每实例最多两个请求，不排队、不自动重试。超时后若 worker 尚未退出仍占用并发名额，避免取消绕过限制；限额不是跨实例全局限流。
+- OPENAI_CHAT 只发一条短消息、32 个输出 token，并强制 `response_format: {type: json_object}`；使用严格 JSON 对象校验，拒绝重复字段及尾随内容。该测试不验证工具调用、视觉输入或教学质量。
+- ASR 使用仓库 MIT 授权的固定一秒合成音频，[夹具及复现说明](../backend/src/main/resources/system-model-probe/NOTICE.md)，不含真人或下载媒体。空转写可通过，只验证请求及响应协议，不验证识别质量。
+- 本次全部供应商 HTTP 调用由测试替身接管（传输边界仅访问本机测试服务器）；真实 DeepSeek/ASR 调用必须另行得到用户授权和凭据。
 
 首版不创建 `system_model_probe_record`，不实现幂等键和回滚预览。回滚仅把指定功能恢复到指定历史版本的模型引用，生成新版本；不连带回退供应商或模型记录，历史引用的对象不存在或失效时明确冲突失败。已有任务仍通过自己的不可变配置版本解析旧配置。
 
@@ -121,4 +141,4 @@ cd backend
 bash ./mvnw -B test
 ```
 
-测试自行创建随机名称的 `lecturelens_p14_*` 数据库，分别验证空库迁移和 V24→V25 升级，结束后只删除自己创建的数据库。不会迁移或清理现有业务库。分阶段结果和原始日志索引记录于 `eval/system-model-management/`；最终汇总在第④提交提供。
+测试自行创建随机名称的 `lecturelens_p14_*` 数据库，分别验证空库迁移和 V24→V25 升级，结束后只删除自己创建的数据库。不会迁移或清理现有业务库。分阶段结果和原始日志索引记录于 `eval/system-model-management/`；整体汇总见 [VERIFY.md](../eval/system-model-management/VERIFY.md)。

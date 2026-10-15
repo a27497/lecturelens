@@ -8,7 +8,7 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 
 系统优先读取视频内覆盖充分的字幕，只有字幕缺失或覆盖不足时才调用外部 ASR。OCR 与 VLM 均为可选能力，关闭后不影响字幕、翻译、章节、学习资料和导出主链路。
 
-[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本、视觉和 ASR，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；ASR 绑定支持热切换，管理页面尚未交付。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
+[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本、视觉和 ASR，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；ASR 绑定支持热切换，管理员页面为 `/admin/settings/models`，仅管理员可见且后端逐接口授权。手动连通性测试默认禁止，部署者可用 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS` 指定精确 origin 白名单；仍禁止私有地址、代理和重定向，固定 10 秒 / 每实例两并发 / 64 KiB 响应上限。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
 
 系统层启用后，启动会把当前部署默认及加密凭据写为不可变版本；新任务创建时冻结版本，运行中的任务继续原版本。多实例应提供相同主密钥和部署默认。切换回未启用系统层的旧 worker 前应先排空已冻结任务，不让旧 worker 忽略新快照；现有无快照任务首次接管标记 ADOPTED。普通配置保存不需要重启。历史及执行查询不会返回版本原文或密文；本次实现仅在隔离测试环境验收，没有修改线上配置。
 

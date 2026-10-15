@@ -128,6 +128,18 @@ public class SystemModelRuntimeConfiguration {
         return new SystemModelAsrProvider(executions, factories);
     }
 
+    @Bean
+    SystemModelStatusService systemModelStatusService(SystemModelRegistry registry, Environment environment) {
+        return new SystemModelStatusService(registry, environment);
+    }
+
+    @Bean(destroyMethod = "close")
+    SystemModelProbeService systemModelProbeService(SystemModelRegistry registry,
+            SystemModelUrlPolicy urls, Environment environment) {
+        return new SystemModelProbeService(registry, urls,
+                environment.getProperty("courselingo.ai.system-models.probe-allowed-origins", ""));
+    }
+
     @Bean(destroyMethod = "close")
     SystemModelVersionNotifications systemModelVersionNotifications(
             SystemModelRegistry registry,

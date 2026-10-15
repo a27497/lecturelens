@@ -60,7 +60,13 @@ final class SystemModelVisionProvider implements VisionModelProvider {
                 r.baseUrl(),
                 r.model(),
                 "system-version-credential",
-                r.capabilities().stream().map(ModelCapability::valueOf).collect(Collectors.toSet()),
+                r.capabilities().stream()
+                        .map(
+                                value ->
+                                        value.equals("ASR")
+                                                ? ModelCapability.AUDIO_TRANSCRIPTION
+                                                : ModelCapability.valueOf(value))
+                        .collect(Collectors.toSet()),
                 r.temperature(),
                 r.maxTokens(),
                 r.timeoutMillis() == null ? null : Duration.ofMillis(r.timeoutMillis()),
