@@ -1,0 +1,282 @@
+{
+  "baseline-profile": {
+    "n": 5,
+    "wall_mean_ms": 1856.0438704000262,
+    "connections": {
+      "claim": {
+        "calls_per_run": 1,
+        "ms_per_run": 7.520665999982157
+      },
+      "event:evidence_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 51.37859179958468
+      },
+      "event:evidence_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 50.264456400691415
+      },
+      "event:model_finished": {
+        "calls_per_run": 4,
+        "ms_per_run": 34.654705600769375
+      },
+      "event:model_started": {
+        "calls_per_run": 4,
+        "ms_per_run": 34.32916900055716
+      },
+      "event:node_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 50.9710972000903
+      },
+      "event:node_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 48.75150119878526
+      },
+      "event:tool_started": {
+        "calls_per_run": 3,
+        "ms_per_run": 26.209079600084806
+      },
+      "finish": {
+        "calls_per_run": 1,
+        "ms_per_run": 8.321728000373696
+      },
+      "guard": {
+        "calls_per_run": 18,
+        "ms_per_run": 152.58503319710144
+      },
+      "other": {
+        "calls_per_run": 4,
+        "ms_per_run": 33.70120319996204
+      },
+      "reserve": {
+        "calls_per_run": 7,
+        "ms_per_run": 59.285977199760964
+      },
+      "save_tool": {
+        "calls_per_run": 3,
+        "ms_per_run": 26.028145600503194
+      },
+      "tool_result": {
+        "calls_per_run": 3,
+        "ms_per_run": 26.180751400170266
+      }
+    },
+    "sql": {
+      "active_run": {
+        "calls_per_run": 65,
+        "ms_per_run": 131.25674539842294
+      },
+      "event_insert": {
+        "calls_per_run": 42,
+        "ms_per_run": 62.09255319990916
+      },
+      "other": {
+        "calls_per_run": 24,
+        "ms_per_run": 27.135613399150316
+      }
+    },
+    "methods": {
+      "claim": {
+        "calls_per_run": 1,
+        "ms_per_run": 13.20343400038837
+      },
+      "event:evidence_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 80.4541061999771
+      },
+      "event:evidence_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 78.95551280053041
+      },
+      "event:model_finished": {
+        "calls_per_run": 4,
+        "ms_per_run": 54.52546319866087
+      },
+      "event:model_started": {
+        "calls_per_run": 4,
+        "ms_per_run": 56.961090799813974
+      },
+      "event:node_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 79.26604399908683
+      },
+      "event:node_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 76.82765559911786
+      },
+      "event:tool_started": {
+        "calls_per_run": 3,
+        "ms_per_run": 40.698539799268474
+      },
+      "finish": {
+        "calls_per_run": 1,
+        "ms_per_run": 13.50268940004753
+      },
+      "guard": {
+        "calls_per_run": 18,
+        "ms_per_run": 211.07630459882785
+      },
+      "reserve": {
+        "calls_per_run": 7,
+        "ms_per_run": 89.5122028006881
+      },
+      "save_tool": {
+        "calls_per_run": 3,
+        "ms_per_run": 46.8382074002875
+      },
+      "tool_result": {
+        "calls_per_run": 3,
+        "ms_per_run": 32.52994700014824
+      }
+    }
+  },
+  "before-profile": {
+    "n": 5,
+    "wall_mean_ms": 3123.4791045997554,
+    "connections": {
+      "claim": {
+        "calls_per_run": 1,
+        "ms_per_run": 7.543593999798759
+      },
+      "event:evidence_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 52.333464799812646
+      },
+      "event:evidence_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 49.7246027993242
+      },
+      "event:model_finished": {
+        "calls_per_run": 4,
+        "ms_per_run": 34.63543699981528
+      },
+      "event:model_started": {
+        "calls_per_run": 4,
+        "ms_per_run": 33.69147339944902
+      },
+      "event:node_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 51.20485959960206
+      },
+      "event:node_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 49.09596700126713
+      },
+      "event:read_attempt_succeeded": {
+        "calls_per_run": 25,
+        "ms_per_run": 208.16425220218662
+      },
+      "event:tool_started": {
+        "calls_per_run": 3,
+        "ms_per_run": 24.478803201782284
+      },
+      "finish": {
+        "calls_per_run": 1,
+        "ms_per_run": 8.309146200190298
+      },
+      "guard": {
+        "calls_per_run": 68,
+        "ms_per_run": 570.6270532020426
+      },
+      "other": {
+        "calls_per_run": 4,
+        "ms_per_run": 32.326331599688274
+      },
+      "reserve": {
+        "calls_per_run": 7,
+        "ms_per_run": 57.993107599395444
+      },
+      "reserve_read_attempt": {
+        "calls_per_run": 25,
+        "ms_per_run": 205.27744439787057
+      },
+      "save_tool": {
+        "calls_per_run": 3,
+        "ms_per_run": 25.33641119953245
+      },
+      "tool_result": {
+        "calls_per_run": 3,
+        "ms_per_run": 25.325289399188478
+      }
+    },
+    "sql": {
+      "active_run": {
+        "calls_per_run": 165,
+        "ms_per_run": 326.7165969933558
+      },
+      "event_insert": {
+        "calls_per_run": 92,
+        "ms_per_run": 125.15343300292443
+      },
+      "other": {
+        "calls_per_run": 24,
+        "ms_per_run": 26.275001601607073
+      },
+      "retry_event_scan": {
+        "calls_per_run": 75,
+        "ms_per_run": 58.4488026011968
+      }
+    },
+    "methods": {
+      "claim": {
+        "calls_per_run": 1,
+        "ms_per_run": 13.276991399834515
+      },
+      "event:evidence_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 81.65797039982863
+      },
+      "event:evidence_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 77.84483219948015
+      },
+      "event:model_finished": {
+        "calls_per_run": 4,
+        "ms_per_run": 54.15419480159471
+      },
+      "event:model_started": {
+        "calls_per_run": 4,
+        "ms_per_run": 55.580039198321174
+      },
+      "event:node_finished": {
+        "calls_per_run": 6,
+        "ms_per_run": 79.58182700058387
+      },
+      "event:node_started": {
+        "calls_per_run": 6,
+        "ms_per_run": 76.98039379938564
+      },
+      "event:read_attempt_succeeded": {
+        "calls_per_run": 25,
+        "ms_per_run": 325.57836700289045
+      },
+      "event:tool_started": {
+        "calls_per_run": 3,
+        "ms_per_run": 37.47532539964595
+      },
+      "finish": {
+        "calls_per_run": 1,
+        "ms_per_run": 13.63416199965286
+      },
+      "guard": {
+        "calls_per_run": 68,
+        "ms_per_run": 788.0295726015902
+      },
+      "reserve": {
+        "calls_per_run": 7,
+        "ms_per_run": 86.567008599377
+      },
+      "reserve_read_attempt": {
+        "calls_per_run": 25,
+        "ms_per_run": 371.5241572004743
+      },
+      "save_tool": {
+        "calls_per_run": 3,
+        "ms_per_run": 45.33794939889049
+      },
+      "tool_result": {
+        "calls_per_run": 3,
+        "ms_per_run": 31.228860799456015
+      }
+    }
+  }
+}

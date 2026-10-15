@@ -1,0 +1,12 @@
+{
+  "workers": 4,
+  "samples_per_scenario": 20,
+  "rows": 300,
+  "script_sha256": "6f6db6efbe7cde757beb410d65a4b8787056cf6c37693660b6067b2011bd6748",
+  "raw_files": {
+    "baseline-worker-0.jsonl": "aebcbe341380bf5baef94e561288ad5aed3346f2ff0d344b7a7ee37207eba2cb",
+    "baseline-worker-1.jsonl": "c8da8f08863dd03b1663ea0c467ba2168718e19f88d8e6008213de6a30e08c2c",
+    "baseline-worker-2.jsonl": "c7b65cdc3b9f57f8127b40827e057cc8c1e9ba20279dca34e294c2887f2399f5",
+    "baseline-worker-3.jsonl": "f1f6be7e4af9724d256249e54b44518753ffd1ed1688707407da73b08b9f3de5"
+  }
+}

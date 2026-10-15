@@ -1,0 +1,98 @@
+diff --git a/tmp/lecturelens-resilience-latency-before/src/lecturelens_agent/study/store.py b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/store.py
+index e4d6a7b..5b1adde 100644
+--- a/tmp/lecturelens-resilience-latency-before/src/lecturelens_agent/study/store.py
++++ b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/store.py
+@@ -67,8 +67,29 @@ class StudyStore:
+         self.model_resolver = model_resolver
+ 
+     def connect(self, **kwargs):
++        from .connections import execution_connection
++
++        scope = execution_connection.get()
++        if scope is not None and scope[0] is self and not kwargs:
++            return scope[1].borrow()
++        # Explicit autocommit connections include the Session advisory lock;
++        # they must retain their dedicated connection and lifetime.
+         return psycopg.connect(self.dsn, connect_timeout=5, row_factory=dict_row, **kwargs)
+ 
++    @contextmanager
++    def execution_connections(self):
++        from .connections import RunConnection, execution_connection
++
++        lease = RunConnection(
++            lambda: psycopg.connect(self.dsn, connect_timeout=5, row_factory=dict_row, autocommit=True)
++        )
++        context = execution_connection.set((self, lease))
++        try:
++            yield
++        finally:
++            execution_connection.reset(context)
++            lease.close()
++
+     def initialize(self):
+         from .attempts import SCHEMA as ATTEMPT_SCHEMA
+         from .feedback_store import SCHEMA as FEEDBACK_SCHEMA
+diff --git a/tmp/lecturelens-resilience-latency-before/src/lecturelens_agent/study/runtime.py b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/runtime.py
+index 7eb6704..5c5e338 100644
+--- a/tmp/lecturelens-resilience-latency-before/src/lecturelens_agent/study/runtime.py
++++ b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/runtime.py
+@@ -127,7 +127,10 @@ class StudyRuntime:
+ 
+     def execute(self, run):
+         token = str(uuid.uuid4())
+-        with self.authority.execution(self.store, run, token, self.stop):
++        with (
++            self.store.execution_connections(),
++            self.authority.execution(self.store, run, token, self.stop),
++        ):
+             self._execute(run, token)
+ 
+     def _execute(self, run, token):
+diff --git a/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/connections.py b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/connections.py
+new file mode 100644
+index 0000000..b68965e
+--- /dev/null
++++ b/home/dev/projects/lecturelens/agent-service/src/lecturelens_agent/study/connections.py
+@@ -0,0 +1,42 @@
++"""A Run-scoped connection lease; execution state still comes from PostgreSQL."""
++
++import threading
++from contextlib import contextmanager
++from contextvars import ContextVar
++
++from .store import RunStopped
++
++execution_connection = ContextVar("study_execution_connection", default=None)
++
++
++class RunConnection:
++    def __init__(self, factory):
++        self.factory = factory
++        self.connection = None
++        self.lock = threading.RLock()
++        self.closed = False
++
++    @contextmanager
++    def borrow(self):
++        # LangGraph propagates context into node threads. Serialize transactions,
++        # rather than letting two callers share one transaction on this connection.
++        with self.lock:
++            if self.closed:
++                raise RunStopped()
++            if self.connection is None or self.connection.closed or self.connection.broken:
++                self.connection = self.factory()
++            try:
++                # Autocommit outside this block leaves no transaction or row lock
++                # across model/tool I/O. Each existing store operation commits alone.
++                with self.connection.transaction():
++                    yield self.connection
++            finally:
++                if self.connection.broken:
++                    self.connection.close()
++                    self.connection = None
++
++    def close(self):
++        with self.lock:
++            self.closed = True
++            if self.connection is not None:
++                self.connection.close()

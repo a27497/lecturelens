@@ -165,7 +165,6 @@ class McpEvidenceAuthority:
         code = None
         result = None
         try:
-            peer = self._connection()
             timestamp = str(int(time.time()))
             args = {k: v for k, v in payload.items() if k != "action"} | {
                 "authorization": {
@@ -173,7 +172,11 @@ class McpEvidenceAuthority:
                     "signature": signature(self.secret, timestamp, request_body(payload), AUTHORITY_PATH),
                 }
             }
-            authority_payload(name, args)  # shape validation; authorization is exclusively Java's job
+            try:
+                authority_payload(name, args)  # authorization is exclusively Java's job
+            except ValidationError:
+                raise StudyError("MCP_INVALID_REQUEST", 422) from None
+            peer = self._connection()
             result = peer[1].call(self._call, peer[2], name, args)
             if any(result[k] != scope[k] for k in ("owner_id", "course_id", "revision")):
                 raise StudyError("EVIDENCE_SCOPE_MISMATCH")

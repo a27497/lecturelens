@@ -1,0 +1,1257 @@
+{
+  "percentiles": "nearest rank",
+  "workers": 1,
+  "samples_per_scenario": 20,
+  "healthy": {
+    "baseline": {
+      "latency_ms": {
+        "n": 20,
+        "mean": 1537.597,
+        "p50": 1514.622,
+        "p95": 1591.813
+      },
+      "model_tool_http_mcp_calls": [
+        4,
+        3,
+        25,
+        25
+      ],
+      "read_retries": 0,
+      "mcp_cumulative_ms": {
+        "n": 20,
+        "mean": 506.415,
+        "p50": 473.818,
+        "p95": 522.7570000000001
+      }
+    },
+    "before": {
+      "latency_ms": {
+        "n": 20,
+        "mean": 2741.679,
+        "p50": 2668.664,
+        "p95": 3257.275
+      },
+      "model_tool_http_mcp_calls": [
+        4,
+        3,
+        25,
+        25
+      ],
+      "read_retries": 0,
+      "mcp_cumulative_ms": {
+        "n": 20,
+        "mean": 474.675,
+        "p50": 446.84,
+        "p95": 474.186
+      }
+    },
+    "candidate": {
+      "latency_ms": {
+        "n": 20,
+        "mean": 912.042,
+        "p50": 871.212,
+        "p95": 941.159
+      },
+      "model_tool_http_mcp_calls": [
+        4,
+        3,
+        25,
+        25
+      ],
+      "read_retries": 0,
+      "mcp_cumulative_ms": {
+        "n": 20,
+        "mean": 457.641,
+        "p50": 421.764,
+        "p95": 472.552
+      }
+    }
+  },
+  "faults": {
+    "check_unavailable_persistent": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 807.139,
+          "p50": 793.222,
+          "p95": 881.918
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "read_retry_total": 40,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 2546.039,
+          "p50": 2536.281,
+          "p95": 2612.728
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "healthy": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1433.757,
+          "p50": 1389.841,
+          "p95": 1583.617
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 893.293,
+          "p50": 855.39,
+          "p95": 954.089
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      }
+    },
+    "illegal_call_shape": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "STUDY_EXECUTION_FAILED": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 243.552,
+          "p50": 244.088,
+          "p95": 254.83
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 195.373,
+          "p50": 193.334,
+          "p95": 224.315
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "integer_overflow": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 20,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1385.926,
+          "p50": 1380.723,
+          "p95": 1440.389
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 178.8,
+          "p50": 175.562,
+          "p95": 204.349
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "malformed_response": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_MALFORMED_AUTHORITY_RESPONSE": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1143.761,
+          "p50": 1131.859,
+          "p95": 1203.856
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_MALFORMED_AUTHORITY_RESPONSE": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1025.753,
+          "p50": 1026.479,
+          "p95": 1076.394
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "negative_parameter": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 20,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 2017.162,
+          "p50": 1993.862,
+          "p95": 2116.977
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 802.959,
+          "p50": 799.516,
+          "p95": 837.65
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "oversized_parameter": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 248.046,
+          "p50": 241.828,
+          "p95": 257.422
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 190.341,
+          "p50": 187.913,
+          "p95": 208.258
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "protocol_once": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1590.314,
+          "p50": 1590.522,
+          "p95": 1635.593
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 5,
+          "p50": 5,
+          "p95": 5
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 974.825,
+          "p50": 970.925,
+          "p95": 1027.126
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 5,
+          "p50": 5,
+          "p95": 5
+        }
+      }
+    },
+    "protocol_persistent": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 474.132,
+          "p50": 469.055,
+          "p95": 499.514
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 324.118,
+          "p50": 322.859,
+          "p95": 338.448
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        }
+      }
+    },
+    "reversed_window": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 20,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1382.796,
+          "p50": 1383.587,
+          "p95": 1413.658
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 184.981,
+          "p50": 181.873,
+          "p95": 202.278
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "timeout_once": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 2629.453,
+          "p50": 2632.691,
+          "p95": 2664.166
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 20,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 3809.422,
+          "p50": 3805.37,
+          "p95": 3866.605
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      }
+    },
+    "timeout_persistent": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 3249.763,
+          "p50": 3243.368,
+          "p95": 3317.674
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "read_retry_total": 40,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 8433.224,
+          "p50": 8457.979,
+          "p95": 8497.141
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "unavailable_once": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1140.67,
+          "p50": 1134.478,
+          "p95": 1191.133
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "succeeded": 20
+        },
+        "execution_success": 20,
+        "recovery_rate": 1.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {},
+        "read_retry_total": 20,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 2328.477,
+          "p50": 2329.839,
+          "p95": 2378.932
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        }
+      }
+    },
+    "unavailable_persistent": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 1148.451,
+          "p50": 1137.616,
+          "p95": 1183.355
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": 0.0,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "read_retry_total": 40,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 2147.873,
+          "p50": 2144.44,
+          "p95": 2207.489
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    },
+    "unknown_tool": {
+      "baseline": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "UNKNOWN_TOOL": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 259.211,
+          "p50": 259.088,
+          "p95": 277.813
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "status": {
+          "failed": 20
+        },
+        "execution_success": 0,
+        "recovery_rate": null,
+        "invalid_request_succeeded": 0,
+        "refused": 0,
+        "failure_codes": {
+          "UNKNOWN_TOOL": 20
+        },
+        "read_retry_total": 0,
+        "read_retry_per_run": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 180.812,
+          "p50": 178.162,
+          "p95": 199.885
+        },
+        "budget_tool_calls": {
+          "n": 20,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "model_calls": {
+          "n": 20,
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        }
+      }
+    }
+  },
+  "raw_sha256": {
+    "healthy-baseline.jsonl": "b2f21ffdd9935c037f9f1214218d79b87c13f1d263c7f04a3aba3ff5e2b75669",
+    "healthy-before.jsonl": "4baa3b73322de17575b7cd0a7675dbfb58afdbfd38b47770fe918352ab0dab69",
+    "healthy-candidate.jsonl": "dab103e69ef76d48d0e9dbfe0e302271d0125cfdbc85fe7b34d1db8e02379162",
+    "faults-baseline.jsonl": "7215cbb92e194239e6485440ada0b34a663caa78e7a0932c5af96cda36c31d4f",
+    "faults-candidate.jsonl": "1da6c20586e8a8ab71da14ef9279b71d631690066fd934eea911a50d36d8d43e"
+  },
+  "source_sha256": {
+    "baseline": "18f5a0d3cd963e4539ee8f2ff64f6e4b7a636d3f80944ec2b6f36c676d5ae7a7",
+    "before": "963ec9599818d42f0266fc3a110d334ae70fab178382b8c5b0933b678d0ab3ee",
+    "candidate": "6100c55cbacd1ce5eef454c7d47a951dfe3abb9c31e4a8c9f94d01586c120ed2"
+  },
+  "old_latency_correction": {
+    "original_p50_p95_ms": [
+      1910.6,
+      3443.2
+    ],
+    "reason": "Original candidate 06:59-07:03 UTC overlapped full pytest from 07:00:55 UTC; baseline idle. Not an isolated code-regression estimate.",
+    "acceptor_serial_control_user_provided": {
+      "n_per_version": 20,
+      "baseline_ms": [
+        1405,
+        2022
+      ],
+      "before_ms": [
+        2636,
+        3215
+      ]
+    }
+  },
+  "real_model_quality": "未运行",
+  "real_Java_process_faults": "未运行",
+  "fault_counts_match_accepted_P0_1": true
+}
