@@ -1,0 +1,154 @@
+{
+  "phase": 1,
+  "base_commit": "fd8ece82a3eef8d0c71cf63aa49ce2b211e843d3",
+  "branch": "codex/p14-system-model-management",
+  "backend_full": {
+    "exit_code": 0,
+    "suite_count": 218,
+    "tests": 1496,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase1/backend-full.log",
+    "junit_xml": ".data/system-model-management/phase1/full-reports"
+  },
+  "relevant_suites": [
+    {
+      "name": "com.example.courselingo.auth.JwtAccessTokenServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.auth.RefreshTokenServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.auth.CurrentUserServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.auth.AuthControllerTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.auth.AuthLoginServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.auth.AuthRegistrationServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelSecretCipherTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAdminBoundaryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "packaging": {
+    "exit_code": 0,
+    "command": [
+      "bash",
+      "./mvnw",
+      "-B",
+      "-DskipTests",
+      "package"
+    ],
+    "log": ".data/system-model-management/phase1/package.log",
+    "tests_ran_in_previous_step": true
+  },
+  "additional_checks": [
+    {
+      "name": "cli-usage",
+      "command": [
+        "bash",
+        "scripts/admin/system-model-admin.sh"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "duration_ms": 15667
+    },
+    {
+      "name": "shell-syntax",
+      "command": [
+        "bash",
+        "-n",
+        "scripts/admin/system-model-admin.sh"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_ms": 5
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "duration_ms": 31
+    }
+  ],
+  "credential_log_scan": {
+    "scope": "Final backend log and archived final JUnit XML; two synthetic system-model credential canaries",
+    "files_scanned": 219,
+    "matching_files": []
+  },
+  "mysql_version": "8.4.11",
+  "database_scenarios": [
+    "empty database -> V25",
+    "V24 with existing user/task -> V25"
+  ],
+  "initial_failures": [
+    {
+      "log": ".data/system-model-management/phase1/focused-initial.log",
+      "reason": "Surefire selector matched no tests; command corrected"
+    },
+    {
+      "log": ".data/system-model-management/phase1/focused.log",
+      "reason": "Shared mock invocation history in new assertion and test database collation mismatch; fixture corrected; historical migrations unchanged",
+      "junit_xml": ".data/system-model-management/phase1/focused-reports"
+    }
+  ],
+  "real_provider_calls": false,
+  "not_run_in_phase1": [
+    "Python/PostgreSQL full suite and Ruff",
+    "Frontend tests/build",
+    "Real-provider task quality"
+  ],
+  "test_infrastructure_cleanup": ".data/system-model-management/phase1/infrastructure.json"
+}

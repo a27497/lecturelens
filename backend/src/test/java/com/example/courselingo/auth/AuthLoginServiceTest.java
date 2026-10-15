@@ -57,6 +57,7 @@ class AuthLoginServiceTest {
     @Test
     void loginNormalizesEmailVerifiesPasswordAndReturnsAccessToken() {
         UserAccount userAccount = activeUser();
+        userAccount.setRole(com.example.courselingo.auth.entity.UserRole.ADMIN);
         when(userAccountMapper.selectOne(anyUserAccountWrapper())).thenReturn(userAccount);
         when(jwtAccessTokenService.generate(userAccount)).thenReturn("access-token");
         when(jwtAccessTokenService.expiresIn()).thenReturn(3600L);
@@ -77,6 +78,7 @@ class AuthLoginServiceTest {
         assertThat(response.user().userId()).isEqualTo(1L);
         assertThat(response.user().email()).isEqualTo("demo@example.com");
         assertThat(response.user().status()).isEqualTo("ACTIVE");
+        assertThat(response.user().role()).isEqualTo(com.example.courselingo.auth.entity.UserRole.ADMIN);
     }
 
     @Test
@@ -128,7 +130,7 @@ class AuthLoginServiceTest {
             .containsExactly("accessToken", "refreshToken", "tokenType", "expiresIn", "user");
         assertThat(LoginResponse.User.class.getRecordComponents())
             .extracting(component -> component.getName())
-            .containsExactly("userId", "email", "status");
+            .containsExactly("userId", "email", "status", "role");
     }
 
     private UserAccount activeUser() {
