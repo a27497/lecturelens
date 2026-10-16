@@ -1,0 +1,190 @@
+{
+  "candidate": "P2-1c",
+  "jar_sha256": "209d9b08d44f31269a7649953db850606d262293c00e6665b4500f4000e67a5e",
+  "test_total": {
+    "tests": 148,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "normal": {
+    "planned": 10,
+    "submitted": 0,
+    "successes": 0,
+    "success_rate": null,
+    "stage_means": null,
+    "lesson_fees": null
+  },
+  "recovery": {
+    "planned": 1,
+    "submitted": 0,
+    "sigkill_count": 0,
+    "status": "NOT_DEMONSTRATED_ASR_ACCESS_DENIED"
+  },
+  "status": "BLOCKED_ASR_ACCESS_DENIED_UNPURCHASED",
+  "diagnostics": {
+    "asr_physical_requests": 2,
+    "http403": 2,
+    "provider_error_code": "AccessDenied.Unpurchased",
+    "usage": null,
+    "cost": null
+  },
+  "supplemental": {
+    "kind": "SUPPLEMENTAL_MATERIALS_ONLY_REUSED_EVIDENCE",
+    "formal_trial": false,
+    "exit_code": 1,
+    "structured_valid": false,
+    "long_course_quality_valid": null,
+    "exception_class": "OpenAiCompatibleLlmException",
+    "failure_reason": "TIMEOUT_OR_DEADLINE",
+    "successful_phase_counts": {
+      "MAP": 14,
+      "REDUCE": 2
+    },
+    "final_generation_reached": true,
+    "preflight_dispatches": [
+      {
+        "phase": "MAP",
+        "request": 1,
+        "estimated_input_tokens": 5612,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 2,
+        "estimated_input_tokens": 5679,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 3,
+        "estimated_input_tokens": 5691,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 4,
+        "estimated_input_tokens": 5653,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 5,
+        "estimated_input_tokens": 5734,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 6,
+        "estimated_input_tokens": 5588,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 7,
+        "estimated_input_tokens": 5725,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 8,
+        "estimated_input_tokens": 5617,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 9,
+        "estimated_input_tokens": 5663,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 10,
+        "estimated_input_tokens": 5655,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 11,
+        "estimated_input_tokens": 5713,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 12,
+        "estimated_input_tokens": 5732,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 13,
+        "estimated_input_tokens": 5718,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "MAP",
+        "request": 14,
+        "estimated_input_tokens": 5103,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "REDUCE",
+        "request": 15,
+        "estimated_input_tokens": 5476,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "REDUCE",
+        "request": 16,
+        "estimated_input_tokens": 1064,
+        "input_limit": 5734,
+        "output_limit": 512
+      },
+      {
+        "phase": "FINAL",
+        "request": 17,
+        "estimated_input_tokens": 2341,
+        "input_limit": 3840,
+        "output_limit": 4096
+      }
+    ],
+    "successful_calls": 16,
+    "incomplete_or_unknown_dispatches": 1,
+    "successful_call_timing": {
+      "n": 16,
+      "mean_seconds": 55.774,
+      "sample_stddev_seconds": 12.442116229430855
+    }
+  },
+  "historical_comparison": {
+    "P1_3": {
+      "full_chain_successes": 0,
+      "submitted": 10
+    },
+    "P1_3b": {
+      "full_chain_successes": 0,
+      "submitted": 10
+    },
+    "P2_1b": {
+      "full_chain_successes": 0,
+      "submitted": 10
+    }
+  },
+  "push": false,
+  "deploy": false
+}

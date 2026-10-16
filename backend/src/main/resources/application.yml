@@ -212,6 +212,12 @@ courselingo:
       max-keywords: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_KEYWORDS:12}
   learning-package:
     llm-timeout: ${COURSE_LINGO_LEARNING_PACKAGE_LLM_TIMEOUT:180s}
+    context-limit: ${LEARNING_PACKAGE_CONTEXT_LIMIT:8192}
+    context-reserve: ${LEARNING_PACKAGE_CONTEXT_RESERVE:256}
+    map-max-tokens: ${LEARNING_PACKAGE_MAP_MAX_TOKENS:512}
+    max-model-requests: ${LEARNING_PACKAGE_MAX_MODEL_REQUESTS:64}
+    max-reduce-levels: ${LEARNING_PACKAGE_MAX_REDUCE_LEVELS:6}
+    generation-timeout: ${LEARNING_PACKAGE_GENERATION_TIMEOUT:900s}
   qa:
     rate-limit-enabled: ${COURSELINGO_QA_RATE_LIMIT_ENABLED:true}
     rate-limit-per-minute: ${COURSELINGO_QA_RATE_LIMIT_PER_MINUTE:10}

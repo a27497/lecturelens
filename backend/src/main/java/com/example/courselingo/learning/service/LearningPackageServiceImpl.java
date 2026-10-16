@@ -217,7 +217,10 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LearningPackageQualityProfile qualityProfile = LearningPackageQualityProfile.from(
             sourceSegments, multimodalSegments, properties
         );
-        LlmProvider llmProvider = resolveLlmProvider();
+        LlmProvider llmProvider = new LearningPackageContextGuard(resolveLlmProvider(), properties, () -> {
+            // Recheck ownership, cancellation, source revision and execution lease between chunks.
+            if (generationFence != null) generationFence.commit(ticket, () -> null);
+        });
         LlmResult result = fullTextResult == null
             ? generateLearningPackage(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
             : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);

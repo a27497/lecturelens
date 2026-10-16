@@ -48,7 +48,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         try {
             return generateOnce(request);
         } catch (OpenAiCompatibleLlmException exception) {
-            if (request.responseFormat() != LlmResponseFormat.JSON_OBJECT
+            if (Boolean.FALSE.equals(request.metadata().get("structuredOutputFallbackAllowed"))
+                || request.responseFormat() != LlmResponseFormat.JSON_OBJECT
                 || exception.failureCategory() != LlmProviderFailureCategory.UNSUPPORTED_RESPONSE_FORMAT) {
                 throw exception;
             }
