@@ -28,6 +28,7 @@ class TranslationCallDiagnosticsTest {
         jdbc.execute("CREATE TABLE system_model_execution_snapshot(id VARCHAR(64) PRIMARY KEY,task_id VARCHAR(64),user_id BIGINT,config_version BIGINT)");
         jdbc.update("INSERT INTO system_model_execution_snapshot VALUES('snapshot','task',7,10)");
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V26__translation_call_diagnostic.sql")).execute(ds);
+        jdbc.execute("ALTER TABLE translation_call_diagnostic ADD COLUMN attempt_id VARCHAR(64) NULL");
         diagnostics = new TranslationCallDiagnostics(jdbc, new DataSourceTransactionManager(ds));
     }
 

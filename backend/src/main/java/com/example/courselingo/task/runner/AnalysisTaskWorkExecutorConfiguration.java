@@ -129,7 +129,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
         VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
         com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies,
         com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner,
-        com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints
+        com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints,
+        com.example.courselingo.task.usage.PipelineUsageLedger ledger
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -190,7 +191,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 jsonArtifactService,
                 artifactFileService
             ),
-            new WriteAiCallRecordStep(analysisTaskMapper, aiCallRecordService),
+            new WriteAiCallRecordStep(analysisTaskMapper, aiCallRecordService).withLedger(ledger),
             new NoopPipelineAnalysisTaskStep(PipelineAnalysisTaskStepName.UPDATE_TASK_PROGRESS_STATUS)
         ), new DefaultPipelineTaskProgressReporter(
             analysisTaskMapper,

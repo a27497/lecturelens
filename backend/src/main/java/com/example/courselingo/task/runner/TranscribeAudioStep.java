@@ -437,7 +437,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 try {
                     silencePlanner.materialize(audio.audioFile(),clip,policy,plan.maxClipBytes());
                     attempts.incrementAndGet();
-                    var result=pinned.transcribe(request);
+                    var result=pinned.transcribe(request.withInterval(new SpeechToTextRequest.AudioInterval(clip.offsetMillis(),clip.endMillis(),clip.timingSource().name(),plan.hash())));
                     long length=clip.endMillis()-clip.offsetMillis();
                     List<TranscribedSegment> timed;
                     if(!"provider_not_available".equals(result.metadata().get("segmentTimingSource"))

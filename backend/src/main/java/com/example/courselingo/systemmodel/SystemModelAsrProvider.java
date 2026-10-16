@@ -14,6 +14,8 @@ public final class SystemModelAsrProvider implements SpeechToTextProvider {
             org.slf4j.LoggerFactory.getLogger(SystemModelAsrProvider.class);
     private final SystemModelExecutionService executions;
     private final Map<SystemModelProtocol, AsrAdapterFactory> factories;
+    private com.example.courselingo.ai.llm.ModelCallObserver observer=com.example.courselingo.ai.llm.ModelCallObserver.NOOP;
+    SystemModelAsrProvider observed(com.example.courselingo.ai.llm.ModelCallObserver value){observer=value;return this;}
 
     public SystemModelAsrProvider(
             SystemModelExecutionService executions, List<AsrAdapterFactory> factories) {
@@ -74,7 +76,11 @@ public final class SystemModelAsrProvider implements SpeechToTextProvider {
                 if (!execution.taskId().equals(request.taskId()))
                     throw new BusinessException(ErrorCode.SYSTEM_MODEL_CONFIG_INVALID);
                 long started = System.nanoTime();
-                try {
+                var interval=request.interval();
+                var scope=com.example.courselingo.ai.llm.ModelCallScope.open(new com.example.courselingo.ai.llm.ModelCallScope.Context(
+                        execution,"ASR_TRANSCRIPTION",route.model(),null,request.requestId(),interval==null?null:interval.startMillis(),
+                        interval==null?null:interval.endMillis(),interval==null?null:interval.source(),interval==null?null:interval.planHash()));
+                try (scope) {
                     var result = delegate.transcribe(request);
                     var metadata = new java.util.LinkedHashMap<String, Object>(result.metadata());
                     metadata.put("systemModelSnapshotId", execution.snapshotId());
@@ -88,8 +94,11 @@ public final class SystemModelAsrProvider implements SpeechToTextProvider {
                             result.duration(),
                             result.audioDurationMillis(),
                             metadata);
+                } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
+                    throw safe;
                 } catch (AsrProviderException failure) {
                     var safe = AsrCallFailure.provider(failure);
+                    observer.validation(scope.lastCallId(),safe.category().name(),null);
                     LOGGER.info(
                             "event=system_model_asr_failed taskId={} snapshotId={} configVersion={}"
                                 + " category={} status={} durationMillis={}",
@@ -104,6 +113,7 @@ public final class SystemModelAsrProvider implements SpeechToTextProvider {
                     throw new AsrCallFailure(
                             AsrCallFailure.Category.NETWORK, failure.details().retryable(), null);
                 } catch (RuntimeException failure) {
+                    observer.validation(scope.lastCallId(),"OUTPUT_INVALID",null);
                     throw new AsrCallFailure(AsrCallFailure.Category.OUTPUT_INVALID, false, null);
                 }
             }

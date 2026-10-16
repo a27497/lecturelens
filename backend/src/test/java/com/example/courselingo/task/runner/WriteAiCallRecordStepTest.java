@@ -26,6 +26,19 @@ import org.junit.jupiter.api.Test;
 
 class WriteAiCallRecordStepTest {
 
+    @Test void failedV2StageSummaryReadsCanonicalPhysicalUsageIncludingFailures() {
+        var tasks=mock(AnalysisTaskMapper.class);when(tasks.selectByIdAndUserId("task_1",7L)).thenReturn(task());
+        var ledger=mock(com.example.courselingo.task.usage.PipelineUsageLedger.class);
+        when(ledger.totals("task_1",7,"TRANSLATION_FULL_TEXT")).thenReturn(new com.example.courselingo.ai.llm.LlmUsage(200,40,240));
+        var service=new RecordingAiCallRecordService();
+        var context=new PipelineAnalysisTaskStepContext(new AnalysisTaskExecutionContext("task_1","upload_1",7L,"en","zh-CN","event",null,2,1));
+        context.addAiCallRecord(PipelineAiCallRecord.failed(AiCallType.LLM,AiCallStage.TRANSLATION,"mock","m",1L,"OUTPUT_INVALID","safe",false,null,null));
+        new WriteAiCallRecordStep(tasks,service).withLedger(ledger).execute(context);
+        assertThat(service.failed.getFirst().promptTokens()).isEqualTo(200);
+        assertThat(service.failed.getFirst().completionTokens()).isEqualTo(40);
+        assertThat(service.failed.getFirst().totalTokens()).isEqualTo(240);
+    }
+
     @Test
     void writeAiCallRecordFlushesSafePendingAsrAndLlmSummariesThroughD15Service() {
         AnalysisTaskMapper analysisTaskMapper = mock(AnalysisTaskMapper.class);

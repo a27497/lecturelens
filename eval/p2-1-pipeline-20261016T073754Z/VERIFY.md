@@ -119,3 +119,52 @@ V30 增加 plan/batch/attempt/step checkpoint，执行 lease 和 outbox 携带 p
 原始尝试保留：compile01/02 编译通过；checkpoint03 为 4 项通过；related04 为 225 项、1 失败（发布回滚测试错误期待原异常，实际按契约安全转换 ACCOUNTING_INCOMPLETE）；related05 为 326 项、1 错误（新夹具未覆盖 pipeline 全步骤）；修正夹具和断言后 related06 为 326 项全部通过，没有放宽业务校验。日志均在 `.data/p2-1-pipeline-20261016T073754Z/checks/`，含全部失败轮次。
 
 数字复现：沿用前文校验脚本，将文件名换成 stage4；最终数字取 stage4-related06.log 的最后一个 Tests run 行，命令参数及磁盘峰值在同名 JSON。没有运行全量测试，没有重启/部署或真实调用，系统绑定未动。10 次真实基线和 1 次独立恢复演示仍待阶段 5、磁盘余量和隔离 Java 启动确认。
+
+## 阶段 5：全物理调用用量与冻结目录价
+
+阶段 4 提交：`ebb2c89e80d8577ecc696ff95a42658cae2e397d`。阶段 5 代码/文档文件与哈希在 `stages/stage5-files.json`；全部轮次日志/复现参数/磁盘峰值在 `stages/stage5-checks.json`。构建出的候选 JAR 路径、SHA256、字节数、31 个迁移在 `candidate-artifact.json`。没有部署或启动该 JAR。
+
+最终相关 Java 测试 **417 项、0 失败、0 错误、0 跳过**，含独立真实 MySQL V31、事务/锁/恢复验证及本地 mock HTTP，不是供应商或真实课程质量成绩。阶段计数有重叠，不相加为独立测试数。`stage5-final05.log` 最后一条 Tests run 为最终数；该日志和对应 JSON 的 hash 已封存。`stage5-package06` 单独 `-DskipTests package` 成功，不把构建的跳过测试当作测试通过。本轮未修改 Python 或前端，也未运行其全量测试；按授权只跑相关层。
+
+新策略 v2.5 固定 `priceSet=catalog-20261016`，旧策略 null 新字段不改变旧 hash。V31 新增 **model_call_attempt** 作为唯一费用账本、不可变 model_price_card；补充 translation_attempt 的推理/缓存/用量状态/校验子项，以及 V26 的 attempt_id。新增物理表覆盖 ASR/资料/视觉而非只翻译，是用户要求静音 ASR 费用和全链路失败调用用量的直接依赖；原 checkpoint 表仍管理翻译恢复预算，不再重复当账单相加。
+
+每次真实 HTTP 前先持久化 STARTED/安全摘要；出网后保存实际 usage、HTTP/finish/error、耗时、模型/fingerprint 哈希。翻译父批、失败、拆分子批均计费。语义失败更新同一 receipt；失败调用的阶段 ai_call_record 也透传账本用量，任何部分未知则保留 null，不凭估算填零。V26 仍是私有诊断，不能作为第二份费用。旧 worker 可追加已发生的用量，任务删除不重建；恢复将旧 STARTED 标记 UNKNOWN_OUTCOME / PROCESS_INTERRUPTED。入账失败阻止最终任务成功，普通浏览器 QA 的独立 operation 不要求处理链 worker lease（新增回归覆盖）。
+
+ASR 在实际 HTTP 边界记录每片和重试，包括 ENV 百炼/SiliconFlow 与 DB 运行时适配；保存静音计划 hash、实际切片区间与来源，不保存音频。三次合成 ASR 请求（2 片、1 次重试）只计三次；其费用属于 ASR 总额，不再次作为“切分增量”叠加。实际 11 个试次尚未运行，不能把该合成测试当实际 ASR 花费。
+
+价格与来源/查阅日期在 `pricing-20261016.json`：DeepSeek USD，百炼北京 ASR CNY，均按 provider 真实 usage；推理已含输出，不能额外收费；缓存/节假日/边界不确定给区间；未知用量/未核实模型价格保持未知。没有假设汇率或免费额度。低层记录安全请求地址、字节/哈希和 options 摘要；资料 HTTP400 私有响应最多 4000 字符，脱敏在截断之前。响应摘录不公开、不进日志，不改变资料生成业务请求/校验。当前 400 样例仅来自 mock，实际课程若发生仍需保留私有证据并定位。
+
+保留全部尝试：compile01 通过；related02 为 272 项、1 失败/8 错误（MySQL DATETIME 的 LocalDateTime 映射、启动夹具缺 ModelCallObserver、旧 H2 诊断夹具缺新增列）；修正后 related03 322 项通过，related04 416 项通过；补独立 QA operation 回归后 final05 417 项通过。所有失败日志均未覆盖。实际 SQL 迁移/锁由专属 tmpfs MySQL 验证，H2 仅保留已有单层回归。最终本轮自建 MySQL 容器在核对精确 ID 与 task 标签后停止/删除，不触及镜像或保护容器；清理日志在私有 owned-mysql-test-cleanup.json。
+
+### 阶段 5 数字与文件复现
+
+```bash
+# 只读：核对产物/文件哈希和每轮计数、峰值。每轮实际重跑参数在 execution.command。
+sha256sum -c eval/p2-1-pipeline-20261016T073754Z/SHA256SUMS
+sha256sum -c .data/p2-1-pipeline-20261016T073754Z/RAW_SHA256SUMS
+python3 - <<'CHECK'
+import json,hashlib,re,zipfile
+from pathlib import Path
+p=Path('eval/p2-1-pipeline-20261016T073754Z')
+for run in json.loads((p/'stages/stage5-checks.json').read_text()):
+    log=Path(run['log_path']);assert hashlib.sha256(log.read_bytes()).hexdigest()==run['log_sha256']
+    counts=re.findall(r'^\[(?:INFO|ERROR)\] Tests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)',log.read_text(),re.M)
+    print(run['name'],counts[-1] if counts else 'compile/package',run['execution']['disk_peak_percent'])
+a=json.loads((p/'candidate-artifact.json').read_text());jar=Path(a['jar_path'])
+assert hashlib.sha256(jar.read_bytes()).hexdigest()==a['jar_sha256'];assert jar.stat().st_size==a['jar_bytes']
+with zipfile.ZipFile(jar) as z:
+    print('migrations',len([n for n in z.namelist() if '/db/migration/' in n and n.endswith('.sql')]))
+d=json.loads((p/'runtime-readiness.json').read_text());print('disk_pct',100*d['used_bytes']/(d['used_bytes']+d['available_bytes']))
+print('headroom_GiB',d['headroom_below_85_bytes']/2**30,'minimum_GiB',d['real_trial_minimum_headroom_bytes']/2**30)
+CHECK
+```
+
+恢复机制、ASR 归因、用量与费用断言分别在 TranslationCheckpointMySqlTest / PipelineResumeMySqlTest / PipelineUsageLedgerMySqlTest / ModelPriceCatalogTest，具体 -Dtest 和命令见 checks JSON。新相关检查使用新 name，不覆盖旧日志；需重新创建专属测试数据库并按 runner 的 loopback/_test 限制提供测试连接，不能指向业务库。
+
+## 当前停止点与真实验收待办
+
+代码阶段 1–5 已分别提交（阶段 5 的自身 hash 在提交后汇报，避免自引用），10 次正常完整链路和 1 次独立恢复演示**尚未进行**。无真实 token/费用/成功率改善结果；不生成假的 trials.jsonl。SUMMARY.md 保留 P1-3 与 P1-3b 原结论。
+
+按已确认 DESIGN.md §12，真实测量要求距 85% 的可写余量至少 2 GiB 或更大的估算峰值；当前仅约 0.4 GiB，runtime-readiness.json 标记未就绪。没有自动清理。`RUNTIME_PLAN.md` 给出隔离 worker/schema/Redis/MQ/端口、原 v10 凭据安全引用、环境 capture 需先验证的边界、10+1 测量及查询计划；`evidence-queries.sql` 是只读预览，未执行。既有生产服务、系统 v10 绑定与旧 eval 原样保留，未读取/打印/记录实际 API Key，未 push/merge/deploy。
+
+待空间满足后仍先报隔离 Java 的启动/停止/中断恢复范围并等用户确认，不能把本次设计确认当后续重启授权。

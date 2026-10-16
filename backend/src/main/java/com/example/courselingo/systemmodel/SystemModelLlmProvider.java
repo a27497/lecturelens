@@ -38,7 +38,9 @@ public final class SystemModelLlmProvider implements LlmProvider {
     public LlmResult generate(LlmRequest request) {
         long started = System.nanoTime();
         String outcome = "FAILED", category = "UNKNOWN";
-        try {
+        try (var ignored=com.example.courselingo.ai.llm.ModelCallScope.open(request==null?null:new com.example.courselingo.ai.llm.ModelCallScope.Context(
+                request.execution(),(String)request.metadata().get(AiModelRoutedLlmRequestFactory.METADATA_STAGE),null,
+                (String)request.metadata().get("translationAttemptId"),request.requestId(),null,null,null))) {
             LlmResult result = generateFrozen(request);
             outcome = "SUCCEEDED";
             category = "NONE";
@@ -125,6 +127,8 @@ public final class SystemModelLlmProvider implements LlmProvider {
         OpenAiCompatibleClientResponse result;
         try {
             result = legacy.complete(request);
+        } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
+            throw safe;
         } catch (RuntimeException failure) {
             var details = LlmProviderFailureClassifier.from(failure);
             var category =

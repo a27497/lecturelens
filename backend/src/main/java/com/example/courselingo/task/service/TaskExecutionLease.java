@@ -72,6 +72,8 @@ public class TaskExecutionLease {
                 """, message.taskId(), message.requestId()).isEmpty()) throw rejected();
             if(message.protocol()==2 && jdbc.queryForList("SELECT task_id FROM task_execution WHERE task_id=? AND protocol_version=2 AND execution_epoch=?",message.taskId(),message.epoch()).isEmpty())throw rejected();
             if(message.protocol()==2 && jdbc.queryForList("SELECT task_id FROM pipeline_policy_snapshot WHERE task_id=? AND user_id=? AND deadline>CURRENT_TIMESTAMP(3)",message.taskId(),message.userId()).isEmpty())throw rejected();
+            if(message.protocol()==2 && jdbc.queryForObject("SELECT COUNT(*) FROM model_call_attempt WHERE task_id=? AND status='STARTED'",Integer.class,message.taskId())>0)
+                throw com.example.courselingo.ai.llm.TranslationFailure.of(com.example.courselingo.ai.llm.TranslationFailure.Reason.ACCOUNTING_INCOMPLETE);
             publish.run();
         });
     }

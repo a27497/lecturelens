@@ -33,13 +33,14 @@ final class PipelineCheckpointFixture implements AutoCloseable {
     final List<SubtitleSegment> source;
 
     PipelineCheckpointFixture() throws Exception {this(3);}
-    PipelineCheckpointFixture(int count) throws Exception {
+    PipelineCheckpointFixture(int count) throws Exception {this(count,false);}
+    PipelineCheckpointFixture(int count,boolean silence) throws Exception {
         db.jdbc.update("UPDATE analysis_task SET status='CREATED',source_language='en' WHERE id=?",task);
         db.jdbc.update("""
             INSERT INTO system_model_execution_snapshot(id,task_id,user_id,operation_type,operation_id,config_version,resolved_config_json)
-            VALUES(?,?,?,'PIPELINE',?,0,'{}')
-            """,snapshot,task,user,task);
-        var settings=new PipelineTranslationProperties();settings.setEnabled(true);settings.getSilence().setEnabled(false);
+            VALUES(?,?,?,'PIPELINE',?,0,?)
+            """,snapshot,task,user,task,"{\"routes\":{\"TRANSLATION_FULL_TEXT\":{\"model\":\"deepseek-flash\",\"source\":\"DATABASE\"},\"ASR_TRANSCRIPTION\":{\"model\":\"qwen-audio-3.1-asr-flash\",\"source\":\"ENV\"},\"LEARNING_PACKAGE\":{\"model\":\"synthetic-local\",\"source\":\"ENV\"}}}");
+        var settings=new PipelineTranslationProperties();settings.setEnabled(true);settings.getSilence().setEnabled(silence);
         settings.getAdaptive().setMaximum(1);settings.getAdaptive().setInputTokenBudget(256);
         policies=new PipelinePolicyService(db.jdbc,settings,new com.example.courselingo.subtitle.service.SubtitleTranslationProperties());
         policies.freeze(ref);frozen=policies.find(task,user).orElseThrow();

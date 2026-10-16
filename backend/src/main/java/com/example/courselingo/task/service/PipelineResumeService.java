@@ -91,6 +91,7 @@ public class PipelineResumeService {
     private Result queue(Map<String,Object> task,PipelinePolicyService.Frozen frozen,Map<String,Object> e) {
         String id=(String)task.get("id");long user=((Number)task.get("user_id")).longValue();
         long epoch=((Number)e.get("execution_epoch")).longValue()+1;
+        jdbc.update("UPDATE model_call_attempt SET status='UNKNOWN_OUTCOME',error_category='UNKNOWN_OUTCOME',usage_status='PROCESS_INTERRUPTED' WHERE task_id=? AND status='STARTED' AND execution_epoch<?",id,epoch);
         jdbc.update("""
             UPDATE task_execution SET execution_epoch=?,resume_count=resume_count+1,completed_at=CURRENT_TIMESTAMP,
             lease_until=CURRENT_TIMESTAMP WHERE task_id=?

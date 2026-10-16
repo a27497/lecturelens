@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, AutoCloseable {
     private final HttpClient http;
     private final int responseLimit;
+    private ModelCallObserver observer=ModelCallObserver.NOOP;
+    public SystemModelHttpClient observed(ModelCallObserver observer){this.observer=observer;return this;}
 
     public SystemModelHttpClient(int responseLimit) {
         this.responseLimit = responseLimit;
@@ -61,6 +63,9 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
             String contentType,
             byte[] body,
             Duration timeout) {
+        return ObservedModelCall.execute(observer,uri,headers,body,contentType.equals("application/json"),()->postOnce(uri,headers,contentType,body,timeout));
+    }
+    private OpenAiCompatibleClientResponse postOnce(URI uri,java.util.Map<String,String> headers,String contentType,byte[] body,Duration timeout) {
         long start = System.nanoTime();
         CompletableFuture<HttpResponse<byte[]>> pending = null;
         try {

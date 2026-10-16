@@ -22,7 +22,7 @@ public final class TranslationResponseDecoder {
         JsonNode root = null;
         try { root = JSON.readTree(response.body()); } catch (Exception ignored) { }
         var usageNode = root == null ? JSON.createObjectNode() : root.path("usage");
-        var usage = new LlmUsage(number(usageNode, "prompt_tokens"), number(usageNode, "completion_tokens"), number(usageNode, "total_tokens"));
+        var usage = LlmUsage.parse(root);
         int status = response.statusCode();
         if (status < 200 || status >= 300) {
             var reason = status == 401 || status == 403 ? AUTHENTICATION : status == 404 ? MODEL_NOT_FOUND

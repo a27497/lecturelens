@@ -170,6 +170,11 @@ public class TranslationCheckpointStore {
                 // Physical usage is a fact even if the originating worker has lost its lease.
                 if(jdbc.queryForList("SELECT id FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL FOR UPDATE",task(),user()).isEmpty())return null;
                 account(attempt,failure.usage(),failure.finishReason(),failure.reason().name(),millis,"FAILED");
+                if(attempt!=null) {
+                    jdbc.update("UPDATE translation_attempt SET validation_check=? WHERE id=? AND task_id=?",failure.check()==null?null:failure.check().name(),attempt.id(),task());
+                    jdbc.update("UPDATE model_call_attempt SET error_category=?,validation_check=? WHERE translation_attempt_id=? AND task_id=?",
+                        failure.reason().name(),failure.check()==null?null:failure.check().name(),attempt.id(),task());
+                }
                 jdbc.update("""
                     UPDATE translation_batch b JOIN task_execution e ON e.task_id=b.task_id SET b.last_error_category=?
                     WHERE b.task_id=? AND b.batch_no=? AND b.config_version=? AND b.claim_epoch=? AND b.claim_token=?
@@ -193,13 +198,21 @@ public class TranslationCheckpointStore {
             var old=rows.getFirst();
             if(old.get("completed_at")!=null)return;
             var safe=usage==null?new LlmUsage(null,null,null):usage;
+            var receipts=jdbc.queryForList("SELECT prompt_tokens,completion_tokens,total_tokens,reasoning_tokens,cache_hit_tokens,cache_miss_tokens FROM model_call_attempt WHERE translation_attempt_id=? AND task_id=?",attempt.id(),task());
+            if(!receipts.isEmpty()) {
+                var receipt=receipts.getFirst();
+                safe=new LlmUsage(known(safe.promptTokens(),receipt.get("prompt_tokens")),known(safe.completionTokens(),receipt.get("completion_tokens")),
+                    known(safe.totalTokens(),receipt.get("total_tokens")),known(safe.reasoningTokens(),receipt.get("reasoning_tokens")),
+                    known(safe.cacheHitTokens(),receipt.get("cache_hit_tokens")),known(safe.cacheMissTokens(),receipt.get("cache_miss_tokens")));
+            }
             long actual=safe.totalTokens()==null?attempt.reserved():safe.totalTokens();
             if(safe.promptTokens()!=null && safe.completionTokens()!=null)actual=Math.max(safe.totalTokens()==null?0:actual,(long)safe.promptTokens()+safe.completionTokens());
             jdbc.update("UPDATE translation_plan SET accounted_tokens=accounted_tokens+? WHERE task_id=?",actual-((Number)old.get("accounted_tokens")).longValue(),task());
             jdbc.update("""
                 UPDATE translation_attempt SET status=?,prompt_tokens=?,completion_tokens=?,total_tokens=?,finish_reason=?,error_category=?,
-                duration_millis=?,accounted_tokens=?,completed_at=CURRENT_TIMESTAMP(3) WHERE id=?
-                """,status,safe.promptTokens(),safe.completionTokens(),safe.totalTokens(),safeFinish(finish),error,Math.max(0,millis),actual,attempt.id());
+                duration_millis=?,accounted_tokens=?,reasoning_tokens=?,cache_hit_tokens=?,cache_miss_tokens=?,usage_status=?,completed_at=CURRENT_TIMESTAMP(3) WHERE id=?
+                """,status,safe.promptTokens(),safe.completionTokens(),safe.totalTokens(),safeFinish(finish),error,Math.max(0,millis),actual,
+                safe.reasoningTokens(),safe.cacheHitTokens(),safe.cacheMissTokens(),com.example.courselingo.task.usage.PipelineUsageLedger.usageStatus(safe,null),attempt.id());
         }
         public List<Node> children(int parent) {
             return tx(()->{active(true);own(parent);return jdbc.queryForList("SELECT * FROM translation_batch WHERE task_id=? AND config_version=? AND parent_batch_no=? ORDER BY child_ordinal",task(),version(),parent)
@@ -273,6 +286,7 @@ public class TranslationCheckpointStore {
     private Instant now(){return jdbc.queryForObject("SELECT CURRENT_TIMESTAMP(3)",Timestamp.class).toInstant();}
     private static Instant instant(Object value){return value instanceof Timestamp t?t.toInstant():((java.time.LocalDateTime)value).toInstant(ZoneOffset.UTC);}
     private static String safeFinish(String value){return value!=null && Set.of("stop","length","content_filter","tool_calls","aborted","insufficient_system_resource").contains(value)?value:null;}
+    private static Integer known(Integer supplied,Object observed){return supplied!=null?supplied:observed instanceof Number number?number.intValue():null;}
     private <T> T tx(Supplier<T> action) {
         try{return transaction.execute(status->action.get());}
         catch(TranslationFailure safe){throw safe;}

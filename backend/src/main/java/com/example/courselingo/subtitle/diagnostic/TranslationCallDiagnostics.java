@@ -48,13 +48,13 @@ public class TranslationCallDiagnostics {
             INSERT INTO translation_call_diagnostic
             (id,snapshot_id,task_id,user_id,config_version,feature,model,provider_attempt,
              segment_count,input_chars,batch_indexes,http_status,finish_reason,provider_reason,
-             prompt_tokens,completion_tokens,total_tokens,duration_millis,response_chars,response_truncated,response_excerpt)
-            SELECT ?,s.id,s.task_id,s.user_id,s.config_version,'TRANSLATION_FULL_TEXT',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+             prompt_tokens,completion_tokens,total_tokens,duration_millis,response_chars,response_truncated,response_excerpt,attempt_id)
+            SELECT ?,s.id,s.task_id,s.user_id,s.config_version,'TRANSLATION_FULL_TEXT',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
             FROM system_model_execution_snapshot s WHERE s.id=? AND s.task_id=? AND s.user_id=? AND s.config_version=?
             """, id, model, attempt, request.metadata().get("sourceSegmentCount"),
             request.metadata().get("translationDiagnostic.inputChars"), request.metadata().get("translationDiagnostic.indexes"),
             status, finish(root), reason, token(root, "prompt_tokens"), token(root, "completion_tokens"),
-            token(root, "total_tokens"), millis, body == null ? null : body.length(), wasTruncated, safeExcerpt,
+            token(root, "total_tokens"), millis, body == null ? null : body.length(), wasTruncated, safeExcerpt,request.metadata().get("translationAttemptId"),
             ref.snapshotId(), ref.taskId(), ref.userId(), ref.configVersion()));
     }
 

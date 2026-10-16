@@ -122,6 +122,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                     continue;
                 }
                 return new AttemptedResponse(response, attempt - 1);
+            } catch (TranslationFailure safe) {
+                throw safe;
             } catch (OpenAiCompatibleLlmException exception) {
                 OpenAiCompatibleLlmException diagnostic = withSettings(request, settings, exception);
                 if (diagnostic.retryable() && attempt < maxAttempts) {

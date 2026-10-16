@@ -77,9 +77,9 @@ public class PipelineTranslationProperties {
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
         var p=freezeAdaptive(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
         if(!checkpointEnabled)return p;
-        return new TranslationPolicy("translation-v2.4",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
+        return new TranslationPolicy("translation-v2.5",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
             p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),p.maxDepth(),p.maxAttempts(),p.maxCalls(),p.tokenBudget(),
-            p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),p.aimd(),new TranslationRecoveryPolicy(maxRecoveries));
+            p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),p.aimd(),new TranslationRecoveryPolicy(maxRecoveries),"catalog-20261016");
     }
     private TranslationPolicy freezeAdaptive(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {

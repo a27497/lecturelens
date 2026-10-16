@@ -222,6 +222,7 @@ class SystemModelRuntimeMySqlTest {
                         com.example.courselingo.ai.asr.SiliconFlowAsrConfiguration.class,
                         com.example.courselingo.ai.asr.MockAsrConfiguration.class)
                 .withBean(SystemModelSecretCipher.class, () -> cipher)
+                .withBean(ModelCallObserver.class,()->ModelCallObserver.NOOP)
                 .withBean(org.springframework.jdbc.core.JdbcTemplate.class, () -> db.jdbc)
                 .withBean(com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics.class,
                     () -> new com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics(db.jdbc,db.transactions))
