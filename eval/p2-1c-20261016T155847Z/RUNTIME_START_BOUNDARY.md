@@ -1,5 +1,7 @@
 # 真实运行启动边界
 
+后续状态：用户已按 AUTHORIZED_SCOPE.md 批准指定临时 unit 的受控启动、冒烟及条件满足后的十次。本文件下文保留当时的边界说明；最新实际检查见 STAGE5_PREFLIGHT.md/stage5-startup-preflight.json。99-system-models.conf 未检出任何凭据指令/路径，当前缺少可引用的系统模型 credential 项，尚未创建/启动 unit；不是要求重复授权相同启动范围。
+
 阶段 4 全量回归已通过：后端 1765、前端 119、Python/PostgreSQL 727 项，失败/错误/跳过均 0。计数与 hash 复算见 STAGE4.md；C/E 特性探针失败，候选继续冻结为 false。测试 MySQL/PostgreSQL 均已按独立许可停止删除。
 
 下一步只涉及已指定的隔离 Java 127.0.0.1:18091、MySQL schema lecturelens_p21_20261016、Redis DB 15、topic lecturelens-p21-20261016T073754Z。候选 JAR、源码及配置身份分别在 candidate-artifact.json/candidate-options.json，最新一致性检查在 stage4-gates-verified.json。不得启动其他服务、操作未知端口占用或改变在线模型绑定。

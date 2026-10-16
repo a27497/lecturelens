@@ -1,0 +1,45 @@
+{
+  "at_utc": "2026-10-16T17:52:06.843321+00:00",
+  "disk": {
+    "used_bytes": 116502450176,
+    "available_bytes": 38374961152,
+    "usage_percent": 75.22236404718223,
+    "headroom_to_85_bytes": 15143349452.800003,
+    "allowed": true
+  },
+  "authorized_unit": "lecturelens-p21c-worker-20261017",
+  "authorized_scope": "sudo systemd-run; existing encrypted credential path references only; isolated Java smoke cache OFF, then ten trials if ASR healthy without 403; stop temporary unit after ten; SIGKILL/restart not authorized",
+  "inspection": "sudo -n grep of the two user-designated drop-ins only; credential directive identifiers/source paths emitted, Environment checks boolean-only; no credential content or Environment lines emitted",
+  "drop_ins": [
+    {
+      "path": "/etc/systemd/system/lecturelens-live-backend.service.d/90-asr-bailian.conf",
+      "load_credential_paths": [
+        "LoadCredentialEncrypted=bailian-asr:/etc/credstore.encrypted/lecturelens-bailian-asr.cred"
+      ],
+      "set_credential_directives": [],
+      "environment_api_master_encryption_key_assignment_detected": false
+    },
+    {
+      "path": "/etc/systemd/system/lecturelens-live-backend.service.d/99-system-models.conf",
+      "load_credential_paths": [],
+      "set_credential_directives": [],
+      "any_load_or_set_credential_directive_detected": false,
+      "environment_directive_detected": false,
+      "environment_key_or_secret_assignment_detected": false
+    }
+  ],
+  "credential_file_contents_read": false,
+  "environment_lines_emitted": false,
+  "stop_reason": "99-system-models.conf exposes no LoadCredential*/SetCredential* directive; no authorized system-model credential path is available. Do not follow other configuration references or copy values.",
+  "plaintext_environment_secret_confirmed": false,
+  "temporary_unit_created": false,
+  "java_started": false,
+  "java_18091_listening": false,
+  "live_services_or_containers_changed": false,
+  "real_trials_submitted": 0,
+  "reproduction": [
+    "sudo -n grep -oE '^[[:space:]]*LoadCredential(Encrypted)?=[A-Za-z0-9_.-]+:/[A-Za-z0-9_./@-]+' <one of the two recorded drop-in paths>",
+    "sudo -n grep -oE '^[[:space:]]*SetCredential(Encrypted)?=' <one of the two recorded drop-in paths>",
+    "sudo -n grep -qE '^[[:space:]]*(LoadCredential|SetCredential)[A-Za-z]*[[:space:]]*=' /etc/systemd/system/lecturelens-live-backend.service.d/99-system-models.conf; exit status 1 means no directive; never print matching content"
+  ]
+}

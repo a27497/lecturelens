@@ -11,3 +11,5 @@
 用户随后明确批准启动 `lecturelens-p21c-unit-mysql-20261017`（127.0.0.1:33316）做独立 MySQL 测试，后续阶段可复用同一许可，测试结束仅停止并删除该确切容器；不含 Java 18091 或其他服务启动/重启。
 
 用户随后明确批准按 POSTGRES_TEST_PLAN.md 启动 `lecturelens-p21c-unit-postgres-20261017`（127.0.0.1:33317），运行 Python 全量，结束后仅停止并删除该确切容器。此许可不含 Java 18091。
+
+用户随后指定通过 `sudo systemd-run` 创建临时 unit `lecturelens-p21c-worker-20261017`，只引用 live backend 两个指定 drop-in 中既有 LoadCredentialEncrypted 路径：90-asr-bailian.conf 的 bailian-asr，以及 99-system-models.conf 的凭据项。允许仅检查凭据指令名和路径，不输出 Environment 行或凭据内容；若 99 使用明文 Environment 密钥则停止，不复制。允许启动隔离 Java 127.0.0.1:18091、cache OFF 单节冒烟，ASR 正常且无 403 后继续正式十次，结束后停止该临时 unit。不得 restart/stop 任何 lecturelens-live-* 服务或容器；SIGKILL 恢复仍需单独许可。检查结果未取得 99 的任何凭据指令/路径，尚未创建或启动 unit，见 stage5-startup-preflight.json。

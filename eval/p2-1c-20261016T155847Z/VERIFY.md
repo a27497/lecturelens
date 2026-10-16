@@ -58,3 +58,5 @@ STAGE3.md 区分特性验收失败与关闭候选的机制回归。stage3-overla
 STAGE4.md 列明 Java 全量首轮失败、夹具修复、1765 项重跑通过、前端 119 项通过、类型检查与离线打包退出码。Python/PostgreSQL 首轮 727 项有 1 failure、0 errors/skipped，原因是测试库名未在既有白名单内；同一容器创建白名单库后全量重跑 727 项通过、0 失败/错误/跳过。没有修改校验或 Agent 源码。全量机制门禁通过，C/E 仍排除，真实验收未测。JAR 哈希、源码逐文件 hash、预期配置 hash、测试夹具 patch hash 分别在 candidate-artifact.json、candidate-build-info.json。原始记录和每个数字的复算命令均在 STAGE4.md/各 JSON；SHA256SUMS 不包含自身。完整代码改动清单及内容 hash 见 changed-files.json。
 
 PostgreSQL 启动身份/日志 hash 在 test-postgres.json，库名修正的实际命令在 test-postgres-database-adjustment.json，精确 ID/image/标签核验后的清理在 test-postgres-cleanup.json。两轮 Python 命令/原始日志/JUnit 路径及 hash 在 stage4-python-full-{01,02}.json，DSN 及 nohup/timeout 包装命令见 POSTGRES_TEST_PLAN.md。复算：`python3 eval/p2-1c-20261016T155847Z/verify_checks.py --prefix stage4-python-full- --final stage4-python-full-02.json`。stage4-gates-verified.json 记录三层最终用例数、对应记录 hash、冻结源码/配置/JAR 一致性及清理后的磁盘。历史打包快照 candidate-artifact.json 不覆盖。
+
+阶段 5 只执行获准的启动前检查：凭据指令/路径的安全投影、布尔检查和复算方式见 stage5-startup-preflight.json，结论见 STAGE5_PREFLIGHT.md。90 的加密凭据引用可用，99 无凭据指令；没有创建/启动临时 unit 或修改 live 资源，真实试次仍为 0。没有确认 99 为明文 Environment 密钥，不作该推断。源码/JAR 未变，未追加无关测试。

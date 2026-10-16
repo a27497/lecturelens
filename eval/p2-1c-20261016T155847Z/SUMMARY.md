@@ -21,4 +21,4 @@ A 使用可冻结的原文模式、小节来源、统一预检和独立超限码
 
 正式十次提交 0，完整链路成功率、阶段 mean±std、片数/调用/峰值/限流、CER、目录价费用、SIGKILL 恢复及缓存命中演示均**未测**。不能将其写成已执行的 0/10。trials.jsonl 当前为空。
 
-全量门禁及候选字节一致性见 stage4-gates-verified.json。下一步是 Java 18091 启动边界，仍需单独许可和符合不读密钥要求的受控启动入口，详见 RUNTIME_START_BOUNDARY.md。当前磁盘 df 显示 76%，原始快照见 stage4-gates-verified.json。
+全量门禁及候选字节一致性见 stage4-gates-verified.json。用户已授权指定临时 unit 的受控启动、冒烟及满足 ASR 条件后的正式十次；检查 99-system-models.conf 未检出任何 LoadCredential*/SetCredential* 项，无法按许可引用系统模型凭据，因而尚未创建/启动 unit。没有确认明文密钥或读取其他配置。需要补充受控凭据指令/路径，详见 STAGE5_PREFLIGHT.md。当前磁盘 df 显示 76%，本轮快照见 stage5-startup-preflight.json。
