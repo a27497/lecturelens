@@ -58,5 +58,6 @@
       "base_url_sha256": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1"
     }
   },
-  "projection_sha256": "8f1c2a493cd6fe61be0e0ce485b4055c1227f3b7c31049b5259783594b98396f"
+  "original_effective_projection_sha256": "8f1c2a493cd6fe61be0e0ce485b4055c1227f3b7c31049b5259783594b98396f",
+  "public_effective_projection_sha256": "59fd4d7321e28bd6b6f3531ab3016f87f92e89b10dc71486505a517a9a130b52"
 }

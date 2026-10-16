@@ -1,0 +1,23 @@
+{
+  "frozen_at_utc": "2026-10-16T12:29:50.409391+00:00",
+  "candidate": "P2-1b",
+  "parent_candidate": "P2-1",
+  "parent_jar_sha256": "beaa04ff59fe167950406b693e8f7590185dd98d97e526d12965d3ce9e2884bc",
+  "jar_path": "/home/dev/projects/lecturelens/.data/p2-1b-pipeline-20261016T122904Z/frozen-candidate.jar",
+  "jar_sha256": "fa21a575d09789b9899faba71ec861216d3c741b6919a0f3add50c532242efb7",
+  "jar_bytes": 92043677,
+  "source_base_commit": "a2c607f925483d436937835bea8e1a2b3ee766f2",
+  "patch_sha256": "63e1c99a4fd483a0f335bb80a536cc3c1b516465eeecbfcb8546dcf857bc4414",
+  "source_files": {
+    "backend/src/main/java/com/example/courselingo/mq/RocketMqAnalysisTaskMessageProducer.java": "ba90b88d27c8be8527b6cedccf04cddc9afc794661c336d11aa3655a18964f86",
+    "backend/src/test/java/com/example/courselingo/mq/RocketMqAnalysisTaskMessageProducerTest.java": "80f876dbcd12d1e798f7204af297ff3941e2a03d0708d568d08bb866bbfab26a"
+  },
+  "migrations": 31,
+  "system_config_version": 10,
+  "policy_engine_version": "translation-v2.5",
+  "built": true,
+  "deployed": false,
+  "started": false,
+  "real_trials_started": false,
+  "original_failure_preserved": "../p2-1-pipeline-20261016T073754Z/protocol-defect.json"
+}

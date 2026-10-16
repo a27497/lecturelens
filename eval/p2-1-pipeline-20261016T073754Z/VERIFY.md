@@ -184,3 +184,5 @@ CHECK
 回归先证实缺陷：`runtime-wire-reproduction01`，5 项、1 失败、0 错误/跳过，比较生产发送字节经真实消费者解析后的 v2/epoch，实际为 null/null。补丁为 transport payload 保留非空协议字段，v1 仍省略 null，未改恢复/租约规则。`runtime-wire-fix02`：48 项、0 失败/错误/跳过（producer、consumer、message、runner、creation）；`runtime-replacement-package03` 离线打包成功。该改动仅 Java MQ 序列化，未修改 Python Agent/runtime 或 DB 机制；本轮不把之前阶段的独立 MySQL 测试重复计入新检查数。
 
 检查记录与原始日志路径见 runtime-checks.json；原候选归档 `.data/p2-1-pipeline-20261016T073754Z/frozen-original.jar` 保持 SHA256 `beaa04ff59fe167950406b693e8f7590185dd98d97e526d12965d3ce9e2884bc`。原 candidate-artifact.json 中构建路径是历史位置，后续构建已替换 target JAR，核验原候选须使用归档。SUMMARY.md、SHA256SUMS 与原失败证据一并本地提交，不 push、不部署。
+
+MQ 修复与本目录首个失败证据已本地提交 `4542af2af122d7229e73637ebed498264ba755d2`。替代候选最终十次正常试次全部执行，翻译10/10发布、完整链路0/10（资料均上下文超限400）；独立第11个任务ASR第70/71片403，未达到barrier、未SIGKILL，恢复演示未完成。所有本轮进程已退出。实际阶段均值±样本标准差、分币种费用、拆批/并发、旧基线对比、失败和外部容器观察差异详见 [P2-1b SUMMARY](../p2-1b-pipeline-20261016T122904Z/SUMMARY.md) 与 [VERIFY](../p2-1b-pipeline-20261016T122904Z/VERIFY.md)。新原始记录索引见 runtime-private-record-manifest.json；原阶段 RAW_SHA256SUMS 未覆盖改写。

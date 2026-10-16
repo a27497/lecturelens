@@ -1,0 +1,134 @@
+[
+  {
+    "event": "started",
+    "step": "VALIDATE_TASK",
+    "started": "2026-10-16T12:38:47.752787171Z"
+  },
+  {
+    "event": "completed",
+    "step": "VALIDATE_TASK",
+    "durationMillis": 5,
+    "started": "2026-10-16T12:38:47.752787171Z",
+    "completed": "2026-10-16T12:38:47.758063261Z"
+  },
+  {
+    "event": "started",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "started": "2026-10-16T12:38:47.762222051Z"
+  },
+  {
+    "event": "completed",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "durationMillis": 313,
+    "started": "2026-10-16T12:38:47.762222051Z",
+    "completed": "2026-10-16T12:38:48.075314190Z"
+  },
+  {
+    "event": "started",
+    "step": "EXTRACT_KEYFRAMES",
+    "started": "2026-10-16T12:38:48.082112210Z"
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_KEYFRAMES",
+    "durationMillis": 5,
+    "started": "2026-10-16T12:38:48.082112210Z",
+    "completed": "2026-10-16T12:38:48.087549959Z"
+  },
+  {
+    "event": "started",
+    "step": "EXTRACT_AUDIO",
+    "started": "2026-10-16T12:38:48.091072909Z"
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_AUDIO",
+    "durationMillis": 8329,
+    "started": "2026-10-16T12:38:48.091072909Z",
+    "completed": "2026-10-16T12:38:56.420403894Z"
+  },
+  {
+    "event": "started",
+    "step": "TRANSCRIBE",
+    "started": "2026-10-16T12:38:56.426230633Z"
+  },
+  {
+    "event": "completed",
+    "step": "TRANSCRIBE",
+    "durationMillis": 260285,
+    "started": "2026-10-16T12:38:56.426230633Z",
+    "completed": "2026-10-16T12:43:16.712054578Z"
+  },
+  {
+    "event": "started",
+    "step": "PERSIST_SUBTITLES",
+    "started": "2026-10-16T12:43:16.719295337Z"
+  },
+  {
+    "event": "completed",
+    "step": "PERSIST_SUBTITLES",
+    "durationMillis": 147,
+    "started": "2026-10-16T12:43:16.719295337Z",
+    "completed": "2026-10-16T12:43:16.867111558Z"
+  },
+  {
+    "event": "started",
+    "step": "TRANSLATE_SUBTITLES",
+    "started": "2026-10-16T12:43:16.870646678Z"
+  },
+  {
+    "event": "completed",
+    "step": "TRANSLATE_SUBTITLES",
+    "durationMillis": 23419,
+    "started": "2026-10-16T12:43:16.870646678Z",
+    "completed": "2026-10-16T12:43:40.289651525Z"
+  },
+  {
+    "event": "started",
+    "step": "OCR_KEYFRAMES",
+    "started": "2026-10-16T12:43:40.295477905Z"
+  },
+  {
+    "event": "completed",
+    "step": "OCR_KEYFRAMES",
+    "durationMillis": 6,
+    "started": "2026-10-16T12:43:40.295477905Z",
+    "completed": "2026-10-16T12:43:40.301649904Z"
+  },
+  {
+    "event": "started",
+    "step": "ANALYZE_KEYFRAMES",
+    "started": "2026-10-16T12:43:40.306103534Z"
+  },
+  {
+    "event": "completed",
+    "step": "ANALYZE_KEYFRAMES",
+    "durationMillis": 3,
+    "started": "2026-10-16T12:43:40.306103534Z",
+    "completed": "2026-10-16T12:43:40.309672384Z"
+  },
+  {
+    "event": "started",
+    "step": "FUSE_VIDEO_SEGMENTS",
+    "started": "2026-10-16T12:43:40.312629583Z"
+  },
+  {
+    "event": "completed",
+    "step": "FUSE_VIDEO_SEGMENTS",
+    "durationMillis": 3,
+    "started": "2026-10-16T12:43:40.312629583Z",
+    "completed": "2026-10-16T12:43:40.315663283Z"
+  },
+  {
+    "event": "started",
+    "step": "GENERATE_LEARNING_PACKAGE",
+    "started": "2026-10-16T12:43:40.318429563Z"
+  },
+  {
+    "event": "failed",
+    "step": "GENERATE_LEARNING_PACKAGE",
+    "durationMillis": 81,
+    "started": "2026-10-16T12:43:40.318429563Z",
+    "completed": "2026-10-16T12:43:40.399931148Z"
+  }
+]
