@@ -48,6 +48,12 @@ import java.util.function.Supplier;
 
 @Service
 public class SubtitleTranslationServiceImpl implements SubtitleTranslationService {
+    private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
+
+    @Autowired(required = false)
+    public void configurePipelinePolicies(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies) {
+        this.pipelinePolicies = policies;
+    }
     private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
 
     @org.springframework.beans.factory.annotation.Autowired(required = false)
@@ -424,6 +430,10 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         ValidatedTranslationCommand command,
         List<SubtitleSegment> sourceSegments
     ) {
+        if (pipelinePolicies != null) {
+            var frozen = pipelinePolicies.find(command.taskId(),command.userId());
+            if (frozen.isPresent()) return generateV2(llmProvider,command,sourceSegments,frozen.get());
+        }
         List<List<SubtitleSegment>> batches = createTranslationBatches(
             sourceSegments,
             properties.getFullText().getBatchMaxSegments(),
@@ -437,6 +447,49 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             batches,
             deadlineNanos
         );
+    }
+
+    private AlignedTranslationRun generateV2(LlmProvider provider, ValidatedTranslationCommand command,
+            List<SubtitleSegment> sources, com.example.courselingo.subtitle.pipeline.PipelinePolicyService.Frozen frozen) {
+        if (!frozen.execution().equals(command.execution()))
+            throw com.example.courselingo.ai.llm.TranslationFailure.of(
+                com.example.courselingo.ai.llm.TranslationFailure.Reason.SNAPSHOT_INVALID);
+        var codec = new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator.Codec() {
+            public LlmRequest request(List<SubtitleSegment> batch, String correction, Duration timeout) {
+                return routeRequest(AiModelStage.TRANSLATION_FULL_TEXT,
+                    SubtitleTranslationPromptFactory.buildV2(command,batch,timeout,correction));
+            }
+            public List<com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator.Translated> validate(
+                    List<SubtitleSegment> batch,LlmResult result) {
+                List<GeneratedSubtitleTranslation> generated;
+                try {
+                    generated = parser.parse(result.content(),batch).stream().map(t ->
+                        new GeneratedSubtitleTranslation(sourceByIndex(batch,t.segmentIndex()),t.text(),null)).toList();
+                } catch (BusinessException failure) {
+                    observeValidation(command,result,failure.getMessage());
+                    var category = TranslationCallDiagnostics.category(failure.getMessage());
+                    var check = "SEGMENT_COUNT".equals(category) ? com.example.courselingo.ai.llm.TranslationFailure.Check.SEGMENT_COUNT
+                        : com.example.courselingo.ai.llm.TranslationFailure.Check.FIELD;
+                    throw new com.example.courselingo.ai.llm.TranslationFailure(
+                        com.example.courselingo.ai.llm.TranslationFailure.Reason.FORMAT_INVALID,200,result.usage(),result.finishReason(),0,check);
+                }
+                var semantic = validateAlignedBatchSemantics(command,batch,generated);
+                if (!semantic.valid()) {
+                    observeValidation(command,result,semantic.reason());
+                    throw new com.example.courselingo.ai.llm.TranslationFailure(
+                        com.example.courselingo.ai.llm.TranslationFailure.Reason.VALIDATION_INVALID,200,result.usage(),result.finishReason(),0,
+                        com.example.courselingo.ai.llm.TranslationFailure.Check.LANGUAGE);
+                }
+                observeValidation(command,result,"PASSED");
+                return generated.stream().map(g -> new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator.Translated(
+                    g.sourceSegment(),g.translatedText())).toList();
+            }
+        };
+        Integer cap = systemModels == null ? null : systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT").maxTokens();
+        var coordinator = new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator(frozen,provider,codec,cap);
+        var outcome = coordinator.run(createTranslationBatches(sources,frozen.policy().batchMaxSegments(),frozen.policy().batchMaxInputChars()));
+        return new AlignedTranslationRun(outcome.translations().stream().map(t ->
+            new GeneratedSubtitleTranslation(t.source(),t.text(),null)).toList(),outcome.responses(),outcome.plannedBatches());
     }
 
     private AlignedTranslationRun generateAlignedTranslationsConcurrently(

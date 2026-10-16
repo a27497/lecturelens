@@ -43,6 +43,9 @@ public final class SystemModelLlmProvider implements LlmProvider {
             outcome = "SUCCEEDED";
             category = "NONE";
             return result;
+        } catch (com.example.courselingo.ai.llm.TranslationFailure failure) {
+            category = failure.reason().name();
+            throw failure;
         } catch (SystemModelCallFailure failure) {
             category = failure.category();
             throw failure;
@@ -105,6 +108,8 @@ public final class SystemModelLlmProvider implements LlmProvider {
                     result.usage(),
                     result.duration(),
                     metadata);
+        } catch (com.example.courselingo.ai.llm.TranslationFailure failure) {
+            throw failure;
         } catch (RuntimeException failure) {
             var details = LlmProviderFailureClassifier.from(failure);
             throw new SystemModelCallFailure(

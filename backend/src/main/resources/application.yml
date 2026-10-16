@@ -50,6 +50,17 @@ management:
       application: courselingo-pro
 
 courselingo:
+  pipeline:
+    translation-v2:
+      enabled: ${PIPELINE_TRANSLATION_V2_ENABLED:false}
+      output-min: ${PIPELINE_TRANSLATION_OUTPUT_MIN:512}
+      output-max: ${PIPELINE_TRANSLATION_OUTPUT_MAX:8192}
+      output-ratio: ${PIPELINE_TRANSLATION_OUTPUT_RATIO:2.0}
+      context-limit: ${PIPELINE_TRANSLATION_CONTEXT_LIMIT:32768}
+      max-depth: ${PIPELINE_TRANSLATION_SPLIT_MAX_DEPTH:6}
+      max-attempts: ${PIPELINE_TRANSLATION_LEAF_MAX_ATTEMPTS:3}
+      max-calls: ${PIPELINE_TRANSLATION_MAX_CALLS:256}
+      token-budget: ${PIPELINE_TRANSLATION_TOKEN_BUDGET:200000}
   study:
     enabled: ${STUDY_AGENT_ENABLED:false}
   retrieval:
