@@ -28,10 +28,10 @@ docker run --detach --name "$test_name" --restart=no \
     --publish 127.0.0.1:33317:5432 --memory=1g --cpus=1 \
     --tmpfs /var/lib/postgresql/data:rw,size=1073741824 \
     --env POSTGRES_HOST_AUTH_METHOD=trust --env POSTGRES_USER=lecturelens \
-    --env POSTGRES_DB=lecturelens_p21c_agent_test "$test_image"
+    --env POSTGRES_DB=lecturelens_agent_test "$test_image"
 for ((attempt=0; attempt<90; attempt++)); do
-    if docker exec "$test_name" pg_isready --host=127.0.0.1 --username=lecturelens --dbname=lecturelens_p21c_agent_test >/dev/null 2>&1; then
-        echo 'READY: independent PostgreSQL at 127.0.0.1:33317, lecturelens_p21c_agent_test'
+    if docker exec "$test_name" pg_isready --host=127.0.0.1 --username=lecturelens --dbname=lecturelens_agent_test >/dev/null 2>&1; then
+        echo 'READY: independent PostgreSQL at 127.0.0.1:33317, lecturelens_agent_test'
         exit 0
     fi
     sleep 1

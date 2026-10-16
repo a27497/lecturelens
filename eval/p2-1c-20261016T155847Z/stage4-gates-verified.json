@@ -1,0 +1,51 @@
+{
+  "at_utc": "2026-10-16T17:44:25.134569+00:00",
+  "final_full_regressions": {
+    "backend": {
+      "record": "stage4-backend-full-02.json",
+      "sha256": "5ba0071f6422a227bc37bc99f86539d47df0e34b4fdb1b0ae4e472e0743b6fe2",
+      "total": {
+        "tests": 1765,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "frontend": {
+      "record": "stage4-frontend-full-01.json",
+      "sha256": "ef3a6ed440e2967dc6d8de231ea612872c0d994870208f131c9e59fff624bb75",
+      "total": {
+        "tests": 119,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "python": {
+      "record": "stage4-python-full-02.json",
+      "sha256": "a55f6159d8c0596282e27269f67ac15fb4f169eb0739254c118283762d0b4d3e",
+      "total": {
+        "tests": 727,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "full_regression_gate_passed": true,
+  "excluded_feature_probes": "C/E remain failed and excluded; no overlap capability acceptance",
+  "candidate_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "candidate_source_and_options_unchanged": true,
+  "java_18091_listening": false,
+  "mysql_test_container_removed": true,
+  "postgres_test_container_removed": true,
+  "real_trials_submitted": 0,
+  "full_runtime_acceptance": false,
+  "disk": {
+    "used_bytes": 116499189760,
+    "available_bytes": 38378221568,
+    "usage_percent": 75.22025888802955,
+    "headroom_to_85_bytes": 15146609868.800003,
+    "allowed": true
+  }
+}
