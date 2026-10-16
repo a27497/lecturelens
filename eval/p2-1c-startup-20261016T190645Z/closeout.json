@@ -1,0 +1,27 @@
+{
+  "at_utc": "2026-10-16T19:11:12.529896+00:00",
+  "protected_evidence_unchanged": true,
+  "protected_evidence_count": 175,
+  "frozen_candidate_unchanged": true,
+  "untracked_metadata_unchanged": true,
+  "live_service_identity_unchanged": true,
+  "temporary_unit": {
+    "MainPID": "0",
+    "LoadState": "not-found",
+    "ActiveState": "inactive",
+    "SubState": "dead"
+  },
+  "port_18091_listening": false,
+  "resources_created": [],
+  "provider_calls_sent": 0,
+  "formal_trials_submitted": 0,
+  "smoke": "未测",
+  "formal_success_rate": "未测",
+  "cost": "未测",
+  "disk": {
+    "used_bytes": 117084991488,
+    "available_bytes": 37792419840,
+    "usage_percent": 75.59849463136813,
+    "headroom_to_85_bytes": 14560808140.800003
+  }
+}
