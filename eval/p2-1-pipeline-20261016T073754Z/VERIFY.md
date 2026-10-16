@@ -72,7 +72,7 @@ nohup timeout 300 python3 eval/p2-1-pipeline-20261016T073754Z/run_related_checks
 
 ## 后续验收范围
 
-阶段 3–5、10 次正常基线和 1 次隔离 Java 恢复演示尚未执行。不会把空 trials 或 mock 成功当作真实测量。重启前另报影响范围并等确认；真正实测还受磁盘余量前置约束。
+阶段 4–5、10 次正常基线和 1 次隔离 Java 恢复演示尚未执行。不会把空 trials 或 mock 成功当作真实测量。重启前另报影响范围并等确认；真正实测还受磁盘余量前置约束。
 
 用户补充已纳入实施：**单节费用包含全部 ASR 调用，静音切分引起的调用数量/费用影响单独列出**。仅把“增量”作为差分说明，不能再加到已包含全部 ASR 的总费用上重复计费。若供应商没有返回实际计费单位，明确未知或目录价估算；跨币种没有可信汇率时保留各币种组成，不伪造统一总额。当前阶段未进行费用测量。
 
@@ -93,3 +93,15 @@ V28 除设计中的 paragraph/member 外增加 **timing_plan**（切片计划与
 日志：`.data/p2-1-pipeline-20261016T073754Z/checks/stage2-{compile-01,related-02,related-03,related-04}.{log,json}`。每轮命令、哈希、磁盘前后/峰值见 `stages/stage2-checks.json`。沿用本任务独立内存盘 MySQL，没有新增或重启 Java worker，没有变更系统 v10 或调用真实 ASR。
 
 阶段 2 数字/日志复现：将上方数字复现脚本中的 `stage1-files.json`、`stage1-checks.json` 分别替换为 `stage2-files.json`、`stage2-checks.json`，跳过没有 result 的编译轮次；每轮测试参数在 execution.command，使用新的 --name 重新执行以免覆盖证据。文件列表记录阶段时点，后续改动须在该阶段 commit 上通过 `git show <commit>:<path>` 校验，不拿旧 hash 强行匹配新工作树。
+
+## 阶段 3：token 批量与动态并发
+
+阶段 2 提交：`7f9f915902ab868d00e1ada050d14f63534572f1`。本阶段代码/文档变更及哈希见 `stages/stage3-files.json`。
+
+新任务冻结 v2.3；旧 v2.1/v2.2 不增加 null 字段，不套用新并发。输入按完整消息的保守 token 预算装箱，超限原子项出网前拆分；顺序、原段时间和一一映射保留。并发从 1 起，连续 3 次校验成功 +1，最大 4；429/timeout 减半，最低 1，旧拥塞窗口迟到失败不重复减半。模型重试仍由唯一控制器管理，不能绕过阶段 1 的总调用/预算/deadline。
+
+同供应商的多个任务共享进程级 4 个名额。获取共享名额后重新检查窗口和冷却，窗口缩小时不超发，不取消已健康请求。事件写入失败释放所有名额并明确失败，不留下许可泄漏。V29 保存逐任务状态和有序事件：时间、batch/attempt、old/new window、inflight、windowEpoch、streak、reason 和 cooldown；同任务重新打开显式记 RECOVERY_RESET（真正任务恢复及旧 worker epoch fence 在阶段 4）。
+
+相关测试 **125 项、0 失败、0 错误、0 跳过**。原始日志 `.data/p2-1-pipeline-20261016T073754Z/checks/stage3-related-01.log`，参数/峰值等见同名 JSON 与 `stages/stage3-checks.json`。机制覆盖 token 装箱、超限出网前拆分、20 个合成批次实际并行且顺序保持、窗口增长/减半/上限、不同任务共享许可、观测失败不泄漏许可、取消唤醒、5xx 不额外减半，以及真实独立 MySQL 的事件顺序/重置/owner/级联。这里的 20 是 mock 调用数，不是真实课程或翻译质量成绩。
+
+数字和日志复现沿用上述脚本，将阶段文件名替换为 stage3；实际测试命令在 `stages/stage3-checks.json` 的 execution.command。未重启、部署或调用真实供应商，未修改系统绑定。

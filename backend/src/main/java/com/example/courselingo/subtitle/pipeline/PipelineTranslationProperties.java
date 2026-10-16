@@ -11,6 +11,18 @@ public class PipelineTranslationProperties {
     private long tokenBudget = 200000;
     private double outputRatio = 2.0;
     private Silence silence = new Silence();
+    private Adaptive adaptive=new Adaptive();
+    public Adaptive getAdaptive(){return adaptive;} public void setAdaptive(Adaptive v){adaptive=v;}
+    public static class Adaptive {
+        private boolean enabled=true;
+        private int inputTokenBudget=2048,initial=1,maximum=4,successStreak=3,processMaximum=4;
+        public boolean isEnabled(){return enabled;}public void setEnabled(boolean v){enabled=v;}
+        public int getInputTokenBudget(){return inputTokenBudget;}public void setInputTokenBudget(int v){inputTokenBudget=v;}
+        public int getInitial(){return initial;}public void setInitial(int v){initial=v;}
+        public int getMaximum(){return maximum;}public void setMaximum(int v){maximum=v;}
+        public int getSuccessStreak(){return successStreak;}public void setSuccessStreak(int v){successStreak=v;}
+        public int getProcessMaximum(){return processMaximum;}public void setProcessMaximum(int v){processMaximum=v;}
+    }
     public Silence getSilence() { return silence; }
     public void setSilence(Silence value) { silence = value; }
     public static class Silence {
@@ -55,6 +67,16 @@ public class PipelineTranslationProperties {
             int sampleRate,int channels,int concurrency,long maxClipBytes) {
         return freezeWithSilence(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,3,
             java.util.List.of(2000L,5000L,10000L));
+    }
+
+    public TranslationPolicy freezePipeline(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
+            int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
+        var p=freezeWithSilence(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
+        if(!adaptive.enabled) return p;
+        var a=new TranslationAimdPolicy(adaptive.inputTokenBudget,1,adaptive.initial,adaptive.maximum,adaptive.successStreak,adaptive.processMaximum);
+        return new TranslationPolicy("translation-v2.3",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
+            p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),p.maxDepth(),p.maxAttempts(),p.maxCalls(),
+            p.tokenBudget(),p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),a);
     }
     public TranslationPolicy freezeWithSilence(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {

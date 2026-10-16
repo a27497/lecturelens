@@ -41,7 +41,7 @@ public class PipelinePolicyService {
     public boolean enabledForNewTasks() { return settings.isEnabled(); }
     private TranslationPolicy policy() {
         var f = translation.getFullText();
-        return settings.freezeWithSilence(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars(),
+        return settings.freezePipeline(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars(),
             sampleRate,channels,chunking.effectiveConcurrency(),Math.min(chunking.effectiveMaxChunkFileSizeBytes(),chunking.effectiveMaxAudioFileSizeBytes()),
             chunking.getChunkRetry().getMaxAttempts(),chunking.getChunkRetry().getBackoff().stream()
                 .map(d->d==null?0L:d.toMillis()).toList());

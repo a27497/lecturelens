@@ -49,6 +49,9 @@ import java.util.function.Supplier;
 @Service
 public class SubtitleTranslationServiceImpl implements SubtitleTranslationService {
     private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
+    private com.example.courselingo.subtitle.pipeline.TranslationSchedulerEvents schedulerEvents;
+    @Autowired(required=false)
+    public void configureSchedulerEvents(com.example.courselingo.subtitle.pipeline.TranslationSchedulerEvents events){schedulerEvents=events;}
 
     @Autowired(required = false)
     public void configurePipelinePolicies(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies) {
@@ -455,6 +458,9 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             throw com.example.courselingo.ai.llm.TranslationFailure.of(
                 com.example.courselingo.ai.llm.TranslationFailure.Reason.SNAPSHOT_INVALID);
         var codec = new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator.Codec() {
+            public LlmRequest planningRequest(List<SubtitleSegment> batch) {
+                return SubtitleTranslationPromptFactory.buildV2(command,batch,Duration.ofMillis(frozen.policy().requestTimeoutMillis()),null);
+            }
             public LlmRequest request(List<SubtitleSegment> batch, String correction, Duration timeout) {
                 return routeRequest(AiModelStage.TRANSLATION_FULL_TEXT,
                     SubtitleTranslationPromptFactory.buildV2(command,batch,timeout,correction));
@@ -487,6 +493,12 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         };
         Integer cap = systemModels == null ? null : systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT").maxTokens();
         var coordinator = new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator(frozen,provider,codec,cap);
+        if(frozen.policy().aimd()!=null) {
+            var route=systemModels==null?null:systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT");
+            String key=route==null?"manual-test":route.source()+":"+route.providerId()+":"+route.baseUrl();
+            coordinator.observe(com.example.courselingo.subtitle.pipeline.PipelinePolicyService.hash(key),
+                schedulerEvents==null?event->{}:schedulerEvents.observer(frozen));
+        }
         var outcome = coordinator.run(createTranslationBatches(sources,frozen.policy().batchMaxSegments(),frozen.policy().batchMaxInputChars()));
         return new AlignedTranslationRun(outcome.translations().stream().map(t ->
             new GeneratedSubtitleTranslation(t.source(),t.text(),null)).toList(),outcome.responses(),outcome.plannedBatches());

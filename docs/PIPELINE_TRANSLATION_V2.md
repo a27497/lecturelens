@@ -1,6 +1,6 @@
 # 全文翻译 v2（实验候选，未部署）
 
-Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运行时。当前阶段 1、2 已实现；AIMD、批次恢复和完整费用账本按后续阶段交付。设计及验收记录见 [P2-1](../eval/p2-1-pipeline-20261016T073754Z/DESIGN.md)。
+Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运行时。当前阶段 1–3 已实现；批次恢复和完整费用账本按后续阶段交付。设计及验收记录见 [P2-1](../eval/p2-1-pipeline-20261016T073754Z/DESIGN.md)。
 
 默认 `PIPELINE_TRANSLATION_V2_ENABLED=false`。开启时仅新任务在创建事务内生成 `pipeline_policy_snapshot`，固定系统执行快照、翻译策略、模板哈希和从任务创建起 30 分钟的截止时间。关闭开关不会改变已冻结任务。策略只包含安全参数；凭据仍从既有系统版本按版本号解密，不保存到执行策略中。
 
@@ -33,3 +33,7 @@ Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运�
 `timing_source` 区分 ASR、SILENCE_SPLIT、AUDIO_CLIP、EMBEDDED_SUBTITLE 和 ESTIMATED。无供应商时间戳时只记录真实音频片区间，不按字数均分；秒显示采用覆盖区间取整，不承诺词级精度。旧字幕行默认 ESTIMATED。全文结果可选 `alignedParagraphs` 保留成员索引、原译文一一对应及时间来源，旧字段保留。
 
 V28 增加时间来源列、段落/成员、切分计划及源指纹发布记录。原子字幕译文仍是唯一翻译结果，段落译文按相同成员拼接；未完整发布、源指纹改变或成员缺失不能返回错误的对齐结果。静音切分的全部 ASR 物理尝试计入单节费用；调用数和成本影响单独列出，不能把增量再加一次。当前只保存计数/计划，实际用量和费用账本在阶段 5 补齐。
+
+阶段 3 新任务冻结 v2.3：按完整消息的 token 估计预算装箱，默认 2048；单项超限在出网前拆小，仍保留原段对应关系。真实请求并发初始 1、最多 4，连续 3 次通过校验后 +1，429/timeout 减半，最低 1。同一拥塞窗口的迟到失败不重复减半，冷却与 Retry-After 有界；其他失败遵守原有界策略。已经运行的健康请求继续完成。等待供应商共享名额后会再检查最新窗口，避免用旧窗口超发。
+
+`PIPELINE_TRANSLATION_AIMD_ENABLED` 默认为 true（外层 v2 仍默认 false）。`PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET=2048`、`PIPELINE_TRANSLATION_CONCURRENCY_INITIAL=1`、`PIPELINE_TRANSLATION_CONCURRENCY_MAX=4`、`PIPELINE_TRANSLATION_SUCCESS_STREAK=3`、`PIPELINE_TRANSLATION_PROVIDER_MAX_INFLIGHT=4` 随新任务冻结。供应商共享上限在同一进程的多个任务之间生效，不承诺跨实例全局限流。V29 保存窗口状态及有序原始事件；恢复窗口显式从 1 重置，不能把新参数替换到旧快照。

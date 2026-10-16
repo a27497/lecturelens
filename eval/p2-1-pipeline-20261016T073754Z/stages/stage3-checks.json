@@ -1,0 +1,36 @@
+[
+  {
+    "name": "stage3-related-01",
+    "result": {
+      "tests": 125,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage3-related-01.log",
+    "log_sha256": "713c0e10001b59db1615862add345585d725d1a3c5f5a9f99d89459c4b7334e3",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:00:58.765535+00:00",
+      "disk_before": {
+        "used_bytes": 131170291712,
+        "available_bytes": 23707119616,
+        "use_percent": 84.69297787668147
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=AdaptiveTranslationControllerTest,TranslationAdaptiveBatchTest,TranslationSchedulerMySqlTest,TranslationBatchCoordinatorTest,PipelinePolicyMySqlTest,SystemModelTranslationV2Test,PipelineTranslationServiceTest,SubtitleTranslationServiceTest,SubtitleTranslationPromptFactoryTest,TranscriptParagraphTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.69369458287541,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131170983936,
+        "available_bytes": 23706427392,
+        "use_percent": 84.69342482630057
+      },
+      "finished_at_utc": "2026-10-16T09:01:30.780302+00:00"
+    }
+  }
+]
