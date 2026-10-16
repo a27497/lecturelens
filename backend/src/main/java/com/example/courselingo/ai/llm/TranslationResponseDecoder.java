@@ -19,6 +19,13 @@ public final class TranslationResponseDecoder {
             && "deepseek-flash".equals(model)) body.put("thinking", Map.of("type", "disabled"));
     }
     public static LlmResult decode(OpenAiCompatibleClientResponse response, String model, Map<String, Object> metadata) {
+        return decode(response, model, metadata, true);
+    }
+    /** Legacy aligned translation accepts an omitted finish reason, but never a declared truncation. */
+    public static LlmResult decodeLegacyAligned(OpenAiCompatibleClientResponse response, String model, Map<String, Object> metadata) {
+        return decode(response, model, metadata, false);
+    }
+    private static LlmResult decode(OpenAiCompatibleClientResponse response, String model, Map<String, Object> metadata, boolean requireStop) {
         JsonNode root = null;
         try { root = JSON.readTree(response.body()); } catch (Exception ignored) { }
         var usageNode = root == null ? JSON.createObjectNode() : root.path("usage");
@@ -39,11 +46,12 @@ public final class TranslationResponseDecoder {
             throw new TranslationFailure(EMPTY_OUTPUT, status, usage, finish, 0,
                 content.isNull()?TranslationFailure.Check.CONTENT_NULL:TranslationFailure.Check.CONTENT_EMPTY);
         if (!content.isTextual()) throw new TranslationFailure(FORMAT_INVALID,status,usage,finish,0,TranslationFailure.Check.CONTENT_NON_STRING);
-        if (!"stop".equals(finish)) throw new TranslationFailure(FORMAT_INVALID,status,usage,finish,0,TranslationFailure.Check.FINISH_REASON);
+        if (requireStop && !"stop".equals(finish)) throw new TranslationFailure(FORMAT_INVALID,status,usage,finish,0,TranslationFailure.Check.FINISH_REASON);
+        JsonNode value;
         try {
-            var value = JSON.readTree(content.asText());
-            if (value == null || !value.isObject()) throw new IllegalArgumentException();
+            value = JSON.readTree(content.asText());
         } catch (Exception ignored) { throw new TranslationFailure(FORMAT_INVALID, status, usage, finish, 0,TranslationFailure.Check.CONTENT_JSON_INVALID); }
+        if (value == null || !value.isObject()) throw new TranslationFailure(FORMAT_INVALID, status, usage, finish, 0,TranslationFailure.Check.CONTENT_NOT_OBJECT);
         return new LlmResult("openai-compatible", model, content.asText(), finish, usage, response.duration(), metadata);
     }
     private static Integer number(JsonNode n, String field) {

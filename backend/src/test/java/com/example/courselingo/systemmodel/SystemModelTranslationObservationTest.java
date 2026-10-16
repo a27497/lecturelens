@@ -23,8 +23,9 @@ class SystemModelTranslationObservationTest {
         when(transport.complete(any())).thenReturn(new OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO));
         var client = new SystemModelChatClient(transport, urls(), diagnostics);
         assertThatThrownBy(() -> client.generate(request(), route(), "synthetic-runtime-key"))
-            .isInstanceOfSatisfying(SystemModelCallFailure.class, e -> {
-                assertThat(e.category()).isEqualTo("OUTPUT_INVALID");
+            .isInstanceOfSatisfying(TranslationFailure.class, e -> {
+                assertThat(e.details().category()).isEqualTo(LlmProviderFailureCategory.OUTPUT_INVALID);
+                assertThat(e.status()).isEqualTo(200);
                 assertThat(e.details().retryable()).isFalse();
                 assertThat(e.getMessage()).doesNotContain(expected, body, "synthetic-runtime-key");
             });
@@ -35,12 +36,12 @@ class SystemModelTranslationObservationTest {
         verify(transport, times(1)).complete(any());
     }
 
-    @Test void successfulContentAndLengthFinishAreUnchangedAndReferencePrivateDiagnostic() throws Exception {
+    @Test void successfulCompletedContentReferencesPrivateDiagnostic() throws Exception {
         var diagnostics = mock(TranslationCallDiagnostics.class);
         String body = body("valid");
         var client = new SystemModelChatClient(r -> new OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO), urls(), diagnostics);
         var result = client.generate(request(), route(), "synthetic-runtime-key");
-        assertThat(result.finishReason()).isEqualTo("length");
+        assertThat(result.finishReason()).isEqualTo("stop");
         assertThat(result.content()).isEqualTo("{\"segments\":[{\"index\":0,\"text\":\"中文译文\"}]}");
         assertThat(result.usage().totalTokens()).isEqualTo(3373);
         assertThat(result.metadata().get(TranslationCallDiagnostics.RESULT_ID)).isInstanceOf(String.class);
@@ -66,7 +67,7 @@ class SystemModelTranslationObservationTest {
             case "malformed" -> "{bad"; case "array" -> "[]";
             default -> "{\"segments\":[{\"index\":0,\"text\":\"中文译文\"}]}";
         });
-        return mapper.writeValueAsString(Map.of("choices",List.of(Map.of("message",message,"finish_reason","length")),
+        return mapper.writeValueAsString(Map.of("choices",List.of(Map.of("message",message,"finish_reason","stop")),
             "usage",Map.of("prompt_tokens",301,"completion_tokens",3072,"total_tokens",3373)));
     }
     private static SystemModelUrlPolicy urls() { return new SystemModelUrlPolicy(host -> new java.net.InetAddress[]{java.net.InetAddress.getByName("8.8.8.8")}); }

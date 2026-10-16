@@ -1,0 +1,77 @@
+{
+  "at_utc": "2026-10-16T18:42:31.461853+00:00",
+  "protected_evidence_files": 141,
+  "protected_evidence_all_unchanged": true,
+  "artifact_hash_matches": {
+    "online_jar": true,
+    "p21c_frozen_jar": true
+  },
+  "untracked_file_metadata_matches": {
+    "inode": true,
+    "bytes": true,
+    "mtime_ns": true
+  },
+  "online_service": {
+    "MainPID": "4866",
+    "ExecMainStartTimestampMonotonic": "31524728",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "online_pid_matches_before": true,
+  "online_start_monotonic_matches_before": true,
+  "test_runs": [
+    {
+      "name": "translation-output-red",
+      "status": "FAILED",
+      "exit_code": 1,
+      "cleanup_complete": true,
+      "remaining": [],
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    },
+    {
+      "name": "translation-output-regression",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "cleanup_complete": true,
+      "remaining": [],
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    },
+    {
+      "name": "translation-output-targeted",
+      "status": "FAILED",
+      "exit_code": 1,
+      "cleanup_complete": true,
+      "remaining": [],
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    },
+    {
+      "name": "translation-output-targeted-v2",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "cleanup_complete": true,
+      "remaining": [],
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    }
+  ],
+  "disk": {
+    "used_bytes": 117012480000,
+    "available_bytes": 37864931328,
+    "usage_percent": 75.55167599759949,
+    "headroom_to_85_bytes": 14633319628.800003
+  },
+  "real_provider_calls": 0,
+  "live_database_access": false,
+  "service_mutations": []
+}

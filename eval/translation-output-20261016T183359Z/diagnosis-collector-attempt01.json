@@ -1,0 +1,62 @@
+{
+  "collected_at_utc": "2026-10-16T18:36:17.484481+00:00",
+  "journal_command": [
+    "journalctl",
+    "-u",
+    "lecturelens-live-backend.service",
+    "--since",
+    "48 hours ago",
+    "--no-pager",
+    "--grep=event=(llm_aligned_batch_translation_(failed|completed)|system_model_call_completed|pipeline_step_failed)",
+    "-o",
+    "json"
+  ],
+  "failure_events": 0,
+  "unique_tasks": 0,
+  "tasks": [],
+  "historical_pid_counts": {},
+  "confirmed_subreason_tasks": 0,
+  "unknown_subreason_tasks": 0,
+  "current_pid": 4866,
+  "current_pid_deployed_jar_fds": [
+    "4",
+    "5"
+  ],
+  "artifacts": [
+    {
+      "path": ".data/system-model-management/deploy-20261016/backend.jar",
+      "sha256": "b45257e13ac03e313730e193cccad386968e228cc73614616aeedce3dfe0110b",
+      "build": {
+        "build.gitCommit": "bc2e6cc",
+        "build.time": "2026-10-15T19\\:47\\:32.021Z",
+        "build.version": "0.0.1-SNAPSHOT"
+      },
+      "class_sha256": {
+        "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelChatClient.class": "9e0d76c72992d863228ee618098016a8033267d67177f6edbb6af25d35eb002f",
+        "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.class": "4e12f4049c0dbd9a8e637973eb151a3eecf79442ddada97e0188a8f4bf7d0b54",
+        "BOOT-INF/classes/com/example/courselingo/ai/llm/LlmStageException.class": "1e6b42660ca302e23a54154661df2418abf71a547e5041f8cb9782363d40b6c2"
+      }
+    },
+    {
+      "path": ".data/baseline-deepseek-20261015T185735Z/p13d/backend-before.jar",
+      "sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+      "build": {
+        "build.gitCommit": "unknown",
+        "build.time": "2026-10-15T17\\:29\\:10.958Z",
+        "build.version": "0.0.1-SNAPSHOT"
+      },
+      "class_sha256": {
+        "BOOT-INF/classes/com/example/courselingo/systemmodel/SystemModelChatClient.class": "d2d414323eb3e5801c40da953f1e9c18ea95a4473f358403992a6c567ff71492",
+        "BOOT-INF/classes/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.class": "7b6e045e08d5f95b267ff608bae50d99f990350c91de8b31a97bc977f4a07e0e",
+        "BOOT-INF/classes/com/example/courselingo/ai/llm/LlmStageException.class": "1e6b42660ca302e23a54154661df2418abf71a547e5041f8cb9782363d40b6c2"
+      }
+    }
+  ],
+  "archived_diagnostic_source": "eval/baseline-deepseek-20261015T185735Z/p13d/diagnostics.json",
+  "archived_diagnostic_sha256": "5ffd07b6479809f31a7b26e2a91153683cf4cb7df5e7ab10bf7c4848a410ac17",
+  "sensitive_response_or_course_content_read": false,
+  "credentials_read": false,
+  "live_database_access": false,
+  "provider_calls": 0,
+  "runtime_mutations": []
+}

@@ -13,7 +13,7 @@ public final class TranslationFailure extends LlmProviderException {
     }
     public enum Check {
         OUTPUT_TRUNCATED, CONTENT_EMPTY, CONTENT_NULL, CONTENT_MISSING, CONTENT_NON_STRING,
-        ENVELOPE_JSON_INVALID, CONTENT_JSON_INVALID, FINISH_REASON, FIELD, SEGMENT_COUNT, LANGUAGE
+        ENVELOPE_JSON_INVALID, CONTENT_JSON_INVALID, CONTENT_NOT_OBJECT, FINISH_REASON, FIELD, SEGMENT_COUNT, LANGUAGE
     }
     private final Reason reason;
     private final Integer status;
@@ -21,11 +21,15 @@ public final class TranslationFailure extends LlmProviderException {
     private final String finishReason;
     private final long retryAfterMillis;
     private final Check check;
+    private final int providerRetryCount;
 
     public TranslationFailure(Reason reason, Integer status, LlmUsage usage, String finishReason, long retryAfterMillis) {
         this(reason,status,usage,finishReason,retryAfterMillis,null);
     }
     public TranslationFailure(Reason reason, Integer status, LlmUsage usage, String finishReason, long retryAfterMillis, Check check) {
+        this(reason, status, usage, finishReason, retryAfterMillis, check, 0);
+    }
+    private TranslationFailure(Reason reason, Integer status, LlmUsage usage, String finishReason, long retryAfterMillis, Check check, int providerRetryCount) {
         super("Translation failed: " + reason.name());
         this.reason = reason; this.status = status;
         this.usage = usage == null ? new LlmUsage(null, null, null) : usage;
@@ -35,6 +39,7 @@ public final class TranslationFailure extends LlmProviderException {
         };
         this.retryAfterMillis = Math.max(0, retryAfterMillis);
         this.check = check;
+        this.providerRetryCount = Math.max(0, providerRetryCount);
     }
     public static TranslationFailure of(Reason reason) { return new TranslationFailure(reason, null, null, null, 0); }
     public Reason reason() { return reason; }
@@ -43,6 +48,10 @@ public final class TranslationFailure extends LlmProviderException {
     public String finishReason() { return finishReason; }
     public long retryAfterMillis() { return retryAfterMillis; }
     public Check check() { return check; }
+    public int providerRetryCount() { return providerRetryCount; }
+    public TranslationFailure withProviderRetryCount(int retries) {
+        return new TranslationFailure(reason, status, usage, finishReason, retryAfterMillis, check, retries);
+    }
     public String observationReason() { return check == null ? reason.name() : check.name(); }
     public boolean transportRetryable() { return switch (reason) {
         case TIMEOUT, RATE_LIMITED, UPSTREAM_5XX, NETWORK -> true;

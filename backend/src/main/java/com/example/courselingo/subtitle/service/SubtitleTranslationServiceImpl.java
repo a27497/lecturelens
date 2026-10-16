@@ -10,6 +10,7 @@ import com.example.courselingo.ai.llm.LlmRequest;
 import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.ai.llm.LlmStructuredOutputExecutor;
+import com.example.courselingo.ai.llm.LlmUsage;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
@@ -367,16 +368,18 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         String provider = normalizeProvider(firstNonBlank(firstResult.provider(), llmProvider.providerName()));
         Runnable publish=()->persistDualOutput(validated,sourceSegments,run.translations(),sourceFullText,translatedFullText,provider);
         if(run.checkpoint()!=null)run.checkpoint().publish(publish);else publish.run();
-        UsageTotals usage = UsageTotals.fromResults(run.results());
+        UsageTotals usage = UsageTotals.fromResults(run.results()).including(run.failedCalls());
+        int callCount = run.results().size() + run.failedCalls().size();
         Duration wallDuration = elapsedDuration(wallStartedNanos);
-        int retryCount = retryCount(run.results(), run.plannedBatchCount());
+        int retryCount = retryCount(run.results(), run.plannedBatchCount()) + run.failedCalls().size()
+            + run.failedCalls().stream().mapToInt(FailedTranslationCall::providerRetryCount).sum();
         log.info(
                 "event=llm_full_text_translation_completed taskId={} wallDurationMillis={}"
                     + " providerDurationMillis={} batchCount={} retryCount={} totalTokens={}",
             SafeLogSanitizer.sanitize(validated.taskId()),
             wallDuration.toMillis(),
             usage.duration().toMillis(),
-            run.results().size(),
+            callCount,
             retryCount,
             usage.totalTokens()
         );
@@ -386,7 +389,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             firstResult.model(),
             wallDuration,
             usage.duration(),
-            run.results().size(),
+            callCount,
             retryCount,
             usage.promptTokens(),
             usage.completionTokens(),
@@ -552,6 +555,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 ));
             }
             List<LlmResult> results = new ArrayList<>();
+            List<FailedTranslationCall> failedCalls = new ArrayList<>();
             List<GeneratedSubtitleTranslation> generated = new ArrayList<>(sourceSegments.size());
             int completed = 0;
             while (completed < batches.size()) {
@@ -568,6 +572,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 completed++;
                 generated.addAll(batchRun.translations());
                 results.addAll(batchRun.results());
+                failedCalls.addAll(batchRun.failedCalls());
                 if (nextBatch < batches.size()) {
                     futures.add(submitTranslationBatch(
                         completionService,
@@ -578,7 +583,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 }
             }
             generated.sort(Comparator.comparing(item -> item.sourceSegment().getSegmentIndex()));
-            return new AlignedTranslationRun(List.copyOf(generated), List.copyOf(results), batches.size());
+            return new AlignedTranslationRun(List.copyOf(generated), List.copyOf(results), batches.size(), null, List.copyOf(failedCalls));
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             cancelPending(futures);
@@ -605,7 +610,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         List<SubtitleSegment> batch
     ) {
         return completionService.submit(() -> {
-            List<LlmResult> batchResults = new ArrayList<>();
+            AlignedCallObservations batchResults = new AlignedCallObservations();
             List<GeneratedSubtitleTranslation> batchTranslations = generateAlignedBatchWithSplitRetry(
                 llmProvider,
                 command,
@@ -615,8 +620,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             );
             return new AlignedTranslationRun(
                 List.copyOf(batchTranslations),
-                List.copyOf(batchResults),
-                1
+                List.copyOf(batchResults.results),
+                1, null, List.copyOf(batchResults.failedCalls)
             );
         });
     }
@@ -659,7 +664,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         ValidatedTranslationCommand command,
         List<SubtitleSegment> batch,
         int depth,
-        List<LlmResult> observedResults
+        AlignedCallObservations observedResults
     ) {
         if (depth > properties.getFullText().getSingleSegmentMaxDepth()) {
             throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Aligned subtitle translation split depth exceeded");
@@ -668,6 +673,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         String semanticRetryReason = null;
         for (int semanticAttempt = 1; semanticAttempt <= semanticMaxAttempts; semanticAttempt++) {
             LlmResult result;
+            long callStarted = System.nanoTime();
             try {
                 result = generateAlignedBatchTranslation(
                     llmProvider,
@@ -677,9 +683,12 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                     semanticRetryReason
                 );
                 if (result != null) {
-                    observedResults.add(result);
+                    observedResults.results.add(result);
                 }
             } catch (BusinessException ex) {
+                var typed = findTranslationFailure(ex);
+                if (typed != null) observedResults.failedCalls.add(new FailedTranslationCall(
+                    typed.usage(), elapsedDuration(callStarted), typed.providerRetryCount()));
                 if (isRetryableOutputFailure(ex)) {
                     return splitAndRetryAlignedBatch(llmProvider, command, batch, depth, observedResults, ex);
                 }
@@ -819,7 +828,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         log.warn(
                 "event=llm_aligned_batch_translation_failed taskId={} providerErrorCategory={}"
                     + " httpStatus={} providerErrorCode={} retryable={} responseFormatUsed={}"
-                    + " attempt={} batchSegmentCount={} batchInputChars={} durationMillis={}",
+                    + " attempt={} batchSegmentCount={} batchInputChars={} durationMillis={} diagnostic={}",
             SafeLogSanitizer.sanitize(command.taskId()),
             failure.details().category(),
             failure.details().httpStatus(),
@@ -829,7 +838,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             semanticAttempt,
             batch.size(),
             inputCharCount(batch),
-            elapsedMillis(startedNanos, null)
+            elapsedMillis(startedNanos, null),
+            failure.safeDiagnosticSummary()
         );
     }
 
@@ -1060,7 +1070,7 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         ValidatedTranslationCommand command,
         List<SubtitleSegment> batch,
         int depth,
-        List<LlmResult> observedResults,
+        AlignedCallObservations observedResults,
         BusinessException original
     ) {
         if (depth >= properties.getFullText().getSingleSegmentMaxDepth()) {
@@ -1204,7 +1214,18 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             .orElseThrow(() -> new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Translation coverage validation failed"));
     }
 
+    private static com.example.courselingo.ai.llm.TranslationFailure findTranslationFailure(Throwable error) {
+        Throwable current = error;
+        for (int depth = 0; current != null && depth < 16; depth++, current = current.getCause()) {
+            if (current instanceof com.example.courselingo.ai.llm.TranslationFailure failure) return failure;
+        }
+        return null;
+    }
+
     private static boolean isRetryableOutputFailure(Throwable error) {
+        var typed = findTranslationFailure(error);
+        if (typed != null && typed.reason() == com.example.courselingo.ai.llm.TranslationFailure.Reason.TRUNCATED) return true;
+
         com.example.courselingo.ai.llm.LlmProviderFailureDetails providerFailure =
             LlmProviderFailureClassifier.from(error);
         if (providerFailure.category() == LlmProviderFailureCategory.CONTEXT_TOO_LARGE
@@ -1634,10 +1655,22 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         List<GeneratedSubtitleTranslation> translations,
         List<LlmResult> results,
         int plannedBatchCount,
-        com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore.Session checkpoint
+        com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore.Session checkpoint,
+        List<FailedTranslationCall> failedCalls
     ) {
-        AlignedTranslationRun(List<GeneratedSubtitleTranslation> translations,List<LlmResult> results,int plannedBatchCount){this(translations,results,plannedBatchCount,null);}
+        AlignedTranslationRun(List<GeneratedSubtitleTranslation> translations,List<LlmResult> results,int plannedBatchCount,
+                com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore.Session checkpoint) {
+            this(translations, results, plannedBatchCount, checkpoint, List.of());
+        }
     }
+
+    // Failed calls affect accounting, never validated translations or publication.
+    private static final class AlignedCallObservations {
+        final List<LlmResult> results = new ArrayList<>();
+        final List<FailedTranslationCall> failedCalls = new ArrayList<>();
+    }
+
+    private record FailedTranslationCall(LlmUsage usage, Duration duration, int providerRetryCount) {}
 
     private record SemanticMetrics(int translatedCharCount, long cjkCharCount, double cjkRatio) {
     }
@@ -1687,6 +1720,18 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
                 totalTokens = addNullable(totalTokens, result.usage().totalTokens());
             }
             return new UsageTotals(duration, promptTokens, completionTokens, totalTokens);
+        }
+
+        private UsageTotals including(List<FailedTranslationCall> failedCalls) {
+            Duration allDuration = duration;
+            Integer allPrompt = promptTokens, allCompletion = completionTokens, allTotal = totalTokens;
+            for (FailedTranslationCall call : failedCalls) {
+                allDuration = allDuration.plus(call.duration());
+                allPrompt = addNullable(allPrompt, call.usage().promptTokens());
+                allCompletion = addNullable(allCompletion, call.usage().completionTokens());
+                allTotal = addNullable(allTotal, call.usage().totalTokens());
+            }
+            return new UsageTotals(allDuration, allPrompt, allCompletion, allTotal);
         }
 
         private static Integer addNullable(Integer current, Integer value) {

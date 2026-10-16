@@ -1,0 +1,66 @@
+{
+  "name": "translation-output-targeted-v2",
+  "status": "SUCCEEDED",
+  "exit_code": 0,
+  "totals": {
+    "tests": 126,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.example.courselingo.subtitle.SubtitleTranslationServiceTest",
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelTranslationObservationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelTranslationV2Test",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.TranslateSubtitleSegmentsStepTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sha256": {
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2-reports/TEST-com.example.courselingo.subtitle.SubtitleTranslationServiceTest.xml": "2b35b65f6b20b865702fe869965743a2353d679cafba0c7f6178d1dd29b32dbd",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2-reports/TEST-com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest.xml": "24ff4585e01c658d9835cb8fa651406b4c0d8637ddae2a7daf879065a191dba5",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2-reports/TEST-com.example.courselingo.systemmodel.SystemModelTranslationObservationTest.xml": "307119097022cc13c9efb096e848b1f7d7104c97f62727ddbf181ef2bc900ea7",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2-reports/TEST-com.example.courselingo.systemmodel.SystemModelTranslationV2Test.xml": "4cf5a6431000b765c650869f1f5093ceb37640c62370b1c95eb3aad865c925fc",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2-reports/TEST-com.example.courselingo.task.runner.TranslateSubtitleSegmentsStepTest.xml": "727bc556407cc30834ac21935cbb9fbd7777a493fba2350ab99641935794df25",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2/run.json": "4a278d0d2e3cb0740c70f28cfcc57a6629760a3c224693a3089c66e4d578f17b",
+    ".data/translation-output-20261016T183359Z/translation-output-targeted-v2/output.log": "9132fb93add5c1e39d74d4710b48260e3f23d84774cedfd2c04d4b36ec52155a"
+  },
+  "cleanup": {
+    "pgid": 3256397,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  }
+}

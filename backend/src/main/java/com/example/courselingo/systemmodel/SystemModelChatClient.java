@@ -124,6 +124,20 @@ final class SystemModelChatClient {
                 }
                 observedReason = "HTTP_STATUS";
                 if (status < 200 || status >= 300) throw statusFailure(status);
+                if ("TRANSLATION_FULL_TEXT".equals(route.feature()) && request.responseFormat() == LlmResponseFormat.JSON_OBJECT) {
+                    try { observedRoot = json.readTree(response.body()); } catch (Exception ignored) { }
+                    var metadata = new LinkedHashMap<String,Object>();
+                    metadata.put("systemModel.snapshotId",request.execution().snapshotId());
+                    metadata.put("systemModel.configVersion",request.execution().configVersion());
+                    metadata.put("systemModel.feature",route.feature());
+                    metadata.put("systemModel.finalUrl",uri.toString());
+                    metadata.put("providerRetryCount",attempt);
+                    if (diagnosticId != null) metadata.put(TranslationCallDiagnostics.RESULT_ID,diagnosticId);
+                    var result = com.example.courselingo.ai.llm.TranslationResponseDecoder.decodeLegacyAligned(response,route.model(),metadata);
+                    observedReason="PASSED";
+                    return new LlmResult(result.provider(), result.model(), result.content(), result.finishReason(), result.usage(),
+                        Duration.ofNanos(System.nanoTime() - start), result.metadata());
+                }
                 observedReason = "ENVELOPE_JSON_INVALID";
                 var root = json.readTree(response.body());
                 observedRoot = root;
@@ -164,7 +178,7 @@ final class SystemModelChatClient {
                         metadata);
             } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
                 observedReason = safe.observationReason();
-                throw safe;
+                throw translationV2 ? safe : safe.withProviderRetryCount(attempt);
             } catch (SystemModelCallFailure safe) {
                 if (!"OUTPUT_INVALID".equals(safe.category())) observedReason = safe.category();
                 if (!safe.details().retryable() || attempt + 1 >= attempts) throw safe;
