@@ -1,0 +1,14 @@
+{
+  "frozen_at_utc": "2026-10-16T12:25:30.906851+00:00",
+  "candidate_jar_sha256": "beaa04ff59fe167950406b693e8f7590185dd98d97e526d12965d3ce9e2884bc",
+  "files": {
+    "runtime/P21Bootstrap.java": "54aeef4f35940670c71e260a409065d9d6f292f33c9d993f1c245e4b69c42ed3",
+    "runtime_support.py": "83b7c2f9d7c08e0961b6c8311a28a56abeed8e94eff5f826d9a6afcb7f067e40",
+    "prepare_runtime.py": "0392d149bb24057b3d27621a8b982f995631b47a6a10b930a95baf10f1da7a1b",
+    "prepare_mq.py": "d3e7c952d71c405f5aeef806c2be1c8683a4cb1344e246fdd30823688398aff2",
+    "measure_runtime.py": "c91057b5b1987e76b3b25a367073d62ac88e27071a03145494e86e9cedb1d77b"
+  },
+  "candidate_jar_modified": false,
+  "barrier_applies_only_to_recovery_trial": true,
+  "python_agent_sync_disabled": true
+}

@@ -1,6 +1,6 @@
 -- PREVIEW ONLY. Run exclusively in the new isolated schema after authorized trials.
 -- Bind @task and @user for one owned evaluation task. Never export credential/config JSON columns.
-SELECT id,status,stage,error_code,created_at,started_at,finished_at FROM analysis_task WHERE id=@task AND user_id=@user;
+SELECT id,status,current_stage AS stage,error_code,created_at,started_at,finished_at FROM analysis_task WHERE id=@task AND user_id=@user;
 SELECT p.task_id,p.snapshot_id,p.config_version,p.engine_version,p.policy_hash,p.prompt_hash,p.deadline
  FROM pipeline_policy_snapshot p WHERE p.task_id=@task AND p.user_id=@user;
 SELECT s.id,s.config_version,JSON_UNQUOTE(JSON_EXTRACT(s.resolved_config_json,'$.routes.TRANSLATION_FULL_TEXT.source')) AS translation_source,

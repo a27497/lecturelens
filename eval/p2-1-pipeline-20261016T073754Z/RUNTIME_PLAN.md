@@ -1,6 +1,8 @@
-# 隔离真实验收：待空间与启动确认
+# 隔离真实验收：原候选协议失败，替代候选待 Redis 门槛
 
-代码相关测试完成不代表 10 次真实基线或恢复演示完成。当前没有启动隔离 Java、没有切换生产 JAR、没有调用供应商；`trials.jsonl` 暂不生成，不填空试次或假结果。磁盘实测及门槛见 runtime-readiness.json。DESIGN.md §12 已确认：距 85% 可写余量至少 max(2 GiB, 单任务峰值与构建/数据库估计 + 512 MiB)，当前不满足。不会自行清理。
+2026-10-16 后续执行：磁盘门槛已满足，用户已授权隔离启动、单次 SIGKILL/重启和结束停止。隔离 worker 已启动后停止；首个 NORMAL 在 MQ 传输中丢失 v2/epoch 字段，被消费者拒绝，随后取消。已保存真实 `trials.jsonl`，原候选剩余 9 次及 RECOVERY 未提交，物理供应商调用为 0。不能将部分队列写成完整 10 次结果。缺陷、原候选归档和停止证据见 protocol-defect.json、redis15-stop.json、runtime-closeout.json。
+
+用户已选择修复后另冻新候选、执行独立 10+1，原失败单独保留。重启前 Redis DB 15 非空（仅本轮取消任务的进度 key），先按用户硬约束停止；随后用户明确授权保留该本轮 key 原样复用 DB 15，不清空、不换库。新候选见 ../p2-1b-pipeline-20261016T122904Z/，启动检查仍拒绝任何其他已有 key。原 DESIGN.md 保持冻结。
 
 ## 拟操作的确切边界
 
@@ -11,7 +13,7 @@
 - `PIPELINE_TRANSLATION_V2_ENABLED=true`、`PIPELINE_TRANSLATION_CHECKPOINT_ENABLED=true`、`PIPELINE_TRANSLATION_ISOLATED_RUNTIME=true`；其余冻结参数依设计默认。只为隔离工作区设置 java.io.tmpdir 与 runner workspace。候选 JAR/source identity 由 candidate-artifact.json 和阶段文件清单冻结。
 - 不重启现有 Java、agent-service、llama、ASR、RocketMQ、MinIO 或任何受保护容器。共享的模型服务接受本轮有界请求，可能增加瞬时 CPU/队列负载与真实费用；没有额外模型探测。
 
-在余量满足后，启动/停止隔离 Java、恢复演示的一次 SIGKILL 与恢复启动，仍按用户要求先报告范围并等确认。本文件是待执行计划，不是已经获得的新启动确认。
+本轮进程/端口/schema/topic 范围与单次故障注入已获用户确认；该授权不撤销 Redis 非空停止或磁盘超过 85% 停止条件。启动身份/指纹与 barrier mock 通过后才可运行。
 
 ## 测量与失败规则
 

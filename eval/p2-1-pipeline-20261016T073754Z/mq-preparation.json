@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-16T12:24:00.351840+00:00",
+  "broker": "127.0.0.1:20911",
+  "topic": {
+    "attributes": {
+      "message.type": "NORMAL"
+    },
+    "order": false,
+    "perm": 6,
+    "readQueueNums": 4,
+    "topicFilterType": "SINGLE_TAG",
+    "topicName": "lecturelens-p21-20261016T073754Z",
+    "topicSysFlag": 0,
+    "writeQueueNums": 4
+  },
+  "consumer_group": {
+    "attributes": {},
+    "brokerId": 0,
+    "consumeBroadcastEnable": false,
+    "consumeEnable": true,
+    "consumeFromMinEnable": true,
+    "consumeMessageOrderly": false,
+    "consumeTimeoutMinute": 15,
+    "groupName": "lecturelens-p21-20261016T073754Z-consumer",
+    "groupRetryPolicy": {
+      "type": "CUSTOMIZED"
+    },
+    "groupSysFlag": 0,
+    "notifyConsumerIdsChangedEnable": true,
+    "retryMaxTimes": 16,
+    "retryQueueNums": 1,
+    "whichBrokerWhenConsumeSlowly": 1
+  },
+  "topic_response": 0,
+  "group_response": 0,
+  "existing_topics_unchanged": true,
+  "existing_groups_unchanged": true,
+  "container_operations": 0
+}

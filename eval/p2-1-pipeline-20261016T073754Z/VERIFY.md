@@ -150,7 +150,7 @@ for run in json.loads((p/'stages/stage5-checks.json').read_text()):
     log=Path(run['log_path']);assert hashlib.sha256(log.read_bytes()).hexdigest()==run['log_sha256']
     counts=re.findall(r'^\[(?:INFO|ERROR)\] Tests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)',log.read_text(),re.M)
     print(run['name'],counts[-1] if counts else 'compile/package',run['execution']['disk_peak_percent'])
-a=json.loads((p/'candidate-artifact.json').read_text());jar=Path(a['jar_path'])
+a=json.loads((p/'candidate-artifact.json').read_text());jar=Path('.data/p2-1-pipeline-20261016T073754Z/frozen-original.jar')
 assert hashlib.sha256(jar.read_bytes()).hexdigest()==a['jar_sha256'];assert jar.stat().st_size==a['jar_bytes']
 with zipfile.ZipFile(jar) as z:
     print('migrations',len([n for n in z.namelist() if '/db/migration/' in n and n.endswith('.sql')]))
@@ -161,10 +161,26 @@ CHECK
 
 恢复机制、ASR 归因、用量与费用断言分别在 TranslationCheckpointMySqlTest / PipelineResumeMySqlTest / PipelineUsageLedgerMySqlTest / ModelPriceCatalogTest，具体 -Dtest 和命令见 checks JSON。新相关检查使用新 name，不覆盖旧日志；需重新创建专属测试数据库并按 runner 的 loopback/_test 限制提供测试连接，不能指向业务库。
 
-## 当前停止点与真实验收待办
+## 原代码阶段停止点（历史）
 
 代码阶段 1–5 已分别提交（阶段 5 的自身 hash 在提交后汇报，避免自引用），10 次正常完整链路和 1 次独立恢复演示**尚未进行**。无真实 token/费用/成功率改善结果；不生成假的 trials.jsonl。SUMMARY.md 保留 P1-3 与 P1-3b 原结论。
 
 按已确认 DESIGN.md §12，真实测量要求距 85% 的可写余量至少 2 GiB 或更大的估算峰值；当前仅约 0.4 GiB，runtime-readiness.json 标记未就绪。没有自动清理。`RUNTIME_PLAN.md` 给出隔离 worker/schema/Redis/MQ/端口、原 v10 凭据安全引用、环境 capture 需先验证的边界、10+1 测量及查询计划；`evidence-queries.sql` 是只读预览，未执行。既有生产服务、系统 v10 绑定与旧 eval 原样保留，未读取/打印/记录实际 API Key，未 push/merge/deploy。
 
 待空间满足后仍先报隔离 Java 的启动/停止/中断恢复范围并等用户确认，不能把本次设计确认当后续重启授权。
+
+## 授权后隔离执行与 MQ 缺陷（2026-10-16）
+
+磁盘 `df -B1` 可用约 36.68 GiB，精确使用率 74.57%，距 85% 约 15.05 GiB；达到设计前置。用户确认启动/停止、单次 SIGKILL 与重启范围。隔离 MySQL schema `lecturelens_p21_20261016` 已迁移 V1–V31；Redis DB 15 两次初查均为空。MQ 通过 broker 协议创建本轮新 topic/group，原 topic/group 配置逐项相等（mq-preparation.json）；没有 docker exec 或受保护容器生命周期操作。
+
+启动器从现有受保护部署文件/credential 引用在进程内加载配置，不读 `/proc/*/environ`，不输出凭据或配置原文。真实启动前比较捕获指纹与 v10，二者相同；不需要替代 fingerprint，也未生成 v11。隔离进程禁用 Python Agent/index 同步，防止写 Agent 表。candidate JAR 未改动，Java helper 只做启动门禁、LlmProvider 透传和独立恢复试次 barrier。selftest 验证版本/指纹拒绝、半数且至少两批门槛、阻塞期间零派发与解除后一次派发；不能代替真实恢复。源 MinIO 对象逐个流式 SHA256 匹配冻结清单，没有复制媒体落盘。
+
+保留启动失败：第一次迁移由应用账号创建 trigger 缺权限，归档失败后重建本轮空 schema，并仅用已有数据库管理员完成该 schema 迁移；未改变全局权限/参数。第一次 worker 因 topic 不存在失败；创建专属 topic 后仍有一次 route 传播期间启动失败；随后相同配置 MQ client probe/worker 成功。以上均无任务或供应商调用，日志在私有 startup-attempt*/migration-attempt01-failed.log。
+
+正式原候选只提交 `normal-algorithms-1`，task `task_5b6b1585bf3d4b57b28d91fe9cdf68f2`：outbox 的列及 JSON 均为 protocol=2/epoch=1，发送端独立 payload 漏掉协议字段，消费者反序列化成旧协议，`TaskExecutionLease.open` 拒绝。执行表、ASR、翻译 attempt/物理账本和 scheduler 均无记录，未进入媒体阶段。诊断后通过授权 API 取消并停止 worker。真实记录保留在 trials.jsonl、protocol-defect.json、runtime-evidence/；计划 10 次中仅提交 1 次，剩余 9 次和恢复试次未提交，SIGKILL 为 0 次，不补造结果、不把取消耗时当处理链性能。
+
+替代候选前 DB 15 检出仅本轮任务的进度 key，TTL 约 24 小时，按用户非空即停约束停止、未删 key。随后用户明确授权保留该 key 原样复用，并授权修复后另冻候选做独立 10+1；原失败不混入新统计。后续候选与结果在 [P2-1b](../p2-1b-pipeline-20261016T122904Z/VERIFY.md)。
+
+回归先证实缺陷：`runtime-wire-reproduction01`，5 项、1 失败、0 错误/跳过，比较生产发送字节经真实消费者解析后的 v2/epoch，实际为 null/null。补丁为 transport payload 保留非空协议字段，v1 仍省略 null，未改恢复/租约规则。`runtime-wire-fix02`：48 项、0 失败/错误/跳过（producer、consumer、message、runner、creation）；`runtime-replacement-package03` 离线打包成功。该改动仅 Java MQ 序列化，未修改 Python Agent/runtime 或 DB 机制；本轮不把之前阶段的独立 MySQL 测试重复计入新检查数。
+
+检查记录与原始日志路径见 runtime-checks.json；原候选归档 `.data/p2-1-pipeline-20261016T073754Z/frozen-original.jar` 保持 SHA256 `beaa04ff59fe167950406b693e8f7590185dd98d97e526d12965d3ce9e2884bc`。原 candidate-artifact.json 中构建路径是历史位置，后续构建已替换 target JAR，核验原候选须使用归档。SUMMARY.md、SHA256SUMS 与原失败证据一并本地提交，不 push、不部署。
