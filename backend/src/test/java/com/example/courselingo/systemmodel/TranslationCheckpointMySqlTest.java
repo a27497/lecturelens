@@ -5,12 +5,45 @@ import com.example.courselingo.subtitle.pipeline.*;
 import com.example.courselingo.task.service.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 
 @EnabledIfEnvironmentVariable(named="SYSTEM_MODEL_TEST_JDBC_URL",matches=".+")
 class TranslationCheckpointMySqlTest {
+    @ParameterizedTest
+    @CsvSource({"CALL_BUDGET_EXHAUSTED,2,6,200000", "SPLIT_DEPTH_EXHAUSTED,256,0,200000", "TOKEN_BUDGET_EXHAUSTED,256,6,850"})
+    void persistedBudgetAndDepthLimitsCannotBeResetByReopeningTheSession(String expected, int maxCalls, int maxDepth, long tokens) throws Exception {
+        try (var f = new PipelineCheckpointFixture(1, false, p -> {
+            p.setMaxCalls(maxCalls); p.setMaxDepth(maxDepth); p.setTokenBudget(tokens);
+        })) {
+            var calls = new AtomicInteger();
+            var provider = PipelineCheckpointFixture.provider(r -> {
+                calls.incrementAndGet();
+                throw TranslationFailure.of(TranslationFailure.Reason.TRUNCATED);
+            });
+            var first = f.session(f.first);
+            assertThatThrownBy(() -> f.coordinator(f.first, provider, first).run(List.of(f.source)))
+                .isInstanceOfSatisfying(TranslationFailure.class, failure -> assertThat(failure.reason().name()).isEqualTo(expected));
+            int consumed = calls.get();
+            assertThat(consumed).isPositive().isLessThanOrEqualTo(maxCalls);
+            if (expected.equals("CALL_BUDGET_EXHAUSTED")) assertThat(consumed).isEqualTo(2);
+            if (expected.equals("SPLIT_DEPTH_EXHAUSTED")) assertThat(consumed).isEqualTo(1);
+            var before = f.db.jdbc.queryForList("SELECT * FROM translation_attempt WHERE task_id=? ORDER BY batch_no,attempt_no", f.task);
+            assertThat(before).hasSize(consumed);
+            var reopened = f.session(f.first);
+            assertThatThrownBy(() -> f.coordinator(f.first, provider, reopened).run(List.of(f.source)))
+                .isInstanceOf(TranslationFailure.class);
+            assertThat(calls.get()).isEqualTo(consumed);
+            assertThat(f.db.jdbc.queryForList("SELECT * FROM translation_attempt WHERE task_id=? ORDER BY batch_no,attempt_no", f.task)).isEqualTo(before);
+            assertThatThrownBy(() -> reopened.publish(() -> { throw new AssertionError("Budget failure published"); }))
+                .isInstanceOf(TranslationFailure.class);
+            assertThat(f.db.jdbc.queryForObject("SELECT COUNT(*) FROM translation_plan WHERE task_id=? AND status='PUBLISHED'", Integer.class, f.task)).isZero();
+        }
+    }
+
     @Test void workerLossResumesOnlyUnfinishedBatchesWithoutReadingTheCurrentBinding() throws Exception {
         try(var f=new PipelineCheckpointFixture()) {
             var calls=new HashMap<Integer,Integer>();var original=f.session(f.first);
