@@ -1,0 +1,189 @@
+{
+  "at_utc": "2026-10-16T18:22:34.468163+00:00",
+  "processes": [
+    {
+      "pid": 7522,
+      "ppid": 7514,
+      "pgid": 7493,
+      "sid": 7493,
+      "state": "S",
+      "tty_nr": 0,
+      "start_ticks": 6069,
+      "same_identity_as_initial_observation": true,
+      "started_at_utc": "2026-10-16T06:38:52.690000+00:00",
+      "signal_metadata": {
+        "SigPnd": "0000000000000000",
+        "ShdPnd": "0000000000000000",
+        "SigBlk": "0000000000000000"
+      },
+      "stdio_targets": {
+        "0": "/dev/null",
+        "1": "/home/dev/.codex/app-server-control/app-server.log",
+        "2": "/home/dev/.codex/app-server-control/app-server.log"
+      }
+    },
+    {
+      "pid": 1633403,
+      "ppid": 7522,
+      "pgid": 1633403,
+      "sid": 1633403,
+      "state": "S",
+      "tty_nr": 0,
+      "start_ticks": 2082559,
+      "same_identity_as_initial_observation": true,
+      "started_at_utc": "2026-10-16T12:24:57.590000+00:00",
+      "signal_metadata": {
+        "SigPnd": "0000000000000000",
+        "ShdPnd": "0000000000010000",
+        "SigBlk": "0000000000010000"
+      },
+      "stdio_targets": {
+        "0": "/dev/null",
+        "1": "pipe:[7328215]",
+        "2": "pipe:[7328216]"
+      }
+    },
+    {
+      "pid": 1634090,
+      "ppid": 1633403,
+      "pgid": 1633403,
+      "sid": 1633403,
+      "state": "T",
+      "tty_nr": 0,
+      "start_ticks": 2082764,
+      "same_identity_as_initial_observation": true,
+      "started_at_utc": "2026-10-16T12:24:59.640000+00:00",
+      "signal_metadata": {
+        "SigPnd": "0000000000000000",
+        "ShdPnd": "0000000000010000",
+        "SigBlk": "0000000000000000"
+      },
+      "stdio_targets": {
+        "0": "not readable without privilege",
+        "1": "not readable without privilege",
+        "2": "not readable without privilege"
+      }
+    },
+    {
+      "pid": 1634092,
+      "ppid": 1634090,
+      "pgid": 1633403,
+      "sid": 1633403,
+      "state": "Z",
+      "tty_nr": 0,
+      "start_ticks": 2082766,
+      "same_identity_as_initial_observation": true,
+      "started_at_utc": "2026-10-16T12:24:59.660000+00:00",
+      "signal_metadata": {
+        "SigPnd": "0000000000000000",
+        "ShdPnd": "0000000000000002",
+        "SigBlk": "0000000000000000"
+      },
+      "stdio_targets": {
+        "0": "not readable without privilege",
+        "1": "not readable without privilege",
+        "2": "not readable without privilege"
+      },
+      "raw_wait_status": 0,
+      "decoded_exit_code": 0
+    }
+  ],
+  "codex_pipe_readers": [
+    {
+      "pid": 7522,
+      "fd": "95",
+      "pipe": "pipe:[7328215]"
+    },
+    {
+      "pid": 7522,
+      "fd": "99",
+      "pipe": "pipe:[7328216]"
+    }
+  ],
+  "historical_session_path": "/home/dev/.codex/sessions/2026/10/16/rollout-2026-10-16T12-16-07-01a144a4-1902-7a03-b82e-82ce996effd0.jsonl",
+  "sanitized_historical_calls": [
+    {
+      "line": 353,
+      "timestamp": "2026-10-16T12:24:58.460Z",
+      "type": "custom_tool_call",
+      "call_id": "call_e9858e4b91fa446f9e3a60ef732cb023",
+      "payload_sha256": "c0b41fbcdd76f43eff7fd3d7d9e56493273ef1460562185eaa3cba48def7e9ea",
+      "features": {
+        "sudo -n": true,
+        "nohup": false,
+        "timeout": false,
+        "SIGSTOP": false,
+        "SIGINT": false,
+        "SIGCONT": false
+      },
+      "signal_source": [],
+      "target_measurement_script": false
+    },
+    {
+      "line": 355,
+      "timestamp": "2026-10-16T12:24:59.648Z",
+      "type": "custom_tool_call_output",
+      "call_id": "call_e9858e4b91fa446f9e3a60ef732cb023",
+      "payload_sha256": "583b17dba4e851ea6773ef1fe4258a5c6acbdd071f57822dd399dcdd27cb9747",
+      "safe_execution_markers": [
+        "session_id\":20654"
+      ]
+    },
+    {
+      "line": 423,
+      "timestamp": "2026-10-16T12:26:24.621Z",
+      "type": "custom_tool_call",
+      "call_id": "call_a7bb505a9f08456ba7c60291d367a4ce",
+      "payload_sha256": "72661a01b40bbd9db8fc33c92e95f007034fb5e7fe14698e63a90ff5c8f92d00",
+      "features": {
+        "sudo -n": true,
+        "nohup": false,
+        "timeout": true,
+        "SIGSTOP": true,
+        "SIGINT": true,
+        "SIGCONT": true
+      },
+      "signal_source": [
+        "os.kill(pid,signal.SIGSTOP)",
+        "os.kill(pid,signal.SIGINT)",
+        "os.kill(pid,signal.SIGCONT)"
+      ],
+      "target_measurement_script": true
+    },
+    {
+      "line": 427,
+      "timestamp": "2026-10-16T12:26:25.159Z",
+      "type": "custom_tool_call_output",
+      "call_id": "call_a7bb505a9f08456ba7c60291d367a4ce",
+      "payload_sha256": "b7a1764d583751c34b28df2fc344dd8d4a7e5409a7e75fede2a0f5d91b3c970f",
+      "safe_execution_markers": [
+        "driver_interrupt [1634092]",
+        "exit_code\":0"
+      ]
+    }
+  ],
+  "live_backend_readonly_identity": {
+    "MainPID": "4866",
+    "ExecMainStartTimestampMonotonic": "31524728",
+    "Id": "lecturelens-live-backend.service",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "resource_sample": {
+    "load_average": [
+      1.857421875,
+      2.14599609375,
+      2.21923828125
+    ],
+    "cpu_count": 4,
+    "memory_KiB": {
+      "MemTotal": 19699304,
+      "MemAvailable": 7214888
+    },
+    "uptime_seconds": 42281.578620414
+  },
+  "process_arguments_or_environments_read": false,
+  "existing_processes_signaled": false,
+  "service_control_actions": [],
+  "container_actions": []
+}

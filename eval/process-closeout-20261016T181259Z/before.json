@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-10-16T18:12:59.399053+00:00",
+  "git_head": "98252437a65791907f6490f79f97ef1796be30d6",
+  "git_status": [
+    "?? eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md"
+  ],
+  "disk": {
+    "used_bytes": 116734701568,
+    "available_bytes": 38142709760,
+    "usage_percent": 75.3723222560705,
+    "headroom_to_85_bytes": 14911098060.800003
+  },
+  "protected_evidence_manifest_sha256": "3d81db334a385ee249a6e41c0227113f5caf97ba99ce04882bd19cb7e3307bb1",
+  "candidate_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "untracked_file_metadata": {
+    "path": "eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md",
+    "inode": 2380827,
+    "bytes": 25603,
+    "mtime_ns": 1792093257081128261
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "at_utc": "2026-10-16T18:26:50.717626+00:00",
+  "command": [
+    "python3",
+    "scripts/dev/run_check.py",
+    "--name",
+    "process-closeout-identity",
+    "--output-root",
+    ".data/process-closeout-20261016T181259Z",
+    "--timeout",
+    "90",
+    "--",
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/dev/tests",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "tests": 14,
+  "test_seconds": 7.806,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "runner_record_path": ".data/process-closeout-20261016T181259Z/process-closeout-identity/run.json",
+  "runner_record_sha256": "3590ce8bae187e04c8f8df91a9ad85354cd559db25621c7de74dba94b9bff48b",
+  "log_path": ".data/process-closeout-20261016T181259Z/process-closeout-identity/output.log",
+  "log_sha256": "277b7b3230b87331b75c228a4dc98214e90f6e07fbf50e096bb5ae856e557231",
+  "checks": [
+    {
+      "command": [
+        "./agent-service/.venv/bin/ruff",
+        "check",
+        "scripts/dev"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n"
+    },
+    {
+      "command": [
+        "./agent-service/.venv/bin/ruff",
+        "format",
+        "--check",
+        "scripts/dev"
+      ],
+      "exit_code": 0,
+      "stdout": "3 files already formatted\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": ""
+    }
+  ],
+  "source_sha256": {
+    "scripts/dev/run_check.py": "4c9b291b34003f7d7bf9461c1e0ec76a2295de45b83808cb03fc45fd2a746f5a",
+    "scripts/dev/tests/process_fixture.py": "44925604bccb16932e85a1b2887bba282f8b1144dd041360210e64ff621140bf",
+    "scripts/dev/tests/test_run_check.py": "c7fd9863bcdfc46ba0e8ae5a403428bcab91c12bd137f2a67f98ac5625af04de"
+  },
+  "real_provider_calls": 0,
+  "services_started": 0,
+  "new_abnormal_wait_chains_after_fixture_cleanup": 0,
+  "permission_denial_test": "synthetic denial inside a new supervisor; its fixture was terminated/reaped by its test parent; no sudo used"
+}
