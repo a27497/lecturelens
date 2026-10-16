@@ -66,7 +66,7 @@ public final class AsrTextNormalizer {
                 continue;
             }
             result.add(new TranscribedSegment(
-                result.size(), segment.startMillis(), segment.endMillis(), current
+                result.size(), segment.startMillis(), segment.endMillis(), current,segment.timingSource(),segment.timingReason()
             ));
             previous = current;
         }

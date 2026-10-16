@@ -61,6 +61,14 @@ courselingo:
       max-attempts: ${PIPELINE_TRANSLATION_LEAF_MAX_ATTEMPTS:3}
       max-calls: ${PIPELINE_TRANSLATION_MAX_CALLS:256}
       token-budget: ${PIPELINE_TRANSLATION_TOKEN_BUDGET:200000}
+      silence:
+        enabled: ${PIPELINE_SILENCE_ENABLED:true}
+        noise-db: ${PIPELINE_SILENCE_NOISE_DB:-35}
+        pause-millis: ${PIPELINE_SILENCE_PAUSE_MILLIS:600}
+        min-millis: ${PIPELINE_SILENCE_MIN_MILLIS:15000}
+        target-millis: ${PIPELINE_SILENCE_TARGET_MILLIS:30000}
+        max-millis: ${PIPELINE_SILENCE_MAX_MILLIS:60000}
+        max-clips: ${PIPELINE_SILENCE_MAX_CLIPS:256}
   study:
     enabled: ${STUDY_AGENT_ENABLED:false}
   retrieval:

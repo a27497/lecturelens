@@ -5,10 +5,18 @@ public record TranslationPolicy(
     String engineVersion, String tokenCounter, long requestTimeoutMillis, long totalTimeoutMillis,
     int outputMin, int outputMax, double outputRatio, int outputSlack, double safetyFactor,
     int contextReserve, int contextLimit, int maxDepth, int maxAttempts, int maxCalls,
-    long tokenBudget, int batchMaxSegments, int batchMaxInputChars
+    long tokenBudget, int batchMaxSegments, int batchMaxInputChars,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    com.example.courselingo.media.SilenceSegmentationPolicy silence
 ) {
+    public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
+        int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
+        int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars) {
+        this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,null);
+    }
     public TranslationPolicy {
-        if (!"translation-v2.1".equals(engineVersion) || !"UTF8_CONSERVATIVE_V1".equals(tokenCounter)
+        if (!java.util.Set.of("translation-v2.1","translation-v2.2").contains(engineVersion) || !"UTF8_CONSERVATIVE_V1".equals(tokenCounter)
             || requestTimeoutMillis < 1 || requestTimeoutMillis > 120000
             || totalTimeoutMillis < 1 || totalTimeoutMillis > 900000
             || outputMin < 1 || outputMin > outputMax || outputMax > 8192
@@ -20,5 +28,6 @@ public record TranslationPolicy(
             || tokenBudget < 1 || tokenBudget > 200000 || batchMaxSegments < 1
             || batchMaxSegments > 10000 || batchMaxInputChars < 1 || batchMaxInputChars > 100000)
             throw new IllegalArgumentException("Invalid translation policy");
+        if ("translation-v2.2".equals(engineVersion) && silence == null) throw new IllegalArgumentException("Missing frozen silence policy");
     }
 }

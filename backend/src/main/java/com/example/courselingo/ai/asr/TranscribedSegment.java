@@ -4,8 +4,14 @@ public record TranscribedSegment(
     int index,
     long startMillis,
     long endMillis,
-    String text
+    String text,
+    TranscriptTimingSource timingSource,
+    String timingReason
 ) {
+
+    public TranscribedSegment(int index,long startMillis,long endMillis,String text) {
+        this(index,startMillis,endMillis,text,TranscriptTimingSource.ESTIMATED,null);
+    }
 
     public TranscribedSegment {
         if (index < 0) {
@@ -21,5 +27,8 @@ public record TranscribedSegment(
             throw new SpeechToTextProviderException("ASR segment is invalid: segment text is required");
         }
         text = text.strip();
+        timingSource = timingSource == null ? TranscriptTimingSource.ESTIMATED : timingSource;
+        if (timingReason != null && !java.util.Set.of("TRAILING_FRAGMENT","SHORT_SPEECH_ISLAND","FILE_SIZE_LIMIT","MAX_DURATION").contains(timingReason))
+            throw new SpeechToTextProviderException("Invalid timing reason");
     }
 }

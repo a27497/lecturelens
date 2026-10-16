@@ -1255,7 +1255,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
             validated.userId(),
             validated.targetLanguage(),
             List.copyOf(translations),
-            toFullTextEntity(validated, sourceFullText, translatedFullText, provider)
+            toFullTextEntity(validated, sourceFullText, translatedFullText, provider),
+            com.example.courselingo.subtitle.pipeline.TranscriptParagraphService.fingerprintSource(sourceSegments)
         );
     }
 

@@ -122,6 +122,7 @@ public final class TranslationBatchCoordinator {
         s.setSegmentIndex(source.getSegmentIndex()); s.setText(text); s.setLanguage(source.getLanguage());
         // Text subdivisions retain the original interval, never an invented finer timestamp.
         s.setStartMillis(source.getStartMillis()); s.setEndMillis(source.getEndMillis()); s.setProvider(source.getProvider());
+        s.setTimingSource(source.getTimingSource());s.setTimingReason(source.getTimingReason());
         return s;
     }
     private long remaining() { return Duration.between(clock.instant(),deadline).toMillis(); }

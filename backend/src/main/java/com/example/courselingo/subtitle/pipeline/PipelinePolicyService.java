@@ -23,6 +23,16 @@ public class PipelinePolicyService {
     private final PipelineTranslationProperties settings;
     private final SubtitleTranslationProperties translation;
     private final ObjectMapper json = new ObjectMapper();
+    private int sampleRate=16000,channels=1;
+    private com.example.courselingo.task.runner.AsrChunkingProperties chunking=new com.example.courselingo.task.runner.AsrChunkingProperties();
+
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    public void configureAudioOptions(com.example.courselingo.task.runner.AsrChunkingProperties chunking,
+            org.springframework.core.env.Environment environment) {
+        this.chunking=chunking;
+        sampleRate=environment.getProperty("courselingo.media.ffmpeg.sample-rate",Integer.class,16000);
+        channels=environment.getProperty("courselingo.media.ffmpeg.channels",Integer.class,1);
+    }
 
     public PipelinePolicyService(JdbcTemplate jdbc, PipelineTranslationProperties settings, SubtitleTranslationProperties translation) {
         this.jdbc = jdbc; this.settings = settings; this.translation = translation;
@@ -31,7 +41,10 @@ public class PipelinePolicyService {
     public boolean enabledForNewTasks() { return settings.isEnabled(); }
     private TranslationPolicy policy() {
         var f = translation.getFullText();
-        return settings.freeze(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars());
+        return settings.freezeWithSilence(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars(),
+            sampleRate,channels,chunking.effectiveConcurrency(),Math.min(chunking.effectiveMaxChunkFileSizeBytes(),chunking.effectiveMaxAudioFileSizeBytes()),
+            chunking.getChunkRetry().getMaxAttempts(),chunking.getChunkRetry().getBackoff().stream()
+                .map(d->d==null?0L:d.toMillis()).toList());
     }
 
     /** Called in the task creation transaction, before the outbox message is visible. */

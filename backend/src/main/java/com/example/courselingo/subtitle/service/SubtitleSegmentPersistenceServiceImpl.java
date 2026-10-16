@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPersistenceService {
+    private com.example.courselingo.subtitle.pipeline.TranscriptParagraphService paragraphs;
+    @Autowired(required=false)
+    public void configureParagraphs(com.example.courselingo.subtitle.pipeline.TranscriptParagraphService value){paragraphs=value;}
 
     private com.example.courselingo.task.service.GenerationFence generationFence;
 
@@ -57,6 +60,7 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
             }
             insertedCount++;
         }
+        if(paragraphs!=null) paragraphs.replace(command);
         return insertedCount;
     }
 
@@ -65,7 +69,9 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
     public int deleteByTaskId(String taskId, Long userId) {
         validateTaskAndUser(taskId, userId);
         if (generationFence != null) generationFence.sourceChanging(taskId.strip(), userId);
-        return mapper.deleteByTaskIdAndUserId(taskId.strip(), userId);
+        int removed=mapper.deleteByTaskIdAndUserId(taskId.strip(), userId);
+        if(paragraphs!=null) paragraphs.clear(taskId.strip(),userId);
+        return removed;
     }
 
     private static ValidatedCommand validateSaveCommand(SaveTranscriptionSegmentsCommand command) {
@@ -149,6 +155,7 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
         entity.setEndMillis(segment.endMillis());
         entity.setLanguage(command.language());
         entity.setText(segment.text().strip());
+        entity.setTimingSource(segment.timingSource().name());entity.setTimingReason(segment.timingReason());
         entity.setProvider(command.provider());
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);

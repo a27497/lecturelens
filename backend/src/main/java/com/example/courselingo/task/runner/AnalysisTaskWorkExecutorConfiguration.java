@@ -126,7 +126,9 @@ public class AnalysisTaskWorkExecutorConfiguration {
         EmbeddedSubtitleTranscriptExtractor embeddedSubtitleTranscriptExtractor,
         EmbeddedSubtitleTranscriptProperties embeddedSubtitleTranscriptProperties,
         VisionPipelineBranchCoordinator visionBranchCoordinator,
-        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
+        com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies,
+        com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -156,7 +158,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 audioDurationProbe,
                 embeddedSubtitleTranscriptExtractor,
                 embeddedSubtitleTranscriptProperties
-            ),
+            ).withSilencePlanning(pipelinePolicies,silencePlanner),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),
             new OcrKeyframesStep(

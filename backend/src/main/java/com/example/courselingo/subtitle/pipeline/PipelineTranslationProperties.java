@@ -10,6 +10,21 @@ public class PipelineTranslationProperties {
     private int contextLimit = 32768;
     private long tokenBudget = 200000;
     private double outputRatio = 2.0;
+    private Silence silence = new Silence();
+    public Silence getSilence() { return silence; }
+    public void setSilence(Silence value) { silence = value; }
+    public static class Silence {
+        private boolean enabled=true;
+        private int noiseDb=-35, maxClips=256;
+        private long pauseMillis=600,minMillis=15000,targetMillis=30000,maxMillis=60000;
+        public boolean isEnabled(){return enabled;} public void setEnabled(boolean v){enabled=v;}
+        public int getNoiseDb(){return noiseDb;} public void setNoiseDb(int v){noiseDb=v;}
+        public int getMaxClips(){return maxClips;} public void setMaxClips(int v){maxClips=v;}
+        public long getPauseMillis(){return pauseMillis;} public void setPauseMillis(long v){pauseMillis=v;}
+        public long getMinMillis(){return minMillis;} public void setMinMillis(long v){minMillis=v;}
+        public long getTargetMillis(){return targetMillis;} public void setTargetMillis(long v){targetMillis=v;}
+        public long getMaxMillis(){return maxMillis;} public void setMaxMillis(long v){maxMillis=v;}
+    }
 
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean value) { enabled = value; }
@@ -35,5 +50,20 @@ public class PipelineTranslationProperties {
             Math.min(120000, requestTimeout.toMillis()), Math.min(900000, totalTimeout.toMillis()),
             outputMin, outputMax, outputRatio, 128, 1.10, 512, contextLimit,
             maxDepth, maxAttempts, maxCalls, tokenBudget, segments, chars);
+    }
+    public TranslationPolicy freezeWithSilence(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
+            int sampleRate,int channels,int concurrency,long maxClipBytes) {
+        return freezeWithSilence(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,3,
+            java.util.List.of(2000L,5000L,10000L));
+    }
+    public TranslationPolicy freezeWithSilence(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
+            int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
+        var p=freeze(requestTimeout,totalTimeout,segments,chars);
+        if (!silence.isEnabled()) return p;
+        var s=new com.example.courselingo.media.SilenceSegmentationPolicy(silence.noiseDb,silence.pauseMillis,silence.minMillis,
+            silence.targetMillis,silence.maxMillis,silence.maxClips,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
+        return new TranslationPolicy("translation-v2.2",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),
+            p.outputMin(),p.outputMax(),p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),
+            p.maxDepth(),p.maxAttempts(),p.maxCalls(),p.tokenBudget(),p.batchMaxSegments(),p.batchMaxInputChars(),s);
     }
 }
