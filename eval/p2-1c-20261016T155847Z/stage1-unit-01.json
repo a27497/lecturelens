@@ -1,0 +1,137 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=LearningPackage*Test,LlmProviderFailureClassifierTest,TranslationFailureDiagnosticTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116357787648,
+    "available_bytes": 38519623680,
+    "usage_percent": 75.12895951080756,
+    "headroom_to_85_bytes": 15288011980.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:06:50.046114+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2528364,
+  "start_ticks": "3413715",
+  "exit_code": 0,
+  "disk_peak_percent": 75.12920546533168,
+  "disk_after": {
+    "used_bytes": 116358033408,
+    "available_bytes": 38519377920,
+    "usage_percent": 75.12911819114571,
+    "headroom_to_85_bytes": 15287766220.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage1-unit-01.log",
+  "log_sha256": "98ce609667714be1f71e7865025636bd0864f76d21476ed055699a8907c25151",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "90539bb20dc83ae88d9532169d1eeaf931be9971b40240f51b1cbbf5cc2a3967"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMapperTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f6f2f73f5e8e8f37e47012a997ec4f80393f2ab82800876110d971805ee871c7"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e97af7fc08a8bd7387c9b25f2301055b2d86a4e7224936791e90734584c518e1"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageResponseParserTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "347bbd1607aa5cd5ad49968c4e13ce94ccff9d8013d19550513bcb4715679c56"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageServiceTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1662b831a81effe9593207a449f9af44edd7d5d35a1fe3ef4e1f8456a47623d9"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dd1c717ea21ef8fd5a683ee72308890bac079a0f5f1ae52092ec749f2f812bcd"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageContextGuardTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9c607f80173d07310439c0915961a4a7a6af00d09b3a10ac0750ae53e0780c2a"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackagePromptFactoryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "039bfd6d081e1688c54188a56d4067af9a62d95e96957f5f89f6847b59367f25"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageQualityValidatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8c080249becf4a3d2647c00a4d818da935151286b0204b7f173b48319c6acddd"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fda130843ba3efa9a9d69eb5efe780fefd0107616233f39807b4f49657e0988c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageVisualOnlyServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4a585a1c24464208af27aff5cdbcbb5632bb3372646c5341fbf48fbe3657063f"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.TranslationFailureDiagnosticTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b1ee657f25f46323d42a00c86a7087eae60e169c538d0c36030a96f7fea62e06"
+    }
+  ],
+  "total": {
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

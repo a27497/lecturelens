@@ -44,6 +44,7 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        if (command.sourceOnly()) return buildFromSource(command, sourceSegments, multimodalSegments, llmTimeout, properties);
         return new LlmRequest(
             command.requestId(),
             command.taskId(),
@@ -63,6 +64,42 @@ final class LearningPackagePromptFactory {
             LlmResponseFormat.JSON_OBJECT
         )
                 .withExecution(command.execution());
+    }
+
+    private static LlmRequest buildFromSource(ValidatedLearningPackageCommand command,
+            List<SubtitleSegment> sourceSegments, List<VideoSegment> visuals,
+            Duration timeout, LearningPackageProperties properties) {
+        var evidence = new StringBuilder("Source transcript:\n");
+        var sections = new java.util.ArrayList<LearningPackageSourceSection>();
+        for (var source : sourceSegments.stream().sorted(java.util.Comparator.comparing(SubtitleSegment::getSegmentIndex)).toList()) {
+            int start = evidence.length();
+            evidence.append("Section ").append(source.getSegmentIndex()).append(" [")
+                .append(source.getStartMillis()).append(',').append(source.getEndMillis()).append(") ms:\n")
+                .append(source.getText()).append("\n\n");
+            sections.add(new LearningPackageSourceSection(start, evidence.length(), source.getSegmentIndex(),
+                source.getStartMillis(), source.getEndMillis(),
+                com.example.courselingo.subtitle.pipeline.PipelinePolicyService.hash(source.getText())));
+        }
+        // Fused/translated visual text can depend on translation; source-only mode uses independent observations.
+        var independentVisuals = visuals.stream().map(source -> {
+            var result = new VideoSegment();
+            result.setSegmentIndex(source.getSegmentIndex()); result.setStartMillis(source.getStartMillis());
+            result.setEndMillis(source.getEndMillis()); result.setOcrText(source.getOcrText());
+            result.setVisualSummary(source.getVisualSummary());
+            return result;
+        }).toList();
+        var user = new StringBuilder("Build a learning package using only original course evidence.\n")
+            .append("Source language: ").append(command.sourceLanguage()).append('\n')
+            .append("Target language: ").append(command.targetLanguage()).append('\n')
+            .append("Target-language title is required. Quality requirements: ")
+            .append(LearningPackageQualityProfile.from(sourceSegments, independentVisuals, properties).promptRequirements())
+            .append("\n\n").append(evidence);
+        appendTimeline(user, independentVisuals);
+        return new LlmRequest(command.requestId(), command.taskId(), List.of(systemMessage(), new LlmMessage(LlmRole.USER, user.toString())),
+            timeout, TEMPERATURE, MAX_TOKENS, Map.of("sourceLanguage", command.sourceLanguage(),
+                "targetLanguage", command.targetLanguage(), "promptSource", "sourceOnly", "sourceSegmentCount", sourceSegments.size(),
+                "translationSegmentCount", 0, "learningSourceSections", List.copyOf(sections)), LlmResponseFormat.JSON_OBJECT)
+            .withExecution(command.execution());
     }
 
     static LlmRequest buildFromFullText(
@@ -124,6 +161,14 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        if (command.sourceOnly()) {
+            var request = buildFromSource(command, sourceSegments, multimodalSegments, llmTimeout, properties);
+            var metadata = new java.util.LinkedHashMap<>(request.metadata());
+            metadata.put("promptVariant", "retry");
+            return new LlmRequest(request.requestId(), request.taskId(),
+                List.of(retrySystemMessage(), request.messages().get(1)), request.timeout(), 0.0,
+                request.maxTokens(), metadata, request.responseFormat()).withExecution(command.execution());
+        }
         return new LlmRequest(
             command.requestId(),
             command.taskId(),

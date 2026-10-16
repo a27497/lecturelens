@@ -41,3 +41,11 @@ courselingo:
 ```
 
 本次不修改在线模型绑定、服务端上下文或供应商账户。候选测试及真实验收状态见 [P2-1c VERIFY](../eval/p2-1c-pipeline-20261016T133927Z/VERIFY.md)。课程准备属于确定性处理流程，不构成 Study Agent 模型自主决策能力证明。
+
+## 后续 P2-1c 实施
+
+后续候选提供显式 `sourceOnly` 资料命令：只读取原文段落和独立视觉观察，不查询全文译文或翻译段，首次生成和质量修复共用此路径。默认命令保持原模式；原文模式仍执行相同权属、执行版本和发布围栏。map 请求附带原文段号、时间范围与内容 hash，按可容纳的完整段落优先切分，超长段继续切分，不扩大原有上下文/调用/时间预算。
+
+不可继续切分的本地上下文超限，以及供应商明确拒绝上下文，返回 `LEARNING_PACKAGE_CONTEXT_LIMIT_EXCEEDED`，以 `LOCAL_PREFLIGHT` / `PROVIDER` 区分来源；预算、超时和格式失败不归入此码。资料保存后记录 `learning_package_outcome`，区分 `MODEL`、`REPAIRED` 和 `DETERMINISTIC_FALLBACK`，不能把退化结果隐去后声称模型质量通过。
+
+这部分尚未启用到真实运行时；本轮测试、独立数据库与真实验收状态见[实施记录](../eval/p2-1c-20261016T155847Z/VERIFY.md)。

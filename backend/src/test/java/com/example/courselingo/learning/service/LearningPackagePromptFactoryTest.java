@@ -13,6 +13,21 @@ import org.junit.jupiter.api.Test;
 
 class LearningPackagePromptFactoryTest {
 
+    @Test void originalEvidenceModeKeepsIndependentVisualObservationsForGenerationAndRepair() {
+        var command = new ValidatedLearningPackageCommand("task_1", 42L, "en", "zh-CN", "req_1", null, true);
+        var visual = segment(0);
+        visual.setFusedSummary("translation-dependent fused summary");
+        var properties = new LearningPackageProperties();
+        var first = LearningPackagePromptFactory.build(command, List.of(source()), List.of(), List.of(visual), Duration.ofSeconds(30), properties);
+        var repair = LearningPackagePromptFactory.buildRetry(command, List.of(source()), List.of(), List.of(visual), Duration.ofSeconds(30), properties);
+        for (var request : List.of(first, repair)) {
+            assertThat(request.messages().get(1).content()).contains("source", "OCR frame 0", "visual frame 0")
+                .doesNotContain("translated frame", "translation-dependent fused summary", "translated subtitles");
+            assertThat(request.metadata()).containsEntry("promptSource", "sourceOnly").containsEntry("translationSegmentCount", 0);
+        }
+        assertThat(repair.metadata()).containsEntry("promptVariant", "retry");
+    }
+
     @Test
     void addsBoundedMultimodalTimeline() {
         List<VideoSegment> timeline = IntStream.range(0, 45).mapToObj(this::segment).toList();

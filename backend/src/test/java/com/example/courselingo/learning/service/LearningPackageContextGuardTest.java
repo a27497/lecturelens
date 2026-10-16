@@ -179,4 +179,59 @@ class LearningPackageContextGuardTest {
     }
 
     private String section(LlmRequest request) { return request.messages().getLast().content().split("\nUntrusted section evidence:\n", 2)[1]; }
+
+    @Test void impossibleContextHasIndependentSafeCodeAndZeroPhysicalCalls() {
+        properties.setContextLimit(4096);
+        assertThatThrownBy(() -> guard().generate(request("evidence")))
+            .isInstanceOfSatisfying(LearningPackageContextException.class, failure -> {
+                assertThat(failure.errorCode()).isEqualTo(com.example.courselingo.common.error.ErrorCode.LEARNING_PACKAGE_CONTEXT_LIMIT_EXCEEDED);
+                assertThat(failure.origin()).isEqualTo(LearningPackageContextException.Origin.LOCAL_PREFLIGHT);
+                assertThat(failure.getCause()).isNull();
+            });
+        assertThat(calls).isEmpty();
+    }
+
+    @Test void providerContextRejectionIsClassifiedWithoutRetryOrRetainingResponse() {
+        var failure = new LlmStageException("LEARNING_PACKAGE", new LlmProviderFailureDetails(
+            LlmProviderFailureCategory.CONTEXT_TOO_LARGE, 400, "exceed_context_size_error", false),
+            new RuntimeException("untrusted provider response"));
+        var guard = guard(request -> { throw failure; });
+        assertThatThrownBy(() -> guard.generate(request("evidence")))
+            .isInstanceOfSatisfying(LearningPackageContextException.class, safe -> {
+                assertThat(safe.origin()).isEqualTo(LearningPackageContextException.Origin.PROVIDER);
+                assertThat(safe.getMessage()).doesNotContain("untrusted provider response");
+                assertThat(safe.getCause()).isNull();
+            });
+        assertThat(calls).hasSize(1);
+    }
+
+    @Test void timeoutIsNotMisclassifiedAsContextOverflow() {
+        var failure = new LlmStageException("LEARNING_PACKAGE", new LlmProviderFailureDetails(
+            LlmProviderFailureCategory.TIMEOUT, 408, null, true), null);
+        assertThatThrownBy(() -> guard(request -> { throw failure; }).generate(request("evidence"))).isSameAs(failure);
+        assertThat(calls).hasSize(1);
+    }
+
+    @Test void sourceOnlySectionsKeepSourceIdentityAndRepairDoesNotNeedTranslations() {
+        var sources = new ArrayList<com.example.courselingo.subtitle.domain.SubtitleSegment>();
+        for (int i = 0; i < 12; i++) {
+            var source = new com.example.courselingo.subtitle.domain.SubtitleSegment();
+            source.setSegmentIndex(i); source.setStartMillis(i * 60000L); source.setEndMillis((i + 1) * 60000L);
+            source.setText("Original concept " + i + " " + "evidence. ".repeat(150)); sources.add(source);
+        }
+        var command = new ValidatedLearningPackageCommand("task", 42L, "en", "zh-CN", "request", execution, true);
+        var request = LearningPackagePromptFactory.build(command, sources, List.of(), Duration.ofSeconds(180));
+        var guard = guard(); guard.generate(request);
+        var maps = calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).toList();
+        assertThat(maps).isNotEmpty();
+        var identities = maps.stream().flatMap(r -> ((List<?>) r.metadata().get("learningSectionSources")).stream())
+            .map(LearningPackageSourceSection.class::cast).toList();
+        assertThat(identities.stream().map(LearningPackageSourceSection::segmentIndex).distinct()).containsExactlyElementsOf(
+            java.util.stream.IntStream.range(0, 12).boxed().toList());
+        assertThat(identities).allSatisfy(s -> assertThat(s.contentHash()).hasSize(64));
+        long mapped = maps.size();
+        guard.generate(LearningPackagePromptFactory.buildRetry(command, sources, List.of(), Duration.ofSeconds(180)));
+        assertThat(calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).count()).isEqualTo(mapped);
+        assertThat(calls.getLast().metadata()).containsEntry("promptSource", "sourceOnly");
+    }
 }

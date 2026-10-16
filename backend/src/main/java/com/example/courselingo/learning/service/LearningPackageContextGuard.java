@@ -50,9 +50,9 @@ final class LearningPackageContextGuard implements LlmProvider {
             String evidence = user.substring(boundary);
             String instructions = user.substring(0, boundary);
             if (!fits(finalRequest(original, userIndex, instructions, List.of())))
-                throw failure("Learning package fixed instructions exceed context budget");
+                throw contextFailure("fixed instructions exceed context budget");
             if (!fits(noteRequest(original, "", 0, 0, "MAP")))
-                throw failure("Learning package map instructions exceed context budget");
+                throw contextFailure("map instructions exceed context budget");
             List<String> notes;
             if (evidence.equals(cachedEvidence)) notes = new ArrayList<>(cachedNotes);
             else {
@@ -96,9 +96,15 @@ final class LearningPackageContextGuard implements LlmProvider {
             }
             int end = low;
             if (end < evidence.length() && end > start && Character.isHighSurrogate(evidence.charAt(end - 1))) end--;
-            if (end <= start) throw failure("Learning package smallest section exceeds context budget");
+            if (end <= start) throw contextFailure("smallest section exceeds context budget");
+            // Keep complete source sections together when they fit; oversized sections still split.
+            int sectionEnd = -1;
+            for (var source : sourceSections(original)) {
+                if (source.end() > start && source.end() <= end) sectionEnd = Math.max(sectionEnd, source.end());
+            }
+            if (sectionEnd > start) end = sectionEnd;
             // Prefer paragraph/sentence boundaries without dropping whitespace or splitting code points.
-            if (end < evidence.length()) {
+            if (sectionEnd < 0 && end < evidence.length()) {
                 for (int i = end - 1; i > start + (end - start) / 2; i--) {
                     char c = evidence.charAt(i);
                     if (c == '\n' || c == '。' || c == '！' || c == '？'
@@ -121,11 +127,11 @@ final class LearningPackageContextGuard implements LlmProvider {
         for (String item : notes) {
             var candidate = new ArrayList<>(group); candidate.add(item);
             if (!fits(noteRequest(original, join(candidate), 0, candidate.size(), "REDUCE"))) {
-                if (group.isEmpty()) throw failure("Learning package single note exceeds reduce budget");
+                if (group.isEmpty()) throw contextFailure("single note exceeds reduce budget");
                 reduced.add(note(dispatch(noteRequest(original, join(group), 0, group.size(), "REDUCE"), "REDUCE")));
                 group.clear();
                 if (!fits(noteRequest(original, join(List.of(item)), 0, 1, "REDUCE")))
-                    throw failure("Learning package single note exceeds reduce budget");
+                    throw contextFailure("single note exceeds reduce budget");
             }
             group.add(item);
         }
@@ -139,6 +145,8 @@ final class LearningPackageContextGuard implements LlmProvider {
         metadata.put("learningSectionStart", start);
         metadata.put("learningSectionEnd", end);
         metadata.put("learningPhase", phase);
+        if ("MAP".equals(phase)) metadata.put("learningSectionSources", sourceSections(original).stream()
+            .filter(section -> section.start() < end && section.end() > start).toList());
         return copy(original, List.of(new LlmMessage(LlmRole.SYSTEM,
             "Summarize course evidence into compact factual notes in target language " + target + ". "
             + "Return only JSON {\"notes\":\"...\"}, at most 280 characters. Preserve key concepts, definitions, "
@@ -164,7 +172,7 @@ final class LearningPackageContextGuard implements LlmProvider {
     private LlmResult dispatch(LlmRequest request, String phase) {
         checkBudget();
         checkAuthority.run();
-        if (!fits(request)) throw failure("Learning package request rejected by context preflight");
+        if (!fits(request)) throw contextFailure("request rejected by context preflight");
         long remaining = properties.generationTimeout().toNanos() - (System.nanoTime() - started);
         if (remaining <= 0) throw failure("Learning package generation deadline exhausted");
         Duration timeout = Duration.ofNanos(remaining);
@@ -180,7 +188,14 @@ final class LearningPackageContextGuard implements LlmProvider {
         org.slf4j.LoggerFactory.getLogger(getClass()).info(
             "event=learning_package_preflight taskId={} phase={} request={} estimatedInputTokens={} inputLimit={} outputLimit={}",
             request.taskId(), phase, requests, estimate(checked), inputLimit(checked), checked.maxTokens());
-        LlmResult result = delegate.generate(checked);
+        LlmResult result;
+        try {
+            result = delegate.generate(checked);
+        } catch (RuntimeException failure) {
+            if (LlmProviderFailureClassifier.from(failure).category() == LlmProviderFailureCategory.CONTEXT_TOO_LARGE)
+                throw new LearningPackageContextException(LearningPackageContextException.Origin.PROVIDER, "provider rejected context");
+            throw failure;
+        }
         results.add(result);
         return result;
     }
@@ -245,5 +260,14 @@ final class LearningPackageContextGuard implements LlmProvider {
         return joined.toString();
     }
     private static BusinessException failure(String message) { return new BusinessException(ErrorCode.AI_PROVIDER_FAILED, message); }
+    private static LearningPackageContextException contextFailure(String reason) {
+        return new LearningPackageContextException(LearningPackageContextException.Origin.LOCAL_PREFLIGHT, reason);
+    }
+    private static List<LearningPackageSourceSection> sourceSections(LlmRequest request) {
+        Object value = request.metadata().get("learningSourceSections");
+        if (!(value instanceof List<?> list)) return List.of();
+        return list.stream().filter(LearningPackageSourceSection.class::isInstance)
+            .map(LearningPackageSourceSection.class::cast).toList();
+    }
     private record Section(int start, int end, String text) {}
 }

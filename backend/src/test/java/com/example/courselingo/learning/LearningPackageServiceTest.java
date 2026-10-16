@@ -170,6 +170,30 @@ class LearningPackageServiceTest {
     }
 
     @Test
+    void sourceOnlyGeneratesWithoutReadingTranslationsAndKeepsAuthorization() {
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(sourceSegments());
+        when(learningPackageMapper.insert(any(LearningPackage.class))).thenReturn(1);
+        fakeLlmProvider.nextContent = okJson();
+        var command = new GenerateLearningPackageCommand("task_1", 42L, "en", "zh-CN", "req_1", null, true);
+        assertThat(learningPackageService.generateLearningPackage(command)).isEqualTo(1);
+        org.mockito.Mockito.verifyNoInteractions(translationMapper);
+        assertThat(fakeLlmProvider.requests.getFirst().metadata()).containsEntry("promptSource", "sourceOnly");
+        assertThat(fakeLlmProvider.requests.getFirst().messages().get(1).content()).contains("hello", "Section 1", "Target language: zh-CN")
+            .doesNotContain("translated subtitles", "你好");
+    }
+
+    @Test
+    void sourceOnlyStillRejectsForeignSourceRowsBeforeCallingProvider() {
+        var foreign = sourceSegments().getFirst(); foreign.setUserId(99L);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(java.util.List.of(foreign));
+        assertThatThrownBy(() -> learningPackageService.generateLearningPackage(
+            new GenerateLearningPackageCommand("task_1", 42L, "en", "zh-CN", "req_1", null, true)))
+            .isInstanceOf(BusinessException.class);
+        assertThat(fakeLlmProvider.requests).isEmpty();
+        org.mockito.Mockito.verifyNoInteractions(translationMapper, learningPackageMapper);
+    }
+
+    @Test
     void generationSuspendsCallerTransactionDuringModelIo() throws NoSuchMethodException {
         Transactional annotation = LearningPackageServiceImpl.class
             .getMethod("generateLearningPackage", GenerateLearningPackageCommand.class)

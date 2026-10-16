@@ -210,8 +210,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         boolean hasVisualEvidence = hasSemanticVisualEvidence(multimodalSegments);
         List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated, hasVisualEvidence);
         boolean visualOnly = sourceSegments.isEmpty();
-        TaskFullTextResult fullTextResult = visualOnly ? null : loadFullTextResult(validated);
-        List<SubtitleTranslationSegment> translationSegments = visualOnly || fullTextResult != null
+        TaskFullTextResult fullTextResult = visualOnly || validated.sourceOnly() ? null : loadFullTextResult(validated);
+        List<SubtitleTranslationSegment> translationSegments = visualOnly || validated.sourceOnly() || fullTextResult != null
             ? List.of()
             : loadAndValidateTranslationSegments(validated, sourceSegments);
         LearningPackageQualityProfile qualityProfile = LearningPackageQualityProfile.from(
@@ -237,7 +237,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             logRecoverableContentFailure(validated, result, provider, ex, "start");
             qualityReport = LearningPackageQualityReport.parseFailure("structured output could not be parsed");
         }
+        String generationOrigin = "MODEL";
         if (!qualityReport.valid()) {
+            generationOrigin = "REPAIRED";
             log.warn(
                 "event=learning_package_quality_repair_requested taskId={} tier={} deficits={}",
                 SafeLogSanitizer.sanitize(validated.taskId()), qualityProfile.tier(), qualityReport.promptText()
@@ -268,6 +270,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             }
         }
         if (!qualityReport.valid()) {
+            generationOrigin = "DETERMINISTIC_FALLBACK";
             parsed = LearningPackageFallbackFactory.build(
                 fallbackEvidence(fullTextResult, sourceSegments, translationSegments, multimodalSegments),
                 validated.targetLanguage(),
@@ -292,6 +295,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             return 1;
         };
         int inserted = generationFence == null ? persist.get() : generationFence.commit(ticket, persist);
+        log.info("event=learning_package_outcome taskId={} inputMode={} generationOrigin={}",
+            SafeLogSanitizer.sanitize(validated.taskId()), validated.sourceOnly() ? "SOURCE_ONLY" : "LEGACY", generationOrigin);
         return new LearningPackageAiCallResult(
             inserted,
             provider,
@@ -486,8 +491,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                 llmProvider,
                 request,
                 command,
-                "translatedSubtitles",
-                joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
+                command.sourceOnly() ? "sourceOnly" : "translatedSubtitles",
+                command.sourceOnly() ? joinedLength(sourceSegments.stream().map(SubtitleSegment::getText).toList())
+                    : joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
             );
         } catch (BusinessException ex) {
             throw ex;
@@ -521,8 +527,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                 llmProvider,
                 request,
                 command,
-                "translatedSubtitles",
-                joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
+                command.sourceOnly() ? "sourceOnly" : "translatedSubtitles",
+                command.sourceOnly() ? joinedLength(sourceSegments.stream().map(SubtitleSegment::getText).toList())
+                    : joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
             );
         } catch (BusinessException ex) {
             throw ex;
