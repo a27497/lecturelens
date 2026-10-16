@@ -1,0 +1,41 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-DskipTests",
+    "-Dcourselingo.build.git-commit=dcc4dda",
+    "package"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116313579520,
+    "available_bytes": 38563831808,
+    "usage_percent": 75.10041556264821,
+    "headroom_to_85_bytes": 15332220108.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:50:25.623825+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2706952,
+  "start_ticks": "3675273",
+  "exit_code": 0,
+  "disk_peak_percent": 75.10280634640955,
+  "disk_after": {
+    "used_bytes": 116407668736,
+    "available_bytes": 38469742592,
+    "usage_percent": 75.16116633010567,
+    "headroom_to_85_bytes": 15238130892.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage4-package.log",
+  "log_sha256": "04e295cb999658ae3cf96e29463ca2d509d1634bbb353db60829ca94b590e3d7",
+  "suites": [],
+  "total": {
+    "tests": 0,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

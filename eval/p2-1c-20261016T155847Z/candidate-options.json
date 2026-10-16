@@ -1,0 +1,42 @@
+{
+  "status": "intended isolated runtime options; not yet started or verified",
+  "java_binding": "127.0.0.1:18091",
+  "mysql_schema": "lecturelens_p21_20261016",
+  "redis_database": 15,
+  "topic": "lecturelens-p21-20261016T073754Z",
+  "model_bindings": "only existing system model management; live metadata not yet verified",
+  "properties": {
+    "courselingo.pipeline.translation-v2.enabled": true,
+    "courselingo.pipeline.translation-v2.isolated-runtime": true,
+    "courselingo.pipeline.translation-v2.checkpoint-enabled": true,
+    "courselingo.pipeline.translation-v2.materials-source-only": true,
+    "courselingo.pipeline.translation-v2.streaming-translation": false,
+    "courselingo.pipeline.translation-v2.materials-parallel": false,
+    "courselingo.pipeline.translation-v2.asr.enabled": true,
+    "courselingo.pipeline.translation-v2.asr.initial": 2,
+    "courselingo.pipeline.translation-v2.asr.maximum": 4,
+    "courselingo.pipeline.translation-v2.asr.success-streak": 3,
+    "courselingo.pipeline.translation-v2.asr.requests-per-second": 10,
+    "courselingo.pipeline.translation-v2.asr.cooldown-millis": 1000,
+    "courselingo.pipeline.translation-v2.asr.merge-enabled": true,
+    "courselingo.pipeline.translation-v2.asr.merge-min-millis": 60000,
+    "courselingo.pipeline.translation-v2.asr.merge-target-millis": 90000,
+    "courselingo.pipeline.translation-v2.asr.merge-max-millis": 120000,
+    "courselingo.pipeline.translation-v2.asr.cache-enabled": false,
+    "courselingo.pipeline.translation-v2.asr.cache-ttl-seconds": 86400,
+    "courselingo.pipeline.translation-v2.asr.cache-max-entries": 256,
+    "courselingo.media.ffmpeg.sample-rate": 16000,
+    "courselingo.media.ffmpeg.channels": 1,
+    "courselingo.learning-package.context-limit": 8192,
+    "courselingo.learning-package.context-reserve": 256,
+    "courselingo.learning-package.map-max-tokens": 512,
+    "courselingo.learning-package.max-model-requests": 64,
+    "courselingo.learning-package.max-reduce-levels": 6,
+    "courselingo.learning-package.generation-timeout": "900s"
+  },
+  "cache_demo_only_delta": {
+    "courselingo.pipeline.translation-v2.asr.cache-enabled": true
+  },
+  "concurrency_eight_status": "未测; separate experiment only after real concurrency-four and CER gates",
+  "full_runtime_acceptance": "未测"
+}

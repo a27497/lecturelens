@@ -1,6 +1,6 @@
 # P2-1c 当前验证记录
 
-状态：阶段 1 通过；独立 MySQL 最终 32 项通过、0 跳过，全量回归未测、真实验收未测。这里的机制检查不能替代正式十次或真实模型质量。
+状态：阶段 1/2 机制完成；阶段 3 按授权不纳入 C/E。Java 全量 1765 项、前端全量 119 项通过且无跳过；Python/PostgreSQL 与真实验收未测。这里的机制检查不能替代正式十次或真实模型质量。
 
 ## 实施范围
 
@@ -37,7 +37,7 @@ sha256sum -c eval/p2-1c-20261016T155847Z/SHA256SUMS
 
 ## 结果身份与未执行范围
 
-本地代码与公开结果的精确 SHA256 见 SHA256SUMS。没有冻结新的可运行 JAR；真实任务的配置、模型绑定和 ASR 访问资格本轮未检查。没有使用旧转写代替新 ASR，没有生成本轮耗时/CER/费用数据。
+本地代码与公开结果的精确 SHA256 见 SHA256SUMS。阶段 1 时尚未冻结可运行 JAR；阶段 4 已归档本地候选，身份见 candidate-artifact.json。真实任务配置、模型绑定和 ASR 访问资格本轮仍未检查。没有使用旧转写代替新 ASR，没有生成本轮耗时/CER/费用数据。
 
 代码审阅时发现原文路径日志会继续使用译文长度；已修正为原文长度并在最终回归中验证。此前两轮通过记录原样保留，不覆盖。已有未跟踪文件 `eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md` 不纳入本轮提交。
 
@@ -52,3 +52,7 @@ sha256sum -c eval/p2-1c-20261016T155847Z/SHA256SUMS
 ## 阶段 3
 
 STAGE3.md 区分特性验收失败与关闭候选的机制回归。stage3-overlap-probe.json：2 项、1 failure/1 error；stage3-qualified-checks.json：101 项通过、0 失败/错误/跳过。两轮均有原始日志与 JUnit hash。复算：`python3 eval/p2-1c-20261016T155847Z/verify_checks.py --prefix stage3- --final stage3-qualified-checks.json`。本轮没有完整 C/E 运行时，两个 overlap 标记冻结为 false，误开启会拒绝。
+
+## 阶段 4 当前门禁
+
+STAGE4.md 列明 Java 全量首轮失败、夹具修复、1765 项重跑通过、前端 119 项通过、类型检查与离线打包退出码。Python/PostgreSQL 仍未测，不能宣称全量门禁完成。JAR 哈希、源码逐文件 hash、预期配置 hash、测试夹具 patch hash 分别在 candidate-artifact.json、candidate-build-info.json。原始记录和每个数字的复算命令均在 STAGE4.md/各 JSON；SHA256SUMS 不包含自身。完整代码改动清单及内容 hash 见 changed-files.json。

@@ -54,7 +54,8 @@ def main():
         # Provider/deployment variables are never inspected or forwarded to deterministic checks.
         environment = {name: os.environ[name] for name in (
             "PATH", "HOME", "USER", "LOGNAME", "JAVA_HOME", "LANG", "LC_ALL",
-            "SYSTEM_MODEL_TEST_JDBC_URL", "SYSTEM_MODEL_TEST_MYSQL_USER", "SYSTEM_MODEL_TEST_MYSQL_PASSWORD"
+            "SYSTEM_MODEL_TEST_JDBC_URL", "SYSTEM_MODEL_TEST_MYSQL_USER", "SYSTEM_MODEL_TEST_MYSQL_PASSWORD",
+            "AGENT_TEST_DATABASE_URL"
         ) if name in os.environ}
         process = subprocess.Popen(command, cwd=ROOT / args.cwd, stdout=log,
                                    stderr=subprocess.STDOUT, start_new_session=True, env=environment)
@@ -94,6 +95,12 @@ def main():
                             "sha256": hashlib.sha256(raw).hexdigest()})
     record["suites"] = reports
     record["total"] = {key: sum(suite[key] for suite in reports) for key in ("tests", "failures", "errors", "skipped")}
+    external = PRIVATE / (args.name + "-junit.xml")
+    if args.cwd != "backend" and external.exists():
+        raw=external.read_bytes()
+        suites=list(ET.fromstring(raw).iter("testsuite"))
+        record["total"]={key:sum(int(suite.attrib.get(key,0)) for suite in suites) for key in ("tests","failures","errors","skipped")}
+        record["external_junit"]={"path":str(external.relative_to(ROOT)),"sha256":hashlib.sha256(raw).hexdigest()}
     record_file.write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps({"record": str(record_file.relative_to(ROOT)), "exit_code": record["exit_code"], "total": record["total"]}))
     raise SystemExit(record["exit_code"] if "stop_reason" not in record else 88)

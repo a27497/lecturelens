@@ -34,6 +34,11 @@ def main():
             for field in total:
                 assert int(xml.attrib.get(field, 0)) == suite[field], report
                 total[field] += suite[field]
+        if "external_junit" in record:
+            report=ROOT / record["external_junit"]["path"]
+            assert digest(report)==record["external_junit"]["sha256"], report
+            suites=list(ET.fromstring(report.read_bytes()).iter("testsuite"))
+            total={field:sum(int(suite.attrib.get(field,0)) for suite in suites) for field in total}
         assert total == record["total"], path
         assert record["disk_before"]["allowed"] and record["disk_after"]["allowed"], path
         checks.append({"record": path.name, "exit_code": record["exit_code"], **total})
