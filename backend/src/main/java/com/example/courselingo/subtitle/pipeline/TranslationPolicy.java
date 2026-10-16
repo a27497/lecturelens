@@ -13,8 +13,28 @@ public record TranslationPolicy(
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
     TranslationRecoveryPolicy recovery,
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-    String priceSet
+    String priceSet,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    com.example.courselingo.ai.asr.AsrPipelinePolicy asr
 ) {
+    public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
+        int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
+        int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
+        com.example.courselingo.media.SilenceSegmentationPolicy silence,TranslationAimdPolicy aimd,TranslationRecoveryPolicy recovery,String priceSet) {
+        this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,null);
+    }
+    public TranslationPolicy withAsr(com.example.courselingo.ai.asr.AsrPipelinePolicy value) {
+        return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
+            outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,value);
+    }
+    public com.example.courselingo.media.SilenceSegmentationPolicy paragraphSilence() {
+        if(asr==null || !asr.mergeEnabled())return silence;
+        return new com.example.courselingo.media.SilenceSegmentationPolicy(silence.noiseDb(),silence.pauseMillis(),
+            asr.mergeMinMillis(),asr.mergeTargetMillis(),asr.mergeMaxMillis(),silence.maxClips(),silence.sampleRate(),silence.channels(),
+            silence.asrConcurrency(),silence.maxClipBytes(),silence.asrMaxAttempts(),silence.retryBackoffMillis());
+    }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
         int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
@@ -43,6 +63,7 @@ public record TranslationPolicy(
             contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,null,null,null);
     }
     public TranslationPolicy {
+        if (asr != null && (silence == null || recovery == null)) throw new IllegalArgumentException("ASR pipeline requires frozen silence and recovery policy");
         if (!java.util.Set.of("translation-v2.1","translation-v2.2","translation-v2.3","translation-v2.4","translation-v2.5").contains(engineVersion) || !"UTF8_CONSERVATIVE_V1".equals(tokenCounter)
             || requestTimeoutMillis < 1 || requestTimeoutMillis > 120000
             || totalTimeoutMillis < 1 || totalTimeoutMillis > 900000

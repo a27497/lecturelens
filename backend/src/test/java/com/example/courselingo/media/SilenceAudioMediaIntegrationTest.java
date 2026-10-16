@@ -9,6 +9,23 @@ import static org.assertj.core.api.Assertions.*;
 
 class SilenceAudioMediaIntegrationTest {
     @TempDir Path directory;
+    @Test @Timeout(30)
+    void actualExtractorProducesSixteenKhzMonoPcmInOnePass() throws Exception {
+        Path source=directory.resolve("stereo.wav");
+        var generate=new ProcessBuilder("ffmpeg","-hide_banner","-loglevel","error","-nostdin","-y",
+            "-f","lavfi","-i","sine=frequency=440:sample_rate=48000:duration=1","-ac","2",source.toString())
+            .redirectError(ProcessBuilder.Redirect.DISCARD).redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
+        try {assertThat(generate.waitFor(10,TimeUnit.SECONDS)).isTrue();assertThat(generate.exitValue()).isZero();}
+        finally {if(generate.isAlive())generate.destroyForcibly();}
+        var extractor=new FfmpegAudioExtractorImpl(new FfmpegProperties(),new ProcessBuilderFfmpegProcessExecutor());
+        var result=extractor.extract(new AudioExtractionRequest(source,directory.resolve("output"),"audio.wav"));
+        try(var stream=javax.sound.sampled.AudioSystem.getAudioInputStream(result.audioFile().toFile())) {
+            assertThat(stream.getFormat().getSampleRate()).isEqualTo(16000f);
+            assertThat(stream.getFormat().getChannels()).isEqualTo(1);
+            assertThat(stream.getFormat().getSampleSizeInBits()).isEqualTo(16);
+        }
+        assertThat(Files.size(result.audioFile())).isLessThan(Files.size(source));
+    }
     @Test @Timeout(40)
     void actualFfmpegSilenceAndWavIntervalsAgreeWithoutAnyProviderCall() throws Exception {
         var input=directory.resolve("synthetic.wav");

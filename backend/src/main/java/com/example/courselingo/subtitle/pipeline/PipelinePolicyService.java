@@ -53,7 +53,7 @@ public class PipelinePolicyService {
         if (ref == null) throw TranslationFailure.of(TranslationFailure.Reason.SNAPSHOT_INVALID);
         try {
             var owner = jdbc.queryForList("""
-                SELECT t.created_at,u.file_md5,u.size_bytes,u.object_key FROM analysis_task t
+            SELECT t.created_at,t.source_language,u.file_md5,u.size_bytes,u.object_key FROM analysis_task t
                 JOIN upload_session u ON u.id=t.upload_id AND u.user_id=t.user_id
                 JOIN system_model_execution_snapshot s ON s.id=? AND s.task_id=t.id AND s.user_id=t.user_id
                 WHERE t.id=? AND t.user_id=? AND t.status='CREATED' AND t.deleted_at IS NULL AND s.config_version=?
@@ -61,6 +61,24 @@ public class PipelinePolicyService {
             if (owner.size() != 1) throw TranslationFailure.of(TranslationFailure.Reason.SNAPSHOT_INVALID);
             var row = owner.getFirst();
             var p = policy();
+            if (settings.getAsr().isEnabled()) {
+                // Hash only explicit nonsecret route options in SQL; no credential columns or suffixes leave the database.
+                var safe = jdbc.queryForMap("""
+                    SELECT SHA2(CAST(JSON_OBJECT('route',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.asr'),
+                        'model',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.model'),
+                        'endpoint',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.baseUrl'),
+                        'protocol',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.protocol'),
+                        'options',JSON_ARRAY(JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.maxTokens'),
+                            JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.temperature'))) AS CHAR),256) AS config_hash,
+                        SHA2(CAST(JSON_OBJECT('provider',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.providerId'),
+                        'model',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.model'),
+                        'endpoint',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.baseUrl'),
+                        'protocol',JSON_EXTRACT(resolved_config_json,'$.routes.ASR_TRANSCRIPTION.protocol')) AS CHAR),256) AS limiter_hash
+                    FROM system_model_execution_snapshot WHERE id=? AND task_id=? AND user_id=? AND config_version=?
+                    """,ref.snapshotId(),ref.taskId(),ref.userId(),ref.configVersion());
+                p = p.withAsr(settings.getAsr().freeze(hash("asr-adapter-v1|"+ref.configVersion()+"|"+row.get("source_language")+"|"+safe.get("config_hash")),
+                    (String)safe.get("limiter_hash")));
+            }
             String encoded = json.writeValueAsString(p);
             Instant created = instant(row.get("created_at"));
             String identity = json.writeValueAsString(Arrays.asList(row.get("file_md5"), row.get("size_bytes"), row.get("object_key")));

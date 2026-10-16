@@ -53,6 +53,9 @@ import org.springframework.context.annotation.Configuration;
     VideoSegmentProperties.class
 })
 public class AnalysisTaskWorkExecutorConfiguration {
+    private com.example.courselingo.task.service.AsrExecutionStore asrStore;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    void configureAsrStore(com.example.courselingo.task.service.AsrExecutionStore value){asrStore=value;}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisTaskWorkExecutorConfiguration.class);
     private static final int VISION_BRANCH_CONCURRENCY = 2;
@@ -160,7 +163,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 audioDurationProbe,
                 embeddedSubtitleTranscriptExtractor,
                 embeddedSubtitleTranscriptProperties
-            ).withSilencePlanning(pipelinePolicies,silencePlanner).withCheckpoints(checkpoints),
+            ).withSilencePlanning(pipelinePolicies,silencePlanner).withCheckpoints(checkpoints).withAsrStore(asrStore),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),
             new OcrKeyframesStep(

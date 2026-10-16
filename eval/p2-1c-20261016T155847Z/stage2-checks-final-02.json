@@ -1,0 +1,217 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=*Asr*Test,Silence*Test,MergedAudioChunkPlannerTest,AdaptiveAsrControllerTest,ExtractAudioStepTest,FfmpegAudioExtractorTest,PipelinePolicyMySqlTest,TranslationCheckpointMySqlTest,PipelineCheckpointExecutionTest,TranscriptParagraphTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116270866432,
+    "available_bytes": 38606544896,
+    "usage_percent": 75.07283691987924,
+    "headroom_to_85_bytes": 15374933196.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:35:44.932469+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2643765,
+  "start_ticks": "3587204",
+  "exit_code": 0,
+  "disk_peak_percent": 75.07366999165447,
+  "disk_after": {
+    "used_bytes": 116271775744,
+    "available_bytes": 38605635584,
+    "usage_percent": 75.07342403713035,
+    "headroom_to_85_bytes": 15374023884.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage2-checks-final-02.log",
+  "log_sha256": "a4b2416fd527b84c7a94dfe4125b3681e04a0e2569878bc2ca3e4c372d16dfae",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrPhysicalObservationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "df1b3c46e7702c194710e1f779d835cf214eae18d09f5accf37e7823d2b0dd5a"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrProviderExceptionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f2ca36d6e3c91e66ca3b75361947f31ec4811b342e4f2f52995489b7f8cb38d3"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrProviderSelectionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bf6966701be1319a3cb457bbda5f59894bca9f4cc3ba811cf31fd03558de9161"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrTextNormalizerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "016ad64d812eca2c3777376eb870ac8f02b6d7261307d6851a4e2d9a49f75300"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.BailianAsrContractTest",
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b427a5a8f1e49fa0a9d86c2cbc1dab8132dc1675454eabe2981bebc30ae418ad"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.BailianAsrProviderTest",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "3fb49b5fc37267e2e002ace1f38a87e03b35d664f737831389273e8a3d238e89"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.JavaHttpBailianAsrTransportTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "7694dcf35b261009122eb5094d5bfdcab0120385d08731cdc0eb50e82adda1ce"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.MockAsrProviderTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "3b9877625ade9dffe1fbc736047bcb8ab315164b0450c7b6245e5635b5dbc8cc"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.SiliconFlowAsrProviderTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9b6518c0462217b72f2df678732dc54ab5789e2134bc0bbd67be928f61ee9ad3"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfmpegAudioExtractorTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "035cc90bd43b2bd5894819f80ad62279b869f84e57db4a00cce4a8a39c2207eb"
+    },
+    {
+      "suite": "com.example.courselingo.media.MergedAudioChunkPlannerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a91626faf363d53d1e33fe9dd1de8531a7bd03d3a94f9271ddf3fc3cd332b2ed"
+    },
+    {
+      "suite": "com.example.courselingo.media.SilenceAudioChunkPlannerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "28da1c08da94989ffe28f95fd9a9a1abfa186042131070026ca5f47e3a57d08c"
+    },
+    {
+      "suite": "com.example.courselingo.media.SilenceAudioMediaIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bc047373fbb55bb36931ae1f55c67a0887286e3e7ed273e19c58bbc9e3b21bfa"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.TranscriptParagraphTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e7f517db53a80d9668fe41f653c23f91b1bea4513675411fb3093690dc16a473"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.AsrExecutionMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "3039d0b2ff964d08a406e42182ca2fdc71a6e14a23d00765346e2e887724a3d2"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PipelinePolicyMySqlTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6d5192f3f755154382a5f3a75a0bdc4fb7e031fda7448495cd409977c7cd2b1e"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelAsrMySqlTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "671c8ce463790668e6c575024286eb589e0aaf5f60931285f11cdae4d978ee2c"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.TranslationCheckpointMySqlTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "19fa178ad656b3ad62d64eea50cae76af3c824e8afce75cd8b32016e513598a8"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.AdaptiveAsrControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "86c87fa290df2ff41e1e4b8bb3462e040fd59ba0100d4ceebc8fdb12425a8948"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.ExtractAudioStepTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "382a03f5f98debc15f490f029bf3543b38effe3daead31e5ecc050d9171dad21"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineCheckpointExecutionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "72f6369283cfaee3c21bc6c90c4516fb53ceb5f4c18bf44373a14c0bdbf2887d"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.SilenceTranscribeStepTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8dbf390a09acbf90598820021c7460a43a739d71c85ec77a3647e37712e699f9"
+    }
+  ],
+  "total": {
+    "tests": 192,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

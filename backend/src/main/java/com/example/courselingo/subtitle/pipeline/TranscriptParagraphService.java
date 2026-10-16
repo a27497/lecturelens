@@ -29,14 +29,15 @@ public class TranscriptParagraphService {
         var segments=command.result().segments();
         if(segments.isEmpty() || segments.stream().anyMatch(s->s.timingSource()==TranscriptTimingSource.ESTIMATED
             || s.endMillis()>command.result().audioDurationMillis())) throw changed();
-        var paragraphs=group(segments,frozen.get().policy().silence());
+        var paragraphs=group(segments,frozen.get().policy().paragraphSilence());
         var owner=jdbc.queryForList("SELECT id FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL AND status NOT IN ('FAILED','CANCELED') FOR UPDATE",command.taskId(),command.userId());
         if(owner.size()!=1) throw changed();
         clear(command.taskId(),command.userId());
         String fingerprint=fingerprint(segments);
         var metadata=command.result().metadata();
         var summary=new LinkedHashMap<String,Object>();
-        for(String key:List.of("segmentationMode","silencePlanHash","asrPhysicalAttempts","silenceClipCount","detectedSilenceMillis","clipIntervals"))
+        for(String key:List.of("segmentationMode","silencePlanHash","asrPhysicalAttempts","silenceClipCount","silenceOriginalClipCount",
+                "asrCacheEnabled","detectedSilenceMillis","clipIntervals","clipSources"))
             if(metadata.containsKey(key)) summary.put(key,metadata.get(key));
         Object hash=summary.get("silencePlanHash");
         if(!(hash instanceof String planHash) || !planHash.matches("[a-f0-9]{64}")) throw changed();

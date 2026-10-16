@@ -26,3 +26,13 @@
 无凭据协议验证：在 `backend/` 运行 `mvn -q -Dtest='*Asr*Test,SpeechToTextProviderTest,TranscribeAudioStepTest' test`，随后运行 backend 回归。这些测试不证明真实云服务可用。
 
 真实验收须上传无合格内嵌字幕的课程，并检查 `ai_call_record` 中 `provider=bailian、status=SUCCEEDED` 和 TRANSCRIBE 完成日志，再继续观察翻译与后续 Pipeline 终态。内嵌字幕成功不能替代真实 ASR 验收；完整课程处理成功也不代表人工识别质量、未见课程泛化或最佳长课吞吐已验证。
+
+## 可选持久化调度（实验实现）
+
+`PIPELINE_ASR_ADAPTIVE_ENABLED=false` 为默认。启用需同时具备静音切分和 v2 checkpoint；新任务冻结 ASR 初始/最大窗口、成功阈值、速率、冷却、合并和缓存参数，旧任务不随配置变化。ASR 初始并发 2、最大 4、连续成功阈值 3；429 将窗口减半，冷却期及分片尝试次数持久化，恢复不重置。相同非敏感供应商/模型身份共享进程名额与平滑速率；这不保证主账号其他进程的总用量。默认 10 requests/s 来自[限流目录](https://help.aliyun.com/zh/model-studio/rate-limit)的 600 RPM 换算，账户实际配额未测。
+
+百炼 HTTP 超时取供应商配置与单次请求剩余期限的较小值；429 保留安全的 Retry-After 时长，超过 30 秒的重试等待上限则结束试次，不提前重发。401/403 不重试或自动换供应商。真实试次仍遇 403 时按验收约束停止后续派发。
+
+合并和缓存分别由 `PIPELINE_ASR_MERGE_ENABLED=false`、`PIPELINE_ASR_CACHE_ENABLED=false` 控制。合并默认目标参数为 60/90/120 秒，保留夹入静音的原时轴和所有旧子区间；文件限制和尾片例外有原因标注。缓存使用同所有者命名空间中的音频 SHA256 和冻结 ASR 配置身份，只保存成功结果，按原始任务删除状态、TTL、容量和当前执行围栏校验。测速必须关闭缓存读写；同任务 checkpoint 复用与跨任务缓存命中分开记录。
+
+WAV 抽取显式使用 PCM s16le，现有默认采样率/声道已是 16000/1；新增抽取耗时、输入/输出 bytes 指标，不能预先宣称文件缩小或提速。真实课程、CER、并发 8、恢复与缓存演示的状态见[本轮验证](../eval/p2-1c-20261016T155847Z/VERIFY.md)。

@@ -14,6 +14,31 @@ public class PipelineTranslationProperties {
     private Adaptive adaptive=new Adaptive();
     private boolean checkpointEnabled=true;
     private int maxRecoveries=3;
+    private Asr asr = new Asr();
+    public Asr getAsr() { return asr; }
+    public void setAsr(Asr value) { asr = value; }
+    public static class Asr {
+        private boolean enabled, mergeEnabled, cacheEnabled;
+        private int initial=2, maximum=4, successStreak=3, requestsPerSecond=10, cacheMaxEntries=256;
+        private long cooldownMillis=1000, mergeMinMillis=60000, mergeTargetMillis=90000, mergeMaxMillis=120000, cacheTtlSeconds=86400;
+        public boolean isEnabled(){return enabled;} public void setEnabled(boolean v){enabled=v;}
+        public boolean isMergeEnabled(){return mergeEnabled;} public void setMergeEnabled(boolean v){mergeEnabled=v;}
+        public boolean isCacheEnabled(){return cacheEnabled;} public void setCacheEnabled(boolean v){cacheEnabled=v;}
+        public int getInitial(){return initial;} public void setInitial(int v){initial=v;}
+        public int getMaximum(){return maximum;} public void setMaximum(int v){maximum=v;}
+        public int getSuccessStreak(){return successStreak;} public void setSuccessStreak(int v){successStreak=v;}
+        public int getRequestsPerSecond(){return requestsPerSecond;} public void setRequestsPerSecond(int v){requestsPerSecond=v;}
+        public int getCacheMaxEntries(){return cacheMaxEntries;} public void setCacheMaxEntries(int v){cacheMaxEntries=v;}
+        public long getCooldownMillis(){return cooldownMillis;} public void setCooldownMillis(long v){cooldownMillis=v;}
+        public long getMergeMinMillis(){return mergeMinMillis;} public void setMergeMinMillis(long v){mergeMinMillis=v;}
+        public long getMergeTargetMillis(){return mergeTargetMillis;} public void setMergeTargetMillis(long v){mergeTargetMillis=v;}
+        public long getMergeMaxMillis(){return mergeMaxMillis;} public void setMergeMaxMillis(long v){mergeMaxMillis=v;}
+        public long getCacheTtlSeconds(){return cacheTtlSeconds;} public void setCacheTtlSeconds(long v){cacheTtlSeconds=v;}
+        com.example.courselingo.ai.asr.AsrPipelinePolicy freeze(String identity,String limiter) {
+            return new com.example.courselingo.ai.asr.AsrPipelinePolicy(initial,maximum,successStreak,requestsPerSecond,cooldownMillis,
+                mergeEnabled,mergeMinMillis,mergeTargetMillis,mergeMaxMillis,cacheEnabled,cacheTtlSeconds,cacheMaxEntries,identity,limiter);
+        }
+    }
     public boolean isCheckpointEnabled(){return checkpointEnabled;}public void setCheckpointEnabled(boolean value){checkpointEnabled=value;}
     public int getMaxRecoveries(){return maxRecoveries;}public void setMaxRecoveries(int value){maxRecoveries=value;}
     public Adaptive getAdaptive(){return adaptive;} public void setAdaptive(Adaptive v){adaptive=v;}

@@ -42,3 +42,9 @@ sha256sum -c eval/p2-1c-20261016T155847Z/SHA256SUMS
 代码审阅时发现原文路径日志会继续使用译文长度；已修正为原文长度并在最终回归中验证。此前两轮通过记录原样保留，不覆盖。已有未跟踪文件 `eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md` 不纳入本轮提交。
 
 磁盘原始 bytes、使用率与距 85% 余量可由各轮 JSON 的 `disk_before`/`disk_after` 复算；公式为 `used/(used+available)` 和 `0.85*(used+available)-used`，单位 GiB 除以 `1024**3`。初始 df 显示 76%，阶段开始通过门禁；后续仍逐阶段检查。
+
+## 阶段 2
+
+详见 STAGE2.md。V32 增补 ASR 状态/事件/分片 checkpoint/缓存及不可变输入约束；存储在 task/service，调度在 task/runner，ASR adapter 无数据库依赖。新增 AsrPipelinePolicy 可选字段不改变旧策略序列化。切片规划和 TranscriptParagraphService 同步支持合并后的冻结上限。抽取显式 PCM 与实际 bytes/耗时观测，默认 16000/1 沿用旧值。对应配置在 application.yml 中默认关闭。
+
+执行只读复算：`python3 eval/p2-1c-20261016T155847Z/verify_checks.py --prefix stage2- --final stage2-merged-integration.json`。当前阶段没有编译可运行候选 JAR、没有真实课程请求；所有实际检查数字均由每轮 JSON/JUnit 复算。

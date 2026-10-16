@@ -28,7 +28,7 @@ public record TranscribedSegment(
         }
         text = text.strip();
         timingSource = timingSource == null ? TranscriptTimingSource.ESTIMATED : timingSource;
-        if (timingReason != null && !java.util.Set.of("TRAILING_FRAGMENT","SHORT_SPEECH_ISLAND","FILE_SIZE_LIMIT","MAX_DURATION").contains(timingReason))
+        if (timingReason != null && !java.util.Set.of("TRAILING_FRAGMENT","SHORT_SPEECH_ISLAND","FILE_SIZE_LIMIT","MAX_DURATION","MERGED_ADJACENT","LONG_SILENCE_GAP").contains(timingReason))
             throw new SpeechToTextProviderException("Invalid timing reason");
     }
 }

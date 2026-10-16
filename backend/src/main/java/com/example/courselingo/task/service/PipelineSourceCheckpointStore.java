@@ -36,7 +36,7 @@ public class PipelineSourceCheckpointStore {
         String source=TranscriptParagraphService.fingerprint(result.segments());
         var safeMetadata=new LinkedHashMap<String,Object>();
         for(String key:List.of("systemModelSnapshotId","systemModelConfigVersion","systemModelSource","segmentationMode","silencePlanHash",
-            "asrPhysicalAttempts","silenceClipCount","detectedSilenceMillis"))if(result.metadata().containsKey(key))safeMetadata.put(key,result.metadata().get(key));
+            "asrPhysicalAttempts","silenceClipCount","silenceOriginalClipCount","asrCacheEnabled","detectedSilenceMillis"))if(result.metadata().containsKey(key))safeMetadata.put(key,result.metadata().get(key));
         String payload=encode(new SourceMetadata(result.provider(),result.language(),result.duration().toMillis(),result.audioDurationMillis(),safeMetadata));
         jdbc.update("""
             INSERT INTO pipeline_step_checkpoint(task_id,step_name,user_id,source_fingerprint,result_hash,payload_json,execution_epoch)

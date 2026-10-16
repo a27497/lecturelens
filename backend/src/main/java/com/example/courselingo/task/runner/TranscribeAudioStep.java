@@ -91,6 +91,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
     private com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner;
     private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    private com.example.courselingo.task.service.AsrExecutionStore asrStore;
+    TranscribeAudioStep withAsrStore(com.example.courselingo.task.service.AsrExecutionStore value){asrStore=value;return this;}
     TranscribeAudioStep withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
 
     TranscribeAudioStep withSilencePlanning(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies,
@@ -423,7 +425,14 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         if(silencePlanner==null || workspace==null) throw new IllegalStateException("Silence planning is unavailable");
         SpeechToTextProvider pinned=speechToTextProvider.forExecution(context.taskContext().systemModels());
         Path directory=workspace.asrChunksOutputDirectory(context);
-        var plan=silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes());
+        var frozen=pipelinePolicies.find(context.taskId(),context.userId()).orElseThrow();
+        var options=frozen.policy().asr();
+        var plan=options==null?silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes()):
+            silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes(),options);
+        if(options!=null && asrStore==null)throw new IllegalStateException("ASR execution store is unavailable");
+        var session=options==null?null:asrStore.open(frozen,context.requestId(),context.taskContext().executionEpoch(),plan,
+            AdaptiveAsrController.audioHash(audio.audioFile()));
+        var controller=session==null?null:new AdaptiveAsrController(session);
         var byPath=plan.chunks().stream().collect(java.util.stream.Collectors.toMap(AudioChunk::audioFile,c->c));
         var attempts=new AtomicInteger();
         var adapter=new SpeechToTextProvider() {
@@ -436,8 +445,13 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 if(clip==null) throw new IllegalStateException("Unplanned audio clip");
                 try {
                     silencePlanner.materialize(audio.audioFile(),clip,policy,plan.maxClipBytes());
-                    attempts.incrementAndGet();
-                    var result=pinned.transcribe(request.withInterval(new SpeechToTextRequest.AudioInterval(clip.offsetMillis(),clip.endMillis(),clip.timingSource().name(),plan.hash())));
+                    java.util.function.Supplier<SpeechToTextResult> call=()->{
+                        attempts.incrementAndGet();
+                        var timeout=controller==null?request.timeout():controller.remainingTimeout(request.timeout());
+                        return pinned.transcribe(new SpeechToTextRequest(request.audioFile(),request.language(),request.requestId(),request.taskId(),timeout,
+                            new SpeechToTextRequest.AudioInterval(clip.offsetMillis(),clip.endMillis(),clip.timingSource().name(),plan.hash())));
+                    };
+                    var result=controller==null?call.get():controller.transcribe(clip.index(),request.audioFile(),call);
                     long length=clip.endMillis()-clip.offsetMillis();
                     List<TranscribedSegment> timed;
                     if(!"provider_not_available".equals(result.metadata().get("segmentTimingSource"))
@@ -457,17 +471,20 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             }
         };
         try {
-            var chunks=transcribeChunksConcurrently(context,plan.chunks(),adapter,policy.asrConcurrency());
+            var chunks=transcribeChunksConcurrently(context,plan.chunks(),adapter,options==null?policy.asrConcurrency():options.maximum());
             var merged=mergeChunkResults(context,chunks.stream().sorted(Comparator.comparingInt(ChunkTranscriptionResult::chunkIndex))
                 .map(ChunkTranscriptionResult::result).toList(),plan.chunks(),duration,adapter);
             var metadata=new java.util.LinkedHashMap<String,Object>(merged.metadata());
             metadata.put("segmentationMode","SILENCE");metadata.put("silencePlanHash",plan.hash());
             metadata.put("asrPhysicalAttempts",attempts.get());metadata.put("silenceClipCount",plan.chunks().size());
             metadata.put("detectedSilenceMillis",plan.detectedSilenceMillis());
+            metadata.put("silenceOriginalClipCount",plan.originalClipCount());
+            metadata.put("clipSources",plan.sources());
+            metadata.put("asrCacheEnabled",options!=null && options.cacheEnabled());
             metadata.put("clipIntervals",plan.chunks().stream().map(c->Map.of("index",c.index(),"startMillis",c.offsetMillis(),
                 "endMillis",c.endMillis(),"timingSource",c.timingSource().name(),"reason",c.timingReason()==null?"":c.timingReason())).toList());
             return new SpeechToTextResult(merged.provider(),merged.language(),merged.fullText(),merged.segments(),merged.duration(),duration,metadata);
-        } finally {deleteDirectoryQuietly(directory);}
+        } finally {if(controller!=null)controller.close();deleteDirectoryQuietly(directory);}
     }
 
     private List<ChunkTranscriptionResult> transcribeChunksConcurrently(
@@ -706,6 +723,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         }
         if (exception instanceof AsrProviderException providerException) {
             Integer statusCode = providerException.statusCode().orElse(null);
+            if(providerException.retryAfterMillis()>30000)return new AsrRetryFailure(false,"retry_after_exceeds_bound",statusCode);
             if (statusCode != null && NON_RETRYABLE_ASR_STATUS_CODES.contains(statusCode)) {
                 return new AsrRetryFailure(false, "http_" + statusCode, statusCode);
             }

@@ -6,6 +6,12 @@ public class AsrProviderException extends SpeechToTextProviderException {
 
     private final boolean retryable;
     private final Integer statusCode;
+    private final long retryAfterMillis;
+
+    public AsrProviderException(String message, boolean retryable, Integer statusCode, long retryAfterMillis) {
+        super(message);
+        this.retryable=retryable;this.statusCode=statusCode;this.retryAfterMillis=Math.max(0,retryAfterMillis);
+    }
 
     public AsrProviderException(String message, boolean retryable) {
         this(message, retryable, null, null);
@@ -25,6 +31,7 @@ public class AsrProviderException extends SpeechToTextProviderException {
         super(message);
         this.retryable = retryable;
         this.statusCode = statusCode;
+        this.retryAfterMillis = 0;
     }
 
     public boolean retryable() {
@@ -34,4 +41,5 @@ public class AsrProviderException extends SpeechToTextProviderException {
     public Optional<Integer> statusCode() {
         return Optional.ofNullable(statusCode);
     }
+    public long retryAfterMillis() { return retryAfterMillis; }
 }

@@ -19,7 +19,10 @@ public final class AsrCallFailure extends AsrProviderException {
     private final Category category;
 
     public AsrCallFailure(Category category, boolean retryable, Integer status) {
-        super("ASR request failed: " + category.name(), retryable, status);
+        this(category,retryable,status,0);
+    }
+    public AsrCallFailure(Category category, boolean retryable, Integer status,long retryAfterMillis) {
+        super("ASR request failed: " + category.name(), retryable, status,retryAfterMillis);
         this.category = category;
     }
 
@@ -52,6 +55,6 @@ public final class AsrCallFailure extends AsrProviderException {
             else if (message.contains("timed out")) category = Category.TIMEOUT;
             else if (failure.retryable()) category = Category.NETWORK;
         }
-        return new AsrCallFailure(category, failure.retryable(), status);
+        return new AsrCallFailure(category, failure.retryable(), status,failure.retryAfterMillis());
     }
 }

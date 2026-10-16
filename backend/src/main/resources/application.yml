@@ -64,6 +64,20 @@ courselingo:
       checkpoint-enabled: ${PIPELINE_TRANSLATION_CHECKPOINT_ENABLED:true}
       max-recoveries: ${PIPELINE_TRANSLATION_MAX_RECOVERIES:3}
       isolated-runtime: ${PIPELINE_TRANSLATION_ISOLATED_RUNTIME:false}
+      asr:
+        enabled: ${PIPELINE_ASR_ADAPTIVE_ENABLED:false}
+        initial: ${PIPELINE_ASR_CONCURRENCY_INITIAL:2}
+        maximum: ${PIPELINE_ASR_CONCURRENCY_MAX:4}
+        success-streak: ${PIPELINE_ASR_SUCCESS_STREAK:3}
+        requests-per-second: ${PIPELINE_ASR_REQUESTS_PER_SECOND:10}
+        cooldown-millis: ${PIPELINE_ASR_COOLDOWN_MILLIS:1000}
+        merge-enabled: ${PIPELINE_ASR_MERGE_ENABLED:false}
+        merge-min-millis: ${PIPELINE_ASR_MERGE_MIN_MILLIS:60000}
+        merge-target-millis: ${PIPELINE_ASR_MERGE_TARGET_MILLIS:90000}
+        merge-max-millis: ${PIPELINE_ASR_MERGE_MAX_MILLIS:120000}
+        cache-enabled: ${PIPELINE_ASR_CACHE_ENABLED:false}
+        cache-ttl-seconds: ${PIPELINE_ASR_CACHE_TTL_SECONDS:86400}
+        cache-max-entries: ${PIPELINE_ASR_CACHE_MAX_ENTRIES:256}
       adaptive:
         enabled: ${PIPELINE_TRANSLATION_AIMD_ENABLED:true}
         input-token-budget: ${PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET:2048}
