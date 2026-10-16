@@ -1,0 +1,33 @@
+{
+  "at_utc": "2026-10-16T19:04:22.201967+00:00",
+  "protected_evidence_count": 169,
+  "changed_protected_evidence": [],
+  "untracked_metadata_unchanged": true,
+  "frozen_candidate_hash_matches": true,
+  "online_jar_hash_unchanged": true,
+  "online_service_unchanged": true,
+  "online_service": {
+    "MainPID": "4866",
+    "ExecMainStartTimestampMonotonic": "31524728",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "temporary_unit": {
+    "MainPID": "0",
+    "LoadState": "not-found",
+    "ActiveState": "inactive",
+    "SubState": "dead"
+  },
+  "port_18091_listening": false,
+  "real_provider_requests_sent": 0,
+  "formal_trials_submitted": 0,
+  "smoke": "未测",
+  "formal_ten_trials": "未测",
+  "cost": "未测",
+  "disk": {
+    "used_bytes": 116831617024,
+    "available_bytes": 38045794304,
+    "usage_percent": 75.43489784741658,
+    "headroom_to_85_bytes": 14814182604.800003
+  }
+}
