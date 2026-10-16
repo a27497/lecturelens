@@ -9,23 +9,32 @@ public record TranslationPolicy(
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
     com.example.courselingo.media.SilenceSegmentationPolicy silence,
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-    TranslationAimdPolicy aimd
+    TranslationAimdPolicy aimd,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    TranslationRecoveryPolicy recovery
 ) {
+    public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
+        int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
+        int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
+        com.example.courselingo.media.SilenceSegmentationPolicy silence,TranslationAimdPolicy aimd) {
+        this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,aimd,null);
+    }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
         int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
         com.example.courselingo.media.SilenceSegmentationPolicy silence) {
         this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
-            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,null);
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,null,null);
     }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
         int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars) {
         this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
-            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,null,null);
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,null,null,null);
     }
     public TranslationPolicy {
-        if (!java.util.Set.of("translation-v2.1","translation-v2.2","translation-v2.3").contains(engineVersion) || !"UTF8_CONSERVATIVE_V1".equals(tokenCounter)
+        if (!java.util.Set.of("translation-v2.1","translation-v2.2","translation-v2.3","translation-v2.4").contains(engineVersion) || !"UTF8_CONSERVATIVE_V1".equals(tokenCounter)
             || requestTimeoutMillis < 1 || requestTimeoutMillis > 120000
             || totalTimeoutMillis < 1 || totalTimeoutMillis > 900000
             || outputMin < 1 || outputMin > outputMax || outputMax > 8192
@@ -39,5 +48,6 @@ public record TranslationPolicy(
             throw new IllegalArgumentException("Invalid translation policy");
         if ("translation-v2.2".equals(engineVersion) && silence == null) throw new IllegalArgumentException("Missing frozen silence policy");
         if ("translation-v2.3".equals(engineVersion) && aimd == null) throw new IllegalArgumentException("Missing frozen concurrency policy");
+        if ("translation-v2.4".equals(engineVersion) && recovery == null) throw new IllegalArgumentException("Missing frozen recovery policy");
     }
 }

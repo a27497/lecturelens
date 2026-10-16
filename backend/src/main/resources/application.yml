@@ -61,6 +61,9 @@ courselingo:
       max-attempts: ${PIPELINE_TRANSLATION_LEAF_MAX_ATTEMPTS:3}
       max-calls: ${PIPELINE_TRANSLATION_MAX_CALLS:256}
       token-budget: ${PIPELINE_TRANSLATION_TOKEN_BUDGET:200000}
+      checkpoint-enabled: ${PIPELINE_TRANSLATION_CHECKPOINT_ENABLED:true}
+      max-recoveries: ${PIPELINE_TRANSLATION_MAX_RECOVERIES:3}
+      isolated-runtime: ${PIPELINE_TRANSLATION_ISOLATED_RUNTIME:false}
       adaptive:
         enabled: ${PIPELINE_TRANSLATION_AIMD_ENABLED:true}
         input-token-budget: ${PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET:2048}

@@ -50,6 +50,9 @@ import org.springframework.stereotype.Service;
 public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
     private com.example.courselingo.task.service.GenerationFence generationFence;
     private org.springframework.transaction.support.TransactionTemplate persistenceTransaction;
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore pipelineCheckpoints;
+    @Autowired(required=false)
+    public void configurePipelineCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){pipelineCheckpoints=value;}
 
     @Autowired
     public void configurePersistence(com.example.courselingo.task.service.GenerationFence fence,
@@ -613,6 +616,17 @@ public class VideoKeyframeScanServiceImpl implements VideoKeyframeScanService {
     }
 
     private void removeExisting(String taskId, Long userId) {
+        var execution=com.example.courselingo.task.service.PipelineExecutionScope.current();
+        if(execution!=null) {
+            if(pipelineCheckpoints==null || !execution.taskId().equals(taskId) || execution.userId()!=userId)
+                throw com.example.courselingo.task.service.PipelineExecutionGuard.stale();
+            for(String key:pipelineCheckpoints.clearCapture(execution)) {
+                try {storageService.deleteObject(key);}catch(RuntimeException ignored) {
+                    LOGGER.warn("event=obsolete_keyframe_cleanup_failed taskId={}",SafeLogSanitizer.sanitize(taskId));
+                }
+            }
+            return;
+        }
         if (evidenceLifecycleService != null) {
             evidenceLifecycleService.cleanupTaskEvidence(taskId, userId);
             return;

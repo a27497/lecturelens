@@ -1,6 +1,6 @@
 # 全文翻译 v2（实验候选，未部署）
 
-Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运行时。当前阶段 1–3 已实现；批次恢复和完整费用账本按后续阶段交付。设计及验收记录见 [P2-1](../eval/p2-1-pipeline-20261016T073754Z/DESIGN.md)。
+Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运行时。当前阶段 1–4 已实现；完整费用账本按阶段 5 交付。设计及验收记录见 [P2-1](../eval/p2-1-pipeline-20261016T073754Z/DESIGN.md)。
 
 默认 `PIPELINE_TRANSLATION_V2_ENABLED=false`。开启时仅新任务在创建事务内生成 `pipeline_policy_snapshot`，固定系统执行快照、翻译策略、模板哈希和从任务创建起 30 分钟的截止时间。关闭开关不会改变已冻结任务。策略只包含安全参数；凭据仍从既有系统版本按版本号解密，不保存到执行策略中。
 
@@ -26,7 +26,7 @@ Java 媒体准备流程的翻译修复，不属于 Python Study Agent 决策运�
 
 启用时校验参数范围；非法配置明确失败。Flyway V27 为增量迁移，不修改 V22–V26。部署前必须迁移新表；不应只替换 JAR 后连接未迁移的数据库。本轮没有部署或启用线上配置，系统模型绑定保持原值，LangChain4j 继续默认关闭。
 
-当前尚不提供崩溃后同任务恢复，旧任务 lease/retry 语义不变；失败调用的已有私有诊断保留已知基本 usage，但阶段汇总尚不能作为完整费用账本。不能用 mock 通过结果宣称十节真实基线已通过。
+旧任务 lease/retry 语义不变；v2.4 支持同任务检查点恢复。失败调用的已有私有诊断保留已知基本 usage，但阶段汇总尚不能作为完整费用账本。不能用 mock 通过结果宣称十节真实基线已通过。
 
 阶段 2 新任务冻结 `translation-v2.2` 策略；旧 v2.1 策略可继续解析，不套用新切分。静音模式显式选择 ASR，旧任务的嵌入字幕优先策略不变。静音阈值 -35 dB、停顿 600ms、段长最短/目标/最长 15/30/60 秒，最大 256 片；尾段、语音孤岛及文件限制导致的短段标注原因。长静音跳过，全静音明确 NO_SPEECH。切片在 ASR worker 内按需生成、请求结束后清理；并发、重试数、退避和文件上限随策略冻结，整个任务只获取一次 ASR 适配器。
 
@@ -37,3 +37,13 @@ V28 增加时间来源列、段落/成员、切分计划及源指纹发布记录
 阶段 3 新任务冻结 v2.3：按完整消息的 token 估计预算装箱，默认 2048；单项超限在出网前拆小，仍保留原段对应关系。真实请求并发初始 1、最多 4，连续 3 次通过校验后 +1，429/timeout 减半，最低 1。同一拥塞窗口的迟到失败不重复减半，冷却与 Retry-After 有界；其他失败遵守原有界策略。已经运行的健康请求继续完成。等待供应商共享名额后会再检查最新窗口，避免用旧窗口超发。
 
 `PIPELINE_TRANSLATION_AIMD_ENABLED` 默认为 true（外层 v2 仍默认 false）。`PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET=2048`、`PIPELINE_TRANSLATION_CONCURRENCY_INITIAL=1`、`PIPELINE_TRANSLATION_CONCURRENCY_MAX=4`、`PIPELINE_TRANSLATION_SUCCESS_STREAK=3`、`PIPELINE_TRANSLATION_PROVIDER_MAX_INFLIGHT=4` 随新任务冻结。供应商共享上限在同一进程的多个任务之间生效，不承诺跨实例全局限流。V29 保存窗口状态及有序原始事件；恢复窗口显式从 1 重置，不能把新参数替换到旧快照。
+
+阶段 4 新任务冻结 v2.4；`PIPELINE_TRANSLATION_CHECKPOINT_ENABLED=true`、`PIPELINE_TRANSLATION_MAX_RECOVERIES=3`。外层 v2 仍关闭；启用恢复必须同时声明 `PIPELINE_TRANSLATION_ISOLATED_RUNTIME=true`，且 RocketMQ topic/group 均以 `lecturelens-p21-` 开头，否则启动报错。不能将带 epoch 的新消息发到旧消费者所在 topic。V30 必须先在隔离 schema 迁移，未部署到业务库。
+
+批次的任务/序号/配置版本为唯一键；源、请求、初始计划和截止时间不可变，拆分树持久化。真实调用前登记 STARTED 并预留预算，校验通过后用量与结果同事务提交；已提交批次恢复时不调用供应商。进程丢失的 STARTED 记 UNKNOWN_OUTCOME，保留预算，不伪造 token。外部调用和本地提交间存在不可消除的崩溃窗口，未提交批次可能再次计费。
+
+90 秒执行 lease、15 秒 heartbeat、30 秒恢复扫描保持原默认。恢复增加 epoch，并在同一事务排入 durable outbox；重复/旧 epoch 无法变更当前状态。新 worker 直接读取原执行快照，不重新 freeze 或访问当前配置头；全局/叶批预算、15 分钟翻译 deadline 和原始 30 分钟整任务 deadline 均不重置。旧 worker 迟到只允许补记已发生的用量，不得发布或覆盖；取消/删除永不恢复。
+
+转写已持久化时，从权威字幕行校验指纹恢复，跳过音频提取、ASR 和原文重写。关键帧捕获完成标记和对象身份一致时跳过捕获；OCR/分析仍由既有指纹与 generation fence 管理。旧 epoch 的对象使用独立命名空间，不能覆盖新 worker 的对象。失败 v2 保留恢复所需 Evidence 到原任务期限，过期后经清理 outbox 清理派生对象；源上传不删。任务授权删除同时清理私有检查点，保留删除边界。媒体对象缺失仍由读取/分析路径明确失败，不宣称数据库标记等价于底层对象持久性。
+
+`POST /api/tasks/{taskId}/resume` 携带 `expectedExecutionEpoch`；未登录 401、非 owner 404、不可恢复/并发 epoch 冲突 409。仅失败且仍在原预算、原媒体身份和原期限内的 v2.4 任务可恢复；原 `/retry` 继续创建新任务。最终字幕、全文和段落对齐发布在同一事务再次检查源、owner、epoch 和 deadline。

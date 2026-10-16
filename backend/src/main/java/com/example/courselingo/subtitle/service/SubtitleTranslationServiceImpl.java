@@ -50,6 +50,9 @@ import java.util.function.Supplier;
 public class SubtitleTranslationServiceImpl implements SubtitleTranslationService {
     private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
     private com.example.courselingo.subtitle.pipeline.TranslationSchedulerEvents schedulerEvents;
+    private com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore checkpointStore;
+    @Autowired(required=false)
+    public void configureCheckpointStore(com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore value){checkpointStore=value;}
     @Autowired(required=false)
     public void configureSchedulerEvents(com.example.courselingo.subtitle.pipeline.TranslationSchedulerEvents events){schedulerEvents=events;}
 
@@ -362,7 +365,8 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         if (diagnostics != null) diagnostics.finalValidation(validated.execution(), "PASSED");
         LlmResult firstResult = run.results().getFirst();
         String provider = normalizeProvider(firstNonBlank(firstResult.provider(), llmProvider.providerName()));
-        persistDualOutput(validated, sourceSegments, run.translations(), sourceFullText, translatedFullText, provider);
+        Runnable publish=()->persistDualOutput(validated,sourceSegments,run.translations(),sourceFullText,translatedFullText,provider);
+        if(run.checkpoint()!=null)run.checkpoint().publish(publish);else publish.run();
         UsageTotals usage = UsageTotals.fromResults(run.results());
         Duration wallDuration = elapsedDuration(wallStartedNanos);
         int retryCount = retryCount(run.results(), run.plannedBatchCount());
@@ -493,15 +497,24 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
         };
         Integer cap = systemModels == null ? null : systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT").maxTokens();
         var coordinator = new com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinator(frozen,provider,codec,cap);
+        com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore.Session checkpoint=null;
+        if(frozen.policy().recovery()!=null) {
+            if(checkpointStore==null || systemModels==null)throw com.example.courselingo.ai.llm.TranslationFailure.of(
+                com.example.courselingo.ai.llm.TranslationFailure.Reason.ACCOUNTING_INCOMPLETE);
+            var route=systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT");
+            checkpoint=checkpointStore.open(frozen,command.requestId(),sources,command.targetLanguage(),route.model(),
+                "MOCK".equals(route.source())?"mock":"openai-compatible");
+            coordinator.checkpoint(checkpoint);
+        }
         if(frozen.policy().aimd()!=null) {
             var route=systemModels==null?null:systemModels.route(command.execution(),"TRANSLATION_FULL_TEXT");
             String key=route==null?"manual-test":route.source()+":"+route.providerId()+":"+route.baseUrl();
             coordinator.observe(com.example.courselingo.subtitle.pipeline.PipelinePolicyService.hash(key),
-                schedulerEvents==null?event->{}:schedulerEvents.observer(frozen));
+                schedulerEvents==null?event->{}:schedulerEvents.observer(frozen,command.requestId()));
         }
         var outcome = coordinator.run(createTranslationBatches(sources,frozen.policy().batchMaxSegments(),frozen.policy().batchMaxInputChars()));
         return new AlignedTranslationRun(outcome.translations().stream().map(t ->
-            new GeneratedSubtitleTranslation(t.source(),t.text(),null)).toList(),outcome.responses(),outcome.plannedBatches());
+            new GeneratedSubtitleTranslation(t.source(),t.text(),null)).toList(),outcome.responses(),outcome.plannedBatches(),checkpoint);
     }
 
     private AlignedTranslationRun generateAlignedTranslationsConcurrently(
@@ -1620,8 +1633,10 @@ public class SubtitleTranslationServiceImpl implements SubtitleTranslationServic
     private record AlignedTranslationRun(
         List<GeneratedSubtitleTranslation> translations,
         List<LlmResult> results,
-        int plannedBatchCount
+        int plannedBatchCount,
+        com.example.courselingo.subtitle.pipeline.TranslationCheckpointStore.Session checkpoint
     ) {
+        AlignedTranslationRun(List<GeneratedSubtitleTranslation> translations,List<LlmResult> results,int plannedBatchCount){this(translations,results,plannedBatchCount,null);}
     }
 
     private record SemanticMetrics(int translatedCharCount, long cjkCharCount, double cjkRatio) {

@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPersistenceService {
     private com.example.courselingo.subtitle.pipeline.TranscriptParagraphService paragraphs;
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    @Autowired(required=false)
+    public void configureCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;}
     @Autowired(required=false)
     public void configureParagraphs(com.example.courselingo.subtitle.pipeline.TranscriptParagraphService value){paragraphs=value;}
 
@@ -48,6 +51,7 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
     @Transactional
     public int saveTranscriptionResult(SaveTranscriptionSegmentsCommand command) {
         ValidatedCommand validated = validateSaveCommand(command);
+        if(checkpoints!=null)checkpoints.checkWriter(validated.taskId(),validated.userId(),command.executionEventId());
         if (generationFence != null) generationFence.sourceChanging(validated.taskId(), validated.userId());
         mapper.deleteByTaskIdAndUserId(validated.taskId(), validated.userId());
 
@@ -61,6 +65,7 @@ public class SubtitleSegmentPersistenceServiceImpl implements SubtitleSegmentPer
             insertedCount++;
         }
         if(paragraphs!=null) paragraphs.replace(command);
+        if(checkpoints!=null)checkpoints.record(validated.taskId(),validated.userId(),command.executionEventId(),command.result());
         return insertedCount;
     }
 

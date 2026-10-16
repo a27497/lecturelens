@@ -23,7 +23,9 @@ public final class TranslationBatchCoordinator {
     private final String policyHash;
     private final Clock clock;
     private final Sleeper sleeper;
-    private final Instant deadline;
+    private Instant deadline;
+    private TranslationCheckpointStore.Session checkpoint;
+    public TranslationBatchCoordinator checkpoint(TranslationCheckpointStore.Session session){checkpoint=session;return this;}
     private volatile int physicalCalls;
     private volatile long reservedTokens;
     private final java.util.concurrent.atomic.AtomicInteger nextBatch=new java.util.concurrent.atomic.AtomicInteger();
@@ -48,8 +50,9 @@ public final class TranslationBatchCoordinator {
     public Outcome run(List<List<SubtitleSegment>> batches) {
         if(policy.aimd()!=null) {
             batches=TranslationBatchPlanner.plan(batches.stream().flatMap(List::stream).toList(),policy,codec);
-            return runAdaptive(batches);
         }
+        if(checkpoint!=null)deadline=min(deadline,checkpoint.initialize(batches,codec));
+        if(policy.aimd()!=null)return runAdaptive(batches);
         nextBatch.set(batches.size()+1);
         var translated = new ArrayList<Translated>();
         for (int i=0;i<batches.size();i++) translated.addAll(node(batches.get(i),0,i+1));
@@ -83,6 +86,24 @@ public final class TranslationBatchCoordinator {
         finally {for(var f:futures)f.cancel(true);executor.shutdownNow();}
     }
     private List<Translated> node(List<SubtitleSegment> batch, int depth,int batchNo) {
+        try {
+            if(checkpoint!=null) {
+                var stored=checkpoint.claim(batchNo);
+                if("SUCCEEDED".equals(stored.status())) {responses.add(checkpoint.cached(stored));return stored.result();}
+                if("SPLIT".equals(stored.status())) {
+                    var translated=new ArrayList<Translated>();
+                    for(var child:checkpoint.children(batchNo))translated.addAll(node(child.source(),child.depth(),child.number()));
+                    var merged=merge(batch,translated);checkpoint.merged(batchNo,merged);return merged;
+                }
+            }
+            return executeNode(batch,depth,batchNo);
+        } catch(RuntimeException raw) {
+            var failure=TranslationFailure.from(raw);
+            if(checkpoint!=null)checkpoint.failNode(batchNo,failure);
+            throw failure;
+        }
+    }
+    private List<Translated> executeNode(List<SubtitleSegment> batch,int depth,int batchNo) {
         checkActive();
         String correction = null;
         int contentRetries = 0;
@@ -91,6 +112,9 @@ public final class TranslationBatchCoordinator {
             int reserved = 0;
             AdaptiveTranslationController.Permit permit=null;
             boolean sent=false;
+            TranslationCheckpointStore.Attempt persistedAttempt=null;
+            LlmResult observed=null;
+            long callStarted=System.nanoTime();
             try {
                 var base = codec.request(batch, correction, Duration.ofMillis(Math.min(policy.requestTimeoutMillis(), remaining())));
                 int input = TranslationTokenBudget.estimate(base,policy);
@@ -105,27 +129,37 @@ public final class TranslationBatchCoordinator {
                 var request = new LlmRequest(base.requestId(),base.taskId(),base.messages(),base.timeout(),base.temperature(),
                     output,1,metadata,LlmResponseFormat.JSON_OBJECT,base.execution());
                 if(adaptive!=null)permit=adaptive.acquire(batchNo,attempt,remaining());
-                reserve(reserved);sent=true;
+                reserve(reserved);
+                if(checkpoint!=null) {
+                    persistedAttempt=checkpoint.begin(batchNo,input,output);
+                    metadata.put("translationAttemptNo",persistedAttempt.number());metadata.put("translationAttemptId",persistedAttempt.id());
+                }
                 request=new LlmRequest(request.requestId(),request.taskId(),request.messages(),
                     Duration.ofMillis(Math.max(1,Math.min(request.timeout().toMillis(),remaining()))),request.temperature(),request.maxTokens(),
-                    1,request.metadata(),request.responseFormat(),request.execution());
+                    1,metadata,request.responseFormat(),request.execution());
+                sent=true;callStarted=System.nanoTime();
                 LlmResult result = provider.generate(request);
+                observed=result;
                 if (result == null) throw TranslationFailure.of(EMPTY_OUTPUT);
                 responses.add(result);
                 reconcile(reserved, result.usage()); reserved=0;
                 if ("length".equals(result.finishReason())) throw new TranslationFailure(TRUNCATED,200,result.usage(),"length",0);
                 if (result.content().isBlank()) throw TranslationFailure.of(EMPTY_OUTPUT);
                 var translated=codec.validate(batch,result);
+                if(checkpoint!=null)checkpoint.succeeded(batchNo,persistedAttempt,translated,result,Duration.ofNanos(System.nanoTime()-callStarted).toMillis());
                 if(permit!=null)permit.succeeded();
                 return translated;
             } catch (RuntimeException raw) {
                 var failure = TranslationFailure.from(raw);
+                if(observed!=null)failure=new TranslationFailure(failure.reason(),failure.status()==null?200:failure.status(),observed.usage(),
+                    observed.finishReason(),failure.retryAfterMillis(),failure.check());
+                if(checkpoint!=null && persistedAttempt!=null)checkpoint.failed(batchNo,persistedAttempt,failure,Duration.ofNanos(System.nanoTime()-callStarted).toMillis());
                 if (reserved > 0 && sent) reconcile(reserved,failure.usage());
                 if(permit!=null){if(sent)permit.failed(failure);else permit.close();}
                 if (failure.reason() == TRUNCATED || failure.reason() == OUTPUT_BUDGET_TOO_SMALL)
-                    return split(batch,depth,failure);
+                    return split(batch,depth,batchNo,failure);
                 if (failure.reason() == EMPTY_OUTPUT || failure.reason() == FORMAT_INVALID || failure.reason() == VALIDATION_INVALID) {
-                    if (++contentRetries > 1 || attempt == policy.maxAttempts()) return split(batch,depth,failure);
+                    if (++contentRetries > 1 || attempt == policy.maxAttempts()) return split(batch,depth,batchNo,failure);
                     correction = failure.reason().name();
                     continue;
                 }
@@ -150,15 +184,13 @@ public final class TranslationBatchCoordinator {
         if (usage != null && usage.totalTokens()!=null)
             reservedTokens += (long) usage.totalTokens() - reservation;
     }
-    private List<Translated> split(List<SubtitleSegment> batch, int depth, TranslationFailure original) {
+    private List<Translated> split(List<SubtitleSegment> batch, int depth,int batchNo, TranslationFailure original) {
         if (depth >= policy.maxDepth()) throw TranslationFailure.of(SPLIT_DEPTH_EXHAUSTED);
         if (batch.size()>1) {
             long total=batch.stream().mapToLong(s -> weight(s.getText())).sum(), weight=0;
             int middle=1;
             for (int i=0;i<batch.size()-1;i++) { weight+=weight(batch.get(i).getText()); middle=i+1; if(weight*2>=total) break; }
-            var result=new ArrayList<Translated>(node(List.copyOf(batch.subList(0,middle)),depth+1,nextBatch.getAndIncrement()));
-            result.addAll(node(List.copyOf(batch.subList(middle,batch.size())),depth+1,nextBatch.getAndIncrement()));
-            return List.copyOf(result);
+            return children(batch,List.of(List.copyOf(batch.subList(0,middle)),List.copyOf(batch.subList(middle,batch.size()))),depth,batchNo);
         }
         var source=batch.getFirst(); String text=source.getText();
         int points=text.codePointCount(0,text.length());
@@ -168,9 +200,20 @@ public final class TranslationBatchCoordinator {
         if(boundary>text.length()/4) mid=boundary;
         String left=text.substring(0,mid).strip(), right=text.substring(mid).strip();
         if(left.isBlank() || right.isBlank()) throw original;
-        var a=node(List.of(piece(source,left)),depth+1,nextBatch.getAndIncrement());
-        var b=node(List.of(piece(source,right)),depth+1,nextBatch.getAndIncrement());
-        return List.of(new Translated(source,a.getFirst().text()+" "+b.getFirst().text()));
+        return children(batch,List.of(List.of(piece(source,left)),List.of(piece(source,right))),depth,batchNo);
+    }
+    private List<Translated> children(List<SubtitleSegment> parent,List<List<SubtitleSegment>> parts,int depth,int number) {
+        var translated=new ArrayList<Translated>();
+        if(checkpoint!=null) {
+            for(var child:checkpoint.split(number,parts,depth+1,codec))translated.addAll(node(child.source(),child.depth(),child.number()));
+        } else for(var part:parts)translated.addAll(node(part,depth+1,nextBatch.getAndIncrement()));
+        var result=merge(parent,translated);
+        if(checkpoint!=null)checkpoint.merged(number,result);
+        return result;
+    }
+    private static List<Translated> merge(List<SubtitleSegment> parent,List<Translated> children) {
+        if(parent.size()>1)return List.copyOf(children);
+        return List.of(new Translated(parent.getFirst(),children.stream().map(Translated::text).collect(java.util.stream.Collectors.joining(" "))));
     }
     private static long weight(String s) { return s.getBytes(java.nio.charset.StandardCharsets.UTF_8).length; }
     private static SubtitleSegment piece(SubtitleSegment source,String text) {

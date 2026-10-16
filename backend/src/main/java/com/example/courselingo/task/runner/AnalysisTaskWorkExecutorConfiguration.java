@@ -128,7 +128,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
         VisionPipelineBranchCoordinator visionBranchCoordinator,
         VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
         com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies,
-        com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner
+        com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner,
+        com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -141,7 +142,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 taskLogMapper,
                 Clock.systemUTC(),
                 visionBranchCoordinator
-            ),
+            ).withCheckpoints(checkpoints),
             new ExtractAudioStep(
                 ffmpegAudioExtractor,
                 workspace
@@ -158,7 +159,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 audioDurationProbe,
                 embeddedSubtitleTranscriptExtractor,
                 embeddedSubtitleTranscriptProperties
-            ).withSilencePlanning(pipelinePolicies,silencePlanner),
+            ).withSilencePlanning(pipelinePolicies,silencePlanner).withCheckpoints(checkpoints),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),
             new OcrKeyframesStep(
@@ -195,7 +196,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
             analysisTaskMapper,
             progressSnapshotService,
             Clock.systemUTC()
-        ), workspace, evidenceLifecycleService);
+        ), workspace, evidenceLifecycleService).withCheckpoints(checkpoints);
     }
 
     @Bean

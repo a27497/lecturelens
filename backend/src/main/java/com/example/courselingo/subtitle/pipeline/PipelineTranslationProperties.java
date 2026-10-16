@@ -12,6 +12,10 @@ public class PipelineTranslationProperties {
     private double outputRatio = 2.0;
     private Silence silence = new Silence();
     private Adaptive adaptive=new Adaptive();
+    private boolean checkpointEnabled=true;
+    private int maxRecoveries=3;
+    public boolean isCheckpointEnabled(){return checkpointEnabled;}public void setCheckpointEnabled(boolean value){checkpointEnabled=value;}
+    public int getMaxRecoveries(){return maxRecoveries;}public void setMaxRecoveries(int value){maxRecoveries=value;}
     public Adaptive getAdaptive(){return adaptive;} public void setAdaptive(Adaptive v){adaptive=v;}
     public static class Adaptive {
         private boolean enabled=true;
@@ -70,6 +74,14 @@ public class PipelineTranslationProperties {
     }
 
     public TranslationPolicy freezePipeline(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
+            int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
+        var p=freezeAdaptive(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
+        if(!checkpointEnabled)return p;
+        return new TranslationPolicy("translation-v2.4",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
+            p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),p.maxDepth(),p.maxAttempts(),p.maxCalls(),p.tokenBudget(),
+            p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),p.aimd(),new TranslationRecoveryPolicy(maxRecoveries));
+    }
+    private TranslationPolicy freezeAdaptive(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
         var p=freezeWithSilence(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
         if(!adaptive.enabled) return p;

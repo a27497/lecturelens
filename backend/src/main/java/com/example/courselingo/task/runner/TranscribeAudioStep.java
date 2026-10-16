@@ -90,6 +90,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     private final EmbeddedSubtitleTranscriptProperties transcriptProperties;
     private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
     private com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner;
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    TranscribeAudioStep withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
 
     TranscribeAudioStep withSilencePlanning(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies,
             com.example.courselingo.media.SilenceAudioChunkPlanner planner) {
@@ -588,6 +590,10 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     }
 
     private SpeechToTextResult transcribeOne(Path audioFile, PipelineAnalysisTaskStepContext context, SpeechToTextProvider adapter) {
+        if(context.taskContext().protocolVersion()==2) {
+            if(checkpoints==null)throw new IllegalStateException("Pipeline checkpoints unavailable");
+            checkpoints.checkActive(context.taskId(),context.userId(),context.requestId(),context.taskContext().executionEpoch());
+        }
         long startedNanos = System.nanoTime();
         SpeechToTextResult result = adapter.transcribe(new SpeechToTextRequest(
             audioFile,

@@ -11,7 +11,7 @@ class TranslationSchedulerMySqlTest {
     @Test void schedulerHistoryIsDurableOrderedOwnedAndResetsExplicitly() throws Exception {
         try(var db=new SystemModelMySqlFixture()) {
             long user=db.user();String task=db.task(user);db.jdbc.update("UPDATE analysis_task SET status='RUNNING' WHERE id=?",task);
-            var settings=new PipelineTranslationProperties();
+            var settings=new PipelineTranslationProperties();settings.setCheckpointEnabled(false);
             var policy=settings.freezePipeline(Duration.ofSeconds(120),Duration.ofMinutes(15),1,1000,16000,1,2,4*1024*1024,3,java.util.List.of(0L));
             var frozen=new PipelinePolicyService.Frozen(policy,"a".repeat(64),Instant.now().plusSeconds(1800),new SystemModelExecutionRef("s",0,task,user));
             var store=new TranslationSchedulerEvents(db.jdbc,db.transactions);

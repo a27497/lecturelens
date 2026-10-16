@@ -260,7 +260,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
 
     private AnalysisTaskMessage buildMessage(AnalysisTask task) {
         TracingContext tracingContext = TracingContextHolder.currentOrCreate();
-        return new AnalysisTaskMessage(
+        var message = new AnalysisTaskMessage(
             task.getId(),
             task.getUploadId(),
             task.getUserId(),
@@ -270,6 +270,8 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             tracingContext.traceId(),
             clock.instant()
         );
+        if(pipelinePolicies!=null && pipelinePolicies.find(task.getId(),task.getUserId()).map(p->p.policy().recovery()!=null).orElse(false))return message.withExecution(1);
+        return message;
     }
 
     private void writeMqFailureLog(AnalysisTask task) {

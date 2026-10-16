@@ -105,3 +105,17 @@ V28 除设计中的 paragraph/member 外增加 **timing_plan**（切片计划与
 相关测试 **125 项、0 失败、0 错误、0 跳过**。原始日志 `.data/p2-1-pipeline-20261016T073754Z/checks/stage3-related-01.log`，参数/峰值等见同名 JSON 与 `stages/stage3-checks.json`。机制覆盖 token 装箱、超限出网前拆分、20 个合成批次实际并行且顺序保持、窗口增长/减半/上限、不同任务共享许可、观测失败不泄漏许可、取消唤醒、5xx 不额外减半，以及真实独立 MySQL 的事件顺序/重置/owner/级联。这里的 20 是 mock 调用数，不是真实课程或翻译质量成绩。
 
 数字和日志复现沿用上述脚本，将阶段文件名替换为 stage3；实际测试命令在 `stages/stage3-checks.json` 的 execution.command。未重启、部署或调用真实供应商，未修改系统绑定。
+
+## 阶段 4：批次持久化与同任务恢复
+
+阶段 3 提交：`0d64acd6e888b11cabc4fdcf54701e2f5067f7b1`。改动及文件哈希见 `stages/stage4-files.json`，每轮测试命令/日志哈希见 `stages/stage4-checks.json`。新任务策略 v2.4，默认外层关闭；启用检查点要求隔离声明和独立 `lecturelens-p21-` MQ topic/group，禁止混用旧消费者。
+
+V30 增加 plan/batch/attempt/step checkpoint，执行 lease 和 outbox 携带 protocol/epoch。批次唯一键为 task+batch+configVersion，拆分树稳定且唯一；DB trigger 禁止改变输入/期限及已完成结果。已完成批次和原文恢复不重跑；未完成请求保留 UNKNOWN_OUTCOME 与预留预算，不承诺外部 exactly-once。恢复通过原 snapshot 读取配置，未调用 current-head freeze；显式 resume 认证/owner/expected epoch 分别验证 401/404/409。
+
+相关测试最终 **326 项、0 失败、0 错误、0 跳过**；包含真实独立 MySQL 迁移、事务/锁/唯一键/触发器。检查点测试模拟 worker 在部分成功和 STARTED 后丢失，在恢复前将系统配置头从 0 改为 1，恢复仍持有 0；已完成批次的调用数、结果哈希和 attempt_count 不变，父批/拆分子批同样验证。另验并发 resume 仅一条事件、旧 MQ/epoch 不能推进状态、旧 finally 不能关闭新 lease、旧成功响应只能补记用量、最终发布事务回滚、重复领取、持久预算、取消/删除、跨 owner 清理及原 ASR/MQ/用户翻译回归。测试中的版本号与文本为合成 fixture，不是实际系统 v10 或真实模型结果。
+
+原文恢复通过权威字幕行指纹验证；恢复跳过 ASR/原文写入和已完成关键帧捕获。v2 失败不立即清掉恢复必需的 Evidence，原任务期限到达后由清理 outbox 清理派生对象，授权删除同时删私有检查点。ASR 派发、源写入和最终发布检查当前 epoch/deadline，旧 worker 的对象路径按执行身份隔离。费用完整性待阶段 5。
+
+原始尝试保留：compile01/02 编译通过；checkpoint03 为 4 项通过；related04 为 225 项、1 失败（发布回滚测试错误期待原异常，实际按契约安全转换 ACCOUNTING_INCOMPLETE）；related05 为 326 项、1 错误（新夹具未覆盖 pipeline 全步骤）；修正夹具和断言后 related06 为 326 项全部通过，没有放宽业务校验。日志均在 `.data/p2-1-pipeline-20261016T073754Z/checks/`，含全部失败轮次。
+
+数字复现：沿用前文校验脚本，将文件名换成 stage4；最终数字取 stage4-related06.log 的最后一个 Tests run 行，命令参数及磁盘峰值在同名 JSON。没有运行全量测试，没有重启/部署或真实调用，系统绑定未动。10 次真实基线和 1 次独立恢复演示仍待阶段 5、磁盘余量和隔离 Java 启动确认。
