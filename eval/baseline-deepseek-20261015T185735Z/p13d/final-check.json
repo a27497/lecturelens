@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-15T19:52:32.878668+00:00",
+  "db_diagnostic": [
+    {
+      "id": "4befe79c-b79f-46ac-9341-66cf6fc53b10",
+      "http_status": 200,
+      "total_tokens": 3976,
+      "finish_reason": "length",
+      "prompt_tokens": 903,
+      "response_chars": 11337,
+      "provider_reason": "CONTENT_EMPTY",
+      "response_length": 4000,
+      "completion_tokens": 3073
+    }
+  ],
+  "services": {
+    "lecturelens-live-backend": {
+      "pid": 3251334,
+      "start_ticks": "4846172"
+    },
+    "lecturelens-live-agent": {
+      "pid": 5102,
+      "start_ticks": "2722"
+    },
+    "lecturelens-live-model": {
+      "pid": 5105,
+      "start_ticks": "2726"
+    }
+  },
+  "active_tasks": [],
+  "disk": {
+    "utc": "2026-10-15T19:52:33.018653+00:00",
+    "total_bytes": 154894188544,
+    "available_bytes": 23524605952,
+    "percent": 84.81246703111945
+  },
+  "no_new_java_diagnostic_write_failures": true,
+  "new_journal_credential_pattern_scan": "PASS; sk-/Bearer patterns only, no provider credential read for comparison"
+}
