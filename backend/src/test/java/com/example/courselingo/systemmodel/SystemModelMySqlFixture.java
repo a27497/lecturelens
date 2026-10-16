@@ -12,7 +12,7 @@ import java.util.UUID;
 final class SystemModelMySqlFixture implements AutoCloseable {
     final String base = System.getenv("SYSTEM_MODEL_TEST_JDBC_URL");
     final String username = System.getenv().getOrDefault("SYSTEM_MODEL_TEST_MYSQL_USER", "root");
-    final String password = System.getenv("SYSTEM_MODEL_TEST_MYSQL_PASSWORD");
+    final String password = System.getenv().getOrDefault("SYSTEM_MODEL_TEST_MYSQL_PASSWORD", "");
     final String database =
             "lecturelens_p14_phase2_" + UUID.randomUUID().toString().replace("-", "");
     final String url;

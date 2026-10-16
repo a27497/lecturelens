@@ -1,8 +1,8 @@
-# 独立 MySQL 测试依赖：待启动许可
+# 独立 MySQL 测试依赖：已获许可并启动
 
 当前 `SYSTEM_MODEL_TEST_JDBC_URL` 未配置。独立 MySQL 检查不能以跳过代替通过；本轮不读取部署配置、不连接未核实的共享数据库，也不启动或重启应用。
 
-已准备 `start_unit_mysql.sh`，尚未执行。它只创建新容器 `lecturelens-p21c-unit-mysql-20261017`：
+用户已批准并执行 `start_unit_mysql.sh`，实际身份见 test-database.json；后续可复用同一许可。它只创建新容器 `lecturelens-p21c-unit-mysql-20261017`：
 
 - 使用本地已有镜像 `mysql:8.4`，固定 image ID `sha256:3466ba4a4828aa8d46fb7c3bc16b67b781c98413cf4ea0fac6feaa6e881faa26`，不拉取镜像。
 - 仅监听 `127.0.0.1:33316`，入口库 `lecturelens_p21c_test`，数据放独立 1 GiB tmpfs，内存上限 1 GiB、CPU 上限 1；无生产卷、无应用配置、无供应商凭据。

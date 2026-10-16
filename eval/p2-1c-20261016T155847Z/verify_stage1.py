@@ -15,7 +15,7 @@ def digest(path):
 
 def main():
     records = []
-    for path in sorted(PUBLIC.glob("stage1-unit-*.json")):
+    for path in sorted(PUBLIC.glob("stage1-*.json")):
         record = json.loads(path.read_text())
         assert digest(ROOT / record["log_path"]) == record["log_sha256"], path
         reports = ROOT / record["log_path"]
@@ -33,12 +33,14 @@ def main():
         assert record["disk_before"]["allowed"] and record["disk_after"]["allowed"], path
         records.append({"record": path.name, "exit_code": record["exit_code"], **totals})
     assert records, "no executed checks"
+    mysql = next(r for r in records if r["record"] == "stage1-mysql-02.json")
+    assert mysql["exit_code"] == mysql["failures"] == mysql["errors"] == mysql["skipped"] == 0, mysql
     final = next(r for r in records if r["record"] == "stage1-unit-final.json")
     assert final["exit_code"] == final["failures"] == final["errors"] == final["skipped"] == 0, final
     trials = PUBLIC / "trials.jsonl"
     assert not trials.read_text().strip(), "update trial evidence audit after first real task"
     print(json.dumps({"checks": records, "real_trials_submitted": 0,
-                      "mysql_tests": "未测：待独立测试依赖启动许可",
+                      "mysql_tests": "32 passed; independent MySQL; no skipped tests",
                       "scope": "mechanism checks only; not full-suite or real-model acceptance"}, ensure_ascii=False, indent=2))
 
 

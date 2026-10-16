@@ -1,6 +1,6 @@
 # P2-1c 当前验证记录
 
-状态：阶段 1 代码检查点；独立 MySQL 未测、全量回归未测、真实验收未测。这里的机制检查不能替代正式十次或真实模型质量。
+状态：阶段 1 通过；独立 MySQL 最终 32 项通过、0 跳过，全量回归未测、真实验收未测。这里的机制检查不能替代正式十次或真实模型质量。
 
 ## 实施范围
 
@@ -33,7 +33,7 @@ sha256sum -c eval/p2-1c-20261016T155847Z/SHA256SUMS
 
 如需重新执行检查，使用 JSON 内的原命令，但给 `run_check.py --name` 一个全新名称；脚本拒绝覆盖旧证据。`bash -n .../start_unit_mysql.sh` 与 Python `ast.parse` 已执行；它们仅检查脚本语法，不能声称 MySQL 启动或数据库测试通过。
 
-独立 MySQL 运行命令与依赖身份在 TEST_DATABASE_PLAN.md，尚未执行，不能把条件跳过计为通过。阶段 0 设计文件保留，用户新授权及对冒烟/A 失败的修订见 AUTHORIZED_SCOPE.md。
+独立 MySQL 运行命令在 TEST_DATABASE_PLAN.md；test-database.json 冻结获准测试容器的实际身份。stage1-mysql-01.json 的 32 项有 1 failure、1 error：断言固定 V25 和空密码 Map.of。修正测试为要求所有当前迁移完全应用、兼容无密码独立夹具后，stage1-mysql-02.json 的 32 项全部通过，失败/错误/跳过均 0；两轮日志/JUnit 均保留。阶段 0 设计文件保留，用户新授权及对冒烟/A 失败的修订见 AUTHORIZED_SCOPE.md。
 
 ## 结果身份与未执行范围
 
