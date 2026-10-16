@@ -41,10 +41,12 @@ public class PipelinePolicyService {
     public boolean enabledForNewTasks() { return settings.isEnabled(); }
     private TranslationPolicy policy() {
         var f = translation.getFullText();
-        return settings.freezePipeline(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars(),
+        var policy=settings.freezePipeline(f.getRequestTimeout(), f.getTotalTimeout(), f.getBatchMaxSegments(), f.getBatchMaxInputChars(),
             sampleRate,channels,chunking.effectiveConcurrency(),Math.min(chunking.effectiveMaxChunkFileSizeBytes(),chunking.effectiveMaxAudioFileSizeBytes()),
             chunking.getChunkRetry().getMaxAttempts(),chunking.getChunkRetry().getBackoff().stream()
                 .map(d->d==null?0L:d.toMillis()).toList());
+        return settings.isMaterialsSourceOnly() || settings.isStreamingTranslation() || settings.isMaterialsParallel()
+            ? policy.withFlow(new PreparationFlowPolicy(settings.isMaterialsSourceOnly(),settings.isStreamingTranslation(),settings.isMaterialsParallel())) : policy;
     }
 
     /** Called in the task creation transaction, before the outbox message is visible. */

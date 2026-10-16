@@ -1,0 +1,177 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=PreparationFlow*Test,GenerateLearningPackageStepTest,AsrExecutionMySqlTest,TranscriptParagraphTest,LearningPackage*Test,TranslationCheckpointMySqlTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116275044352,
+    "available_bytes": 38602366976,
+    "usage_percent": 75.07553448562763,
+    "headroom_to_85_bytes": 15370755276.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:40:58.408256+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2665303,
+  "start_ticks": "3618551",
+  "exit_code": 0,
+  "disk_peak_percent": 75.07624590247697,
+  "disk_after": {
+    "used_bytes": 116276297728,
+    "available_bytes": 38601113600,
+    "usage_percent": 75.07634375535216,
+    "headroom_to_85_bytes": 15369501900.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage3-qualified-checks.log",
+  "log_sha256": "ff8e38753e1fd0146fbe167d0f21916d472ab63b3d2c4367d2ba7e331dbb5968",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "7feb19141b5ba0d88beee7e0c7bd2281a536446b2c2e01f02c6c5fd05bd4710f"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMapperTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6295b4b083a9026ea41ab4a4da5d8e18befadc5e16de1ff161eea179ba3f6ed1"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0ee8ff05b4afbaae3c4471b5077328f7ccad667acaea91ab71cc270a1ac620a4"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageResponseParserTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dd9de6b2a0a6c761e9d4569adb073f85bde037fc0630ffc5a8f623492db3ce8c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageServiceTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2edc63aa2324f18fbf16b3e3813c5fa82ee44addc6f251699edb65d3e2440bb2"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5baa915658612875f5a088c624046deea0673313e9711d5fd778551abb45ab97"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageContextGuardTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "99196525803052306f69cdac8bb90f5fbbf0dd4262eef251c427ebda751c339c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackagePromptFactoryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9cb2787c52ba348f4914cd7aad1268072eedfcbec0f664a1f87f26134cfdd2f3"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageQualityValidatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "46acd00e59ba8cf1cf949a086358a473b4c982fdb46851089e228ddf92f85fd2"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9b57f9a5bbbd372aa16c15e6048f259c923fd0121ccbcdaa4b592cb49781c2dd"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageVisualOnlyServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b2b451d5a8d9b7ede3cb7230fa1af146292efcfa5d687a417db1b995fc0f2047"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.PreparationFlowPolicyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "aaa05368e7a24bef87609739afb976c3b5b352524b5de32567630b67eeb74aae"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.TranscriptParagraphTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "14137ed496a1357e300392316a6e85885d0a9413aead5407670ed4c0f250a38f"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.AsrExecutionMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1abbaa5ba1a6c1259beeb010132908873e1fb3d5979833d4948d0ecb2a2e8e34"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PreparationFlowMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "409cb0223d96d39e0867dd702842bb7ffc6ca6096fcc10a80fbfdd3bf5c15454"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.TranslationCheckpointMySqlTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e2ba21cecee9f3617bcb2bbae7118185d122e0c8d76da72b79f2e7acd86f15ce"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.GenerateLearningPackageStepTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a0be99b56dbd99b207a8451b89b102a1e7a661362be9fa4eda9fb09213320536"
+    }
+  ],
+  "total": {
+    "tests": 101,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

@@ -14,6 +14,10 @@ public class PipelineTranslationProperties {
     private Adaptive adaptive=new Adaptive();
     private boolean checkpointEnabled=true;
     private int maxRecoveries=3;
+    private boolean materialsSourceOnly,streamingTranslation,materialsParallel;
+    public boolean isMaterialsSourceOnly(){return materialsSourceOnly;}public void setMaterialsSourceOnly(boolean v){materialsSourceOnly=v;}
+    public boolean isStreamingTranslation(){return streamingTranslation;}public void setStreamingTranslation(boolean v){streamingTranslation=v;}
+    public boolean isMaterialsParallel(){return materialsParallel;}public void setMaterialsParallel(boolean v){materialsParallel=v;}
     private Asr asr = new Asr();
     public Asr getAsr() { return asr; }
     public void setAsr(Asr value) { asr = value; }

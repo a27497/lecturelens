@@ -15,8 +15,18 @@ public record TranslationPolicy(
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
     String priceSet,
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-    com.example.courselingo.ai.asr.AsrPipelinePolicy asr
+    com.example.courselingo.ai.asr.AsrPipelinePolicy asr,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    PreparationFlowPolicy flow
 ) {
+    public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
+        int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
+        int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
+        com.example.courselingo.media.SilenceSegmentationPolicy silence,TranslationAimdPolicy aimd,TranslationRecoveryPolicy recovery,String priceSet,
+        com.example.courselingo.ai.asr.AsrPipelinePolicy asr) {
+        this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,null);
+    }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
         int contextLimit,int maxDepth,int maxAttempts,int maxCalls,long tokenBudget,int batchMaxSegments,int batchMaxInputChars,
@@ -27,7 +37,12 @@ public record TranslationPolicy(
     public TranslationPolicy withAsr(com.example.courselingo.ai.asr.AsrPipelinePolicy value) {
         return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
             outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
-            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,value);
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,value,flow);
+    }
+    public TranslationPolicy withFlow(PreparationFlowPolicy value) {
+        return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
+            outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,value);
     }
     public com.example.courselingo.media.SilenceSegmentationPolicy paragraphSilence() {
         if(asr==null || !asr.mergeEnabled())return silence;

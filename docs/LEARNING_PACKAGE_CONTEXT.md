@@ -49,3 +49,5 @@ courselingo:
 不可继续切分的本地上下文超限，以及供应商明确拒绝上下文，返回 `LEARNING_PACKAGE_CONTEXT_LIMIT_EXCEEDED`，以 `LOCAL_PREFLIGHT` / `PROVIDER` 区分来源；预算、超时和格式失败不归入此码。资料保存后记录 `learning_package_outcome`，区分 `MODEL`、`REPAIRED` 和 `DETERMINISTIC_FALLBACK`，不能把退化结果隐去后声称模型质量通过。
 
 这部分尚未启用到真实运行时；本轮测试、独立数据库与真实验收状态见[实施记录](../eval/p2-1c-20261016T155847Z/VERIFY.md)。
+
+确定性 Pipeline 新任务可用 `PIPELINE_MATERIALS_SOURCE_ONLY=true` 冻结原文资料模式；资料步骤重新校验任务的冻结模型引用。`PIPELINE_STREAMING_TRANSLATION`、`PIPELINE_MATERIALS_PARALLEL` 保持 false，本候选明确拒绝开启未合格的重叠执行路径。兼容性验收失败及 C/E 未纳入说明见[阶段 3](../eval/p2-1c-20261016T155847Z/STAGE3.md)。

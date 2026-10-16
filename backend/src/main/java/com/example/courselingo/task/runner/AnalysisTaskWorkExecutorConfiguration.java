@@ -185,7 +185,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 taskLogMapper,
                 Clock.systemUTC()
             ),
-            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService),
+            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService).withPolicies(pipelinePolicies),
             new GenerateArtifactsStep(
                 analysisTaskMapper,
                 srtArtifactService,

@@ -64,6 +64,9 @@ courselingo:
       checkpoint-enabled: ${PIPELINE_TRANSLATION_CHECKPOINT_ENABLED:true}
       max-recoveries: ${PIPELINE_TRANSLATION_MAX_RECOVERIES:3}
       isolated-runtime: ${PIPELINE_TRANSLATION_ISOLATED_RUNTIME:false}
+      materials-source-only: ${PIPELINE_MATERIALS_SOURCE_ONLY:false}
+      streaming-translation: ${PIPELINE_STREAMING_TRANSLATION:false}
+      materials-parallel: ${PIPELINE_MATERIALS_PARALLEL:false}
       asr:
         enabled: ${PIPELINE_ASR_ADAPTIVE_ENABLED:false}
         initial: ${PIPELINE_ASR_CONCURRENCY_INITIAL:2}

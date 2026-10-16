@@ -48,3 +48,7 @@ sha256sum -c eval/p2-1c-20261016T155847Z/SHA256SUMS
 详见 STAGE2.md。V32 增补 ASR 状态/事件/分片 checkpoint/缓存及不可变输入约束；存储在 task/service，调度在 task/runner，ASR adapter 无数据库依赖。新增 AsrPipelinePolicy 可选字段不改变旧策略序列化。切片规划和 TranscriptParagraphService 同步支持合并后的冻结上限。抽取显式 PCM 与实际 bytes/耗时观测，默认 16000/1 沿用旧值。对应配置在 application.yml 中默认关闭。
 
 执行只读复算：`python3 eval/p2-1c-20261016T155847Z/verify_checks.py --prefix stage2- --final stage2-merged-integration.json`。当前阶段没有编译可运行候选 JAR、没有真实课程请求；所有实际检查数字均由每轮 JSON/JUnit 复算。
+
+## 阶段 3
+
+STAGE3.md 区分特性验收失败与关闭候选的机制回归。stage3-overlap-probe.json：2 项、1 failure/1 error；stage3-qualified-checks.json：101 项通过、0 失败/错误/跳过。两轮均有原始日志与 JUnit hash。复算：`python3 eval/p2-1c-20261016T155847Z/verify_checks.py --prefix stage3- --final stage3-qualified-checks.json`。本轮没有完整 C/E 运行时，两个 overlap 标记冻结为 false，误开启会拒绝。

@@ -13,6 +13,8 @@ final class GenerateLearningPackageStep implements PipelineAnalysisTaskStep {
 
     private final AnalysisTaskMapper analysisTaskMapper;
     private final LearningPackageService learningPackageService;
+    private com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies;
+    GenerateLearningPackageStep withPolicies(com.example.courselingo.subtitle.pipeline.PipelinePolicyService value){policies=value;return this;}
 
     GenerateLearningPackageStep(
         AnalysisTaskMapper analysisTaskMapper,
@@ -43,6 +45,15 @@ final class GenerateLearningPackageStep implements PipelineAnalysisTaskStep {
             : context.requireSpeechToTextResult().language();
         long startedNanos = System.nanoTime();
         try {
+            boolean sourceOnly=false;
+            if(policies!=null) {
+                var frozen=policies.find(context.taskId(),context.userId());
+                if(frozen.isPresent()) {
+                    if(!frozen.get().execution().equals(context.taskContext().systemModels()))
+                        throw com.example.courselingo.ai.llm.TranslationFailure.of(com.example.courselingo.ai.llm.TranslationFailure.Reason.SNAPSHOT_INVALID);
+                    sourceOnly=frozen.get().policy().flow()!=null && frozen.get().policy().flow().sourceOnly();
+                }
+            }
             LearningPackageAiCallResult result = learningPackageService.generateLearningPackageWithAiCallRecord(
                 new GenerateLearningPackageCommand(
                     context.taskId(),
@@ -50,7 +61,7 @@ final class GenerateLearningPackageStep implements PipelineAnalysisTaskStep {
                     sourceLanguage,
                     context.targetLanguage(),
                     context.requestId(),
-                                    context.taskContext().systemModels()
+                                    context.taskContext().systemModels(),sourceOnly
                 )
             );
             context.addAiCallRecord(PipelineAiCallRecord.succeeded(
