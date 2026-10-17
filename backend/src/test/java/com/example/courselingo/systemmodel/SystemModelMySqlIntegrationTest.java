@@ -70,7 +70,7 @@ class SystemModelMySqlIntegrationTest {
     void freshMigrationAndV24UpgradeBothValidate() throws Exception {
         for (String url : List.of(freshUrl, upgradedUrl)) {
             flyway(url).validate();
-            assertThat(flyway(url).info().current().getVersion().toString()).isEqualTo("25");
+            assertThat(flyway(url).info().current().getVersion().toString()).isEqualTo("31");
             try (Connection connection = open(url)) {
                 assertThat(scalar(connection, "SELECT current_version FROM system_model_config_state WHERE id=1")).isEqualTo("0");
                 assertThat(scalar(connection, "SELECT config_sha256 = SHA2(config_json, 256) FROM system_model_config_version WHERE version=0"))
