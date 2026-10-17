@@ -18,6 +18,8 @@ import com.example.courselingo.media.AudioChunker;
 import com.example.courselingo.media.AudioDurationProbe;
 import com.example.courselingo.media.FfmpegAudioExtractor;
 import com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractor;
+import com.example.courselingo.media.SilenceAudioChunkPlanner;
+import com.example.courselingo.subtitle.pipeline.PipelinePolicyService;
 import com.example.courselingo.subtitle.service.SubtitleSegmentPersistenceService;
 import com.example.courselingo.subtitle.service.SubtitleTranslationService;
 import com.example.courselingo.storage.StorageService;
@@ -27,6 +29,8 @@ import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.mapper.TaskLogMapper;
 import com.example.courselingo.task.progress.NoopTaskProgressSnapshotService;
 import com.example.courselingo.task.progress.TaskProgressSnapshotService;
+import com.example.courselingo.task.service.PipelineSourceCheckpointStore;
+import com.example.courselingo.task.usage.PipelineUsageLedger;
 import com.example.courselingo.upload.mapper.UploadSessionMapper;
 import com.example.courselingo.upload.service.ChunkStagingPathResolver;
 import com.example.courselingo.upload.service.ChunkStagingProperties;
@@ -88,6 +92,10 @@ class AnalysisTaskWorkExecutorConfigurationTest {
                 mock(VideoKeyframeEvidenceLifecycleService.class))
             .withBean(TaskClaimService.class, NoopTaskClaimService::new)
             .withBean(TaskProgressSnapshotService.class, NoopTaskProgressSnapshotService::new)
+            .withBean(PipelinePolicyService.class, () -> mock(PipelinePolicyService.class))
+            .withBean(SilenceAudioChunkPlanner.class, () -> mock(SilenceAudioChunkPlanner.class))
+            .withBean(PipelineSourceCheckpointStore.class, () -> mock(PipelineSourceCheckpointStore.class))
+            .withBean(PipelineUsageLedger.class, () -> mock(PipelineUsageLedger.class))
             .run(context -> {
                 assertThat(context).hasSingleBean(AnalysisTaskWorkExecutor.class);
                 assertThat(context).hasSingleBean(PipelineAnalysisTaskWorkExecutor.class);
