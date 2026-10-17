@@ -107,6 +107,8 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
             return lastFailure == null
                 ? VisionAnalysisResult.failed(providerName(), model, elapsedMillis(started), "VISION_PROVIDER_FAILED", "Vision provider request failed")
                 : lastFailure;
+        } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
+            throw safe;
         } catch (Exception exception) {
             lastFailure = VisionAnalysisResult.failed(
                 providerName(),
@@ -131,6 +133,8 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
                     if (!retryableStatus(response.statusCode())) {
                         break;
                     }
+                } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
+                    throw safe;
                 } catch (Exception retryException) {
                     lastFailure = VisionAnalysisResult.failed(
                         providerName(),

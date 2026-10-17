@@ -1,0 +1,133 @@
+[
+  {
+    "name": "stage2-compile-01",
+    "result": null,
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage2-compile-01.log",
+    "log_sha256": "4d1796c66906ff0c1918a4a8b5e3ec5dadeaecd32ca09cbc06622348f17eac3f",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:41:59.902634+00:00",
+      "disk_before": {
+        "used_bytes": 131162255360,
+        "available_bytes": 23715155968,
+        "use_percent": 84.68778902962424
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "test-compile"
+      ],
+      "timeout_seconds": 180,
+      "disk_peak_percent": 84.68782869970877,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131156459520,
+        "available_bytes": 23720951808,
+        "use_percent": 84.6840468183164
+      },
+      "finished_at_utc": "2026-10-16T08:42:10.907821+00:00"
+    }
+  },
+  {
+    "name": "stage2-related-02",
+    "result": {
+      "tests": 198,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage2-related-02.log",
+    "log_sha256": "13e6a225b7f67c754bf90fdf1e246f5f927d34a86acc82624cb38ec1645f2948",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:45:13.734340+00:00",
+      "disk_before": {
+        "used_bytes": 131153575936,
+        "available_bytes": 23723835392,
+        "use_percent": 84.68218496901555
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=SilenceAudioChunkPlannerTest,SilenceAudioMediaIntegrationTest,TranscriptParagraphTest,TranscriptParagraphMySqlTest,SilenceTranscribeStepTest,TranscribeAudioStepTest,SubtitleSegmentPersistenceServiceTest,SubtitleSegmentMapperTest,SubtitleTranslationMapperTest,SubtitleTranslationServiceTest,PipelineTranslationServiceTest,PipelinePolicyMySqlTest,SystemModelAsrMySqlTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,FfmpegAudioExtractorTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68736059271126,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131160539136,
+        "available_bytes": 23716872192,
+        "use_percent": 84.68668091192956
+      },
+      "finished_at_utc": "2026-10-16T08:45:52.774842+00:00"
+    }
+  },
+  {
+    "name": "stage2-related-03",
+    "result": {
+      "tests": 221,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage2-related-03.log",
+    "log_sha256": "8bf89f3fb7cbd324b139015a8d68d33aabfd9c75bafa6d158c898492a4aa57be",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:48:30.348467+00:00",
+      "disk_before": {
+        "used_bytes": 131162447872,
+        "available_bytes": 23714963456,
+        "use_percent": 84.68791332922245
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=SilenceAudioChunkPlannerTest,SilenceAudioMediaIntegrationTest,TranscriptParagraphTest,TranscriptParagraphMySqlTest,SilenceTranscribeStepTest,TranscribeAudioStepTest,SubtitleSegmentPersistenceServiceTest,SubtitleSegmentMapperTest,SubtitleTranslationMapperTest,SubtitleTranslationServiceTest,PipelineTranslationServiceTest,PipelinePolicyMySqlTest,SystemModelAsrMySqlTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,FfmpegAudioExtractorTest,TranslationBatchCoordinatorTest,SystemModelTranslationV2Test",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68979633590173,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131163348992,
+        "available_bytes": 23714062336,
+        "use_percent": 84.68849515712897
+      },
+      "finished_at_utc": "2026-10-16T08:49:11.386502+00:00"
+    }
+  },
+  {
+    "name": "stage2-related-04",
+    "result": {
+      "tests": 222,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage2-related-04.log",
+    "log_sha256": "b1223671e6cf84a326af6553102fb5c2734c6d7cbc8b8c54598301d0fd596545",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:50:51.559903+00:00",
+      "disk_before": {
+        "used_bytes": 131164848128,
+        "available_bytes": 23712563200,
+        "use_percent": 84.68946310719164
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=SilenceAudioChunkPlannerTest,SilenceAudioMediaIntegrationTest,TranscriptParagraphTest,TranscriptParagraphMySqlTest,SilenceTranscribeStepTest,TranscribeAudioStepTest,SubtitleSegmentPersistenceServiceTest,SubtitleSegmentMapperTest,SubtitleTranslationMapperTest,SubtitleTranslationServiceTest,PipelineTranslationServiceTest,PipelinePolicyMySqlTest,SystemModelAsrMySqlTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,FfmpegAudioExtractorTest,TranslationBatchCoordinatorTest,SystemModelTranslationV2Test",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.69125355034033,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131165609984,
+        "available_bytes": 23711801344,
+        "use_percent": 84.68995501623988
+      },
+      "finished_at_utc": "2026-10-16T08:51:31.607548+00:00"
+    }
+  }
+]

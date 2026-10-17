@@ -1,0 +1,62 @@
+[
+  {
+    "event": "completed",
+    "step": "VALIDATE_TASK",
+    "duration_ms": 3
+  },
+  {
+    "event": "completed",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "duration_ms": 6
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_KEYFRAMES",
+    "duration_ms": 3
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_AUDIO",
+    "duration_ms": 7081
+  },
+  {
+    "event": "completed",
+    "step": "TRANSCRIBE",
+    "duration_ms": 95423
+  },
+  {
+    "event": "completed",
+    "step": "PERSIST_SUBTITLES",
+    "duration_ms": 30
+  },
+  {
+    "event": "llm_aligned_batch_translation_started",
+    "segmentCount": 1,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3999
+  },
+  {
+    "event": "system_model_call_completed",
+    "configVersion": 10,
+    "category": "OUTPUT_INVALID",
+    "durationMillis": 15237
+  },
+  {
+    "event": "llm_aligned_batch_translation_failed",
+    "providerErrorCategory": "OUTPUT_INVALID",
+    "httpStatus": "null",
+    "providerErrorCode": "null",
+    "retryable": "false",
+    "responseFormatUsed": "JSON_OBJECT",
+    "attempt": 1,
+    "batchSegmentCount": 1,
+    "batchInputChars": 3093,
+    "durationMillis": 15237
+  },
+  {
+    "event": "failed",
+    "step": "TRANSLATE_SUBTITLES",
+    "duration_ms": 15258
+  }
+]

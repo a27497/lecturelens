@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/verify.py"
+  ],
+  "started_at_utc": "2026-10-15T11:19:50.605285+00:00",
+  "finished_at_utc": "2026-10-15T11:19:51.070430+00:00",
+  "exit_code": 0,
+  "stdout": "{\n  \"lecture_count\": 5,\n  \"unique_audio_hours\": 3.620766111111111,\n  \"finished_trials\": 10,\n  \"time_range_utc\": {\n    \"from\": \"2026-10-15T08:34:13.340709+00:00\",\n    \"to\": \"2026-10-15T11:12:38.648837+00:00\"\n  },\n  \"cer_scored_trials\": 10,\n  \"reference_characters\": 249538,\n  \"edit_distance\": 42335,\n  \"weighted_cer\": 0.16965351970441375,\n  \"processing_ms\": {\n    \"n\": 10,\n    \"mean\": 947371.2965,\n    \"sample_sd\": 242866.85540266344,\n    \"min\": 261057.525,\n    \"max\": 1070140.525\n  },\n  \"successful_index_ready_ms\": {\n    \"n\": 0,\n    \"mean\": null,\n    \"sample_sd\": null,\n    \"min\": null,\n    \"max\": null\n  },\n  \"asr_list_price_cny\": {\n    \"n\": 8,\n    \"mean\": 0.044403175,\n    \"sample_sd\": 0.00707112692609884,\n    \"min\": 0.0397416,\n    \"max\": 0.056237800000000004\n  },\n  \"known_successful_asr_call_fee_cny\": 0.4106304,\n  \"asr_usage_missing_calls\": 2,\n  \"asr_failed_calls\": 2,\n  \"asr_chunk_retries\": 2,\n  \"task_status_counts\": {\n    \"FAILED\": 10\n  },\n  \"translation_status_counts\": {\n    \"FAILED\": 8,\n    \"SUCCEEDED\": 1,\n    \"NOT_STARTED\": 1\n  }\n}\n",
+  "stderr": ""
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "bash",
+    "-o",
+    "pipefail",
+    "-c",
+    ".data/baseline-asr-20261015/.venv/bin/python eval/baseline-asr-20261015/render-verify.py | cmp - eval/baseline-asr-20261015/VERIFY.md"
+  ],
+  "started_at_utc": "2026-10-15T11:23:17.775027+00:00",
+  "finished_at_utc": "2026-10-15T11:23:17.865743+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

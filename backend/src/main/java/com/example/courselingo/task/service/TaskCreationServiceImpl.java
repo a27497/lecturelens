@@ -34,6 +34,12 @@ import java.util.regex.Pattern;
 
 @Service
 public class TaskCreationServiceImpl implements TaskCreationService {
+    private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
+
+    @Autowired(required = false)
+    public void configurePipelinePolicies(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies) {
+        this.pipelinePolicies = policies;
+    }
     private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
 
     @Autowired(required = false)
@@ -165,7 +171,13 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR);
         }
 
-        if (systemModels != null) systemModels.freezePipeline(task.getId(), task.getUserId());
+        if (systemModels != null) {
+            var snapshot = systemModels.freezePipeline(task.getId(), task.getUserId());
+            if (pipelinePolicies != null) pipelinePolicies.freeze(snapshot);
+        } else if (pipelinePolicies != null && pipelinePolicies.enabledForNewTasks()) {
+            throw com.example.courselingo.ai.llm.TranslationFailure.of(
+                com.example.courselingo.ai.llm.TranslationFailure.Reason.SNAPSHOT_INVALID);
+        }
 
         stateService.changeState(AnalysisTaskStateChangeCommand.builder()
             .taskId(task.getId())
@@ -248,7 +260,7 @@ public class TaskCreationServiceImpl implements TaskCreationService {
 
     private AnalysisTaskMessage buildMessage(AnalysisTask task) {
         TracingContext tracingContext = TracingContextHolder.currentOrCreate();
-        return new AnalysisTaskMessage(
+        var message = new AnalysisTaskMessage(
             task.getId(),
             task.getUploadId(),
             task.getUserId(),
@@ -258,6 +270,8 @@ public class TaskCreationServiceImpl implements TaskCreationService {
             tracingContext.traceId(),
             clock.instant()
         );
+        if(pipelinePolicies!=null && pipelinePolicies.find(task.getId(),task.getUserId()).map(p->p.policy().recovery()!=null).orElse(false))return message.withExecution(1);
+        return message;
     }
 
     private void writeMqFailureLog(AnalysisTask task) {

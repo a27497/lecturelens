@@ -27,6 +27,10 @@ record PipelineAiCallRecord(
 ) {
 
     private static final AiCallRecordSanitizer SANITIZER = new AiCallRecordSanitizer();
+    PipelineAiCallRecord withUsage(com.example.courselingo.ai.llm.LlmUsage usage) {
+        return new PipelineAiCallRecord(callType,stage,provider,model,success,durationMillis,providerDurationMillis,batchCount,retryCount,
+            usage.promptTokens(),usage.completionTokens(),usage.totalTokens(),inputUnits,outputUnits,errorCode,errorMessage,retryable,requestFingerprint,responseFingerprint);
+    }
 
     static PipelineAiCallRecord succeeded(
         AiCallType callType,

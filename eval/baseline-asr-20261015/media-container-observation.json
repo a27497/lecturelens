@@ -1,0 +1,335 @@
+[
+  {
+    "source_id": "algorithms",
+    "original": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 95851046,
+          "duration": "3198.233100"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 0,
+          "duration": "0.000000"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 153650176,
+          "duration": "3201.045333"
+        },
+        {
+          "codec_type": "subtitle",
+          "time_base": "1/1000",
+          "start_time": "0.000000",
+          "duration_ts": 3199000,
+          "duration": "3199.000000"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 288094080,
+          "duration": "3201.045333"
+        }
+      ],
+      "format": {
+        "duration": "3201.045333"
+      }
+    },
+    "evaluation": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 95851046,
+          "duration": "3198.233100"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 153650176,
+          "duration": "3201.045333"
+        }
+      ],
+      "format": {
+        "duration": "3201.045333"
+      }
+    }
+  },
+  {
+    "source_id": "calculus",
+    "original": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 208822918,
+          "duration": "2320.254644"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 0,
+          "duration": "0.000000"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration_ts": 102325248,
+          "duration": "2320.300408"
+        },
+        {
+          "codec_type": "subtitle",
+          "time_base": "1/1000",
+          "start_time": "0.000000",
+          "duration_ts": 2324010,
+          "duration": "2324.010000"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 208827037,
+          "duration": "2320.300411"
+        }
+      ],
+      "format": {
+        "duration": "2320.300408"
+      }
+    },
+    "evaluation": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 208822918,
+          "duration": "2320.254644"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration_ts": 102325248,
+          "duration": "2320.300408"
+        }
+      ],
+      "format": {
+        "duration": "2320.300408"
+      }
+    }
+  },
+  {
+    "source_id": "economics",
+    "original": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 61556302,
+          "duration": "2053.930664"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 0,
+          "duration": "0.000000"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 98588672,
+          "duration": "2053.930667"
+        },
+        {
+          "codec_type": "subtitle",
+          "time_base": "1/1000",
+          "start_time": "0.000000",
+          "duration_ts": 2052230,
+          "duration": "2052.230000"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 184853760,
+          "duration": "2053.930667"
+        }
+      ],
+      "format": {
+        "duration": "2053.930667"
+      }
+    },
+    "evaluation": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 61556302,
+          "duration": "2053.930664"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 98588672,
+          "duration": "2053.930667"
+        }
+      ],
+      "format": {
+        "duration": "2053.930667"
+      }
+    }
+  },
+  {
+    "source_id": "linear",
+    "original": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 214993779,
+          "duration": "2388.819767"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 114664416,
+          "duration": "2388.842000"
+        },
+        {
+          "codec_type": "subtitle",
+          "time_base": "1/1000000",
+          "start_time": "0.000000",
+          "duration_ts": 2369810000,
+          "duration": "2369.810000"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 214995780,
+          "duration": "2388.842000"
+        }
+      ],
+      "format": {
+        "duration": "2388.842000"
+      }
+    },
+    "evaluation": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 214993779,
+          "duration": "2388.819767"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 114664416,
+          "duration": "2388.842000"
+        }
+      ],
+      "format": {
+        "duration": "2388.842000"
+      }
+    }
+  },
+  {
+    "source_id": "probability",
+    "original": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 92021167,
+          "duration": "3070.442676"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 0,
+          "duration": "0.000000"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 147381248,
+          "duration": "3070.442667"
+        },
+        {
+          "codec_type": "subtitle",
+          "time_base": "1/1000",
+          "start_time": "0.000000",
+          "duration_ts": 3070640,
+          "duration": "3070.640000"
+        },
+        {
+          "codec_type": "video",
+          "time_base": "1/90000",
+          "start_time": "0.000000",
+          "duration_ts": 276357600,
+          "duration": "3070.640000"
+        }
+      ],
+      "format": {
+        "duration": "3070.640000"
+      }
+    },
+    "evaluation": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "time_base": "1/29970",
+          "start_time": "0.000000",
+          "duration_ts": 92021167,
+          "duration": "3070.442676"
+        },
+        {
+          "codec_type": "audio",
+          "time_base": "1/48000",
+          "start_time": "0.000000",
+          "duration_ts": 147381248,
+          "duration": "3070.442667"
+        }
+      ],
+      "format": {
+        "duration": "3070.442676"
+      }
+    }
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "frozen_before_remaining_trials_utc": "2026-10-15T08:37:25.193874+00:00",
+  "path": "eval/baseline-asr-20261015/run-v3.py",
+  "sha256": "f364a5a3898ecbe5f85d27c72741b88685523fe8abdc46b1e7065a5b11ab11ec",
+  "change": "Driver only: completed trials never rerun; successful missing usage still stops. Failed calls with missing usage reserve 1 CNY each for budget control only, never reported as actual cost; reserve 3 CNY for old invalid/probe unknown calls, stop before next trial above 15 CNY guarded total. Same corpus, runtime, normalization and per-trial dispatch."
+}

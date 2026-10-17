@@ -1,0 +1,12 @@
+{
+  "valid_baseline": false,
+  "reason": "ASR HTTP proxy produced two ReadTimeouts and its missing-usage guard returned HTTP 402 for subsequent calls; direct 180-second diagnostic succeeded in 6521.501 ms. These trials cannot establish production ASR accuracy, failure rate or latency.",
+  "preserved_raw": [
+    "trials.jsonl",
+    "http-calls.jsonl",
+    "predictions/"
+  ],
+  "runner_stopped": true,
+  "pending_observation": "calculus-2 submitted before stop; runtime can finish independently; do not resubmit as a clean trial",
+  "new_batch": "batch-v2"
+}

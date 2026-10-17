@@ -1,0 +1,6 @@
+{
+  "result": "FAILED_BEFORE_UPLOAD",
+  "category": "DRIVER_TIMESTAMP_FORMAT",
+  "reason": "Local precheck initially expected HH:MM:SS, ffmpeg emitted MM:SS. Parser corrected; no task/configuration mutation or provider call in this attempt.",
+  "preserved_driver": ".data/system-model-management/deepseek-20261016/start-trial-attempt-01.py"
+}

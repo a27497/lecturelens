@@ -1,0 +1,57 @@
+[
+  {
+    "source_id": "algorithms",
+    "upload_id": "up_ccbcc50f28674f8c80e5c5d5c45effbe",
+    "source_sha256": "14654a86b1f2954a09818a0abaea6442ec2c84ca909619d1213d83fb837d817a",
+    "object_key": "raw/9/up_ccbcc50f28674f8c80e5c5d5c45effbe/source.mp4",
+    "object_bytes": 121139855,
+    "etag": "4033300d69e5563f50318e7a3a5818c1-24",
+    "object_stream_sha256": "14654a86b1f2954a09818a0abaea6442ec2c84ca909619d1213d83fb837d817a",
+    "source_sha256_verified": true,
+    "media_copied_to_disk": false
+  },
+  {
+    "source_id": "calculus",
+    "upload_id": "up_5899b2e936244fb49cfcb86027728d44",
+    "source_sha256": "d46c4aee5f5104c2e642c6dbbb8df813aebd20e84f6bc2b88070b3c6f8098750",
+    "object_key": "raw/9/up_5899b2e936244fb49cfcb86027728d44/source.mp4",
+    "object_bytes": 89203111,
+    "etag": "e5c5ea94345e83324bdd7fd81eda767e-18",
+    "object_stream_sha256": "d46c4aee5f5104c2e642c6dbbb8df813aebd20e84f6bc2b88070b3c6f8098750",
+    "source_sha256_verified": true,
+    "media_copied_to_disk": false
+  },
+  {
+    "source_id": "economics",
+    "upload_id": "up_062069063b154670a1cf03a095faa34b",
+    "source_sha256": "116afb01df8dc39dc048273a91ce9e03df793a6cda12364d19b165da43e56222",
+    "object_key": "raw/9/up_062069063b154670a1cf03a095faa34b/source.mp4",
+    "object_bytes": 78301654,
+    "etag": "b4263317ba2aca35d3437bebd7056404-15",
+    "object_stream_sha256": "116afb01df8dc39dc048273a91ce9e03df793a6cda12364d19b165da43e56222",
+    "source_sha256_verified": true,
+    "media_copied_to_disk": false
+  },
+  {
+    "source_id": "linear",
+    "upload_id": "up_f072268112e2483aa31a6028673f77d6",
+    "source_sha256": "e547ab7cfa64c44cd53b246089d2fa531f83dcce5123ccb136bd92e801f1e2db",
+    "object_key": "raw/9/up_f072268112e2483aa31a6028673f77d6/source.mp4",
+    "object_bytes": 92213820,
+    "etag": "bf2e793a0ba87b124a59828d5abb3209-18",
+    "object_stream_sha256": "e547ab7cfa64c44cd53b246089d2fa531f83dcce5123ccb136bd92e801f1e2db",
+    "source_sha256_verified": true,
+    "media_copied_to_disk": false
+  },
+  {
+    "source_id": "probability",
+    "upload_id": "up_53f22a0c58c742bcb947bfd913b64771",
+    "source_sha256": "ab0e133be2fde82f0b86bdb3a92c18578e9c58a2d8c1961ff9fa65fa528ce934",
+    "object_key": "raw/9/up_53f22a0c58c742bcb947bfd913b64771/source.mp4",
+    "object_bytes": 117799230,
+    "etag": "cd0414a526b9fa8d017e353dd8c7e78d-23",
+    "object_stream_sha256": "ab0e133be2fde82f0b86bdb3a92c18578e9c58a2d8c1961ff9fa65fa528ce934",
+    "source_sha256_verified": true,
+    "media_copied_to_disk": false
+  }
+]

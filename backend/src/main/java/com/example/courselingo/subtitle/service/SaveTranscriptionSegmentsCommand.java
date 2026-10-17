@@ -5,6 +5,8 @@ import com.example.courselingo.ai.asr.SpeechToTextResult;
 public record SaveTranscriptionSegmentsCommand(
     String taskId,
     Long userId,
-    SpeechToTextResult result
+    SpeechToTextResult result,
+    String executionEventId
 ) {
+    public SaveTranscriptionSegmentsCommand(String taskId,Long userId,SpeechToTextResult result){this(taskId,userId,result,null);}
 }

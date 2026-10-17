@@ -1,0 +1,9 @@
+{
+  "allowedOrigins": [
+    "https://api.deepseek.com"
+  ],
+  "timeoutMillis": 10000,
+  "concurrency": 2,
+  "responseLimitBytes": 65536,
+  "asrFixtureSha256": "b0d37d5e191ec3a1aac79f780279c4180573be25c4e53a4844e6690a515c51e7"
+}

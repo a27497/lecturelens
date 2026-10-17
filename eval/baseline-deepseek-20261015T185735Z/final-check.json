@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-15T19:32:45.504082+00:00",
+  "disk": {
+    "utc": "2026-10-15T19:32:45.504118+00:00",
+    "total_bytes": 154894188544,
+    "available_bytes": 25932439552,
+    "percent": 83.2579648108402
+  },
+  "active_tasks": [],
+  "original_baseline_db_unchanged": true,
+  "services_unchanged": {
+    "lecturelens-live-backend": true,
+    "lecturelens-live-agent": true,
+    "lecturelens-live-model": true
+  },
+  "jar_unchanged": true,
+  "binding_retained": true,
+  "version": 10,
+  "business_code_changed": false,
+  "production_parameters_changed": false
+}

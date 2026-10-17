@@ -27,6 +27,9 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
     private final RocketMqAnalysisTaskMessageProducer transport;
     private final VideoKeyframeEvidenceLifecycleService cleanup;
     private final TransactionTemplate transaction;
+    private PipelineCheckpointDeletion pipelineDeletion;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    public void configurePipelineDeletion(PipelineCheckpointDeletion value){pipelineDeletion=value;}
 
     public DurableTaskOutbox(JdbcTemplate jdbc, ObjectMapper json, RocketMqAnalysisTaskMessageProducer transport,
                              VideoKeyframeEvidenceLifecycleService cleanup, PlatformTransactionManager manager) {
@@ -43,9 +46,13 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
         message.validate();
         String eventId = UUID.randomUUID().toString();
         var event = new AnalysisTaskMessage(message.taskId(), message.uploadId(), message.userId(),
-            message.sourceLanguage(), message.targetLanguage(), eventId, message.traceId(), message.createdAt());
+            message.sourceLanguage(), message.targetLanguage(), eventId, message.traceId(), message.createdAt(),message.protocolVersion(),message.executionEpoch());
         try {
-            insert(eventId, message.taskId(), message.userId(), tag.name(), json.writeValueAsString(event));
+            if(message.protocol()==2)jdbc.update("""
+                INSERT INTO task_outbox(event_id,task_id,user_id,event_type,payload,status,attempts,available_at,created_at,protocol_version,execution_epoch)
+                VALUES(?,?,?,?,?,'PENDING',0,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,2,?)
+                """,eventId,message.taskId(),message.userId(),tag.name(),json.writeValueAsString(event),message.epoch());
+            else insert(eventId, message.taskId(), message.userId(), tag.name(), json.writeValueAsString(event));
         } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
             throw new IllegalStateException("Cannot serialize task event", exception);
         }
@@ -76,6 +83,7 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
                     transaction.executeWithoutResult(status -> {
                         jdbc.update("DELETE FROM course_evidence WHERE task_id=? AND user_id=?", event.taskId(), event.userId());
                         jdbc.update("DELETE FROM course_evidence_snapshot WHERE task_id=? AND user_id=?", event.taskId(), event.userId());
+                        if(pipelineDeletion!=null)pipelineDeletion.clearDeleted(event.taskId(),event.userId());
                     });
                 } else {
                     transport.send(AnalysisTaskMessageTag.valueOf(event.type()),
@@ -108,7 +116,9 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
                 UPDATE task_outbox SET status='DELIVERING',claim_id=?,claim_until=?,attempts=? WHERE event_id=?
                 """, claimId, Timestamp.from(Instant.now().plusSeconds(300)), attempts, id);
             return new Event(id, (String) row.get("task_id"), ((Number) row.get("user_id")).longValue(),
-                (String) row.get("event_type"), (String) row.get("payload"), attempts, claimId);
+                (String) row.get("event_type"), (String) row.get("payload"), attempts, claimId,
+                row.get("protocol_version")==null?1:((Number)row.get("protocol_version")).intValue(),
+                row.get("execution_epoch")==null?0:((Number)row.get("execution_epoch")).longValue());
         });
     }
 
@@ -121,7 +131,14 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
                 """, exhausted ? "DEAD" : "PENDING",
                 Timestamp.from(Instant.now().plusSeconds(Math.min(300, 1L << Math.min(event.attempts(), 8)))),
                 exception.getClass().getSimpleName(), event.id(), event.claimId());
-            if (updated == 1 && exhausted && event.type().equals("ANALYSIS_CREATED")) {
+            if(updated==1 && exhausted && event.protocol()==2) {
+                jdbc.update("""
+                    UPDATE analysis_task SET status='FAILED',error_code='MQ_DELIVERY_EXHAUSTED',error_message='Frozen task delivery exhausted',
+                    finished_at=CURRENT_TIMESTAMP WHERE id=? AND user_id=? AND status IN ('QUEUED','RETRYING') AND deleted_at IS NULL
+                    AND (EXISTS(SELECT 1 FROM task_execution WHERE task_id=? AND execution_epoch=?)
+                        OR (?=1 AND NOT EXISTS(SELECT 1 FROM task_execution WHERE task_id=?)))
+                    """,event.taskId(),event.userId(),event.taskId(),event.epoch(),event.epoch(),event.taskId());
+            } else if (updated == 1 && exhausted && event.type().equals("ANALYSIS_CREATED")) {
                 jdbc.update("""
                     UPDATE analysis_task SET status='FAILED',error_code='MQ_DELIVERY_EXHAUSTED',
                     error_message='Task delivery failed; create a retry task',finished_at=CURRENT_TIMESTAMP
@@ -133,5 +150,5 @@ public class DurableTaskOutbox implements AnalysisTaskMessageProducer {
             event.id(), event.taskId(), event.attempts(), exhausted, exception.getClass().getSimpleName());
     }
 
-    private record Event(String id, String taskId, Long userId, String type, String payload, int attempts, String claimId) { }
+    private record Event(String id, String taskId, Long userId, String type, String payload, int attempts, String claimId,int protocol,long epoch) { }
 }

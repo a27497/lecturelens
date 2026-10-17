@@ -1,0 +1,16 @@
+[
+  {
+    "call_id": "84478cc6-2ca3-45b6-b054-25c8b4070390",
+    "task_id": "task_bca24366edcd4e09b38f38b213817485",
+    "http_status": 403,
+    "request_body_bytes": 863940,
+    "request_body_hash": "dd69a11b2dc0f70ae02f022d286b561c1f4dfd0bbe9e82a4d2c78aff59022c3d",
+    "request_max_tokens": null,
+    "response_chars": 178,
+    "response_truncated": false,
+    "private_excerpt_sha256": null,
+    "error_type": null,
+    "input_tokens": null,
+    "context_limit": null
+  }
+]

@@ -31,14 +31,25 @@ class ProcessBuilderFfmpegProcessExecutor implements FfmpegProcessExecutor {
 
     @Override
     public FfmpegProcessResult execute(List<String> command, Duration timeout) throws IOException, InterruptedException {
+        return execute(command,timeout,STREAM_CAPTURE_LIMIT_BYTES,false);
+    }
+
+    @Override
+    public FfmpegProcessResult executeBounded(List<String> command,Duration timeout,int captureBytes) throws IOException,InterruptedException {
+        if(captureBytes<1024 || captureBytes>256*1024) throw new IllegalArgumentException("Invalid capture limit");
+        return execute(command,timeout,captureBytes,true);
+    }
+
+    private FfmpegProcessResult execute(List<String> command,Duration timeout,int captureBytes,boolean markTruncation)
+            throws IOException,InterruptedException {
         Process process = processStarter.start(List.copyOf(command));
         ExecutorService streamReaders = Executors.newFixedThreadPool(2, runnable -> {
             Thread thread = new Thread(runnable, "courselingo-ffmpeg-stream-reader");
             thread.setDaemon(true);
             return thread;
         });
-        Future<String> stdout = streamReaders.submit(readStream(process.getInputStream()));
-        Future<String> stderr = streamReaders.submit(readStream(process.getErrorStream()));
+        Future<String> stdout = streamReaders.submit(readStream(process.getInputStream(),captureBytes,markTruncation));
+        Future<String> stderr = streamReaders.submit(readStream(process.getErrorStream(),captureBytes,markTruncation));
         try {
             boolean finished = process.waitFor(timeout.toMillis(), TimeUnit.MILLISECONDS);
             if (!finished) {
@@ -103,18 +114,20 @@ class ProcessBuilderFfmpegProcessExecutor implements FfmpegProcessExecutor {
         }
     }
 
-    private Callable<String> readStream(InputStream stream) {
+    private Callable<String> readStream(InputStream stream,int captureBytes,boolean markTruncation) {
         return () -> {
             byte[] buffer = new byte[1024];
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             int read;
+            boolean truncated=false;
             while ((read = stream.read(buffer)) != -1) {
-                int writable = Math.min(read, STREAM_CAPTURE_LIMIT_BYTES - output.size());
+                int writable = Math.min(read, captureBytes - output.size());
+                if (writable<read) truncated=true;
                 if (writable > 0) {
                     output.write(buffer, 0, writable);
                 }
             }
-            return output.toString(StandardCharsets.UTF_8);
+            return output.toString(StandardCharsets.UTF_8) + (markTruncation && truncated ? "\n[OUTPUT_TRUNCATED]\n" : "");
         };
     }
 

@@ -1,0 +1,68 @@
+{
+  "task": [
+    {
+      "id": "task_5b6b1585bf3d4b57b28d91fe9cdf68f2",
+      "status": "CANCELED",
+      "current_stage": null,
+      "error_code": null,
+      "created_at": "2026-10-16 12:25:15.008000",
+      "started_at": null,
+      "finished_at": "2026-10-16 12:26:24.991000"
+    }
+  ],
+  "policy": [
+    {
+      "snapshot_id": "9dfb7d1a-3c4f-4191-a760-7f4d633c9f02",
+      "config_version": 10,
+      "engine_version": "translation-v2.5",
+      "policy_hash": "bdb53cb192e14529d037af3b0c1d34550b2e2b8c5f4cde826e79342f069445cf",
+      "prompt_hash": "d3a9f6b76f01a59839c04a2bfc2cfba1b8c0767500ac2374145babe07cf13c2a",
+      "deadline": "2026-10-16 12:55:15.008000"
+    }
+  ],
+  "routes": [
+    {
+      "id": "9dfb7d1a-3c4f-4191-a760-7f4d633c9f02",
+      "config_version": 10,
+      "translation_source": "DATABASE",
+      "translation_model": "deepseek-flash"
+    }
+  ],
+  "execution": [],
+  "batches": [],
+  "attempts": [],
+  "calls": [],
+  "scheduler": [],
+  "checkpoints": [],
+  "outbox": [
+    {
+      "event_id": "e87b80ff-0497-41e8-8241-016c45406b73",
+      "event_type": "ANALYSIS_CREATED",
+      "status": "SENT",
+      "attempts": 1,
+      "protocol_version": 2,
+      "execution_epoch": 1,
+      "created_at": "2026-10-16 12:25:15",
+      "completed_at": "2026-10-16 12:25:15"
+    },
+    {
+      "event_id": "d912617d-b321-4a88-9c3f-c7b6fb518efe",
+      "event_type": "ANALYSIS_CANCEL",
+      "status": "SENT",
+      "attempts": 1,
+      "protocol_version": 1,
+      "execution_epoch": null,
+      "created_at": "2026-10-16 12:26:24",
+      "completed_at": "2026-10-16 12:26:25"
+    }
+  ],
+  "timing": [],
+  "publication": [],
+  "coverage": [
+    {
+      "source_segments": 0,
+      "translated_segments": null,
+      "nonempty_translations": null
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 package com.example.courselingo.systemmodel;
 
+import com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics;
+
 import com.example.courselingo.ai.llm.*;
 import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 
@@ -16,8 +18,14 @@ public final class SystemModelLlmProvider implements LlmProvider {
             OpenAiCompatibleLlmClient http,
             SystemModelUrlPolicy addresses,
             OpenAiCompatibleLlmClient legacy) {
+        this(executions, http, addresses, legacy, null);
+    }
+
+    SystemModelLlmProvider(SystemModelExecutionService executions, OpenAiCompatibleLlmClient http,
+            SystemModelUrlPolicy addresses, OpenAiCompatibleLlmClient legacy,
+            TranslationCallDiagnostics diagnostics) {
         this.executions = executions;
-        this.chat = new SystemModelChatClient(http, addresses);
+        this.chat = new SystemModelChatClient(http, addresses, diagnostics);
         this.legacy = legacy;
     }
 
@@ -30,11 +38,16 @@ public final class SystemModelLlmProvider implements LlmProvider {
     public LlmResult generate(LlmRequest request) {
         long started = System.nanoTime();
         String outcome = "FAILED", category = "UNKNOWN";
-        try {
+        try (var ignored=com.example.courselingo.ai.llm.ModelCallScope.open(request==null?null:new com.example.courselingo.ai.llm.ModelCallScope.Context(
+                request.execution(),(String)request.metadata().get(AiModelRoutedLlmRequestFactory.METADATA_STAGE),null,
+                (String)request.metadata().get("translationAttemptId"),request.requestId(),null,null,null))) {
             LlmResult result = generateFrozen(request);
             outcome = "SUCCEEDED";
             category = "NONE";
             return result;
+        } catch (com.example.courselingo.ai.llm.TranslationFailure failure) {
+            category = failure.reason().name();
+            throw failure;
         } catch (SystemModelCallFailure failure) {
             category = failure.category();
             throw failure;
@@ -97,6 +110,8 @@ public final class SystemModelLlmProvider implements LlmProvider {
                     result.usage(),
                     result.duration(),
                     metadata);
+        } catch (com.example.courselingo.ai.llm.TranslationFailure failure) {
+            throw failure;
         } catch (RuntimeException failure) {
             var details = LlmProviderFailureClassifier.from(failure);
             throw new SystemModelCallFailure(
@@ -112,6 +127,8 @@ public final class SystemModelLlmProvider implements LlmProvider {
         OpenAiCompatibleClientResponse result;
         try {
             result = legacy.complete(request);
+        } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {
+            throw safe;
         } catch (RuntimeException failure) {
             var details = LlmProviderFailureClassifier.from(failure);
             var category =

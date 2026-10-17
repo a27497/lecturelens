@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-16T12:27:25.243334+00:00",
+  "keys": [
+    {
+      "key": "cl:t:progress:task_5b6b1585bf3d4b57b28d91fe9cdf68f2",
+      "type": "string",
+      "ttl_seconds": 86340
+    }
+  ],
+  "values_read": false,
+  "database": 15,
+  "initial_checks_empty": true,
+  "nonempty_gate": "STOP",
+  "keys_deleted": 0,
+  "database_changed": false
+}

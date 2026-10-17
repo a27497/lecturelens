@@ -48,6 +48,7 @@ public enum ErrorCode {
     TASK_NOT_FOUND("TASK_NOT_FOUND", "任务不存在", HttpStatus.NOT_FOUND),
     TASK_NOT_OWNER("TASK_NOT_OWNER", "无权访问该任务", HttpStatus.FORBIDDEN),
     TASK_INVALID_STATUS("TASK_INVALID_STATUS", "任务状态不允许当前操作", HttpStatus.CONFLICT),
+    TASK_RESUME_CONFLICT("TASK_RESUME_CONFLICT", "任务无法续跑或执行版本已变化", HttpStatus.CONFLICT),
     TASK_RETRY_NOT_ALLOWED("TASK_RETRY_NOT_ALLOWED", "任务不允许重新分析", HttpStatus.CONFLICT),
     TASK_DELETE_NOT_ALLOWED("TASK_DELETE_NOT_ALLOWED", "存在仍在处理中的课程，请先取消处理后再删除", HttpStatus.CONFLICT),
     TASK_RATE_LIMITED("TASK_RATE_LIMITED", "任务创建过于频繁", HttpStatus.TOO_MANY_REQUESTS),

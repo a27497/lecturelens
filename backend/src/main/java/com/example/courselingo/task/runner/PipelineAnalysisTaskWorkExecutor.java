@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecutor {
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    public PipelineAnalysisTaskWorkExecutor withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineAnalysisTaskWorkExecutor.class);
 
@@ -77,6 +79,14 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
 
     @Override
     public AnalysisTaskWorkResult execute(AnalysisTaskExecutionContext context) {
+        try(var ignored=context.protocolVersion()==2
+            ?com.example.courselingo.task.service.PipelineExecutionScope.open(context.taskId(),context.userId(),context.requestId(),context.executionEpoch())
+            :com.example.courselingo.task.service.PipelineExecutionScope.clear()) {
+            return executePipeline(context);
+        }
+    }
+
+    private AnalysisTaskWorkResult executePipeline(AnalysisTaskExecutionContext context) {
         validateContext(context);
         List<PipelineAnalysisTaskStepName> completed = new ArrayList<>();
         PipelineAnalysisTaskStepContext stepContext = new PipelineAnalysisTaskStepContext(
@@ -84,8 +94,25 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             completed
         );
         boolean completedSuccessfully = false;
+        boolean restoredSource=false,restoredCapture=false;
+        if(context.protocolVersion()==2) {
+            if(checkpoints==null)throw new IllegalStateException("Pipeline checkpoints unavailable");
+            var source=checkpoints.restore(context.taskId(),context.userId(),context.requestId(),context.executionEpoch());
+            restoredSource=source.isPresent();
+            if(restoredSource){stepContext.setSpeechToTextResult(source.orElseThrow());stepContext.markAsrBranchRunning();}
+            restoredCapture=checkpoints.captureReady(context.taskId(),context.userId(),context.requestId(),context.executionEpoch());
+            if(restoredCapture)stepContext.setRestoredVisionCapture();
+        }
         try {
             for (PipelineAnalysisTaskStep step : steps) {
+                if(restoredSource && List.of(PipelineAnalysisTaskStepName.EXTRACT_AUDIO,PipelineAnalysisTaskStepName.TRANSCRIBE,
+                    PipelineAnalysisTaskStepName.PERSIST_SUBTITLES).contains(step.name())
+                    || restoredCapture && step.name()==PipelineAnalysisTaskStepName.EXTRACT_KEYFRAMES) {
+                    completed.add(step.name());
+                    LOGGER.info("event=pipeline_checkpoint_reused taskId={} stepName={} epoch={}",
+                        SafeLogSanitizer.sanitize(context.taskId()),step.name(),context.executionEpoch());
+                    continue;
+                }
                 if (step.name() == PipelineAnalysisTaskStepName.EXTRACT_AUDIO) {
                     stepContext.markAsrBranchRunning();
                 }
@@ -172,7 +199,7 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             return new AnalysisTaskWorkResult(true, null, null);
         } finally {
             stepContext.cancelVisionBranchAndAwaitExit();
-            if (!completedSuccessfully && evidenceLifecycleService != null) {
+            if (!completedSuccessfully && evidenceLifecycleService != null && context.protocolVersion()!=2) {
                 cleanupFailedTaskEvidence(stepContext);
             }
             if (workspace != null) {

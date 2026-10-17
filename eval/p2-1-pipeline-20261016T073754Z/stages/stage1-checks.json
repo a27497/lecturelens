@@ -1,0 +1,138 @@
+[
+  {
+    "name": "stage1-unit-01",
+    "result": {
+      "tests": 192,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage1-unit-01.log",
+    "log_sha256": "d6ebd8db8963f8d025e8dadb8be56b818596f5d79829f73efcb17d82e5852c78",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:21:52.176482+00:00",
+      "disk_before": {
+        "used_bytes": 131152838656,
+        "available_bytes": 23724572672,
+        "use_percent": 84.68170892800113
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationBatchCoordinatorTest,SystemModelTranslationV2Test,PipelineTranslationServiceTest,TranslationCallDiagnosticsTest,SystemModelTranslationObservationTest,SubtitleTranslationServiceTest,SubtitleTranslationResponseParserTest,SubtitleTranslationPromptFactoryTest,OpenAiCompatibleLlmProviderTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68287522848647,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131154853888,
+        "available_bytes": 23722557440,
+        "use_percent": 84.68301010677388
+      },
+      "finished_at_utc": "2026-10-16T08:22:24.215268+00:00"
+    }
+  },
+  {
+    "name": "stage1-unit-02",
+    "result": {
+      "tests": 192,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage1-unit-02.log",
+    "log_sha256": "142efd7c1b8a8b0a069fccf2eb3d421e6f85c5e4dbd9853aa337a0c4bfdebae7",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:23:18.063116+00:00",
+      "disk_before": {
+        "used_bytes": 131155312640,
+        "available_bytes": 23722098688,
+        "use_percent": 84.68330631007174
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationBatchCoordinatorTest,SystemModelTranslationV2Test,PipelineTranslationServiceTest,TranslationCallDiagnosticsTest,SystemModelTranslationObservationTest,SubtitleTranslationServiceTest,SubtitleTranslationResponseParserTest,SubtitleTranslationPromptFactoryTest,OpenAiCompatibleLlmProviderTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68335655884549,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131154087936,
+        "available_bytes": 23723323392,
+        "use_percent": 84.68251555305335
+      },
+      "finished_at_utc": "2026-10-16T08:23:48.077559+00:00"
+    }
+  },
+  {
+    "name": "stage1-mysql-01",
+    "result": {
+      "tests": 47,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage1-mysql-01.log",
+    "log_sha256": "8b4d509568e4bb2c2977c68a330624539d07ee1d57056ce291285f1858eeb570",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:24:40.698186+00:00",
+      "disk_before": {
+        "used_bytes": 131154931712,
+        "available_bytes": 23722479616,
+        "use_percent": 84.68306035554762
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=PipelinePolicyMySqlTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68346234573758,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131155259392,
+        "available_bytes": 23722151936,
+        "use_percent": 84.68327192933182
+      },
+      "finished_at_utc": "2026-10-16T08:25:02.706229+00:00"
+    }
+  },
+  {
+    "name": "stage1-combined-03",
+    "result": {
+      "tests": 252,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage1-combined-03.log",
+    "log_sha256": "267e4a694fbf52f6a1bd669462610532f8978b21d130cfddebfa0cf422ab1e88",
+    "execution": {
+      "started_at_utc": "2026-10-16T08:26:48.042931+00:00",
+      "disk_before": {
+        "used_bytes": 131156275200,
+        "available_bytes": 23721136128,
+        "use_percent": 84.6839278080628
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationBatchCoordinatorTest,SystemModelTranslationV2Test,PipelineTranslationServiceTest,TranslationFailureDiagnosticTest,TaskCreationServiceTest,PipelinePolicyMySqlTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,TranslationCallDiagnosticsTest,SystemModelTranslationObservationTest,SubtitleTranslationServiceTest,SubtitleTranslationResponseParserTest,SubtitleTranslationPromptFactoryTest,OpenAiCompatibleLlmProviderTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.68467625032437,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131156848640,
+        "available_bytes": 23720562688,
+        "use_percent": 84.68429806218514
+      },
+      "finished_at_utc": "2026-10-16T08:27:31.107977+00:00"
+    }
+  }
+]

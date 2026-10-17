@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TaskFullTextResultQueryServiceImpl implements TaskFullTextResultQueryService {
+    private com.example.courselingo.subtitle.pipeline.TranscriptParagraphService paragraphs;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    public void configureParagraphs(com.example.courselingo.subtitle.pipeline.TranscriptParagraphService value){paragraphs=value;}
 
     private final TaskFullTextResultMapper mapper;
 
@@ -18,7 +21,12 @@ public class TaskFullTextResultQueryServiceImpl implements TaskFullTextResultQue
     @Override
     public Optional<TaskFullTextResultView> getByTaskAndLanguage(String taskId, Long userId, String targetLanguage) {
         return Optional.ofNullable(mapper.selectByTaskIdUserIdAndTargetLanguage(taskId, userId, targetLanguage))
-            .map(TaskFullTextResultQueryServiceImpl::toView);
+            .map(entity -> {
+                var view=toView(entity);
+                return paragraphs==null?view:new TaskFullTextResultView(view.taskId(),view.sourceLanguage(),view.targetLanguage(),
+                    view.sourceFullText(),view.translatedFullText(),view.provider(),view.createdAt(),view.updatedAt(),
+                    paragraphs.aligned(taskId,userId,targetLanguage));
+            });
     }
 
     private static TaskFullTextResultView toView(TaskFullTextResult entity) {

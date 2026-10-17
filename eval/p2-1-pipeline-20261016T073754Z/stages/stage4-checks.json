@@ -1,0 +1,196 @@
+[
+  {
+    "name": "stage4-checkpoint03",
+    "result": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-checkpoint03.log",
+    "log_sha256": "012783e78fb4124fbb3bc904705d799d6224b800348009b419f161927a3af1e3",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:40:38.604934+00:00",
+      "disk_before": {
+        "used_bytes": 131185483776,
+        "available_bytes": 23691927552,
+        "use_percent": 84.70278696625091
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationCheckpointMySqlTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.70315457570094,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131185954816,
+        "available_bytes": 23691456512,
+        "use_percent": 84.70309110356568
+      },
+      "finished_at_utc": "2026-10-16T09:41:10.618421+00:00"
+    }
+  },
+  {
+    "name": "stage4-compile-01",
+    "result": null,
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-compile-01.log",
+    "log_sha256": "8a0de3d1b5ec5ca7c9080c4047a157bdac7e5c2444b018e0d935bd8e1a940cdf",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:25:31.337104+00:00",
+      "disk_before": {
+        "used_bytes": 131178266624,
+        "available_bytes": 23699144704,
+        "use_percent": 84.69812705365416
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "test-compile"
+      ],
+      "timeout_seconds": 180,
+      "disk_peak_percent": 84.69837300817828,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131178598400,
+        "available_bytes": 23698812928,
+        "use_percent": 84.69834127211065
+      },
+      "finished_at_utc": "2026-10-16T09:25:53.373448+00:00"
+    }
+  },
+  {
+    "name": "stage4-compile-02",
+    "result": null,
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-compile-02.log",
+    "log_sha256": "a2e9410c5915d47bde6e3da4dec1e3d5df63418c9158fa087484058c802620f7",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:33:35.876428+00:00",
+      "disk_before": {
+        "used_bytes": 131182268416,
+        "available_bytes": 23695142912,
+        "use_percent": 84.70071089849357
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "test-compile"
+      ],
+      "timeout_seconds": 180,
+      "disk_peak_percent": 84.7007532132504,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131182452736,
+        "available_bytes": 23694958592,
+        "use_percent": 84.70082990874717
+      },
+      "finished_at_utc": "2026-10-16T09:33:57.883869+00:00"
+    }
+  },
+  {
+    "name": "stage4-related04",
+    "result": {
+      "tests": 225,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-related04.log",
+    "log_sha256": "6f32414e94796b51b20787ee9587d15ce011310f1894478fc91003f7b3236469",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:42:05.061562+00:00",
+      "disk_before": {
+        "used_bytes": 131194863616,
+        "available_bytes": 23682547712,
+        "use_percent": 84.70884326582332
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,TaskResumeControllerTest,DurableBoundariesIntegrationTest,PipelineAnalysisTaskRunnerFailureTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,TaskCreationServiceTest,TaskCommandServiceTest,TranslationSchedulerMySqlTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.70987733269354,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131195846656,
+        "available_bytes": 23681564672,
+        "use_percent": 84.70947798717587
+      },
+      "finished_at_utc": "2026-10-16T09:42:54.091828+00:00"
+    }
+  },
+  {
+    "name": "stage4-related05",
+    "result": {
+      "tests": 326,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-related05.log",
+    "log_sha256": "35f1fdce800b214abb440a99317347df83305a3cb120fbeb8d63b07de2c58f8c",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:43:32.708461+00:00",
+      "disk_before": {
+        "used_bytes": 131195478016,
+        "available_bytes": 23681933312,
+        "use_percent": 84.70923996666866
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,TaskResumeControllerTest,PipelineCheckpointExecutionTest,PipelineRecoveryActivationTest,DurableBoundariesIntegrationTest,PipelineAnalysisTaskRunnerFailureTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,TranscribeAudioStepTest,TaskCreationServiceTest,TaskCommandServiceTest,TranslationSchedulerMySqlTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,TranslationBatchCoordinatorTest,AdaptiveTranslationControllerTest,TranslationBatchPlannerTest,PipelineTranslationServiceTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71064164298892,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131196649472,
+        "available_bytes": 23680761856,
+        "use_percent": 84.70999634294714
+      },
+      "finished_at_utc": "2026-10-16T09:44:30.745976+00:00"
+    }
+  },
+  {
+    "name": "stage4-related06",
+    "result": {
+      "tests": 326,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage4-related06.log",
+    "log_sha256": "384be706bf7fc4ac987ee5953fc0c6e1d795cb10f4fd689402855c0e976b02f0",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:44:51.678826+00:00",
+      "disk_before": {
+        "used_bytes": 131196825600,
+        "available_bytes": 23680585728,
+        "use_percent": 84.71011006385613
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,TaskResumeControllerTest,PipelineCheckpointExecutionTest,PipelineRecoveryActivationTest,DurableBoundariesIntegrationTest,PipelineAnalysisTaskRunnerFailureTest,PipelineAnalysisTaskWorkExecutorTest,PersistSubtitleSegmentsStepTest,TranscribeAudioStepTest,TaskCreationServiceTest,TaskCommandServiceTest,TranslationSchedulerMySqlTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,TranslationBatchCoordinatorTest,AdaptiveTranslationControllerTest,TranslationBatchPlannerTest,PipelineTranslationServiceTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71121289220622,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131197775872,
+        "available_bytes": 23679635456,
+        "use_percent": 84.71072362783029
+      },
+      "finished_at_utc": "2026-10-16T09:45:49.751461+00:00"
+    }
+  }
+]
