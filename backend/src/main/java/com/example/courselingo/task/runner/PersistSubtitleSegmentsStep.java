@@ -38,7 +38,8 @@ final class PersistSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
         if (context.asrBranchFailed()) {
-            subtitleSegmentPersistenceService.deleteByTaskId(context.taskId(), context.userId());
+            if(context.taskContext().protocolVersion()!=2)
+                subtitleSegmentPersistenceService.deleteByTaskId(context.taskId(), context.userId());
             return;
         }
         SpeechToTextResult result = context.requireSpeechToTextResult();
@@ -46,9 +47,11 @@ final class PersistSubtitleSegmentsStep implements PipelineAnalysisTaskStep {
             subtitleSegmentPersistenceService.saveTranscriptionResult(new SaveTranscriptionSegmentsCommand(
                 context.taskId(),
                 context.userId(),
-                result
+                result,
+                context.taskContext().protocolVersion()==2?context.requestId():null
             ));
         } catch (RuntimeException failure) {
+            if(context.taskContext().protocolVersion()==2)throw failure;
             try {
                 subtitleSegmentPersistenceService.deleteByTaskId(context.taskId(), context.userId());
             } catch (RuntimeException cleanupFailure) {

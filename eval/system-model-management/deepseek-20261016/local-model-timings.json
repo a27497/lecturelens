@@ -1,0 +1,47 @@
+[
+  {
+    "phase": "prompt eval time",
+    "millis": 4617.31,
+    "tokens": 58
+  },
+  {
+    "phase": "eval time",
+    "millis": 6848.38,
+    "tokens": 50
+  },
+  {
+    "phase": "total time",
+    "millis": 11465.69,
+    "tokens": 108
+  },
+  {
+    "phase": "prompt eval time",
+    "millis": 37087.02,
+    "tokens": 852
+  },
+  {
+    "phase": "eval time",
+    "millis": 36907.22,
+    "tokens": 277
+  },
+  {
+    "phase": "total time",
+    "millis": 73994.24,
+    "tokens": 1129
+  },
+  {
+    "phase": "prompt eval time",
+    "millis": 3132.88,
+    "tokens": 66
+  },
+  {
+    "phase": "eval time",
+    "millis": 6651.88,
+    "tokens": 56
+  },
+  {
+    "phase": "total time",
+    "millis": 9784.76,
+    "tokens": 122
+  }
+]

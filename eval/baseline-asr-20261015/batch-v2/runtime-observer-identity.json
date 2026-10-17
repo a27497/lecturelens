@@ -1,0 +1,33 @@
+{
+  "observed_at_utc": "2026-10-15T08:42:29.151482+00:00",
+  "original_jar_sha256": "a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08",
+  "all_original_extracted_entries_byte_identical": true,
+  "verified_entries": 943,
+  "additional_observer": "BaselineBootstrap.java; response tee only, original Java transport called once per request; no ASR HTTP proxy",
+  "evaluation_pid": 511497,
+  "source_production_pid": 5104,
+  "production_process_not_restarted": true,
+  "same_upstream_asr_endpoint": true,
+  "local_model_file_name": "qwen2.5-3b-instruct-q4_k_m.gguf",
+  "local_model_alias": "lecturelens-local-qwen",
+  "local_model_context": 8192,
+  "local_model_threads": 4,
+  "api_cost_includes_local_compute": false,
+  "previous_runtime_identity": "../runtime-identity.json describes invalid v1 HTTP proxy isolation; valid v2 uses direct ASR plus same index HTTP observer",
+  "frozen_production_settings": {
+    "ASR_PROVIDER": "bailian",
+    "ASR_CHUNK_DURATION": "180s",
+    "ASR_CHUNK_CONCURRENCY": "2",
+    "ASR_MAX_AUDIO_FILE_SIZE": "7MB",
+    "ASR_CHUNK_MAX_FILE_SIZE": "6MB",
+    "BAILIAN_ASR_MODEL": "qwen-audio-3.1-asr-flash",
+    "OPENAI_COMPATIBLE_MODEL": "lecturelens-local-qwen",
+    "COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_ENABLED": "true",
+    "COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_BATCH_CONCURRENCY": "1",
+    "DENSE_RETRIEVAL_ENABLED": "true",
+    "COURSELINGO_VISION_KEYFRAME_ENABLED": "false",
+    "COURSELINGO_VISION_OCR_ENABLED": "false",
+    "COURSELINGO_VISION_ANALYSIS_ENABLED": "false",
+    "COURSELINGO_FUSION_VIDEO_SEGMENT_ENABLED": "false"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "fault_injected": false,
+  "recovery_demonstration_completed": false,
+  "reason": "ASR_AUTHENTICATION_403_BEFORE_TRANSLATION_BARRIER",
+  "asr_physical_calls": 71,
+  "asr_http_200": 69,
+  "asr_http_403": 1,
+  "network_outcome_unknown": 1,
+  "translation_calls": 0,
+  "completed_asr_checkpoint": false,
+  "authentication_retry_performed": false
+}

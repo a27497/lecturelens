@@ -50,6 +50,35 @@ management:
       application: courselingo-pro
 
 courselingo:
+  pipeline:
+    translation-v2:
+      enabled: ${PIPELINE_TRANSLATION_V2_ENABLED:false}
+      output-min: ${PIPELINE_TRANSLATION_OUTPUT_MIN:512}
+      output-max: ${PIPELINE_TRANSLATION_OUTPUT_MAX:8192}
+      output-ratio: ${PIPELINE_TRANSLATION_OUTPUT_RATIO:2.0}
+      context-limit: ${PIPELINE_TRANSLATION_CONTEXT_LIMIT:32768}
+      max-depth: ${PIPELINE_TRANSLATION_SPLIT_MAX_DEPTH:6}
+      max-attempts: ${PIPELINE_TRANSLATION_LEAF_MAX_ATTEMPTS:3}
+      max-calls: ${PIPELINE_TRANSLATION_MAX_CALLS:256}
+      token-budget: ${PIPELINE_TRANSLATION_TOKEN_BUDGET:200000}
+      checkpoint-enabled: ${PIPELINE_TRANSLATION_CHECKPOINT_ENABLED:true}
+      max-recoveries: ${PIPELINE_TRANSLATION_MAX_RECOVERIES:3}
+      isolated-runtime: ${PIPELINE_TRANSLATION_ISOLATED_RUNTIME:false}
+      adaptive:
+        enabled: ${PIPELINE_TRANSLATION_AIMD_ENABLED:true}
+        input-token-budget: ${PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET:2048}
+        initial: ${PIPELINE_TRANSLATION_CONCURRENCY_INITIAL:1}
+        maximum: ${PIPELINE_TRANSLATION_CONCURRENCY_MAX:4}
+        success-streak: ${PIPELINE_TRANSLATION_SUCCESS_STREAK:3}
+        process-maximum: ${PIPELINE_TRANSLATION_PROVIDER_MAX_INFLIGHT:4}
+      silence:
+        enabled: ${PIPELINE_SILENCE_ENABLED:true}
+        noise-db: ${PIPELINE_SILENCE_NOISE_DB:-35}
+        pause-millis: ${PIPELINE_SILENCE_PAUSE_MILLIS:600}
+        min-millis: ${PIPELINE_SILENCE_MIN_MILLIS:15000}
+        target-millis: ${PIPELINE_SILENCE_TARGET_MILLIS:30000}
+        max-millis: ${PIPELINE_SILENCE_MAX_MILLIS:60000}
+        max-clips: ${PIPELINE_SILENCE_MAX_CLIPS:256}
   study:
     enabled: ${STUDY_AGENT_ENABLED:false}
   retrieval:

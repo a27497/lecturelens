@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-15T19:49:14.655038+00:00",
+  "source_id": "economics",
+  "source_sha256": "116afb01df8dc39dc048273a91ce9e03df793a6cda12364d19b165da43e56222",
+  "reuse_upload_id": "up_b5618740a8c248b3b163a379b9b30c74",
+  "new_tasks": 1,
+  "expected_config_version": 10,
+  "code_commit": "bc2e6cc",
+  "task_limit_seconds": 1800,
+  "timeouts_or_concurrency_changed": false
+}

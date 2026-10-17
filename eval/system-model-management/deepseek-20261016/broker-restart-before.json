@@ -1,0 +1,15 @@
+{
+  "authorized_by_user": true,
+  "approval_text": "允许仅重启 RocketMQ broker",
+  "requested_at": "2026-10-15T18:04:38.860289+00:00",
+  "name": "/lecturelens-demo-l2-rocketmq-broker-1",
+  "image_id": "sha256:d57ee4ebbd9d7bb6e185775bde41c128e98f185b25bf0b05c77d4e6c010572b8",
+  "state": {
+    "Status": "running",
+    "Pid": 3220,
+    "StartedAt": "2026-10-15T06:20:48.773440362Z"
+  },
+  "running_analysis_tasks": 0,
+  "disk_used_ratio": 0.8995993596778334,
+  "command": "docker restart --time 30 lecturelens-demo-l2-rocketmq-broker-1"
+}

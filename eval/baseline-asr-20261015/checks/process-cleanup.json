@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-10-15T11:22:12.659667+00:00",
+  "cleanup": [
+    {
+      "pid": 511497,
+      "signal": "SIGTERM",
+      "evaluation_process_only": true,
+      "still_exists_after_2s": false
+    },
+    {
+      "pid": 476755,
+      "signal": "SIGTERM",
+      "evaluation_process_only": true,
+      "still_exists_after_2s": false
+    }
+  ],
+  "original_processes_alive": [
+    5102,
+    5104,
+    5105
+  ],
+  "public_raw_records_and_local_media_preserved": true
+}

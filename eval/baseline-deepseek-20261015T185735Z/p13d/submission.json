@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-15T19:49:15.034434+00:00",
+  "response": {
+    "taskId": "task_1b5dd375008544258544f7b6f3a2001c",
+    "uploadId": "up_b5618740a8c248b3b163a379b9b30c74",
+    "status": "QUEUED",
+    "targetLanguage": "zh-CN"
+  }
+}

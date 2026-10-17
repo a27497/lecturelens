@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "files": [
+    {
+      "path": "eval/baseline-asr-20261015/direct-long-diagnostic.json",
+      "source_commit": "fd8ece82",
+      "bytes": 202789,
+      "sha256": "ee68217f671560e0b087f1a725b6884130cd2ccf2a407814f084d94b3be92640",
+      "reason": "complete provider response body; excluded from public branch"
+    },
+    {
+      "path": "eval/baseline-asr-20261015/readiness-probe.json",
+      "source_commit": "fd8ece82",
+      "bytes": 367,
+      "sha256": "b2f2aa120d62e7c11c8e7b42e8fba4cb976827e7f887de0395cc94050c0ac2eb",
+      "reason": "complete provider response body; excluded from public branch"
+    },
+    {
+      "path": "eval/baseline-asr-20261015/readiness-spoken-probe.json",
+      "source_commit": "fd8ece82",
+      "bytes": 2666,
+      "sha256": "d9f9ba935b644a118c8849ed1c8e4c2057d589c2f0e2d118c7581c011552d7a4",
+      "reason": "complete provider response body; excluded from public branch"
+    }
+  ]
+}

@@ -20,6 +20,9 @@ public final class PipelineAnalysisTaskStepContext {
     private PipelineBranchStatus asrBranchStatus = PipelineBranchStatus.NOT_STARTED;
     private PipelineBranchStatus visionBranchStatus = PipelineBranchStatus.NOT_STARTED;
     private final List<PipelineAiCallRecord> aiCallRecords = new ArrayList<>();
+    private boolean restoredVisionCapture;
+    boolean restoredVisionCapture(){return restoredVisionCapture;}
+    void setRestoredVisionCapture(){restoredVisionCapture=true;setVisionBranchResult(VisionPipelineBranchResult.succeeded());}
 
     PipelineAnalysisTaskStepContext(
         AnalysisTaskExecutionContext taskContext,

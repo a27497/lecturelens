@@ -175,6 +175,15 @@ class AiCallRecordServiceTest {
         assertSafe(view.errorMessage());
     }
 
+    @Test void failedCallPersistsKnownTokensInsteadOfDiscardingThem() {
+        var existing=record(100L,"task_1",42L,AiCallRecordStatus.STARTED);
+        when(mapper.selectByIdTaskIdAndUserId(100L,"task_1",42L)).thenReturn(existing);
+        when(mapper.updateByIdTaskIdAndUserId(any(AiCallRecord.class),org.mockito.Mockito.eq(100L),org.mockito.Mockito.eq("task_1"),org.mockito.Mockito.eq(42L))).thenReturn(1);
+        var view=service.failCall(new FailAiCallRecordCommand(100L,"task_1",42L,9L,"OUTPUT_INVALID","Safe failure",false,null,null,100,20,120));
+        assertThat(captureUpdated().getPromptTokens()).isEqualTo(100);
+        assertThat(view.completionTokens()).isEqualTo(20);assertThat(view.totalTokens()).isEqualTo(120);
+    }
+
     @Test
     void listByTaskReturnsOnlyTaskAndOwnerRecordsInStableOrder() {
         when(mapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(

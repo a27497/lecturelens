@@ -1,0 +1,49 @@
+{
+  "attempted_trials": 10,
+  "completed_transcription_scored_trials": 9,
+  "unavailable_transcription_trials": [
+    "v2-probability-2"
+  ],
+  "edit_distance": 9014,
+  "reference_characters": 216217,
+  "completed_transcription_weighted_cer": 0.04168959887520408,
+  "per_lecture_completed_transcription_cer": {
+    "algorithms": {
+      "n": 2,
+      "mean": 0.03240319305370773,
+      "sample_sd": 7.427072136263817e-05,
+      "min": 0.03235067572298859,
+      "max": 0.032455710384426864
+    },
+    "calculus": {
+      "n": 2,
+      "mean": 0.06671270718232045,
+      "sample_sd": 0.0011329335168182256,
+      "min": 0.06591160220994476,
+      "max": 0.06751381215469614
+    },
+    "economics": {
+      "n": 2,
+      "mean": 0.05082241318971886,
+      "sample_sd": 0.00021996555778249375,
+      "min": 0.05066687405218338,
+      "max": 0.05097795232725435
+    },
+    "linear": {
+      "n": 2,
+      "mean": 0.042110231265404585,
+      "sample_sd": 0.0018540741024347036,
+      "min": 0.04079920289475064,
+      "max": 0.04342125963605852
+    },
+    "probability": {
+      "n": 1,
+      "mean": 0.01584586296929864,
+      "sample_sd": null,
+      "min": 0.01584586296929864,
+      "max": 0.01584586296929864
+    }
+  },
+  "frozen_all_output_cer_including_empty_task_results": 0.16965351970441375,
+  "interpretation": "Additional availability view; original summary and all failed trials are unchanged. A completed ASR with a genuine empty hypothesis still scores 100% CER. A task that never executed TRANSCRIBE has no ASR CER; its failure remains in the 10-attempt denominator and the frozen empty-output penalty metric."
+}

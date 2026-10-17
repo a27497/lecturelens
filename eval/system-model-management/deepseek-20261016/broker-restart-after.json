@@ -1,0 +1,9 @@
+{
+  "image_id": "sha256:d57ee4ebbd9d7bb6e185775bde41c128e98f185b25bf0b05c77d4e6c010572b8",
+  "state": {
+    "Status": "running",
+    "Pid": 2791406,
+    "StartedAt": "2026-10-15T18:05:09.380803972Z"
+  },
+  "image_unchanged": true
+}

@@ -10,6 +10,8 @@ import java.time.Duration;
 
 final class JavaHttpBailianAsrTransport implements BailianAsrTransport {
     private final HttpClient client;
+    private com.example.courselingo.ai.llm.ModelCallObserver observer=com.example.courselingo.ai.llm.ModelCallObserver.NOOP;
+    JavaHttpBailianAsrTransport observed(com.example.courselingo.ai.llm.ModelCallObserver value){observer=value;return this;}
 
     JavaHttpBailianAsrTransport(Duration connectTimeout) {
         this(HttpClient.newBuilder().connectTimeout(connectTimeout)
@@ -20,6 +22,13 @@ final class JavaHttpBailianAsrTransport implements BailianAsrTransport {
 
     @Override
     public Response send(URI endpoint, String credential, byte[] body, Duration timeout) {
+        var result=com.example.courselingo.ai.llm.ObservedModelCall.execute(observer,endpoint,java.util.Map.of("Authorization","Bearer "+credential),body,true,()->{
+            long started=System.nanoTime();var response=sendOnce(endpoint,credential,body,timeout);
+            return new com.example.courselingo.ai.llm.OpenAiCompatibleClientResponse(response.statusCode(),response.body(),java.util.Map.of(),Duration.ofNanos(System.nanoTime()-started));
+        });
+        return new Response(result.statusCode(),result.body());
+    }
+    private Response sendOnce(URI endpoint,String credential,byte[] body,Duration timeout) {
         try {
             HttpRequest request = HttpRequest.newBuilder(endpoint).timeout(timeout)
                 .header("Authorization", "Bearer " + credential)

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/score.py",
+    "--output",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/summary.json"
+  ],
+  "started_at_utc": "2026-10-15T11:12:48.308338+00:00",
+  "finished_at_utc": "2026-10-15T11:12:48.750450+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

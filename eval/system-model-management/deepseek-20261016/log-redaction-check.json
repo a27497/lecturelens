@@ -1,0 +1,19 @@
+{
+  "scope": "Java journal since 2026-10-15 17:50 UTC; raw journal not copied",
+  "api_key_prefix_or_bearer_header_matches": 0,
+  "saved_event_fields": [
+    "event",
+    "taskId",
+    "tag",
+    "outcome",
+    "errorCode",
+    "errorType",
+    "stepName",
+    "stage",
+    "durationMillis",
+    "attempt",
+    "exhausted",
+    "timestamp"
+  ],
+  "api_key_read_by_driver": false
+}

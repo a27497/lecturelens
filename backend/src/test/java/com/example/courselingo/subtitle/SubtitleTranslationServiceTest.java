@@ -92,6 +92,36 @@ class SubtitleTranslationServiceTest {
         queryService = new SubtitleTranslationQueryServiceImpl(translationMapper);
     }
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"schema,UNEXPECTED_SCHEMA", "count,EXTRA_SEGMENT",
+        "parse,JSON_PARSE_ERROR", "length,OUTPUT_TRUNCATED", "language,TARGET_LANGUAGE_MISMATCH"})
+    void observationsReportOriginalValidationWithoutChangingFailure(String kind, String expected) {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setSemanticMaxAttempts(1);
+        translationService = fullTextTranslationService(properties);
+        var diagnostics = org.mockito.Mockito.mock(com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics.class);
+        translationService.setTranslationDiagnostics(diagnostics);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 1000, "Welcome to class.")));
+        String text = switch (kind) {
+            case "schema" -> "{}";
+            case "count" -> alignedJson("你好世界。", "额外分段。");
+            case "parse" -> "not-json";
+            case "length" -> alignedJson("欢迎来到课堂。");
+            default -> alignedJson("Today's lesson describes mathematical reasoning.");
+        };
+        LlmResult response = llmResult(text, kind.equals("length") ? "length" : "stop", 10, 20, 1);
+        fakeLlmProvider.nextOutcomes(response);
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(BusinessException.class);
+        var reason = ArgumentCaptor.forClass(String.class);
+        org.mockito.Mockito.verify(diagnostics, org.mockito.Mockito.atLeastOnce())
+            .validation(org.mockito.ArgumentMatchers.isNull(), org.mockito.ArgumentMatchers.any(), reason.capture());
+        assertThat(reason.getAllValues()).anySatisfy(r -> assertThat(r).startsWith(expected));
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
+    }
+
     @Test
     void defaultTranslationIsolatesAdjacentUtterancesBeforeBindingTheirTimestamps() {
         translationService = fullTextTranslationService(new SubtitleTranslationProperties());

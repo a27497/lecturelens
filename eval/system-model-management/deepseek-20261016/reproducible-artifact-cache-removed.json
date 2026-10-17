@@ -1,0 +1,8 @@
+{
+  "path": "backend/target/courselingo-backend-0.0.1-SNAPSHOT.jar",
+  "bytes": 91827784,
+  "sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+  "identical_deployed_copy_preserved": ".data/system-model-management/deploy-20261016/backend.jar",
+  "deployed_jar_modified": false,
+  "used_ratio_after": 0.8995545637815817
+}

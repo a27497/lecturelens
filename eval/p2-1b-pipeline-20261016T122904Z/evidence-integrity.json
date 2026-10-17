@@ -1,0 +1,11 @@
+{
+  "integrity": "PASS",
+  "normal_full_chain_acceptance": "FAILED_0_OF_10",
+  "translation_publication": "10_OF_10",
+  "recovery_acceptance": "NOT_DEMONSTRATED_ASR_403",
+  "recomputed_normal_asr_catalog_reference_cny": "0.5022330",
+  "recomputed_normal_translation_known_lower_usd": "0.063459192000",
+  "failed_trials_preserved": true,
+  "protected_container_list_equality": false,
+  "container_discrepancy_record": "container-identity-reconciliation.json"
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-16T12:26:28.179618+00:00",
+  "worker_stopped": true,
+  "production_config_unchanged": true,
+  "disk": {
+    "utc": "2026-10-16T12:26:28.179652+00:00",
+    "used_bytes": 115728207872,
+    "available_bytes": 39149203456,
+    "percent": 74.72245750990139,
+    "headroom_below_85_bytes": 15917591756.800003
+  }
+}

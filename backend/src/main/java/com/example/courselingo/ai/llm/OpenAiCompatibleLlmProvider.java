@@ -73,6 +73,16 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
 
     private LlmResult generateOnce(LlmRequest request) {
         ValidatedSettings settings = validateSettings(request);
+        if (com.example.courselingo.ai.llm.TranslationResponseDecoder.enabled(request)) {
+            try {
+                var response = client.complete(new OpenAiCompatibleChatCompletionRequest(settings.uri(),
+                    Map.of("Authorization", "Bearer " + settings.apiKey()), "POST", "application/json",
+                    jsonBody(request, settings), settings.requestTimeout()));
+                return com.example.courselingo.ai.llm.TranslationResponseDecoder.decode(response,
+                    settings.model(), Map.of("providerRetryCount", 0));
+            } catch (com.example.courselingo.ai.llm.TranslationFailure safe) { throw safe; }
+            catch (RuntimeException failure) { throw com.example.courselingo.ai.llm.TranslationFailure.from(failure); }
+        }
         AttemptedResponse attempted = callClient(request, settings);
         handleErrorStatus(attempted.response(), settings);
         return mapSuccessResponse(
@@ -112,6 +122,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                     continue;
                 }
                 return new AttemptedResponse(response, attempt - 1);
+            } catch (TranslationFailure safe) {
+                throw safe;
             } catch (OpenAiCompatibleLlmException exception) {
                 OpenAiCompatibleLlmException diagnostic = withSettings(request, settings, exception);
                 if (diagnostic.retryable() && attempt < maxAttempts) {
@@ -150,6 +162,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             body.put("response_format", Map.of("type", "json_object"));
         }
         OpenAiCompatibleRequestOptionsAdapter.apply(body, settings.model());
+        com.example.courselingo.ai.llm.TranslationResponseDecoder.applyOptions(
+            body, settings.uri().toString(), settings.model(), request);
         body.put("stream", false);
         try {
             return objectMapper.writeValueAsString(body);

@@ -1,0 +1,59 @@
+{
+  "started_at_utc": "2026-10-16T12:30:50.838735+00:00",
+  "normal_trials": 10,
+  "recovery_trials": 1,
+  "order": [
+    [
+      "algorithms",
+      1
+    ],
+    [
+      "algorithms",
+      2
+    ],
+    [
+      "calculus",
+      1
+    ],
+    [
+      "calculus",
+      2
+    ],
+    [
+      "economics",
+      1
+    ],
+    [
+      "economics",
+      2
+    ],
+    [
+      "linear",
+      1
+    ],
+    [
+      "linear",
+      2
+    ],
+    [
+      "probability",
+      1
+    ],
+    [
+      "probability",
+      2
+    ]
+  ],
+  "task_timeout_seconds": 1800,
+  "translation_timeout_seconds": 900,
+  "serial": true,
+  "ddof": 1,
+  "normal_denominator": 10,
+  "source_manifest": "eval/baseline-asr-20261015/assets.lock.json",
+  "candidate_artifact": "candidate-artifact.json",
+  "instrumentation": "runtime/P21Bootstrap.java",
+  "translation_initial_window": 1,
+  "translation_maximum_window": 4,
+  "process_maximum_inflight": 4,
+  "provider_credential_export": false
+}

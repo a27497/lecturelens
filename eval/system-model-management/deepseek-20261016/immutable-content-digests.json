@@ -1,0 +1,61 @@
+{
+  "query": "SELECT version,SHA2(JSON_EXTRACT(config_json,'$.providers'),256),SHA2(JSON_EXTRACT(config_json,'$.models'),256),SHA2(JSON_EXTRACT(config_json,'$.defaults'),256),JSON_EXTRACT(config_json,'$.bindings') FROM system_model_config_version WHERE version BETWEEN 3 AND 9 ORDER BY version;",
+  "versions": [
+    {
+      "version": 3,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {}
+    },
+    {
+      "version": 4,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {
+        "TRANSLATION_FULL_TEXT": 1
+      }
+    },
+    {
+      "version": 5,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {}
+    },
+    {
+      "version": 6,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {
+        "TRANSLATION_FULL_TEXT": 1
+      }
+    },
+    {
+      "version": 7,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {}
+    },
+    {
+      "version": 8,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {
+        "TRANSLATION_FULL_TEXT": 1
+      }
+    },
+    {
+      "version": 9,
+      "providers_sha256": "e3ba21a4445a88b84bcaf564f7fe076384bc7e1a82bf3486ce983bd9b13c08a8",
+      "models_sha256": "75df2475e17aefee8c7f6c203b6b1cfd2bf35d90a78d4581611d863ead6a6843",
+      "deployment_defaults_sha256": "212b1913c759da70df470795c897a6c97b0e6a8347ba876523dbd57ba503b4e5",
+      "bindings": {}
+    }
+  ],
+  "providers_models_defaults_identical": true
+}

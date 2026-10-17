@@ -1,0 +1,62 @@
+[
+  {
+    "event": "started",
+    "step": "VALIDATE_TASK",
+    "started": "2026-10-16T13:06:43.089770458Z"
+  },
+  {
+    "event": "completed",
+    "step": "VALIDATE_TASK",
+    "durationMillis": 3,
+    "started": "2026-10-16T13:06:43.089770458Z",
+    "completed": "2026-10-16T13:06:43.092958607Z"
+  },
+  {
+    "event": "started",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "started": "2026-10-16T13:06:43.096559327Z"
+  },
+  {
+    "event": "completed",
+    "step": "RESOLVE_UPLOADED_SOURCE",
+    "durationMillis": 8,
+    "started": "2026-10-16T13:06:43.096559327Z",
+    "completed": "2026-10-16T13:06:43.105151877Z"
+  },
+  {
+    "event": "started",
+    "step": "EXTRACT_KEYFRAMES",
+    "started": "2026-10-16T13:06:43.112506676Z"
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_KEYFRAMES",
+    "durationMillis": 4,
+    "started": "2026-10-16T13:06:43.112506676Z",
+    "completed": "2026-10-16T13:06:43.117393936Z"
+  },
+  {
+    "event": "started",
+    "step": "EXTRACT_AUDIO",
+    "started": "2026-10-16T13:06:43.120972195Z"
+  },
+  {
+    "event": "completed",
+    "step": "EXTRACT_AUDIO",
+    "durationMillis": 7547,
+    "started": "2026-10-16T13:06:43.120972195Z",
+    "completed": "2026-10-16T13:06:50.668729532Z"
+  },
+  {
+    "event": "started",
+    "step": "TRANSCRIBE",
+    "started": "2026-10-16T13:06:50.673869562Z"
+  },
+  {
+    "event": "failed",
+    "step": "TRANSCRIBE",
+    "durationMillis": 149888,
+    "started": "2026-10-16T13:06:50.673869562Z",
+    "completed": "2026-10-16T13:09:20.562751060Z"
+  }
+]

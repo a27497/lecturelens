@@ -1,0 +1,86 @@
+{
+  "utc": "2026-10-15T19:00:18.182310+00:00",
+  "failed_task_count": 30,
+  "formal_baseline_count": 10,
+  "non_baseline_failed_count": 20,
+  "active_tasks": [],
+  "outbox_states": [
+    {
+      "schema": "baseline_asr_20261015",
+      "status": "DEAD",
+      "task_id": "task_a6466fb49ebe4d7e840dc11f220e3b4e",
+      "attempts": 8,
+      "event_id": "8bed3db9-7d08-40b2-9e3d-74cdc64599a0",
+      "created_at": "2026-10-15 11:08:17.000000",
+      "event_type": "ANALYSIS_CREATED",
+      "last_error": "BusinessException",
+      "claim_until": null,
+      "available_at": "2026-10-15 11:16:54.350000",
+      "completed_at": null
+    },
+    {
+      "schema": "courselingo",
+      "status": "DEAD",
+      "task_id": "task_af2961a5253a4e8dbcb811a3efcbcede",
+      "attempts": 8,
+      "event_id": "4a75d585-7cfb-40a3-8e8d-10e622065913",
+      "created_at": "2026-10-15 17:55:09.000000",
+      "event_type": "ANALYSIS_CREATED",
+      "last_error": "BusinessException",
+      "claim_until": null,
+      "available_at": "2026-10-15 18:03:47.930000",
+      "completed_at": null
+    },
+    {
+      "schema": "courselingo",
+      "status": "DEAD",
+      "task_id": "task_fb81356012b143bd9b986fe0dae24c7c",
+      "attempts": 8,
+      "event_id": "2741fc4c-a4aa-4cb7-801c-21fb6c6f0173",
+      "created_at": "2026-10-15 17:55:10.000000",
+      "event_type": "ANALYSIS_CREATED",
+      "last_error": "BusinessException",
+      "claim_until": null,
+      "available_at": "2026-10-15 18:03:47.947000",
+      "completed_at": null
+    }
+  ],
+  "retry_dead_topics": [
+    "%RETRY%baseline-asr-20261015-consumer_baseline-asr-20261015",
+    "%RETRY%lecturelens-learning-loop-consumer_lecturelens-learning-loop",
+    "%RETRY%lecturelens-demo-consumer-group_courselingo-analysis-task"
+  ],
+  "mutations": [],
+  "checked_utc": "2026-10-15T19:02:31.910070+00:00",
+  "retry_offset_checks": [
+    {
+      "topic": "%RETRY%baseline-asr-20261015-consumer_baseline-asr-20261015",
+      "group": "baseline-asr-20261015-consumer",
+      "queue": 0,
+      "broker_max_offset": 15,
+      "consumer_offset": 15,
+      "backlog": 0
+    },
+    {
+      "topic": "%RETRY%lecturelens-learning-loop-consumer_lecturelens-learning-loop",
+      "group": "lecturelens-learning-loop-consumer",
+      "queue": 0,
+      "broker_max_offset": 5,
+      "consumer_offset": 5,
+      "backlog": 0
+    },
+    {
+      "topic": "%RETRY%lecturelens-demo-consumer-group_courselingo-analysis-task",
+      "group": "lecturelens-demo-consumer-group",
+      "queue": 0,
+      "broker_max_offset": 6,
+      "consumer_offset": 6,
+      "backlog": 0
+    }
+  ],
+  "retry_backlog_total": 0,
+  "dead_letter_topics": [],
+  "handling": "NOOP: formal baseline MQ retries already consumed; one baseline outbox row already DEAD after 8 attempts and excluded by dispatcher. Preserve it and all task DB states. Non-baseline DEAD rows untouched. No message redelivery or offset reset.",
+  "database_writes": 0,
+  "messages_consumed_by_cleanup": 0
+}

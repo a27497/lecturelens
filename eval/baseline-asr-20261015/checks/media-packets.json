@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/verify-media.py"
+  ],
+  "started_at_utc": "2026-10-15T11:12:53.322070+00:00",
+  "finished_at_utc": "2026-10-15T11:13:25.442972+00:00",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/dev/projects/lecturelens/eval/baseline-asr-20261015/verify-media.py\", line 89, in <module>\n    main()\n  File \"/home/dev/projects/lecturelens/eval/baseline-asr-20261015/verify-media.py\", line 58, in main\n    assert before[\"format\"][\"duration\"] == after[\"format\"][\"duration\"]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "bash",
+    "-o",
+    "pipefail",
+    "-c",
+    ".data/baseline-asr-20261015/.venv/bin/python eval/baseline-asr-20261015/collect-stages.py --log eval/baseline-asr-20261015/batch-v2/pipeline-log.txt --trials eval/baseline-asr-20261015/batch-v2/trials.jsonl | cmp - eval/baseline-asr-20261015/batch-v2/pipeline-events.jsonl"
+  ],
+  "started_at_utc": "2026-10-15T11:20:39.127574+00:00",
+  "finished_at_utc": "2026-10-15T11:20:39.181103+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

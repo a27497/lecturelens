@@ -1,0 +1,12 @@
+{
+  "frozen_at_utc": "2026-10-16T12:30:43.779316+00:00",
+  "files": {
+    "runtime/P21Bootstrap.java": "54aeef4f35940670c71e260a409065d9d6f292f33c9d993f1c245e4b69c42ed3",
+    "runtime_support.py": "91d0651507a1209811b811f944f472dde58895800679aa34d777557f284c77c0",
+    "prepare_runtime.py": "0392d149bb24057b3d27621a8b982f995631b47a6a10b930a95baf10f1da7a1b",
+    "measure_runtime.py": "c91057b5b1987e76b3b25a367073d62ac88e27071a03145494e86e9cedb1d77b"
+  },
+  "candidate_jar_modified": false,
+  "barrier_applies_only_to_recovery_trial": true,
+  "python_agent_sync_disabled": true
+}

@@ -14,6 +14,8 @@ final class SystemModelVisionProvider implements VisionModelProvider {
     private final OpenAiCompatibleLlmClient http;
     private final VisionAnalysisProperties properties;
     private final SystemModelUrlPolicy urls;
+    private com.example.courselingo.ai.llm.ModelCallObserver observer=com.example.courselingo.ai.llm.ModelCallObserver.NOOP;
+    SystemModelVisionProvider observed(com.example.courselingo.ai.llm.ModelCallObserver value){observer=value;return this;}
 
     SystemModelVisionProvider(
             SystemModelExecutionService executions,
@@ -43,11 +45,15 @@ final class SystemModelVisionProvider implements VisionModelProvider {
                             urls.checkDestination(r.uri());
                             return http.complete(r);
                         }
-                        : new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5));
+                        : new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5)).observed(observer);
         var provider =
                 new OpenAiCompatibleVisionProvider(
                         properties, client, ignored -> key, new ObjectMapper(), database);
-        return provider.analyze(request);
+        var active=com.example.courselingo.task.service.PipelineExecutionScope.current();
+        try(var ignored=com.example.courselingo.ai.llm.ModelCallScope.open(new com.example.courselingo.ai.llm.ModelCallScope.Context(
+                ref,"VISION_FRAME_ANALYSIS",resolved.model(),null,active==null?null:active.eventId(),null,null,null))) {
+            return provider.analyze(request);
+        }
     }
 
     static AiModelRoute route(SystemModelExecutionService executions, SystemModelExecutionRef ref) {

@@ -82,11 +82,11 @@ public class AsrChunkingProperties {
         this.chunkRetry = chunkRetry == null ? new ChunkRetryProperties() : chunkRetry;
     }
 
-    long effectiveMaxAudioFileSizeBytes() {
+    public long effectiveMaxAudioFileSizeBytes() {
         return toPositiveBytes(maxAudioFileSize);
     }
 
-    long effectiveMaxChunkFileSizeBytes() {
+    public long effectiveMaxChunkFileSizeBytes() {
         long maxAudioBytes = effectiveMaxAudioFileSizeBytes();
         long configuredChunkBytes = toPositiveBytes(maxChunkFileSize);
         if (maxAudioBytes <= 0L) {
@@ -99,7 +99,7 @@ public class AsrChunkingProperties {
         return Math.min(configuredChunkBytes, safeChunkBytes);
     }
 
-    int effectiveConcurrency() {
+    public int effectiveConcurrency() {
         int configuredMax = Math.max(1, Math.min(4, maxConcurrency));
         int configuredConcurrency = Math.max(1, concurrency);
         return Math.min(configuredConcurrency, configuredMax);

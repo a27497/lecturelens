@@ -88,6 +88,15 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     private final ChunkCompletionObserver chunkCompletionObserver;
     private final EmbeddedSubtitleTranscriptExtractor embeddedSubtitleExtractor;
     private final EmbeddedSubtitleTranscriptProperties transcriptProperties;
+    private com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies;
+    private com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner;
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    TranscribeAudioStep withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
+
+    TranscribeAudioStep withSilencePlanning(com.example.courselingo.subtitle.pipeline.PipelinePolicyService policies,
+            com.example.courselingo.media.SilenceAudioChunkPlanner planner) {
+        pipelinePolicies=policies;silencePlanner=planner;return this;
+    }
 
     TranscribeAudioStep(SpeechToTextProvider speechToTextProvider) {
         this(speechToTextProvider, null, new AsrChunkingProperties(), null, null);
@@ -304,6 +313,14 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         AudioExtractionResult audio,
         long authoritativeAudioDurationMillis
     ) {
+        if (pipelinePolicies!=null) {
+            var frozen=pipelinePolicies.find(context.taskId(),context.userId());
+            if(frozen.isPresent() && frozen.get().policy().silence()!=null) {
+                if(!frozen.get().execution().equals(context.taskContext().systemModels()))
+                    throw com.example.courselingo.ai.llm.TranslationFailure.of(com.example.courselingo.ai.llm.TranslationFailure.Reason.SNAPSHOT_INVALID);
+                return transcribeWithSilence(context,audio,authoritativeAudioDurationMillis,frozen.get().policy().silence());
+            }
+        }
         if (embeddedSubtitleExtractor != null && transcriptProperties.embeddedSubtitleFirst()) {
             java.util.Optional<EmbeddedSubtitleTranscript> embedded = context.uploadedSourcePath()
                 .flatMap(path -> embeddedSubtitleExtractor.extract(
@@ -401,13 +418,70 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         }
     }
 
+    private SpeechToTextResult transcribeWithSilence(PipelineAnalysisTaskStepContext context,AudioExtractionResult audio,
+            long duration,com.example.courselingo.media.SilenceSegmentationPolicy policy) {
+        if(silencePlanner==null || workspace==null) throw new IllegalStateException("Silence planning is unavailable");
+        SpeechToTextProvider pinned=speechToTextProvider.forExecution(context.taskContext().systemModels());
+        Path directory=workspace.asrChunksOutputDirectory(context);
+        var plan=silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes());
+        var byPath=plan.chunks().stream().collect(java.util.stream.Collectors.toMap(AudioChunk::audioFile,c->c));
+        var attempts=new AtomicInteger();
+        var adapter=new SpeechToTextProvider() {
+            public String providerName(){return pinned.providerName();}
+            public long maxAudioFileSizeBytes(){return pinned.maxAudioFileSizeBytes();}
+            public Integer maxAttempts(){return pinned.maxAttempts()==null?policy.asrMaxAttempts():Math.min(policy.asrMaxAttempts(),pinned.maxAttempts());}
+            public java.util.List<Long> chunkRetryBackoffMillis(){return policy.retryBackoffMillis();}
+            public SpeechToTextResult transcribe(SpeechToTextRequest request) {
+                AudioChunk clip=byPath.get(request.audioFile());
+                if(clip==null) throw new IllegalStateException("Unplanned audio clip");
+                try {
+                    silencePlanner.materialize(audio.audioFile(),clip,policy,plan.maxClipBytes());
+                    attempts.incrementAndGet();
+                    var result=pinned.transcribe(request.withInterval(new SpeechToTextRequest.AudioInterval(clip.offsetMillis(),clip.endMillis(),clip.timingSource().name(),plan.hash())));
+                    long length=clip.endMillis()-clip.offsetMillis();
+                    List<TranscribedSegment> timed;
+                    if(!"provider_not_available".equals(result.metadata().get("segmentTimingSource"))
+                        && !result.segments().isEmpty() && result.segments().stream().allMatch(TranscribeAudioStep::hasValidSegmentTime)) {
+                        timed=result.segments().stream().filter(s->s.startMillis()<length).map(s->new TranscribedSegment(s.index(),
+                            s.startMillis(),Math.min(length,s.endMillis()),s.text(),com.example.courselingo.ai.asr.TranscriptTimingSource.ASR,clip.timingReason())).toList();
+                    } else {
+                        String text=result.fullText().isBlank()?buildFullText(result.segments()):result.fullText();
+                        if(text.isBlank()) throw new AsrProviderException("ASR returned empty audio clip text",false);
+                        timed=List.of(new TranscribedSegment(0,0,length,text,clip.timingSource(),clip.timingReason()));
+                    }
+                    return new SpeechToTextResult(result.provider(),result.language(),buildFullText(timed),timed,
+                        result.duration(),length,result.metadata());
+                } finally {
+                    try {Files.deleteIfExists(clip.audioFile());} catch(java.io.IOException ignored) { }
+                }
+            }
+        };
+        try {
+            var chunks=transcribeChunksConcurrently(context,plan.chunks(),adapter,policy.asrConcurrency());
+            var merged=mergeChunkResults(context,chunks.stream().sorted(Comparator.comparingInt(ChunkTranscriptionResult::chunkIndex))
+                .map(ChunkTranscriptionResult::result).toList(),plan.chunks(),duration,adapter);
+            var metadata=new java.util.LinkedHashMap<String,Object>(merged.metadata());
+            metadata.put("segmentationMode","SILENCE");metadata.put("silencePlanHash",plan.hash());
+            metadata.put("asrPhysicalAttempts",attempts.get());metadata.put("silenceClipCount",plan.chunks().size());
+            metadata.put("detectedSilenceMillis",plan.detectedSilenceMillis());
+            metadata.put("clipIntervals",plan.chunks().stream().map(c->Map.of("index",c.index(),"startMillis",c.offsetMillis(),
+                "endMillis",c.endMillis(),"timingSource",c.timingSource().name(),"reason",c.timingReason()==null?"":c.timingReason())).toList());
+            return new SpeechToTextResult(merged.provider(),merged.language(),merged.fullText(),merged.segments(),merged.duration(),duration,metadata);
+        } finally {deleteDirectoryQuietly(directory);}
+    }
+
     private List<ChunkTranscriptionResult> transcribeChunksConcurrently(
         PipelineAnalysisTaskStepContext context,
         List<AudioChunk> chunks,
         SpeechToTextProvider adapter
     ) {
+        return transcribeChunksConcurrently(context,chunks,adapter,chunkingProperties.effectiveConcurrency());
+    }
+
+    private List<ChunkTranscriptionResult> transcribeChunksConcurrently(PipelineAnalysisTaskStepContext context,
+            List<AudioChunk> chunks,SpeechToTextProvider adapter,int configuredConcurrency) {
         int totalChunks = chunks.size();
-        int concurrency = Math.min(totalChunks, chunkingProperties.effectiveConcurrency());
+        int concurrency = Math.min(totalChunks, configuredConcurrency);
         AtomicInteger completedChunks = new AtomicInteger(0);
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
             concurrency,
@@ -475,7 +549,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         refreshClaim(context, "chunk-start");
         updateAsrProgress(context, completedChunks.get(), totalChunks, chunkNumber);
         long chunkStartedNanos = System.nanoTime();
-        long chunkSizeBytes = readFileSize(chunk.audioFile(), "ASR chunk file size cannot be read");
+        Long chunkSizeBytes = chunk.endMillis()>chunk.offsetMillis() ? null
+            : readFileSize(chunk.audioFile(), "ASR chunk file size cannot be read");
         LOGGER.info(
             "ASR chunk started: taskId={}, chunkIndex={}/{}, chunkSizeBytes={}, offsetMillis={}",
             context.taskId(),
@@ -515,6 +590,10 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
     }
 
     private SpeechToTextResult transcribeOne(Path audioFile, PipelineAnalysisTaskStepContext context, SpeechToTextProvider adapter) {
+        if(context.taskContext().protocolVersion()==2) {
+            if(checkpoints==null)throw new IllegalStateException("Pipeline checkpoints unavailable");
+            checkpoints.checkActive(context.taskId(),context.userId(),context.requestId(),context.taskContext().executionEpoch());
+        }
         long startedNanos = System.nanoTime();
         SpeechToTextResult result = adapter.transcribe(new SpeechToTextRequest(
             audioFile,
@@ -589,15 +668,17 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                     elapsedMillis(attemptStartedNanos)
                 );
                 refreshClaim(context, "chunk-retry-before-backoff");
-                sleepBeforeRetry(attempt);
+                sleepBeforeRetry(attempt,adapter);
                 refreshClaim(context, "chunk-retry-after-backoff");
             }
         }
         throw lastFailure == null ? new IllegalStateException("ASR chunk retry failed unexpectedly") : lastFailure;
     }
 
-    private void sleepBeforeRetry(int failedAttempt) {
-        Duration backoff = resolveBackoff(failedAttempt);
+    private void sleepBeforeRetry(int failedAttempt,SpeechToTextProvider adapter) {
+        var frozen=adapter.chunkRetryBackoffMillis();
+        Duration backoff = frozen==null?resolveBackoff(failedAttempt):frozen.isEmpty()?Duration.ZERO:
+            Duration.ofMillis(frozen.get(Math.min(failedAttempt-1,frozen.size()-1)));
         if (backoff.isZero() || backoff.isNegative()) {
             return;
         }
@@ -779,7 +860,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                     segments.size(),
                     range.startMillis(),
                     range.endMillis(),
-                    segment.text()
+                    segment.text(),segment.timingSource(),segment.timingReason()
                 ));
             }
         }
@@ -825,6 +906,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         long authoritativeAudioDurationMillis
     ) {
         AudioChunk chunk = chunks.get(chunkIndex);
+        if(chunk.endMillis()>chunk.offsetMillis()) return Math.min(chunk.endMillis(),authoritativeAudioDurationMillis);
         if (chunkIndex + 1 < chunks.size()) {
             return Math.min(chunks.get(chunkIndex + 1).offsetMillis(), authoritativeAudioDurationMillis);
         }

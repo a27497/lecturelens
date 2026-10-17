@@ -1,0 +1,40 @@
+{
+  "checked_at_utc": "2026-10-16T10:06:09.720364+00:00",
+  "catalog_id": "catalog-20261016",
+  "deepseek": {
+    "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "api_schema": "https://api-docs.deepseek.com/api/create-chat-completion/",
+    "model": "deepseek-flash",
+    "model_version": "DeepSeek-V4.1-Flash",
+    "currency": "USD",
+    "unit": "per_1000000_tokens",
+    "off_peak": {
+      "cache_hit": 0.003,
+      "cache_miss": 0.15,
+      "completion": 0.6
+    },
+    "peak": {
+      "cache_hit": 0.006,
+      "cache_miss": 0.3,
+      "completion": 1.2
+    },
+    "peak_utc": "Mon-Fri 01:00-04:00 and 06:00-10:00 except Chinese public holidays",
+    "holiday_calendar": "not verified; affected calls report a lower/upper range",
+    "reasoning": "subset of completion; not added again"
+  },
+  "bailian": {
+    "source": "https://help.aliyun.com/zh/model-studio/model-pricing",
+    "model": "qwen-audio-3.1-asr-flash",
+    "region": "Beijing",
+    "endpoint_host": "dashscope.aliyuncs.com",
+    "currency": "CNY",
+    "unit": "per_1000000_tokens",
+    "input": 0.8,
+    "output": 2.7,
+    "audio_seconds_are_not_tokens": true
+  },
+  "unknown_usage_is_zero": false,
+  "canonical_cost_table": "model_call_attempt",
+  "never_add_stage_or_diagnostic_costs_again": true,
+  "silence_cost_is_subset_of_asr_total": true
+}
