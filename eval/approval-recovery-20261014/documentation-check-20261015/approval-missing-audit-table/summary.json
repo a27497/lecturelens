@@ -1,0 +1,164 @@
+[
+  {
+    "kind": "practice",
+    "decision": "approve",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1025.833,
+    "recovery_p95_ms": 1025.833
+  },
+  {
+    "kind": "practice",
+    "decision": "approve",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 989.632,
+    "recovery_p95_ms": 989.632
+  },
+  {
+    "kind": "practice",
+    "decision": "approve",
+    "point": "publication_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 975.558,
+    "recovery_p95_ms": 975.558
+  },
+  {
+    "kind": "practice",
+    "decision": "edit",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1044.613,
+    "recovery_p95_ms": 1044.613
+  },
+  {
+    "kind": "practice",
+    "decision": "edit",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1063.722,
+    "recovery_p95_ms": 1063.722
+  },
+  {
+    "kind": "practice",
+    "decision": "edit",
+    "point": "publication_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 971.672,
+    "recovery_p95_ms": 971.672
+  },
+  {
+    "kind": "practice",
+    "decision": "reject",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 986.883,
+    "recovery_p95_ms": 986.883
+  },
+  {
+    "kind": "practice",
+    "decision": "reject",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1031.093,
+    "recovery_p95_ms": 1031.093
+  },
+  {
+    "kind": "practice",
+    "decision": "reject",
+    "point": "termination_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 940.531,
+    "recovery_p95_ms": 940.531
+  },
+  {
+    "kind": "feedback",
+    "decision": "approve",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1007.864,
+    "recovery_p95_ms": 1007.864
+  },
+  {
+    "kind": "feedback",
+    "decision": "approve",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 961.001,
+    "recovery_p95_ms": 961.001
+  },
+  {
+    "kind": "feedback",
+    "decision": "approve",
+    "point": "publication_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1001.208,
+    "recovery_p95_ms": 1001.208
+  },
+  {
+    "kind": "feedback",
+    "decision": "edit",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1017.736,
+    "recovery_p95_ms": 1017.736
+  },
+  {
+    "kind": "feedback",
+    "decision": "edit",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 980.884,
+    "recovery_p95_ms": 980.884
+  },
+  {
+    "kind": "feedback",
+    "decision": "edit",
+    "point": "publication_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1022.465,
+    "recovery_p95_ms": 1022.465
+  },
+  {
+    "kind": "feedback",
+    "decision": "reject",
+    "point": "waiting",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 997.457,
+    "recovery_p95_ms": 997.457
+  },
+  {
+    "kind": "feedback",
+    "decision": "reject",
+    "point": "decision_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1006.145,
+    "recovery_p95_ms": 1006.145
+  },
+  {
+    "kind": "feedback",
+    "decision": "reject",
+    "point": "termination_committed",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 904.03,
+    "recovery_p95_ms": 904.03
+  }
+]

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.courselingo.qa.StudyAuthorityTest" time="0.905" tests="8" errors="0" skipped="0" failures="0" flakes="0"><testcase name="sourceChangeDuringDenseCallPreventsReturningContext" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.544" />
+  <testcase name="readAndNeighborToolsAreBoundedAndRejectUnknownReferences" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.019" />
+  <testcase name="windowUsesSameModalityInTimeOrderAndDoesNotWrapToTranslation" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.011" />
+  <testcase name="searchContextKeepsVisualSourcesAndRequestedTimeBoundary" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.012" />
+  <testcase name="serviceSignatureBindsPathTimeAndBody" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.264" />
+  <testcase name="unreadyIndexBlocksSourceButAllowsCancellationAuthorityCheck" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.013" />
+  <testcase name="searchUsesOriginalSpeechAndCompletesAdjacentContextWithoutDuplicateTranslation" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.013" />
+  <testcase name="rejectsCrossOwnerDeletedAndStaleBeforeReadingSource" classname="com.example.courselingo.qa.StudyAuthorityTest" time="0.015" />
+</testsuite>

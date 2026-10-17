@@ -9,6 +9,7 @@ from typing import TypedDict
 
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command
 from pydantic import ValidationError
 
 from .context import (
@@ -22,6 +23,7 @@ from .context import (
 )
 from .contracts import TOOLS, GenericPracticeArgs, materialize_practice, python_practice
 from .examples import check_example
+from .failures import failure_category
 from .goals import refusal_text
 from .intervals import interval_practice
 from .linear import LinearPracticeArgs, bind_linear_request, linear_practice
@@ -125,10 +127,17 @@ class StudyRuntime:
                         )
 
     def execute(self, run):
+        token = str(uuid.uuid4())
+        with (
+            self.store.execution_connections(),
+            self.authority.execution(self.store, run, token, self.stop),
+        ):
+            self._execute(run, token)
+
+    def _execute(self, run, token):
         with self.store.execution_lock(run["session_id"]) as acquired:
             if not acquired:
                 return
-            token = str(uuid.uuid4())
             try:
                 self.store.claim(run["run_id"], token, self.seconds)
                 if run["model_mode"] != self.provider.mode:
@@ -158,7 +167,11 @@ class StudyRuntime:
                             "retry_tool_contract": False,
                         }
                     )
+                    if saved.interrupts and initial is None:
+                        initial = Command(resume=True)
                     result = graph.invoke(initial, config, durability="sync")
+                    if result.get("__interrupt__"):
+                        return
                     self.authority.read(run)
                     self.store.guard(run["run_id"], token)
                     if not result["done"]:
@@ -218,48 +231,65 @@ class StudyRuntime:
                 + len(json.dumps(schemas).encode())
                 + output_tokens
             )
-            self.store.reserve(run["run_id"], token, "model", tokens)
             metadata = {"attempt": row["model_calls"] + 1, "purpose": purpose}
             if purpose == "review":
                 metadata["review_stage"] = body.get("review_mode", "candidate_review")
             if hasattr(provider, "identity"):
                 metadata["model_selection"] = provider.identity(purpose)
             timeout = max(0.1, (row["deadline"] - datetime.now(timezone.utc)).total_seconds())
-            self.store.event(
+            from .call_journal import begin, complete, operation_key, replay
+
+            key = operation_key(messages, schemas, purpose)
+            prior, metadata = begin(
+                self.store,
                 run["run_id"],
                 token,
-                "model_started",
-                {
-                    **metadata,
-                    "_trace": model_detail(wire_messages, schemas, timeout),
-                },
+                key,
+                tokens,
+                metadata,
+                model_detail(wire_messages, schemas, timeout),
             )
+            if prior is not None:
+                guard()
+                return replay(prior)
             started = time.monotonic()
             method = provider.review if purpose == "review" else provider.decide
             try:
                 response = method(
                     messages, max(0.1, (row["deadline"] - datetime.now(timezone.utc)).total_seconds())
                 )
+                if not isinstance(response, dict):
+                    raise StudyError("MODEL_TOOL_CONTRACT")
             except StudyError as error:
                 guard()
-                self.store.event(
+                complete(
+                    self.store,
                     run["run_id"],
                     token,
-                    "model_failed",
+                    key,
+                    metadata,
                     {
                         **metadata,
                         "error_code": error.code,
+                        "failure_category": failure_category(error.code),
                         "duration_ms": round((time.monotonic() - started) * 1000),
                         **getattr(error, "usage", {}),
+                        "diagnostics": getattr(error, "diagnostics", {}),
+                    },
+                    error={
+                        "code": error.code,
+                        "usage": getattr(error, "usage", {}),
                         "diagnostics": getattr(error, "diagnostics", {}),
                     },
                 )
                 raise
             guard()
-            self.store.event(
+            complete(
+                self.store,
                 run["run_id"],
                 token,
-                "model_finished",
+                key,
+                metadata,
                 {
                     **metadata,
                     "duration_ms": round((time.monotonic() - started) * 1000),
@@ -267,6 +297,7 @@ class StudyRuntime:
                     "protocol_repairs": response.get("protocol_repairs", []),
                     "_trace": {"response": response},
                 },
+                response=response,
             )
             return response
 
@@ -302,6 +333,7 @@ class StudyRuntime:
                     "protocol_retry_scheduled",
                     {
                         "error_code": error.code,
+                        "failure_category": failure_category(error.code),
                         "retry": 1,
                         "purpose": "course_observation",
                     },
@@ -320,7 +352,10 @@ class StudyRuntime:
             }
 
         def decide(state):
+            from .call_journal import planning_calls
+
             budget_row = guard()
+            planned_calls = planning_calls(self.store, run["run_id"], token, budget_row["model_calls"])
             evidence = (
                 self.authority.read(run, "READ", evidence_ids=state["selected"])["evidence"]
                 if state["selected"]
@@ -350,7 +385,7 @@ class StudyRuntime:
                 state["history"],
                 self.store.recent_context(run["session_id"], run["run_id"]),
                 {
-                    "model_calls_left_after_response": max(0, 5 - budget_row["model_calls"]),
+                    "model_calls_left_after_response": max(0, 5 - planned_calls),
                     "new_practice_review_calls": 2
                     if self.independent_solutions and self.provider.mode == "real"
                     else 1,
@@ -380,7 +415,10 @@ class StudyRuntime:
                     raise
                 guard()
                 self.store.event(
-                    run["run_id"], token, "protocol_retry_scheduled", {"error_code": error.code, "retry": 1}
+                    run["run_id"],
+                    token,
+                    "protocol_retry_scheduled",
+                    {"error_code": error.code, "failure_category": failure_category(error.code), "retry": 1},
                 )
                 return {
                     "pending": None,
@@ -389,14 +427,20 @@ class StudyRuntime:
                     "retry_tool_contract": True,
                     "tool_contract_diagnostics": getattr(error, "diagnostics", {}),
                 }
+            if not isinstance(call, dict):
+                raise StudyError("MODEL_TOOL_CONTRACT")
             calls = call.get("calls", [call])
             if not isinstance(calls, list) or not 1 <= len(calls) <= 3:
                 raise StudyError("MODEL_TOOL_CONTRACT")
             pending = []
             seen = {item["fingerprint"] for item in state["history"]}
             for offset, tool_call in enumerate(calls):
-                if tool_call.get("name") not in TOOLS or not isinstance(tool_call.get("arguments"), dict):
+                if not isinstance(tool_call, dict):
+                    raise StudyError("MODEL_TOOL_CONTRACT")
+                if not isinstance(tool_call.get("name"), str) or tool_call["name"] not in TOOLS:
                     raise StudyError("UNKNOWN_TOOL")
+                if not isinstance(tool_call.get("arguments"), dict):
+                    raise StudyError("INVALID_TOOL_ARGUMENTS")
                 name = tool_call["name"]
                 if (
                     name
@@ -452,6 +496,9 @@ class StudyRuntime:
                         raise StudyError("LEARNER_PLAN_CONFLICT")
                     if raw_arguments.get("practice_kind") == "linear_points":
                         raw_arguments["linear_request"] = request_plan
+                if name == "search_course_evidence":
+                    # Validate even filters that will be removed by the goal fence.
+                    TOOLS[name][0].model_validate(aliases_in(raw_arguments, aliases))
                 if name == "search_course_evidence" and not has_time_request(run["goal"]):
                     # Unrequested filters must not turn a relevant course into a false abstention.
                     raw_arguments.pop("start_ms", None)
@@ -563,7 +610,7 @@ class StudyRuntime:
                     raise StudyError("TOOL_ID_CONFLICT")
                 result = prior["result"]
             else:
-                self.store.reserve(run["run_id"], token, "tool")
+                self.store.reserve(run["run_id"], token, "tool", key=call_id)
                 self.store.event(run["run_id"], token, "tool_started", {"call_id": call_id, "tool": name})
                 artifact = None
                 computed_example = None
@@ -987,7 +1034,12 @@ class StudyRuntime:
                                 run["run_id"],
                                 token,
                                 "protocol_retry_scheduled",
-                                {"error_code": error.code, "retry": 1, "purpose": "review"},
+                                {
+                                    "error_code": error.code,
+                                    "failure_category": failure_category(error.code),
+                                    "retry": 1,
+                                    "purpose": "review",
+                                },
                             )
                             response = model_call(messages, "review")
                         verdict = QualityReview.model_validate(aliases_in(response["review"], review_ids))
@@ -1052,11 +1104,17 @@ class StudyRuntime:
         graph = StateGraph(State)
         graph.add_node("decide", traced_node(self.store, run, token, "decide", decide))
         graph.add_node("tool", traced_node(self.store, run, token, "tool", act))
+        if run.get("approval_required"):
+            from .approval import add_gate
+
+            add_gate(graph, self, run, token)
+            graph.add_edge("approval", END)
+        end = "approval" if run.get("approval_required") else END
         graph.add_edge(START, "decide")
         graph.add_conditional_edges(
             "decide", lambda state: "decide" if state.get("retry_tool_contract") else "tool"
         )
         graph.add_conditional_edges(
-            "tool", lambda state: END if state["done"] else "tool" if state.get("pending") else "decide"
+            "tool", lambda state: end if state["done"] else "tool" if state.get("pending") else "decide"
         )
         return graph.compile(checkpointer=saver)

@@ -8,9 +8,9 @@ from .strings import StringProgramPlan, render_string_program
 
 
 class StudyScope(Contract):
-    owner_id: Annotated[int, Field(ge=1)]
+    owner_id: Annotated[int, Field(ge=1, le=2**63 - 1)]
     course_id: Identifier
-    revision: Annotated[int, Field(ge=0)]
+    revision: Annotated[int, Field(ge=0, le=2**63 - 1)]
 
 
 class StudyCommand(StudyScope):
@@ -28,6 +28,7 @@ class StudyCommand(StudyScope):
         "START_FEEDBACK",
         "SAVE_FEEDBACK_NOTE",
         "FEEDBACK_NOTES",
+        "DECIDE_APPROVAL",
     ]
     session_id: Identifier | None = None
     run_id: Identifier | None = None
@@ -43,6 +44,9 @@ class StudyCommand(StudyScope):
     feedback_id: Identifier | None = None
     note_text: Annotated[str, Field(min_length=1, max_length=2000)] | None = None
     disposition: Literal["disputed", "acknowledged"] | None = None
+    approval_required: Annotated[bool, Field(strict=True)] = False
+    approval_decision: Literal["approve", "edit", "reject"] | None = None
+    approval_edit: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
 
     @model_validator(mode="after")
     def attempt_scope(self):
@@ -63,6 +67,13 @@ class StudyCommand(StudyScope):
                 or self.expected_version is None
             ):
                 raise ValueError("A correction requires learner text and an expected version")
+        if self.operation == "DECIDE_APPROVAL":
+            if not all((self.session_id, self.run_id, self.request_key, self.approval_decision)):
+                raise ValueError("Approval requires explicit Run scope and a request key")
+            if (self.approval_decision == "edit") != (self.approval_edit is not None):
+                raise ValueError("An edited approval requires replacement publication text")
+            if self.approval_edit is not None and not self.approval_edit.strip():
+                raise ValueError("Empty publication text")
         return self
 
 
@@ -90,8 +101,8 @@ class SearchArgs(Contract):
             description="Choose subject: linear_points for checking points against linear equations, row-picture/origin/common-point exercises (not solution-set classification); python_strings for string immutability/rebinding; python_strings_or_code for other Python code; interval_halving for numeric higher/lower guessing; selection_steps for selection-sort states; search_cost for sorting preparation versus linear/binary query costs; general for other topics including tracing linear scans. Search again to change it."
         ),
     ] = "auto"
-    start_ms: Annotated[int, Field(ge=0)] | None = None
-    end_ms: Annotated[int, Field(ge=0)] | None = None
+    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
+    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
 
     @model_validator(mode="after")
     def valid_window(self):

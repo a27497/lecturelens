@@ -182,3 +182,18 @@ it("opens a saved older run from learning history", async () => {
   expect(studyCommand).toHaveBeenCalledWith("task", expect.objectContaining({ operation: "READ", run_id: "older" }));
   wrapper.unmount();
 });
+
+it("restores the frozen approval choice and waiting draft after reload", async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
+    return { run: { ...run, status: "awaiting_approval", approval_required: true }, artifact: null,
+      approval: { kind: "practice", decision: null, preview: { title: "unpublished draft", explanation: "preview only" } } };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  expect((wrapper.find('input[type="checkbox"]').element as HTMLInputElement).checked).toBe(true);
+  expect(wrapper.text()).toContain("等待你的发布审批");
+  expect(wrapper.find(".study-artifact").exists()).toBe(false);
+  expect(studyEvents).not.toHaveBeenCalled();
+  wrapper.unmount();
+});

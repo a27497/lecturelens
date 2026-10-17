@@ -41,7 +41,7 @@ public class StudyController {
     }
 
     private JsonNode invoke(String taskId,long owner,Command command) {
-        if(command==null || command.operation()==null || !Set.of("CREATE_SESSION","LIST","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES").contains(command.operation())
+        if(command==null || command.operation()==null || !Set.of("CREATE_SESSION","LIST","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
                 || (command.goal()!=null && (command.goal().isBlank() || command.goal().length()>1000))
                 || command.after()<0) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id())) {
@@ -65,7 +65,13 @@ public class StudyController {
                 command.expected_version()<0 || command.note_text()==null || command.note_text().isBlank() || command.note_text().length()>2000 ||
                 command.disposition()==null || !Set.of("disputed","acknowledged").contains(command.disposition())))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        long revision=authority.current(taskId,owner,Set.of("CREATE_SESSION","START","ANSWERS","SAVE_ATTEMPT","START_FEEDBACK").contains(command.operation()));
+        if (command.operation().equals("DECIDE_APPROVAL") &&
+                (command.session_id()==null || command.run_id()==null || command.request_key()==null ||
+                 command.approval_decision()==null || !Set.of("approve","edit","reject").contains(command.approval_decision()) ||
+                 (command.approval_decision().equals("edit") != (command.approval_edit()!=null)) ||
+                 (command.approval_edit()!=null && (command.approval_edit().isBlank() || command.approval_edit().length()>4000))))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        long revision=authority.current(taskId,owner,Set.of("CREATE_SESSION","START","ANSWERS","SAVE_ATTEMPT","START_FEEDBACK","DECIDE_APPROVAL").contains(command.operation()));
         Map<String,Object> payload=new LinkedHashMap<>();
         payload.put("owner_id",owner); payload.put("course_id",taskId); payload.put("revision",revision); payload.put("operation",command.operation());
         if(command.session_id()!=null) payload.put("session_id",command.session_id());
@@ -81,6 +87,9 @@ public class StudyController {
         if(command.feedback_id()!=null) payload.put("feedback_id",command.feedback_id());
         if(command.note_text()!=null) payload.put("note_text",command.note_text());
         if(command.disposition()!=null) payload.put("disposition",command.disposition());
+        if(command.approval_required()!=null) payload.put("approval_required",command.approval_required());
+        if(command.approval_decision()!=null) payload.put("approval_decision",command.approval_decision());
+        if(command.approval_edit()!=null) payload.put("approval_edit",command.approval_edit());
         payload.put("after",command.after());
         var result=transport.command(payload);
         if(authority.current(taskId,owner,false)!=revision) throw new BusinessException(ErrorCode.STUDY_CONFLICT);
@@ -110,7 +119,7 @@ public class StudyController {
                         next=event.path("sequence").asLong();
                         emitter.send(SseEmitter.event().id(Long.toString(next)).name(event.path("event_type").asText()).data(event));
                     }
-                    if(Set.of("succeeded","failed","cancelled","budget_exceeded").contains(batch.path("status").asText())) break;
+                    if(Set.of("succeeded","failed","cancelled","budget_exceeded","awaiting_approval").contains(batch.path("status").asText())) break;
                     emitter.send(SseEmitter.event().comment("heartbeat"));
                     Thread.sleep(1000);
                     long checkedOwner=users.currentUser(auth).userId();
@@ -136,7 +145,14 @@ public class StudyController {
     }
     public record Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                           String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
-                          String attempt_id,String feedback_id,String note_text,String disposition) {
+                          String attempt_id,String feedback_id,String note_text,String disposition,
+                          Boolean approval_required,String approval_decision,String approval_edit) {
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,null,null,null);
+        }
         public Command(String operation,String session_id,String run_id,String request_key,String goal,long after) {
             this(operation,session_id,run_id,request_key,goal,after,null,null,null,null,null);
         }

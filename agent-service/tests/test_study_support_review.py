@@ -256,14 +256,6 @@ def test_computed_view_hides_verified_answers_only_after_actual_proof_and_forbid
 @pytest.mark.parametrize("cancel", [False, True])
 def test_runtime_reserves_wire_budget_and_keeps_review_observations_private(setup, cancel):
     store, _, runtime, scope = setup
-    reservations = []
-    reserve = store.reserve
-
-    def capture(*args, **kwargs):
-        reservations.append(args)
-        return reserve(*args, **kwargs)
-
-    store.reserve = capture
 
     def review(messages, timeout):
         body = json.loads(messages[-1]["content"])
@@ -276,7 +268,13 @@ def test_runtime_reserves_wire_budget_and_keeps_review_observations_private(setu
             + len(json.dumps([schema]).encode())
             + output_tokens(body["review_mode"])
         )
-        assert reservations[-1][2:] == ("model", expected)
+        with store.connect() as conn:
+            reservation = conn.execute(
+                "SELECT reserved_tokens FROM study_model_call WHERE run_id=(SELECT run_id FROM study_run "
+                "WHERE session_id=%s) ORDER BY (metadata->>'attempt')::integer DESC LIMIT 1",
+                (scope["session_id"],),
+            ).fetchone()
+        assert reservation["reserved_tokens"] == expected
         data = accepted(body)
         for check in data["checks"]:
             check["course_fact"] = "Private support observation"

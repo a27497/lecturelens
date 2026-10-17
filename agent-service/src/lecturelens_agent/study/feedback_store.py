@@ -47,18 +47,22 @@ def start_feedback(store, conn, parent, command, mode):
         (parent["session_id"], command.request_key),
     ).fetchone()
     if prior:
-        if prior["task_kind"] != "feedback" or prior["source_attempt_id"] != command.attempt_id:
+        if (
+            prior["task_kind"] != "feedback"
+            or prior["source_attempt_id"] != command.attempt_id
+            or prior["approval_required"] != command.approval_required
+        ):
             raise StudyError("REQUEST_KEY_CONFLICT")
         return store._view(conn, prior)
     if conn.execute(
-        "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running')",
+        "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running','awaiting_approval')",
         (parent["session_id"],),
     ).fetchone():
         raise StudyError("SESSION_BUSY")
     config = store.model_resolver(command.owner_id) if mode == "real" and store.model_resolver else None
     row = conn.execute(
-        "INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,task_kind,source_attempt_id) "
-        "VALUES (%s,%s,%s,%s,%s,%s,'feedback',%s) RETURNING *",
+        "INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,task_kind,source_attempt_id,approval_required) "
+        "VALUES (%s,%s,%s,%s,%s,%s,'feedback',%s,%s) RETURNING *",
         (
             str(uuid.uuid4()),
             parent["session_id"],
@@ -67,6 +71,7 @@ def start_feedback(store, conn, parent, command, mode):
             mode,
             Jsonb(config) if config else None,
             command.attempt_id,
+            command.approval_required,
         ),
     ).fetchone()
     store._event(conn, row["run_id"], "run_queued", {})

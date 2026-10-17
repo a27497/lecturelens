@@ -1,0 +1,104 @@
+{
+  "captured_at_utc": "2026-10-14T09:21:44.691247+00:00",
+  "python": "Python 3.12.14",
+  "postgres": "PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+  "python_checks": {
+    "tests": 682,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "complete_collection_covered_once": true,
+  "database_skips": 0,
+  "groups": [
+    {
+      "worker": 0,
+      "files": [
+        "tests/test_course_mcp.py",
+        "tests/test_study_quality.py",
+        "tests/test_study_computed_review.py",
+        "tests/test_study_support_review.py",
+        "tests/test_authority_url.py",
+        "tests/test_study_costs.py",
+        "tests/test_study_connections.py",
+        "tests/test_study_metrics_report.py"
+      ],
+      "expected_cases": 138,
+      "port": 15469,
+      "database_name": "lecturelens_agent_test",
+      "tests": 138,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 1,
+      "files": [
+        "tests/test_study.py",
+        "tests/test_study_sequences.py",
+        "tests/test_models.py",
+        "tests/test_study_answer_points.py",
+        "tests/test_study_trace.py",
+        "tests/test_study_method_scope.py",
+        "tests/test_study_example_runtime.py"
+      ],
+      "expected_cases": 149,
+      "port": 15470,
+      "database_name": "lecturelens_agent_test",
+      "tests": 149,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 2,
+      "files": [
+        "tests/test_study_provider.py",
+        "tests/test_study_resilience.py",
+        "tests/test_study_feedback.py",
+        "tests/test_study_intervals.py",
+        "tests/test_benchmark.py",
+        "tests/test_study_context.py",
+        "tests/test_reviewer_probe.py",
+        "tests/test_study_solution.py"
+      ],
+      "expected_cases": 198,
+      "port": 15471,
+      "database_name": "lecturelens_agent_test",
+      "tests": 198,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 3,
+      "files": [
+        "tests/test_study_examples.py",
+        "tests/test_study_linear.py",
+        "tests/test_retrieval.py",
+        "tests/test_study_python_practice.py",
+        "tests/test_study_goals.py",
+        "tests/test_study_attempts.py",
+        "tests/test_study_eval.py",
+        "tests/test_feedback_eval.py"
+      ],
+      "expected_cases": 197,
+      "port": 15472,
+      "database_name": "lecturelens_agent_test",
+      "tests": 197,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "ruff_check": "passed: agent-service and scripts/eval/report-study-metrics.py",
+  "ruff_format_check": "passed: agent-service/src agent-service/tests scripts/eval/report-study-metrics.py (82 files)",
+  "reporter_sha256": "da69a54c65c9ec76c58bc12f8409d0574b143e3fb8791031c8063afc8604c152",
+  "wrapper_sha256": "6faa55dbee215fdeb5e576373bb549343cec527b78b2fd5359ca6ff7717c0e29",
+  "reproducibility": {
+    "command": "uv run --project agent-service python scripts/eval/report-study-metrics.py (same seven --records)",
+    "report_json_byte_identical": true,
+    "markdown_byte_identical": true,
+    "report_json_sha256": "56ae90cee24d91a1c41a2b1bb0b117d3aaddfaf4545ae3af7e5072baeaf67af9"
+  }
+}

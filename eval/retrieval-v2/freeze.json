@@ -1,0 +1,110 @@
+{
+  "id": "retrieval-v2-20261014",
+  "frozen_at": "2026-10-14T12:08:15.017684+00:00",
+  "files": {
+    "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b",
+    "eval/retrieval-v2/cases.json": "660b0cff7aa03f127cf7841e4c4fc5decfbb073c7f537a1beef3de4423ad2e13",
+    "eval/retrieval-v2/split-plan.json": "2a3f73369c9983ce4312973fea862f50281408eac5ae5ee0343b682f53e65343",
+    "eval/retrieval-v2/config.json": "4e6340b7d18b27864ad137a14bb7431fbaa1333fca49102ed4c6aede7f434879",
+    "eval/retrieval-v2/annotation-seeds.json": "faa76fdf59a0bce5325bb5d6aece46232251ce3b84345cdce0bfcf3792eb65f4",
+    "eval/retrieval-v2/source-downloads.json": "9d2462e07505d6730610bc163db0346b97f090481e1e101d8e6641d540349a0c",
+    "eval/retrieval-v2/SOURCES.md": "3292ecbb360168e741fc3a6d7618339853a684c586584beac9f99b1d44196fad",
+    "eval/retrieval-v2/PROTOCOL.md": "ff1d778dfc8600908dc03a7fea87555f047fffac37ab29c9fbed6f847ac6d6f1",
+    "eval/retrieval-v2/pyproject.toml": "76b744eb8cfff1547736c8d96b14ff78e58a70f23295b78f0a487be6770b481e",
+    "eval/retrieval-v2/uv.lock": "538cb9074ee4609f18a4b0760efa250a895a3647fd9bb2086c4bba91f2497429",
+    "eval/retrieval-v2/build_cases.py": "4699d938e6a43aa2246548ec4c2ec106e1950d05c1051fcb23232d1c2e50df2f",
+    "eval/retrieval-v2/extract_corpus.py": "88d2a5907c5ee9a9c8d6900dca451593d56f597372d1bbd8c2a851273264aef7",
+    "agent-service/src/lecturelens_agent/benchmark_v2/__init__.py": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+    "agent-service/src/lecturelens_agent/benchmark_v2/run.py": "25ca7381415e0e764a5d773be98b0a219bd1b7f7ddd59f1a106024b99f4f0e68",
+    "agent-service/src/lecturelens_agent/benchmark_v2/statistics.py": "e9a9acabce128062549dd2d2efc213690cd2a0bb34767845b651d5830db04174",
+    "agent-service/src/lecturelens_agent/embedding.py": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4",
+    "agent-service/src/lecturelens_agent/retrieval.py": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe",
+    "agent-service/src/lecturelens_agent/contracts.py": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06",
+    "agent-service/src/lecturelens_agent/store.py": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d",
+    "agent-service/src/lecturelens_agent/benchmark/core.py": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c",
+    "agent-service/src/lecturelens_agent/benchmark/reranker.py": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6"
+  },
+  "packages": {
+    "fastembed": "0.8.0",
+    "onnxruntime": "1.30.0",
+    "psycopg": "3.3.6",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu",
+    "transformers": "5.17.0",
+    "huggingface-hub": "1.32.0",
+    "pydantic": "2.13.5",
+    "tokenizers": "0.23.2"
+  },
+  "primary": "Holdout Evidence Coverage@3; three paired contrasts to Dense, Bonferroni familywise alpha=.05",
+  "annotation": {
+    "type": "model-assisted; Codex authored and source-reviewed; no human gold, no independent blind review",
+    "human_annotators": 0,
+    "independent_review": false,
+    "source_review": "Every positive locator was inspected before scoring. Sparse anchored qrels, not exhaustive human judgments. No-answer means unavailable in this frozen text-only snapshot, not the whole course."
+  },
+  "split_plan": {
+    "planned_before_annotation_or_scoring": true,
+    "created_at_utc": "2026-10-14",
+    "development_courses": [
+      "algorithms",
+      "linear",
+      "calculus",
+      "probability"
+    ],
+    "holdout_courses": [
+      "economics",
+      "quantum"
+    ],
+    "questions_per_course": 20,
+    "answerable_per_course": 16,
+    "cross_lecture_per_course": 4,
+    "no_answer_per_course": 4,
+    "chinese_per_course": 10,
+    "holdout_policy": "Course-disjoint; no retrieval scores before freeze; one scored holdout pass. No config/label changes after scores. Dataset author is AI and sees source material, not a blind human annotator."
+  },
+  "config": {
+    "candidate_k": 8,
+    "context_k": 3,
+    "metric_ks": [
+      1,
+      3,
+      5,
+      8
+    ],
+    "rerank_k": 8,
+    "latency_repeats": 1,
+    "rrf_k": 60,
+    "dense_weight": 0.5,
+    "bm25": {
+      "k1": 1.2,
+      "b": 0.75
+    },
+    "cross_encoder": {
+      "repo": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+      "revision": "1427fd652930e4ba29e8149678df786c240d8825",
+      "max_length": 512,
+      "files_sha256": {
+        "config.json": "cc2cfe51aa3fd759d21d21acf5dfd6994aa67a3c9210636d22e143699d336c77",
+        "model.safetensors": "5daeca2481a76b5976a2bdc32f0a78532b6716da4f8cd3ff59460ef8d2f359b4",
+        "sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+        "special_tokens_map.json": "378eb3bf733eb16e65792d7e3fda5b8a4631387ca04d2015199c4d4f22ae554d",
+        "tokenizer.json": "62c24cdc13d4c9952d63718d6c9fa4c287974249e16b7ade6d5a85e7bbb75626",
+        "tokenizer_config.json": "e7fbfbfa6347b4e414c1cee50d142e2c2f9a895dad68b068ae83a8b564c3837e"
+      }
+    },
+    "dense_files_sha256": {
+      "config.json": "c8ec081fdad2df991bf5abbf18418fec7a5cdaa421f60ffb060a30040b8c376f",
+      "model_optimized.onnx": "634d0f66c29dc934c8fa72b8a4fe91dd4d420a22f1d82a241058d4316e659a99",
+      "ort_config.json": "99881c45e073696289224931dd48694398bc6bcd1fe7cb7018bca1e0cc00e1fc",
+      "special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+      "tokenizer.json": "fa685fc160bbdbab64058d4fc91b60e62d207e8dc60b9af5c002c5ab946ded00",
+      "tokenizer_config.json": "0666eebf692422757e1dddf3c9fb1ded73ba3dc726c5828671fc89e45bf3609f",
+      "unigram.json": "da145b5e7700ae40f16691ec32a0b1fdc1ee3298db22a31ea55f57a966c4a65d"
+    },
+    "bootstrap_draws": 5000,
+    "bootstrap_seed": 1729,
+    "primary_metric": "evidence_coverage@3",
+    "answerability_gate": "none; rankers return candidates, not reader refusals",
+    "phase_a_methods_unchanged": true
+  }
+}

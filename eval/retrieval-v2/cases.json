@@ -1,0 +1,3754 @@
+{
+  "id": "retrieval-v2",
+  "annotation": {
+    "type": "model-assisted; Codex authored and source-reviewed; no human gold, no independent blind review",
+    "human_annotators": 0,
+    "independent_review": false,
+    "source_review": "Every positive locator was inspected before scoring. Sparse anchored qrels, not exhaustive human judgments. No-answer means unavailable in this frozen text-only snapshot, not the whole course."
+  },
+  "cases": [
+    {
+      "id": "algorithms-q01",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l1",
+      "language": "en",
+      "query": "What does BFS level i mean about the number of edges from the start?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Level i means reachable in i edges but not fewer.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p04-e00",
+            "v2-algorithms-l1-p04-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              560
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q02",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l1",
+      "language": "zh",
+      "query": "有向图的邻接表为每个顶点存储什么？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Adj[u] contains outgoing neighbors.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p03-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 3,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q03",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l1",
+      "language": "en",
+      "query": "What time bound includes discovering unreachable vertices in BFS?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "O(V+E) including unreachable vertices.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              577
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q04",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l1",
+      "language": "zh",
+      "query": "用 BFS 的父指针怎样恢复从目标回到起点的最短路径？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Follow parents from target back to s.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              577
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-algorithms-l2-p02-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q05",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l2",
+      "language": "en",
+      "query": "What search behavior is compared to exploring a maze?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "DFS follows a path, backtracks, recursively explores unvisited neighbors.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p02-e00",
+            "v2-algorithms-l2-p02-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              596
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q06",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l2",
+      "language": "zh",
+      "query": "DFS 中返回祖先和指向后代的非树边分别叫什么？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Back edges go to ancestors, forward edges to descendants.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p03-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 3,
+            "normalized_character_range": [
+              0,
+              593
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q07",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l2",
+      "language": "en",
+      "query": "Why does reversing DFS finishing order give a topological order?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Topological sort uses reverse DFS finishing times.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p05-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 5,
+            "normalized_character_range": [
+              0,
+              510
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q08",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l2",
+      "language": "zh",
+      "query": "根据本讲的环检测条件，仅出现 cross edge 就能判定有环吗？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "The criterion is a DFS back edge, not an arbitrary cross edge.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p04-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              639
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-algorithms-l3-p01-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q09",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l3",
+      "language": "en",
+      "query": "What edge-weight assumption does Dijkstra require?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "All weights nonnegative.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p04-e00",
+            "v2-algorithms-l3-p04-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q10",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l3",
+      "language": "zh",
+      "query": "贪心最短路算法每次从未确定顶点中挑选哪个？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Choose minimum tentative shortest-path distance.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p05-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 5,
+            "normalized_character_range": [
+              0,
+              584
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q11",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l3",
+      "language": "en",
+      "query": "How does the array priority queue affect Dijkstra complexity?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Array gives quadratic total cost.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              476
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q12",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-l3",
+      "language": "zh",
+      "query": "DAG 最短路是否也必须禁止负权边，为什么没有负环？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "DAGs have no cycles; topological relaxation supports negative edges.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              607
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-algorithms-l1-p06-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q13",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-cross",
+      "language": "en",
+      "query": "Combine the BFS level definition in lecture 13 with Dijkstra selection in lecture 16: how do their notions of distance differ?",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Level i means reachable in i edges but not fewer.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p04-e00",
+            "v2-algorithms-l1-p04-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              560
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        },
+        {
+          "required_fact": "Choose minimum tentative shortest-path distance.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p05-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 5,
+            "normalized_character_range": [
+              0,
+              584
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q14",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-cross",
+      "language": "zh",
+      "query": "第13讲父指针怎样恢复路径，第14讲又怎样用回边识别环？",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Follow parents from target back to s.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              577
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        },
+        {
+          "required_fact": "The criterion is a DFS back edge, not an arbitrary cross edge.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p04-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              639
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q15",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-cross",
+      "language": "en",
+      "query": "Explain how lecture 14 orders DAG vertices and how lecture 16 uses that order for shortest paths.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Topological sort uses reverse DFS finishing times.",
+          "evidence_ids": [
+            "v2-algorithms-l2-p05-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l2",
+            "page": 5,
+            "normalized_character_range": [
+              0,
+              510
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/e59f8a55929028498953691891229a17_MIT6_006F11_lec14.pdf",
+            "source_sha256": "531c70ff75c9c892ea79b204021032d8a8310bd5444ce927d504bab07d42b3f3"
+          }
+        },
+        {
+          "required_fact": "DAGs have no cycles; topological relaxation supports negative edges.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              607
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q16",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-cross",
+      "language": "zh",
+      "query": "比较第13讲 BFS 的复杂度与第16讲数组实现 Dijkstra 的复杂度。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "O(V+E) including unreachable vertices.",
+          "evidence_ids": [
+            "v2-algorithms-l1-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l1",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              577
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/1208e162775f6f5cedfbb9f2b694ede0_MIT6_006F11_lec13.pdf",
+            "source_sha256": "d10f747d886f4fa930d5cef470af7421a74877587276d45cbf2aa7e9fc43cd0c"
+          }
+        },
+        {
+          "required_fact": "Array gives quadratic total cost.",
+          "evidence_ids": [
+            "v2-algorithms-l3-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "algorithms-l3",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              476
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/6277a1f06100c26a7ff21031af6757b5_MIT6_006F11_lec16.pdf",
+            "source_sha256": "4c7e5fc2561bdf09cbb4f8138e99ba16ff30a7389fa9e74a857dde3d8173a377"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "algorithms-q17",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-no-answer",
+      "language": "en",
+      "query": "What Bellman-Ford negative-cycle detection pseudocode is given in these three lectures?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Only BFS, DFS and Dijkstra/DAG notes selected; no Bellman-Ford pseudocode."
+    },
+    {
+      "id": "algorithms-q18",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-no-answer",
+      "language": "zh",
+      "query": "这里用哪个确切的斐波那契堆势函数证明 decrease-key 的摊还界？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Bound is listed but implementation/potential proof explicitly not covered."
+    },
+    {
+      "id": "algorithms-q19",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-no-answer",
+      "language": "en",
+      "query": "Which parallel BFS GPU kernel and measured speedup do these notes provide?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No GPU implementation or measurement exists in snapshot."
+    },
+    {
+      "id": "algorithms-q20",
+      "course": "algorithms",
+      "split": "development",
+      "family": "algorithms-no-answer",
+      "language": "zh",
+      "query": "另上传的 roads.csv 图文件各点最短距离是多少？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No roads.csv is present; graph inputs and outputs absent."
+    },
+    {
+      "id": "linear-q01",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l1",
+      "language": "en",
+      "query": "How is the error vector oriented relative to the line of projection?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "The residual is perpendicular to a.",
+          "evidence_ids": [
+            "v2-linear-l1-p01-e01",
+            "v2-linear-l1-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 1,
+            "normalized_character_range": [
+              600,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q02",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l1",
+      "language": "zh",
+      "query": "投影到非零向量张成的一条直线，其投影矩阵秩是多少？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Rank one and column space is that line.",
+          "evidence_ids": [
+            "v2-linear-l1-p06-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 6,
+            "normalized_character_range": [
+              599,
+              1179
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q03",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l1",
+      "language": "en",
+      "query": "Why does applying a projection matrix twice have the same effect as once?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "A projected point stays fixed; P squared equals P.",
+          "evidence_ids": [
+            "v2-linear-l1-p07-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 7,
+            "normalized_character_range": [
+              594,
+              1172
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q04",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l1",
+      "language": "zh",
+      "query": "正交投影矩阵的转置有什么性质？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Projection matrix is symmetric.",
+          "evidence_ids": [
+            "v2-linear-l1-p07-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 7,
+            "normalized_character_range": [
+              0,
+              593
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-linear-l3-p01-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q05",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l2",
+      "language": "en",
+      "query": "What do least squares minimize when Ax=b has no exact solution?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Sum of squared residuals.",
+          "evidence_ids": [
+            "v2-linear-l2-p05-e02",
+            "v2-linear-l2-p05-e02-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 5,
+            "normalized_character_range": [
+              1198,
+              1634
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q06",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l2",
+      "language": "zh",
+      "query": "如果 P 给出拟合投影，哪个矩阵给出垂直方向的残差？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "I-P projects to the perpendicular subspace.",
+          "evidence_ids": [
+            "v2-linear-l2-p04-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q07",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l2",
+      "language": "en",
+      "query": "How are the fitted and residual components related to the original vector?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Projection plus error equals b.",
+          "evidence_ids": [
+            "v2-linear-l2-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 3,
+            "normalized_character_range": [
+              597,
+              1223
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q08",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l2",
+      "language": "zh",
+      "query": "最小二乘是否要求 b 本来就在列空间内，精确解对应什么特殊情况？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Zero residual is the special case b in column space; otherwise minimize length.",
+          "evidence_ids": [
+            "v2-linear-l2-p06-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 6,
+            "normalized_character_range": [
+              0,
+              596
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-linear-l1-p06-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q09",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l3",
+      "language": "en",
+      "query": "What two conditions define an orthonormal basis?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Pairwise perpendicular, each unit length.",
+          "evidence_ids": [
+            "v2-linear-l3-p01-e01",
+            "v2-linear-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 1,
+            "normalized_character_range": [
+              600,
+              1199
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q10",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l3",
+      "language": "zh",
+      "query": "即使 Q 不是方阵，标准正交列为何使 Q 转置乘 Q 等于单位矩阵？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Column inner products form identity.",
+          "evidence_ids": [
+            "v2-linear-l3-p03-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 3,
+            "normalized_character_range": [
+              0,
+              589
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q11",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l3",
+      "language": "en",
+      "query": "What must be removed from the second vector in Gram-Schmidt?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Subtract its projection onto the first vector.",
+          "evidence_ids": [
+            "v2-linear-l3-p15-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 15,
+            "normalized_character_range": [
+              0,
+              596
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q12",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-l3",
+      "language": "zh",
+      "query": "Gram-Schmidt 在这里从什么性质的原始向量开始构造标准正交向量？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Starts with independent vectors.",
+          "evidence_ids": [
+            "v2-linear-l3-p13-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 13,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-linear-l1-p07-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q13",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-cross",
+      "language": "en",
+      "query": "Connect lecture 15 perpendicular projection error with lecture 17 removing a projection in Gram-Schmidt.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "The residual is perpendicular to a.",
+          "evidence_ids": [
+            "v2-linear-l1-p01-e01",
+            "v2-linear-l1-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 1,
+            "normalized_character_range": [
+              600,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        },
+        {
+          "required_fact": "Subtract its projection onto the first vector.",
+          "evidence_ids": [
+            "v2-linear-l3-p15-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 15,
+            "normalized_character_range": [
+              0,
+              596
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q14",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-cross",
+      "language": "zh",
+      "query": "比较第15讲投影到一条线的秩与第17讲标准正交列的内积矩阵。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Rank one and column space is that line.",
+          "evidence_ids": [
+            "v2-linear-l1-p06-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l1",
+            "page": 6,
+            "normalized_character_range": [
+              599,
+              1179
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/96a31504ec5d489d84113320b593eb0d_Y_Ac6KiQ1t0.pdf",
+            "source_sha256": "389341f1c9b7da95d19e340ca505209968746119f80845467755668237321ecf"
+          }
+        },
+        {
+          "required_fact": "Column inner products form identity.",
+          "evidence_ids": [
+            "v2-linear-l3-p03-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 3,
+            "normalized_character_range": [
+              0,
+              589
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q15",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-cross",
+      "language": "en",
+      "query": "Combine lecture 16 least-squares objective with lecture 17 input requirements for Gram-Schmidt.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Sum of squared residuals.",
+          "evidence_ids": [
+            "v2-linear-l2-p05-e02",
+            "v2-linear-l2-p05-e02-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 5,
+            "normalized_character_range": [
+              1198,
+              1634
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        },
+        {
+          "required_fact": "Starts with independent vectors.",
+          "evidence_ids": [
+            "v2-linear-l3-p13-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 13,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q16",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-cross",
+      "language": "zh",
+      "query": "第16讲的残差投影 I-P 与第17讲单位正交基分别表达什么？",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "I-P projects to the perpendicular subspace.",
+          "evidence_ids": [
+            "v2-linear-l2-p04-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l2",
+            "page": 4,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/b05d83bbdd6bcc995f2f8002093010c6_osh80YCg_GM.pdf",
+            "source_sha256": "7baf098e2368fa6fae26b7ee155b248411a1bac2963145f67055cfca05da3b12"
+          }
+        },
+        {
+          "required_fact": "Pairwise perpendicular, each unit length.",
+          "evidence_ids": [
+            "v2-linear-l3-p01-e01",
+            "v2-linear-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "linear-l3",
+            "page": 1,
+            "normalized_character_range": [
+              600,
+              1199
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/e87f2914b2eb2f53e38688040c04b9b1_0MtwqhIwdrI.pdf",
+            "source_sha256": "15786c4a4ba457e5887687d67ca18f265145f824d87146b4c45c7e4596f4158e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "linear-q17",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-no-answer",
+      "language": "en",
+      "query": "What singular values does the lecture compute for the externally supplied matrix sales.csv?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No external matrix or SVD computation in selected lectures."
+    },
+    {
+      "id": "linear-q18",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-no-answer",
+      "language": "zh",
+      "query": "这些讲中最小二乘的岭回归惩罚参数通过交叉验证选成多少？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No ridge regression parameter or validation exercise."
+    },
+    {
+      "id": "linear-q19",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-no-answer",
+      "language": "en",
+      "query": "What is the full Gram-Schmidt output for the new vectors stored in vectors.csv?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No file or specified numerical vectors."
+    },
+    {
+      "id": "linear-q20",
+      "course": "linear",
+      "split": "development",
+      "family": "linear-no-answer",
+      "language": "zh",
+      "query": "该实现使用什么确切的浮点重正交化容差？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No implementation tolerance is specified in snapshot."
+    },
+    {
+      "id": "calculus-q01",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l1",
+      "language": "en",
+      "query": "What is the geometric formula for a dot product?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Product of lengths times cosine.",
+          "evidence_ids": [
+            "v2-calculus-l1-p06-e01",
+            "v2-calculus-l1-p06-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 6,
+            "normalized_character_range": [
+              598,
+              1194
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q02",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l1",
+      "language": "zh",
+      "query": "为什么向量与自身的点积等于长度平方？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "The angle is zero and cosine is one.",
+          "evidence_ids": [
+            "v2-calculus-l1-p07-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 7,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q03",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l1",
+      "language": "en",
+      "query": "How is a three-component vector length computed?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Square root of sum of squared components.",
+          "evidence_ids": [
+            "v2-calculus-l1-p03-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 3,
+            "normalized_character_range": [
+              1192,
+              1790
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q04",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l1",
+      "language": "zh",
+      "query": "orthogonality 在几何中是什么意思？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "It means perpendicularity.",
+          "evidence_ids": [
+            "v2-calculus-l1-p10-e03"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 10,
+            "normalized_character_range": [
+              1795,
+              1916
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-calculus-l2-p12-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q05",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l2",
+      "language": "en",
+      "query": "What does the sign of a planar determinant tell us in an area computation?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Determinant is signed area, sign depends on orientation.",
+          "evidence_ids": [
+            "v2-calculus-l2-p06-e01",
+            "v2-calculus-l2-p06-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 6,
+            "normalized_character_range": [
+              593,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q06",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l2",
+      "language": "zh",
+      "query": "如何用单位方向向量的点积得到某方向上的分量？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Dot with the unit direction.",
+          "evidence_ids": [
+            "v2-calculus-l2-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q07",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l2",
+      "language": "en",
+      "query": "Which hand gives the direction of A cross B?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Right hand points along A, curls toward B, thumb gives direction.",
+          "evidence_ids": [
+            "v2-calculus-l2-p12-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 12,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q08",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l2",
+      "language": "zh",
+      "query": "三维行列式在这里为什么能用于体积计算？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Signed volume; changing orientation changes sign.",
+          "evidence_ids": [
+            "v2-calculus-l2-p09-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 9,
+            "normalized_character_range": [
+              599,
+              1196
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-calculus-l1-p06-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q09",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l3",
+      "language": "en",
+      "query": "What changes when the order of a cross product is reversed?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Cross product order matters; opposite direction.",
+          "evidence_ids": [
+            "v2-calculus-l3-p01-e03",
+            "v2-calculus-l3-p01-e03-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 1,
+            "normalized_character_range": [
+              1794,
+              2390
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q10",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l3",
+      "language": "zh",
+      "query": "3×4 矩阵乘 4×2 矩阵的结果是什么形状？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Output is 3x2.",
+          "evidence_ids": [
+            "v2-calculus-l3-p02-e10"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 2,
+            "normalized_character_range": [
+              5976,
+              6572
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q11",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l3",
+      "language": "en",
+      "query": "What operation transposes a matrix?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Read rows as columns and vice versa.",
+          "evidence_ids": [
+            "v2-calculus-l3-p04-e08"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 4,
+            "normalized_character_range": [
+              4775,
+              5374
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q12",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-l3",
+      "language": "zh",
+      "query": "单位矩阵与零矩阵是相同的变换吗？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Identity preserves X; zero sends X to zero.",
+          "evidence_ids": [
+            "v2-calculus-l3-p03-e03"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 3,
+            "normalized_character_range": [
+              1794,
+              2380
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-calculus-l3-p01-e03"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q13",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-cross",
+      "language": "en",
+      "query": "Compare lecture 1 dot-product angle information with lecture 2 signed-area determinant.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Product of lengths times cosine.",
+          "evidence_ids": [
+            "v2-calculus-l1-p06-e01",
+            "v2-calculus-l1-p06-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 6,
+            "normalized_character_range": [
+              598,
+              1194
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        },
+        {
+          "required_fact": "Determinant is signed area, sign depends on orientation.",
+          "evidence_ids": [
+            "v2-calculus-l2-p06-e01",
+            "v2-calculus-l2-p06-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 6,
+            "normalized_character_range": [
+              593,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q14",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-cross",
+      "language": "zh",
+      "query": "结合第2讲叉乘右手规则与第3讲交换参数顺序的解释。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Right hand points along A, curls toward B, thumb gives direction.",
+          "evidence_ids": [
+            "v2-calculus-l2-p12-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 12,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        },
+        {
+          "required_fact": "Cross product order matters; opposite direction.",
+          "evidence_ids": [
+            "v2-calculus-l3-p01-e03",
+            "v2-calculus-l3-p01-e03-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 1,
+            "normalized_character_range": [
+              1794,
+              2390
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q15",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-cross",
+      "language": "en",
+      "query": "What lecture 1 identity computes squared vector length, and what lecture 3 transformation preserves a vector?",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "The angle is zero and cosine is one.",
+          "evidence_ids": [
+            "v2-calculus-l1-p07-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l1",
+            "page": 7,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/a6ef6f99ba62d94a0cbcb4bfd5eefce4_PxCxlsl_YwY.pdf",
+            "source_sha256": "8a1a0f57ebf5c3e90a5780172c675ba2fd1781b8eda02c46ca4e047b2c4bd52e"
+          }
+        },
+        {
+          "required_fact": "Identity preserves X; zero sends X to zero.",
+          "evidence_ids": [
+            "v2-calculus-l3-p03-e03"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 3,
+            "normalized_character_range": [
+              1794,
+              2380
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q16",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-cross",
+      "language": "zh",
+      "query": "第2讲怎样提取方向分量，第3讲矩阵乘积的输出维度怎样确定？",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Dot with the unit direction.",
+          "evidence_ids": [
+            "v2-calculus-l2-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l2",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/c542939492274449e99caa5df72fab3f_9FLItlbBUPY.pdf",
+            "source_sha256": "796a4ccbeb7d841cc4144f6eb25d65f27f90b61fd33c3f82e9c4d337f920a4ab"
+          }
+        },
+        {
+          "required_fact": "Output is 3x2.",
+          "evidence_ids": [
+            "v2-calculus-l3-p02-e10"
+          ],
+          "source_locator": {
+            "lecture_id": "calculus-l3",
+            "page": 2,
+            "normalized_character_range": [
+              5976,
+              6572
+            ],
+            "source_url": "https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/8cee7d239b4595b8afbd6d674ace575d_bHdzkFrgRcA.pdf",
+            "source_sha256": "ab7ca037dfec07e59ca7c9d608e0294fcb40961dc3b75b6f811a74d3e87a1510"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "calculus-q17",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-no-answer",
+      "language": "en",
+      "query": "What Stokes theorem boundary orientation is proved in these first three lectures?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Only vectors/determinants/matrices; no Stokes theorem proof."
+    },
+    {
+      "id": "calculus-q18",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-no-answer",
+      "language": "zh",
+      "query": "缺失的 surface.json 中曲面的数值通量是多少？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Surface and vector field not supplied."
+    },
+    {
+      "id": "calculus-q19",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-no-answer",
+      "language": "en",
+      "query": "What error bound does the lecture give for Simpson quadrature on a triple integral?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No quadrature error bound in selected snapshot."
+    },
+    {
+      "id": "calculus-q20",
+      "course": "calculus",
+      "split": "development",
+      "family": "calculus-no-answer",
+      "language": "zh",
+      "query": "例题基准使用哪一版本的 GPU 矩阵乘法库？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No computational benchmark/version record."
+    },
+    {
+      "id": "probability-q01",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l1",
+      "language": "en",
+      "query": "What two requirements should the list of outcomes in a sample space satisfy?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Mutually exclusive and collectively exhaustive.",
+          "evidence_ids": [
+            "v2-probability-l1-p01-e01",
+            "v2-probability-l1-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1071
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q02",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l1",
+      "language": "zh",
+      "query": "概率模型中的事件与样本空间有什么关系？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "An event is a subset of the sample space.",
+          "evidence_ids": [
+            "v2-probability-l1-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q03",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l1",
+      "language": "en",
+      "query": "How does a finite discrete uniform law compute an event probability?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Count outcomes in A divided by total outcomes.",
+          "evidence_ids": [
+            "v2-probability-l1-p03-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 3,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q04",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l1",
+      "language": "zh",
+      "query": "可数无限个互斥事件的并集概率，需要什么可加性条件？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Countable additivity.",
+          "evidence_ids": [
+            "v2-probability-l1-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 3,
+            "normalized_character_range": [
+              600,
+              839
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-probability-l3-p01-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q05",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l2",
+      "language": "en",
+      "query": "What becomes the new universe when conditioning on event B?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "B is the new universe.",
+          "evidence_ids": [
+            "v2-probability-l2-p01-e01",
+            "v2-probability-l2-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 1,
+            "normalized_character_range": [
+              598,
+              955
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q06",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l2",
+      "language": "zh",
+      "query": "贝叶斯规则怎样从似然和先验转为观察 B 之后的信念？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Infer P(Ai given B) from prior and conditional likelihood.",
+          "evidence_ids": [
+            "v2-probability-l2-p02-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 2,
+            "normalized_character_range": [
+              599,
+              930
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q07",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l2",
+      "language": "en",
+      "query": "Which partitioning approach underlies the total probability theorem?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Divide and conquer over a partition with conditional probabilities.",
+          "evidence_ids": [
+            "v2-probability-l2-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q08",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l2",
+      "language": "zh",
+      "query": "在这里的定义中，为什么零概率事件不能作为条件？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Definition divides by the conditioning probability; zero is undefined.",
+          "evidence_ids": [
+            "v2-probability-l2-p01-e01",
+            "v2-probability-l2-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 1,
+            "normalized_character_range": [
+              598,
+              955
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-probability-l1-p03-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q09",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l3",
+      "language": "en",
+      "query": "How is independence expressed as no information about another event?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Occurrence of A provides no information about B.",
+          "evidence_ids": [
+            "v2-probability-l3-p01-e01",
+            "v2-probability-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1074
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q10",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l3",
+      "language": "zh",
+      "query": "原来独立的事件在给定额外条件后必然还独立吗？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Conditioning may affect independence.",
+          "evidence_ids": [
+            "v2-probability-l3-p01-e01",
+            "v2-probability-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1074
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q11",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l3",
+      "language": "en",
+      "query": "Does pairwise independence alone establish independence of a collection?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Pairwise versus full independence are different.",
+          "evidence_ids": [
+            "v2-probability-l3-p02-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 2,
+            "normalized_character_range": [
+              600,
+              1233
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q12",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-l3",
+      "language": "zh",
+      "query": "相互独立的一组事件，对观察其中某些事件有什么信息限制？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Information about some gives no information about remaining events.",
+          "evidence_ids": [
+            "v2-probability-l3-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-probability-l2-p02-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q13",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-cross",
+      "language": "en",
+      "query": "Connect lecture 1 exhaustive sample-space outcomes with lecture 2 partitioning in total probability.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Mutually exclusive and collectively exhaustive.",
+          "evidence_ids": [
+            "v2-probability-l1-p01-e01",
+            "v2-probability-l1-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1071
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        },
+        {
+          "required_fact": "Divide and conquer over a partition with conditional probabilities.",
+          "evidence_ids": [
+            "v2-probability-l2-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              598
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q14",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-cross",
+      "language": "zh",
+      "query": "比较第1讲可数可加性与第3讲一组事件的相互独立性。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Countable additivity.",
+          "evidence_ids": [
+            "v2-probability-l1-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 3,
+            "normalized_character_range": [
+              600,
+              839
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        },
+        {
+          "required_fact": "Information about some gives no information about remaining events.",
+          "evidence_ids": [
+            "v2-probability-l3-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              599
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q15",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-cross",
+      "language": "en",
+      "query": "Distinguish lecture 2 Bayesian belief revision from lecture 3 independence as lack of information.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Infer P(Ai given B) from prior and conditional likelihood.",
+          "evidence_ids": [
+            "v2-probability-l2-p02-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l2",
+            "page": 2,
+            "normalized_character_range": [
+              599,
+              930
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/1d1520a08a59780bd49a9f0f12bf9af8_MIT6_041F10_L02.pdf",
+            "source_sha256": "c6940d7d26ab04cfb08833a79ccf0d73ec8924ccb6df4611fb528c431696c58b"
+          }
+        },
+        {
+          "required_fact": "Occurrence of A provides no information about B.",
+          "evidence_ids": [
+            "v2-probability-l3-p01-e01",
+            "v2-probability-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1074
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q16",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-cross",
+      "language": "zh",
+      "query": "结合第1讲事件是子集的定义与第3讲条件可能改变独立性的警告。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "An event is a subset of the sample space.",
+          "evidence_ids": [
+            "v2-probability-l1-p02-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l1",
+            "page": 2,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/fee036e2e13527166fb7f8bcd0647844_MIT6_041F10_L01.pdf",
+            "source_sha256": "b766c872baf79b57069e44fb11bd9a0b6282cbd78544eaf7891073dbe9476c85"
+          }
+        },
+        {
+          "required_fact": "Conditioning may affect independence.",
+          "evidence_ids": [
+            "v2-probability-l3-p01-e01",
+            "v2-probability-l3-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "probability-l3",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1074
+            ],
+            "source_url": "https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/b200b6217af1cd5dbea8c659ebbf046a_MIT6_041F10_L03.pdf",
+            "source_sha256": "5c725d5c6d802b09e780cb10e3e7b85d820bcadec7cb8694042c75fa39950fab"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "probability-q17",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-no-answer",
+      "language": "en",
+      "query": "What conjugate posterior density is derived for a Beta-Binomial parameter?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No Beta distribution or conjugate density in selected first three lectures."
+    },
+    {
+      "id": "probability-q18",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-no-answer",
+      "language": "zh",
+      "query": "对 observations.csv 做独立性检验得出的 p 值是多少？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No observations or hypothesis-test result."
+    },
+    {
+      "id": "probability-q19",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-no-answer",
+      "language": "en",
+      "query": "What numerical stationary distribution is computed for the Markov chain?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No Markov chain transition matrix or stationary computation."
+    },
+    {
+      "id": "probability-q20",
+      "course": "probability",
+      "split": "development",
+      "family": "probability-no-answer",
+      "language": "zh",
+      "query": "雷达校准参数改成未给定的新值后，飞机存在的后验概率是多少？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Old example probabilities do not specify new parameters."
+    },
+    {
+      "id": "economics-q01",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l1",
+      "language": "en",
+      "query": "What choice principle is the building block of consumer behavior?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Utility maximization.",
+          "evidence_ids": [
+            "v2-economics-l1-p01-e02",
+            "v2-economics-l1-p01-e02-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 1,
+            "normalized_character_range": [
+              1193,
+              1789
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q02",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l1",
+      "language": "zh",
+      "query": "如果偏好 x 胜于 y、y 胜于 z，传递性要求什么？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Prefer x to z.",
+          "evidence_ids": [
+            "v2-economics-l1-p03-e03"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 3,
+            "normalized_character_range": [
+              1795,
+              2391
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q03",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l1",
+      "language": "en",
+      "query": "What is marginal utility in calculus terms?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Derivative of utility with respect to a good.",
+          "evidence_ids": [
+            "v2-economics-l1-p10-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 10,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q04",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l1",
+      "language": "zh",
+      "query": "讲者后来是否纠正了“完备性不允许无差异”的说法？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Explicit correction: of course one can be indifferent.",
+          "evidence_ids": [
+            "v2-economics-l1-p04-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 4,
+            "normalized_character_range": [
+              1194,
+              1787
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-economics-l1-p02-e04"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q05",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l2",
+      "language": "en",
+      "query": "Where are the intercepts of a two-good budget line?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Spend all income on each good: income divided by price.",
+          "evidence_ids": [
+            "v2-economics-l2-p02-e02",
+            "v2-economics-l2-p02-e02-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 2,
+            "normalized_character_range": [
+              1199,
+              1797
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q06",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l2",
+      "language": "zh",
+      "query": "图形上怎样找预算约束内最好的消费组合？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Tangency of highest reachable indifference curve and budget constraint.",
+          "evidence_ids": [
+            "v2-economics-l2-p08-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 8,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q07",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l2",
+      "language": "en",
+      "query": "What does the slope of the budget constraint represent?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Negative price ratio, called marginal rate of transformation.",
+          "evidence_ids": [
+            "v2-economics-l2-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 3,
+            "normalized_character_range": [
+              598,
+              1197
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q08",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l2",
+      "language": "zh",
+      "query": "为什么效用只表示顺序时，去掉例子中的平方根可能不改变选择？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "In this example ordinal transformation does not change choice.",
+          "evidence_ids": [
+            "v2-economics-l2-p08-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 8,
+            "normalized_character_range": [
+              1195,
+              1792
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-economics-l1-p10-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q09",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l3",
+      "language": "en",
+      "query": "What distinguishes normal and inferior goods by income elasticity?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Positive for normal, negative for inferior.",
+          "evidence_ids": [
+            "v2-economics-l3-p11-e00",
+            "v2-economics-l3-p11-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 11,
+            "normalized_character_range": [
+              0,
+              594
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q10",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l3",
+      "language": "zh",
+      "query": "替代效应在价格变化时保持什么不变？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Hold utility constant.",
+          "evidence_ids": [
+            "v2-economics-l3-p13-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 13,
+            "normalized_character_range": [
+              596,
+              1193
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q11",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l3",
+      "language": "en",
+      "query": "What is held fixed when defining the income effect here?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Hold prices constant.",
+          "evidence_ids": [
+            "v2-economics-l3-p13-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 13,
+            "normalized_character_range": [
+              1194,
+              1788
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q12",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-l3",
+      "language": "zh",
+      "query": "为什么限制用途的食品券可能比等额现金给消费者带来更低效用？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Restriction may force a lower indifference curve; paternalism is stated reason.",
+          "evidence_ids": [
+            "v2-economics-l3-p05-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 5,
+            "normalized_character_range": [
+              598,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-economics-l2-p08-e00"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q13",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-cross",
+      "language": "en",
+      "query": "Connect lecture 4 utility maximization with lecture 6 welfare effects of restricted food stamps.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Utility maximization.",
+          "evidence_ids": [
+            "v2-economics-l1-p01-e02",
+            "v2-economics-l1-p01-e02-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 1,
+            "normalized_character_range": [
+              1193,
+              1789
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        },
+        {
+          "required_fact": "Restriction may force a lower indifference curve; paternalism is stated reason.",
+          "evidence_ids": [
+            "v2-economics-l3-p05-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 5,
+            "normalized_character_range": [
+              598,
+              1192
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q14",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-cross",
+      "language": "zh",
+      "query": "比较第5讲预算线价格比与第6讲保持效用不变的替代效应。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Negative price ratio, called marginal rate of transformation.",
+          "evidence_ids": [
+            "v2-economics-l2-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 3,
+            "normalized_character_range": [
+              598,
+              1197
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        },
+        {
+          "required_fact": "Hold utility constant.",
+          "evidence_ids": [
+            "v2-economics-l3-p13-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 13,
+            "normalized_character_range": [
+              596,
+              1193
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q15",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-cross",
+      "language": "en",
+      "query": "Combine lecture 4 marginal utility with lecture 6 income elasticity classification of goods.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Derivative of utility with respect to a good.",
+          "evidence_ids": [
+            "v2-economics-l1-p10-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l1",
+            "page": 10,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/6eb8a5471d117fa809b8e7a3fa7669e4_9kH0x7V_0Ig.pdf",
+            "source_sha256": "92dfc88dd71ecc25aa0394b5e4cc0368af9d6af8a0c23d250acb17b6bb520a04"
+          }
+        },
+        {
+          "required_fact": "Positive for normal, negative for inferior.",
+          "evidence_ids": [
+            "v2-economics-l3-p11-e00",
+            "v2-economics-l3-p11-e00-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 11,
+            "normalized_character_range": [
+              0,
+              594
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q16",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-cross",
+      "language": "zh",
+      "query": "联系第5讲相切最优条件与第6讲收入效应和替代效应的区分。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Tangency of highest reachable indifference curve and budget constraint.",
+          "evidence_ids": [
+            "v2-economics-l2-p08-e00"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l2",
+            "page": 8,
+            "normalized_character_range": [
+              0,
+              597
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/857f022fb1baf4f84b0dda0432c5f6e4_TIWE0DaOlzU.pdf",
+            "source_sha256": "67dc08ea1d37fe75a37867d11d263634c1911ddc158a9a5b761a4c1d77bb762b"
+          }
+        },
+        {
+          "required_fact": "Hold prices constant.",
+          "evidence_ids": [
+            "v2-economics-l3-p13-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "economics-l3",
+            "page": 13,
+            "normalized_character_range": [
+              1194,
+              1788
+            ],
+            "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/f44013d93f8b5e8ea932396a1b83529e_yCd_OSJmtfg.pdf",
+            "source_sha256": "8c25e3afbca28de04cab009f578a02bd4a016ca60b2d91c7f6992f1e7fc0eec5"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "economics-q17",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-no-answer",
+      "language": "en",
+      "query": "What 2026 food-stamp eligibility dollar threshold does this historical course report?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Historical lecture has no 2026 policy update; no current-policy inference."
+    },
+    {
+      "id": "economics-q18",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-no-answer",
+      "language": "zh",
+      "query": "新的 household.csv 家庭数据对应什么最优消费组合？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No new household data or utility parameters."
+    },
+    {
+      "id": "economics-q19",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-no-answer",
+      "language": "en",
+      "query": "What exact Giffen-good empirical elasticity estimate and confidence interval are reported?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No empirical estimate with CI in selected lectures."
+    },
+    {
+      "id": "economics-q20",
+      "course": "economics",
+      "split": "holdout",
+      "family": "economics-no-answer",
+      "language": "zh",
+      "query": "未提供的价格改革后估计损失多少货币福利？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No reform inputs or welfare estimate."
+    },
+    {
+      "id": "quantum-q01",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l1",
+      "language": "en",
+      "query": "What can quantum mechanics predict when experiment outcomes are not deterministic?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Probabilities of outcomes.",
+          "evidence_ids": [
+            "v2-quantum-l1-p01-e03",
+            "v2-quantum-l1-p01-e03-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 1,
+            "normalized_character_range": [
+              1791,
+              2389
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q02",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l1",
+      "language": "zh",
+      "query": "在线性方程中，把两个解叠加的含义是什么？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "A linear combination of solutions is another solution.",
+          "evidence_ids": [
+            "v2-quantum-l1-p02-e04"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 2,
+            "normalized_character_range": [
+              2394,
+              2931
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q03",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l1",
+      "language": "en",
+      "query": "How can a light beam gain energy without changing color?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "More photons, same photon frequency/energy.",
+          "evidence_ids": [
+            "v2-quantum-l1-p06-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 6,
+            "normalized_character_range": [
+              599,
+              1197
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q04",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l1",
+      "language": "zh",
+      "query": "逐个发送光子的干涉实验，需要两个光子彼此干涉吗？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Each photon interferes with itself, not another photon.",
+          "evidence_ids": [
+            "v2-quantum-l1-p09-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 9,
+            "normalized_character_range": [
+              1191,
+              1782
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-quantum-l2-p07-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q05",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l2",
+      "language": "en",
+      "query": "What do the two complex components encode in the interferometer state?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Upper/lower branch amplitudes; norm squares give probabilities.",
+          "evidence_ids": [
+            "v2-quantum-l2-p01-e01",
+            "v2-quantum-l2-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1270
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q06",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l2",
+      "language": "zh",
+      "query": "相移器怎样改变光子的概率幅？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Multiplies amplitude by a phase factor.",
+          "evidence_ids": [
+            "v2-quantum-l2-p02-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 2,
+            "normalized_character_range": [
+              600,
+              1196
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q07",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l2",
+      "language": "en",
+      "query": "Which detector can identify a functioning bomb without its explosion?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "D1 outcome certifies working bomb without explosion.",
+          "evidence_ids": [
+            "v2-quantum-l2-p07-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 7,
+            "normalized_character_range": [
+              594,
+              1182
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q08",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l2",
+      "language": "zh",
+      "query": "检测一个可用的 EV 炸弹时，爆炸、D0、D1 三种结果的概率各是多少？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Explosion 1/2, D0 1/4, D1 1/4.",
+          "evidence_ids": [
+            "v2-quantum-l2-p07-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 7,
+            "normalized_character_range": [
+              594,
+              1182
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-quantum-l1-p09-e02"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q09",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l3",
+      "language": "en",
+      "query": "Why does increasing intensity not increase photoelectron energy at fixed frequency?",
+      "category": "lexical",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "More photons arrive, but energy per photon is unchanged.",
+          "evidence_ids": [
+            "v2-quantum-l3-p02-e01",
+            "v2-quantum-l3-p02-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 2,
+            "normalized_character_range": [
+              599,
+              1198
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q10",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l3",
+      "language": "zh",
+      "query": "材料的逸出功在光电效应中是什么意思？",
+      "category": "semantic",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Minimum energy needed to eject an electron.",
+          "evidence_ids": [
+            "v2-quantum-l3-p01-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 1,
+            "normalized_character_range": [
+              1190,
+              1546
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q11",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l3",
+      "language": "en",
+      "query": "Which momentum belongs in the de Broglie wavelength rather than mc?",
+      "category": "multi-condition",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "de Broglie uses true momentum, Compton uses mc.",
+          "evidence_ids": [
+            "v2-quantum-l3-p03-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 3,
+            "normalized_character_range": [
+              598,
+              1195
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "hard_negative_rationale": null,
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q12",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-l3",
+      "language": "zh",
+      "query": "相对障碍物尺度，德布罗意波长多小时可以忽略波动效应？",
+      "category": "confusing-evidence-hard-negative",
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Wavelength much smaller than object size.",
+          "evidence_ids": [
+            "v2-quantum-l3-p06-e04"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 6,
+            "normalized_character_range": [
+              2386,
+              3015
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [
+        "v2-quantum-l2-p01-e01"
+      ],
+      "hard_negative_rationale": "Related but insufficient for the specific question, or an explicitly corrected false teaching premise.",
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q13",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-cross",
+      "language": "en",
+      "query": "Relate lecture 1 nondeterminism to the lecture 2 probabilities for a working EV bomb.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Probabilities of outcomes.",
+          "evidence_ids": [
+            "v2-quantum-l1-p01-e03",
+            "v2-quantum-l1-p01-e03-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 1,
+            "normalized_character_range": [
+              1791,
+              2389
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        },
+        {
+          "required_fact": "Explosion 1/2, D0 1/4, D1 1/4.",
+          "evidence_ids": [
+            "v2-quantum-l2-p07-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 7,
+            "normalized_character_range": [
+              594,
+              1182
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q14",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-cross",
+      "language": "zh",
+      "query": "联系第1讲同颜色光子的能量与第3讲光强和光电子能量的区别。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "More photons, same photon frequency/energy.",
+          "evidence_ids": [
+            "v2-quantum-l1-p06-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 6,
+            "normalized_character_range": [
+              599,
+              1197
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        },
+        {
+          "required_fact": "More photons arrive, but energy per photon is unchanged.",
+          "evidence_ids": [
+            "v2-quantum-l3-p02-e01",
+            "v2-quantum-l3-p02-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 2,
+            "normalized_character_range": [
+              599,
+              1198
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q15",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-cross",
+      "language": "en",
+      "query": "Explain lecture 1 single-photon self-interference together with lecture 2 branch amplitudes.",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Each photon interferes with itself, not another photon.",
+          "evidence_ids": [
+            "v2-quantum-l1-p09-e02"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l1",
+            "page": 9,
+            "normalized_character_range": [
+              1191,
+              1782
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+            "source_sha256": "df3742f6f0dfabbc46cd4120637308760fec1c0d9c5a0708e0b74d8b2ac14181"
+          }
+        },
+        {
+          "required_fact": "Upper/lower branch amplitudes; norm squares give probabilities.",
+          "evidence_ids": [
+            "v2-quantum-l2-p01-e01",
+            "v2-quantum-l2-p01-e01-zh"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 1,
+            "normalized_character_range": [
+              599,
+              1270
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q16",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-cross",
+      "language": "zh",
+      "query": "比较第2讲相移器的作用与第3讲忽略物质波的尺度条件。",
+      "category": "cross-section",
+      "cross_lecture": true,
+      "answerable": true,
+      "aspects": [
+        {
+          "required_fact": "Multiplies amplitude by a phase factor.",
+          "evidence_ids": [
+            "v2-quantum-l2-p02-e01"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l2",
+            "page": 2,
+            "normalized_character_range": [
+              600,
+              1196
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+            "source_sha256": "2921abfb6621e4eb9daea07be7873a2cde0cd283f3d2cb8e23471121ce6a8b52"
+          }
+        },
+        {
+          "required_fact": "Wavelength much smaller than object size.",
+          "evidence_ids": [
+            "v2-quantum-l3-p06-e04"
+          ],
+          "source_locator": {
+            "lecture_id": "quantum-l3",
+            "page": 6,
+            "normalized_character_range": [
+              2386,
+              3015
+            ],
+            "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/f928b8dce3d6a218fddda9617c5eb4f2_MIT8_04S16_LecNotes3.pdf",
+            "source_sha256": "090b5fe2e6808db83defa197410d3b25d6ad2e1fcb9fce7f755933917e50d660"
+          }
+        }
+      ],
+      "hard_negative_ids": [],
+      "no_answer_reason": null
+    },
+    {
+      "id": "quantum-q17",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-no-answer",
+      "language": "en",
+      "query": "What detection-efficiency corrected probability is measured for this interferometer in 2026?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "Ideal course model has no 2026 experiment/detection efficiency."
+    },
+    {
+      "id": "quantum-q18",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-no-answer",
+      "language": "zh",
+      "query": "这三讲推导出的氢原子谱能量本征值是什么？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No hydrogen spectrum derivation in selected lectures 1-3."
+    },
+    {
+      "id": "quantum-q19",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-no-answer",
+      "language": "en",
+      "query": "What Compton scattering angle was measured for the unpublished detector file?",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No detector file/data or specified angle."
+    },
+    {
+      "id": "quantum-q20",
+      "course": "quantum",
+      "split": "holdout",
+      "family": "quantum-no-answer",
+      "language": "zh",
+      "query": "新的未指定有限深方势阱势能对应哪些列出的束缚态能量？",
+      "category": "exception-no-answer",
+      "answerable": false,
+      "aspects": [],
+      "hard_negative_ids": [],
+      "no_answer_reason": "No finite-well problem parameters or solution in selected snapshot."
+    }
+  ]
+}

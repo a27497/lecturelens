@@ -1,0 +1,6 @@
+{
+  "source_pdfs_verified": 18,
+  "native_evidence_exact_source_ranges_verified": 717,
+  "chinese_factual_adaptations": 18,
+  "verification": "All native normalized text equals the pinned source PDF page slice; no media timestamp claims. Chinese adaptations are explicitly model-assisted."
+}

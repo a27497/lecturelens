@@ -1,0 +1,1124 @@
+diff --git a/agent-service/README.md b/agent-service/README.md
+index b862f68..c448109 100644
+--- a/agent-service/README.md
++++ b/agent-service/README.md
+@@ -22,7 +22,7 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的
+ ## 授权、停止与恢复
+ 
+ - 内部 HMAC 绑定 audience、方法、实际路径、时间戳和原始请求体。每次工具或生成上下文前后重新检查 Java 当前权限与版本；Java 不可用时拒绝使用缓存证据。
+-- 默认 Run 上限为 6 次模型调用、8 次逻辑工具执行、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
++- 默认 Run 上限为 6 次模型调用、8 次工具预算扣减（逻辑工具及额外只读重试共享）、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
+ - Session 使用专用 autocommit 连接上的 PostgreSQL advisory lock 保护 checkpoint 写入，不持有跨模型请求的业务事务。仍持锁的慢 worker 不被其他 worker 接管。
+ - 创建请求通过 `request_key` 幂等，同一 key 更换内容会冲突。工具结果按 `run_id + call_id` 唯一，每 Run 最多一个学习产物；副作用已提交而 checkpoint 未保存时，恢复回读工具结果，不重复保存。
+ - 模型响应尚未 checkpoint 时崩溃可能导致外部请求重发，不承诺 provider 恰好调用一次。恢复保留原预算、deadline 和模型配置。
+@@ -68,6 +68,7 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
+ 测试使用确定性模型/向量夹具和真实 PostgreSQL，覆盖权限、取消、幂等、进程恢复、预算及删除。未设置测试数据库时相关用例会 skip，不能报告为完整通过。CI 提供独立数据库；真实模型质量按[质量评测说明](../docs/L2_QUALITY_EVALUATION.md)单独验证，Java `DenseRetrievalLiveIT` 只验证检索契约。
+ 
+ - **Trace / Replay：** `python -m lecturelens_agent.study.trace_cli` 导出私有 Trace、启动授权的新 Run Replay 和比较结果；需要运维数据库访问及 Java 用户登录，读取前后重新授权。[用法与真实失败](../eval/agent-trace-phase-b/README.md)
++- **只读容错：** CHECK/SEARCH/READ/WINDOW 的超时和依赖不可用最多重试两次，退避 50/100ms；每次重试持久扣减上述工具预算。参数、响应、权属/版本错误直接拒绝，持续依赖故障明确失败，不生成无证据产物。公开 Trace 记录失败类别、重试、退避与终止；写入不自动重试。[故障注入与基线](../eval/tool-resilience-20261014/README.md)
+ - **Course MCP：** `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用官方 SDK stdio Client/Server；默认 `internal`。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
+ - **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
+ - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
+diff --git a/agent-service/src/lecturelens_agent/course_mcp/client.py b/agent-service/src/lecturelens_agent/course_mcp/client.py
+index d8ec30f..7c70341 100644
+--- a/agent-service/src/lecturelens_agent/course_mcp/client.py
++++ b/agent-service/src/lecturelens_agent/course_mcp/client.py
+@@ -165,7 +165,6 @@ class McpEvidenceAuthority:
+         code = None
+         result = None
+         try:
+-            peer = self._connection()
+             timestamp = str(int(time.time()))
+             args = {k: v for k, v in payload.items() if k != "action"} | {
+                 "authorization": {
+@@ -173,7 +172,11 @@ class McpEvidenceAuthority:
+                     "signature": signature(self.secret, timestamp, request_body(payload), AUTHORITY_PATH),
+                 }
+             }
+-            authority_payload(name, args)  # shape validation; authorization is exclusively Java's job
++            try:
++                authority_payload(name, args)  # authorization is exclusively Java's job
++            except ValidationError:
++                raise StudyError("MCP_INVALID_REQUEST", 422) from None
++            peer = self._connection()
+             result = peer[1].call(self._call, peer[2], name, args)
+             if any(result[k] != scope[k] for k in ("owner_id", "course_id", "revision")):
+                 raise StudyError("EVIDENCE_SCOPE_MISMATCH")
+diff --git a/agent-service/src/lecturelens_agent/course_mcp/contracts.py b/agent-service/src/lecturelens_agent/course_mcp/contracts.py
+index 5682e70..7df0111 100644
+--- a/agent-service/src/lecturelens_agent/course_mcp/contracts.py
++++ b/agent-service/src/lecturelens_agent/course_mcp/contracts.py
+@@ -17,8 +17,16 @@ class CourseRequest(StudyScope):
+ 
+ class SearchRequest(CourseRequest):
+     query: Annotated[str, Field(min_length=1, max_length=500)]
+-    start_ms: Annotated[int, Field(ge=0)] | None = None
+-    end_ms: Annotated[int, Field(ge=0)] | None = None
++    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
++    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
++
++    @model_validator(mode="after")
++    def valid_window(self):
++        if not self.query.strip() or (self.start_ms is None) != (self.end_ms is None):
++            raise ValueError("Invalid query or time window")
++        if self.start_ms is not None and self.start_ms > self.end_ms:
++            raise ValueError("Reversed time window")
++        return self
+ 
+ 
+ class ReadRequest(CourseRequest):
+@@ -32,8 +40,8 @@ class WindowRequest(CourseRequest):
+ class CourseEvidence(Contract):
+     evidence_id: Identifier
+     text: Annotated[str, Field(max_length=1200)]
+-    start_ms: Annotated[int, Field(ge=0)]
+-    end_ms: Annotated[int, Field(ge=0)]
++    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)]
++    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)]
+     source_type: Annotated[str, Field(min_length=1, max_length=64)]
+ 
+     @model_validator(mode="after")
+diff --git a/agent-service/src/lecturelens_agent/study/contracts.py b/agent-service/src/lecturelens_agent/study/contracts.py
+index 9670a09..05dfa59 100644
+--- a/agent-service/src/lecturelens_agent/study/contracts.py
++++ b/agent-service/src/lecturelens_agent/study/contracts.py
+@@ -8,9 +8,9 @@ from .strings import StringProgramPlan, render_string_program
+ 
+ 
+ class StudyScope(Contract):
+-    owner_id: Annotated[int, Field(ge=1)]
++    owner_id: Annotated[int, Field(ge=1, le=2**63 - 1)]
+     course_id: Identifier
+-    revision: Annotated[int, Field(ge=0)]
++    revision: Annotated[int, Field(ge=0, le=2**63 - 1)]
+ 
+ 
+ class StudyCommand(StudyScope):
+@@ -90,8 +90,8 @@ class SearchArgs(Contract):
+             description="Choose subject: linear_points for checking points against linear equations, row-picture/origin/common-point exercises (not solution-set classification); python_strings for string immutability/rebinding; python_strings_or_code for other Python code; interval_halving for numeric higher/lower guessing; selection_steps for selection-sort states; search_cost for sorting preparation versus linear/binary query costs; general for other topics including tracing linear scans. Search again to change it."
+         ),
+     ] = "auto"
+-    start_ms: Annotated[int, Field(ge=0)] | None = None
+-    end_ms: Annotated[int, Field(ge=0)] | None = None
++    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
++    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
+ 
+     @model_validator(mode="after")
+     def valid_window(self):
+diff --git a/agent-service/src/lecturelens_agent/study/feedback.py b/agent-service/src/lecturelens_agent/study/feedback.py
+index b1f6800..a840722 100644
+--- a/agent-service/src/lecturelens_agent/study/feedback.py
++++ b/agent-service/src/lecturelens_agent/study/feedback.py
+@@ -9,6 +9,7 @@ from langgraph.graph import END, START, StateGraph
+ from pydantic import Field
+ 
+ from ..contracts import Contract, Identifier
++from .failures import failure_category
+ from .feedback_store import feedback_source
+ from .store import BudgetExceeded, RunStopped, StudyError
+ 
+@@ -322,6 +323,17 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
+                     or (row["deadline"] - datetime.now(timezone.utc)).total_seconds() <= 5
+                 ):
+                     raise
++                store.event(
++                    run["run_id"],
++                    token,
++                    "model_retry_scheduled",
++                    {
++                        "retry": 1,
++                        "task_kind": "feedback",
++                        "error_code": error.code,
++                        "failure_category": failure_category(error.code),
++                    },
++                )
+         raise AssertionError("unreachable")
+ 
+     def call_once(messages, schemas, review=False):
+@@ -358,6 +370,8 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
+                 timeout,
+                 review=review,
+             )
++            if not isinstance(response, dict):
++                raise StudyError("MODEL_FEEDBACK_CONTRACT")
+         except (StudyError, BudgetExceeded) as error:
+             # A per-call timeout is recoverable only while the persisted Run
+             # deadline, cancellation and revision guards still allow progress.
+@@ -370,6 +384,7 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
+                 metadata
+                 | {
+                     "error_code": code,
++                    "failure_category": failure_category(code),
+                     "duration_ms": round((time.monotonic() - started) * 1000),
+                     **getattr(error, "usage", {}),
+                 },
+@@ -388,7 +403,14 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
+             },
+         )
+         calls = response.get("calls", [])
+-        if len(calls) != 1 or calls[0]["name"] not in {s["function"]["name"] for s in schemas}:
++        if (
++            not isinstance(calls, list)
++            or len(calls) != 1
++            or not isinstance(calls[0], dict)
++            or not isinstance(calls[0].get("name"), str)
++            or calls[0]["name"] not in {s["function"]["name"] for s in schemas}
++            or not isinstance(calls[0].get("arguments"), dict)
++        ):
+             raise StudyError("MODEL_FEEDBACK_CONTRACT")
+         return calls[0]
+ 
+diff --git a/agent-service/src/lecturelens_agent/study/runtime.py b/agent-service/src/lecturelens_agent/study/runtime.py
+index 7beec36..7eb6704 100644
+--- a/agent-service/src/lecturelens_agent/study/runtime.py
++++ b/agent-service/src/lecturelens_agent/study/runtime.py
+@@ -22,6 +22,7 @@ from .context import (
+ )
+ from .contracts import TOOLS, GenericPracticeArgs, materialize_practice, python_practice
+ from .examples import check_example
++from .failures import failure_category
+ from .goals import refusal_text
+ from .intervals import interval_practice
+ from .linear import LinearPracticeArgs, bind_linear_request, linear_practice
+@@ -125,10 +126,14 @@ class StudyRuntime:
+                         )
+ 
+     def execute(self, run):
++        token = str(uuid.uuid4())
++        with self.authority.execution(self.store, run, token, self.stop):
++            self._execute(run, token)
++
++    def _execute(self, run, token):
+         with self.store.execution_lock(run["session_id"]) as acquired:
+             if not acquired:
+                 return
+-            token = str(uuid.uuid4())
+             try:
+                 self.store.claim(run["run_id"], token, self.seconds)
+                 if run["model_mode"] != self.provider.mode:
+@@ -240,6 +245,8 @@ class StudyRuntime:
+                 response = method(
+                     messages, max(0.1, (row["deadline"] - datetime.now(timezone.utc)).total_seconds())
+                 )
++                if not isinstance(response, dict):
++                    raise StudyError("MODEL_TOOL_CONTRACT")
+             except StudyError as error:
+                 guard()
+                 self.store.event(
+@@ -249,6 +256,7 @@ class StudyRuntime:
+                     {
+                         **metadata,
+                         "error_code": error.code,
++                        "failure_category": failure_category(error.code),
+                         "duration_ms": round((time.monotonic() - started) * 1000),
+                         **getattr(error, "usage", {}),
+                         "diagnostics": getattr(error, "diagnostics", {}),
+@@ -302,6 +310,7 @@ class StudyRuntime:
+                     "protocol_retry_scheduled",
+                     {
+                         "error_code": error.code,
++                        "failure_category": failure_category(error.code),
+                         "retry": 1,
+                         "purpose": "course_observation",
+                     },
+@@ -380,7 +389,10 @@ class StudyRuntime:
+                     raise
+                 guard()
+                 self.store.event(
+-                    run["run_id"], token, "protocol_retry_scheduled", {"error_code": error.code, "retry": 1}
++                    run["run_id"],
++                    token,
++                    "protocol_retry_scheduled",
++                    {"error_code": error.code, "failure_category": failure_category(error.code), "retry": 1},
+                 )
+                 return {
+                     "pending": None,
+@@ -389,14 +401,20 @@ class StudyRuntime:
+                     "retry_tool_contract": True,
+                     "tool_contract_diagnostics": getattr(error, "diagnostics", {}),
+                 }
++            if not isinstance(call, dict):
++                raise StudyError("MODEL_TOOL_CONTRACT")
+             calls = call.get("calls", [call])
+             if not isinstance(calls, list) or not 1 <= len(calls) <= 3:
+                 raise StudyError("MODEL_TOOL_CONTRACT")
+             pending = []
+             seen = {item["fingerprint"] for item in state["history"]}
+             for offset, tool_call in enumerate(calls):
+-                if tool_call.get("name") not in TOOLS or not isinstance(tool_call.get("arguments"), dict):
++                if not isinstance(tool_call, dict):
++                    raise StudyError("MODEL_TOOL_CONTRACT")
++                if not isinstance(tool_call.get("name"), str) or tool_call["name"] not in TOOLS:
+                     raise StudyError("UNKNOWN_TOOL")
++                if not isinstance(tool_call.get("arguments"), dict):
++                    raise StudyError("INVALID_TOOL_ARGUMENTS")
+                 name = tool_call["name"]
+                 if (
+                     name
+@@ -452,6 +470,9 @@ class StudyRuntime:
+                         raise StudyError("LEARNER_PLAN_CONFLICT")
+                     if raw_arguments.get("practice_kind") == "linear_points":
+                         raw_arguments["linear_request"] = request_plan
++                if name == "search_course_evidence":
++                    # Validate even filters that will be removed by the goal fence.
++                    TOOLS[name][0].model_validate(aliases_in(raw_arguments, aliases))
+                 if name == "search_course_evidence" and not has_time_request(run["goal"]):
+                     # Unrequested filters must not turn a relevant course into a false abstention.
+                     raw_arguments.pop("start_ms", None)
+@@ -987,7 +1008,12 @@ class StudyRuntime:
+                                 run["run_id"],
+                                 token,
+                                 "protocol_retry_scheduled",
+-                                {"error_code": error.code, "retry": 1, "purpose": "review"},
++                                {
++                                    "error_code": error.code,
++                                    "failure_category": failure_category(error.code),
++                                    "retry": 1,
++                                    "purpose": "review",
++                                },
+                             )
+                             response = model_call(messages, "review")
+                         verdict = QualityReview.model_validate(aliases_in(response["review"], review_ids))
+diff --git a/agent-service/src/lecturelens_agent/study/store.py b/agent-service/src/lecturelens_agent/study/store.py
+index 5108887..e4d6a7b 100644
+--- a/agent-service/src/lecturelens_agent/study/store.py
++++ b/agent-service/src/lecturelens_agent/study/store.py
+@@ -8,6 +8,8 @@ import psycopg
+ from psycopg.rows import dict_row
+ from psycopg.types.json import Jsonb
+ 
++from .failures import failure_category
++
+ SCHEMA = """
+ CREATE TABLE IF NOT EXISTS study_session (
+     session_id text PRIMARY KEY, owner_id bigint NOT NULL, course_id text NOT NULL,
+@@ -196,7 +198,7 @@ class StudyStore:
+             if command.operation == "EVENTS":
+                 rows = conn.execute(
+                     "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s "
+-                    "AND event_type NOT IN ('node_started','node_finished','node_failed','evidence_started','evidence_finished','evidence_failed','replay_linked') "
++                    "AND event_type NOT IN ('node_started','node_finished','node_failed','evidence_started','evidence_finished','evidence_failed','replay_linked','read_attempt_reserved','read_attempt_succeeded') "
+                     "ORDER BY sequence LIMIT 100",
+                     (run["run_id"], command.after),
+                 ).fetchall()
+@@ -353,6 +355,50 @@ class StudyStore:
+                 "SELECT * FROM study_tool_result WHERE run_id=%s AND call_id=%s", (run_id, call_id)
+             ).fetchone()
+ 
++    def reserve_read_attempt(self, run_id, token, key, metadata):
++        # The journal and retry charge commit together. Re-entering an unfinished
++        # checkpoint cannot reset the per-read cap or obtain a free retry.
++        with self.connect() as conn:
++            row = self._active(conn, run_id, token)
++            completed = conn.execute(
++                "SELECT COALESCE(max(sequence),0) AS sequence FROM study_event WHERE run_id=%s "
++                "AND event_type='read_attempt_succeeded' AND payload->>'operation_key'=%s",
++                (run_id, key),
++            ).fetchone()["sequence"]
++            count = conn.execute(
++                "SELECT count(*) AS n FROM study_event WHERE run_id=%s "
++                "AND event_type='read_attempt_reserved' AND payload->>'operation_key'=%s AND sequence>%s",
++                (run_id, key, completed),
++            ).fetchone()["n"]
++            failed = conn.execute(
++                "SELECT payload->>'error_code' AS code FROM study_event WHERE run_id=%s "
++                "AND event_type='tool_read_failed' AND payload->>'operation_key'=%s AND sequence>%s "
++                "ORDER BY sequence DESC LIMIT 1",
++                (run_id, key, completed),
++            ).fetchone()
++            # Successful reads can be freshly authorized on replay. A reservation
++            # precedes even that fresh call, fencing crashes before failure logging.
++            code = (failed or {}).get("code") or ("READ_CHECKPOINT_REPLAY" if count else None)
++            if count >= 3:
++                raise StudyError(code or "READ_RETRY_EXHAUSTED", 503)
++            if count:
++                if row["tool_calls"] >= 8:
++                    raise BudgetExceeded()
++                conn.execute("UPDATE study_run SET tool_calls=tool_calls+1 WHERE run_id=%s", (run_id,))
++            payload = {
++                **metadata,
++                "operation_key": key,
++                "attempt": count + 1,
++                "reservation_id": str(uuid.uuid4()),
++            }
++            if code:
++                payload["error_code"] = code
++                payload["failure_category"] = failure_category(code)
++            self._event(conn, run_id, "read_attempt_reserved", payload)
++            if count:
++                self._event(conn, run_id, "tool_retry_started", payload)
++            return count + 1, code
++
+     def event(self, run_id, token, name, payload):
+         with self.connect() as conn:
+             self._active(conn, run_id, token)
+@@ -410,7 +456,16 @@ class StudyStore:
+             "UPDATE study_run SET status=%s,error_code=%s,finished_at=now() WHERE run_id=%s",
+             (status, error, run_id),
+         )
+-        cls._event(conn, run_id, "run_finished", {"status": status, "error_code": error})
++        cls._event(
++            conn,
++            run_id,
++            "run_finished",
++            {
++                "status": status,
++                "error_code": error,
++                "failure_category": failure_category(error) if error else None,
++            },
++        )
+ 
+     def finish(self, run_id, token, status, error=None):
+         with self.connect() as conn:
+diff --git a/agent-service/src/lecturelens_agent/study/telemetry.py b/agent-service/src/lecturelens_agent/study/telemetry.py
+index 8363d60..f05392d 100644
+--- a/agent-service/src/lecturelens_agent/study/telemetry.py
++++ b/agent-service/src/lecturelens_agent/study/telemetry.py
+@@ -6,10 +6,13 @@ No provider credentials, hidden reasoning or new execution state is stored here.
+ 
+ import time
+ import uuid
++from contextlib import contextmanager
+ from contextvars import ContextVar
+ 
+ from langchain_core.runnables import RunnableConfig
++from pydantic import ValidationError
+ 
++from .failures import failure_category
+ from .store import BudgetExceeded, RunStopped, StudyError
+ 
+ _span = ContextVar("study_trace_span", default=None)
+@@ -34,7 +37,17 @@ def traced_node(store, run, token, name, function):
+             "step": config.get("metadata", {}).get("langgraph_step"),
+             "call_id": (state.get("pending") or {}).get("call_id"),
+         }
+-        context = _span.set({**span, "store": store, "run_id": run["run_id"], "token": token})
++        context = _span.set(
++            {
++                **(_span.get() or {}),
++                **span,
++                "read_ordinal": 0,
++                "turn": state.get("turn", 0),
++                "store": store,
++                "run_id": run["run_id"],
++                "token": token,
++            }
++        )
+         started = time.monotonic()
+         try:
+             store.event(
+@@ -61,7 +74,27 @@ def traced_node(store, run, token, name, function):
+             # A late result must never be journaled past cancellation/deadline.
+             raise
+         except Exception as error:
++            code = (
++                error.code
++                if isinstance(error, StudyError)
++                else "INVALID_TOOL_ARGUMENTS"
++                if isinstance(error, ValidationError)
++                else type(error).__name__
++            )
+             try:
++                if failure_category(code) in {"model_tool_selection", "invalid_parameters", "model_protocol"}:
++                    store.event(
++                        run["run_id"],
++                        token,
++                        "tool_rejected",
++                        {
++                            "node": name,
++                            "call_id": span["call_id"],
++                            "error_code": code,
++                            "failure_category": failure_category(code),
++                            "policy": "reject_before_execution",
++                        },
++                    )
+                 store.event(
+                     run["run_id"],
+                     token,
+@@ -82,7 +115,7 @@ def traced_node(store, run, token, name, function):
+ 
+ 
+ class TracedAuthority:
+-    """Observe actual SEARCH/READ/WINDOW calls; CHECK still uses the original authority."""
++    """Fence and trace bounded read attempts; authorization always remains with Java."""
+ 
+     def __init__(self, authority):
+         self.authority = authority
+@@ -91,7 +124,32 @@ class TracedAuthority:
+         if hasattr(self.authority, "close"):
+             self.authority.close()
+ 
++    @contextmanager
++    def execution(self, store, run, token, stop):
++        context = _span.set(
++            {
++                "store": store,
++                "run_id": run["run_id"],
++                "token": token,
++                "stop": stop,
++                "node": "execute",
++                "span_id": None,
++                "checkpoint_id": None,
++                "call_id": None,
++                "read_ordinal": 0,
++            }
++        )
++        try:
++            yield
++        finally:
++            _span.reset(context)
++
+     def read(self, scope, action="CHECK", **arguments):
++        from .resilience import execute_read
++
++        return execute_read(self._read_once, _span.get(), scope, action, **arguments)
++
++    def _read_once(self, scope, action="CHECK", **arguments):
+         span = _span.get()
+         if action == "CHECK" or span is None:
+             return self.authority.read(scope, action, **arguments)
+diff --git a/agent-service/src/lecturelens_agent/study/trace.py b/agent-service/src/lecturelens_agent/study/trace.py
+index f4e76cc..37396a1 100644
+--- a/agent-service/src/lecturelens_agent/study/trace.py
++++ b/agent-service/src/lecturelens_agent/study/trace.py
+@@ -97,7 +97,10 @@ def metrics(run, events):
+         )
+         else "provider_reported",
+         "model_calls": run["model_calls"],
+-        "logical_tool_calls": run["tool_calls"],
++        "logical_tool_calls": sum(e["event_type"] == "tool_started" for e in events) if observed else None,
++        "budget_tool_calls": run["tool_calls"],
++        "read_retries": sum(e["event_type"] == "tool_retry_started" for e in events),
++        "dependency_stops": sum(e["event_type"] == "dependency_stopped" for e in events),
+         "llm_latency_ms": [m["duration_ms"] for m in models if "duration_ms" in m],
+         "llm_unfinished_calls": len(starts) - len(models),
+         "tool_node_latency_inclusive_ms": [t["duration_ms"] for t in tools] if observed else None,
+diff --git a/agent-service/tests/test_course_mcp.py b/agent-service/tests/test_course_mcp.py
+index d5f4166..d3b9a33 100644
+--- a/agent-service/tests/test_course_mcp.py
++++ b/agent-service/tests/test_course_mcp.py
+@@ -281,7 +281,12 @@ def test_broken_mcp_enters_existing_terminal_failure_without_fallback(setup, mod
+         assert classify(expected) == (
+             "permission-state" if expected == "EVIDENCE_SCOPE_MISMATCH" else "infra"
+         )
+-        assert result["run"]["model_calls"] == result["run"]["tool_calls"] == int(mode.startswith("search_"))
++        assert result["run"]["model_calls"] == int(mode.startswith("search_"))
++        retries = 2 if expected in {"MCP_TIMEOUT", "MCP_SERVER_UNAVAILABLE"} else 0
++        assert result["run"]["tool_calls"] == int(mode.startswith("search_")) + retries
++        events = test_study.read(setup, "EVENTS")["events"]
++        assert sum(e["event_type"] == "tool_retry_started" for e in events) == retries
++        assert any(e["event_type"] == "dependency_stopped" for e in events)
+         assert direct.reads == [] and result["artifact"] is None
+     finally:
+         client.close()
+diff --git a/agent-service/tests/test_study_linear.py b/agent-service/tests/test_study_linear.py
+index 0375b6b..e6d37cd 100644
+--- a/agent-service/tests/test_study_linear.py
++++ b/agent-service/tests/test_study_linear.py
+@@ -750,6 +750,7 @@ def test_completed_citation_context_is_reviewed_and_replayed_without_rereading(s
+         if action == "WINDOW":
+             windows.append(kwargs["evidence_id"])
+             return {
++                **{k: scope[k] for k in ("owner_id", "course_id", "revision")},
+                 "evidence": [
+                     {
+                         "evidence_id": "tail",
+@@ -758,7 +759,7 @@ def test_completed_citation_context_is_reviewed_and_replayed_without_rereading(s
+                         "end_ms": 2000,
+                         "source_type": "SUBTITLE",
+                     }
+-                ]
++                ],
+             }
+         result = original_read(scope, action, **kwargs)
+         for item in result["evidence"]:
+diff --git a/docs/L2_STUDY_AGENT.md b/docs/L2_STUDY_AGENT.md
+index bbc213c..449c2e3 100644
+--- a/docs/L2_STUDY_AGENT.md
++++ b/docs/L2_STUDY_AGENT.md
+@@ -49,7 +49,7 @@ LangGraph 采用同步 checkpoint 持久化；使用官方 `PostgresSaver`。每
+ 
+ ## 预算、取消与删除
+ 
+-默认每个 Run：6 次模型调用、8 次逻辑工具执行（内部权威读取另受固定窗口/查询上限约束）、90 秒 deadline，64,000 的保守 token 预留上限。输入以 UTF-8 字节数加工具 schema 估计上界，加决策900 / 目标逐条复核1200 / 字段及课程覆盖复核900 / 旧契约复核300的输出token预留；该字段不是 provider 实际计费 token。checkpoint 最多保留 8 条候选引用；模型上下文按相同时间区间去重后最多发送 8 条、每条最多 600 字符，并使用仅在本次决策内有效的短编号。返回编号经映射及可见集合校验后才恢复成 canonical ID；短编号不作为持久来源。模型响应限制为 128 KiB，单次网络等待不超过剩余运行时间。
++默认每个 Run：6 次模型调用、8 次工具预算扣减（逻辑工具和额外只读重试共享；正常内部权威读取另受固定窗口/查询上限约束）、90 秒 deadline，64,000 的保守 token 预留上限。输入以 UTF-8 字节数加工具 schema 估计上界，加决策900 / 目标逐条复核1200 / 字段及课程覆盖复核900 / 旧契约复核300的输出token预留；该字段不是 provider 实际计费 token。checkpoint 最多保留 8 条候选引用；模型上下文按相同时间区间去重后最多发送 8 条、每条最多 600 字符，并使用仅在本次决策内有效的短编号。返回编号经映射及可见集合校验后才恢复成 canonical ID；短编号不作为持久来源。模型响应限制为 128 KiB，单次网络等待不超过剩余运行时间。
+ 
+ `AGENT_RUN_DEADLINE_SECONDS` 支持 30–300 秒，默认 90；deadline 从首次 worker claim 起持久保存，含重启停机时间。CPU 验收可显式加大预算，必须单独报告，不能记成满足默认延迟。
+ 
+@@ -154,3 +154,11 @@ BC未发布实现补充：检索时模型可选择`python_strings`，随后用`i
+ 本轮学习闭环 Phase 的目标条件、拒答正文、线性计算、引用补读及独立质量结果见 [Phase 验收](../eval/phase-completion/RESULTS.md)。模型原始判断与保守规则拦截分别报告；线上 C 不随工作区开发改变。
+ 
+ 2026-09-20 学习闭环Phase补充：来源集合与规范ID保持不变，带时间的复核片段及共享正文按课程时间顺序展示；排序不推断相邻关系或支持。字符串计划最多三次绑定、四次打印；固定线性输入不预猜成立条件，旧版本计划保留回放语义。当前候选、完整机制测试、开发与新保留质量分别见 [Phase记录](../eval/phase-completion/RESULTS.md)。本文件早期同名候选字母属于历史L2.2阶段，不等同于学习闭环Phase的源码身份。
++
++## 工具故障语义（未发布）
++
++只读 CHECK/SEARCH/READ/WINDOW 对超时和依赖不可用最多进行两次额外尝试，按 50/100ms 退避；尝试记录与重试预算扣减在 PostgreSQL 同一事务提交。未完成读取的尝试上限跨 checkpoint 恢复保留；已成功读取可重新授权，重新调用前仍记录持久尝试。每次调用前后以及退避后检查取消、worker token 和 deadline；每次实际请求由 Java 重新检查权属、revision 与删除状态，不使用缓存绕过 authority。写入产物不进入重试策略。
++
++模型选择的参数先严格校验（含 Java Long 范围），再应用已有目标/时间约束；越界、非法工具调用和畸形响应直接拒绝。持续依赖故障走明确 failed 终态，不将不可用当作课程证据不足，不保存无依据成功产物。公开事件包含安全的失败类别、读重试、退避、拒绝和终止，不包含参数原文、证据或答案。Trace 的 `budget_tool_calls` 与 `logical_tool_calls` 分开计量。已有模型格式纠正仍限制为一次并消耗模型预算。
++
++机制及本地 HTTP/MCP 故障注入证据见[容错评测](../eval/tool-resilience-20261014/README.md)；确定性 provider 不证明真实模型学习质量，AU 冻结结果和线上配置不变。
+diff --git a/eval/README.md b/eval/README.md
+index bdedf69..c2764a1 100644
+--- a/eval/README.md
++++ b/eval/README.md
+@@ -14,6 +14,8 @@
+ 
+ 求职增强实验最新完成 **Phase E · Multi-user Agent Concurrency & Isolation**：5/20/50-user 固定响应、5/10-user 真实模型、取消晚到结果及两种进程崩溃恢复已实测，2,160 次负向权限请求 0 绕过；并发检索 503 和全部失败保留。这是执行/隔离实验，不更新 AU 的教学质量结论。见 [Phase E 报告](multi-user-phase-e/README.md)；本轮停止，不开启 Phase F。
+ 
++未发布的工具容错候选增加持久预算内的有界只读重试、严格参数校验和公开失败分类。固定本地 HTTP/MCP 故障矩阵与改动前源码对比见[工具容错报告](tool-resilience-20261014/README.md)；确定性 provider 只验证机制，不更新 AU 教学质量结论。
++
+ ## 历史目录
+ 
+ | 目录 | 作用 |
+@@ -29,6 +31,7 @@
+ | `phase-completion/` | X 之后到最终 AU 的 Phase 完整收敛记录 |
+ | `model-management/` | 用户模型连接/路由机制验收 |
+ | `multi-user-phase-e/` | 最终求职增强实验：多用户并发、权限/产物/checkpoint 隔离及取消/恢复 |
++| `tool-resilience-20261014/` | 有界读重试、拒绝与终止的机制测试及每类二十次本地故障基线对比 |
+ 
+ 历史失败是评测证据的一部分，不因后续候选通过而删除或改判。阅读项目时优先从当前完成报告进入，再按需要追溯历史目录。
+ 
+diff --git a/scripts/eval/replay-study-quality.py b/scripts/eval/replay-study-quality.py
+index caa11b3..8c5d43d 100644
+--- a/scripts/eval/replay-study-quality.py
++++ b/scripts/eval/replay-study-quality.py
+@@ -90,7 +90,9 @@ class FixedEvidence:
+                 i for i, e in enumerate(self.evidence) if e["evidence_id"] == arguments["evidence_id"]
+             )
+             selected = self.evidence[max(0, index - 1) : index + 2]
+-        return {**self.scope, "evidence": selected}
++        # Session context may be added to the caller's scope after construction;
++        # the authority response contains only the course identity, like Java/MCP.
++        return {k: self.scope[k] for k in ("owner_id", "course_id", "revision")} | {"evidence": selected}
+ 
+ 
+ def main():
+diff --git a/agent-service/src/lecturelens_agent/study/failures.py b/agent-service/src/lecturelens_agent/study/failures.py
+new file mode 100644
+index 0000000..674d7e5
+--- /dev/null
++++ b/agent-service/src/lecturelens_agent/study/failures.py
+@@ -0,0 +1,26 @@
++"""Public, payload-free failure labels for execution symptoms."""
++
++
++def failure_category(code):
++    if code == "READ_CHECKPOINT_REPLAY":
++        return "checkpoint_recovery"
++    if code in {"UNKNOWN_TOOL", "SEARCH_REQUIRED", "ARTIFACT_MUST_END_RUN", "REPEATED_TOOL_WITHOUT_PROGRESS"}:
++        return "model_tool_selection"
++    if code in {"INVALID_TOOL_ARGUMENTS", "MCP_INVALID_REQUEST"}:
++        return "invalid_parameters"
++    if code in {
++        "MODEL_TOOL_CONTRACT",
++        "MODEL_OUTPUT_TRUNCATED",
++        "MODEL_FEEDBACK_CONTRACT",
++        "MODEL_REVIEW_CONTRACT",
++    }:
++        return "model_protocol"
++    if "MALFORMED" in code or code == "MCP_CONTRACT_MISMATCH":
++        return "malformed_response"
++    if any(part in code for part in ("SCOPE", "CHANGED", "STALE", "CANCEL")):
++        return "permission_state"
++    if "TIMEOUT" in code:
++        return "timeout"
++    if "BUDGET" in code or "DEADLINE" in code:
++        return "budget"
++    return "tool_dependency_unavailable"
+diff --git a/agent-service/src/lecturelens_agent/study/resilience.py b/agent-service/src/lecturelens_agent/study/resilience.py
+new file mode 100644
+index 0000000..7e55ae8
+--- /dev/null
++++ b/agent-service/src/lecturelens_agent/study/resilience.py
+@@ -0,0 +1,172 @@
++"""Bounded read recovery in the Agent runtime, backed by the existing Run journal.
++
++Every physical retry keeps Java as the authority; successful observations are
++never substituted from a local cache. Artifact writes do not enter this policy.
++"""
++
++import hashlib
++import json
++import uuid
++
++import httpx
++from pydantic import ValidationError
++
++from .failures import failure_category
++from .store import BudgetExceeded, RunStopped, StudyError
++
++
++def execute_read(read_once, span, scope, action="CHECK", **arguments):
++    from ..course_mcp.contracts import ACTION_TO_TOOL, TOOLS, CourseResult
++
++    try:
++        if action not in ACTION_TO_TOOL:
++            raise StudyError("MCP_INVALID_REQUEST", 422)
++        _, schema, _ = TOOLS[ACTION_TO_TOOL[action]]
++        schema.model_validate(
++            {
++                **{k: scope[k] for k in ("owner_id", "course_id", "revision")},
++                **arguments,
++                "authorization": {"timestamp": "0", "signature": "0" * 64},
++            }
++        )
++        if set(arguments) & {"owner_id", "course_id", "revision", "authorization", "action"}:
++            raise StudyError("MCP_INVALID_REQUEST", 422)
++    except (ValidationError, KeyError):
++        public_failure(span, action, "MCP_INVALID_REQUEST", "tool_rejected")
++        raise StudyError("MCP_INVALID_REQUEST", 422) from None
++    except StudyError as error:
++        public_failure(span, action, error.code, "tool_rejected")
++        raise
++    if span is None:
++        return read_once(scope, action, **arguments)
++
++    store, run_id, token = (span[k] for k in ("store", "run_id", "token"))
++    ordinal = span["read_ordinal"]
++    span["read_ordinal"] += 1
++    key = hashlib.sha256(
++        json.dumps(
++            [span["node"], span["call_id"], span.get("turn"), ordinal, action, arguments], sort_keys=True
++        ).encode()
++    ).hexdigest()
++    last_code = None
++    while True:
++        guard(span)
++        try:
++            attempt, previous_code = store.reserve_read_attempt(
++                run_id,
++                token,
++                key,
++                {
++                    "action": action,
++                    "call_id": span["call_id"],
++                    "node": span["node"],
++                    "error_code": last_code,
++                    "failure_category": failure_category(last_code) if last_code else None,
++                },
++            )
++            last_code = previous_code or last_code
++            if attempt > 1 and not last_code:
++                last_code = "READ_CHECKPOINT_REPLAY"
++        except StudyError as error:
++            public_failure(span, action, error.code, "dependency_stopped", operation_key=key)
++            raise StudyError(error.code, 503) from None
++        if attempt > 1:
++            delay = 0.05 * 2 ** (attempt - 2)
++            store.event(
++                run_id,
++                token,
++                "tool_retry_backoff",
++                {
++                    "operation_key": key,
++                    "action": action,
++                    "attempt": attempt,
++                    "delay_ms": delay * 1000,
++                    "error_code": last_code,
++                    "failure_category": failure_category(last_code),
++                },
++            )
++            if span["stop"].wait(delay):
++                raise RunStopped()
++            guard(span)
++        try:
++            result = read_once(scope, action, **arguments)
++            guard(span)
++            try:
++                CourseResult.model_validate(result)
++            except ValidationError:
++                raise StudyError("MCP_MALFORMED_RESPONSE", 503) from None
++            if any(result[k] != scope[k] for k in ("owner_id", "course_id", "revision")):
++                raise StudyError("EVIDENCE_SCOPE_MISMATCH")
++            store.event(
++                run_id,
++                token,
++                "read_attempt_succeeded",
++                {
++                    "operation_key": key,
++                    "attempt": attempt,
++                    "completion_id": str(uuid.uuid4()),
++                },
++            )
++            return result
++        except (RunStopped, BudgetExceeded):
++            raise
++        except (
++            StudyError,
++            httpx.HTTPError,
++            TimeoutError,
++            ValueError,
++            KeyError,
++            TypeError,
++            AttributeError,
++        ) as error:
++            guard(span)
++            if isinstance(error, StudyError):
++                code = error.code
++            elif isinstance(error, (httpx.TimeoutException, TimeoutError)):
++                code = "MCP_AUTHORITY_TIMEOUT"
++            elif isinstance(error, httpx.HTTPError):
++                code = "MCP_AUTHORITY_UNAVAILABLE"
++            else:
++                code = "MCP_MALFORMED_RESPONSE"
++            retryable = code in {
++                "MCP_TIMEOUT",
++                "MCP_SERVER_UNAVAILABLE",
++                "MCP_AUTHORITY_TIMEOUT",
++                "MCP_AUTHORITY_UNAVAILABLE",
++            }
++            public_failure(span, action, code, "tool_read_failed", attempt=attempt, operation_key=key)
++            if not retryable or attempt >= 3:
++                public_failure(
++                    span,
++                    action,
++                    code,
++                    "dependency_stopped",
++                    policy="fail_closed",
++                    attempt=attempt,
++                    operation_key=key,
++                )
++                raise StudyError(code, 503) from None
++            last_code = code
++
++
++def guard(span):
++    if span["stop"].is_set():
++        raise RunStopped()
++    span["store"].guard(span["run_id"], span["token"])
++
++
++def public_failure(span, action, code, event, **extra):
++    if span:
++        span["store"].event(
++            span["run_id"],
++            span["token"],
++            event,
++            {
++                "action": action,
++                "call_id": span["call_id"],
++                "node": span["node"],
++                "error_code": code,
++                "failure_category": failure_category(code),
++                **extra,
++            },
++        )
+diff --git a/agent-service/tests/test_study_resilience.py b/agent-service/tests/test_study_resilience.py
+new file mode 100644
+index 0000000..57132aa
+--- /dev/null
++++ b/agent-service/tests/test_study_resilience.py
+@@ -0,0 +1,313 @@
++"""Fault semantics with real persistent budgets, journal and checkpoints."""
++
++import json
++import threading
++
++import pytest
++import test_study
++from pydantic import ValidationError
++
++from lecturelens_agent.course_mcp.contracts import SearchRequest
++from lecturelens_agent.study.contracts import StudyCommand
++from lecturelens_agent.study.store import StudyError
++
++setup = test_study.setup
++
++
++def public(setup):
++    return test_study.read(setup, "EVENTS")["events"]
++
++
++@pytest.mark.parametrize("action", ["SEARCH", "READ", "WINDOW", "CHECK"])
++@pytest.mark.parametrize("failures", [1, 2, 3])
++def test_bounded_read_retry_is_charged_and_public(setup, action, failures):
++    store, authority, runtime, _ = setup
++    original = authority.read
++    attempts = []
++
++    def broken(scope, selected="CHECK", **args):
++        if selected == action:
++            attempts.append(selected)
++            if len(attempts) <= failures:
++                raise StudyError("MCP_AUTHORITY_UNAVAILABLE", 503)
++        return original(scope, selected, **args)
++
++    authority.read = broken
++    run = test_study.start(setup)
++    runtime.execute(run)
++    result = test_study.read(setup)
++    retries = [e for e in public(setup) if e["event_type"] == "tool_retry_started"]
++    assert len(retries) == min(failures, 2)
++    assert all(e["payload"]["failure_category"] == "tool_dependency_unavailable" for e in retries)
++    if failures < 3:
++        assert result["run"]["status"] == "succeeded"
++        assert result["run"]["tool_calls"] == 3 + failures
++    else:
++        assert result["run"]["status"] == "failed"
++        assert result["artifact"] is None and len(attempts) == 3
++        assert any(e["event_type"] == "dependency_stopped" for e in public(setup))
++
++
++@pytest.mark.parametrize(
++    "code,category",
++    [
++        ("MCP_MALFORMED_RESPONSE", "malformed_response"),
++        ("MCP_MALFORMED_AUTHORITY_RESPONSE", "malformed_response"),
++        ("EVIDENCE_SCOPE_MISMATCH", "permission_state"),
++        ("COURSE_UNAVAILABLE_OR_CHANGED", "permission_state"),
++    ],
++)
++def test_fail_closed_errors_are_not_retried(setup, code, category):
++    _, authority, runtime, _ = setup
++    original = authority.read
++    attempts = []
++
++    def broken(scope, action="CHECK", **args):
++        if action == "SEARCH":
++            attempts.append(action)
++            raise StudyError(code)
++        return original(scope, action, **args)
++
++    authority.read = broken
++    runtime.execute(test_study.start(setup))
++    result = test_study.read(setup)
++    assert result["run"]["status"] == "failed" and result["artifact"] is None
++    assert len(attempts) == 1
++    stopped = next(e for e in public(setup) if e["event_type"] == "dependency_stopped")
++    assert stopped["payload"]["failure_category"] == category
++
++
++@pytest.mark.parametrize(
++    "call,category",
++    [
++        ({"name": "publish_answer", "arguments": {}}, "model_tool_selection"),
++        ({"name": "search_course_evidence", "arguments": {"query": "x" * 501}}, "invalid_parameters"),
++        (
++            {"name": "search_course_evidence", "arguments": {"query": "x", "start_ms": -1, "end_ms": 2}},
++            "invalid_parameters",
++        ),
++        ({"name": "search_course_evidence", "arguments": "{}"}, "invalid_parameters"),
++        ({"calls": [17]}, "model_protocol"),
++        ({"calls": [{"name": ["search_course_evidence"], "arguments": {}}]}, "model_tool_selection"),
++    ],
++)
++def test_illegal_model_call_is_rejected_before_execution(setup, call, category):
++    _, authority, runtime, _ = setup
++    runtime.provider.decide = lambda *_: call
++    runtime.execute(test_study.start(setup))
++    result = test_study.read(setup)
++    assert result["run"]["status"] == "failed" and result["artifact"] is None
++    assert result["run"]["tool_calls"] == 0
++    assert all(action == "CHECK" for action in authority.reads)
++    rejected = next(e for e in public(setup) if e["event_type"] == "tool_rejected")
++    assert rejected["payload"]["failure_category"] == category
++    assert "arguments" not in json.dumps(public(setup))
++
++
++@pytest.mark.parametrize("fence", ["cancel", "deadline", "revision", "shutdown", "budget"])
++def test_failure_cannot_bypass_fences_to_retry(setup, fence):
++    store, authority, runtime, scope = setup
++    run = test_study.start(setup)
++    original = authority.read
++    attempts = []
++
++    def broken(scope_arg, action="CHECK", **args):
++        if action == "SEARCH":
++            attempts.append(action)
++            if fence == "cancel":
++                store.command(StudyCommand(**scope, operation="CANCEL", run_id=run["run_id"]), "mock")
++            elif fence == "deadline":
++                with store.connect() as conn:
++                    conn.execute(
++                        "UPDATE study_run SET deadline=now()-interval '1 second' WHERE run_id=%s",
++                        (run["run_id"],),
++                    )
++            elif fence == "budget":
++                with store.connect() as conn:
++                    conn.execute("UPDATE study_run SET tool_calls=8 WHERE run_id=%s", (run["run_id"],))
++            elif fence == "revision":
++                authority.valid = False
++                raise StudyError("COURSE_UNAVAILABLE_OR_CHANGED")
++            else:
++                runtime.stop.set()
++            raise StudyError("MCP_AUTHORITY_UNAVAILABLE", 503)
++        return original(scope_arg, action, **args)
++
++    authority.read = broken
++    runtime.execute(run)
++    result = test_study.read(setup)
++    assert len(attempts) == 1 and result["artifact"] is None
++    assert (
++        result["run"]["status"]
++        == {
++            "cancel": "cancelled",
++            "deadline": "budget_exceeded",
++            "budget": "budget_exceeded",
++            "revision": "failed",
++            "shutdown": "running",
++        }[fence]
++    )
++
++
++def test_checkpoint_restart_preserves_attempt_cap_and_error(setup):
++    store, authority, runtime, _ = setup
++    original = authority.read
++    attempts = []
++
++    def crash(scope, action="CHECK", **args):
++        if action == "SEARCH":
++            attempts.append(action)
++            if len(attempts) == 2:
++                raise test_study.Crash()
++            raise StudyError("MCP_TIMEOUT", 503)
++        return original(scope, action, **args)
++
++    authority.read = crash
++    run = test_study.start(setup)
++    with pytest.raises(test_study.Crash):
++        runtime.execute(run)
++    runtime.execute(run)
++    result = test_study.read(setup)
++    assert result["run"]["status"] == "failed"
++    assert result["run"]["error_code"] == "MCP_TIMEOUT" and len(attempts) == 3
++    assert result["run"]["tool_calls"] == 4  # logical node replay + two persisted retries
++    assert [e["payload"]["attempt"] for e in public(setup) if e["event_type"] == "tool_retry_started"] == [
++        2,
++        3,
++    ]
++
++
++def test_cancel_during_backoff_stops_before_next_external_call(setup):
++    store, authority, runtime, scope = setup
++    original = authority.read
++    ready = threading.Event()
++    release = threading.Event()
++    original_event = store.event
++    calls = []
++
++    def event(*args):
++        result = original_event(*args)
++        if args[2] == "tool_retry_backoff":
++            ready.set()
++            assert release.wait(5)
++        return result
++
++    def broken(scope, action="CHECK", **args):
++        if action == "SEARCH":
++            calls.append(action)
++            raise StudyError("MCP_TIMEOUT", 503)
++        return original(scope, action, **args)
++
++    store.event, authority.read = event, broken
++    run = test_study.start(setup)
++    worker = threading.Thread(target=runtime.execute, args=(run,))
++    worker.start()
++    try:
++        assert ready.wait(5)
++        store.command(StudyCommand(**scope, operation="CANCEL", run_id=run["run_id"]), "mock")
++    finally:
++        release.set()
++        worker.join(5)
++    assert not worker.is_alive() and len(calls) == 1
++    assert test_study.read(setup)["run"]["status"] == "cancelled"
++
++
++def test_transport_validates_window_before_connect():
++    from lecturelens_agent.course_mcp.client import McpEvidenceAuthority
++
++    client = McpEvidenceAuthority("http://127.0.0.1:1", "synthetic-secret")
++    client._connection = lambda: pytest.fail("invalid arguments opened a transport")
++    with pytest.raises(StudyError, match="MCP_INVALID_REQUEST"):
++        client.read(
++            {"owner_id": 1, "course_id": "c", "revision": 0}, "SEARCH", query="x", start_ms=3, end_ms=1
++        )
++    client.close()
++
++
++@pytest.mark.parametrize(
++    "args", [{"query": " "}, {"query": "x", "start_ms": 1}, {"query": "x", "end_ms": -1}]
++)
++def test_mcp_request_rejects_bad_windows(args):
++    with pytest.raises(ValidationError):
++        SearchRequest.model_validate(
++            {
++                "owner_id": 1,
++                "course_id": "c",
++                "revision": 0,
++                "authorization": {"timestamp": "0", "signature": "0" * 64},
++                **args,
++            }
++        )
++
++
++def test_artifact_write_failure_is_never_automatically_retried(setup):
++    store, _, runtime, _ = setup
++    original = store.save_tool
++    writes = []
++
++    def fail_write(*args, **kwargs):
++        if args[3] == "create_practice_set":
++            writes.append(args[3])
++            raise StudyError("MCP_AUTHORITY_UNAVAILABLE", 503)
++        return original(*args, **kwargs)
++
++    store.save_tool = fail_write
++    runtime.execute(test_study.start(setup))
++    result = test_study.read(setup)
++    assert len(writes) == 1 and result["run"]["status"] == "failed"
++    assert result["artifact"] is None
++    assert not any(e["event_type"] == "tool_retry_started" for e in public(setup))
++
++
++@pytest.mark.parametrize("payload", [None, {"evidence": "PRIVATE bad data"}, []])
++def test_malformed_internal_response_is_public_and_never_published(setup, payload):
++    _, authority, runtime, _ = setup
++    original = authority.read
++
++    def malformed(scope, action="CHECK", **args):
++        return payload if action == "SEARCH" else original(scope, action, **args)
++
++    authority.read = malformed
++    runtime.execute(test_study.start(setup))
++    result = test_study.read(setup)
++    assert result["run"]["error_code"] == "MCP_MALFORMED_RESPONSE" and result["artifact"] is None
++    assert not any(e["event_type"] == "tool_retry_started" for e in public(setup))
++    assert any(e["payload"].get("failure_category") == "malformed_response" for e in public(setup))
++    assert "PRIVATE" not in json.dumps(public(setup))
++
++
++def test_integer_outside_java_long_is_rejected_before_goal_normalization(setup):
++    _, authority, runtime, _ = setup
++    runtime.provider.decide = lambda *_: {
++        "name": "search_course_evidence",
++        "arguments": {
++            "query": "stop",
++            "start_ms": 0,
++            "end_ms": 2**63,
++        },
++    }
++    runtime.execute(test_study.start(setup))
++    result = test_study.read(setup)
++    assert result["run"]["error_code"] == "INVALID_TOOL_ARGUMENTS"
++    assert result["run"]["tool_calls"] == 0 and all(a == "CHECK" for a in authority.reads)
++    assert (
++        next(e for e in public(setup) if e["event_type"] == "tool_rejected")["payload"]["failure_category"]
++        == "invalid_parameters"
++    )
++
++
++@pytest.mark.parametrize(
++    "change", [{"owner_id": 2**63}, {"revision": 2**63}, {"start_ms": 0, "end_ms": 2**63}]
++)
++def test_mcp_request_rejects_integer_overflow(change):
++    with pytest.raises(ValidationError):
++        SearchRequest.model_validate(
++            {
++                "owner_id": 1,
++                "course_id": "c",
++                "revision": 0,
++                "query": "x",
++                "authorization": {"timestamp": "0", "signature": "0" * 64},
++                **change,
++            }
++        )

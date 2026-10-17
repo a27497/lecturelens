@@ -281,7 +281,12 @@ def test_broken_mcp_enters_existing_terminal_failure_without_fallback(setup, mod
         assert classify(expected) == (
             "permission-state" if expected == "EVIDENCE_SCOPE_MISMATCH" else "infra"
         )
-        assert result["run"]["model_calls"] == result["run"]["tool_calls"] == int(mode.startswith("search_"))
+        assert result["run"]["model_calls"] == int(mode.startswith("search_"))
+        retries = 2 if expected in {"MCP_TIMEOUT", "MCP_SERVER_UNAVAILABLE"} else 0
+        assert result["run"]["tool_calls"] == int(mode.startswith("search_")) + retries
+        events = test_study.read(setup, "EVENTS")["events"]
+        assert sum(e["event_type"] == "tool_retry_started" for e in events) == retries
+        assert any(e["event_type"] == "dependency_stopped" for e in events)
         assert direct.reads == [] and result["artifact"] is None
     finally:
         client.close()

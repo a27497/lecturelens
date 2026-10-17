@@ -1,0 +1,2420 @@
+{
+  "reason": "tool turn interrupted while full matrix was running",
+  "run_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7",
+  "before": {
+    "status": "running",
+    "error_code": null,
+    "model_calls": 4,
+    "tool_calls": 3,
+    "reserved_tokens": 38032,
+    "model_rows": 4,
+    "journal_tokens": 38032,
+    "tool_reservations": 3,
+    "retry_charges": 0,
+    "effects": {
+      "study_artifact": 0,
+      "study_feedback": 0,
+      "study_approval": 1
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "event_type": "run_queued",
+        "payload": {}
+      },
+      {
+        "sequence": 2,
+        "event_type": "run_started",
+        "payload": {}
+      },
+      {
+        "sequence": 3,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9",
+          "reservation_id": "89124781-2758-4faa-9b75-9297a9ba5828",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 4,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "948263b3-0b8d-496d-bfc6-ba02f82e4401",
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9"
+        }
+      },
+      {
+        "sequence": 5,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 1,
+          "call_id": null,
+          "span_id": "396d3186-02e6-40db-9ada-8405b622dcea",
+          "checkpoint_id": "1f1c7e4a-cbbb-6cea-8000-4a3fb1c8bb1d"
+        }
+      },
+      {
+        "sequence": 6,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "f281252572b93f43aecf213053fa223289b0639874b92669de7adc6c0b9928db",
+          "reservation_id": "07bfa014-42be-4583-a48f-e95c019c2eec",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 7,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "6176f480-77ed-4817-9e1a-7c879ab26222",
+          "operation_key": "f281252572b93f43aecf213053fa223289b0639874b92669de7adc6c0b9928db"
+        }
+      },
+      {
+        "sequence": 8,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "868ef3eebd5209d080aedc154c3156d67418d03a394505a10cb833dbbf05225b",
+          "reservation_id": "53a878e8-0916-4892-a95a-cd14841baa22",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 9,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "7d18b5dd-d889-447c-b28a-b24be03953d2",
+          "operation_key": "868ef3eebd5209d080aedc154c3156d67418d03a394505a10cb833dbbf05225b"
+        }
+      },
+      {
+        "sequence": 10,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 1,
+          "purpose": "decision",
+          "operation_key": "4a38f471673aa6f6ed5d1a25d4f95aeb2cc46cfdfcdf9f3682ea44b135bf1b47"
+        }
+      },
+      {
+        "sequence": 11,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "e5b155679273b0d2505715dd17107c6640eb8fb3655dba0b769479b9c72d0cd5",
+          "reservation_id": "40f0deca-634d-42ea-8625-20957b92c35b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 12,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "c103e382-9420-474b-9c39-db68dd506dd4",
+          "operation_key": "e5b155679273b0d2505715dd17107c6640eb8fb3655dba0b769479b9c72d0cd5"
+        }
+      },
+      {
+        "sequence": 13,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 1,
+          "purpose": "decision",
+          "duration_ms": 10,
+          "operation_key": "4a38f471673aa6f6ed5d1a25d4f95aeb2cc46cfdfcdf9f3682ea44b135bf1b47",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 14,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 1,
+          "call_id": null,
+          "span_id": "396d3186-02e6-40db-9ada-8405b622dcea",
+          "duration_ms": 56.221,
+          "checkpoint_id": "1f1c7e4a-cbbb-6cea-8000-4a3fb1c8bb1d"
+        }
+      },
+      {
+        "sequence": 15,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 16,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491",
+          "reservation_id": "2d96d672-b3fc-40ea-9b8e-0fb9241cefb0",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 17,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "971280d6-6d4a-4e27-a723-bd8fb4d86c8d",
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491"
+        }
+      },
+      {
+        "sequence": 18,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "search_course_evidence",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0"
+        }
+      },
+      {
+        "sequence": 19,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0",
+          "reservation_id": "5d6b950e-2765-4c5a-8c5e-42949e77559c",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 20,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "9172bc54-07a6-4c04-942f-6c1e4839e272"
+        }
+      },
+      {
+        "sequence": 21,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "transport": "internal",
+          "duration_ms": 0.122,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "9172bc54-07a6-4c04-942f-6c1e4839e272"
+        }
+      },
+      {
+        "sequence": 22,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "3d6e5bc9-9bf4-4491-a56e-1e0614ffa811",
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0"
+        }
+      },
+      {
+        "sequence": 23,
+        "event_type": "run_resumed",
+        "payload": {}
+      },
+      {
+        "sequence": 24,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9",
+          "reservation_id": "bdad7ab8-a9a9-434c-a17c-19140f8b884a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 25,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "82871b47-5ef0-4c03-bfeb-4ca78d4a2a4f",
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9"
+        }
+      },
+      {
+        "sequence": 26,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 27,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491",
+          "reservation_id": "fe802731-16d9-4e2b-813a-4d41c464a40d",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 28,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "1456a990-8ecb-4137-a14f-e8c191225a7e",
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491"
+        }
+      },
+      {
+        "sequence": 29,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0",
+          "reservation_id": "9feb6deb-8aa5-40d0-9bb2-3974e0945567",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 30,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "3b1bece0-7dcc-4582-8f88-3f705c15e260"
+        }
+      },
+      {
+        "sequence": 31,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "transport": "internal",
+          "duration_ms": 0.191,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "3b1bece0-7dcc-4582-8f88-3f705c15e260"
+        }
+      },
+      {
+        "sequence": 32,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "975941b6-e594-47c9-aa24-8836cc74b95f",
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0"
+        }
+      },
+      {
+        "sequence": 33,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "f08064c56b5c85d6b92d2ab8a69ff068b7b621117fdfd792a42b2a9b0d0994f9",
+          "reservation_id": "67d4f956-a475-4703-920a-75819946f18b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 34,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "cbe57e34-c419-497d-90ae-1c8a5b9ac3b7",
+          "operation_key": "f08064c56b5c85d6b92d2ab8a69ff068b7b621117fdfd792a42b2a9b0d0994f9"
+        }
+      },
+      {
+        "sequence": 35,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "search_course_evidence",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0"
+        }
+      },
+      {
+        "sequence": 36,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "duration_ms": 48.924,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 37,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 3,
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7"
+        }
+      },
+      {
+        "sequence": 38,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "14f772b4d65d6a8be1b092a040f3b3e32c220ff2cc99979371fd5cb0d0e88f58",
+          "reservation_id": "4f2e661b-85ad-4cef-9aa1-010e64d19154",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 39,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "9ab0c99a-b03e-496e-befe-bbd5926cddac",
+          "operation_key": "14f772b4d65d6a8be1b092a040f3b3e32c220ff2cc99979371fd5cb0d0e88f58"
+        }
+      },
+      {
+        "sequence": 40,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "86a4f44e84d8469d38f17071dee4f17eed81ee6b66a5329fcad66aaa2c408e54",
+          "reservation_id": "01c3fa8f-af11-47f9-892e-893eb484d5ea",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 41,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7",
+          "evidence_call_id": "36899b7f-d45b-45c9-81c6-b7018e894445"
+        }
+      },
+      {
+        "sequence": 42,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "transport": "internal",
+          "duration_ms": 0.237,
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7",
+          "evidence_call_id": "36899b7f-d45b-45c9-81c6-b7018e894445"
+        }
+      },
+      {
+        "sequence": 43,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "51d68456-d199-4426-b050-53b065aec048",
+          "operation_key": "86a4f44e84d8469d38f17071dee4f17eed81ee6b66a5329fcad66aaa2c408e54"
+        }
+      },
+      {
+        "sequence": 44,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "1f2d1199d72af98dae42ab2a0dca838dd75610fe3aac33c0e5ca7fe3ebe2a829",
+          "reservation_id": "d2cbc022-182e-4258-bdd2-60aac866c9c7",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 45,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "4870cb74-5d33-46e7-8713-64dafe0bea40",
+          "operation_key": "1f2d1199d72af98dae42ab2a0dca838dd75610fe3aac33c0e5ca7fe3ebe2a829"
+        }
+      },
+      {
+        "sequence": 46,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 2,
+          "purpose": "decision",
+          "operation_key": "56928833e01959b16f56511871918d44c807af42c4cbe42b223fecffa03ed8d9"
+        }
+      },
+      {
+        "sequence": 47,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "b68680d3a5c584998312263360b3f4a153d57da7047420ad965cd5a8b601493a",
+          "reservation_id": "ef1cdd22-6a61-47f3-b617-ee0714e1fb7f",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 48,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "c01bb436-bf76-481c-9b63-bd308e8ffedf",
+          "operation_key": "b68680d3a5c584998312263360b3f4a153d57da7047420ad965cd5a8b601493a"
+        }
+      },
+      {
+        "sequence": 49,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 2,
+          "purpose": "decision",
+          "duration_ms": 10,
+          "operation_key": "56928833e01959b16f56511871918d44c807af42c4cbe42b223fecffa03ed8d9",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 50,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 3,
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "duration_ms": 77.775,
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7"
+        }
+      },
+      {
+        "sequence": 51,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 4,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8"
+        }
+      },
+      {
+        "sequence": 52,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "2fa9c428f7511aa5a2113089aa34283751f966c9eef58b94326aa192d46517ef",
+          "reservation_id": "5d718c93-4970-47b0-9b84-84a187488764",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 53,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "09437b2c-3bcd-40d9-ae49-caaf0f83e811",
+          "operation_key": "2fa9c428f7511aa5a2113089aa34283751f966c9eef58b94326aa192d46517ef"
+        }
+      },
+      {
+        "sequence": 54,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "read_evidence_window",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1"
+        }
+      },
+      {
+        "sequence": 55,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "36c9b41bab14ee422c0d272800b637cc3cef54b416c0ad83c73ca62b4e10dec7",
+          "reservation_id": "56b5bc8d-1196-4855-b64d-4ddc64cb1a2a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 56,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8",
+          "evidence_call_id": "a8e50fa6-ddf4-4328-8d36-6b6378a75ef6"
+        }
+      },
+      {
+        "sequence": 57,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "transport": "internal",
+          "duration_ms": 0.166,
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8",
+          "evidence_call_id": "a8e50fa6-ddf4-4328-8d36-6b6378a75ef6"
+        }
+      },
+      {
+        "sequence": 58,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "600fdfe6-e624-43d9-8927-365e8cc033d4",
+          "operation_key": "36c9b41bab14ee422c0d272800b637cc3cef54b416c0ad83c73ca62b4e10dec7"
+        }
+      },
+      {
+        "sequence": 59,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "df76a68c53ca63afaefa3f33ca8933e1b31ce67fc743141786bcdebbd4bd98ad",
+          "reservation_id": "596e0ebd-40f9-4e43-a974-fbf6eb0fbadf",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 60,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "58e5f32a-9849-4b40-9b72-70dde7588732",
+          "operation_key": "df76a68c53ca63afaefa3f33ca8933e1b31ce67fc743141786bcdebbd4bd98ad"
+        }
+      },
+      {
+        "sequence": 61,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "read_evidence_window",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1"
+        }
+      },
+      {
+        "sequence": 62,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 4,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "duration_ms": 35.469,
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8"
+        }
+      },
+      {
+        "sequence": 63,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 5,
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca"
+        }
+      },
+      {
+        "sequence": 64,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "cc496e20a7c178b6b1994a70ecee9eb58ef35a222e33ba826b38bfdd26c8e73c",
+          "reservation_id": "d65d84ae-08c5-4bfd-b432-e23ef18ea80b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 65,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "8a50d666-bf1d-476b-b115-19820c68f207",
+          "operation_key": "cc496e20a7c178b6b1994a70ecee9eb58ef35a222e33ba826b38bfdd26c8e73c"
+        }
+      },
+      {
+        "sequence": 66,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "f144ee18135472dd7fb0a7d7af15cb7ffdc69ab812a59f0170f7c473da508cec",
+          "reservation_id": "cd08b3a1-fc64-4b3b-ae9e-854b951fa705",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 67,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca",
+          "evidence_call_id": "d7a65074-5159-4dac-a7ae-d4d507407dd4"
+        }
+      },
+      {
+        "sequence": 68,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "transport": "internal",
+          "duration_ms": 0.109,
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca",
+          "evidence_call_id": "d7a65074-5159-4dac-a7ae-d4d507407dd4"
+        }
+      },
+      {
+        "sequence": 69,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "add4d6b0-41db-4acf-85a6-82f65f406d05",
+          "operation_key": "f144ee18135472dd7fb0a7d7af15cb7ffdc69ab812a59f0170f7c473da508cec"
+        }
+      },
+      {
+        "sequence": 70,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "224a7c6dc0a5d49919e162ed328f48786ec7f448f2a1c8a7bcf1d56099ce04e3",
+          "reservation_id": "37effc09-671a-4a78-ba9d-cf7341c3dae8",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 71,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "101a1ca0-0874-4855-84fa-7da96e4715c9",
+          "operation_key": "224a7c6dc0a5d49919e162ed328f48786ec7f448f2a1c8a7bcf1d56099ce04e3"
+        }
+      },
+      {
+        "sequence": 72,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 3,
+          "purpose": "decision",
+          "operation_key": "ebe6af27601fbc68f3ce8f5567bc3214a9798941c9b57e979e99ff0a002cbd8c"
+        }
+      },
+      {
+        "sequence": 73,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "71284648ceab34772af490be8286a49f5a8260fe6ea19b0341d84a19c4b4aed4",
+          "reservation_id": "5e450e59-0a6a-48c8-9d07-4f0e8fc99da5",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 74,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "02472335-08f9-47a0-b9ac-c8eed0040ca0",
+          "operation_key": "71284648ceab34772af490be8286a49f5a8260fe6ea19b0341d84a19c4b4aed4"
+        }
+      },
+      {
+        "sequence": 75,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 3,
+          "purpose": "decision",
+          "duration_ms": 11,
+          "operation_key": "ebe6af27601fbc68f3ce8f5567bc3214a9798941c9b57e979e99ff0a002cbd8c",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 76,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 5,
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "duration_ms": 57.786,
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca"
+        }
+      },
+      {
+        "sequence": 77,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 6,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a"
+        }
+      },
+      {
+        "sequence": 78,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "7e468cfc654f8702d0ce2ed3569dea13b1365bb4831e23fe024b5aabccd2a8a9",
+          "reservation_id": "71db88ae-69aa-448f-b6f2-31ecf8bb5b0a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 79,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "9f1ff10b-5eaf-4220-8b42-1cb4845be1fa",
+          "operation_key": "7e468cfc654f8702d0ce2ed3569dea13b1365bb4831e23fe024b5aabccd2a8a9"
+        }
+      },
+      {
+        "sequence": 80,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "create_practice_set",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 81,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "336b2e5f5650ce69a5faa3079e447ac4a37e34541f544e0ba9698ea2eafe2a04",
+          "reservation_id": "aeca3a71-b820-4c31-917c-75d65adcd756",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 82,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "eecc61c2-fa0c-4b05-bf62-220b6097cb3f"
+        }
+      },
+      {
+        "sequence": 83,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "duration_ms": 0.112,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "eecc61c2-fa0c-4b05-bf62-220b6097cb3f"
+        }
+      },
+      {
+        "sequence": 84,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "3e10afaf-1646-4ff0-b3ce-8d279204f371",
+          "operation_key": "336b2e5f5650ce69a5faa3079e447ac4a37e34541f544e0ba9698ea2eafe2a04"
+        }
+      },
+      {
+        "sequence": 85,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "9e1ac7c3b783bce84acfacae3c3720bd75a58baa78f841d5b99ec09fceba1cad",
+          "reservation_id": "a84629f0-d6c0-4a78-9506-c07831f2c9a5",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 86,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "0da11c0a-41de-4e4b-ba60-c56063363418"
+        }
+      },
+      {
+        "sequence": 87,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "duration_ms": 0.125,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "0da11c0a-41de-4e4b-ba60-c56063363418"
+        }
+      },
+      {
+        "sequence": 88,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "79c85a13-6433-4051-a92c-c0fd2fdb9d8b",
+          "operation_key": "9e1ac7c3b783bce84acfacae3c3720bd75a58baa78f841d5b99ec09fceba1cad"
+        }
+      },
+      {
+        "sequence": 89,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "66918ccb979331a4ab2d36c2940850307dd3394b51075421ad636104a2141cd9",
+          "reservation_id": "24a5f88f-5f2b-479b-9fc4-f1c8c7203a46",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 90,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "43577de8-cca2-48e9-98ed-791714199ad6",
+          "operation_key": "66918ccb979331a4ab2d36c2940850307dd3394b51075421ad636104a2141cd9"
+        }
+      },
+      {
+        "sequence": 91,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 4,
+          "purpose": "review",
+          "review_stage": "field_support_goals_v1",
+          "operation_key": "7bb1fc149569e1cfe81865482d7951cf4e5972d022cf95345e85d8ca6a043ab6"
+        }
+      },
+      {
+        "sequence": 92,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "21ae2e9b3f589d68cf527bbbcfbdd18e06b61be21cfc50c35d5eca53fa1a841a",
+          "reservation_id": "30807703-de25-493c-a0f7-00bf98df9e9e",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 93,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "921aea91-29a7-43ac-bbfb-96dc7952ced1",
+          "operation_key": "21ae2e9b3f589d68cf527bbbcfbdd18e06b61be21cfc50c35d5eca53fa1a841a"
+        }
+      },
+      {
+        "sequence": 94,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 4,
+          "purpose": "review",
+          "duration_ms": 9,
+          "review_stage": "field_support_goals_v1",
+          "operation_key": "7bb1fc149569e1cfe81865482d7951cf4e5972d022cf95345e85d8ca6a043ab6",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 95,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "9ab608737abb96a619dba14cd5cdf96be00042daed63042ce7484d47fefd50c3",
+          "reservation_id": "7ad48f01-d0be-45a5-b7dc-1d561d3c32ab",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 96,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "52ae14d2-d068-4e25-8da2-4e01363124f3",
+          "operation_key": "9ab608737abb96a619dba14cd5cdf96be00042daed63042ce7484d47fefd50c3"
+        }
+      },
+      {
+        "sequence": 97,
+        "event_type": "quality_checked",
+        "payload": {
+          "issues": [],
+          "source": "mock_demo",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "accepted": true
+        }
+      },
+      {
+        "sequence": 98,
+        "event_type": "approval_draft_saved",
+        "payload": {
+          "kind": "practice",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 99,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "create_practice_set",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 100,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 6,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "duration_ms": 82.74,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a"
+        }
+      },
+      {
+        "sequence": 101,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "e38fd1c752405fbe0b0ea97f81e03617da4d50d2c5349157409134825d2fefe2",
+          "reservation_id": "0e48ae4c-8358-4774-a9ef-599e57d47d98",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 102,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "fd035f9c-c774-4885-a91a-5068aeda2810",
+          "operation_key": "e38fd1c752405fbe0b0ea97f81e03617da4d50d2c5349157409134825d2fefe2"
+        }
+      },
+      {
+        "sequence": 103,
+        "event_type": "approval_waiting",
+        "payload": {
+          "kind": "practice"
+        }
+      },
+      {
+        "sequence": 104,
+        "event_type": "approval_decided",
+        "payload": {
+          "edited": false,
+          "actor_id": 42,
+          "decision": "approve",
+          "request_key": "decision"
+        }
+      }
+    ],
+    "remote_calls": [
+      {
+        "method": "decide",
+        "operation_key": "101efc90a5e5956f9a23deb828a95c73e47f675bab587f5c44ee863e15c9c283",
+        "n": 1
+      },
+      {
+        "method": "decide",
+        "operation_key": "48be3783c632a5aaf53f71b0c69b0824180eb5e8c2782a3ff3c0945a60457606",
+        "n": 1
+      },
+      {
+        "method": "decide",
+        "operation_key": "bb1e1d76696a690f3255c38a87de12d3096927a4b736078c65209e804fcdd25a",
+        "n": 1
+      },
+      {
+        "method": "review",
+        "operation_key": "8b918985bb0ac0a6521facace584f1cd81ee2dcce1b3fb7ae8d0af5b319adbd1",
+        "n": 1
+      }
+    ]
+  },
+  "after": {
+    "status": "budget_exceeded",
+    "error_code": "RUN_BUDGET_EXCEEDED",
+    "model_calls": 4,
+    "tool_calls": 3,
+    "reserved_tokens": 38032,
+    "model_rows": 4,
+    "journal_tokens": 38032,
+    "tool_reservations": 3,
+    "retry_charges": 0,
+    "effects": {
+      "study_artifact": 0,
+      "study_feedback": 0,
+      "study_approval": 1
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "event_type": "run_queued",
+        "payload": {}
+      },
+      {
+        "sequence": 2,
+        "event_type": "run_started",
+        "payload": {}
+      },
+      {
+        "sequence": 3,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9",
+          "reservation_id": "89124781-2758-4faa-9b75-9297a9ba5828",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 4,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "948263b3-0b8d-496d-bfc6-ba02f82e4401",
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9"
+        }
+      },
+      {
+        "sequence": 5,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 1,
+          "call_id": null,
+          "span_id": "396d3186-02e6-40db-9ada-8405b622dcea",
+          "checkpoint_id": "1f1c7e4a-cbbb-6cea-8000-4a3fb1c8bb1d"
+        }
+      },
+      {
+        "sequence": 6,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "f281252572b93f43aecf213053fa223289b0639874b92669de7adc6c0b9928db",
+          "reservation_id": "07bfa014-42be-4583-a48f-e95c019c2eec",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 7,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "6176f480-77ed-4817-9e1a-7c879ab26222",
+          "operation_key": "f281252572b93f43aecf213053fa223289b0639874b92669de7adc6c0b9928db"
+        }
+      },
+      {
+        "sequence": 8,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "868ef3eebd5209d080aedc154c3156d67418d03a394505a10cb833dbbf05225b",
+          "reservation_id": "53a878e8-0916-4892-a95a-cd14841baa22",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 9,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "7d18b5dd-d889-447c-b28a-b24be03953d2",
+          "operation_key": "868ef3eebd5209d080aedc154c3156d67418d03a394505a10cb833dbbf05225b"
+        }
+      },
+      {
+        "sequence": 10,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 1,
+          "purpose": "decision",
+          "operation_key": "4a38f471673aa6f6ed5d1a25d4f95aeb2cc46cfdfcdf9f3682ea44b135bf1b47"
+        }
+      },
+      {
+        "sequence": 11,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "e5b155679273b0d2505715dd17107c6640eb8fb3655dba0b769479b9c72d0cd5",
+          "reservation_id": "40f0deca-634d-42ea-8625-20957b92c35b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 12,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "c103e382-9420-474b-9c39-db68dd506dd4",
+          "operation_key": "e5b155679273b0d2505715dd17107c6640eb8fb3655dba0b769479b9c72d0cd5"
+        }
+      },
+      {
+        "sequence": 13,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 1,
+          "purpose": "decision",
+          "duration_ms": 10,
+          "operation_key": "4a38f471673aa6f6ed5d1a25d4f95aeb2cc46cfdfcdf9f3682ea44b135bf1b47",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 14,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 1,
+          "call_id": null,
+          "span_id": "396d3186-02e6-40db-9ada-8405b622dcea",
+          "duration_ms": 56.221,
+          "checkpoint_id": "1f1c7e4a-cbbb-6cea-8000-4a3fb1c8bb1d"
+        }
+      },
+      {
+        "sequence": 15,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 16,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491",
+          "reservation_id": "2d96d672-b3fc-40ea-9b8e-0fb9241cefb0",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 17,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "971280d6-6d4a-4e27-a723-bd8fb4d86c8d",
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491"
+        }
+      },
+      {
+        "sequence": 18,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "search_course_evidence",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0"
+        }
+      },
+      {
+        "sequence": 19,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0",
+          "reservation_id": "5d6b950e-2765-4c5a-8c5e-42949e77559c",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 20,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "9172bc54-07a6-4c04-942f-6c1e4839e272"
+        }
+      },
+      {
+        "sequence": 21,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "acd062fb-ed02-4c47-b40b-b88272005188",
+          "transport": "internal",
+          "duration_ms": 0.122,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "9172bc54-07a6-4c04-942f-6c1e4839e272"
+        }
+      },
+      {
+        "sequence": 22,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "3d6e5bc9-9bf4-4491-a56e-1e0614ffa811",
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0"
+        }
+      },
+      {
+        "sequence": 23,
+        "event_type": "run_resumed",
+        "payload": {}
+      },
+      {
+        "sequence": 24,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9",
+          "reservation_id": "bdad7ab8-a9a9-434c-a17c-19140f8b884a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 25,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "82871b47-5ef0-4c03-bfeb-4ca78d4a2a4f",
+          "operation_key": "162f757898b17690112fdb7e87c5fd177d7dd915a3fc1567c59ecdd0e28aadd9"
+        }
+      },
+      {
+        "sequence": 26,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 27,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491",
+          "reservation_id": "fe802731-16d9-4e2b-813a-4d41c464a40d",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 28,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "1456a990-8ecb-4137-a14f-e8c191225a7e",
+          "operation_key": "1327591967d6963348d9066f08c669a85385f18b7db96d879aa8a7f1e2776491"
+        }
+      },
+      {
+        "sequence": 29,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0",
+          "reservation_id": "9feb6deb-8aa5-40d0-9bb2-3974e0945567",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 30,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "3b1bece0-7dcc-4582-8f88-3f705c15e260"
+        }
+      },
+      {
+        "sequence": 31,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "SEARCH",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "transport": "internal",
+          "duration_ms": 0.191,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4",
+          "evidence_call_id": "3b1bece0-7dcc-4582-8f88-3f705c15e260"
+        }
+      },
+      {
+        "sequence": 32,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "975941b6-e594-47c9-aa24-8836cc74b95f",
+          "operation_key": "972953aa4956b2fc7dc9eb834de7bbbef276201d375018a421c4b201293aa1e0"
+        }
+      },
+      {
+        "sequence": 33,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "error_code": null,
+          "operation_key": "f08064c56b5c85d6b92d2ab8a69ff068b7b621117fdfd792a42b2a9b0d0994f9",
+          "reservation_id": "67d4f956-a475-4703-920a-75819946f18b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 34,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "cbe57e34-c419-497d-90ae-1c8a5b9ac3b7",
+          "operation_key": "f08064c56b5c85d6b92d2ab8a69ff068b7b621117fdfd792a42b2a9b0d0994f9"
+        }
+      },
+      {
+        "sequence": 35,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "search_course_evidence",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0"
+        }
+      },
+      {
+        "sequence": 36,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 2,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:0",
+          "span_id": "6f67fb9d-4ba9-49b2-9df3-98992d9eebf7",
+          "duration_ms": 48.924,
+          "checkpoint_id": "1f1c7e4a-cc5a-66f1-8001-ebdda5ab9fc4"
+        }
+      },
+      {
+        "sequence": 37,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 3,
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7"
+        }
+      },
+      {
+        "sequence": 38,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "14f772b4d65d6a8be1b092a040f3b3e32c220ff2cc99979371fd5cb0d0e88f58",
+          "reservation_id": "4f2e661b-85ad-4cef-9aa1-010e64d19154",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 39,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "9ab0c99a-b03e-496e-befe-bbd5926cddac",
+          "operation_key": "14f772b4d65d6a8be1b092a040f3b3e32c220ff2cc99979371fd5cb0d0e88f58"
+        }
+      },
+      {
+        "sequence": 40,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "86a4f44e84d8469d38f17071dee4f17eed81ee6b66a5329fcad66aaa2c408e54",
+          "reservation_id": "01c3fa8f-af11-47f9-892e-893eb484d5ea",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 41,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7",
+          "evidence_call_id": "36899b7f-d45b-45c9-81c6-b7018e894445"
+        }
+      },
+      {
+        "sequence": 42,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "transport": "internal",
+          "duration_ms": 0.237,
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7",
+          "evidence_call_id": "36899b7f-d45b-45c9-81c6-b7018e894445"
+        }
+      },
+      {
+        "sequence": 43,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "51d68456-d199-4426-b050-53b065aec048",
+          "operation_key": "86a4f44e84d8469d38f17071dee4f17eed81ee6b66a5329fcad66aaa2c408e54"
+        }
+      },
+      {
+        "sequence": 44,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "1f2d1199d72af98dae42ab2a0dca838dd75610fe3aac33c0e5ca7fe3ebe2a829",
+          "reservation_id": "d2cbc022-182e-4258-bdd2-60aac866c9c7",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 45,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "4870cb74-5d33-46e7-8713-64dafe0bea40",
+          "operation_key": "1f2d1199d72af98dae42ab2a0dca838dd75610fe3aac33c0e5ca7fe3ebe2a829"
+        }
+      },
+      {
+        "sequence": 46,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 2,
+          "purpose": "decision",
+          "operation_key": "56928833e01959b16f56511871918d44c807af42c4cbe42b223fecffa03ed8d9"
+        }
+      },
+      {
+        "sequence": 47,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "b68680d3a5c584998312263360b3f4a153d57da7047420ad965cd5a8b601493a",
+          "reservation_id": "ef1cdd22-6a61-47f3-b617-ee0714e1fb7f",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 48,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "c01bb436-bf76-481c-9b63-bd308e8ffedf",
+          "operation_key": "b68680d3a5c584998312263360b3f4a153d57da7047420ad965cd5a8b601493a"
+        }
+      },
+      {
+        "sequence": 49,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 2,
+          "purpose": "decision",
+          "duration_ms": 10,
+          "operation_key": "56928833e01959b16f56511871918d44c807af42c4cbe42b223fecffa03ed8d9",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 50,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 3,
+          "call_id": null,
+          "span_id": "9c6c0fe4-c61c-452b-9309-905fbf72d1b9",
+          "duration_ms": 77.775,
+          "checkpoint_id": "1f1c7e4a-d5d6-672e-8002-af277d324df7"
+        }
+      },
+      {
+        "sequence": 51,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 4,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8"
+        }
+      },
+      {
+        "sequence": 52,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "2fa9c428f7511aa5a2113089aa34283751f966c9eef58b94326aa192d46517ef",
+          "reservation_id": "5d718c93-4970-47b0-9b84-84a187488764",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 53,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "09437b2c-3bcd-40d9-ae49-caaf0f83e811",
+          "operation_key": "2fa9c428f7511aa5a2113089aa34283751f966c9eef58b94326aa192d46517ef"
+        }
+      },
+      {
+        "sequence": 54,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "read_evidence_window",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1"
+        }
+      },
+      {
+        "sequence": 55,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "36c9b41bab14ee422c0d272800b637cc3cef54b416c0ad83c73ca62b4e10dec7",
+          "reservation_id": "56b5bc8d-1196-4855-b64d-4ddc64cb1a2a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 56,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8",
+          "evidence_call_id": "a8e50fa6-ddf4-4328-8d36-6b6378a75ef6"
+        }
+      },
+      {
+        "sequence": 57,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "WINDOW",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "transport": "internal",
+          "duration_ms": 0.166,
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8",
+          "evidence_call_id": "a8e50fa6-ddf4-4328-8d36-6b6378a75ef6"
+        }
+      },
+      {
+        "sequence": 58,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "600fdfe6-e624-43d9-8927-365e8cc033d4",
+          "operation_key": "36c9b41bab14ee422c0d272800b637cc3cef54b416c0ad83c73ca62b4e10dec7"
+        }
+      },
+      {
+        "sequence": 59,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "error_code": null,
+          "operation_key": "df76a68c53ca63afaefa3f33ca8933e1b31ce67fc743141786bcdebbd4bd98ad",
+          "reservation_id": "596e0ebd-40f9-4e43-a974-fbf6eb0fbadf",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 60,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "58e5f32a-9849-4b40-9b72-70dde7588732",
+          "operation_key": "df76a68c53ca63afaefa3f33ca8933e1b31ce67fc743141786bcdebbd4bd98ad"
+        }
+      },
+      {
+        "sequence": 61,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "read_evidence_window",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1"
+        }
+      },
+      {
+        "sequence": 62,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 4,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:1",
+          "span_id": "6ea82825-bddc-4f9d-85c7-ac6a24c2a34f",
+          "duration_ms": 35.469,
+          "checkpoint_id": "1f1c7e4a-d6a3-6424-8003-cfc05290a7e8"
+        }
+      },
+      {
+        "sequence": 63,
+        "event_type": "node_started",
+        "payload": {
+          "node": "decide",
+          "step": 5,
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca"
+        }
+      },
+      {
+        "sequence": 64,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "cc496e20a7c178b6b1994a70ecee9eb58ef35a222e33ba826b38bfdd26c8e73c",
+          "reservation_id": "d65d84ae-08c5-4bfd-b432-e23ef18ea80b",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 65,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "8a50d666-bf1d-476b-b115-19820c68f207",
+          "operation_key": "cc496e20a7c178b6b1994a70ecee9eb58ef35a222e33ba826b38bfdd26c8e73c"
+        }
+      },
+      {
+        "sequence": 66,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "f144ee18135472dd7fb0a7d7af15cb7ffdc69ab812a59f0170f7c473da508cec",
+          "reservation_id": "cd08b3a1-fc64-4b3b-ae9e-854b951fa705",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 67,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca",
+          "evidence_call_id": "d7a65074-5159-4dac-a7ae-d4d507407dd4"
+        }
+      },
+      {
+        "sequence": 68,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "decide",
+          "action": "READ",
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "transport": "internal",
+          "duration_ms": 0.109,
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca",
+          "evidence_call_id": "d7a65074-5159-4dac-a7ae-d4d507407dd4"
+        }
+      },
+      {
+        "sequence": 69,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "add4d6b0-41db-4acf-85a6-82f65f406d05",
+          "operation_key": "f144ee18135472dd7fb0a7d7af15cb7ffdc69ab812a59f0170f7c473da508cec"
+        }
+      },
+      {
+        "sequence": 70,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "224a7c6dc0a5d49919e162ed328f48786ec7f448f2a1c8a7bcf1d56099ce04e3",
+          "reservation_id": "37effc09-671a-4a78-ba9d-cf7341c3dae8",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 71,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "101a1ca0-0874-4855-84fa-7da96e4715c9",
+          "operation_key": "224a7c6dc0a5d49919e162ed328f48786ec7f448f2a1c8a7bcf1d56099ce04e3"
+        }
+      },
+      {
+        "sequence": 72,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 3,
+          "purpose": "decision",
+          "operation_key": "ebe6af27601fbc68f3ce8f5567bc3214a9798941c9b57e979e99ff0a002cbd8c"
+        }
+      },
+      {
+        "sequence": 73,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "decide",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "71284648ceab34772af490be8286a49f5a8260fe6ea19b0341d84a19c4b4aed4",
+          "reservation_id": "5e450e59-0a6a-48c8-9d07-4f0e8fc99da5",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 74,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "02472335-08f9-47a0-b9ac-c8eed0040ca0",
+          "operation_key": "71284648ceab34772af490be8286a49f5a8260fe6ea19b0341d84a19c4b4aed4"
+        }
+      },
+      {
+        "sequence": 75,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 3,
+          "purpose": "decision",
+          "duration_ms": 11,
+          "operation_key": "ebe6af27601fbc68f3ce8f5567bc3214a9798941c9b57e979e99ff0a002cbd8c",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 76,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "decide",
+          "step": 5,
+          "call_id": null,
+          "span_id": "663c353e-1d50-4187-bb5e-5e0c66db5175",
+          "duration_ms": 57.786,
+          "checkpoint_id": "1f1c7e4a-d708-64ae-8004-e1a56749e2ca"
+        }
+      },
+      {
+        "sequence": 77,
+        "event_type": "node_started",
+        "payload": {
+          "node": "tool",
+          "step": 6,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a"
+        }
+      },
+      {
+        "sequence": 78,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "7e468cfc654f8702d0ce2ed3569dea13b1365bb4831e23fe024b5aabccd2a8a9",
+          "reservation_id": "71db88ae-69aa-448f-b6f2-31ecf8bb5b0a",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 79,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "9f1ff10b-5eaf-4220-8b42-1cb4845be1fa",
+          "operation_key": "7e468cfc654f8702d0ce2ed3569dea13b1365bb4831e23fe024b5aabccd2a8a9"
+        }
+      },
+      {
+        "sequence": 80,
+        "event_type": "tool_started",
+        "payload": {
+          "tool": "create_practice_set",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 81,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "336b2e5f5650ce69a5faa3079e447ac4a37e34541f544e0ba9698ea2eafe2a04",
+          "reservation_id": "aeca3a71-b820-4c31-917c-75d65adcd756",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 82,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "eecc61c2-fa0c-4b05-bf62-220b6097cb3f"
+        }
+      },
+      {
+        "sequence": 83,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "duration_ms": 0.112,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "eecc61c2-fa0c-4b05-bf62-220b6097cb3f"
+        }
+      },
+      {
+        "sequence": 84,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "3e10afaf-1646-4ff0-b3ce-8d279204f371",
+          "operation_key": "336b2e5f5650ce69a5faa3079e447ac4a37e34541f544e0ba9698ea2eafe2a04"
+        }
+      },
+      {
+        "sequence": 85,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "9e1ac7c3b783bce84acfacae3c3720bd75a58baa78f841d5b99ec09fceba1cad",
+          "reservation_id": "a84629f0-d6c0-4a78-9506-c07831f2c9a5",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 86,
+        "event_type": "evidence_started",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "0da11c0a-41de-4e4b-ba60-c56063363418"
+        }
+      },
+      {
+        "sequence": 87,
+        "event_type": "evidence_finished",
+        "payload": {
+          "node": "tool",
+          "action": "READ",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "transport": "internal",
+          "duration_ms": 0.125,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a",
+          "evidence_call_id": "0da11c0a-41de-4e4b-ba60-c56063363418"
+        }
+      },
+      {
+        "sequence": 88,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "79c85a13-6433-4051-a92c-c0fd2fdb9d8b",
+          "operation_key": "9e1ac7c3b783bce84acfacae3c3720bd75a58baa78f841d5b99ec09fceba1cad"
+        }
+      },
+      {
+        "sequence": 89,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "66918ccb979331a4ab2d36c2940850307dd3394b51075421ad636104a2141cd9",
+          "reservation_id": "24a5f88f-5f2b-479b-9fc4-f1c8c7203a46",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 90,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "43577de8-cca2-48e9-98ed-791714199ad6",
+          "operation_key": "66918ccb979331a4ab2d36c2940850307dd3394b51075421ad636104a2141cd9"
+        }
+      },
+      {
+        "sequence": 91,
+        "event_type": "model_started",
+        "payload": {
+          "attempt": 4,
+          "purpose": "review",
+          "review_stage": "field_support_goals_v1",
+          "operation_key": "7bb1fc149569e1cfe81865482d7951cf4e5972d022cf95345e85d8ca6a043ab6"
+        }
+      },
+      {
+        "sequence": 92,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "21ae2e9b3f589d68cf527bbbcfbdd18e06b61be21cfc50c35d5eca53fa1a841a",
+          "reservation_id": "30807703-de25-493c-a0f7-00bf98df9e9e",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 93,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "921aea91-29a7-43ac-bbfb-96dc7952ced1",
+          "operation_key": "21ae2e9b3f589d68cf527bbbcfbdd18e06b61be21cfc50c35d5eca53fa1a841a"
+        }
+      },
+      {
+        "sequence": 94,
+        "event_type": "model_finished",
+        "payload": {
+          "attempt": 4,
+          "purpose": "review",
+          "duration_ms": 9,
+          "review_stage": "field_support_goals_v1",
+          "operation_key": "7bb1fc149569e1cfe81865482d7951cf4e5972d022cf95345e85d8ca6a043ab6",
+          "protocol_repairs": []
+        }
+      },
+      {
+        "sequence": 95,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "tool",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "error_code": null,
+          "operation_key": "9ab608737abb96a619dba14cd5cdf96be00042daed63042ce7484d47fefd50c3",
+          "reservation_id": "7ad48f01-d0be-45a5-b7dc-1d561d3c32ab",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 96,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "52ae14d2-d068-4e25-8da2-4e01363124f3",
+          "operation_key": "9ab608737abb96a619dba14cd5cdf96be00042daed63042ce7484d47fefd50c3"
+        }
+      },
+      {
+        "sequence": 97,
+        "event_type": "quality_checked",
+        "payload": {
+          "issues": [],
+          "source": "mock_demo",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "accepted": true
+        }
+      },
+      {
+        "sequence": 98,
+        "event_type": "approval_draft_saved",
+        "payload": {
+          "kind": "practice",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 99,
+        "event_type": "tool_finished",
+        "payload": {
+          "tool": "create_practice_set",
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2"
+        }
+      },
+      {
+        "sequence": 100,
+        "event_type": "node_finished",
+        "payload": {
+          "node": "tool",
+          "step": 6,
+          "call_id": "770993d5-2589-45dc-8126-6f3a4a1b97f7:2",
+          "span_id": "ab6b1d3c-f612-47b1-ba59-ac3faa7c0d5b",
+          "duration_ms": 82.74,
+          "checkpoint_id": "1f1c7e4a-d7a1-62cc-8005-2c89498a432a"
+        }
+      },
+      {
+        "sequence": 101,
+        "event_type": "read_attempt_reserved",
+        "payload": {
+          "node": "execute",
+          "action": "CHECK",
+          "attempt": 1,
+          "call_id": null,
+          "error_code": null,
+          "operation_key": "e38fd1c752405fbe0b0ea97f81e03617da4d50d2c5349157409134825d2fefe2",
+          "reservation_id": "0e48ae4c-8358-4774-a9ef-599e57d47d98",
+          "failure_category": null
+        }
+      },
+      {
+        "sequence": 102,
+        "event_type": "read_attempt_succeeded",
+        "payload": {
+          "attempt": 1,
+          "completion_id": "fd035f9c-c774-4885-a91a-5068aeda2810",
+          "operation_key": "e38fd1c752405fbe0b0ea97f81e03617da4d50d2c5349157409134825d2fefe2"
+        }
+      },
+      {
+        "sequence": 103,
+        "event_type": "approval_waiting",
+        "payload": {
+          "kind": "practice"
+        }
+      },
+      {
+        "sequence": 104,
+        "event_type": "approval_decided",
+        "payload": {
+          "edited": false,
+          "actor_id": 42,
+          "decision": "approve",
+          "request_key": "decision"
+        }
+      },
+      {
+        "sequence": 105,
+        "event_type": "run_finished",
+        "payload": {
+          "status": "budget_exceeded",
+          "error_code": "RUN_BUDGET_EXCEEDED",
+          "failure_category": "budget"
+        }
+      }
+    ],
+    "remote_calls": [
+      {
+        "method": "decide",
+        "operation_key": "101efc90a5e5956f9a23deb828a95c73e47f675bab587f5c44ee863e15c9c283",
+        "n": 1
+      },
+      {
+        "method": "decide",
+        "operation_key": "48be3783c632a5aaf53f71b0c69b0824180eb5e8c2782a3ff3c0945a60457606",
+        "n": 1
+      },
+      {
+        "method": "decide",
+        "operation_key": "bb1e1d76696a690f3255c38a87de12d3096927a4b736078c65209e804fcdd25a",
+        "n": 1
+      },
+      {
+        "method": "review",
+        "operation_key": "8b918985bb0ac0a6521facace584f1cd81ee2dcce1b3fb7ae8d0af5b319adbd1",
+        "n": 1
+      }
+    ]
+  },
+  "recovery_ms": 1047.071,
+  "worker_exit_code": 0,
+  "not_counted_as_planned_injection": true
+}

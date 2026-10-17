@@ -1,0 +1,904 @@
+{
+  "runs": 1260,
+  "cohorts": 63,
+  "all_existing_non_tool_cohort_fields_exactly_unchanged": true,
+  "terminal_and_latency_exactly_unchanged": true,
+  "tool_changed_cohorts": {
+    "candidate-final/illegal_call_shape": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:48.791007+00:00",
+          "through": "2026-10-14T07:03:26.310472+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_protocol": 20
+        },
+        "rejection_category_samples": {
+          "model_protocol": {
+            "counts": {
+              "model_protocol": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:48.791007+00:00",
+              "through": "2026-10-14T07:03:26.310472+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/integer_overflow": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:47.430986+00:00",
+          "through": "2026-10-14T07:03:24.522603+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:47.430986+00:00",
+              "through": "2026-10-14T07:03:24.522603+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/negative_parameter": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:44.406814+00:00",
+          "through": "2026-10-14T07:03:21.981804+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:44.406814+00:00",
+              "through": "2026-10-14T07:03:21.981804+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/oversized_parameter": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:46.630335+00:00",
+          "through": "2026-10-14T07:03:23.673205+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:46.630335+00:00",
+              "through": "2026-10-14T07:03:23.673205+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/protocol_persistent": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:53.700593+00:00",
+          "through": "2026-10-14T07:03:32.140141+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_protocol": 20
+        },
+        "rejection_category_samples": {
+          "model_protocol": {
+            "counts": {
+              "model_protocol": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:53.700593+00:00",
+              "through": "2026-10-14T07:03:32.140141+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/reversed_window": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:45.887688+00:00",
+          "through": "2026-10-14T07:03:22.805981+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:45.887688+00:00",
+              "through": "2026-10-14T07:03:22.805981+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "candidate-final/unknown_tool": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T06:59:48.101902+00:00",
+          "through": "2026-10-14T07:03:25.386992+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_tool_selection": 20
+        },
+        "rejection_category_samples": {
+          "model_tool_selection": {
+            "counts": {
+              "model_tool_selection": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T06:59:48.101902+00:00",
+              "through": "2026-10-14T07:03:25.386992+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/illegal_call_shape": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:51.455387+00:00",
+          "through": "2026-10-14T08:11:56.016370+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_protocol": 20
+        },
+        "rejection_category_samples": {
+          "model_protocol": {
+            "counts": {
+              "model_protocol": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:51.455387+00:00",
+              "through": "2026-10-14T08:11:56.016370+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/integer_overflow": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:50.938293+00:00",
+          "through": "2026-10-14T08:11:55.458323+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:50.938293+00:00",
+              "through": "2026-10-14T08:11:55.458323+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/negative_parameter": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:49.522892+00:00",
+          "through": "2026-10-14T08:11:54.634036+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:49.522892+00:00",
+              "through": "2026-10-14T08:11:54.634036+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/oversized_parameter": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:50.673362+00:00",
+          "through": "2026-10-14T08:11:55.194831+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:50.673362+00:00",
+              "through": "2026-10-14T08:11:55.194831+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/protocol_persistent": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:52.774815+00:00",
+          "through": "2026-10-14T08:11:57.484434+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_protocol": 20
+        },
+        "rejection_category_samples": {
+          "model_protocol": {
+            "counts": {
+              "model_protocol": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:52.774815+00:00",
+              "through": "2026-10-14T08:11:57.484434+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/reversed_window": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:50.414702+00:00",
+          "through": "2026-10-14T08:11:54.908774+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "invalid_parameters": 20
+        },
+        "rejection_category_samples": {
+          "invalid_parameters": {
+            "counts": {
+              "invalid_parameters": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:50.414702+00:00",
+              "through": "2026-10-14T08:11:54.908774+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    },
+    "faults-candidate/unknown_tool": {
+      "requested": {
+        "availability": "可得",
+        "sample_count": 20,
+        "success": 0,
+        "failed": 0,
+        "rejected": 20,
+        "unknown": 0,
+        "rate_denominator": 20,
+        "time_range": {
+          "from": "2026-10-14T08:03:51.203346+00:00",
+          "through": "2026-10-14T08:11:55.736023+00:00",
+          "runs_with_timestamps": 20,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": 0.0,
+        "failure_rate": 0.0,
+        "rejection_rate": 1.0,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {
+          "model_tool_selection": 20
+        },
+        "rejection_category_samples": {
+          "model_tool_selection": {
+            "counts": {
+              "model_tool_selection": 20
+            },
+            "sample_count": 20,
+            "time_range": {
+              "from": "2026-10-14T08:03:51.203346+00:00",
+              "through": "2026-10-14T08:11:55.736023+00:00",
+              "runs_with_timestamps": 20,
+              "runs_without_timestamps": 0,
+              "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+            }
+          }
+        }
+      },
+      "executed": {
+        "availability": "不可得",
+        "sample_count": 0,
+        "success": 0,
+        "failed": 0,
+        "rejected": 0,
+        "unknown": 0,
+        "rate_denominator": 0,
+        "time_range": {
+          "from": null,
+          "through": null,
+          "runs_with_timestamps": 0,
+          "runs_without_timestamps": 0,
+          "basis": "contributing Run lifetimes; unfinished Runs use created_at, not an estimated end"
+        },
+        "success_rate": null,
+        "failure_rate": null,
+        "rejection_rate": null,
+        "failure_categories": {},
+        "failure_category_samples": {},
+        "rejection_categories": {},
+        "rejection_category_samples": {}
+      }
+    }
+  }
+}

@@ -22,8 +22,9 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 ## 授权、停止与恢复
 
 - 内部 HMAC 绑定 audience、方法、实际路径、时间戳和原始请求体。每次工具或生成上下文前后重新检查 Java 当前权限与版本；Java 不可用时拒绝使用缓存证据。
-- 默认 Run 上限为 6 次模型调用、8 次逻辑工具执行、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
+- 默认 Run 上限为 6 次模型调用、8 次工具预算扣减（逻辑工具及额外只读重试共享）、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
 - Session 使用专用 autocommit 连接上的 PostgreSQL advisory lock 保护 checkpoint 写入，不持有跨模型请求的业务事务。仍持锁的慢 worker 不被其他 worker 接管。
+- 未发布工作区在 Run 内复用一个事务工作连接，每个 Store 操作仍单独提交/回滚；模型和工具 I/O 期间无事务、行锁或状态缓存。Session advisory lock 与 checkpoint saver 保留独立连接。[串行延迟与故障复核](../eval/tool-resilience-latency-20261014/README.md)
 - 创建请求通过 `request_key` 幂等，同一 key 更换内容会冲突。工具结果按 `run_id + call_id` 唯一，每 Run 最多一个学习产物；副作用已提交而 checkpoint 未保存时，恢复回读工具结果，不重复保存。
 - 模型响应尚未 checkpoint 时崩溃可能导致外部请求重发，不承诺 provider 恰好调用一次。恢复保留原预算、deadline 和模型配置。
 - 取消立即将 Run 标为 `cancelled`。外部调用可能继续至返回或超时，但 worker token、运行状态和版本检查阻止晚到结果发布。预算耗尽、无效工具/引用、权限或版本变化、provider 失败和修订耗尽均停止执行。
@@ -68,6 +69,11 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 测试使用确定性模型/向量夹具和真实 PostgreSQL，覆盖权限、取消、幂等、进程恢复、预算及删除。未设置测试数据库时相关用例会 skip，不能报告为完整通过。CI 提供独立数据库；真实模型质量按[质量评测说明](../docs/L2_QUALITY_EVALUATION.md)单独验证，Java `DenseRetrievalLiveIT` 只验证检索契约。
 
 - **Trace / Replay：** `python -m lecturelens_agent.study.trace_cli` 导出私有 Trace、启动授权的新 Run Replay 和比较结果；需要运维数据库访问及 Java 用户登录，读取前后重新授权。[用法与真实失败](../eval/agent-trace-phase-b/README.md)
+- **持久记录指标：** `python -m lecturelens_agent.study.metrics_report --records FILE.jsonl --output-dir NEW_DIR` 或 `--database` 只读汇总 Run 终态、工具结局、模型用量与延迟；每项附样本量/UTC 范围，未记录金额和节点耗时标不可得。[统一口径与命令](../docs/STUDY_METRICS.md)
+- **只读容错：** CHECK/SEARCH/READ/WINDOW 的超时和依赖不可用最多重试两次，退避 50/100ms；每次重试持久扣减上述工具预算。参数、响应、权属/版本错误直接拒绝，持续依赖故障明确失败，不生成无证据产物。公开 Trace 记录失败类别、重试、退避与终止；写入不自动重试。[故障注入与基线](../eval/tool-resilience-20261014/README.md)
 - **Course MCP：** `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用官方 SDK stdio Client/Server；默认 `internal`。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
 - **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
+- **检索评测 v2：** `lecturelens_agent.benchmark_v2.run report` 从冻结的 120 题排名重算配对 CI 和失败分桶，开发/保留按课程隔离，保留检索仅运行一次。模型辅助标注不代表人类金标准，观测指标不认证回答质量。[结果与复现](../eval/retrieval-v2/README.md)
 - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
+
+可选发布审批默认关闭：浏览器勾选或 START/START_FEEDBACK 使用 `approval_required=true`。审批与调用日志恢复语义见 [审批与崩溃恢复](../docs/STUDY_APPROVAL_RECOVERY.md)，逐点强制终止实测见 [报告](../eval/approval-recovery-20261014/README.md)。

@@ -1,0 +1,41 @@
+{
+  "browser": "real Chrome, no mocked HTTP",
+  "data": "synthetic course, deterministic MockProvider; Java/MySQL/Agent/PostgreSQL real",
+  "checks": [
+    {
+      "case": "waiting_SIGKILL_reload_and_wrong_owner",
+      "passed": true,
+      "ownership_http_status": 404
+    },
+    {
+      "case": "approve",
+      "passed": true,
+      "run_id": "08e2f9a8-3ffd-4633-b11b-52581734402b",
+      "status": "succeeded",
+      "model_calls": 4,
+      "tool_calls": 3
+    },
+    {
+      "case": "feedback_approve",
+      "passed": true
+    },
+    {
+      "case": "edit",
+      "passed": true,
+      "run_id": "b08dadc8-471e-4a0f-a462-55e91cda49cb",
+      "status": "succeeded",
+      "model_calls": 4,
+      "tool_calls": 3
+    },
+    {
+      "case": "reject",
+      "passed": true,
+      "run_id": "f9dbfc61-351c-4313-80af-830d96fff987",
+      "status": "failed",
+      "model_calls": 4,
+      "tool_calls": 3
+    }
+  ],
+  "passed": 5,
+  "n": 5
+}

@@ -1,0 +1,118 @@
+{
+  "captured_at_utc": "2026-10-14T11:18:34.767297+00:00",
+  "python": "Python 3.12.14",
+  "postgres": "PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+  "python_checks": {
+    "tests": 691,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "database_skips": 0,
+  "complete_collection_covered_once": true,
+  "groups": [
+    {
+      "worker": 0,
+      "files": [
+        "tests/test_course_mcp.py",
+        "tests/test_study_quality.py",
+        "tests/test_study_computed_review.py",
+        "tests/test_study_support_review.py",
+        "tests/test_authority_url.py",
+        "tests/test_study_costs.py",
+        "tests/test_study_connections.py",
+        "tests/test_study_metrics_report.py"
+      ],
+      "expected_cases": 147,
+      "port": 15509,
+      "database_name": "lecturelens_agent_test",
+      "tests": 147,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 1,
+      "files": [
+        "tests/test_study.py",
+        "tests/test_study_sequences.py",
+        "tests/test_models.py",
+        "tests/test_study_answer_points.py",
+        "tests/test_study_trace.py",
+        "tests/test_study_method_scope.py",
+        "tests/test_study_example_runtime.py"
+      ],
+      "expected_cases": 149,
+      "port": 15510,
+      "database_name": "lecturelens_agent_test",
+      "tests": 149,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 2,
+      "files": [
+        "tests/test_study_provider.py",
+        "tests/test_study_resilience.py",
+        "tests/test_study_feedback.py",
+        "tests/test_study_intervals.py",
+        "tests/test_benchmark.py",
+        "tests/test_study_context.py",
+        "tests/test_reviewer_probe.py",
+        "tests/test_study_solution.py"
+      ],
+      "expected_cases": 198,
+      "port": 15511,
+      "database_name": "lecturelens_agent_test",
+      "tests": 198,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "worker": 3,
+      "files": [
+        "tests/test_study_examples.py",
+        "tests/test_study_linear.py",
+        "tests/test_retrieval.py",
+        "tests/test_study_python_practice.py",
+        "tests/test_study_goals.py",
+        "tests/test_study_attempts.py",
+        "tests/test_study_eval.py",
+        "tests/test_feedback_eval.py"
+      ],
+      "expected_cases": 197,
+      "port": 15512,
+      "database_name": "lecturelens_agent_test",
+      "tests": 197,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "ruff_check": "passed: agent-service, scripts/eval/report-study-metrics.py, eval/study-metrics-requests-20261014/*.py",
+  "ruff_format_check": "passed: src/tests, wrapper and new fixture/comparison scripts (84 files)",
+  "original_report_and_seven_input_hashes_unchanged": true,
+  "original_non_tool_cohort_metrics_unchanged": true,
+  "reproducibility": {
+    "report_json_byte_identical": true,
+    "markdown_byte_identical": true
+  },
+  "sha256": {
+    "agent-service/src/lecturelens_agent/study/metrics_report.py": "7def08a22f789e2695f2042d274c44859bda7b3ec9bc770589a739e194af9328",
+    "agent-service/tests/test_study_metrics_report.py": "2882cf22774d15a76f79fc6808d2e45002a64bb6b57edc79595437e69889c0ab",
+    "eval/study-metrics-requests-20261014/persisted-runs.py": "755cec7eac3dd7f7d26056af4cea6a48e02c524bb5a28e3a1d69f072caf390e1",
+    "eval/study-metrics-requests-20261014/compare-persisted.py": "9e6ad0720636d4fa31a274ea95ad7fd04c0581f3b909f91a7b1eaebe4a045784",
+    "eval/study-metrics-requests-20261014/saved-evaluations/report.json": "aa2e594b9d371009b4acf258c31bb9b101d13e4cd87f2653bf9a25807ac751b6",
+    "eval/study-metrics-requests-20261014/persisted-comparison/comparison.json": "cfcbecf6122e48d9e237ab115b45ecdc8e2873fe3fe98606b6baca727d978d15",
+    "eval/study-metrics-requests-20261014/persisted-runs.jsonl": "d55906950432e0ac42a37116f0fd9f32023083bf03077197dfa87672f4a0c0be"
+  },
+  "retained_database": {
+    "container": "lecturelens-metrics-requests-0",
+    "localhost_port": 15508,
+    "database": "lecturelens_agent_test",
+    "runs": 15,
+    "events": 720
+  }
+}

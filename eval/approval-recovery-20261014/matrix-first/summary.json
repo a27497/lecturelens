@@ -1,0 +1,5755 @@
+[
+  {
+    "profile": "practice",
+    "point": "store.claim:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1601.332,
+    "recovery_p95_ms": 1601.332,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.claim:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1667.858,
+    "recovery_p95_ms": 1667.858,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1592.176,
+    "recovery_p95_ms": 1592.176,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1887.656,
+    "recovery_p95_ms": 1887.656,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2132.825,
+    "recovery_p95_ms": 2132.825,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2121.225,
+    "recovery_p95_ms": 2121.225,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2114.268,
+    "recovery_p95_ms": 2114.268,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1858.217,
+    "recovery_p95_ms": 1858.217,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1925.963,
+    "recovery_p95_ms": 1925.963,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1764.02,
+    "recovery_p95_ms": 1764.02,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1670.797,
+    "recovery_p95_ms": 1670.797,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1583.378,
+    "recovery_p95_ms": 1583.378,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1656.33,
+    "recovery_p95_ms": 1656.33,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1558.996,
+    "recovery_p95_ms": 1558.996,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1684.967,
+    "recovery_p95_ms": 1684.967,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1676.09,
+    "recovery_p95_ms": 1676.09,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1539.249,
+    "recovery_p95_ms": 1539.249,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1566.971,
+    "recovery_p95_ms": 1566.971,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1582.217,
+    "recovery_p95_ms": 1582.217,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1598.097,
+    "recovery_p95_ms": 1598.097,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1653.389,
+    "recovery_p95_ms": 1653.389,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1878.08,
+    "recovery_p95_ms": 1878.08,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1327.565,
+    "recovery_p95_ms": 1327.565,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1176.132,
+    "recovery_p95_ms": 1176.132,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1239.317,
+    "recovery_p95_ms": 1239.317,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1137.451,
+    "recovery_p95_ms": 1137.451,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1256.76,
+    "recovery_p95_ms": 1256.76,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1232.232,
+    "recovery_p95_ms": 1232.232,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1308.959,
+    "recovery_p95_ms": 1308.959,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1176.551,
+    "recovery_p95_ms": 1176.551,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1689.927,
+    "recovery_p95_ms": 1689.927,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2210.146,
+    "recovery_p95_ms": 2210.146,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1884.603,
+    "recovery_p95_ms": 1884.603,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1720.755,
+    "recovery_p95_ms": 1720.755,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1454.244,
+    "recovery_p95_ms": 1454.244,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1547.827,
+    "recovery_p95_ms": 1547.827,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1420.921,
+    "recovery_p95_ms": 1420.921,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1465.507,
+    "recovery_p95_ms": 1465.507,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1475.739,
+    "recovery_p95_ms": 1475.739,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1547.192,
+    "recovery_p95_ms": 1547.192,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1618.245,
+    "recovery_p95_ms": 1618.245,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1507.344,
+    "recovery_p95_ms": 1507.344,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1435.319,
+    "recovery_p95_ms": 1435.319,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1486.635,
+    "recovery_p95_ms": 1486.635,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1515.269,
+    "recovery_p95_ms": 1515.269,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.SEARCH:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1491.543,
+    "recovery_p95_ms": 1491.543,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.SEARCH:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1530.934,
+    "recovery_p95_ms": 1530.934,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1489.817,
+    "recovery_p95_ms": 1489.817,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1669.583,
+    "recovery_p95_ms": 1669.583,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1546.205,
+    "recovery_p95_ms": 1546.205,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1490.274,
+    "recovery_p95_ms": 1490.274,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1600.052,
+    "recovery_p95_ms": 1600.052,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1475.935,
+    "recovery_p95_ms": 1475.935,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1524.443,
+    "recovery_p95_ms": 1524.443,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1527.114,
+    "recovery_p95_ms": 1527.114,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1464.524,
+    "recovery_p95_ms": 1464.524,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1486.065,
+    "recovery_p95_ms": 1486.065,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1454.537,
+    "recovery_p95_ms": 1454.537,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1511.037,
+    "recovery_p95_ms": 1511.037,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1460.057,
+    "recovery_p95_ms": 1460.057,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1558.721,
+    "recovery_p95_ms": 1558.721,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1572.808,
+    "recovery_p95_ms": 1572.808,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1501.729,
+    "recovery_p95_ms": 1501.729,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1471.844,
+    "recovery_p95_ms": 1471.844,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1572.179,
+    "recovery_p95_ms": 1572.179,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1482.629,
+    "recovery_p95_ms": 1482.629,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1499.341,
+    "recovery_p95_ms": 1499.341,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1487.248,
+    "recovery_p95_ms": 1487.248,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1462.075,
+    "recovery_p95_ms": 1462.075,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1540.115,
+    "recovery_p95_ms": 1540.115,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1531.109,
+    "recovery_p95_ms": 1531.109,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1457.622,
+    "recovery_p95_ms": 1457.622,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1436.294,
+    "recovery_p95_ms": 1436.294,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1424.439,
+    "recovery_p95_ms": 1424.439,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1436.134,
+    "recovery_p95_ms": 1436.134,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1419.242,
+    "recovery_p95_ms": 1419.242,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1463.242,
+    "recovery_p95_ms": 1463.242,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1542.647,
+    "recovery_p95_ms": 1542.647,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1499.283,
+    "recovery_p95_ms": 1499.283,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1478.337,
+    "recovery_p95_ms": 1478.337,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1516.37,
+    "recovery_p95_ms": 1516.37,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1424.054,
+    "recovery_p95_ms": 1424.054,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1409.18,
+    "recovery_p95_ms": 1409.18,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1418.141,
+    "recovery_p95_ms": 1418.141,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1470.29,
+    "recovery_p95_ms": 1470.29,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1540.99,
+    "recovery_p95_ms": 1540.99,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1513.722,
+    "recovery_p95_ms": 1513.722,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1542.697,
+    "recovery_p95_ms": 1542.697,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1503.771,
+    "recovery_p95_ms": 1503.771,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1405.754,
+    "recovery_p95_ms": 1405.754,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1377.01,
+    "recovery_p95_ms": 1377.01,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1347.785,
+    "recovery_p95_ms": 1347.785,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1277.686,
+    "recovery_p95_ms": 1277.686,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1406.322,
+    "recovery_p95_ms": 1406.322,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1402.239,
+    "recovery_p95_ms": 1402.239,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.WINDOW:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1495.504,
+    "recovery_p95_ms": 1495.504,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.WINDOW:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1415.27,
+    "recovery_p95_ms": 1415.27,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1407.987,
+    "recovery_p95_ms": 1407.987,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1498.991,
+    "recovery_p95_ms": 1498.991,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1391.711,
+    "recovery_p95_ms": 1391.711,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1376.482,
+    "recovery_p95_ms": 1376.482,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1361.303,
+    "recovery_p95_ms": 1361.303,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1452.791,
+    "recovery_p95_ms": 1452.791,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1251.733,
+    "recovery_p95_ms": 1251.733,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1346.477,
+    "recovery_p95_ms": 1346.477,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1398.272,
+    "recovery_p95_ms": 1398.272,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1276.812,
+    "recovery_p95_ms": 1276.812,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1331.934,
+    "recovery_p95_ms": 1331.934,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1312.86,
+    "recovery_p95_ms": 1312.86,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1332.703,
+    "recovery_p95_ms": 1332.703,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1403.53,
+    "recovery_p95_ms": 1403.53,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1351.525,
+    "recovery_p95_ms": 1351.525,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1423.909,
+    "recovery_p95_ms": 1423.909,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1363.425,
+    "recovery_p95_ms": 1363.425,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1378.186,
+    "recovery_p95_ms": 1378.186,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1383.346,
+    "recovery_p95_ms": 1383.346,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1367.23,
+    "recovery_p95_ms": 1367.23,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:16:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1332.716,
+    "recovery_p95_ms": 1332.716,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:16:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1407.396,
+    "recovery_p95_ms": 1407.396,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1390.833,
+    "recovery_p95_ms": 1390.833,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1497.936,
+    "recovery_p95_ms": 1497.936,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1409.587,
+    "recovery_p95_ms": 1409.587,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1459.846,
+    "recovery_p95_ms": 1459.846,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1405.77,
+    "recovery_p95_ms": 1405.77,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1431.048,
+    "recovery_p95_ms": 1431.048,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:17:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1367.114,
+    "recovery_p95_ms": 1367.114,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:17:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1514.343,
+    "recovery_p95_ms": 1514.343,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1413.131,
+    "recovery_p95_ms": 1413.131,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1395.908,
+    "recovery_p95_ms": 1395.908,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1315.806,
+    "recovery_p95_ms": 1315.806,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1298.254,
+    "recovery_p95_ms": 1298.254,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1251.79,
+    "recovery_p95_ms": 1251.79,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1336.213,
+    "recovery_p95_ms": 1336.213,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1300.092,
+    "recovery_p95_ms": 1300.092,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1213.727,
+    "recovery_p95_ms": 1213.727,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1345.255,
+    "recovery_p95_ms": 1345.255,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1319.28,
+    "recovery_p95_ms": 1319.28,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:18:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1269.362,
+    "recovery_p95_ms": 1269.362,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:18:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1284.349,
+    "recovery_p95_ms": 1284.349,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1198.002,
+    "recovery_p95_ms": 1198.002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1249.232,
+    "recovery_p95_ms": 1249.232,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1213.625,
+    "recovery_p95_ms": 1213.625,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1274.973,
+    "recovery_p95_ms": 1274.973,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:19:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1270.837,
+    "recovery_p95_ms": 1270.837,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:19:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1356.538,
+    "recovery_p95_ms": 1356.538,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1296.721,
+    "recovery_p95_ms": 1296.721,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1281.485,
+    "recovery_p95_ms": 1281.485,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:20:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1278.103,
+    "recovery_p95_ms": 1278.103,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:20:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1325.298,
+    "recovery_p95_ms": 1325.298,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1357.119,
+    "recovery_p95_ms": 1357.119,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.READ:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1322.588,
+    "recovery_p95_ms": 1322.588,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:21:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1245.97,
+    "recovery_p95_ms": 1245.97,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:21:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1359.764,
+    "recovery_p95_ms": 1359.764,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1342.78,
+    "recovery_p95_ms": 1342.78,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1237.374,
+    "recovery_p95_ms": 1237.374,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1164.769,
+    "recovery_p95_ms": 1164.769,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.begin:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1210.366,
+    "recovery_p95_ms": 1210.366,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.review:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1252.211,
+    "recovery_p95_ms": 1252.211,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.review:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1182.917,
+    "recovery_p95_ms": 1182.917,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:22:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1133.577,
+    "recovery_p95_ms": 1133.577,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:22:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1321.797,
+    "recovery_p95_ms": 1321.797,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:16:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1206.776,
+    "recovery_p95_ms": 1206.776,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:16:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1274.4,
+    "recovery_p95_ms": 1274.4,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1216.459,
+    "recovery_p95_ms": 1216.459,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1208.639,
+    "recovery_p95_ms": 1208.639,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:23:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1230.153,
+    "recovery_p95_ms": 1230.153,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:23:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1338.735,
+    "recovery_p95_ms": 1338.735,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:17:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1313.229,
+    "recovery_p95_ms": 1313.229,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:17:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1306.85,
+    "recovery_p95_ms": 1306.85,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1298.748,
+    "recovery_p95_ms": 1298.748,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1178.645,
+    "recovery_p95_ms": 1178.645,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "node.tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1141.861,
+    "recovery_p95_ms": 1141.861,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1167.319,
+    "recovery_p95_ms": 1167.319,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1159.829,
+    "recovery_p95_ms": 1159.829,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put_writes:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1166.049,
+    "recovery_p95_ms": 1166.049,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "checkpoint.put:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1161.476,
+    "recovery_p95_ms": 1161.476,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:24:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1173.678,
+    "recovery_p95_ms": 1173.678,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.reserve_read_attempt:24:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1753.249,
+    "recovery_p95_ms": 1753.249,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:18:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1752.671,
+    "recovery_p95_ms": 1752.671,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "authority.CHECK:18:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1388.594,
+    "recovery_p95_ms": 1388.594,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.finish:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1246.139,
+    "recovery_p95_ms": 1246.139,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.finish:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1261.385,
+    "recovery_p95_ms": 1261.385,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.claim:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2857.736,
+    "recovery_p95_ms": 2857.736,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.claim:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2798.583,
+    "recovery_p95_ms": 2798.583,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2659.943,
+    "recovery_p95_ms": 2659.943,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2792.2619999999997,
+    "recovery_p95_ms": 2792.2619999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2790.05,
+    "recovery_p95_ms": 2790.05,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2884.2259999999997,
+    "recovery_p95_ms": 2884.2259999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2901.751,
+    "recovery_p95_ms": 2901.751,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2762.301,
+    "recovery_p95_ms": 2762.301,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2719.46,
+    "recovery_p95_ms": 2719.46,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2616.689,
+    "recovery_p95_ms": 2616.689,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2721.517,
+    "recovery_p95_ms": 2721.517,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2801.594,
+    "recovery_p95_ms": 2801.594,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2750.337,
+    "recovery_p95_ms": 2750.337,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2673.241,
+    "recovery_p95_ms": 2673.241,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2858.861,
+    "recovery_p95_ms": 2858.861,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2884.607,
+    "recovery_p95_ms": 2884.607,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2759.6040000000003,
+    "recovery_p95_ms": 2759.6040000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2769.791,
+    "recovery_p95_ms": 2769.791,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2792.5820000000003,
+    "recovery_p95_ms": 2792.5820000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2784.7380000000003,
+    "recovery_p95_ms": 2784.7380000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2781.075,
+    "recovery_p95_ms": 2781.075,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2732.5190000000002,
+    "recovery_p95_ms": 2732.5190000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1189.972,
+    "recovery_p95_ms": 1189.972,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1157.538,
+    "recovery_p95_ms": 1157.538,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1240.315,
+    "recovery_p95_ms": 1240.315,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1146.574,
+    "recovery_p95_ms": 1146.574,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1293.597,
+    "recovery_p95_ms": 1293.597,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1402.661,
+    "recovery_p95_ms": 1402.661,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1331.146,
+    "recovery_p95_ms": 1331.146,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1282.772,
+    "recovery_p95_ms": 1282.772,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 3032.687,
+    "recovery_p95_ms": 3032.687,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2743.096,
+    "recovery_p95_ms": 2743.096,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2774.629,
+    "recovery_p95_ms": 2774.629,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2648.031,
+    "recovery_p95_ms": 2648.031,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2531.159,
+    "recovery_p95_ms": 2531.159,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2594.428,
+    "recovery_p95_ms": 2594.428,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2515.459,
+    "recovery_p95_ms": 2515.459,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2590.9219999999996,
+    "recovery_p95_ms": 2590.9219999999996,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2599.82,
+    "recovery_p95_ms": 2599.82,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2683.255,
+    "recovery_p95_ms": 2683.255,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2674.405,
+    "recovery_p95_ms": 2674.405,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2548.157,
+    "recovery_p95_ms": 2548.157,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2606.005,
+    "recovery_p95_ms": 2606.005,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2754.569,
+    "recovery_p95_ms": 2754.569,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2650.545,
+    "recovery_p95_ms": 2650.545,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.SEARCH:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2629.864,
+    "recovery_p95_ms": 2629.864,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.SEARCH:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2737.673,
+    "recovery_p95_ms": 2737.673,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2665.075,
+    "recovery_p95_ms": 2665.075,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2689.208,
+    "recovery_p95_ms": 2689.208,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2881.3450000000003,
+    "recovery_p95_ms": 2881.3450000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2704.567,
+    "recovery_p95_ms": 2704.567,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2616.0699999999997,
+    "recovery_p95_ms": 2616.0699999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2755.783,
+    "recovery_p95_ms": 2755.783,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2589.361,
+    "recovery_p95_ms": 2589.361,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2578.746,
+    "recovery_p95_ms": 2578.746,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2587.815,
+    "recovery_p95_ms": 2587.815,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2590.782,
+    "recovery_p95_ms": 2590.782,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2613.145,
+    "recovery_p95_ms": 2613.145,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2485.716,
+    "recovery_p95_ms": 2485.716,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2535.3050000000003,
+    "recovery_p95_ms": 2535.3050000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2659.223,
+    "recovery_p95_ms": 2659.223,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2677.648,
+    "recovery_p95_ms": 2677.648,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2587.0150000000003,
+    "recovery_p95_ms": 2587.0150000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2551.0460000000003,
+    "recovery_p95_ms": 2551.0460000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 4051.395,
+    "recovery_p95_ms": 4051.395,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2908.557,
+    "recovery_p95_ms": 2908.557,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2828.358,
+    "recovery_p95_ms": 2828.358,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2793.042,
+    "recovery_p95_ms": 2793.042,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2689.8720000000003,
+    "recovery_p95_ms": 2689.8720000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2541.52,
+    "recovery_p95_ms": 2541.52,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2536.25,
+    "recovery_p95_ms": 2536.25,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2531.437,
+    "recovery_p95_ms": 2531.437,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2528.7200000000003,
+    "recovery_p95_ms": 2528.7200000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2572.832,
+    "recovery_p95_ms": 2572.832,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2525.803,
+    "recovery_p95_ms": 2525.803,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2492.176,
+    "recovery_p95_ms": 2492.176,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2656.46,
+    "recovery_p95_ms": 2656.46,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2583.829,
+    "recovery_p95_ms": 2583.829,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2609.538,
+    "recovery_p95_ms": 2609.538,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2565.7110000000002,
+    "recovery_p95_ms": 2565.7110000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2561.0020000000004,
+    "recovery_p95_ms": 2561.0020000000004,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2689.0609999999997,
+    "recovery_p95_ms": 2689.0609999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2454.7520000000004,
+    "recovery_p95_ms": 2454.7520000000004,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2498.103,
+    "recovery_p95_ms": 2498.103,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2421.3540000000003,
+    "recovery_p95_ms": 2421.3540000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2504.4139999999998,
+    "recovery_p95_ms": 2504.4139999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2347.916,
+    "recovery_p95_ms": 2347.916,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2475.053,
+    "recovery_p95_ms": 2475.053,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2561.01,
+    "recovery_p95_ms": 2561.01,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2523.598,
+    "recovery_p95_ms": 2523.598,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2558.9080000000004,
+    "recovery_p95_ms": 2558.9080000000004,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2490.842,
+    "recovery_p95_ms": 2490.842,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2631.298,
+    "recovery_p95_ms": 2631.298,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2543.693,
+    "recovery_p95_ms": 2543.693,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2611.425,
+    "recovery_p95_ms": 2611.425,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.WINDOW:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2547.536,
+    "recovery_p95_ms": 2547.536,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.WINDOW:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2574.5910000000003,
+    "recovery_p95_ms": 2574.5910000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2550.009,
+    "recovery_p95_ms": 2550.009,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2544.584,
+    "recovery_p95_ms": 2544.584,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2436.6220000000003,
+    "recovery_p95_ms": 2436.6220000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2597.5640000000003,
+    "recovery_p95_ms": 2597.5640000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2438.883,
+    "recovery_p95_ms": 2438.883,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2440.563,
+    "recovery_p95_ms": 2440.563,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2528.752,
+    "recovery_p95_ms": 2528.752,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2597.756,
+    "recovery_p95_ms": 2597.756,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2448.342,
+    "recovery_p95_ms": 2448.342,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2417.54,
+    "recovery_p95_ms": 2417.54,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2435.2070000000003,
+    "recovery_p95_ms": 2435.2070000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2448.5879999999997,
+    "recovery_p95_ms": 2448.5879999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2441.5150000000003,
+    "recovery_p95_ms": 2441.5150000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2345.129,
+    "recovery_p95_ms": 2345.129,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2537.494,
+    "recovery_p95_ms": 2537.494,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2566.8509999999997,
+    "recovery_p95_ms": 2566.8509999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2447.4269999999997,
+    "recovery_p95_ms": 2447.4269999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2525.8940000000002,
+    "recovery_p95_ms": 2525.8940000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2532.5919999999996,
+    "recovery_p95_ms": 2532.5919999999996,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2544.5969999999998,
+    "recovery_p95_ms": 2544.5969999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:16:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2446.942,
+    "recovery_p95_ms": 2446.942,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:16:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2512.096,
+    "recovery_p95_ms": 2512.096,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2453.071,
+    "recovery_p95_ms": 2453.071,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2642.612,
+    "recovery_p95_ms": 2642.612,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2555.889,
+    "recovery_p95_ms": 2555.889,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2429.308,
+    "recovery_p95_ms": 2429.308,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2464.642,
+    "recovery_p95_ms": 2464.642,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2502.996,
+    "recovery_p95_ms": 2502.996,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:17:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2474.872,
+    "recovery_p95_ms": 2474.872,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:17:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2512.117,
+    "recovery_p95_ms": 2512.117,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2473.9210000000003,
+    "recovery_p95_ms": 2473.9210000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2644.748,
+    "recovery_p95_ms": 2644.748,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2530.596,
+    "recovery_p95_ms": 2530.596,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2546.676,
+    "recovery_p95_ms": 2546.676,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2400.898,
+    "recovery_p95_ms": 2400.898,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2448.525,
+    "recovery_p95_ms": 2448.525,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2462.605,
+    "recovery_p95_ms": 2462.605,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2366.865,
+    "recovery_p95_ms": 2366.865,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2337.8779999999997,
+    "recovery_p95_ms": 2337.8779999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2401.9030000000002,
+    "recovery_p95_ms": 2401.9030000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:18:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2372.697,
+    "recovery_p95_ms": 2372.697,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:18:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2474.424,
+    "recovery_p95_ms": 2474.424,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2427.348,
+    "recovery_p95_ms": 2427.348,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2441.459,
+    "recovery_p95_ms": 2441.459,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2423.1620000000003,
+    "recovery_p95_ms": 2423.1620000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2463.464,
+    "recovery_p95_ms": 2463.464,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:19:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2365.416,
+    "recovery_p95_ms": 2365.416,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:19:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2405.3469999999998,
+    "recovery_p95_ms": 2405.3469999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2535.829,
+    "recovery_p95_ms": 2535.829,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2456.536,
+    "recovery_p95_ms": 2456.536,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:20:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2501.587,
+    "recovery_p95_ms": 2501.587,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:20:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2475.704,
+    "recovery_p95_ms": 2475.704,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2471.83,
+    "recovery_p95_ms": 2471.83,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.READ:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2410.647,
+    "recovery_p95_ms": 2410.647,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:21:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2302.0209999999997,
+    "recovery_p95_ms": 2302.0209999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:21:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2406.08,
+    "recovery_p95_ms": 2406.08,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2421.871,
+    "recovery_p95_ms": 2421.871,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2458.669,
+    "recovery_p95_ms": 2458.669,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2427.902,
+    "recovery_p95_ms": 2427.902,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.begin:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1242.058,
+    "recovery_p95_ms": 1242.058,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.review:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1144.943,
+    "recovery_p95_ms": 1144.943,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.review:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1152.587,
+    "recovery_p95_ms": 1152.587,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:22:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1236.356,
+    "recovery_p95_ms": 1236.356,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:22:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1281.511,
+    "recovery_p95_ms": 1281.511,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:16:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1240.758,
+    "recovery_p95_ms": 1240.758,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:16:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1280.548,
+    "recovery_p95_ms": 1280.548,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1226.561,
+    "recovery_p95_ms": 1226.561,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2328.5,
+    "recovery_p95_ms": 2328.5,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:23:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2391.184,
+    "recovery_p95_ms": 2391.184,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:23:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2479.835,
+    "recovery_p95_ms": 2479.835,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:17:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2410.541,
+    "recovery_p95_ms": 2410.541,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:17:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2423.415,
+    "recovery_p95_ms": 2423.415,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2320.3540000000003,
+    "recovery_p95_ms": 2320.3540000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2313.468,
+    "recovery_p95_ms": 2313.468,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "node.tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2393.452,
+    "recovery_p95_ms": 2393.452,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2367.319,
+    "recovery_p95_ms": 2367.319,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2333.488,
+    "recovery_p95_ms": 2333.488,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2274.4790000000003,
+    "recovery_p95_ms": 2274.4790000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2371.919,
+    "recovery_p95_ms": 2371.919,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:24:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2312.624,
+    "recovery_p95_ms": 2312.624,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.reserve_read_attempt:24:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2328.785,
+    "recovery_p95_ms": 2328.785,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:18:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2389.348,
+    "recovery_p95_ms": 2389.348,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "authority.CHECK:18:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2408.614,
+    "recovery_p95_ms": 2408.614,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.pause:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2325.562,
+    "recovery_p95_ms": 2325.562,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.pause:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1193.845,
+    "recovery_p95_ms": 1193.845,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1106.331,
+    "recovery_p95_ms": 1106.331,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "checkpoint.put_writes:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1140.673,
+    "recovery_p95_ms": 1140.673,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "worker.return:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1121.801,
+    "recovery_p95_ms": 1121.801,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.publish:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1149.217,
+    "recovery_p95_ms": 1149.217,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.publish:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1151.164,
+    "recovery_p95_ms": 1151.164,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.claim:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2599.6589999999997,
+    "recovery_p95_ms": 2599.6589999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.claim:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2666.658,
+    "recovery_p95_ms": 2666.658,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2473.389,
+    "recovery_p95_ms": 2473.389,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2619.242,
+    "recovery_p95_ms": 2619.242,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2694.553,
+    "recovery_p95_ms": 2694.553,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2644.965,
+    "recovery_p95_ms": 2644.965,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2410.651,
+    "recovery_p95_ms": 2410.651,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2569.837,
+    "recovery_p95_ms": 2569.837,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2589.733,
+    "recovery_p95_ms": 2589.733,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2670.492,
+    "recovery_p95_ms": 2670.492,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2580.589,
+    "recovery_p95_ms": 2580.589,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2546.791,
+    "recovery_p95_ms": 2546.791,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2539.2380000000003,
+    "recovery_p95_ms": 2539.2380000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2465.591,
+    "recovery_p95_ms": 2465.591,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2624.879,
+    "recovery_p95_ms": 2624.879,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2578.601,
+    "recovery_p95_ms": 2578.601,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2633.919,
+    "recovery_p95_ms": 2633.919,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2518.501,
+    "recovery_p95_ms": 2518.501,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2684.557,
+    "recovery_p95_ms": 2684.557,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2543.695,
+    "recovery_p95_ms": 2543.695,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2547.935,
+    "recovery_p95_ms": 2547.935,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2615.0699999999997,
+    "recovery_p95_ms": 2615.0699999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2671.431,
+    "recovery_p95_ms": 2671.431,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2568.4939999999997,
+    "recovery_p95_ms": 2568.4939999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2662.1490000000003,
+    "recovery_p95_ms": 2662.1490000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2620.608,
+    "recovery_p95_ms": 2620.608,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2644.2780000000002,
+    "recovery_p95_ms": 2644.2780000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2659.252,
+    "recovery_p95_ms": 2659.252,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2689.022,
+    "recovery_p95_ms": 2689.022,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2423.249,
+    "recovery_p95_ms": 2423.249,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2553.853,
+    "recovery_p95_ms": 2553.853,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2505.456,
+    "recovery_p95_ms": 2505.456,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2564.7290000000003,
+    "recovery_p95_ms": 2564.7290000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2570.4390000000003,
+    "recovery_p95_ms": 2570.4390000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2539.128,
+    "recovery_p95_ms": 2539.128,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2522.4719999999998,
+    "recovery_p95_ms": 2522.4719999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2559.694,
+    "recovery_p95_ms": 2559.694,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2402.175,
+    "recovery_p95_ms": 2402.175,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2596.249,
+    "recovery_p95_ms": 2596.249,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2538.548,
+    "recovery_p95_ms": 2538.548,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2566.742,
+    "recovery_p95_ms": 2566.742,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2496.243,
+    "recovery_p95_ms": 2496.243,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2414.775,
+    "recovery_p95_ms": 2414.775,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2463.7129999999997,
+    "recovery_p95_ms": 2463.7129999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2670.103,
+    "recovery_p95_ms": 2670.103,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2608.489,
+    "recovery_p95_ms": 2608.489,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2509.2839999999997,
+    "recovery_p95_ms": 2509.2839999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2472.107,
+    "recovery_p95_ms": 2472.107,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2648.361,
+    "recovery_p95_ms": 2648.361,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2451.3140000000003,
+    "recovery_p95_ms": 2451.3140000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2540.645,
+    "recovery_p95_ms": 2540.645,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2437.411,
+    "recovery_p95_ms": 2437.411,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1198.68,
+    "recovery_p95_ms": 1198.68,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1206.894,
+    "recovery_p95_ms": 1206.894,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1283.612,
+    "recovery_p95_ms": 1283.612,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1194.257,
+    "recovery_p95_ms": 1194.257,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1283.641,
+    "recovery_p95_ms": 1283.641,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:6:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1224.328,
+    "recovery_p95_ms": 1224.328,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:6:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1313.193,
+    "recovery_p95_ms": 1313.193,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1253.037,
+    "recovery_p95_ms": 1253.037,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2512.362,
+    "recovery_p95_ms": 2512.362,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2565.5969999999998,
+    "recovery_p95_ms": 2565.5969999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2559.175,
+    "recovery_p95_ms": 2559.175,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:7:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2507.013,
+    "recovery_p95_ms": 2507.013,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:7:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2635.004,
+    "recovery_p95_ms": 2635.004,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.save_tool:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2620.051,
+    "recovery_p95_ms": 2620.051,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.save_tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2530.7780000000002,
+    "recovery_p95_ms": 2530.7780000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_tool:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2468.327,
+    "recovery_p95_ms": 2468.327,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2539.6279999999997,
+    "recovery_p95_ms": 2539.6279999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2506.313,
+    "recovery_p95_ms": 2506.313,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2500.192,
+    "recovery_p95_ms": 2500.192,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2473.825,
+    "recovery_p95_ms": 2473.825,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2494.784,
+    "recovery_p95_ms": 2494.784,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2567.3019999999997,
+    "recovery_p95_ms": 2567.3019999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2475.779,
+    "recovery_p95_ms": 2475.779,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:8:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2606.493,
+    "recovery_p95_ms": 2606.493,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:8:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2527.983,
+    "recovery_p95_ms": 2527.983,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2399.81,
+    "recovery_p95_ms": 2399.81,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2571.049,
+    "recovery_p95_ms": 2571.049,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2493.581,
+    "recovery_p95_ms": 2493.581,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2540.073,
+    "recovery_p95_ms": 2540.073,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2493.478,
+    "recovery_p95_ms": 2493.478,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2563.469,
+    "recovery_p95_ms": 2563.469,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:9:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2597.7110000000002,
+    "recovery_p95_ms": 2597.7110000000002,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:9:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2495.56,
+    "recovery_p95_ms": 2495.56,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2471.704,
+    "recovery_p95_ms": 2471.704,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2498.521,
+    "recovery_p95_ms": 2498.521,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2351.846,
+    "recovery_p95_ms": 2351.846,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2493.724,
+    "recovery_p95_ms": 2493.724,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2512.899,
+    "recovery_p95_ms": 2512.899,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2590.962,
+    "recovery_p95_ms": 2590.962,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:10:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2512.413,
+    "recovery_p95_ms": 2512.413,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:10:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2501.316,
+    "recovery_p95_ms": 2501.316,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2484.1220000000003,
+    "recovery_p95_ms": 2484.1220000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2383.5789999999997,
+    "recovery_p95_ms": 2383.5789999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2388.0950000000003,
+    "recovery_p95_ms": 2388.0950000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2515.0119999999997,
+    "recovery_p95_ms": 2515.0119999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2626.077,
+    "recovery_p95_ms": 2626.077,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2440.205,
+    "recovery_p95_ms": 2440.205,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2429.563,
+    "recovery_p95_ms": 2429.563,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2360.419,
+    "recovery_p95_ms": 2360.419,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2393.883,
+    "recovery_p95_ms": 2393.883,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2632.837,
+    "recovery_p95_ms": 2632.837,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:11:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2483.686,
+    "recovery_p95_ms": 2483.686,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:11:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2400.639,
+    "recovery_p95_ms": 2400.639,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2364.6639999999998,
+    "recovery_p95_ms": 2364.6639999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2475.431,
+    "recovery_p95_ms": 2475.431,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2292.819,
+    "recovery_p95_ms": 2292.819,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2446.392,
+    "recovery_p95_ms": 2446.392,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2428.7430000000004,
+    "recovery_p95_ms": 2428.7430000000004,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.READ:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2421.631,
+    "recovery_p95_ms": 2421.631,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2409.41,
+    "recovery_p95_ms": 2409.41,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2434.241,
+    "recovery_p95_ms": 2434.241,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:12:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2392.124,
+    "recovery_p95_ms": 2392.124,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:12:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2360.161,
+    "recovery_p95_ms": 2360.161,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2372.989,
+    "recovery_p95_ms": 2372.989,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.begin:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1160.122,
+    "recovery_p95_ms": 1160.122,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1250.523,
+    "recovery_p95_ms": 1250.523,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "provider.feedback:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1198.355,
+    "recovery_p95_ms": 1198.355,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:16:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1250.523,
+    "recovery_p95_ms": 1250.523,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:16:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1261.502,
+    "recovery_p95_ms": 1261.502,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:13:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1242.035,
+    "recovery_p95_ms": 1242.035,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:13:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1286.47,
+    "recovery_p95_ms": 1286.47,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:3:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1149.667,
+    "recovery_p95_ms": 1149.667,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:3:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2421.315,
+    "recovery_p95_ms": 2421.315,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:17:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2449.58,
+    "recovery_p95_ms": 2449.58,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:17:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2518.431,
+    "recovery_p95_ms": 2518.431,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:14:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2429.858,
+    "recovery_p95_ms": 2429.858,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:14:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2417.639,
+    "recovery_p95_ms": 2417.639,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.save_tool:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2378.816,
+    "recovery_p95_ms": 2378.816,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.save_tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2282.866,
+    "recovery_p95_ms": 2282.866,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "node.feedback_tool:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2255.621,
+    "recovery_p95_ms": 2255.621,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2301.555,
+    "recovery_p95_ms": 2301.555,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:4:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2389.3630000000003,
+    "recovery_p95_ms": 2389.3630000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:4:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2321.9880000000003,
+    "recovery_p95_ms": 2321.9880000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2326.7889999999998,
+    "recovery_p95_ms": 2326.7889999999998,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:18:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2478.651,
+    "recovery_p95_ms": 2478.651,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "store.reserve_read_attempt:18:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2381.7709999999997,
+    "recovery_p95_ms": 2381.7709999999997,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:15:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2424.296,
+    "recovery_p95_ms": 2424.296,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "authority.CHECK:15:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2427.889,
+    "recovery_p95_ms": 2427.889,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.pause:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2265.473,
+    "recovery_p95_ms": 2265.473,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.pause:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1149.625,
+    "recovery_p95_ms": 1149.625,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:5:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1137.148,
+    "recovery_p95_ms": 1137.148,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "checkpoint.put_writes:5:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1206.231,
+    "recovery_p95_ms": 1206.231,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "worker.return:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1235.073,
+    "recovery_p95_ms": 1235.073,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.publish:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1239.576,
+    "recovery_p95_ms": 1239.576,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.publish:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1154.48,
+    "recovery_p95_ms": 1154.48,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "lifecycle",
+    "point": "cancel:authority.SEARCH:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1028.035,
+    "recovery_p95_ms": 1028.035,
+    "outcomes": {
+      "USER_CANCELLED": 1
+    }
+  },
+  {
+    "profile": "lifecycle",
+    "point": "delete:authority.SEARCH:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1081.011,
+    "recovery_p95_ms": 1081.011,
+    "outcomes": {
+      "deleted": 1
+    }
+  },
+  {
+    "profile": "lifecycle",
+    "point": "delete_checkpoint_crash:authority.SEARCH:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1091.548,
+    "recovery_p95_ms": 1091.548,
+    "outcomes": {
+      "deleted": 1
+    }
+  },
+  {
+    "profile": "approval_lifecycle",
+    "point": "cancel:worker.return:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1008.983,
+    "recovery_p95_ms": 1008.983,
+    "outcomes": {
+      "USER_CANCELLED": 1
+    }
+  },
+  {
+    "profile": "approval_lifecycle",
+    "point": "delete:worker.return:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1031.142,
+    "recovery_p95_ms": 1031.142,
+    "outcomes": {
+      "deleted": 1
+    }
+  },
+  {
+    "profile": "approval_lifecycle",
+    "point": "delete_checkpoint_crash:worker.return:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1129.525,
+    "recovery_p95_ms": 1129.525,
+    "outcomes": {
+      "deleted": 1
+    }
+  },
+  {
+    "profile": "retry_cap",
+    "point": "SEARCH:three_crashes",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1177.21,
+    "recovery_p95_ms": 1177.21,
+    "outcomes": {
+      "READ_CHECKPOINT_REPLAY": 1
+    }
+  }
+]

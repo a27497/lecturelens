@@ -1,0 +1,6634 @@
+{
+  "development": {
+    "scope": "development",
+    "courses": [
+      "algorithms",
+      "calculus",
+      "linear",
+      "probability"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 80,
+        "answerable_queries": 64,
+        "no_answer_queries": 16,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.19010416666666666,
+              "ci": [
+                0.140625,
+                0.23958333333333331
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.044270833333333336,
+                0.3333333333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.296875,
+              "ci": [
+                0.234375,
+                0.359375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.078125,
+                0.5
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.296875,
+              "ci": [
+                0.234375,
+                0.359375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.078125,
+                0.5
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.265625,
+              "ci": [
+                0.1953125,
+                0.3359375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.0625,
+                0.46113281249999716
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.4296875,
+              "ci": [
+                0.3385416666666667,
+                0.5182291666666667
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.18229166666666663,
+                0.6822916666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.40364583333333337,
+              "ci": [
+                0.3463541666666667,
+                0.45833333333333337
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.17708333333333331,
+                0.6223958333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.36965450127560573,
+              "ci": [
+                0.2983054377867361,
+                0.43768641023859756
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.14727380554185804,
+                0.5902163708369693
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.484375,
+              "ci": [
+                0.39042968750000007,
+                0.578125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.234375,
+                0.734375
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5208333333333333,
+              "ci": [
+                0.4322916666666667,
+                0.6015625
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22395833333333331,
+                0.8203125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4184895833333333,
+              "ci": [
+                0.3687434895833333,
+                0.4705729166666667
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.1796875,
+                0.6497395833333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4135249476689636,
+              "ci": [
+                0.3527877522740956,
+                0.4718330677591549
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.16650395824031106,
+                0.659405108774649
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5546875,
+              "ci": [
+                0.46875,
+                0.6330078124999972
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2890625,
+                0.828125
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5690104166666666,
+              "ci": [
+                0.48307291666666663,
+                0.6497395833333333
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.28645833333333337,
+                0.8489583333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4251860119047619,
+              "ci": [
+                0.3739918154761904,
+                0.47764136904761906
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.19449404761904762,
+                0.6497395833333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4316090134280392,
+              "ci": [
+                0.371600318271595,
+                0.4900226729072301
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.19186120029024314,
+                0.6718311352297928
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6015625,
+              "ci": [
+                0.5234375,
+                0.671875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.359375,
+                0.84375
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 38.953704499363084,
+            "ci95_ms": [
+              37.72970900172368,
+              39.68731900022249
+            ],
+            "n": 80
+          },
+          "p95": {
+            "estimate_ms": 45.286921498336596,
+            "ci95_ms": [
+              43.908463476846,
+              46.158734997152344
+            ],
+            "n": 80
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 16,
+          "n": 16,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8063923194655637,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 53,
+          "population": 80,
+          "primary_counts": {
+            "ranked_below_context": 6,
+            "not_recalled_in_candidates": 29,
+            "original_translation_duplicate": 2,
+            "no_answer_candidate_returned": 16
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.11320754716981132,
+            "not_recalled_in_candidates": 0.5471698113207547,
+            "original_translation_duplicate": 0.03773584905660377,
+            "no_answer_candidate_returned": 0.3018867924528302
+          },
+          "tag_counts": {
+            "ranked_below_context": 8,
+            "not_recalled_in_candidates": 29,
+            "original_translation_duplicate": 3,
+            "no_answer_candidate_returned": 16
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.1509433962264151,
+            "not_recalled_in_candidates": 0.5471698113207547,
+            "original_translation_duplicate": 0.05660377358490566,
+            "no_answer_candidate_returned": 0.3018867924528302
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 80,
+        "answerable_queries": 64,
+        "no_answer_queries": 16,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.20833333333333331,
+              "ci": [
+                0.15624999999999997,
+                0.2604166666666667
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.08854166666666666,
+                0.328125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.328125,
+              "ci": [
+                0.265625,
+                0.375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.515625
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.328125,
+              "ci": [
+                0.265625,
+                0.375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.515625
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.2890625,
+              "ci": [
+                0.21875,
+                0.359375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.1171875,
+                0.46875
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3723958333333333,
+              "ci": [
+                0.28645833333333337,
+                0.4557291666666667
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.19791666666666666,
+                0.5546875
+              ]
+            },
+            "mrr": {
+              "estimate": 0.40104166666666663,
+              "ci": [
+                0.34375,
+                0.45572916666666663
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.203125,
+                0.59375
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.32715226881592707,
+              "ci": [
+                0.2625145573950411,
+                0.39024313575863095
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.16566710821048317,
+                0.4894406394818429
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4609375,
+              "ci": [
+                0.3671875,
+                0.5546875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2578125,
+                0.6640625
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5364583333333334,
+              "ci": [
+                0.44270833333333337,
+                0.6224609374999991
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.28385416666666663,
+                0.7838541666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4307291666666667,
+              "ci": [
+                0.3752604166666667,
+                0.48359375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.21744140624999997,
+                0.6385546874999998
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.404245462038986,
+              "ci": [
+                0.33602593149754506,
+                0.4679697104006342
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.20546258646865667,
+                0.6011096487108522
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5859375,
+              "ci": [
+                0.5,
+                0.671875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.34375,
+                0.828125
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.578125,
+              "ci": [
+                0.48958333333333337,
+                0.6588541666666666
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.30729166666666663,
+                0.8385416666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4326822916666667,
+              "ci": [
+                0.378515625,
+                0.48438802083333315
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22133789062499998,
+                0.6385546874999998
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4204978245583037,
+              "ci": [
+                0.3564568733902749,
+                0.4809079351040473
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2132511402383694,
+                0.6239423333744466
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6015625,
+              "ci": [
+                0.515625,
+                0.6796875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.3671875,
+                0.828125
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 50.07619449861522,
+            "ci95_ms": [
+              49.334489998727804,
+              52.14333899857593
+            ],
+            "n": 80
+          },
+          "p95": {
+            "estimate_ms": 59.983827548603585,
+            "ci95_ms": [
+              57.88650649956253,
+              61.59417900198605
+            ],
+            "n": 80
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 16,
+          "n": 16,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8063923194655637,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 55,
+          "population": 80,
+          "primary_counts": {
+            "ranked_below_context": 6,
+            "not_recalled_in_candidates": 30,
+            "original_translation_duplicate": 3,
+            "no_answer_candidate_returned": 16
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.10909090909090909,
+            "not_recalled_in_candidates": 0.5454545454545454,
+            "original_translation_duplicate": 0.05454545454545454,
+            "no_answer_candidate_returned": 0.2909090909090909
+          },
+          "tag_counts": {
+            "ranked_below_context": 9,
+            "not_recalled_in_candidates": 30,
+            "original_translation_duplicate": 4,
+            "no_answer_candidate_returned": 16
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.16363636363636364,
+            "not_recalled_in_candidates": 0.5454545454545454,
+            "original_translation_duplicate": 0.07272727272727272,
+            "no_answer_candidate_returned": 0.2909090909090909
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 80,
+        "answerable_queries": 64,
+        "no_answer_queries": 16,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.1875,
+              "ci": [
+                0.14322916666666666,
+                0.23177083333333334
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.0859375,
+                0.2890625
+              ]
+            },
+            "mrr": {
+              "estimate": 0.296875,
+              "ci": [
+                0.234375,
+                0.34375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.4375
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.296875,
+              "ci": [
+                0.234375,
+                0.34375
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.4375
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.2578125,
+              "ci": [
+                0.1953125,
+                0.3203125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.109375,
+                0.3984375
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3802083333333333,
+              "ci": [
+                0.30729166666666663,
+                0.453125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22135416666666666,
+                0.53125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.40625,
+              "ci": [
+                0.35416666666666663,
+                0.45572916666666663
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.21608072916666668,
+                0.5833333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.32830191367496425,
+              "ci": [
+                0.2780559599578151,
+                0.37852997190852516
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.18232871746956897,
+                0.4659090015269545
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.484375,
+              "ci": [
+                0.390625,
+                0.5703125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2734375,
+                0.6875
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.4817708333333333,
+              "ci": [
+                0.39583333333333337,
+                0.5651041666666666
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.27864583333333337,
+                0.6822916666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.42031250000000003,
+              "ci": [
+                0.37082682291666663,
+                0.46458333333333335
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22498697916666666,
+                0.6052213541666664
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3774313053881102,
+              "ci": [
+                0.32382835517896974,
+                0.43044252279172496
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.21022669311012,
+                0.5346646814316196
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.546875,
+              "ci": [
+                0.46875,
+                0.6173828124999972
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.3359375,
+                0.7578125
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.59375,
+              "ci": [
+                0.515625,
+                0.6666666666666666
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.296875,
+                0.8854166666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.42747395833333335,
+              "ci": [
+                0.37864257812499996,
+                0.47174479166666666
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22552083333333334,
+                0.6187532552083332
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4225566586053109,
+              "ci": [
+                0.3719480752108946,
+                0.4718538440328962
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.21618685116769043,
+                0.6208565778048231
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.625,
+              "ci": [
+                0.5625,
+                0.6875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.34375,
+                0.90625
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 49.7021439987293,
+            "ci95_ms": [
+              49.08596899986151,
+              51.676099001269904
+            ],
+            "n": 80
+          },
+          "p95": {
+            "estimate_ms": 60.06794104978326,
+            "ci95_ms": [
+              58.727776177793224,
+              61.94168799993349
+            ],
+            "n": 80
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 16,
+          "n": 16,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8063923194655637,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 54,
+          "population": 80,
+          "primary_counts": {
+            "ranked_below_context": 11,
+            "not_recalled_in_candidates": 27,
+            "no_answer_candidate_returned": 16
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.2037037037037037,
+            "not_recalled_in_candidates": 0.5,
+            "no_answer_candidate_returned": 0.2962962962962963
+          },
+          "tag_counts": {
+            "ranked_below_context": 11,
+            "not_recalled_in_candidates": 27,
+            "original_translation_duplicate": 1,
+            "no_answer_candidate_returned": 16
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.2037037037037037,
+            "not_recalled_in_candidates": 0.5,
+            "original_translation_duplicate": 0.018518518518518517,
+            "no_answer_candidate_returned": 0.2962962962962963
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 80,
+        "answerable_queries": 64,
+        "no_answer_queries": 16,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.26302083333333337,
+              "ci": [
+                0.1875,
+                0.3463541666666667
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.08072916666666666,
+                0.4688151041666657
+              ]
+            },
+            "mrr": {
+              "estimate": 0.390625,
+              "ci": [
+                0.3125,
+                0.46875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.640625
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.390625,
+              "ci": [
+                0.3125,
+                0.46875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.140625,
+                0.640625
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.34375,
+              "ci": [
+                0.25,
+                0.4453125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.109375,
+                0.59375
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.5052083333333333,
+              "ci": [
+                0.40625,
+                0.6015625
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.1953125,
+                0.8073567708333325
+              ]
+            },
+            "mrr": {
+              "estimate": 0.484375,
+              "ci": [
+                0.41145833333333337,
+                0.5546875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.203125,
+                0.7604166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.45196399603721515,
+              "ci": [
+                0.37292789338768656,
+                0.5317344392648056
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.1740399914458175,
+                0.7225984478403252
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5390625,
+              "ci": [
+                0.4453125,
+                0.6328125
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2265625,
+                0.84375
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5859375,
+              "ci": [
+                0.5,
+                0.6640625
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2786458333333333,
+                0.8854166666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5,
+              "ci": [
+                0.4296875,
+                0.56640625
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2265625,
+                0.76953125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4927507678616012,
+              "ci": [
+                0.4190211498371856,
+                0.5644102578393535
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.2157762535816059,
+                0.7664795932622217
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.609375,
+              "ci": [
+                0.5234375,
+                0.6875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.3125,
+                0.90625
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.59375,
+              "ci": [
+                0.515625,
+                0.6666666666666666
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.296875,
+                0.8854166666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5026041666666666,
+              "ci": [
+                0.4348958333333333,
+                0.56640625
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.23177083333333334,
+                0.76953125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.496163384061885,
+              "ci": [
+                0.4262632552440357,
+                0.5646874214912303
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.22425324963366317,
+                0.7664795932622217
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.625,
+              "ci": [
+                0.5625,
+                0.6875
+              ],
+              "n": 64,
+              "ci95_course_family": [
+                0.34375,
+                0.90625
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 826.9892759999493,
+            "ci95_ms": [
+              795.3818759997375,
+              887.1809744996426
+            ],
+            "n": 80
+          },
+          "p95": {
+            "estimate_ms": 1400.9853560010015,
+            "ci95_ms": [
+              1215.1820228506035,
+              1425.552054950094
+            ],
+            "n": 80
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 16,
+          "n": 16,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8063923194655637,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 49,
+          "population": 80,
+          "primary_counts": {
+            "original_translation_duplicate": 2,
+            "not_recalled_in_candidates": 27,
+            "ranked_below_context": 4,
+            "no_answer_candidate_returned": 16
+          },
+          "primary_share_of_failures": {
+            "original_translation_duplicate": 0.04081632653061224,
+            "not_recalled_in_candidates": 0.5510204081632653,
+            "ranked_below_context": 0.08163265306122448,
+            "no_answer_candidate_returned": 0.32653061224489793
+          },
+          "tag_counts": {
+            "ranked_below_context": 6,
+            "original_translation_duplicate": 3,
+            "not_recalled_in_candidates": 27,
+            "no_answer_candidate_returned": 16
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.12244897959183673,
+            "original_translation_duplicate": 0.061224489795918366,
+            "not_recalled_in_candidates": 0.5510204081632653,
+            "no_answer_candidate_returned": 0.32653061224489793
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": -0.0234375,
+        "ci": [
+          -0.1015625,
+          0.046875
+        ],
+        "n": 64,
+        "ci_course_family_bonferroni": [
+          -0.1328125,
+          0.08860677083333712
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.75,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": 0.0,
+        "ci": [
+          -0.0859375,
+          0.08079427083333712
+        ],
+        "n": 64,
+        "ci_course_family_bonferroni": [
+          -0.125,
+          0.140625
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.0546875,
+        "ci": [
+          -0.03125,
+          0.1328125
+        ],
+        "n": 64,
+        "ci_course_family_bonferroni": [
+          -0.078125,
+          0.1796875
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.5,
+        "course_sign_flip_p_bonferroni": 1
+      }
+    }
+  },
+  "holdout": {
+    "scope": "holdout",
+    "courses": [
+      "economics",
+      "quantum"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 40,
+        "answerable_queries": 32,
+        "no_answer_queries": 8,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.30729166666666663,
+              "ci": [
+                0.15104166666666666,
+                0.453125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.14583333333333334,
+                0.48958333333333326
+              ]
+            },
+            "mrr": {
+              "estimate": 0.46875,
+              "ci": [
+                0.25,
+                0.65625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.25,
+                0.65625
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.46875,
+              "ci": [
+                0.25,
+                0.65625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.25,
+                0.65625
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.390625,
+              "ci": [
+                0.203125,
+                0.5625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.1875,
+                0.59375
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.5052083333333333,
+              "ci": [
+                0.3177083333333333,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.28125,
+                0.6875
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5208333333333333,
+              "ci": [
+                0.3020833333333333,
+                0.6979166666666666
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3020833333333333,
+                0.703125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4652718498547802,
+              "ci": [
+                0.2720209959783588,
+                0.6271962341138771
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.26049150896793766,
+                0.6461386290261991
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.53125,
+              "ci": [
+                0.34375,
+                0.703125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3125,
+                0.703125
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6458333333333333,
+              "ci": [
+                0.515625,
+                0.78125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4375,
+                0.84375
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5536458333333333,
+              "ci": [
+                0.3677083333333333,
+                0.7083333333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3645833333333333,
+                0.71875
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5224103714968524,
+              "ci": [
+                0.37790942951432516,
+                0.6595972714659926
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.35334166846537873,
+                0.701011203355107
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6875,
+              "ci": [
+                0.59375,
+                0.796875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.515625,
+                0.84375
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.65625,
+              "ci": [
+                0.5364583333333333,
+                0.78125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4375,
+                0.84375
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5536458333333333,
+              "ci": [
+                0.3677083333333333,
+                0.7083333333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3645833333333333,
+                0.71875
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5272986915595895,
+              "ci": [
+                0.3810339891020555,
+                0.6627103483725935
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3533459091334652,
+                0.7059870306599788
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6875,
+              "ci": [
+                0.59375,
+                0.796875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.515625,
+                0.84375
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 39.30682899954263,
+            "ci95_ms": [
+              38.7049945002218,
+              40.55618900201807
+            ],
+            "n": 40
+          },
+          "p95": {
+            "estimate_ms": 46.46085994791065,
+            "ci95_ms": [
+              42.180205502154415,
+              47.730620000947965
+            ],
+            "n": 40
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 8,
+          "n": 8,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 25,
+          "population": 40,
+          "primary_counts": {
+            "not_recalled_in_candidates": 12,
+            "ranked_below_context": 4,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.48,
+            "ranked_below_context": 0.16,
+            "no_answer_candidate_returned": 0.32,
+            "original_translation_duplicate": 0.04
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 12,
+            "ranked_below_context": 5,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.48,
+            "ranked_below_context": 0.2,
+            "no_answer_candidate_returned": 0.32,
+            "original_translation_duplicate": 0.04
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 40,
+        "answerable_queries": 32,
+        "no_answer_queries": 8,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.25,
+              "ci": [
+                0.09375,
+                0.43229166666666663
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.08333333333333333,
+                0.4322916666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.375,
+              "ci": [
+                0.1875,
+                0.5625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.1875,
+                0.59375
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.375,
+              "ci": [
+                0.1875,
+                0.5625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.1875,
+                0.59375
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.328125,
+              "ci": [
+                0.140625,
+                0.53125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.125,
+                0.53125
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3958333333333333,
+              "ci": [
+                0.203125,
+                0.5625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.203125,
+                0.5625
+              ]
+            },
+            "mrr": {
+              "estimate": 0.45312499999999994,
+              "ci": [
+                0.24479166666666666,
+                0.6354166666666666
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.24479166666666669,
+                0.6458333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.369612358467819,
+              "ci": [
+                0.19066565891997783,
+                0.5319740182038712
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.19066565891997783,
+                0.5360895739982737
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.484375,
+              "ci": [
+                0.25,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.25,
+                0.6875
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6145833333333333,
+              "ci": [
+                0.43229166666666663,
+                0.796875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.296875,
+                0.859375
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4875,
+              "ci": [
+                0.31666666666666665,
+                0.640625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.2833333333333333,
+                0.6614583333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.46717182395550566,
+              "ci": [
+                0.31366461164141657,
+                0.6201110457072638
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.2488675366187711,
+                0.6403742862910056
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.65625,
+              "ci": [
+                0.484375,
+                0.828125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.328125,
+                0.921875
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6822916666666666,
+              "ci": [
+                0.5677083333333333,
+                0.8020833333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4375,
+                0.8802083333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5005208333333333,
+              "ci": [
+                0.3421875,
+                0.6458333333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.31145833333333334,
+                0.6703125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4938624735872498,
+              "ci": [
+                0.36416694428325486,
+                0.6214598594815692
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.30468949551679647,
+                0.6498888862125842
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.734375,
+              "ci": [
+                0.640625,
+                0.84375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.515625,
+                0.9375
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 52.063293998799054,
+            "ci95_ms": [
+              50.78304900234798,
+              53.863134500716114
+            ],
+            "n": 40
+          },
+          "p95": {
+            "estimate_ms": 59.557044498978925,
+            "ci95_ms": [
+              56.992549001734005,
+              65.88024899974698
+            ],
+            "n": 40
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 8,
+          "n": 8,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 27,
+          "population": 40,
+          "primary_counts": {
+            "not_recalled_in_candidates": 11,
+            "ranked_below_context": 7,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.4074074074074074,
+            "ranked_below_context": 0.25925925925925924,
+            "no_answer_candidate_returned": 0.2962962962962963,
+            "original_translation_duplicate": 0.037037037037037035
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 11,
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.4074074074074074,
+            "ranked_below_context": 0.2962962962962963,
+            "no_answer_candidate_returned": 0.2962962962962963,
+            "original_translation_duplicate": 0.037037037037037035
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 40,
+        "answerable_queries": 32,
+        "no_answer_queries": 8,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.29166666666666663,
+              "ci": [
+                0.16145833333333331,
+                0.4479166666666667
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.11979166666666666,
+                0.45833333333333326
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4375,
+              "ci": [
+                0.28125,
+                0.59375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.25,
+                0.59375
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4375,
+              "ci": [
+                0.28125,
+                0.59375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.25,
+                0.59375
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.375,
+              "ci": [
+                0.21875,
+                0.5625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.1875,
+                0.5625
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.421875,
+              "ci": [
+                0.265625,
+                0.578125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.234375,
+                0.5527343749999906
+              ]
+            },
+            "mrr": {
+              "estimate": 0.49999999999999994,
+              "ci": [
+                0.328125,
+                0.6510416666666667
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3020833333333333,
+                0.65625
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.40402681414549213,
+              "ci": [
+                0.2602032145351603,
+                0.5399762514851236
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.22957600418336038,
+                0.5471946834172698
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.515625,
+              "ci": [
+                0.328125,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.29648437500000013,
+                0.6875
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.546875,
+              "ci": [
+                0.3802083333333333,
+                0.7135416666666667
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.296875,
+                0.7135416666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.521875,
+              "ci": [
+                0.35520833333333335,
+                0.6640625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3103515625,
+                0.6729166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4631096364348734,
+              "ci": [
+                0.31491772447273836,
+                0.6023458477674131
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.2518132897554819,
+                0.6179141387243402
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.59375,
+              "ci": [
+                0.4375,
+                0.734375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.328125,
+                0.75
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6822916666666666,
+              "ci": [
+                0.5677083333333333,
+                0.8020833333333334
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4375,
+                0.8802083333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5391741071428571,
+              "ci": [
+                0.3918340773809524,
+                0.6685267857142858
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.34281994047619047,
+                0.681845238095238
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5122371937106625,
+              "ci": [
+                0.3939718356425779,
+                0.6325192381579976
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.3123008717905552,
+                0.6618324664641551
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.75,
+              "ci": [
+                0.65625,
+                0.84375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.515625,
+                0.953125
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 52.98452399983944,
+            "ci95_ms": [
+              52.59306899824878,
+              53.32955000085349
+            ],
+            "n": 40
+          },
+          "p95": {
+            "estimate_ms": 61.293663001561065,
+            "ci95_ms": [
+              57.7639064998948,
+              65.5205989969545
+            ],
+            "n": 40
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 8,
+          "n": 8,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 26,
+          "population": 40,
+          "primary_counts": {
+            "not_recalled_in_candidates": 10,
+            "ranked_below_context": 7,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.38461538461538464,
+            "ranked_below_context": 0.2692307692307692,
+            "no_answer_candidate_returned": 0.3076923076923077,
+            "original_translation_duplicate": 0.038461538461538464
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 10,
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 8,
+            "original_translation_duplicate": 1
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.38461538461538464,
+            "ranked_below_context": 0.3076923076923077,
+            "no_answer_candidate_returned": 0.3076923076923077,
+            "original_translation_duplicate": 0.038461538461538464
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 40,
+        "answerable_queries": 32,
+        "no_answer_queries": 8,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.40625,
+              "ci": [
+                0.2916666666666667,
+                0.53125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.2864583333333333,
+                0.5364583333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5625,
+              "ci": [
+                0.40625,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.40625,
+                0.75
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5625,
+              "ci": [
+                0.40625,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.40625,
+                0.75
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.484375,
+              "ci": [
+                0.34375,
+                0.625
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.328125,
+                0.640625
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.5416666666666667,
+              "ci": [
+                0.42708333333333337,
+                0.6666666666666667
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.328125,
+                0.703125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5989583333333333,
+              "ci": [
+                0.4895833333333333,
+                0.7083333333333334
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.40625,
+                0.7708333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5372851901187279,
+              "ci": [
+                0.43358039093299267,
+                0.6588258099621318
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.35147742988639513,
+                0.6909593801565961
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.578125,
+              "ci": [
+                0.484375,
+                0.6875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.34375,
+                0.734375
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.65625,
+              "ci": [
+                0.5208333333333333,
+                0.796875
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.390625,
+                0.8697916666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.6270833333333333,
+              "ci": [
+                0.5186979166666668,
+                0.7270833333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.44214843750000005,
+                0.783893229166666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5882806608193287,
+              "ci": [
+                0.4778256224632451,
+                0.7042597890066753
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.383248990978924,
+                0.7472239607755782
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.703125,
+              "ci": [
+                0.578125,
+                0.828125
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.421875,
+                0.9375
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6822916666666666,
+              "ci": [
+                0.5677083333333333,
+                0.8020833333333334
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4375,
+                0.8802083333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.6322916666666667,
+              "ci": [
+                0.5307291666666667,
+                0.7270833333333333
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4578125,
+                0.783893229166666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.6003296574375901,
+              "ci": [
+                0.4999459941950958,
+                0.7067704837553518
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.4038550711566247,
+                0.7544596409811551
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.75,
+              "ci": [
+                0.65625,
+                0.84375
+              ],
+              "n": 32,
+              "ci95_course_family": [
+                0.515625,
+                0.953125
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 662.0124889996077,
+            "ci95_ms": [
+              620.4042389999813,
+              728.9596670016181
+            ],
+            "n": 40
+          },
+          "p95": {
+            "estimate_ms": 1120.3129253010043,
+            "ci95_ms": [
+              945.6709529986256,
+              1663.8510819975636
+            ],
+            "n": 40
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 8,
+          "n": 8,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 24,
+          "population": 40,
+          "primary_counts": {
+            "not_recalled_in_candidates": 10,
+            "ranked_below_context": 6,
+            "no_answer_candidate_returned": 8
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.4166666666666667,
+            "ranked_below_context": 0.25,
+            "no_answer_candidate_returned": 0.3333333333333333
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 10,
+            "ranked_below_context": 6,
+            "no_answer_candidate_returned": 8
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.4166666666666667,
+            "ranked_below_context": 0.25,
+            "no_answer_candidate_returned": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": -0.046875,
+        "ci": [
+          -0.109375,
+          0.0
+        ],
+        "n": 32,
+        "ci_course_family_bonferroni": [
+          -0.171875,
+          0.0
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": -0.015625,
+        "ci": [
+          -0.046875,
+          0.0
+        ],
+        "n": 32,
+        "ci_course_family_bonferroni": [
+          -0.0678385416666667,
+          0.0
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.046875,
+        "ci": [
+          -0.09375,
+          0.234375
+        ],
+        "n": 32,
+        "ci_course_family_bonferroni": [
+          -0.15625,
+          0.2919270833333485
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      }
+    }
+  },
+  "all": {
+    "scope": "all",
+    "courses": [
+      "algorithms",
+      "calculus",
+      "economics",
+      "linear",
+      "probability",
+      "quantum"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 120,
+        "answerable_queries": 96,
+        "no_answer_queries": 24,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.22916666666666666,
+              "ci": [
+                0.16840277777777776,
+                0.2899305555555555
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.11458333333333333,
+                0.34548611111111116
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3541666666666667,
+              "ci": [
+                0.2708333333333333,
+                0.4270833333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.1875,
+                0.5104166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3541666666666667,
+              "ci": [
+                0.2708333333333333,
+                0.4270833333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.1875,
+                0.5104166666666666
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3072916666666667,
+              "ci": [
+                0.22916666666666666,
+                0.3802083333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.15625,
+                0.4635416666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.4548611111111111,
+              "ci": [
+                0.3697916666666667,
+                0.5399305555555556
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2760416666666667,
+                0.6475694444444444
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4427083333333333,
+              "ci": [
+                0.36284722222222227,
+                0.5121527777777778
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2725694444444445,
+                0.6041666666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4015269508019972,
+              "ci": [
+                0.3253534735312312,
+                0.4745595996419032
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.240164579513235,
+                0.5630035643370799
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5,
+              "ci": [
+                0.4114583333333333,
+                0.5833333333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3229166666666667,
+                0.6875
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5625,
+              "ci": [
+                0.4895833333333333,
+                0.6336805555555555
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.34891493055555556,
+                0.7725694444444445
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4635416666666667,
+              "ci": [
+                0.3939192708333333,
+                0.5262196180555555
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2888845486111111,
+                0.6267491319444443
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4498200889449266,
+              "ci": [
+                0.3866063762074041,
+                0.5093720464390735
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2718061316639564,
+                0.6223397760290926
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5989583333333334,
+              "ci": [
+                0.53125,
+                0.6614583333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4010416666666667,
+                0.7916666666666666
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5980902777777778,
+              "ci": [
+                0.5260416666666666,
+                0.665798611111111
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4036241319444444,
+                0.798611111111111
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4680059523809524,
+              "ci": [
+                0.3979637896825397,
+                0.5312531001984127
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2975669642857143,
+                0.6279842509920633
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4635055728052227,
+              "ci": [
+                0.40062866028513233,
+                0.5232855959464193
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2913453551661408,
+                0.6325389715202742
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6302083333333334,
+              "ci": [
+                0.5625,
+                0.6927083333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4583333333333333,
+                0.8020833333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 38.98058949926053,
+            "ci95_ms": [
+              38.490234001073986,
+              39.67343449949112
+            ],
+            "n": 120
+          },
+          "p95": {
+            "estimate_ms": 45.597915000325884,
+            "ci95_ms": [
+              44.698044499637035,
+              46.79148704944964
+            ],
+            "n": 120
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 24,
+          "n": 24,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8620237953250198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 78,
+          "population": 120,
+          "primary_counts": {
+            "ranked_below_context": 10,
+            "not_recalled_in_candidates": 41,
+            "original_translation_duplicate": 3,
+            "no_answer_candidate_returned": 24
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.1282051282051282,
+            "not_recalled_in_candidates": 0.5256410256410257,
+            "original_translation_duplicate": 0.038461538461538464,
+            "no_answer_candidate_returned": 0.3076923076923077
+          },
+          "tag_counts": {
+            "ranked_below_context": 13,
+            "not_recalled_in_candidates": 41,
+            "original_translation_duplicate": 4,
+            "no_answer_candidate_returned": 24
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.16666666666666666,
+            "not_recalled_in_candidates": 0.5256410256410257,
+            "original_translation_duplicate": 0.05128205128205128,
+            "no_answer_candidate_returned": 0.3076923076923077
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 120,
+        "answerable_queries": 96,
+        "no_answer_queries": 24,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.2222222222222222,
+              "ci": [
+                0.16145833333333331,
+                0.2899305555555556
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.1267361111111111,
+                0.3229166666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.34375,
+              "ci": [
+                0.2708333333333333,
+                0.4166666666666667
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.4895833333333333
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.34375,
+              "ci": [
+                0.2708333333333333,
+                0.4166666666666667
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.4895833333333333
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3020833333333333,
+              "ci": [
+                0.22395833333333334,
+                0.3854166666666667
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.171875,
+                0.4479166666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3802083333333333,
+              "ci": [
+                0.2951388888888889,
+                0.4600694444444445
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.24826388888888887,
+                0.517361111111111
+              ]
+            },
+            "mrr": {
+              "estimate": 0.41840277777777773,
+              "ci": [
+                0.3385416666666667,
+                0.4895833333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2725694444444444,
+                0.5659722222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3413056320332244,
+              "ci": [
+                0.2693556558326162,
+                0.40959159977121856
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.21935101041728175,
+                0.469273603730031
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.46875,
+              "ci": [
+                0.3697916666666667,
+                0.5625
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3125,
+                0.625
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5625,
+              "ci": [
+                0.4774305555555555,
+                0.6440972222222222
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3663194444444444,
+                0.7569444444444443
+              ]
+            },
+            "mrr": {
+              "estimate": 0.44965277777777785,
+              "ci": [
+                0.3814192708333333,
+                0.5131944444444444
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2942621527777778,
+                0.6038281249999999
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.42522091601115924,
+              "ci": [
+                0.3583736266868151,
+                0.4922214644047059
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.27458705185409193,
+                0.5759996289691535
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.609375,
+              "ci": [
+                0.5260416666666666,
+                0.6822916666666666
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4166666666666667,
+                0.8020833333333334
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6128472222222222,
+              "ci": [
+                0.5416666666666666,
+                0.6788194444444445
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.41840277777777773,
+                0.8055555555555554
+              ]
+            },
+            "mrr": {
+              "estimate": 0.45529513888888884,
+              "ci": [
+                0.3907096354166666,
+                0.5158875868055555
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.30077907986111113,
+                0.6068619791666667
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.44495270756795247,
+              "ci": [
+                0.38506325027937943,
+                0.5050146594160791
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.29498608307526947,
+                0.5947520812787912
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6458333333333334,
+              "ci": [
+                0.578125,
+                0.7083333333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4635416666666667,
+                0.8229166666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 51.03325449999829,
+            "ci95_ms": [
+              50.12412399992172,
+              52.14333899857593
+            ],
+            "n": 120
+          },
+          "p95": {
+            "estimate_ms": 59.983827548603585,
+            "ci95_ms": [
+              57.88650649956253,
+              61.747497501892205
+            ],
+            "n": 120
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 24,
+          "n": 24,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8620237953250198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 82,
+          "population": 120,
+          "primary_counts": {
+            "ranked_below_context": 13,
+            "not_recalled_in_candidates": 41,
+            "original_translation_duplicate": 4,
+            "no_answer_candidate_returned": 24
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.15853658536585366,
+            "not_recalled_in_candidates": 0.5,
+            "original_translation_duplicate": 0.04878048780487805,
+            "no_answer_candidate_returned": 0.2926829268292683
+          },
+          "tag_counts": {
+            "ranked_below_context": 17,
+            "not_recalled_in_candidates": 41,
+            "original_translation_duplicate": 5,
+            "no_answer_candidate_returned": 24
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.2073170731707317,
+            "not_recalled_in_candidates": 0.5,
+            "original_translation_duplicate": 0.06097560975609756,
+            "no_answer_candidate_returned": 0.2926829268292683
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 120,
+        "answerable_queries": 96,
+        "no_answer_queries": 24,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.2222222222222222,
+              "ci": [
+                0.17013888888888887,
+                0.28125
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.13020833333333334,
+                0.3177083333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.34375,
+              "ci": [
+                0.28125,
+                0.40625
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.21875,
+                0.46875
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.34375,
+              "ci": [
+                0.28125,
+                0.40625
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.21875,
+                0.46875
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.296875,
+              "ci": [
+                0.22916666666666666,
+                0.3645833333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.17708333333333334,
+                0.421875
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.39409722222222215,
+              "ci": [
+                0.3211805555555556,
+                0.46527777777777773
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2759982638888889,
+                0.5086805555555555
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4375,
+              "ci": [
+                0.3697916666666667,
+                0.49826388888888884
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.29340277777777773,
+                0.5712239583333327
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3535435471651402,
+              "ci": [
+                0.29591517945525997,
+                0.41002133359310466
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2403163694470542,
+                0.4608885040676287
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4947916666666667,
+              "ci": [
+                0.40625,
+                0.578125
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.34375,
+                0.640625
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5034722222222222,
+              "ci": [
+                0.42534722222222215,
+                0.5833333333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3489583333333333,
+                0.6562934027777773
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4541666666666666,
+              "ci": [
+                0.390625,
+                0.509375
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.30484809027777776,
+                0.5922222222222217
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.40599074907036464,
+              "ci": [
+                0.3466769613605379,
+                0.46482102312176765
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.27267616830795677,
+                0.5285470916762393
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5625,
+              "ci": [
+                0.4895833333333333,
+                0.6302083333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3958333333333333,
+                0.7239583333333334
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.623263888888889,
+              "ci": [
+                0.5572916666666666,
+                0.685763888888889
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.40972222222222227,
+                0.826388888888889
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4647073412698413,
+              "ci": [
+                0.4065693204365079,
+                0.5164192708333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3129082961309524,
+                0.604962177579365
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4524501703070947,
+              "ci": [
+                0.4020939288198377,
+                0.5030739615390604
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3001859266186507,
+                0.5946478302857268
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6666666666666666,
+              "ci": [
+                0.609375,
+                0.71875
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4583333333333333,
+                0.8645833333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 51.667354000528576,
+            "ci95_ms": [
+              50.39916899841046,
+              52.392188998055644
+            ],
+            "n": 120
+          },
+          "p95": {
+            "estimate_ms": 60.12400799718307,
+            "ci95_ms": [
+              59.316317998491286,
+              62.06919454998569
+            ],
+            "n": 120
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 24,
+          "n": 24,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8620237953250198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 80,
+          "population": 120,
+          "primary_counts": {
+            "ranked_below_context": 18,
+            "not_recalled_in_candidates": 37,
+            "no_answer_candidate_returned": 24,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.225,
+            "not_recalled_in_candidates": 0.4625,
+            "no_answer_candidate_returned": 0.3,
+            "original_translation_duplicate": 0.0125
+          },
+          "tag_counts": {
+            "ranked_below_context": 19,
+            "not_recalled_in_candidates": 37,
+            "original_translation_duplicate": 2,
+            "no_answer_candidate_returned": 24
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.2375,
+            "not_recalled_in_candidates": 0.4625,
+            "original_translation_duplicate": 0.025,
+            "no_answer_candidate_returned": 0.3
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 120,
+        "answerable_queries": 96,
+        "no_answer_queries": 24,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.3107638888888889,
+              "ci": [
+                0.24479166666666666,
+                0.37673611111111116
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.16840277777777776,
+                0.4618055555555555
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4479166666666667,
+              "ci": [
+                0.375,
+                0.5208333333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2604166666666667,
+                0.6354166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4479166666666667,
+              "ci": [
+                0.375,
+                0.5208333333333334
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.2604166666666667,
+                0.6354166666666666
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.390625,
+              "ci": [
+                0.3072916666666667,
+                0.4739583333333333
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.21354166666666666,
+                0.5677083333333334
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.517361111111111,
+              "ci": [
+                0.44097222222222215,
+                0.59375
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.30902777777777773,
+                0.7309461805555549
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5225694444444445,
+              "ci": [
+                0.4600694444444444,
+                0.5815972222222222
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.32113715277777777,
+                0.7135416666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.48040439406438606,
+              "ci": [
+                0.4163614922664121,
+                0.5468767599809572
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.28680636511991714,
+                0.6665854820286381
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5520833333333334,
+              "ci": [
+                0.4791666666666667,
+                0.625
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3385416666666667,
+                0.765625
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.609375,
+              "ci": [
+                0.5364583333333334,
+                0.6788194444444443
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.39409722222222227,
+                0.8194444444444443
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5423611111111111,
+              "ci": [
+                0.48194444444444445,
+                0.5993055555555555
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.34319010416666673,
+                0.7295225694444444
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5245940655141771,
+              "ci": [
+                0.46355579171753125,
+                0.5855208983224485
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.32772891262182563,
+                0.7108306590195654
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.640625,
+              "ci": [
+                0.5729166666666666,
+                0.703125
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4270833333333333,
+                0.8489583333333334
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.623263888888889,
+              "ci": [
+                0.5572916666666666,
+                0.685763888888889
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.40972222222222227,
+                0.826388888888889
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5458333333333334,
+              "ci": [
+                0.48784288194444436,
+                0.6001779513888887
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3501736111111111,
+                0.730212673611111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.53088547518712,
+              "ci": [
+                0.4730807000581445,
+                0.5887110140487939
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.3363151065942626,
+                0.7143353450246047
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6666666666666666,
+              "ci": [
+                0.609375,
+                0.71875
+              ],
+              "n": 96,
+              "ci95_course_family": [
+                0.4583333333333333,
+                0.8645833333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 759.3102524988353,
+            "ci95_ms": [
+              735.2690980005718,
+              809.7223954992384
+            ],
+            "n": 120
+          },
+          "p95": {
+            "estimate_ms": 1399.2941105007048,
+            "ci95_ms": [
+              1207.0806405004987,
+              1425.552054950094
+            ],
+            "n": 120
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 24,
+          "n": 24,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.8620237953250198,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 73,
+          "population": 120,
+          "primary_counts": {
+            "original_translation_duplicate": 2,
+            "not_recalled_in_candidates": 37,
+            "ranked_below_context": 10,
+            "no_answer_candidate_returned": 24
+          },
+          "primary_share_of_failures": {
+            "original_translation_duplicate": 0.0273972602739726,
+            "not_recalled_in_candidates": 0.5068493150684932,
+            "ranked_below_context": 0.136986301369863,
+            "no_answer_candidate_returned": 0.3287671232876712
+          },
+          "tag_counts": {
+            "ranked_below_context": 12,
+            "original_translation_duplicate": 3,
+            "not_recalled_in_candidates": 37,
+            "no_answer_candidate_returned": 24
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.1643835616438356,
+            "original_translation_duplicate": 0.0410958904109589,
+            "not_recalled_in_candidates": 0.5068493150684932,
+            "no_answer_candidate_returned": 0.3287671232876712
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": -0.03125,
+        "ci": [
+          -0.08333333333333333,
+          0.020833333333333332
+        ],
+        "n": 96,
+        "ci_course_family_bonferroni": [
+          -0.11458333333333333,
+          0.046875
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.375,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": -0.005208333333333333,
+        "ci": [
+          -0.0625,
+          0.052083333333333336
+        ],
+        "n": 96,
+        "ci_course_family_bonferroni": [
+          -0.08854166666666667,
+          0.08854166666666667
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.052083333333333336,
+        "ci": [
+          -0.026041666666666668,
+          0.13020833333333334
+        ],
+        "n": 96,
+        "ci_course_family_bonferroni": [
+          -0.052083333333333336,
+          0.16145833333333334
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.25,
+        "course_sign_flip_p_bonferroni": 0.75
+      }
+    }
+  },
+  "zh": {
+    "scope": "zh",
+    "courses": [
+      "algorithms",
+      "calculus",
+      "economics",
+      "linear",
+      "probability",
+      "quantum"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.16666666666666666,
+              "ci": [
+                0.09027777777777778,
+                0.24652777777777776
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.05902777777777778,
+                0.2881944444444444
+              ]
+            },
+            "mrr": {
+              "estimate": 0.25,
+              "ci": [
+                0.14583333333333334,
+                0.3333333333333333
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.10416666666666667,
+                0.4166666666666667
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.25,
+              "ci": [
+                0.14583333333333334,
+                0.3333333333333333
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.10416666666666667,
+                0.4166666666666667
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.19791666666666666,
+              "ci": [
+                0.11458333333333333,
+                0.28125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.07291666666666667,
+                0.3541666666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.38888888888888884,
+              "ci": [
+                0.31249999999999994,
+                0.4756944444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1875,
+                0.5868055555555555
+              ]
+            },
+            "mrr": {
+              "estimate": 0.34027777777777773,
+              "ci": [
+                0.25,
+                0.4270833333333333
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.16666666666666666,
+                0.517361111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3215134957958162,
+              "ci": [
+                0.24864653438041032,
+                0.3981694602428842
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1544940399914265,
+                0.48759193388596067
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.40625,
+              "ci": [
+                0.3229166666666667,
+                0.5
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1875,
+                0.6145833333333334
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5034722222222222,
+              "ci": [
+                0.40972222222222215,
+                0.6006944444444444
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.23958333333333334,
+                0.75
+              ]
+            },
+            "mrr": {
+              "estimate": 0.36423611111111115,
+              "ci": [
+                0.27984375,
+                0.4465364583333332
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.18192708333333332,
+                0.5423611111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.37005106686377137,
+              "ci": [
+                0.29963462584101813,
+                0.443362757430644
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.181448277823207,
+                0.5485552943526341
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5208333333333334,
+              "ci": [
+                0.4270833333333333,
+                0.6145833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25,
+                0.78125
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5625,
+              "ci": [
+                0.4583333333333333,
+                0.6701388888888888
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3368055555555555,
+                0.7916666666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3701884920634921,
+              "ci": [
+                0.2858085317460317,
+                0.453034474206349
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1976860119047619,
+                0.5423611111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3912285525365115,
+              "ci": [
+                0.31580414309628824,
+                0.4677369806029984
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.21847409459099262,
+                0.5666033416038966
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5625,
+              "ci": [
+                0.4583333333333333,
+                0.6666666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.34375,
+                0.7916666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 39.136154498919495,
+            "ci95_ms": [
+              38.500648999615805,
+              39.81374974900973
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 46.07092304704565,
+            "ci95_ms": [
+              43.65673561409949,
+              47.86010849948064
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 43,
+          "population": 60,
+          "primary_counts": {
+            "ranked_below_context": 5,
+            "not_recalled_in_candidates": 23,
+            "original_translation_duplicate": 3,
+            "no_answer_candidate_returned": 12
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.11627906976744186,
+            "not_recalled_in_candidates": 0.5348837209302325,
+            "original_translation_duplicate": 0.06976744186046512,
+            "no_answer_candidate_returned": 0.27906976744186046
+          },
+          "tag_counts": {
+            "ranked_below_context": 8,
+            "not_recalled_in_candidates": 23,
+            "original_translation_duplicate": 4,
+            "no_answer_candidate_returned": 12
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.18604651162790697,
+            "not_recalled_in_candidates": 0.5348837209302325,
+            "original_translation_duplicate": 0.09302325581395349,
+            "no_answer_candidate_returned": 0.27906976744186046
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.10416666666666667,
+              "ci": [
+                0.048611111111111105,
+                0.17013888888888887
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.027777777777777776,
+                0.19444444444444442
+              ]
+            },
+            "mrr": {
+              "estimate": 0.16666666666666666,
+              "ci": [
+                0.10364583333333352,
+                0.25
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.041666666666666664,
+                0.3125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.16666666666666666,
+              "ci": [
+                0.10364583333333352,
+                0.25
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.041666666666666664,
+                0.3125
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.13541666666666666,
+              "ci": [
+                0.07291666666666667,
+                0.20833333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.03125,
+                0.25
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3055555555555555,
+              "ci": [
+                0.21180555555555555,
+                0.40625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.15625,
+                0.4444444444444444
+              ]
+            },
+            "mrr": {
+              "estimate": 0.2534722222222222,
+              "ci": [
+                0.17361111111111108,
+                0.3333333333333333
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.13194444444444445,
+                0.3819444444444445
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.2350819892462858,
+              "ci": [
+                0.15980754038549952,
+                0.31292573926099154
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.12398157969058513,
+                0.3453246512300295
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3333333333333333,
+              "ci": [
+                0.22916666666666666,
+                0.4479166666666667
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.17708333333333334,
+                0.4895833333333333
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5104166666666666,
+              "ci": [
+                0.40972222222222215,
+                0.6180555555555555
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.27777777777777773,
+                0.7465277777777777
+              ]
+            },
+            "mrr": {
+              "estimate": 0.2982638888888889,
+              "ci": [
+                0.22534722222222223,
+                0.3698090277777775
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1659548611111111,
+                0.4382031249999999
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.32463065294464355,
+              "ci": [
+                0.25625158316464064,
+                0.3962756610563216
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.18235722902274681,
+                0.4679819407633625
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.53125,
+              "ci": [
+                0.4270833333333333,
+                0.6354166666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.7710937499999962
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5694444444444444,
+              "ci": [
+                0.46875,
+                0.6736111111111112
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3541666666666667,
+                0.7916666666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3043402777777778,
+              "ci": [
+                0.23228732638888888,
+                0.3746571180555555
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.17708333333333334,
+                0.4395920138888888
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3459124177262812,
+              "ci": [
+                0.27891010664510485,
+                0.4172201308795133
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2096241166902924,
+                0.4883877202795337
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5729166666666666,
+              "ci": [
+                0.46875,
+                0.6770833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3645833333333333,
+                0.7916666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 52.31513450053171,
+            "ci95_ms": [
+              50.623588998860214,
+              53.928499000903685
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 61.525767500097565,
+            "ci95_ms": [
+              57.81019299975014,
+              65.90496149965475
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 47,
+          "population": 60,
+          "primary_counts": {
+            "ranked_below_context": 8,
+            "not_recalled_in_candidates": 23,
+            "original_translation_duplicate": 4,
+            "no_answer_candidate_returned": 12
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.1702127659574468,
+            "not_recalled_in_candidates": 0.48936170212765956,
+            "original_translation_duplicate": 0.0851063829787234,
+            "no_answer_candidate_returned": 0.2553191489361702
+          },
+          "tag_counts": {
+            "ranked_below_context": 12,
+            "not_recalled_in_candidates": 23,
+            "original_translation_duplicate": 5,
+            "no_answer_candidate_returned": 12
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.2553191489361702,
+            "not_recalled_in_candidates": 0.48936170212765956,
+            "original_translation_duplicate": 0.10638297872340426,
+            "no_answer_candidate_returned": 0.2553191489361702
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.13541666666666666,
+              "ci": [
+                0.07291666666666667,
+                0.20138888888888887
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.04513888888888889,
+                0.2395833333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.20833333333333334,
+              "ci": [
+                0.125,
+                0.2916666666666667
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.08333333333333333,
+                0.3541666666666667
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.20833333333333334,
+              "ci": [
+                0.125,
+                0.2916666666666667
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.08333333333333333,
+                0.3541666666666667
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.16666666666666666,
+              "ci": [
+                0.09375,
+                0.23958333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.052083333333333336,
+                0.2916666666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.3368055555555555,
+              "ci": [
+                0.25,
+                0.43402777777777785
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.4583333333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3055555555555555,
+              "ci": [
+                0.2222222222222222,
+                0.3854166666666667
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.17361111111111113,
+                0.4444444444444444
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.2734598792045093,
+              "ci": [
+                0.2049419945364012,
+                0.3485157512857776
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.16422057617480973,
+                0.38048618490572733
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.375,
+              "ci": [
+                0.28125,
+                0.4791666666666667
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.23958333333333334,
+                0.5104166666666666
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.40625,
+              "ci": [
+                0.32638888888888884,
+                0.5
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.24305555555555555,
+                0.5764756944444432
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3201388888888889,
+              "ci": [
+                0.2420138888888889,
+                0.3975694444444444
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.18055555555555555,
+                0.46806423611111103
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.305276700100144,
+              "ci": [
+                0.24154035952229058,
+                0.37603173247808763
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.17997879478780465,
+                0.4349666775427932
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4270833333333333,
+              "ci": [
+                0.34375,
+                0.5208333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2604166666666667,
+                0.6041666666666666
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5590277777777778,
+              "ci": [
+                0.4583333333333333,
+                0.6631944444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3194444444444444,
+                0.7986111111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.33824404761904764,
+              "ci": [
+                0.2637890625,
+                0.41215401785714284
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1953125,
+                0.4844804067460316
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3592189265765691,
+              "ci": [
+                0.2951617195313636,
+                0.427367857254708
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2097387796037691,
+                0.5052622761477751
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5833333333333334,
+              "ci": [
+                0.4791666666666667,
+                0.6875
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.8333333333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 51.810674000080326,
+            "ci95_ms": [
+              50.42262999995728,
+              52.64531899956637
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 60.30074199734371,
+            "ci95_ms": [
+              58.52375100093923,
+              65.72038299709673
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 45,
+          "population": 60,
+          "primary_counts": {
+            "ranked_below_context": 10,
+            "not_recalled_in_candidates": 22,
+            "no_answer_candidate_returned": 12,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.2222222222222222,
+            "not_recalled_in_candidates": 0.4888888888888889,
+            "no_answer_candidate_returned": 0.26666666666666666,
+            "original_translation_duplicate": 0.022222222222222223
+          },
+          "tag_counts": {
+            "ranked_below_context": 11,
+            "not_recalled_in_candidates": 22,
+            "original_translation_duplicate": 2,
+            "no_answer_candidate_returned": 12
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.24444444444444444,
+            "not_recalled_in_candidates": 0.4888888888888889,
+            "original_translation_duplicate": 0.044444444444444446,
+            "no_answer_candidate_returned": 0.26666666666666666
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.34375,
+              "ci": [
+                0.2638888888888889,
+                0.4305555555555555
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1909722222222222,
+                0.4931423611111099
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4375,
+              "ci": [
+                0.3541666666666667,
+                0.5213541666666591
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25,
+                0.6041666666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4375,
+              "ci": [
+                0.3541666666666667,
+                0.5213541666666591
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25,
+                0.6041666666666666
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.375,
+              "ci": [
+                0.28125,
+                0.46875
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.21875,
+                0.53125
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.49652777777777773,
+              "ci": [
+                0.3958333333333333,
+                0.6041666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.28125,
+                0.7083333333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.49652777777777773,
+              "ci": [
+                0.40625,
+                0.5868055555555555
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2986111111111111,
+                0.6805555555555555
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.46376052260903355,
+              "ci": [
+                0.3772297489976722,
+                0.5554968168137231
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2712559110431375,
+                0.645538626890687
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5104166666666666,
+              "ci": [
+                0.40625,
+                0.6145833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.7291666666666666
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.5590277777777778,
+              "ci": [
+                0.4583333333333333,
+                0.6631944444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3194444444444444,
+                0.7986111111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5111111111111111,
+              "ci": [
+                0.4256857638888889,
+                0.5989756944444442
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3125,
+                0.6961979166666665
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4934240935425664,
+              "ci": [
+                0.4056761512116825,
+                0.5839164868669244
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.29010052057323943,
+                0.6914509499990842
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5833333333333334,
+              "ci": [
+                0.4791666666666667,
+                0.6875
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.8333333333333334
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.5590277777777778,
+              "ci": [
+                0.4583333333333333,
+                0.6631944444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3194444444444444,
+                0.7986111111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5111111111111111,
+              "ci": [
+                0.4256857638888889,
+                0.5989756944444442
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3125,
+                0.6961979166666665
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4934240935425664,
+              "ci": [
+                0.4056761512116825,
+                0.5839164868669244
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.29010052057323943,
+                0.6914509499990842
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5833333333333334,
+              "ci": [
+                0.4791666666666667,
+                0.6875
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.8333333333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 662.0124889996077,
+            "ci95_ms": [
+              644.7922689985717,
+              707.7645429999393
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 1097.282267448645,
+            "ci95_ms": [
+              929.6491810006045,
+              1212.1900594005633
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 38,
+          "population": 60,
+          "primary_counts": {
+            "original_translation_duplicate": 2,
+            "not_recalled_in_candidates": 22,
+            "no_answer_candidate_returned": 12,
+            "ranked_below_context": 2
+          },
+          "primary_share_of_failures": {
+            "original_translation_duplicate": 0.05263157894736842,
+            "not_recalled_in_candidates": 0.5789473684210527,
+            "no_answer_candidate_returned": 0.3157894736842105,
+            "ranked_below_context": 0.05263157894736842
+          },
+          "tag_counts": {
+            "ranked_below_context": 4,
+            "original_translation_duplicate": 3,
+            "not_recalled_in_candidates": 22,
+            "no_answer_candidate_returned": 12
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.10526315789473684,
+            "original_translation_duplicate": 0.07894736842105263,
+            "not_recalled_in_candidates": 0.5789473684210527,
+            "no_answer_candidate_returned": 0.3157894736842105
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": -0.07291666666666667,
+        "ci": [
+          -0.13541666666666666,
+          -0.010416666666666666
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.23958333333333334,
+          0.041666666666666664
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.5,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": -0.03125,
+        "ci": [
+          -0.10416666666666667,
+          0.041666666666666664
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.1875,
+          0.11458333333333333
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.75,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.10416666666666667,
+        "ci": [
+          0.010416666666666666,
+          0.20833333333333334
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.0035590277777777972,
+          0.23958333333333334
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.0625,
+        "course_sign_flip_p_bonferroni": 0.1875
+      }
+    }
+  },
+  "en": {
+    "scope": "en",
+    "courses": [
+      "algorithms",
+      "calculus",
+      "economics",
+      "linear",
+      "probability",
+      "quantum"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.2916666666666667,
+              "ci": [
+                0.20138888888888887,
+                0.3819444444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.10416666666666667,
+                0.4895833333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.5833333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1875,
+                0.7291666666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.5833333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.1875,
+                0.7291666666666666
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4166666666666667,
+              "ci": [
+                0.2916666666666667,
+                0.5416666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.16666666666666666,
+                0.6770833333333334
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.5208333333333334,
+              "ci": [
+                0.38888888888888884,
+                0.6493055555555555
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.28472222222222227,
+                0.75
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5451388888888888,
+              "ci": [
+                0.4305555555555555,
+                0.6527777777777778
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.7847222222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.48154040580817825,
+              "ci": [
+                0.36390631016884595,
+                0.5942436944568656
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25317152332706716,
+                0.7084611526661302
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.59375,
+              "ci": [
+                0.4583333333333333,
+                0.71875
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3541666666666667,
+                0.8229166666666666
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6215277777777778,
+              "ci": [
+                0.5138888888888888,
+                0.7256944444444443
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.39236111111111116,
+                0.8333333333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5628472222222222,
+              "ci": [
+                0.4607552083333334,
+                0.6597222222222222
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3166145833333333,
+                0.7940972222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5295891110260816,
+              "ci": [
+                0.42833019914570886,
+                0.6281965012108433
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3050653379899962,
+                0.7480449786809368
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6770833333333334,
+              "ci": [
+                0.5729166666666666,
+                0.7708333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.46875,
+                0.8541666666666666
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6336805555555555,
+              "ci": [
+                0.5277777777777778,
+                0.734375
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4079861111111111,
+                0.8472222222222222
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5658234126984127,
+              "ci": [
+                0.46269345238095233,
+                0.6614632936507936
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.32636780753968253,
+                0.7940972222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5357825930739338,
+              "ci": [
+                0.4360749383884006,
+                0.6323487222935864
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.31348023465036323,
+                0.7507139993494161
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6979166666666666,
+              "ci": [
+                0.6041666666666666,
+                0.7916666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.5,
+                0.875
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 38.953704499363084,
+            "ci95_ms": [
+              38.389630000892794,
+              39.65954999875976
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 45.286921498336596,
+            "ci95_ms": [
+              43.02897394845785,
+              47.754203950898955
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 35,
+          "population": 60,
+          "primary_counts": {
+            "not_recalled_in_candidates": 18,
+            "no_answer_candidate_returned": 12,
+            "ranked_below_context": 5
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.5142857142857142,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "ranked_below_context": 0.14285714285714285
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 18,
+            "no_answer_candidate_returned": 12,
+            "ranked_below_context": 5
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.5142857142857142,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "ranked_below_context": 0.14285714285714285
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.34027777777777773,
+              "ci": [
+                0.24305555555555555,
+                0.4375
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.15625,
+                0.5277777777777778
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5208333333333334,
+              "ci": [
+                0.4166666666666667,
+                0.625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2708333333333333,
+                0.7708333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5208333333333334,
+              "ci": [
+                0.4166666666666667,
+                0.625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2708333333333333,
+                0.7708333333333334
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.46875,
+              "ci": [
+                0.34375,
+                0.59375
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.21875,
+                0.71875
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.4548611111111111,
+              "ci": [
+                0.3541666666666667,
+                0.5590277777777778
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2673611111111111,
+                0.6319444444444444
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5833333333333334,
+              "ci": [
+                0.4756944444444444,
+                0.6840277777777777
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.32282986111111117,
+                0.8159722222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4475292748201629,
+              "ci": [
+                0.3507710862573808,
+                0.5417999815077797
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.24801834222597227,
+                0.6351648590094064
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6041666666666666,
+              "ci": [
+                0.4791666666666667,
+                0.7291666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3541666666666667,
+                0.8229166666666666
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6145833333333334,
+              "ci": [
+                0.4895833333333333,
+                0.736111111111111
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3958333333333333,
+                0.8090277777777778
+              ]
+            },
+            "mrr": {
+              "estimate": 0.6010416666666667,
+              "ci": [
+                0.5027777777777778,
+                0.6920138888888889
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.34722222222222215,
+                0.8253559027777777
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5258111790776748,
+              "ci": [
+                0.42162396552244685,
+                0.6254951637433621
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3125527569215778,
+                0.7227738612147637
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6875,
+              "ci": [
+                0.5729166666666666,
+                0.7916666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.46875,
+                0.875
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.65625,
+              "ci": [
+                0.5520833333333334,
+                0.7570312499999988
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4270833333333333,
+                0.8576388888888888
+              ]
+            },
+            "mrr": {
+              "estimate": 0.6062500000000001,
+              "ci": [
+                0.5118055555555555,
+                0.6946180555555556
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.35310763888888885,
+                0.8305598958333333
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5439929974096236,
+              "ci": [
+                0.44627819176953815,
+                0.6375969823789014
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.32564660375844773,
+                0.7449271296578825
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.71875,
+              "ci": [
+                0.625,
+                0.8125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.5,
+                0.8958333333333334
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 50.46310400030052,
+            "ci95_ms": [
+              49.49296999984654,
+              51.568970000516856
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 59.87917549882695,
+            "ci95_ms": [
+              56.59358899720246,
+              60.042704548686736
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 35,
+          "population": 60,
+          "primary_counts": {
+            "not_recalled_in_candidates": 18,
+            "no_answer_candidate_returned": 12,
+            "ranked_below_context": 5
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.5142857142857142,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "ranked_below_context": 0.14285714285714285
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 18,
+            "no_answer_candidate_returned": 12,
+            "ranked_below_context": 5
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.5142857142857142,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "ranked_below_context": 0.14285714285714285
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.30902777777777773,
+              "ci": [
+                0.21527777777777776,
+                0.40625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.14583333333333334,
+                0.4791666666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4791666666666667,
+              "ci": [
+                0.3541666666666667,
+                0.6041666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25,
+                0.7083333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4791666666666667,
+              "ci": [
+                0.3541666666666667,
+                0.6041666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25,
+                0.7083333333333334
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4270833333333333,
+              "ci": [
+                0.3020833333333333,
+                0.5520833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.6458333333333334
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.45138888888888884,
+              "ci": [
+                0.3541666666666667,
+                0.5486111111111112
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2743055555555555,
+                0.6111111111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5694444444444443,
+              "ci": [
+                0.45486111111111116,
+                0.673611111111111
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3194444444444444,
+                0.78125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4336272151257711,
+              "ci": [
+                0.34068997728742306,
+                0.522479473904948
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.24831914650700534,
+                0.6020729443881232
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6145833333333334,
+              "ci": [
+                0.4895833333333333,
+                0.7395833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.375,
+                0.8333333333333334
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6006944444444444,
+              "ci": [
+                0.4861111111111111,
+                0.7152777777777777
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3923611111111111,
+                0.78125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5881944444444444,
+              "ci": [
+                0.48819444444444443,
+                0.6819444444444445
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3447482638888889,
+                0.7940972222222222
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5067047980405851,
+              "ci": [
+                0.4102387026236151,
+                0.6000591688541475
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.30700913044868405,
+                0.6860692917912827
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6979166666666666,
+              "ci": [
+                0.59375,
+                0.8020833333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4791666666666667,
+                0.875
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6875,
+              "ci": [
+                0.5972222222222222,
+                0.78125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4444444444444445,
+                0.8923611111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5911706349206348,
+              "ci": [
+                0.49448536706349205,
+                0.6831932043650794
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3488355654761905,
+                0.7951562499999998
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5456814140376203,
+              "ci": [
+                0.4593197673414939,
+                0.6303481138750671
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.33000925927116315,
+                0.7351912329046918
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.75,
+              "ci": [
+                0.6666666666666666,
+                0.8229166666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.5104166666666666,
+                0.9375
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 51.290374001837336,
+            "ci95_ms": [
+              49.6712589992967,
+              52.54286900162697
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 60.11179004981386,
+            "ci95_ms": [
+              57.74783999986539,
+              61.16615645150887
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 35,
+          "population": 60,
+          "primary_counts": {
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 12,
+            "not_recalled_in_candidates": 15
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.22857142857142856,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "not_recalled_in_candidates": 0.42857142857142855
+          },
+          "tag_counts": {
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 12,
+            "not_recalled_in_candidates": 15
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.22857142857142856,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "not_recalled_in_candidates": 0.42857142857142855
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 60,
+        "answerable_queries": 48,
+        "no_answer_queries": 12,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.27777777777777773,
+              "ci": [
+                0.1875,
+                0.37152777777777785
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.11458333333333333,
+                0.45138888888888884
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.3541666666666667,
+                0.5625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.22916666666666666,
+                0.6875
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.3541666666666667,
+                0.5625
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.22916666666666666,
+                0.6875
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.40625,
+              "ci": [
+                0.28125,
+                0.53125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.17708333333333334,
+                0.6354166666666666
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.5381944444444444,
+              "ci": [
+                0.42361111111111116,
+                0.6459201388888877
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2673611111111111,
+                0.7951388888888888
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5486111111111112,
+              "ci": [
+                0.4513888888888889,
+                0.6458333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.78125
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4970482655197386,
+              "ci": [
+                0.39263345377740094,
+                0.6018887169496165
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.25086225740912377,
+                0.731234030639045
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.59375,
+              "ci": [
+                0.4895833333333333,
+                0.6979166666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.3125,
+                0.84375
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.6597222222222222,
+              "ci": [
+                0.5451388888888888,
+                0.7708333333333334
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4131944444444444,
+                0.8819444444444443
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5736111111111112,
+              "ci": [
+                0.48053819444444434,
+                0.6645920138888889
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.329140625,
+                0.7934027777777777
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5557640374857876,
+              "ci": [
+                0.4577882837596843,
+                0.6540632488345368
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.32117586573238743,
+                0.7721826042050172
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.6979166666666666,
+              "ci": [
+                0.5833333333333334,
+                0.8125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4583333333333333,
+                0.90625
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.6875,
+              "ci": [
+                0.5972222222222222,
+                0.78125
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.4444444444444445,
+                0.8923611111111112
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5805555555555556,
+              "ci": [
+                0.49339409722222227,
+                0.6666666666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.33955729166666665,
+                0.7954861111111112
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.5683468568316737,
+              "ci": [
+                0.4793516042700615,
+                0.6580677172934848
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.33443488906299274,
+                0.7784051019179543
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.75,
+              "ci": [
+                0.6666666666666666,
+                0.8229166666666666
+              ],
+              "n": 48,
+              "ci95_course_family": [
+                0.5104166666666666,
+                0.9375
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 888.9035290012544,
+            "ci95_ms": [
+              811.503791497671,
+              944.5339140002034
+            ],
+            "n": 60
+          },
+          "p95": {
+            "estimate_ms": 1425.552054950094,
+            "ci95_ms": [
+              1364.4273146736984,
+              1576.8032479505562
+            ],
+            "n": 60
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 12,
+          "n": 12,
+          "rate": 1.0,
+          "wilson_ci95": [
+            0.7575059933447592,
+            1
+          ]
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 35,
+          "population": 60,
+          "primary_counts": {
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 12,
+            "not_recalled_in_candidates": 15
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.22857142857142856,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "not_recalled_in_candidates": 0.42857142857142855
+          },
+          "tag_counts": {
+            "ranked_below_context": 8,
+            "no_answer_candidate_returned": 12,
+            "not_recalled_in_candidates": 15
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.22857142857142856,
+            "no_answer_candidate_returned": 0.34285714285714286,
+            "not_recalled_in_candidates": 0.42857142857142855
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": 0.010416666666666666,
+        "ci": [
+          -0.0625,
+          0.09375
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.08333333333333333,
+          0.10416666666666667
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": 0.020833333333333332,
+        "ci": [
+          -0.0625,
+          0.10416666666666667
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.08333333333333333,
+          0.11458333333333333
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.625,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.0,
+        "ci": [
+          -0.11458333333333333,
+          0.10416666666666667
+        ],
+        "n": 48,
+        "ci_course_family_bonferroni": [
+          -0.16666666666666666,
+          0.15625
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      }
+    }
+  },
+  "cross-lecture": {
+    "scope": "cross-lecture",
+    "courses": [
+      "algorithms",
+      "calculus",
+      "economics",
+      "linear",
+      "probability",
+      "quantum"
+    ],
+    "methods": {
+      "dense": {
+        "queries": 24,
+        "answerable_queries": 24,
+        "no_answer_queries": 0,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.14583333333333334,
+              "ci": [
+                0.14583333333333334,
+                0.14583333333333334
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.06944444444444443,
+                0.22916666666666666
+              ]
+            },
+            "mrr": {
+              "estimate": 0.375,
+              "ci": [
+                0.375,
+                0.375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.5833333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.375,
+              "ci": [
+                0.375,
+                0.375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.5833333333333334
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.1875,
+              "ci": [
+                0.1875,
+                0.1875
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.10416666666666667,
+                0.2916666666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.27777777777777773,
+              "ci": [
+                0.27777777777777773,
+                0.27777777777777773
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.1597222222222222,
+                0.3958333333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.4583333333333333,
+                0.4583333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.625
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.2896331602249491,
+              "ci": [
+                0.2896331602249491,
+                0.2896331602249491
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.17266118611427925,
+                0.39664960188211135
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3333333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.3333333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.20833333333333334,
+                0.4583333333333333
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.3541666666666667,
+              "ci": [
+                0.3541666666666667,
+                0.3541666666666667
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.1875,
+                0.5347222222222222
+              ]
+            },
+            "mrr": {
+              "estimate": 0.46875,
+              "ci": [
+                0.46875,
+                0.46875
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.6354166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.33260676025196545,
+              "ci": [
+                0.3326067602519654,
+                0.3326067602519654
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2049443262036645,
+                0.45167144249754554
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3958333333333333,
+              "ci": [
+                0.3958333333333333,
+                0.3958333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.25,
+                0.5416666666666666
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.3923611111111111,
+              "ci": [
+                0.3923611111111111,
+                0.3923611111111111
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.21519097222222225,
+                0.59375
+              ]
+            },
+            "mrr": {
+              "estimate": 0.47470238095238093,
+              "ci": [
+                0.47470238095238093,
+                0.47470238095238093
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.30456349206349204,
+                0.6354166666666666
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.35151148443131913,
+              "ci": [
+                0.35151148443131913,
+                0.35151148443131913
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.21661683334904236,
+                0.47814794904849833
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4375,
+              "ci": [
+                0.4375,
+                0.4375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.6041666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 40.50526400169474,
+            "ci95_ms": [
+              40.50526400169474,
+              40.50526400169474
+            ],
+            "n": 24
+          },
+          "p95": {
+            "estimate_ms": 46.386827847709355,
+            "ci95_ms": [
+              46.386827847709355,
+              46.386827847709355
+            ],
+            "n": 24
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 22,
+          "population": 24,
+          "primary_counts": {
+            "not_recalled_in_candidates": 19,
+            "ranked_below_context": 2,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.8636363636363636,
+            "ranked_below_context": 0.09090909090909091,
+            "original_translation_duplicate": 0.045454545454545456
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 19,
+            "ranked_below_context": 3,
+            "original_translation_duplicate": 2
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.8636363636363636,
+            "ranked_below_context": 0.13636363636363635,
+            "original_translation_duplicate": 0.09090909090909091
+          }
+        }
+      },
+      "bm25_dense": {
+        "queries": 24,
+        "answerable_queries": 24,
+        "no_answer_queries": 0,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.11805555555555554,
+              "ci": [
+                0.11805555555555554,
+                0.11805555555555554
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.09027777777777778,
+                0.14583333333333334
+              ]
+            },
+            "mrr": {
+              "estimate": 0.3333333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.3333333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.25,
+                0.4166666666666667
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3333333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.3333333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.25,
+                0.4166666666666667
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.16666666666666666,
+              "ci": [
+                0.16666666666666666,
+                0.16666666666666666
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.125,
+                0.20833333333333334
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.25,
+              "ci": [
+                0.25,
+                0.25
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.17361111111111108,
+                0.3125
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4444444444444444,
+              "ci": [
+                0.4444444444444444,
+                0.4444444444444444
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.34027777777777785,
+                0.548611111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.25730598012472056,
+              "ci": [
+                0.25730598012472056,
+                0.25730598012472056
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.19265161992426338,
+                0.3210860332071057
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3333333333333333,
+              "ci": [
+                0.3333333333333333,
+                0.3333333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.22916666666666666,
+                0.4166666666666667
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.3541666666666667,
+              "ci": [
+                0.3541666666666667,
+                0.3541666666666667
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.22916666666666666,
+                0.4791666666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.46319444444444446,
+              "ci": [
+                0.46319444444444446,
+                0.46319444444444446
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.35555555555555557,
+                0.5763888888888888
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.31162491677832205,
+              "ci": [
+                0.31162491677832205,
+                0.31162491677832205
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.22020629508997067,
+                0.4076867410282941
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4375,
+              "ci": [
+                0.4375,
+                0.4375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.5625
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.40972222222222215,
+              "ci": [
+                0.40972222222222215,
+                0.40972222222222215
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.23611111111111108,
+                0.5902777777777778
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4684027777777778,
+              "ci": [
+                0.4684027777777778,
+                0.4684027777777778
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.35694444444444445,
+                0.5850694444444444
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.33734657017439246,
+              "ci": [
+                0.33734657017439246,
+                0.33734657017439246
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.22020629508997067,
+                0.4599165883179981
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.4583333333333333,
+                0.4583333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.6041666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 51.810039001793484,
+            "ci95_ms": [
+              51.810039001793484,
+              51.810039001793484
+            ],
+            "n": 24
+          },
+          "p95": {
+            "estimate_ms": 60.01194050040794,
+            "ci95_ms": [
+              60.01194050040794,
+              60.01194050040794
+            ],
+            "n": 24
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 23,
+          "population": 24,
+          "primary_counts": {
+            "not_recalled_in_candidates": 20,
+            "ranked_below_context": 2,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.8695652173913043,
+            "ranked_below_context": 0.08695652173913043,
+            "original_translation_duplicate": 0.043478260869565216
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 20,
+            "original_translation_duplicate": 2,
+            "ranked_below_context": 3
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.8695652173913043,
+            "original_translation_duplicate": 0.08695652173913043,
+            "ranked_below_context": 0.13043478260869565
+          }
+        }
+      },
+      "hybrid_rrf": {
+        "queries": 24,
+        "answerable_queries": 24,
+        "no_answer_queries": 0,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.13888888888888887,
+              "ci": [
+                0.13888888888888887,
+                0.13888888888888887
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.09722222222222221,
+                0.19444444444444442
+              ]
+            },
+            "mrr": {
+              "estimate": 0.375,
+              "ci": [
+                0.375,
+                0.375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.4583333333333333
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.375,
+              "ci": [
+                0.375,
+                0.375
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.4583333333333333
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.1875,
+              "ci": [
+                0.1875,
+                0.1875
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.14583333333333334,
+                0.22916666666666666
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.2638888888888889,
+              "ci": [
+                0.26388888888888884,
+                0.26388888888888884
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.18055555555555555,
+                0.3263888888888889
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4930555555555555,
+              "ci": [
+                0.4930555555555555,
+                0.4930555555555555
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3819444444444444,
+                0.5833333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.2832014872183006,
+              "ci": [
+                0.2832014872183005,
+                0.2832014872183005
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.20999250140546052,
+                0.3451457160546253
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.3541666666666667,
+              "ci": [
+                0.3541666666666667,
+                0.3541666666666667
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.25,
+                0.4583333333333333
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.3263888888888889,
+              "ci": [
+                0.3263888888888889,
+                0.3263888888888889
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2222222222222222,
+                0.4166666666666667
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5138888888888888,
+              "ci": [
+                0.5138888888888888,
+                0.5138888888888888
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3958333333333333,
+                0.6111111111111112
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3186108458895938,
+              "ci": [
+                0.3186108458895938,
+                0.3186108458895938
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2291363733080515,
+                0.39166253221263186
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4166666666666667,
+              "ci": [
+                0.4166666666666667,
+                0.4166666666666667
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2916666666666667,
+                0.5208333333333334
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.47222222222222215,
+              "ci": [
+                0.47222222222222215,
+                0.47222222222222215
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2708333333333333,
+                0.6597222222222222
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5138888888888888,
+              "ci": [
+                0.5138888888888888,
+                0.5138888888888888
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3958333333333333,
+                0.6111111111111112
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.3848812182324665,
+              "ci": [
+                0.3848812182324665,
+                0.3848812182324665
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.25503887498146977,
+                0.5010661367119931
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5416666666666666,
+              "ci": [
+                0.5416666666666666,
+                0.5416666666666666
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.7291666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 53.57561450000503,
+            "ci95_ms": [
+              53.57561450000503,
+              53.57561450000503
+            ],
+            "n": 24
+          },
+          "p95": {
+            "estimate_ms": 59.67505749904376,
+            "ci95_ms": [
+              59.67505749904376,
+              59.67505749904376
+            ],
+            "n": 24
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 23,
+          "population": 24,
+          "primary_counts": {
+            "ranked_below_context": 7,
+            "not_recalled_in_candidates": 16
+          },
+          "primary_share_of_failures": {
+            "ranked_below_context": 0.30434782608695654,
+            "not_recalled_in_candidates": 0.6956521739130435
+          },
+          "tag_counts": {
+            "ranked_below_context": 7,
+            "not_recalled_in_candidates": 16,
+            "original_translation_duplicate": 1
+          },
+          "tag_share_of_failures": {
+            "ranked_below_context": 0.30434782608695654,
+            "not_recalled_in_candidates": 0.6956521739130435,
+            "original_translation_duplicate": 0.043478260869565216
+          }
+        }
+      },
+      "hybrid_rrf_ce": {
+        "queries": 24,
+        "answerable_queries": 24,
+        "no_answer_queries": 0,
+        "metrics": {
+          "1": {
+            "recall": {
+              "estimate": 0.18055555555555555,
+              "ci": [
+                0.18055555555555555,
+                0.18055555555555555
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.11805555555555554,
+                0.24305555555555555
+              ]
+            },
+            "mrr": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.4583333333333333,
+                0.4583333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.5833333333333334
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.4583333333333333,
+              "ci": [
+                0.4583333333333333,
+                0.4583333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.5833333333333334
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.22916666666666666,
+              "ci": [
+                0.22916666666666666,
+                0.22916666666666666
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.16666666666666666,
+                0.2916666666666667
+              ]
+            }
+          },
+          "3": {
+            "recall": {
+              "estimate": 0.34027777777777773,
+              "ci": [
+                0.34027777777777773,
+                0.34027777777777773
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.20138888888888887,
+                0.47222222222222215
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5555555555555555,
+              "ci": [
+                0.5555555555555556,
+                0.5555555555555556
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3958333333333333,
+                0.7152777777777777
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.36531280603854266,
+              "ci": [
+                0.36531280603854266,
+                0.36531280603854266
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2397768478562501,
+                0.4868783927557004
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.4166666666666667,
+              "ci": [
+                0.4166666666666667,
+                0.4166666666666667
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2708333333333333,
+                0.5625
+              ]
+            }
+          },
+          "5": {
+            "recall": {
+              "estimate": 0.45833333333333326,
+              "ci": [
+                0.4583333333333333,
+                0.4583333333333333
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2638888888888889,
+                0.6458333333333333
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5743055555555555,
+              "ci": [
+                0.5743055555555555,
+                0.5743055555555555
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.4145833333333333,
+                0.7236111111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.43328712205145664,
+              "ci": [
+                0.43328712205145664,
+                0.43328712205145664
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2775096097478646,
+                0.5810337060968077
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5208333333333334,
+              "ci": [
+                0.5208333333333334,
+                0.5208333333333334
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.6875
+              ]
+            }
+          },
+          "8": {
+            "recall": {
+              "estimate": 0.47222222222222215,
+              "ci": [
+                0.47222222222222215,
+                0.47222222222222215
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2708333333333333,
+                0.6597222222222222
+              ]
+            },
+            "mrr": {
+              "estimate": 0.5743055555555555,
+              "ci": [
+                0.5743055555555555,
+                0.5743055555555555
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.4145833333333333,
+                0.7236111111111111
+              ]
+            },
+            "ndcg": {
+              "estimate": 0.44025214100838167,
+              "ci": [
+                0.44025214100838167,
+                0.44025214100838167
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.2801947482624863,
+                0.594345662271512
+              ]
+            },
+            "evidence_coverage": {
+              "estimate": 0.5416666666666666,
+              "ci": [
+                0.5416666666666666,
+                0.5416666666666666
+              ],
+              "n": 24,
+              "ci95_course_family": [
+                0.3333333333333333,
+                0.7291666666666666
+              ]
+            }
+          }
+        },
+        "latency": {
+          "p50": {
+            "estimate_ms": 776.4328919984109,
+            "ci95_ms": [
+              776.4328919984109,
+              776.4328919984109
+            ],
+            "n": 24
+          },
+          "p95": {
+            "estimate_ms": 1358.1414029988082,
+            "ci95_ms": [
+              1358.1414029988082,
+              1358.1414029988082
+            ],
+            "n": 24
+          }
+        },
+        "no_answer_candidate_returned": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "wilson_ci95": null
+        },
+        "retrieval_errors": 0,
+        "failures": {
+          "n": 20,
+          "population": 24,
+          "primary_counts": {
+            "not_recalled_in_candidates": 16,
+            "ranked_below_context": 3,
+            "original_translation_duplicate": 1
+          },
+          "primary_share_of_failures": {
+            "not_recalled_in_candidates": 0.8,
+            "ranked_below_context": 0.15,
+            "original_translation_duplicate": 0.05
+          },
+          "tag_counts": {
+            "not_recalled_in_candidates": 16,
+            "original_translation_duplicate": 2,
+            "ranked_below_context": 4
+          },
+          "tag_share_of_failures": {
+            "not_recalled_in_candidates": 0.8,
+            "original_translation_duplicate": 0.1,
+            "ranked_below_context": 0.2
+          }
+        }
+      }
+    },
+    "paired_primary_comparisons": {
+      "bm25_dense_minus_dense": {
+        "estimate": 0.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "n": 24,
+        "ci_course_family_bonferroni": [
+          -0.10416666666666667,
+          0.125
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_minus_dense": {
+        "estimate": 0.020833333333333332,
+        "ci": [
+          0.020833333333333332,
+          0.020833333333333332
+        ],
+        "n": 24,
+        "ci_course_family_bonferroni": [
+          -0.10416666666666667,
+          0.14583333333333334
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 1.0,
+        "course_sign_flip_p_bonferroni": 1
+      },
+      "hybrid_rrf_ce_minus_dense": {
+        "estimate": 0.08333333333333333,
+        "ci": [
+          0.08333333333333333,
+          0.08333333333333333
+        ],
+        "n": 24,
+        "ci_course_family_bonferroni": [
+          -0.041666666666666664,
+          0.20833333333333334
+        ],
+        "metric": "Evidence Coverage@3",
+        "simultaneous_family": "three prespecified comparisons to Dense",
+        "course_sign_flip_p_two_sided": 0.375,
+        "course_sign_flip_p_bonferroni": 1
+      }
+    }
+  }
+}

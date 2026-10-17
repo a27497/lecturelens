@@ -9,6 +9,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import Field
 
 from ..contracts import Contract, Identifier
+from .failures import failure_category
 from .feedback_store import feedback_source
 from .store import BudgetExceeded, RunStopped, StudyError
 
@@ -322,6 +323,17 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
                     or (row["deadline"] - datetime.now(timezone.utc)).total_seconds() <= 5
                 ):
                     raise
+                store.event(
+                    run["run_id"],
+                    token,
+                    "model_retry_scheduled",
+                    {
+                        "retry": 1,
+                        "task_kind": "feedback",
+                        "error_code": error.code,
+                        "failure_category": failure_category(error.code),
+                    },
+                )
         raise AssertionError("unreachable")
 
     def call_once(messages, schemas, review=False):
@@ -332,7 +344,6 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
             + len(json.dumps(schemas).encode())
             + max_tokens
         )
-        store.reserve(run["run_id"], token, "model", tokens)
         metadata = {
             "purpose": "review" if review else "decision",
             "attempt": row["model_calls"] + 1,
@@ -341,15 +352,32 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
         if hasattr(provider, "identity"):
             metadata["model_selection"] = provider.identity(metadata["purpose"])
         timeout = min(20.0, max(0.1, (row["deadline"] - datetime.now(timezone.utc)).total_seconds()))
-        store.event(
-            run["run_id"],
-            token,
-            "model_started",
-            {
-                **metadata,
-                "_trace": model_detail(messages, schemas, timeout),
-            },
+        from .call_journal import begin, operation_key, replay
+
+        key = operation_key(messages, schemas, metadata["purpose"])
+        prior, metadata = begin(
+            store, run["run_id"], token, key, tokens, metadata, model_detail(messages, schemas, timeout)
         )
+        if prior is not None:
+            guard()
+            response = replay(prior)
+        else:
+            response = invoke_model(messages, schemas, timeout, review, key, metadata)
+        calls = response.get("calls", [])
+        if (
+            not isinstance(calls, list)
+            or len(calls) != 1
+            or not isinstance(calls[0], dict)
+            or not isinstance(calls[0].get("name"), str)
+            or calls[0]["name"] not in {s["function"]["name"] for s in schemas}
+            or not isinstance(calls[0].get("arguments"), dict)
+        ):
+            raise StudyError("MODEL_FEEDBACK_CONTRACT")
+        return calls[0]
+
+    def invoke_model(messages, schemas, timeout, review, key, metadata):
+        from .call_journal import complete
+
         started = time.monotonic()
         try:
             response = provider.feedback(
@@ -358,44 +386,50 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
                 timeout,
                 review=review,
             )
+            if not isinstance(response, dict):
+                raise StudyError("MODEL_FEEDBACK_CONTRACT")
         except (StudyError, BudgetExceeded) as error:
             # A per-call timeout is recoverable only while the persisted Run
             # deadline, cancellation and revision guards still allow progress.
             guard()
             code = "MODEL_TIMEOUT" if isinstance(error, BudgetExceeded) else error.code
-            store.event(
+            complete(
+                store,
                 run["run_id"],
                 token,
-                "model_failed",
-                metadata
-                | {
+                key,
+                metadata,
+                {
                     "error_code": code,
+                    "failure_category": failure_category(code),
                     "duration_ms": round((time.monotonic() - started) * 1000),
                     **getattr(error, "usage", {}),
                 },
+                error={"code": code, "usage": getattr(error, "usage", {})},
             )
             raise StudyError(code) from error
         guard()
-        store.event(
+        complete(
+            store,
             run["run_id"],
             token,
-            "model_finished",
-            metadata
-            | {
+            key,
+            metadata,
+            {
                 "duration_ms": round((time.monotonic() - started) * 1000),
                 **response.get("usage", {}),
                 "_trace": {"response": response},
             },
+            response=response,
         )
-        calls = response.get("calls", [])
-        if len(calls) != 1 or calls[0]["name"] not in {s["function"]["name"] for s in schemas}:
-            raise StudyError("MODEL_FEEDBACK_CONTRACT")
-        return calls[0]
+        return response
 
     def decide(state):
+        from .call_journal import planning_calls
+
         row = guard()
         evidence = evidence_for(state["selected"])
-        calls_left = max(0, 6 - row["model_calls"])
+        calls_left = max(0, 6 - planning_calls(store, run["run_id"], token, row["model_calls"]))
         if not state["history"]:
             names = ["read_question_evidence"]
         else:
@@ -444,7 +478,7 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
         if prior:
             result = prior["result"]
         else:
-            store.reserve(run["run_id"], token, "tool")
+            store.reserve(run["run_id"], token, "tool", key=call_id)
             store.event(run["run_id"], token, "tool_started", {"tool": name, "call_id": call_id})
             feedback = None
             if name == "read_question_evidence":
@@ -589,7 +623,13 @@ def feedback_graph(runtime, run, token, saver, provider, state_type):
     graph = StateGraph(state_type)
     graph.add_node("feedback_decide", traced_node(store, run, token, "feedback_decide", decide))
     graph.add_node("feedback_tool", traced_node(store, run, token, "feedback_tool", tool))
+    if run.get("approval_required"):
+        from .approval import add_gate
+
+        add_gate(graph, runtime, run, token)
+        graph.add_edge("approval", END)
+    end = "approval" if run.get("approval_required") else END
     graph.add_edge(START, "feedback_decide")
     graph.add_edge("feedback_decide", "feedback_tool")
-    graph.add_conditional_edges("feedback_tool", lambda state: END if state["done"] else "feedback_decide")
+    graph.add_conditional_edges("feedback_tool", lambda state: end if state["done"] else "feedback_decide")
     return graph.compile(checkpointer=saver)

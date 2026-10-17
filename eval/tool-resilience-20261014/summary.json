@@ -1,0 +1,1864 @@
+{
+  "baseline_commit": "56bc07ac3f5f57bb71592047baf12befc90e0448",
+  "baseline_source_sha256": "18f5a0d3cd963e4539ee8f2ff64f6e4b7a636d3f80944ec2b6f36c676d5ae7a7",
+  "candidate_source_sha256": "963ec9599818d42f0266fc3a110d334ae70fab178382b8c5b0933b678d0ab3ee",
+  "raw_sha256": {
+    "baseline.jsonl": "0c69e02941bfae1ce5d06ba04e84713edba4986d04ee048f22dd31eb2588efdf",
+    "candidate.jsonl": "9a19c0e18c86902c89c0ecd9a392e978489f440f96424ec2d4333e8062dd3b7a",
+    "run.py": "6f6db6efbe7cde757beb410d65a4b8787056cf6c37693660b6067b2011bd6748"
+  },
+  "percentile_method": "nearest rank; signed per-trial deltas; full Run wall time, not tool-only time",
+  "workers_per_phase": 4,
+  "samples_per_worker": 5,
+  "real_model_quality": "未运行",
+  "real_Java_process": "未运行",
+  "scenarios": {
+    "check_unavailable_persistent": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "latency_ms": {
+          "mean": 1105.637,
+          "p50": 1107.129,
+          "p95": 1219.857
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -915.812,
+          "p50": -801.049,
+          "p95": -600.112
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "failure_categories": {
+          "tool_dependency_unavailable": 20
+        },
+        "dependency_stop_count": 20,
+        "read_retry_calls": {
+          "total": 40,
+          "per_run": {
+            "mean": 2,
+            "p50": 2,
+            "p95": 2
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        },
+        "mcp_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "latency_ms": {
+          "mean": 3939.385,
+          "p50": 3850.399,
+          "p95": 4713.305
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -324.585,
+          "p50": -524.213,
+          "p95": 1502.089
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 2833.748,
+        "p50": 2723.452,
+        "p95": 3609.797
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 591.228,
+        "p50": 458.812,
+        "p95": 2319.826
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 40,
+        "per_run": {
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        }
+      }
+    },
+    "healthy": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 25,
+          "p50": 25,
+          "p95": 25
+        },
+        "latency_ms": {
+          "mean": 2021.45,
+          "p50": 1868.372,
+          "p95": 2632.698
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 25,
+          "p50": 25,
+          "p95": 25
+        },
+        "latency_ms": {
+          "mean": 4263.97,
+          "p50": 4538.54,
+          "p95": 5364.307
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 2242.52,
+        "p50": 1910.57,
+        "p95": 3443.2
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "illegal_call_shape": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "STUDY_EXECUTION_FAILED": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 334.661,
+          "p50": 330.033,
+          "p95": 360.176
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -1686.788,
+          "p50": -1559.773,
+          "p95": -1463.519
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "failure_categories": {
+          "model_protocol": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 740.511,
+          "p50": 719.841,
+          "p95": 902.564
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -3523.459,
+          "p50": -3974.509,
+          "p95": -2249.414
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 405.85,
+        "p50": 393.803,
+        "p95": 586.074
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -1836.671,
+        "p50": -1647.88,
+        "p95": -702.431
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "integer_overflow": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": null,
+        "unsafe_success": 20,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 25,
+          "p50": 25,
+          "p95": 25
+        },
+        "latency_ms": {
+          "mean": 1897.688,
+          "p50": 1850.073,
+          "p95": 2041.006
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -123.761,
+          "p50": 0.261,
+          "p95": 233.972
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "failure_categories": {
+          "invalid_parameters": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 741.479,
+          "p50": 687.776,
+          "p95": 1041.047
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -3522.491,
+          "p50": -3956.153,
+          "p95": -2184.847
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": -1156.209,
+        "p50": -1233.122,
+        "p95": -859.071
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -3398.73,
+        "p50": -3165.236,
+        "p95": -2147.576
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": -420,
+        "per_run": {
+          "mean": -21,
+          "p50": -21,
+          "p95": -21
+        }
+      }
+    },
+    "malformed_response": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_MALFORMED_AUTHORITY_RESPONSE": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 1594.979,
+          "p50": 1523.682,
+          "p95": 1817.95
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -426.471,
+          "p50": -333.849,
+          "p95": -10.754
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_MALFORMED_AUTHORITY_RESPONSE": 20
+        },
+        "failure_categories": {
+          "malformed_response": 20
+        },
+        "dependency_stop_count": 20,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 2265.851,
+          "p50": 2141.192,
+          "p95": 2771.669
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -1998.119,
+          "p50": -2505.504,
+          "p95": -370.401
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 670.872,
+        "p50": 505.979,
+        "p95": 1252.719
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -1571.648,
+        "p50": -1458.657,
+        "p95": -36.552
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "negative_parameter": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": null,
+        "unsafe_success": 20,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 25,
+          "p50": 25,
+          "p95": 25
+        },
+        "latency_ms": {
+          "mean": 2722.039,
+          "p50": 2650.424,
+          "p95": 2968.533
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 700.59,
+          "p50": 802.825,
+          "p95": 1157.644
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "failure_categories": {
+          "invalid_parameters": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 1630.645,
+          "p50": 1575.871,
+          "p95": 1984.186
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -2633.325,
+          "p50": -3076.839,
+          "p95": -1236.818
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": -1091.395,
+        "p50": -1164.159,
+        "p95": -702.554
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -3333.915,
+        "p50": -3089.04,
+        "p95": -1984.503
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": -420,
+        "per_run": {
+          "mean": -21,
+          "p50": -21,
+          "p95": -21
+        }
+      }
+    },
+    "oversized_parameter": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 338.675,
+          "p50": 322.572,
+          "p95": 391.902
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -1682.774,
+          "p50": -1534.901,
+          "p95": -1430.188
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "failure_categories": {
+          "invalid_parameters": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 754.462,
+          "p50": 733.867,
+          "p95": 984.261
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -3509.508,
+          "p50": -4001.392,
+          "p95": -2186.742
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 415.787,
+        "p50": 374.608,
+        "p95": 632.516
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -1826.734,
+        "p50": -1648.382,
+        "p95": -656.755
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "protocol_once": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 29,
+          "p50": 29,
+          "p95": 29
+        },
+        "latency_ms": {
+          "mean": 2189.474,
+          "p50": 2148.973,
+          "p95": 2442.365
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 168.024,
+          "p50": 286.221,
+          "p95": 630.343
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 29,
+          "p50": 29,
+          "p95": 29
+        },
+        "latency_ms": {
+          "mean": 4964.855,
+          "p50": 4521.216,
+          "p95": 6270.922
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 700.885,
+          "p50": 473.942,
+          "p95": 3163.679
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 2775.381,
+        "p50": 2372.243,
+        "p95": 4090.12
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 532.861,
+        "p50": 180.709,
+        "p95": 2811.537
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "protocol_persistent": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 8,
+          "p50": 8,
+          "p95": 8
+        },
+        "latency_ms": {
+          "mean": 614.51,
+          "p50": 605.221,
+          "p95": 660.662
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -1406.939,
+          "p50": -1281.025,
+          "p95": -1140.327
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MODEL_TOOL_CONTRACT": 20
+        },
+        "failure_categories": {
+          "model_protocol": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 8,
+          "p50": 8,
+          "p95": 8
+        },
+        "latency_ms": {
+          "mean": 1404.684,
+          "p50": 1171.119,
+          "p95": 1879.867
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -2859.286,
+          "p50": -3290.823,
+          "p95": -1269.116
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 790.174,
+        "p50": 564.569,
+        "p95": 1266.07
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -1452.346,
+        "p50": -1380.339,
+        "p95": -23.201
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    },
+    "reversed_window": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": null,
+        "unsafe_success": 20,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 25,
+          "p50": 25,
+          "p95": 25
+        },
+        "latency_ms": {
+          "mean": 1929.651,
+          "p50": 1904.812,
+          "p95": 2082.366
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -91.799,
+          "p50": 0.342,
+          "p95": 199.025
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "INVALID_TOOL_ARGUMENTS": 20
+        },
+        "failure_categories": {
+          "invalid_parameters": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 751.471,
+          "p50": 690.241,
+          "p95": 984.347
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -3512.499,
+          "p50": -3919.489,
+          "p95": -2177.276
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": -1178.179,
+        "p50": -1230.768,
+        "p95": -888.347
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -3420.7,
+        "p50": -3181.882,
+        "p95": -2177.618
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": -420,
+        "per_run": {
+          "mean": -21,
+          "p50": -21,
+          "p95": -21
+        }
+      }
+    },
+    "timeout_once": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 2812.79,
+          "p50": 2799.875,
+          "p95": 2939.039
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 791.34,
+          "p50": 937.396,
+          "p95": 1017.42
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "mcp_calls": {
+          "mean": 26,
+          "p50": 26,
+          "p95": 26
+        },
+        "latency_ms": {
+          "mean": 7315.567,
+          "p50": 6740.994,
+          "p95": 8766.127
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 3051.597,
+          "p50": 3175.457,
+          "p95": 3552.453
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 4502.777,
+        "p50": 3932.925,
+        "p95": 5904.822
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 2260.257,
+        "p50": 2241.15,
+        "p95": 2569.239
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 400,
+        "per_run": {
+          "mean": 20,
+          "p50": 20,
+          "p95": 20
+        }
+      }
+    },
+    "timeout_persistent": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 3585.078,
+          "p50": 3569.635,
+          "p95": 3711.423
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 1563.628,
+          "p50": 1701.052,
+          "p95": 1814.923
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_TIMEOUT": 20
+        },
+        "failure_categories": {
+          "timeout": 20
+        },
+        "dependency_stop_count": 20,
+        "read_retry_calls": {
+          "total": 40,
+          "per_run": {
+            "mean": 2,
+            "p50": 2,
+            "p95": 2
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 8,
+          "p50": 8,
+          "p95": 8
+        },
+        "latency_ms": {
+          "mean": 9960.962,
+          "p50": 9818.648,
+          "p95": 10669.172
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 5696.992,
+          "p50": 5450.43,
+          "p95": 6532.35
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 6375.884,
+        "p50": 6249.013,
+        "p95": 7121.242
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 4133.364,
+        "p50": 4234.383,
+        "p95": 4820.403
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 40,
+        "per_run": {
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        }
+      }
+    },
+    "unavailable_once": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 1575.044,
+          "p50": 1542.317,
+          "p95": 1777.196
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -446.405,
+          "p50": -345.475,
+          "p95": -175.015
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 20,
+        "recovery_success_rate": 1.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "succeeded": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {},
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 20,
+          "per_run": {
+            "mean": 1,
+            "p50": 1,
+            "p95": 1
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "mcp_calls": {
+          "mean": 26,
+          "p50": 26,
+          "p95": 26
+        },
+        "latency_ms": {
+          "mean": 6732.204,
+          "p50": 7354.556,
+          "p95": 7973.902
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": 2468.235,
+          "p50": 2137.548,
+          "p95": 4790.972
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 5157.16,
+        "p50": 5819.445,
+        "p95": 6424.024
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 2914.64,
+        "p50": 2308.434,
+        "p95": 5136.447
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 400,
+        "per_run": {
+          "mean": 20,
+          "p50": 20,
+          "p95": 20
+        }
+      }
+    },
+    "unavailable_persistent": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 1,
+          "p50": 1,
+          "p95": 1
+        },
+        "mcp_calls": {
+          "mean": 6,
+          "p50": 6,
+          "p95": 6
+        },
+        "latency_ms": {
+          "mean": 1603.756,
+          "p50": 1553.695,
+          "p95": 1814.502
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -417.693,
+          "p50": -297.784,
+          "p95": -10.707
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": 0.0,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "MCP_AUTHORITY_UNAVAILABLE": 20
+        },
+        "failure_categories": {
+          "tool_dependency_unavailable": 20
+        },
+        "dependency_stop_count": 20,
+        "read_retry_calls": {
+          "total": 40,
+          "per_run": {
+            "mean": 2,
+            "p50": 2,
+            "p95": 2
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 3,
+          "p50": 3,
+          "p95": 3
+        },
+        "mcp_calls": {
+          "mean": 8,
+          "p50": 8,
+          "p95": 8
+        },
+        "latency_ms": {
+          "mean": 4244.03,
+          "p50": 4079.797,
+          "p95": 5018.49
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -19.94,
+          "p50": -526.994,
+          "p95": 1872.433
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 2640.274,
+        "p50": 2438.248,
+        "p95": 3519.819
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": 397.754,
+        "p50": 147.106,
+        "p95": 2232.473
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 40,
+        "per_run": {
+          "mean": 2,
+          "p50": 2,
+          "p95": 2
+        }
+      }
+    },
+    "unknown_tool": {
+      "baseline": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "UNKNOWN_TOOL": 20
+        },
+        "failure_categories": {},
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 355.733,
+          "p50": 354.865,
+          "p95": 391.962
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -1665.717,
+          "p50": -1518.537,
+          "p95": -1442.009
+        }
+      },
+      "candidate": {
+        "n": 20,
+        "execution_success": 0,
+        "recovery_success_rate": null,
+        "unsafe_success": 0,
+        "status_distribution": {
+          "failed": 20
+        },
+        "refusal_count": 0,
+        "failure_codes": {
+          "UNKNOWN_TOOL": 20
+        },
+        "failure_categories": {
+          "model_tool_selection": 20
+        },
+        "dependency_stop_count": 0,
+        "read_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "protocol_retry_calls": {
+          "total": 0,
+          "per_run": {
+            "mean": 0,
+            "p50": 0,
+            "p95": 0
+          }
+        },
+        "budget_tool_calls": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        },
+        "mcp_calls": {
+          "mean": 4,
+          "p50": 4,
+          "p95": 4
+        },
+        "latency_ms": {
+          "mean": 733.256,
+          "p50": 707.969,
+          "p95": 919.426
+        },
+        "latency_increment_vs_healthy_ms": {
+          "mean": -3530.713,
+          "p50": -3957.67,
+          "p95": -2239.432
+        }
+      },
+      "candidate_minus_baseline_latency_ms": {
+        "mean": 377.524,
+        "p50": 339.849,
+        "p95": 560.988
+      },
+      "candidate_minus_baseline_fault_increment_ms": {
+        "mean": -1864.997,
+        "p50": -1637.285,
+        "p95": -737.136
+      },
+      "candidate_minus_baseline_mcp_calls": {
+        "total": 0,
+        "per_run": {
+          "mean": 0,
+          "p50": 0,
+          "p95": 0
+        }
+      }
+    }
+  },
+  "totals": {
+    "baseline_runs": 300,
+    "candidate_runs": 300,
+    "transient": {
+      "n": 40,
+      "baseline_recovered": 0,
+      "candidate_recovered": 40
+    },
+    "persistent_failed": 60,
+    "candidate_invalid_rejected": 120,
+    "baseline_unsafe_success": 60,
+    "candidate_unsafe_success": 0
+  }
+}

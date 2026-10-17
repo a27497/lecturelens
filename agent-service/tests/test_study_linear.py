@@ -750,6 +750,7 @@ def test_completed_citation_context_is_reviewed_and_replayed_without_rereading(s
         if action == "WINDOW":
             windows.append(kwargs["evidence_id"])
             return {
+                **{k: scope[k] for k in ("owner_id", "course_id", "revision")},
                 "evidence": [
                     {
                         "evidence_id": "tail",
@@ -758,7 +759,7 @@ def test_completed_citation_context_is_reviewed_and_replayed_without_rereading(s
                         "end_ms": 2000,
                         "source_type": "SUBTITLE",
                     }
-                ]
+                ],
             }
         result = original_read(scope, action, **kwargs)
         for item in result["evidence"]:

@@ -1,0 +1,12 @@
+{
+  "workers": 4,
+  "samples_per_scenario": 20,
+  "rows": 300,
+  "script_sha256": "6f6db6efbe7cde757beb410d65a4b8787056cf6c37693660b6067b2011bd6748",
+  "raw_files": {
+    "candidate-worker-0.jsonl": "9470b840d8dbb8a4e21280f6733f673af5b498e40fbe24a9c503a2a05bc4adbf",
+    "candidate-worker-1.jsonl": "c09fd0cb783a23292310eaf353c2ac569e8b73f92b615c225f0b1e2aafe3e64c",
+    "candidate-worker-2.jsonl": "21314a319a5080d26483b828512ea6574fc5a71a2c564aa0e4ecf18a31900e71",
+    "candidate-worker-3.jsonl": "6dffcc5277e894491aa3bcf03bf140b5fff9327a665fde0102aaebc241e5f10e"
+  }
+}

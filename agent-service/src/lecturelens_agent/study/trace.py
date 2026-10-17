@@ -97,7 +97,10 @@ def metrics(run, events):
         )
         else "provider_reported",
         "model_calls": run["model_calls"],
-        "logical_tool_calls": run["tool_calls"],
+        "logical_tool_calls": sum(e["event_type"] == "tool_started" for e in events) if observed else None,
+        "budget_tool_calls": run["tool_calls"],
+        "read_retries": sum(e["event_type"] == "tool_retry_started" for e in events),
+        "dependency_stops": sum(e["event_type"] == "dependency_stopped" for e in events),
         "llm_latency_ms": [m["duration_ms"] for m in models if "duration_ms" in m],
         "llm_unfinished_calls": len(starts) - len(models),
         "tool_node_latency_inclusive_ms": [t["duration_ms"] for t in tools] if observed else None,
