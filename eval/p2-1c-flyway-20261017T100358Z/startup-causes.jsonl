@@ -1,0 +1,6 @@
+{"index": 0, "kind": "STARTUP"}
+{"index": 1, "kind": "STARTUP"}
+{"index": 2, "kind": "STARTUP"}
+{"index": 3, "kind": "FLYWAY"}
+{"index": 4, "kind": "FLYWAY"}
+{"index": 5, "kind": "SQL", "sqlState": "HY000", "vendorCode": 3780}
