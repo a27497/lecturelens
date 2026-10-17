@@ -21,6 +21,32 @@ beforeEach(() => {
   vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "READY" } as never);
 });
 
+it.each([
+  { choice: "default unchecked", toggles: [], expected: false },
+  { choice: "checked", toggles: [true], expected: true },
+  { choice: "unchecked again", toggles: [true, false], expected: false },
+])("sends a compatible START request with approval $choice", async ({ toggles, expected }) => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "CREATE_SESSION") return { session_id: "session" };
+    if (command.operation === "START") return { run, artifact };
+    return { sessions: [], runs: [] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  await wrapper.findAll("textarea")[0]!.setValue("解释停止条件");
+  for (const checked of toggles) await wrapper.find('input[type="checkbox"]').setValue(checked);
+  await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
+  await flushPromises();
+  const starts = vi.mocked(studyCommand).mock.calls.filter(call => call[1].operation === "START");
+  expect(starts).toHaveLength(1);
+  expect(starts[0]).toEqual(["task", expect.objectContaining({
+    operation: "START", session_id: "session", goal: "解释停止条件", request_key: expect.any(String),
+  })]);
+  if (expected) expect(starts[0]![1]).toHaveProperty("approval_required", true);
+  else expect(starts[0]![1]).not.toHaveProperty("approval_required");
+  wrapper.unmount();
+});
+
 it("restores a completed run, keeps answers private and preserves citation seek", async () => {
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
     if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };

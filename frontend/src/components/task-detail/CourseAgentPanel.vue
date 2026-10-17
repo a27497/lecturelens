@@ -115,7 +115,10 @@ async function start() {
       if (current !== version) return;
       sessionId.value = response.session_id!;
     }
-    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value });
+    const response = await studyCommand(task, {
+      operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text,
+      ...(approvalRequired.value ? { approval_required: true } : {}),
+    });
     if (current !== version) return;
     run.value = response.run ?? null; artifact.value = response.artifact ?? null;
     approval.value = response.approval ?? null;
