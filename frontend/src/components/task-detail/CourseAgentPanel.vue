@@ -229,7 +229,7 @@ async function reveal() {
         <p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
-            <el-button text @click="$emit('seek', citation.start_ms)">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
+            <el-button text @click="$emit('seek', citation.start_ms)">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 回看片段起点</el-button>
             <code class="evidence-id">{{ citation.evidence_id }}</code><p>{{ citation.text }}</p>
           </div>
         </details>

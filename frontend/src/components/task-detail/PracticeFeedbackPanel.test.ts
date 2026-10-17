@@ -22,8 +22,8 @@ it("opens every supporting passage of a compound feedback observation", async ()
   multiple.content.observations![0]!.evidence_ids = ["e1", "e2"];
   multiple.content.citations.push({ evidence_id: "e2", text: "The second supporting passage.", start_ms: 9000, end_ms: 10000, source_type: "SUBTITLE" });
   const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, feedback: multiple } }, global: { stubs } });
-  await wrapper.findAll("button").find(b => b.text() === "回看课程证据 1")!.trigger("click");
-  await wrapper.findAll("button").find(b => b.text() === "回看课程证据 2")!.trigger("click");
+  await wrapper.findAll("button").find(b => b.text() === "回看课程证据 1 · 00:00:05 - 00:00:06 · 片段起点")!.trigger("click");
+  await wrapper.findAll("button").find(b => b.text() === "回看课程证据 2 · 00:00:09 - 00:00:10 · 片段起点")!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[5000], [9000]]);
   wrapper.unmount();
 });
@@ -44,7 +44,7 @@ it("restores an active feedback run and displays the completed result after poll
   await vi.advanceTimersByTimeAsync(1500); await flushPromises();
   expect(studyCommand).toHaveBeenCalledWith("course", { operation: "READ", session_id: "session", run_id: "feedback-run" });
   expect(wrapper.text()).toContain("Explain the stopping condition.");
-  await wrapper.findAll("button").find(b => b.text() === "回看这段课程证据")!.trigger("click");
+  await wrapper.findAll("button").find(b => b.text() === "回看这段课程证据 · 00:00:05 - 00:00:06 · 片段起点")!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[5000]]);
   wrapper.unmount();
 });

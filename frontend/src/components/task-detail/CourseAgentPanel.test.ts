@@ -32,7 +32,7 @@ it("restores a completed run, keeps answers private and preserves citation seek"
   expect(wrapper.text()).toContain("停止条件");
   expect(wrapper.text()).not.toContain("PRIVATE ANSWER");
   expect(vi.mocked(studyCommand).mock.calls.some(call => call[1].operation === "ANSWERS")).toBe(false);
-  await wrapper.findAll("button").find(button => button.text().includes("跳到视频"))!.trigger("click");
+  await wrapper.findAll("button").find(button => button.text() === "00:00:01 - 00:00:02 · 回看片段起点")!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[1234]]);
   await wrapper.findAll("button").find(button => button.text().includes("查看参考答案"))!.trigger("click");
   await flushPromises();

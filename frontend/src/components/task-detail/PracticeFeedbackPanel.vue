@@ -4,6 +4,7 @@ import { studyCommand } from "../../api/study";
 import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun, StudyResponse } from "../../api/study";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import { randomUuid } from "../../utils/randomUuid";
+import { formatMillisRange } from "../../utils/time";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
@@ -193,7 +194,9 @@ async function showNotes(more = false) {
           <summary>查看课程证据（{{ item.evidence_ids?.length ?? 1 }} 段）</summary>
           <blockquote>{{ item.evidence_quote }}</blockquote>
           <template v-for="(id, citationIndex) in item.evidence_ids ?? [item.evidence_id]" :key="id">
-            <el-button v-if="feedback.content.citations.some(c => c.evidence_id === id)" text @click="$emit('seek', feedback.content.citations.find(c => c.evidence_id === id)!.start_ms)">{{ (item.evidence_ids?.length ?? 1) > 1 ? `回看课程证据 ${citationIndex + 1}` : '回看这段课程证据' }}</el-button>
+            <el-button v-for="citation in feedback.content.citations.filter(c => c.evidence_id === id)" :key="citation.evidence_id" text @click="$emit('seek', citation.start_ms)">
+              {{ (item.evidence_ids?.length ?? 1) > 1 ? `回看课程证据 ${citationIndex + 1}` : '回看这段课程证据' }} · {{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 片段起点
+            </el-button>
           </template>
         </details>
       </div>
