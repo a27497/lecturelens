@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS study_feedback_note (
 
 
 def enabled():
-    return os.environ.get("STUDY_FEEDBACK_ENABLED", "false").lower() == "true"
+    return os.environ.get("STUDY_FEEDBACK_ENABLED", "true").lower() == "true"
 
 
 def start_feedback(store, conn, parent, command, mode):
