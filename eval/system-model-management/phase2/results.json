@@ -1,0 +1,241 @@
+{
+  "phase": 2,
+  "base_commit": "91fcb319fc39ca906a1ebd8dcbb61be5f65f0947",
+  "branch": "codex/p14-system-model-management",
+  "backend_full": {
+    "exit_code": 0,
+    "suite_count": 222,
+    "tests": 1546,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase2/backend-full-final.log",
+    "junit_xml": ".data/system-model-management/phase2/full-final-reports"
+  },
+  "system_model_suites": [
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelSecretCipherTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelActivationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAdminBoundaryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelHttpClientTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelUrlPolicyTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "real_mysql_tests": 30,
+  "mock_requests": [
+    {
+      "keyLast4": "2756",
+      "model": "vision-model",
+      "finalUrl": "https://api.deepseek.com/chat/completions",
+      "responseFormat": "json_object",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": true,
+      "scenario": "vision"
+    },
+    {
+      "keyLast4": "5531",
+      "model": "legacy-model",
+      "finalUrl": "https://legacy.example/v1/chat/completions",
+      "responseFormat": "json_object",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": false,
+      "scenario": "legacy-environment"
+    },
+    {
+      "keyLast4": "1984",
+      "model": "translation-a",
+      "finalUrl": "https://api.deepseek.com/chat/completions",
+      "responseFormat": "json_object",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": false,
+      "scenario": "text-version-switch"
+    },
+    {
+      "keyLast4": "2756",
+      "model": "translation-b",
+      "finalUrl": "https://other.example/v1/chat/completions",
+      "responseFormat": "json_object",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": false,
+      "scenario": "text-version-switch"
+    },
+    {
+      "keyLast4": "1984",
+      "model": "full-text",
+      "finalUrl": "https://api.deepseek.com/chat/completions",
+      "responseFormat": "json_object",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": false,
+      "scenario": "translation-modes"
+    },
+    {
+      "keyLast4": "2756",
+      "model": "segments",
+      "finalUrl": "https://other.example/v1/chat/completions",
+      "responseFormat": "TEXT",
+      "hasKey": true,
+      "kind": "MOCK_REQUEST",
+      "hasImage": false,
+      "scenario": "translation-modes"
+    }
+  ],
+  "mock_version_switch": [
+    {
+      "finalUrl": "https://api.deepseek.com/chat/completions",
+      "kind": "MOCK_RESULT",
+      "model": "translation-a",
+      "task": "A",
+      "observedVersion": 28,
+      "frozenVersion": 28
+    },
+    {
+      "finalUrl": "https://other.example/v1/chat/completions",
+      "kind": "MOCK_RESULT",
+      "model": "translation-b",
+      "task": "B",
+      "observedVersion": 29,
+      "frozenVersion": 29
+    }
+  ],
+  "observations": ".data/system-model-management/phase2/observations-final",
+  "credential_log_scan": {
+    "files_scanned": 225,
+    "canary_count": 8,
+    "matching_files": [],
+    "scope": "Final backend log, matching final JUnit XML and sanitized Mock receipts; includes synthetic master-key canary"
+  },
+  "packaging": {
+    "exit_code": 0,
+    "command": [
+      "bash",
+      "./mvnw",
+      "-B",
+      "-DskipTests",
+      "package"
+    ],
+    "log": ".data/system-model-management/phase2/package-final.log",
+    "tests_ran_in_previous_step": true
+  },
+  "checks": [
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "shell-syntax",
+      "command": [
+        "bash",
+        "-n",
+        "scripts/admin/system-model-admin.sh"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "test_infrastructure": [
+    {
+      "command": [
+        "docker",
+        "exec",
+        "lecturelens-p14-phase2-mysql",
+        "mysql",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)\n"
+    },
+    {
+      "command": [
+        "docker",
+        "rm",
+        "--force",
+        "--volumes",
+        "lecturelens-p14-phase2-mysql"
+      ],
+      "exit_code": 0,
+      "output": "lecturelens-p14-phase2-mysql\n"
+    }
+  ],
+  "prior_records": [
+    {
+      "log": ".data/system-model-management/phase2/compile-initial.log",
+      "outcome": "failed compilation; lambda capture fixed before test execution"
+    },
+    {
+      "log": ".data/system-model-management/phase2/focused-initial.log",
+      "outcome": "202 tests passed"
+    },
+    {
+      "log": ".data/system-model-management/phase2/focused-network.log",
+      "outcome": "103 tests passed"
+    },
+    {
+      "log": ".data/system-model-management/phase2/backend-full-initial.log",
+      "outcome": "1546 tests passed before receipt recorder was added"
+    }
+  ],
+  "real_provider_calls": false,
+  "not_run_in_phase2": [
+    "Python/PostgreSQL full suite and Ruff",
+    "Frontend tests/build",
+    "Real-provider task quality"
+  ],
+  "remaining_phases": [
+    "ASR runtime switching",
+    "Admin frontend and active connectivity probes",
+    "Aggregate final verification"
+  ],
+  "production_deployment": false,
+  "online_configuration_changed": false
+}

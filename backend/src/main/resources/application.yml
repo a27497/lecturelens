@@ -230,6 +230,9 @@ courselingo:
         single-segment-min-piece-chars: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MIN_PIECE_CHARS:80}
         single-segment-max-depth: ${COURSELINGO_SUBTITLE_TRANSLATION_FULL_TEXT_SINGLE_SEGMENT_MAX_DEPTH:6}
   ai:
+    system-models:
+      enabled: ${SYSTEM_MODEL_CONFIG_ENABLED:false}
+      probe-allowed-origins: ${SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS:}
     model-routing:
       enabled: ${COURSELINGO_AI_MODEL_ROUTING_ENABLED:true}
       default-text-model: ${OPENAI_COMPATIBLE_MODEL:Qwen/Qwen3-8B}

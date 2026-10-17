@@ -1,8 +1,8 @@
 package com.example.courselingo.subtitle.service;
 
 import com.example.courselingo.ai.llm.LlmMessage;
-import com.example.courselingo.ai.llm.LlmResponseFormat;
 import com.example.courselingo.ai.llm.LlmRequest;
+import com.example.courselingo.ai.llm.LlmResponseFormat;
 import com.example.courselingo.ai.llm.LlmRole;
 import com.example.courselingo.subtitle.domain.SubtitleSegment;
 import java.time.Duration;
@@ -34,7 +34,8 @@ final class SubtitleTranslationPromptFactory {
                 "segmentIndex", sourceSegment.getSegmentIndex()
             ),
             LlmResponseFormat.TEXT
-        );
+        )
+                .withExecution(command.execution());
     }
 
     static LlmRequest buildAlignedBatch(
@@ -80,8 +81,9 @@ final class SubtitleTranslationPromptFactory {
     private static LlmMessage systemMessage() {
         return new LlmMessage(
             LlmRole.SYSTEM,
-            "You translate subtitle text. Translate only the subtitle text provided by the user. Return only the translated plain text. Do not return JSON. Do not return Markdown. Do not include explanations. Do not include numbering."
-        );
+                "You translate subtitle text. Translate only the subtitle text provided by the"
+                    + " user. Return only the translated plain text. Do not return JSON. Do not"
+                    + " return Markdown. Do not include explanations. Do not include numbering.");
     }
 
     private static LlmMessage userMessage(ValidatedTranslationCommand command, SubtitleSegment sourceSegment) {
@@ -130,7 +132,8 @@ final class SubtitleTranslationPromptFactory {
             maxAttempts,
             metadata,
             LlmResponseFormat.JSON_OBJECT
-        );
+        )
+                .withExecution(command.execution());
     }
 
     private static LlmMessage alignedBatchSystemMessage(String targetLanguage) {
@@ -138,16 +141,17 @@ final class SubtitleTranslationPromptFactory {
         String targetName = languageName(targetLanguage);
         return new LlmMessage(
             LlmRole.SYSTEM,
-            """
-                Target language is %s.
-                Translate all normal prose into natural %s.
-                Do not copy complete English sentences from the source.
-                Only established technical terms, product names, API names, class names and code identifiers may remain in English.
-                Do not summarize, omit or merge segments.
-                Return only one valid JSON object with this exact shape: {"segments":[{"index":0,"text":"translated text"}]}.
-                Use each input segment's batch-local index in the response. Return exactly one non-empty text item for every input segment.
-                Do not return sourceSegmentIndex, source text, Markdown, code fences, explanations, or additional fields.
-                """.formatted(target, targetName)
+                """
+Target language is %s.
+Translate all normal prose into natural %s.
+Do not copy complete English sentences from the source.
+Only established technical terms, product names, API names, class names and code identifiers may remain in English.
+Do not summarize, omit or merge segments.
+Return only one valid JSON object with this exact shape: {"segments":[{"index":0,"text":"translated text"}]}.
+Use each input segment's batch-local index in the response. Return exactly one non-empty text item for every input segment.
+Do not return sourceSegmentIndex, source text, Markdown, code fences, explanations, or additional fields.
+"""
+                        .formatted(target, targetName)
         );
     }
 
@@ -156,18 +160,19 @@ final class SubtitleTranslationPromptFactory {
         String targetName = languageName(targetLanguage);
         return new LlmMessage(
             LlmRole.SYSTEM,
-            """
-                The previous JSON structure was valid, but the translated text did not satisfy the requested target language.
-                Return the complete batch again.
-                Target language is %s.
-                All normal prose must be natural %s.
-                Do not copy the English source.
-                Technical terms and code identifiers may remain in English.
-                Return exactly one item for every input segment.
-                Return only one valid JSON object with this exact shape: {"segments":[{"index":0,"text":"translated text"}]}.
-                Use each input segment's batch-local index. Do not summarize, omit or merge segments.
-                Do not return sourceSegmentIndex, source text, Markdown, code fences, explanations, or additional fields.
-                """.formatted(target, targetName)
+                """
+The previous JSON structure was valid, but the translated text did not satisfy the requested target language.
+Return the complete batch again.
+Target language is %s.
+All normal prose must be natural %s.
+Do not copy the English source.
+Technical terms and code identifiers may remain in English.
+Return exactly one item for every input segment.
+Return only one valid JSON object with this exact shape: {"segments":[{"index":0,"text":"translated text"}]}.
+Use each input segment's batch-local index. Do not summarize, omit or merge segments.
+Do not return sourceSegmentIndex, source text, Markdown, code fences, explanations, or additional fields.
+"""
+                        .formatted(target, targetName)
         );
     }
 

@@ -118,6 +118,8 @@ function isAuthInvalidError(error: AxiosError): boolean {
     return false;
   }
   const status = error.response?.status;
+  // Administrator authorization failure does not invalidate an otherwise valid user session.
+  if (status === 403 && requestPath(error.config).startsWith("/api/admin/system-models")) return false;
   return status === 401 || status === 403 || AUTH_INVALID_CODES.has(responseErrorCode(error));
 }
 

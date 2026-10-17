@@ -57,6 +57,11 @@ public final class LlmProviderFailureClassifier {
         Throwable current = failure;
         Set<Throwable> visited = Collections.newSetFromMap(new IdentityHashMap<>());
         while (current != null && visited.add(current)) {
+            if (current
+                    instanceof
+                    com.example.courselingo.systemmodel.SystemModelCallFailure safeFailure) {
+                return safeFailure.details();
+            }
             if (current instanceof OpenAiCompatibleLlmException openAiFailure) {
                 return openAiFailure.failureDetails();
             }

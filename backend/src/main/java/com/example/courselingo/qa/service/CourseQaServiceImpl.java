@@ -4,8 +4,8 @@ import com.example.courselingo.ai.llm.LlmProvider;
 import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
 import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
 import com.example.courselingo.ai.llm.LlmRequest;
-import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmResponseFormat;
+import com.example.courselingo.ai.llm.LlmResult;
 import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.ai.llm.LlmStructuredOutputExecutor;
 import com.example.courselingo.ai.llm.LlmUsage;
@@ -32,24 +32,32 @@ import com.example.courselingo.qa.dto.CourseQaUsage;
 import com.example.courselingo.qa.mapper.CourseQaRecordMapper;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
+import com.example.courselingo.task.service.GenerationFence;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
-import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class CourseQaServiceImpl implements CourseQaService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private GenerationFence generationFence;
 
@@ -176,6 +184,11 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
+        var execution =
+                systemModels == null
+                        ? null
+                        : systemModels.operation(
+                                normalizedTaskId, currentUser.userId(), "COURSE_QA");
         GenerationFence.Ticket ticket = generationFence == null ? null
             : generationFence.begin(normalizedTaskId, currentUser.userId(), null);
         CourseQaRateLimitResult rateLimit = rateLimitService.checkAndConsume(currentUser.userId());
@@ -249,7 +262,8 @@ public class CourseQaServiceImpl implements CourseQaService {
                 properties.getMaxAttempts(),
                 Map.of("stage", AiModelStage.COURSE_QA.name(), "targetLanguage", task.getTargetLanguage()),
                 LlmResponseFormat.JSON_OBJECT
-            );
+            )
+                            .withExecution(execution);
             LlmRequest routed = routedRequestFactory == null
                 ? requestForProvider
                 : routedRequestFactory.apply(AiModelStage.COURSE_QA, requestForProvider);
@@ -272,7 +286,8 @@ public class CourseQaServiceImpl implements CourseQaService {
             );
             completeAiCall(started, normalizedTaskId, currentUser.userId(), result, evidence.size(), answer.length());
             log.info(
-                "event=course_qa_completed taskId={} evidenceCount={} promptChars={} providerDurationMillis={} totalDurationMillis={}",
+                    "event=course_qa_completed taskId={} evidenceCount={} promptChars={}"
+                        + " providerDurationMillis={} totalDurationMillis={}",
                 SafeLogSanitizer.sanitize(normalizedTaskId),
                 evidence.size(),
                 promptChars,
@@ -296,7 +311,8 @@ public class CourseQaServiceImpl implements CourseQaService {
                 null
             );
             log.warn(
-                "event=course_qa_failed taskId={} evidenceCount={} totalDurationMillis={} errorCode={}",
+                    "event=course_qa_failed taskId={} evidenceCount={} totalDurationMillis={}"
+                        + " errorCode={}",
                 SafeLogSanitizer.sanitize(normalizedTaskId),
                 evidence.size(),
                 elapsedMillis(startedNanos),

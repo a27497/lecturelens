@@ -61,6 +61,8 @@ public class SiliconFlowAsrProvider implements SpeechToTextProvider {
         );
         try {
             return client.transcribe(clientRequest);
+        } catch (AsrCallFailure safe) {
+            throw safe;
         } catch (SiliconFlowAsrException exception) {
             throw exception;
         } catch (RuntimeException exception) {

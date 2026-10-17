@@ -8,10 +8,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /** Explicit selection wins; legacy flags remain supported only when unambiguous. */
-final class AsrProviderSelection {
+public final class AsrProviderSelection {
     private static final String PREFIX = "courselingo.ai.asr.";
 
-    private static String selected(Environment environment) {
+    public static String selected(Environment environment) {
         String explicit = environment.getProperty(PREFIX + "provider", "").strip();
         if (!explicit.isEmpty()) {
             if (!List.of("bailian", "siliconflow", "mock", "none").contains(explicit)) {
@@ -36,7 +36,8 @@ final class AsrProviderSelection {
         Selected(String name) { this.name = name; }
         @Override
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return name.equals(selected(context.getEnvironment()));
+            return !context.getEnvironment().getProperty("courselingo.ai.system-models.enabled", Boolean.class, false)
+                && name.equals(selected(context.getEnvironment()));
         }
     }
     static final class Bailian extends Selected { Bailian() { super("bailian"); } }

@@ -13,13 +13,51 @@ public record LlmRequest(
     Integer maxTokens,
     Integer maxAttempts,
     Map<String, Object> metadata,
-    LlmResponseFormat responseFormat
-) {
+    LlmResponseFormat responseFormat,
+        com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
 
     public LlmRequest {
         messages = messages == null ? List.of() : List.copyOf(messages);
         metadata = metadata == null ? Map.of() : Map.copyOf(metadata);
         responseFormat = responseFormat == null ? LlmResponseFormat.JSON_OBJECT : responseFormat;
+    }
+
+    public LlmRequest(
+            String requestId,
+            String taskId,
+            List<LlmMessage> messages,
+            Duration timeout,
+            Double temperature,
+            Integer maxTokens,
+            Integer maxAttempts,
+            Map<String, Object> metadata,
+            LlmResponseFormat responseFormat) {
+        this(
+                requestId,
+                taskId,
+                messages,
+                timeout,
+                temperature,
+                maxTokens,
+                maxAttempts,
+                metadata,
+                responseFormat,
+                null);
+    }
+
+    public LlmRequest withExecution(
+            com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
+        return new LlmRequest(
+                requestId,
+                taskId,
+                messages,
+                timeout,
+                temperature,
+                maxTokens,
+                maxAttempts,
+                metadata,
+                responseFormat,
+                execution);
     }
 
     public LlmRequest(

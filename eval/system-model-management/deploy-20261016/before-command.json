@@ -1,0 +1,7 @@
+[
+  "/usr/bin/java",
+  "-Djdk.httpclient.HttpClient.log=",
+  "-jar",
+  "/home/dev/projects/lecturelens-asr-b/.data/asr-b-deploy/backend-asr-b.jar",
+  "--spring.config.additional-location=file:/home/dev/projects/lecturelens-asr-b/.data/asr-b-deploy/asr-bailian.yml"
+]

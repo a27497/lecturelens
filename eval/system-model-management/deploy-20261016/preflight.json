@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-15T17:28:31.096945+00:00",
+  "branch": "codex/p14-system-model-management",
+  "deployment_commit": "13f8fc03d61d608157be1b7c3c0b5d474536acfd",
+  "before_source_marker": "7583973a2768f79cfcee2860ce46f8cbe9fa1825",
+  "before_jar_sha256": "a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08",
+  "flyway_before": 24,
+  "analysis_status_counts": {
+    "SUCCEEDED": 5,
+    "FAILED": 6,
+    "CANCELED": 1
+  },
+  "unfinished_analysis_tasks": 0,
+  "system_model_tables_before": 0,
+  "target_admin_user_id": 9,
+  "services_before": {
+    "lecturelens-live-backend": {
+      "MainPID": "5104",
+      "ExecMainStartTimestamp": "Thu 2026-10-15 06:20:58 UTC",
+      "ActiveState": "active"
+    },
+    "lecturelens-live-agent": {
+      "MainPID": "5102",
+      "ExecMainStartTimestamp": "Thu 2026-10-15 06:20:58 UTC",
+      "ActiveState": "active"
+    },
+    "lecturelens-live-model": {
+      "MainPID": "5105",
+      "ExecMainStartTimestamp": "Thu 2026-10-15 06:20:58 UTC",
+      "ActiveState": "active"
+    }
+  },
+  "backup_directory": "/home/dev/projects/lecturelens/.data/system-model-management/deploy-20261016",
+  "disk_available_bytes": 13914726400,
+  "before_marker_note": "Source marker is old ASR worktree HEAD; deployed JAR identity is its SHA256, not an assertion of a clean source build."
+}
