@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/dev/projects/lecturelens/eval/redis15-auth-diagnostic-20261017T052407Z/provenance.py", line 90, in <module>
+    main()
+  File "/home/dev/projects/lecturelens/eval/redis15-auth-diagnostic-20261017T052407Z/provenance.py", line 62, in main
+    meta = task_fields(path)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/dev/projects/lecturelens/eval/redis15-auth-diagnostic-20261017T052407Z/provenance.py", line 52, in task_fields
+    object_members(r)
+  File "/home/dev/projects/lecturelens/eval/redis15-auth-diagnostic-20261017T052407Z/provenance.py", line 38, in object_members
+    d.require(ch == '{', 'ARCHIVE_TASK_SHAPE')
+  File "/home/dev/projects/lecturelens/eval/redis15-auth-diagnostic-20261017T052407Z/diagnose.py", line 26, in require
+    raise Gate(code)
+metadata_diagnose.Gate: ARCHIVE_TASK_SHAPE
