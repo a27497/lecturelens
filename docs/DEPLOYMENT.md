@@ -171,6 +171,10 @@ docker compose --env-file .env ps
 
 Compose 配置见 [`compose.yaml`](../compose.yaml)。它会启动 MySQL、Redis、MinIO、RocketMQ NameServer 和 RocketMQ Broker/Proxy，并初始化 MinIO bucket。确认容器状态正常后再启动后端。
 
+自管 MySQL 在启用 binlog、由非 SUPER 账号执行迁移时，需要设置 `log_bin_trust_function_creators=ON`，或由具备所需权限的账号执行 V25。
+V25 创建配置版本和审计保护触发器；缺少该设置或权限会报 `HY000/1419`。Compose 已设置该实例参数，binlog 保持开启。
+该参数放宽实例内触发器/函数创建的 binlog 权限检查，不授予应用账号 SUPER；迁移账号仍需相应的数据库级 DDL/触发器权限。
+
 当前固定 MinIO vendor 镜像的匿名获取问题仍未修复，普通部署配置保留原始镜像 pin。CI 的无 Key Mock E2E 显式加载 [`compose.ci-minio.yml`](../compose.ci-minio.yml)，通过 [`Dockerfile.ci`](../infra/minio/Dockerfile.ci) 从与原镜像 release 对应的同一 commit 的官方源码构建；源码归档 SHA256、Go 工具链和基础镜像 digest 均固定，不声称与 vendor binary byte-identical。该 CI 路径已在 fresh GitHub hosted runner 上通过完整 Mock E2E；远端结果和验证边界见 [CI 后续记录](REPOSITORY_CLOSEOUT.md#2026-10-07-successor-ci-only-minio-source-build)。
 
 ## 10. Windows PowerShell 启动后端

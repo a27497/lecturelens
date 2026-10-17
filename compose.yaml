@@ -4,6 +4,8 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+      # V25 triggers require this for non-SUPER migration accounts when binlog is enabled.
+      - --log-bin-trust-function-creators=1
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change-me-root-password}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-courselingo}
