@@ -1,0 +1,13 @@
+{
+  "at_utc": "2026-10-17T06:45:43.531552+00:00",
+  "properties": {
+    "MainPID": "645169",
+    "ExecMainStartTimestampMonotonic": "7836614172",
+    "User": "dev",
+    "Group": "dev",
+    "LoadState": "loaded",
+    "ActiveState": "active",
+    "SubState": "running",
+    "InvocationID": "a4a46e834fd742d6bfd00ad53b5e49e7"
+  }
+}

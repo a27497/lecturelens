@@ -1,0 +1,21 @@
+{
+  "no_task_submission_functions": true,
+  "all_frozen_options_preserved": true,
+  "original_bootstrap_unchanged": true,
+  "original_isolation_gate_unchanged": true,
+  "fixed_diagnostic_filter_passed": true,
+  "offline_java_selftests": [
+    "P21_SELFTEST_PASS",
+    "P21_STARTUP_DIAGNOSTICS_SELFTEST_PASS"
+  ],
+  "source_sha256": {
+    "redis_resource.py": "1bc3aa80c1eb9c6651016b07264a0e729ee9b0ba55e4f174e62affcbf80ba649",
+    "offline_check.py": "30f6bac860f41e6b1701e1a58fd5734643398c21000dd21d87287bd7cd52a6bc",
+    "runtime_service.py": "507e7e983d463895e07d23e09a467e021e4f13f98437bbd51777155c18500dcc"
+  },
+  "java_source_sha256": {
+    "P21IsolationGate.java": "b4ced2b8aa21b898ec6e28f10bf4f460c91402280b2021c96bc819a5df52383e",
+    "P21Bootstrap.java": "54aeef4f35940670c71e260a409065d9d6f292f33c9d993f1c245e4b69c42ed3",
+    "P21StartupDiagnostics.java": "a41041669551a96b49a9b74e201821bc9d1393aa65335b35acc0a6d4125d7b82"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-10-17T06:46:34.992517+00:00",
+  "container_id": "d3a19279dd7b0e94c4b1c7a4e6308e2a2c14c371e7fcd9438d38b5db1d0a5a4a",
+  "stopped": true,
+  "removed": true,
+  "persistent_volumes_created": 0,
+  "historical_redis_touched": false
+}

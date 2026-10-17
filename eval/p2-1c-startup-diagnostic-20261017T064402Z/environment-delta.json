@@ -1,0 +1,18 @@
+{
+  "redis_container": "lecturelens-p21c-redis-20261017t064402z",
+  "owner_label": "p2-1c-startup-diagnostic-20261017T064402Z",
+  "redis_image": "sha256:234c902a2db49461a129e2d4aeff85b28cf20187ed274a67f6e50995fa713c7b",
+  "redis_bind": "127.0.0.1",
+  "redis_port": 33318,
+  "redis_database": 15,
+  "redis_persistence": false,
+  "redis_shared_volumes": false,
+  "java_unit": "lecturelens-p21c-worker-20261017",
+  "logical_options_unchanged": true,
+  "cache": false,
+  "streamingTranslation": false,
+  "materialsParallel": false,
+  "mode": "STARTUP_DIAGNOSTIC_ONLY",
+  "course_tasks_allowed": false,
+  "provider_calls_allowed": false
+}

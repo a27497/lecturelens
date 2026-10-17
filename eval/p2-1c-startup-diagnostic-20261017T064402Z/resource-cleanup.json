@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-10-17T06:49:31.676021+00:00",
+  "unit": "MainPID=0\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+  "java_original_identity_gone": true,
+  "used_sigkill": false,
+  "removed_owned_subdirectories": [
+    "runtime",
+    "extra",
+    "tmp",
+    "workspace"
+  ],
+  "retained_safe_logs_sha256": {
+    "systemd-create.log": "64d4301adef54d53658a66dd4bbebb53570796750ec2e50bf0df13b86855f3bc",
+    "compile.log": "aaf625e6963db7a938b70f6869f2dc52444ac0c75e551a4100e177838699efc7",
+    "migration-parser-launch.log": "5f6e9010c46a054118ef28664702b4d6ac169ed3e10d7911ccdc74432bbaa822",
+    "redis-cleanup.log": "3e6233a39ff4f5abecb6dda41ac40e1c42c24bc2deabb4b6a7058d0bd56add73",
+    "migration-check-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "offline-launch.log": "a21cd8f182844dddd363aec469234052735a12bbad51da192f4db942c253fc19",
+    "redis-create.log": "fd4f881296d050810aa7f6d98ffc50068f16d075c6f527d88d8e153b6dccc499"
+  },
+  "frozen_jar_removed": false,
+  "historical_resources_touched": false
+}

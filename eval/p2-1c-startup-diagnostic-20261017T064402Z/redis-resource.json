@@ -1,0 +1,32 @@
+{
+  "at_utc": "2026-10-17T06:45:27.576968+00:00",
+  "container": {
+    "Id": "d3a19279dd7b0e94c4b1c7a4e6308e2a2c14c371e7fcd9438d38b5db1d0a5a4a",
+    "Config.Labels": {
+      "lecturelens.owner": "p2-1c-startup-diagnostic-20261017T064402Z"
+    },
+    "Mounts": [],
+    "HostConfig.NetworkMode": "host",
+    "HostConfig.ReadonlyRootfs": true,
+    "Image": "sha256:234c902a2db49461a129e2d4aeff85b28cf20187ed274a67f6e50995fa713c7b"
+  },
+  "server_run_id_sha256": "19c926546467a24a6361be5c71a56ad0d019ca4889bf09245fd709fc8ac0f2d8",
+  "redis_version": "8.8.0",
+  "database": 15,
+  "empty_checks": [
+    {
+      "dbsize": 0,
+      "full_scan_unique_count": 0,
+      "cursor_zero": true
+    },
+    {
+      "dbsize": 0,
+      "full_scan_unique_count": 0,
+      "cursor_zero": true
+    }
+  ],
+  "shared_host_volumes": false,
+  "persistence": false,
+  "historical_redis_connected": false,
+  "data_commands_sent": false
+}
