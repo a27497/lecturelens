@@ -1,0 +1,23 @@
+{
+  "smoke_submitted": 0,
+  "formal_submitted": 0,
+  "formal_planned": 10,
+  "full_chain_success_rate": "未测（未提交正式试次）",
+  "stage_seconds": {
+    "extraction": "未测",
+    "asr": "未测",
+    "translation": "未测",
+    "materials": "未测",
+    "submission_to_terminal": "未测"
+  },
+  "course_supplier_calls": "未测（未提交课程任务，无任务调用记录）",
+  "asr_tokens": "未测",
+  "asr_cost_cny_directory_estimate": "未测（无课程试次台账）",
+  "cer": "未测",
+  "recovery": "未测，SIGKILL/重启仍需另行授权",
+  "cache_demo": "未测，cache OFF 保持不变",
+  "failure": "APPLICATION_START_FAILED; Java exit 1 after both startup gates passed",
+  "startup_cause": "UNKNOWN; raw startup messages not retained",
+  "streamingTranslation": false,
+  "materialsParallel": false
+}

@@ -1,0 +1,35 @@
+{
+  "at_utc": "2026-10-17T06:30:58.658473+00:00",
+  "uid": 1002,
+  "dev_identity": true,
+  "db_schema": "lecturelens_p21_20261016",
+  "version": 10,
+  "pending_tasks": 0,
+  "pending_outbox": 0,
+  "redis": {
+    "database": 15,
+    "dbsize": 0,
+    "scans": [
+      {
+        "dbsize_before": 0,
+        "dbsize_after": 0,
+        "unique_count": 0,
+        "pages": 1
+      },
+      {
+        "dbsize_before": 0,
+        "dbsize_after": 0,
+        "unique_count": 0,
+        "pages": 1
+      }
+    ],
+    "identity_matches_owned_instance": true,
+    "values_read": false,
+    "deleted_keys": 0
+  },
+  "media_count": 5,
+  "raw_media_read_only": true,
+  "derived_write_scope": "new task UUIDs: artifacts/9/<task>/ and keyframes/9/<task>/",
+  "workspace": "/home/dev/projects/lecturelens/.data/p2-1c-independent-redis-20261017T062836Z/workspace",
+  "supplier_calls": 0
+}
