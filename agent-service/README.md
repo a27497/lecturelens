@@ -17,7 +17,9 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 
 执行循环是 **model → tool → observation → 下一次决策或停止**。模型通过标准 `tool_calls` 选择检索、相邻证据补读、有界计算、练习草稿或证据不足报告；草稿经过目标条件、字段引用、答案一致性与课程方法范围复核，最多提交两份候选。程序保存解释、练习与私有答案，或保存证据不足产物。受限 Python AST 工具没有导入、I/O、循环或任意方法执行能力；计算正确不等于课程支持。
 
-作答保存为不可变版本。反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议；`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有结果和核对记录仍可读。见[工具与执行协议](../docs/L2_STUDY_AGENT.md)、[复核机制](../docs/L2_QUALITY_REVIEW.md)及[学习交互](../docs/L3_LEARNING_FLOW.md)。
+作答保存为不可变版本。反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。P2-2a **拟默认开启，未发布**：本地候选在未设置 `STUDY_FEEDBACK_ENABLED` 时默认 true，示例模板同步；线上配置未改，真实浏览器及用户人工审阅尚未完成。课程所有者保存作答后主动请求反馈，不自动调用模型、不对其他用户开放课程，也不作为成绩。见[工具与执行协议](../docs/L2_STUDY_AGENT.md)、[复核机制](../docs/L2_QUALITY_REVIEW.md)及[学习交互](../docs/L3_LEARNING_FLOW.md)。
+
+显式设置 `STUDY_FEEDBACK_ENABLED=false` 可关闭新反馈，已有作答、反馈及核对记录仍可读取，作答修改和核对意见仍可保存；失败或取消不影响已保存答案，不把旧反馈视作新版反馈。该开关只限制新请求，不会取消在途 Run；修改启动环境通常需要重新加载 Agent，不能承诺热切换。任何服务操作须另行授权，未通过真实验收前不部署默认开启；Java/Python 的 Study 总开关、权限与模型路由保持独立。
 
 ## 授权、停止与恢复
 

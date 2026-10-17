@@ -1,0 +1,17 @@
+{
+  "lecturelens-live-backend.service": {
+    "MainPID": "4682",
+    "ActiveState": "active",
+    "SubState": "running",
+    "ActiveEnterTimestamp": "Sat 2026-10-17 07:35:50 UTC"
+  },
+  "lecturelens-live-agent.service": {
+    "MainPID": "4681",
+    "ActiveState": "active",
+    "SubState": "running",
+    "ActiveEnterTimestamp": "Sat 2026-10-17 07:35:50 UTC"
+  },
+  "database_pairing": "unknown",
+  "reason": "Unit state and listening ports do not identify the MySQL schema or PostgreSQL database; no environment or credential files read.",
+  "reviewer": "模型辅助，待人工"
+}
