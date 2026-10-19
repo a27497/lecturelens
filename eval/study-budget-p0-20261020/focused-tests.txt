@@ -1,0 +1,5 @@
+BUDGET_SCENARIO {"batch": true, "duplicate_observations": 0, "error_code": null, "method_observations": 1, "model_calls": 5, "requested_reservations": [4380, 13695, 16179, 16653, 10883], "reservations": [4380, 13695, 16179, 16653, 10883], "reserved_tokens": 61790, "reused_observations": 2, "status": "succeeded", "tool_calls": 4}
+.BUDGET_SCENARIO {"batch": true, "duplicate_observations": 0, "error_code": null, "method_observations": 1, "model_calls": 5, "requested_reservations": [4380, 13695, 16179, 16653, 10883], "reservations": [4380, 13695, 16179, 16653, 10883], "reserved_tokens": 61790, "reused_observations": 2, "status": "succeeded", "tool_calls": 4}
+.BUDGET_SCENARIO {"batch": false, "duplicate_observations": 0, "error_code": "RUN_BUDGET_EXCEEDED", "method_observations": 1, "model_calls": 4, "requested_reservations": [4380, 13695, 15687, 16179, 16653], "reservations": [4380, 13695, 15687, 16179], "reserved_tokens": 49941, "reused_observations": 2, "status": "budget_exceeded", "tool_calls": 3}
+.......................................
+41 passed in 4.89s
