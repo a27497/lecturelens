@@ -47,6 +47,19 @@ def bailian_nonthinking(url, model):
     )
 
 
+def deepseek_nonthinking(url, model):
+    """Official DeepSeek defaults to thinking, which rejects required tool choice."""
+    parsed = urlsplit(url)
+    return (
+        parsed.scheme == "https"
+        and parsed.netloc.lower() in {"api.deepseek.com", "api.deepseek.com:443"}
+        and parsed.path.rstrip("/") in {"", "/v1"}
+        and not parsed.query
+        and not parsed.fragment
+        and model in {"deepseek-flash", "deepseek-v4-pro"}
+    )
+
+
 class ModelResponseError(StudyError):
     """Only bounded codes and usage may cross the runtime event boundary."""
 
@@ -520,6 +533,8 @@ class ChatProvider:
                 if len(schemas) == 1
                 else "auto"
             )
+        if deepseek_nonthinking(self.url, self.model):
+            payload["thinking"] = {"type": "disabled"}
         headers = {"Authorization": "Bearer " + self.key} if self.key else {}
         try:
             with httpx.Client(timeout=timeout, follow_redirects=False, trust_env=False) as client:
