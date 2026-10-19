@@ -53,7 +53,7 @@ python3 /home/dev/projects/lecturelens/scripts/dev/run_check.py \
   '-Dtest=FrozenDeepSeekProtocolTest,*Llm*Test,OpenAiCompatible*Test,SystemModelProbeTransportTest,SystemModelTranslationObservationTest,SystemModelDiagnosticsTest,TranslationCallDiagnosticsTest,CourseQaServiceTest,CourseChapterServiceTest,VisionAnalysisServiceTest,SubtitleTranslation*Test,TaskCommandServiceTest,TaskCreationServiceTest,PipelineAnalysisTaskWorkExecutorTest' package
 ```
 
-审批包保留确切命令和 export 文件清单。构建时间元数据使后续重建 JAR 的整体 SHA 可能变化；逐条目比较需只容许 build-info 的时间/提交身份差异及明确列出的协议类。禁止打包整个当前开发分支。比较脚本为同目录 `compare_jars.py`，只读 ZIP 内容，不运行 JAR。
+审批包保留确切命令和 export 文件清单。构建时间元数据使后续重建 JAR 的整体 SHA 可能变化；逐条目比较需只容许 build-info 的时间/提交身份差异及明确列出的协议类。禁止打包整个当前开发分支。初次打包发现 6 个仅因源码行号偏移而变化的附带类；确认指令不变后保留这些原有类型的源码行位，消除附带字节码差异，不改编译器设置或手工替换 class。比较脚本为同目录 `compare_jars.py`，只读 ZIP 内容，不运行 JAR。
 
 ## 验证边界
 

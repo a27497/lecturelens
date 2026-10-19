@@ -148,18 +148,15 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
             return lastFailure;
         }
     }
-
     private static int maxAttempts(AiModelRoute route) {
         if (route == null || route.maxAttempts() == null) {
             return 1;
         }
         return Math.max(1, route.maxAttempts());
     }
-
     private static boolean retryableStatus(int statusCode) {
         return statusCode == 429 || statusCode >= 500;
     }
-
     OpenAiCompatibleChatCompletionRequest toClientRequest(VisionAnalysisRequest request) throws Exception {
         AiModelRoute route = request.route();
         if (route == null) {
@@ -178,7 +175,6 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
             requestTimeout(route)
         );
     }
-
     private String jsonBody(VisionAnalysisRequest request) throws Exception {
         ImagePayload image = imagePayload(request);
         Map<String, Object> imageUrl = Map.of(
@@ -202,7 +198,6 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
         body.put("stream", false);
         return objectMapper.writeValueAsString(body);
     }
-
     private ImagePayload imagePayload(VisionAnalysisRequest request) throws Exception {
         byte[] original = Files.readAllBytes(request.imagePath());
         java.awt.image.BufferedImage source = javax.imageio.ImageIO.read(new java.io.ByteArrayInputStream(original));
@@ -223,7 +218,6 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
         javax.imageio.ImageIO.write(target, "png", output);
         return new ImagePayload(output.toByteArray(), "image/png");
     }
-
     private static String mediaType(byte[] bytes) {
         if (bytes != null && bytes.length >= 8
             && (bytes[0] & 0xff) == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4e && bytes[3] == 0x47) {
@@ -231,7 +225,6 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
         }
         return "image/jpeg";
     }
-
     private VisionAnalysisResult mapSuccess(OpenAiCompatibleClientResponse response, String model, long durationMillis) throws Exception {
         JsonNode root = objectMapper.readTree(response.body());
         com.example.courselingo.ai.llm.LlmOutputGuard.rejectTruncated(root, response.statusCode());

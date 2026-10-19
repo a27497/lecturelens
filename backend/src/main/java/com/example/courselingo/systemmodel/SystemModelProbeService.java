@@ -32,14 +32,8 @@ public final class SystemModelProbeService implements AutoCloseable {
                     .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
 
     public record Command(long expectedVersion, long modelId) {}
-
     public record Result(
-            boolean ok,
-            String category,
-            long elapsedMillis,
-            long version,
-            long modelId,
-            String finalUrl,
+            boolean ok, String category, long elapsedMillis, long version, long modelId, String finalUrl,
             @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
             com.example.courselingo.ai.llm.LlmOutputDiagnostics outputDiagnostics) {
         public Result(boolean ok, String category, long elapsedMillis, long version, long modelId, String finalUrl) {
@@ -53,7 +47,6 @@ public final class SystemModelProbeService implements AutoCloseable {
             int concurrency,
             int responseLimitBytes,
             String asrFixtureSha256) {}
-
     SystemModelProbeService(
             SystemModelRegistry registry, SystemModelUrlPolicy urls, String allowedOrigins) {
         this(
@@ -64,7 +57,6 @@ public final class SystemModelProbeService implements AutoCloseable {
                 Duration.ofSeconds(10),
                 2);
     }
-
     SystemModelProbeService(
             SystemModelRegistry registry,
             SystemModelUrlPolicy urls,
@@ -120,7 +112,6 @@ public final class SystemModelProbeService implements AutoCloseable {
             throw new BusinessException(ErrorCode.SYSTEM_MODEL_CONFIG_UNAVAILABLE);
         }
     }
-
     public Policy policy() {
         return new Policy(
                 List.copyOf(allowedOrigins),
@@ -129,7 +120,6 @@ public final class SystemModelProbeService implements AutoCloseable {
                 RESPONSE_LIMIT_BYTES,
                 fixtureSha256);
     }
-
     public Result probe(Command command, long actor) {
         if (command.expectedVersion() < 0 || command.modelId() <= 0)
             throw new BusinessException(ErrorCode.SYSTEM_MODEL_CONFIG_INVALID);
@@ -167,7 +157,6 @@ public final class SystemModelProbeService implements AutoCloseable {
                         result.elapsedMillis());
         return result;
     }
-
     private Result execute(
             Command command,
             long started,
