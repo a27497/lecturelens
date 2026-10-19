@@ -147,3 +147,13 @@ def test_explicit_reread_expands_a_preview_without_exceeding_the_text_budget():
     assert after["source-0"] == evidence[0]["text"][:600]
     assert after["source-1"] == evidence[1]["text"][:600]
     assert sum(len(text.encode()) for text in after.values()) <= 6000
+
+
+def test_four_byte_unicode_preserves_methods_and_nonempty_previews_under_the_hard_byte_bound():
+    evidence = [{"evidence_id": f"source-{i}", "text": "🧮" * 650} for i in range(8)]
+    observed = {"methods": {f"m{i}": {"evidence_id": f"source-{i}"} for i in range(2)}}
+    texts = decision_texts(evidence, observed, focus="source-7")
+    assert texts["source-0"] == texts["source-1"] == "🧮" * 600
+    assert sum(len(text.encode()) for text in texts.values()) <= 6000
+    assert all(texts.values())
+    assert len(texts["source-7"]) > len(texts["source-2"])

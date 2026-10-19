@@ -213,11 +213,15 @@ def decision_texts(evidence, coverage, byte_limit=6000, *, focus=None):
     """
     texts = {item["evidence_id"]: item["text"][:600] for item in evidence}
     pinned = {method["evidence_id"] for method in (coverage or {}).get("methods", {}).values()}
-    if focus is not None:
-        pinned.add(focus)
     remaining = byte_limit - sum(len(text.encode()) for ref, text in texts.items() if ref in pinned)
     previews = sorted((ref for ref in texts if ref not in pinned), key=lambda ref: len(texts[ref].encode()))
-    # At most two methods plus the explicit reread: <=5400 pinned UTF-8 bytes.
+    # Two methods need at most 4800 bytes even with four-byte Unicode. Expand
+    # the explicit reread next, retaining a small visible preview for every ID.
+    if focus in previews:
+        previews.remove(focus)
+        minimum = sum(min(64, len(texts[ref].encode())) for ref in previews)
+        texts[focus] = texts[focus].encode()[: max(0, remaining - minimum)].decode("utf-8", errors="ignore")
+        remaining -= len(texts[focus].encode())
     for index, ref in enumerate(previews):
         share = max(0, remaining // (len(previews) - index))
         texts[ref] = texts[ref].encode()[:share].decode("utf-8", errors="ignore")
