@@ -40,3 +40,6 @@ Agent 部署与迁移
 脚本仅 status、RUNS 查询，以及使用不存在 Run ID 的 DECIDE_APPROVAL/ATTEMPT_HISTORY/FEEDBACK_NOTES；后3项预期404，不是成功审批或学习闭环验收。
 本轮未验证真实生成、作答反馈质量、完整审批后的真实模型续跑、Windows 导入后的实际浏览器表现；不能宣称全功能已通过。
 私有演练容器保持运行，未停止其他服务或容器；恢复点、日志、证书和复现脚本不入 Git。
+
+后续用户回传
+Windows 当前用户 Root 导入及线上 TLS 验证已回传通过；浏览器无警告确认及五项 Java 接口仍为 NOT_RUN。执行受阻原因及证据边界见 USER_CHECKPOINT.txt，不覆盖本报告原始验证状态。
