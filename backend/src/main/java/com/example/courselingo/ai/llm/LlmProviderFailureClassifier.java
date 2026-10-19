@@ -62,6 +62,7 @@ public final class LlmProviderFailureClassifier {
                     com.example.courselingo.systemmodel.SystemModelCallFailure safeFailure) {
                 return safeFailure.details();
             }
+            if (current instanceof LlmOutputException outputFailure) return outputFailure.details();
             if (current instanceof OpenAiCompatibleLlmException openAiFailure) {
                 return openAiFailure.failureDetails();
             }

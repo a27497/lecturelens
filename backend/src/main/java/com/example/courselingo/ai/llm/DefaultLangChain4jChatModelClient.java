@@ -6,6 +6,7 @@ import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import java.time.Duration;
+import java.util.HashMap;
 
 public class DefaultLangChain4jChatModelClient implements LangChain4jChatModelClient {
 
@@ -17,12 +18,17 @@ public class DefaultLangChain4jChatModelClient implements LangChain4jChatModelCl
 
     @Override
     public LangChain4jClientResponse complete(LangChain4jClientRequest request) {
+        var options = new HashMap<String, Object>();
+        // Preserve this optional client's existing parameters for other vendors.
+        if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(request.model()))
+            OpenAiCompatibleRequestOptionsAdapter.apply(options, request.model());
         ChatModel chatModel = OpenAiChatModel.builder()
             .baseUrl(properties.getBaseUrl().strip())
             .apiKey(properties.getApiKey().strip())
             .modelName(request.model())
             .temperature(request.temperature())
             .maxTokens(request.maxTokens())
+            .customParameters(options)
             .timeout(request.timeout())
             .httpClientBuilder(new JdkHttpClientBuilder()
                 .connectTimeout(properties.getConnectTimeout())

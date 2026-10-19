@@ -107,6 +107,8 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
             return lastFailure == null
                 ? VisionAnalysisResult.failed(providerName(), model, elapsedMillis(started), "VISION_PROVIDER_FAILED", "Vision provider request failed")
                 : lastFailure;
+        } catch (com.example.courselingo.ai.llm.LlmOutputException safe) {
+            return VisionAnalysisResult.failedOutput(providerName(), model, elapsedMillis(started), safe);
         } catch (Exception exception) {
             lastFailure = VisionAnalysisResult.failed(
                 providerName(),
@@ -131,6 +133,8 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
                     if (!retryableStatus(response.statusCode())) {
                         break;
                     }
+                } catch (com.example.courselingo.ai.llm.LlmOutputException safe) {
+                    return VisionAnalysisResult.failedOutput(providerName(), model, elapsedMillis(started), safe);
                 } catch (Exception retryException) {
                     lastFailure = VisionAnalysisResult.failed(
                         providerName(),
@@ -230,6 +234,9 @@ public class OpenAiCompatibleVisionProvider implements VisionModelProvider {
 
     private VisionAnalysisResult mapSuccess(OpenAiCompatibleClientResponse response, String model, long durationMillis) throws Exception {
         JsonNode root = objectMapper.readTree(response.body());
+        com.example.courselingo.ai.llm.LlmOutputGuard.rejectTruncated(root, response.statusCode());
+        if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(model))
+            com.example.courselingo.ai.llm.LlmOutputGuard.rejectEmpty(root, response.statusCode());
         JsonNode choices = root.path("choices");
         if (!choices.isArray() || choices.isEmpty()) {
             return VisionAnalysisResult.failed(providerName(), model, durationMillis, "VISION_MALFORMED_RESPONSE", "Missing choices");

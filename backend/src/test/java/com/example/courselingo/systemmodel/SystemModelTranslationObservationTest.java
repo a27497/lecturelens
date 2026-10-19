@@ -19,13 +19,15 @@ class SystemModelTranslationObservationTest {
     void recordsSpecificFailureWithoutChangingPublicErrorOrRetries(String kind, String expected) throws Exception {
         var diagnostics = mock(TranslationCallDiagnostics.class);
         var transport = mock(OpenAiCompatibleLlmClient.class);
-        String body = body(kind);
+        String body = body(kind).replace("\"finish_reason\":\"length\"", "\"finish_reason\":\"stop\"");
         when(transport.complete(any())).thenReturn(new OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO));
         var client = new SystemModelChatClient(transport, urls(), diagnostics);
         assertThatThrownBy(() -> client.generate(request(), route(), "synthetic-runtime-key"))
-            .isInstanceOfSatisfying(SystemModelCallFailure.class, e -> {
-                assertThat(e.category()).isEqualTo("OUTPUT_INVALID");
-                assertThat(e.details().retryable()).isFalse();
+            .satisfies(e -> {
+                assertThat(LlmProviderFailureClassifier.from(e).category()).isEqualTo(LlmProviderFailureCategory.OUTPUT_INVALID);
+                assertThat(LlmProviderFailureClassifier.from(e).retryable()).isFalse();
+                assertThat(e).isInstanceOf(kind.equals("empty") || kind.equals("null")
+                    ? LlmOutputException.class : SystemModelCallFailure.class);
                 assertThat(e.getMessage()).doesNotContain(expected, body, "synthetic-runtime-key");
             });
         var root = org.mockito.ArgumentCaptor.forClass(JsonNode.class);
@@ -35,16 +37,36 @@ class SystemModelTranslationObservationTest {
         verify(transport, times(1)).complete(any());
     }
 
-    @Test void successfulContentAndLengthFinishAreUnchangedAndReferencePrivateDiagnostic() throws Exception {
+    @Test void normalContentAndStopFinishReferencePrivateDiagnostic() throws Exception {
         var diagnostics = mock(TranslationCallDiagnostics.class);
-        String body = body("valid");
+        String body = body("valid").replace("\"finish_reason\":\"length\"", "\"finish_reason\":\"stop\"");
         var client = new SystemModelChatClient(r -> new OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO), urls(), diagnostics);
         var result = client.generate(request(), route(), "synthetic-runtime-key");
-        assertThat(result.finishReason()).isEqualTo("length");
+        assertThat(result.finishReason()).isEqualTo("stop");
         assertThat(result.content()).isEqualTo("{\"segments\":[{\"index\":0,\"text\":\"中文译文\"}]}");
         assertThat(result.usage().totalTokens()).isEqualTo(3373);
         assertThat(result.metadata().get(TranslationCallDiagnostics.RESULT_ID)).isInstanceOf(String.class);
         verify(diagnostics).provider(anyString(), any(), any(), eq(1), eq(200), eq(body), any(), any(), eq("PASSED"), anyLong());
+    }
+
+    @ParameterizedTest @org.junit.jupiter.params.provider.ValueSource(strings = {
+        "empty", "null", "missing", "number", "malformed", "array", "valid"})
+    void lengthWinsBeforeContentChecksAndRecordsPrivateObservation(String kind) throws Exception {
+        var diagnostics = mock(TranslationCallDiagnostics.class);
+        var transport = mock(OpenAiCompatibleLlmClient.class);
+        String body = body(kind);
+        when(transport.complete(any())).thenReturn(new OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO));
+        var client = new SystemModelChatClient(transport, urls(), diagnostics);
+        assertThatThrownBy(() -> client.generate(request(), route(), "synthetic-runtime-key"))
+            .isInstanceOfSatisfying(LlmOutputException.class, e -> {
+                assertThat(e.diagnostics().reason()).isEqualTo(LlmOutputDiagnostics.Reason.TRUNCATED);
+                assertThat(e.diagnostics().usage().totalTokens()).isEqualTo(3373);
+                assertThat(e.details().httpStatus()).isEqualTo(200);
+                assertThat(e.getCause()).isNull();
+            });
+        verify(diagnostics).provider(anyString(), any(), eq("deepseek-flash"), eq(1), eq(200),
+            eq(body), eq("synthetic-runtime-key"), any(), eq("OUTPUT_TRUNCATED"), anyLong());
+        verify(transport, times(1)).complete(any());
     }
 
     @Test void httpRetriesRemainBoundedWithSeparateObservations() {

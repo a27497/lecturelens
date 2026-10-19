@@ -890,6 +890,43 @@ class SubtitleTranslationServiceTest {
         assertThat(inserted.getTranslatedText()).isEqualTo("\u7b2c\u4e00\u6bb5 \u7b2c\u4e8c\u6bb5 \u7b2c\u4e09\u6bb5");
     }
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"empty", "partial", "json"})
+    void protocolTruncationStillUsesExistingBoundedPieceRecovery(String output) {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setEnabled(true);
+        properties.getFullText().setSingleSegmentMaxPieceChars(12);
+        properties.getFullText().setSingleSegmentMinPieceChars(5);
+        var llmProperties = new com.example.courselingo.ai.llm.OpenAiCompatibleLlmProperties();
+        llmProperties.setApiKey("synthetic-key");
+        llmProperties.setBaseUrl("https://model.example/v1");
+        llmProperties.setModel("deepseek-flash");
+        var count = new AtomicInteger();
+        var provider = new com.example.courselingo.ai.llm.OpenAiCompatibleLlmProvider(llmProperties, request -> {
+            int attempt = count.getAndIncrement();
+            String content = attempt == 0 ? switch (output) {
+                case "empty" -> "";
+                case "partial" -> "{\"segments\":[";
+                default -> alignedJson("截断结果不能保存");
+            } : alignedJson(switch (attempt) { case 1 -> "第一段"; case 2 -> "第二段"; default -> "第三段"; });
+            try {
+                String body = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(Map.of(
+                    "choices", List.of(Map.of("finish_reason", attempt == 0 ? "length" : "stop", "message", Map.of("content", content)))));
+                return new com.example.courselingo.ai.llm.OpenAiCompatibleClientResponse(200, body, Map.of(), Duration.ZERO);
+            } catch (Exception e) { throw new AssertionError(e); }
+        });
+        translationService = new SubtitleTranslationServiceImpl(sourceMapper, translationMapper, fullTextResultMapper,
+            provider, FIXED_CLOCK, new SubtitleTranslationResponseParser(), properties);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(7, 0, 2900, "first part. second part. third part.")));
+        when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
+        when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
+        var result = translationService.translateTaskSubtitlesWithAiCallRecord(command());
+        assertThat(result.savedCount()).isEqualTo(1);
+        assertThat(count.get()).isEqualTo(4);
+        assertThat(captureInsertedSegments(1).getFirst().getTranslatedText()).isEqualTo("第一段 第二段 第三段");
+    }
+
     @Test
     void unauthorizedProviderFailureDoesNotSplitOrWrite() {
         translationService = fullTextTranslationService();

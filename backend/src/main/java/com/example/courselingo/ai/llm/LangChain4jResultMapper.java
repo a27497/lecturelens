@@ -29,6 +29,19 @@ final class LangChain4jResultMapper {
         TokenUsage tokenUsage = response.tokenUsage();
         FinishReason finishReason = response.finishReason();
 
+        var usage = tokenUsage == null ? new LlmUsage(null, null, null)
+            : new LlmUsage(tokenUsage.inputTokenCount(), tokenUsage.outputTokenCount(), tokenUsage.totalTokenCount());
+        Integer reasoning = tokenUsage instanceof dev.langchain4j.model.openai.OpenAiTokenUsage openAi
+            && openAi.outputTokensDetails() != null ? openAi.outputTokensDetails().reasoningTokens() : null;
+        // SDK responses do not expose the exact successful transport status; do not invent 200.
+        if (finishReason == FinishReason.LENGTH)
+            throw new LlmOutputException(new LlmOutputDiagnostics(LlmOutputDiagnostics.Reason.TRUNCATED,
+                null, usage, "length", reasoning));
+        if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(fallbackModel)
+            && (aiMessage == null || aiMessage.text() == null || aiMessage.text().isBlank()))
+            throw new LlmOutputException(new LlmOutputDiagnostics(LlmOutputDiagnostics.Reason.EMPTY_OUTPUT,
+                null, usage, finishReason == FinishReason.STOP ? "stop" : null, reasoning));
+
         Map<String, Object> metadata = new HashMap<>();
         safeResponseId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
 
@@ -37,9 +50,7 @@ final class LangChain4jResultMapper {
             textOrDefault(response.modelName(), fallbackModel),
             aiMessage == null || aiMessage.text() == null ? "" : aiMessage.text(),
             finishReason == null ? UNKNOWN_FINISH_REASON : finishReason.name(),
-            tokenUsage == null
-                ? new LlmUsage(null, null, null)
-                : new LlmUsage(tokenUsage.inputTokenCount(), tokenUsage.outputTokenCount(), tokenUsage.totalTokenCount()),
+            usage,
             clientResponse.duration(),
             metadata
         );

@@ -39,7 +39,13 @@ public final class SystemModelProbeService implements AutoCloseable {
             long elapsedMillis,
             long version,
             long modelId,
-            String finalUrl) {}
+            String finalUrl,
+            @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+            com.example.courselingo.ai.llm.LlmOutputDiagnostics outputDiagnostics) {
+        public Result(boolean ok, String category, long elapsedMillis, long version, long modelId, String finalUrl) {
+            this(ok, category, elapsedMillis, version, modelId, finalUrl, null);
+        }
+    }
 
     public record Policy(
             List<String> allowedOrigins,
@@ -196,6 +202,11 @@ public final class SystemModelProbeService implements AutoCloseable {
                                         timeout));
             }
             return result(command, started, "OK", endpoint);
+        } catch (com.example.courselingo.ai.llm.LlmOutputException safe) {
+            return new Result(false, safe.diagnostics().reason() == com.example.courselingo.ai.llm.LlmOutputDiagnostics.Reason.TRUNCATED
+                ? "OUTPUT_TRUNCATED" : "OUTPUT_INVALID",
+                Duration.ofNanos(System.nanoTime() - started).toMillis(), command.expectedVersion(),
+                command.modelId(), endpoint, safe.diagnostics());
         } catch (SystemModelCallFailure safe) {
             return result(command, started, safe.category(), endpoint);
         } catch (AsrProviderException safe) {
@@ -256,6 +267,9 @@ public final class SystemModelProbeService implements AutoCloseable {
                     category, LlmProviderFailureCategory.INVALID_REQUEST, status, false);
         }
         var root = json.readTree(response.body());
+        com.example.courselingo.ai.llm.LlmOutputGuard.rejectTruncated(root, status);
+        if (com.example.courselingo.ai.llm.OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(route.model()))
+            com.example.courselingo.ai.llm.LlmOutputGuard.rejectEmpty(root, status);
         var content = root.path("choices").path(0).path("message").path("content");
         if (!content.isTextual() || !json.readTree(content.asText()).isObject())
             throw new SystemModelCallFailure(

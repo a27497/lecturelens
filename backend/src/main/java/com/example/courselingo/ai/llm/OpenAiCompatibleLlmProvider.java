@@ -179,7 +179,11 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
     ) {
         OpenAiCompatibleChatCompletionResponse payload;
         try {
-            payload = objectMapper.readValue(response.body(), OpenAiCompatibleChatCompletionResponse.class);
+            var root = objectMapper.readTree(response.body());
+            LlmOutputGuard.rejectTruncated(root, response.statusCode());
+            if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(settings.model()))
+                LlmOutputGuard.rejectEmpty(root, response.statusCode());
+            payload = objectMapper.treeToValue(root, OpenAiCompatibleChatCompletionResponse.class);
         } catch (JsonProcessingException exception) {
             throw responseException(
                 "OpenAI-compatible LLM response JSON is invalid",

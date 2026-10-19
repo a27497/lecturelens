@@ -49,6 +49,9 @@ public final class SystemModelLlmProvider implements LlmProvider {
             outcome = "SUCCEEDED";
             category = "NONE";
             return result;
+        } catch (LlmOutputException failure) {
+            category = failure.details().providerErrorCode();
+            throw failure;
         } catch (SystemModelCallFailure failure) {
             category = failure.category();
             throw failure;
@@ -111,6 +114,8 @@ public final class SystemModelLlmProvider implements LlmProvider {
                     result.usage(),
                     result.duration(),
                     metadata);
+        } catch (LlmOutputException safe) {
+            throw safe;
         } catch (RuntimeException failure) {
             var details = LlmProviderFailureClassifier.from(failure);
             throw new SystemModelCallFailure(

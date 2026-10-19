@@ -111,6 +111,9 @@ final class SystemModelChatClient {
                 observedReason = "ENVELOPE_JSON_INVALID";
                 var root = json.readTree(response.body());
                 observedRoot = root;
+                LlmOutputGuard.rejectTruncated(root, status);
+                if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(route.model()))
+                    LlmOutputGuard.rejectEmpty(root, status);
                 observedReason = "CONTENT_FIELD_INVALID";
                 var content = root.path("choices").path(0).path("message").path("content");
                 if (!content.isTextual() || content.asText().isBlank()) {
@@ -146,6 +149,11 @@ final class SystemModelChatClient {
                                 integer(usage, "total_tokens")),
                         Duration.ofNanos(System.nanoTime() - start),
                         metadata);
+            } catch (LlmOutputException safe) {
+                observedReason = safe.diagnostics().reason() == LlmOutputDiagnostics.Reason.TRUNCATED
+                    ? "OUTPUT_TRUNCATED" : observedRoot.path("choices").path(0).path("message").path("content").isNull()
+                        ? "CONTENT_NULL" : "CONTENT_EMPTY";
+                throw safe;
             } catch (SystemModelCallFailure safe) {
                 if (!"OUTPUT_INVALID".equals(safe.category())) observedReason = safe.category();
                 if (!safe.details().retryable() || attempt + 1 >= attempts) throw safe;
