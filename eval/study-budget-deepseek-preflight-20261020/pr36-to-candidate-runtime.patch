@@ -1,0 +1,21 @@
+diff --git a/agent-service/src/lecturelens_agent/study/provider.py b/agent-service/src/lecturelens_agent/study/provider.py
+index 664dad8..c58251d 100644
+--- a/agent-service/src/lecturelens_agent/study/provider.py
++++ b/agent-service/src/lecturelens_agent/study/provider.py
+@@ -49,0 +50,13 @@ def bailian_nonthinking(url, model):
++def deepseek_nonthinking(url, model):
++    """Official DeepSeek defaults to thinking, which rejects required tool choice."""
++    parsed = urlsplit(url)
++    return (
++        parsed.scheme == "https"
++        and parsed.netloc.lower() in {"api.deepseek.com", "api.deepseek.com:443"}
++        and parsed.path.rstrip("/") in {"", "/v1"}
++        and not parsed.query
++        and not parsed.fragment
++        and model in {"deepseek-flash", "deepseek-v4-pro"}
++    )
++
++
+@@ -522,0 +536,2 @@ class ChatProvider:
++        if deepseek_nonthinking(self.url, self.model):
++            payload["thinking"] = {"type": "disabled"}

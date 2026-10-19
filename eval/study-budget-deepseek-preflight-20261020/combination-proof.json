@@ -1,0 +1,355 @@
+{
+  "live_provider_sha256": "3b70650ec0fbd2423683b2b976a017eb9e2940a31a604776cf21f9f0602172c8",
+  "combined_provider_sha256": "d3ab712d178b8c8e5fdc25f9c253fefbe26fc785b3ee7bf0415e315d01d6f45d",
+  "remove_deepseek_exactly_equals_pr36": true,
+  "remove_budget_estimator_exactly_equals_live_provider": true,
+  "all_runtime_files": [
+    {
+      "path": "agent-service/src/lecturelens_agent/__init__.py",
+      "baseline_sha256": "fdc2234c4de314c10ccfe65f69cab1ab429c482261253c70792892a9484c27de",
+      "live_sha256": "fdc2234c4de314c10ccfe65f69cab1ab429c482261253c70792892a9484c27de",
+      "pr_sha256": "fdc2234c4de314c10ccfe65f69cab1ab429c482261253c70792892a9484c27de"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/app.py",
+      "baseline_sha256": "99e9360bd5b5562758f05407c6b75589bcf6d01c14b52a58306c5cba91d13db8",
+      "live_sha256": "99e9360bd5b5562758f05407c6b75589bcf6d01c14b52a58306c5cba91d13db8",
+      "pr_sha256": "99e9360bd5b5562758f05407c6b75589bcf6d01c14b52a58306c5cba91d13db8"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/__init__.py",
+      "baseline_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+      "live_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+      "pr_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/answers.py",
+      "baseline_sha256": "8101912f64c708be8f6edd7c84868d09df2b7b95d0d3f302cb27807d331cd5cd",
+      "live_sha256": "8101912f64c708be8f6edd7c84868d09df2b7b95d0d3f302cb27807d331cd5cd",
+      "pr_sha256": "8101912f64c708be8f6edd7c84868d09df2b7b95d0d3f302cb27807d331cd5cd"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/core.py",
+      "baseline_sha256": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c",
+      "live_sha256": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c",
+      "pr_sha256": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/freeze.py",
+      "baseline_sha256": "a4cebf9402f54706bf00cfa1d6c1b3765eef94e8dc0c6fc539ed2d01b12b6a0c",
+      "live_sha256": "a4cebf9402f54706bf00cfa1d6c1b3765eef94e8dc0c6fc539ed2d01b12b6a0c",
+      "pr_sha256": "a4cebf9402f54706bf00cfa1d6c1b3765eef94e8dc0c6fc539ed2d01b12b6a0c"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/report.py",
+      "baseline_sha256": "b5094d5b54d5ae514607bcdf833cb99d4fbf6565bc9bebee890ca3119d0e2117",
+      "live_sha256": "b5094d5b54d5ae514607bcdf833cb99d4fbf6565bc9bebee890ca3119d0e2117",
+      "pr_sha256": "b5094d5b54d5ae514607bcdf833cb99d4fbf6565bc9bebee890ca3119d0e2117"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/reranker.py",
+      "baseline_sha256": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6",
+      "live_sha256": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6",
+      "pr_sha256": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/run.py",
+      "baseline_sha256": "d5fbddf20b050d416c0e5b3fedca247b4c84d4181ae45079559124438646b346",
+      "live_sha256": "d5fbddf20b050d416c0e5b3fedca247b4c84d4181ae45079559124438646b346",
+      "pr_sha256": "d5fbddf20b050d416c0e5b3fedca247b4c84d4181ae45079559124438646b346"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark/serve_reader.py",
+      "baseline_sha256": "b66b619c448da90a03c5e26146b0d602a55ce900ec1afb41167582a699cc5be6",
+      "live_sha256": "b66b619c448da90a03c5e26146b0d602a55ce900ec1afb41167582a699cc5be6",
+      "pr_sha256": "b66b619c448da90a03c5e26146b0d602a55ce900ec1afb41167582a699cc5be6"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark_v2/__init__.py",
+      "baseline_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+      "live_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+      "pr_sha256": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark_v2/run.py",
+      "baseline_sha256": "25ca7381415e0e764a5d773be98b0a219bd1b7f7ddd59f1a106024b99f4f0e68",
+      "live_sha256": "25ca7381415e0e764a5d773be98b0a219bd1b7f7ddd59f1a106024b99f4f0e68",
+      "pr_sha256": "25ca7381415e0e764a5d773be98b0a219bd1b7f7ddd59f1a106024b99f4f0e68"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/benchmark_v2/statistics.py",
+      "baseline_sha256": "e9a9acabce128062549dd2d2efc213690cd2a0bb34767845b651d5830db04174",
+      "live_sha256": "e9a9acabce128062549dd2d2efc213690cd2a0bb34767845b651d5830db04174",
+      "pr_sha256": "e9a9acabce128062549dd2d2efc213690cd2a0bb34767845b651d5830db04174"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/contracts.py",
+      "baseline_sha256": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06",
+      "live_sha256": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06",
+      "pr_sha256": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/course_mcp/__init__.py",
+      "baseline_sha256": "3a3151e0474414c889c9a1ac2c43bd6e82ba59d74cf4d32928fdb0db4404a74d",
+      "live_sha256": "3a3151e0474414c889c9a1ac2c43bd6e82ba59d74cf4d32928fdb0db4404a74d",
+      "pr_sha256": "3a3151e0474414c889c9a1ac2c43bd6e82ba59d74cf4d32928fdb0db4404a74d"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/course_mcp/client.py",
+      "baseline_sha256": "89bdf77047de37ee882d8919726ae6cc477a1aa46579069883399218f1d42f6a",
+      "live_sha256": "89bdf77047de37ee882d8919726ae6cc477a1aa46579069883399218f1d42f6a",
+      "pr_sha256": "89bdf77047de37ee882d8919726ae6cc477a1aa46579069883399218f1d42f6a"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/course_mcp/contracts.py",
+      "baseline_sha256": "ccc717a11d8a88ecdca7a8774e38708bfbfa6a0729f9e0e3d83f062cdea98249",
+      "live_sha256": "ccc717a11d8a88ecdca7a8774e38708bfbfa6a0729f9e0e3d83f062cdea98249",
+      "pr_sha256": "ccc717a11d8a88ecdca7a8774e38708bfbfa6a0729f9e0e3d83f062cdea98249"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/course_mcp/server.py",
+      "baseline_sha256": "082bcd49174879c1ed67fc011578aca96de264bd84113af4804833215290e0ed",
+      "live_sha256": "082bcd49174879c1ed67fc011578aca96de264bd84113af4804833215290e0ed",
+      "pr_sha256": "082bcd49174879c1ed67fc011578aca96de264bd84113af4804833215290e0ed"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/embedding.py",
+      "baseline_sha256": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4",
+      "live_sha256": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4",
+      "pr_sha256": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/retrieval.py",
+      "baseline_sha256": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe",
+      "live_sha256": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe",
+      "pr_sha256": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/store.py",
+      "baseline_sha256": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d",
+      "live_sha256": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d",
+      "pr_sha256": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/__init__.py",
+      "baseline_sha256": "b4cf474e3760e9cc117f211e7f6916cd9f35dcaec2d67ce9326b25770dd7a185",
+      "live_sha256": "b4cf474e3760e9cc117f211e7f6916cd9f35dcaec2d67ce9326b25770dd7a185",
+      "pr_sha256": "b4cf474e3760e9cc117f211e7f6916cd9f35dcaec2d67ce9326b25770dd7a185"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/approval.py",
+      "baseline_sha256": "d92a173f124dd41d65d1c37f7d343dc91a6077791bc61080c3f9f133e853909c",
+      "live_sha256": "d92a173f124dd41d65d1c37f7d343dc91a6077791bc61080c3f9f133e853909c",
+      "pr_sha256": "d92a173f124dd41d65d1c37f7d343dc91a6077791bc61080c3f9f133e853909c"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/attempts.py",
+      "baseline_sha256": "a714bd030a6190a9f4278ed5375a2d584fcefdef04b81e1efe221e98b75b48f9",
+      "live_sha256": "a714bd030a6190a9f4278ed5375a2d584fcefdef04b81e1efe221e98b75b48f9",
+      "pr_sha256": "a714bd030a6190a9f4278ed5375a2d584fcefdef04b81e1efe221e98b75b48f9"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/authority.py",
+      "baseline_sha256": "5b4629186886dd63e239d2d0931f9b82d981b9fcfdba76aa54122dd688249700",
+      "live_sha256": "5b4629186886dd63e239d2d0931f9b82d981b9fcfdba76aa54122dd688249700",
+      "pr_sha256": "5b4629186886dd63e239d2d0931f9b82d981b9fcfdba76aa54122dd688249700"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/call_journal.py",
+      "baseline_sha256": "17f2322911a27b38fa65b611389191541b46ed5d6c16b41d48b27fc53450162c",
+      "live_sha256": "17f2322911a27b38fa65b611389191541b46ed5d6c16b41d48b27fc53450162c",
+      "pr_sha256": "5fd6d99470997d9ed859da04ee2ceacb9039e0c7c56f0efef13c629f662c2b35"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/connections.py",
+      "baseline_sha256": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317",
+      "live_sha256": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317",
+      "pr_sha256": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/context.py",
+      "baseline_sha256": "ec04946767b46b4277943054dec82c26f345e615613b3d8c3849e51d876b2a5a",
+      "live_sha256": "ec04946767b46b4277943054dec82c26f345e615613b3d8c3849e51d876b2a5a",
+      "pr_sha256": "101abf293da65fd0391d0ebdd6bf30b6e2dd8bfd7233c0ba9bfbf42ec5038956"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/contracts.py",
+      "baseline_sha256": "cdb51920df6eea12c04d0501f028cf4efc1b3a0ad15bb560426a5e96fdca29d9",
+      "live_sha256": "cdb51920df6eea12c04d0501f028cf4efc1b3a0ad15bb560426a5e96fdca29d9",
+      "pr_sha256": "cdb51920df6eea12c04d0501f028cf4efc1b3a0ad15bb560426a5e96fdca29d9"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/costs.py",
+      "baseline_sha256": "193b85e5e33ba30d701fced0f8342d905050802f9b700dffbad600a5a3b89505",
+      "live_sha256": "193b85e5e33ba30d701fced0f8342d905050802f9b700dffbad600a5a3b89505",
+      "pr_sha256": "193b85e5e33ba30d701fced0f8342d905050802f9b700dffbad600a5a3b89505"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/examples.py",
+      "baseline_sha256": "53bb9c028f752207a28c364bb2a966cc977f0958482a74a1c0eda760cf13bd64",
+      "live_sha256": "53bb9c028f752207a28c364bb2a966cc977f0958482a74a1c0eda760cf13bd64",
+      "pr_sha256": "53bb9c028f752207a28c364bb2a966cc977f0958482a74a1c0eda760cf13bd64"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/failures.py",
+      "baseline_sha256": "30d6aaa1184808d80440d2410e351ba25f829a68060a449c4364cc9f5331d265",
+      "live_sha256": "30d6aaa1184808d80440d2410e351ba25f829a68060a449c4364cc9f5331d265",
+      "pr_sha256": "30d6aaa1184808d80440d2410e351ba25f829a68060a449c4364cc9f5331d265"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/feedback.py",
+      "baseline_sha256": "2266f1242273d2355132ac5b2ef3219c3dc0af067686a5be714be1ff95454888",
+      "live_sha256": "2266f1242273d2355132ac5b2ef3219c3dc0af067686a5be714be1ff95454888",
+      "pr_sha256": "2266f1242273d2355132ac5b2ef3219c3dc0af067686a5be714be1ff95454888"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/feedback_store.py",
+      "baseline_sha256": "1653a53a222626bf23df4af3edf8e53ff5f75544c52aa146d57b73daf01ad85e",
+      "live_sha256": "1653a53a222626bf23df4af3edf8e53ff5f75544c52aa146d57b73daf01ad85e",
+      "pr_sha256": "1653a53a222626bf23df4af3edf8e53ff5f75544c52aa146d57b73daf01ad85e"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/goals.py",
+      "baseline_sha256": "23f3c1a0e644c842f8f3c4d3221453143b993dc4400aef46962818eb0e212a4a",
+      "live_sha256": "23f3c1a0e644c842f8f3c4d3221453143b993dc4400aef46962818eb0e212a4a",
+      "pr_sha256": "23f3c1a0e644c842f8f3c4d3221453143b993dc4400aef46962818eb0e212a4a"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/grounded.py",
+      "baseline_sha256": "5be2cb5c143c2a1ec0aab714afb39c49e9049a65983aa184ac1256e4ed6f5833",
+      "live_sha256": "5be2cb5c143c2a1ec0aab714afb39c49e9049a65983aa184ac1256e4ed6f5833",
+      "pr_sha256": "5be2cb5c143c2a1ec0aab714afb39c49e9049a65983aa184ac1256e4ed6f5833"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/intervals.py",
+      "baseline_sha256": "712717f32e910a8293c5f4a2751cf885c3dbadaf0678b8c679263139794fc585",
+      "live_sha256": "712717f32e910a8293c5f4a2751cf885c3dbadaf0678b8c679263139794fc585",
+      "pr_sha256": "712717f32e910a8293c5f4a2751cf885c3dbadaf0678b8c679263139794fc585"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/linear.py",
+      "baseline_sha256": "f34b6f79f1c56b351ab861736735f40a6af0717df1b0d5048e4ddf42a6f36693",
+      "live_sha256": "f34b6f79f1c56b351ab861736735f40a6af0717df1b0d5048e4ddf42a6f36693",
+      "pr_sha256": "f34b6f79f1c56b351ab861736735f40a6af0717df1b0d5048e4ddf42a6f36693"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/method_scope.py",
+      "baseline_sha256": "9f532c72ea69867e3e4feb78f746a0bd4e9aaee232693cbc22a839603036c6e2",
+      "live_sha256": "9f532c72ea69867e3e4feb78f746a0bd4e9aaee232693cbc22a839603036c6e2",
+      "pr_sha256": "9dad5f0de4d139b556c17476c34d56ca678910facba3a4e6bea3999520f3b704"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/metrics_report.py",
+      "baseline_sha256": "7def08a22f789e2695f2042d274c44859bda7b3ec9bc770589a739e194af9328",
+      "live_sha256": "7def08a22f789e2695f2042d274c44859bda7b3ec9bc770589a739e194af9328",
+      "pr_sha256": "7def08a22f789e2695f2042d274c44859bda7b3ec9bc770589a739e194af9328"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/models.py",
+      "baseline_sha256": "6057f9ce329f8b5001937feb8c55a3abe71642d1b6e228b433cffbae1ef7142f",
+      "live_sha256": "6057f9ce329f8b5001937feb8c55a3abe71642d1b6e228b433cffbae1ef7142f",
+      "pr_sha256": "6057f9ce329f8b5001937feb8c55a3abe71642d1b6e228b433cffbae1ef7142f"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/provider.py",
+      "baseline_sha256": "abe9d9ed3bba7a67d9812cbdc2764e1ed0120f6267fb9f82680b4ddf4e500a75",
+      "live_sha256": "3b70650ec0fbd2423683b2b976a017eb9e2940a31a604776cf21f9f0602172c8",
+      "pr_sha256": "102aebda5d32ac1e226d16098c66d9db17bad9ba88310ebb38eee4ee8ba5e50e"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/quality.py",
+      "baseline_sha256": "02d6e6e9511edd1643c101df23116766d59af4c1e8fc8cd543eba80ee2aaf4b8",
+      "live_sha256": "02d6e6e9511edd1643c101df23116766d59af4c1e8fc8cd543eba80ee2aaf4b8",
+      "pr_sha256": "02d6e6e9511edd1643c101df23116766d59af4c1e8fc8cd543eba80ee2aaf4b8"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/replay.py",
+      "baseline_sha256": "362c2c7769b415c5030b8623eaa5afc6cc0fb6783194abef3e3fcbe5354037f4",
+      "live_sha256": "362c2c7769b415c5030b8623eaa5afc6cc0fb6783194abef3e3fcbe5354037f4",
+      "pr_sha256": "362c2c7769b415c5030b8623eaa5afc6cc0fb6783194abef3e3fcbe5354037f4"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/resilience.py",
+      "baseline_sha256": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671",
+      "live_sha256": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671",
+      "pr_sha256": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/runtime.py",
+      "baseline_sha256": "47edcd64a5d783cc1b9b5f620bc316817773cd7640d1c5a6cdb8d3f5f3212202",
+      "live_sha256": "47edcd64a5d783cc1b9b5f620bc316817773cd7640d1c5a6cdb8d3f5f3212202",
+      "pr_sha256": "884d766a9e2d30712b88ea7a4a0c5d3517e4240a6b0f24eb44dbc114cf616b8a"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/sequences.py",
+      "baseline_sha256": "ff087bd40d6eeddda06b6ea22aafccf62fb1080e883e382806b058da110c93a4",
+      "live_sha256": "ff087bd40d6eeddda06b6ea22aafccf62fb1080e883e382806b058da110c93a4",
+      "pr_sha256": "ff087bd40d6eeddda06b6ea22aafccf62fb1080e883e382806b058da110c93a4"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/solution.py",
+      "baseline_sha256": "be3367138dc5d11fbf4dfac8f1d89a2840de54efe006a8109e8db12b407f8728",
+      "live_sha256": "be3367138dc5d11fbf4dfac8f1d89a2840de54efe006a8109e8db12b407f8728",
+      "pr_sha256": "be3367138dc5d11fbf4dfac8f1d89a2840de54efe006a8109e8db12b407f8728"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/store.py",
+      "baseline_sha256": "098b9d8c1a4da5d522945918307aa1cabaf36b968cb14d6be17c26ede56c87d8",
+      "live_sha256": "098b9d8c1a4da5d522945918307aa1cabaf36b968cb14d6be17c26ede56c87d8",
+      "pr_sha256": "7b562025d280a7310ee5fb11d1a7d0333d7a1cb5ba49e9a799a9904fb359f31b"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/strings.py",
+      "baseline_sha256": "f850d26f0704e103ac9dd2f0a6514c26bf3f3edfb1eb472d2c2767a167b3151c",
+      "live_sha256": "f850d26f0704e103ac9dd2f0a6514c26bf3f3edfb1eb472d2c2767a167b3151c",
+      "pr_sha256": "f850d26f0704e103ac9dd2f0a6514c26bf3f3edfb1eb472d2c2767a167b3151c"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/support_review.py",
+      "baseline_sha256": "c055cc6a2f45f22f29ba9cfc62a228c5a43b506c601fd63b8cde9aa81c151cc9",
+      "live_sha256": "c055cc6a2f45f22f29ba9cfc62a228c5a43b506c601fd63b8cde9aa81c151cc9",
+      "pr_sha256": "c055cc6a2f45f22f29ba9cfc62a228c5a43b506c601fd63b8cde9aa81c151cc9"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/telemetry.py",
+      "baseline_sha256": "df46b3e0484233b1e96a21f1ceff3bbe35cf458f6aebe0ac8dd8ab5a89cff816",
+      "live_sha256": "df46b3e0484233b1e96a21f1ceff3bbe35cf458f6aebe0ac8dd8ab5a89cff816",
+      "pr_sha256": "df46b3e0484233b1e96a21f1ceff3bbe35cf458f6aebe0ac8dd8ab5a89cff816"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/trace.py",
+      "baseline_sha256": "0395b96e3ea70906e3709af6fa7b73f793617a7e91fd2d14bad4c7c3d9056bd6",
+      "live_sha256": "0395b96e3ea70906e3709af6fa7b73f793617a7e91fd2d14bad4c7c3d9056bd6",
+      "pr_sha256": "0395b96e3ea70906e3709af6fa7b73f793617a7e91fd2d14bad4c7c3d9056bd6"
+    },
+    {
+      "path": "agent-service/src/lecturelens_agent/study/trace_cli.py",
+      "baseline_sha256": "d2d6b199e0cf6ccf9befb26074a610121d8c7a3fef4974f2b9c9659ea00ba2d4",
+      "live_sha256": "d2d6b199e0cf6ccf9befb26074a610121d8c7a3fef4974f2b9c9659ea00ba2d4",
+      "pr_sha256": "d2d6b199e0cf6ccf9befb26074a610121d8c7a3fef4974f2b9c9659ea00ba2d4"
+    },
+    {
+      "path": "agent-service/uv.lock",
+      "baseline_sha256": "ce81aeee31149ff99055a7d1c2941f11f984b82e9d7fb0d455b60a87a444fe7f",
+      "live_sha256": "ce81aeee31149ff99055a7d1c2941f11f984b82e9d7fb0d455b60a87a444fe7f",
+      "pr_sha256": "ce81aeee31149ff99055a7d1c2941f11f984b82e9d7fb0d455b60a87a444fe7f"
+    },
+    {
+      "path": "agent-service/pyproject.toml",
+      "baseline_sha256": "86a9643d4c965b9345f3c76fad4f30baf2e0c062bd4b97a33dc5808031bb5afa",
+      "live_sha256": "86a9643d4c965b9345f3c76fad4f30baf2e0c062bd4b97a33dc5808031bb5afa",
+      "pr_sha256": "86a9643d4c965b9345f3c76fad4f30baf2e0c062bd4b97a33dc5808031bb5afa"
+    }
+  ],
+  "installed_package_count_live": 83,
+  "installed_package_count_candidate": 83,
+  "installed_version_differences": {},
+  "interpreter_same_executable": true,
+  "unchanged_sql_schema_literals": {
+    "agent-service/src/lecturelens_agent/study/store.py": "identical",
+    "agent-service/src/lecturelens_agent/study/attempts.py": "identical",
+    "agent-service/src/lecturelens_agent/study/feedback_store.py": "identical",
+    "agent-service/src/lecturelens_agent/study/approval.py": "identical",
+    "agent-service/src/lecturelens_agent/study/models.py": "identical"
+  }
+}

@@ -1,0 +1,10 @@
+..................................DEEPSEEK_OFFLINE_SMOKE {"recovery": false, "practice": {"status": "succeeded", "model_calls": 5, "tool_calls": 4, "reserved_tokens": 61790}, "feedback": {"status": "succeeded", "model_calls": 4, "tool_calls": 2, "reserved_tokens": 28524}, "mock_http_calls": 9, "paid_calls": 0}
+.DEEPSEEK_OFFLINE_SMOKE {"recovery": true, "practice": {"status": "succeeded", "model_calls": 5, "tool_calls": 4, "reserved_tokens": 61790}, "feedback": {"status": "succeeded", "model_calls": 4, "tool_calls": 2, "reserved_tokens": 28524}, "mock_http_calls": 9, "paid_calls": 0}
+.......
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /home/dev/projects/lecturelens-study-budget-deepseek-preflight/agent-service/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+42 passed, 1 warning in 5.22s

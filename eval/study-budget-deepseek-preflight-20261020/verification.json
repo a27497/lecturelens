@@ -1,0 +1,113 @@
+{
+  "candidate_sha": "7b60d94dc0a221217e595dfb5fe5205ba474d03a",
+  "mechanism_result": "PASS",
+  "real_provider_quality_result": "NOT_RUN",
+  "paid_provider_calls": 0,
+  "production_database_access": false,
+  "production_mutations": false,
+  "tests": {
+    "focused": {
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "pytest_seconds": 5.22,
+      "supervisor_status": "SUCCEEDED",
+      "supervisor_exit_code": 0,
+      "record": "focused-run.json",
+      "output": "focused-output.txt",
+      "output_sha256": "bcbfa729517ef84f609586cc465c71b9623d16d971e77f26524624a65c9309c5",
+      "network_process_records": 1,
+      "network_counters": {
+        "database_connections": 0,
+        "denied_connections": 0,
+        "loopback_test_connections": 0
+      }
+    },
+    "full_frozen": {
+      "passed": 793,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "pytest_seconds": 179.71,
+      "supervisor_status": "SUCCEEDED",
+      "supervisor_exit_code": 0,
+      "record": "full_frozen-run.json",
+      "output": "full_frozen-output.txt",
+      "output_sha256": "cc66878795ea982ed895b3cc10cbfd3e0fd76efe0675e271aa0de86a28aa7b33",
+      "network_process_records": 2,
+      "network_counters": {
+        "database_connections": 0,
+        "denied_connections": 0,
+        "loopback_test_connections": 10
+      }
+    }
+  },
+  "commands": {
+    "full_frozen": "AGENT_TEST_DATABASE_URL=\"$PREFLIGHT_TEST_DSN\" python3 /home/dev/projects/lecturelens/scripts/dev/run_check.py --name study-p0-2-frozen-full --cwd /home/dev/projects/lecturelens-study-budget-deepseek-preflight/.data/p0-2-preflight/release-7b60d94dc0a221217e595dfb5fe5205ba474d03a --timeout 600 -- /home/dev/projects/lecturelens-study-budget-deepseek-preflight/.data/p0-2-preflight/release-7b60d94dc0a221217e595dfb5fe5205ba474d03a/agent-service/.venv/bin/python scripts/eval/check-study-offline.py --database-port 25459 --network-records /home/dev/projects/lecturelens-study-budget-deepseek-preflight/.data/p0-2-preflight/network-frozen-full -- -q",
+    "focused": "AGENT_TEST_DATABASE_URL=\"$PREFLIGHT_TEST_DSN\" python3 /home/dev/projects/lecturelens/scripts/dev/run_check.py --name study-p0-2-focused-final --cwd /home/dev/projects/lecturelens-study-budget-deepseek-preflight --timeout 180 -- /home/dev/projects/lecturelens-study-budget-deepseek-preflight/agent-service/.venv/bin/python scripts/eval/check-study-offline.py --database-port 25459 --network-records .data/p0-2-preflight/network-focused-final -- tests/test_study_deepseek.py tests/test_study_deepseek_preflight.py tests/test_study_offline_guard.py -q -s"
+  },
+  "command_notes": [
+    "PREFLIGHT_TEST_DSN must refer only to the independently created loopback test database; no production DSN.",
+    "Supervisor names and network-records paths must be fresh on reproduction; original records must not be overwritten.",
+    "Commands above omit the test-only password; no production credentials were passed."
+  ],
+  "test_database": {
+    "container": "lecturelens-p0-2-preflight-pg-20261020",
+    "image": "pgvector/pgvector:0.8.6-pg17",
+    "host": "127.0.0.1",
+    "port": 25459,
+    "database": "lecturelens_agent_test",
+    "server_version": "17.11",
+    "data_volume": "new tmpfs 512m"
+  },
+  "smoke": {
+    "healthy_and_recovered_identical": true,
+    "practice": {
+      "status": "succeeded",
+      "models": 5,
+      "tools": 4,
+      "reserved": 61790,
+      "questions": 2,
+      "method_observations": 1
+    },
+    "feedback": {
+      "status": "succeeded",
+      "models": 4,
+      "tools": 2,
+      "reserved": 28524,
+      "exact_attempt_binding": true,
+      "persisted": true
+    },
+    "mock_http_calls_per_healthy_or_recovered_chain": 9,
+    "new_negative_cases": [
+      "cancelled",
+      "quality_rejected_then_budget_exceeded",
+      "invalid_citation",
+      "budget_exceeded_before_http",
+      "evidence_version_changed"
+    ]
+  },
+  "unchanged_production_service": {
+    "MainPID": "2085258",
+    "ExecMainStartTimestamp": "Mon 2026-10-19 13:25:38 UTC",
+    "WorkingDirectory": "/home/dev/lecturelens-releases/bc2e6cc-deepseek-nonthinking-20261019/agent-service",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "original_dirty_source_hashes_verified": {
+    "agent-service/src/lecturelens_agent/study/provider.py": "3b70650ec0fbd2423683b2b976a017eb9e2940a31a604776cf21f9f0602172c8",
+    "agent-service/tests/test_study_deepseek.py": "fc6e301ae03ff49fac0cfceede695e579063d1211fd90bce5d9d2499d0b33b19"
+  },
+  "network_limitations": "Python audit fence, not OS sandbox. Native libpq connects use only explicitly validated isolated DSN; socket counters do not capture libpq. Main-suite counters exclude intentional denial self-test records held in a pytest temp directory.",
+  "warning": "Existing Starlette AnyIO BlockingPortal deprecation; no test skips.",
+  "lint": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS (95 files already formatted)",
+    "git_diff_check": "PASS"
+  },
+  "patch_reconstruction": {
+    "live_to_candidate_all_runtime_files_exact": true,
+    "pr36_to_candidate_all_runtime_files_exact": true
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "live_launcher_sha256": "91bafac4a8ba50821f0597da8bdc75a5103148a5f13f01d9a694565e80de4e08",
+  "pure_frozen_command_compatibility": true,
+  "rejects_unrelated_commands": true,
+  "preserves_other_environment_values": true,
+  "explicit_feedback_opt_in": true,
+  "executed_loader_or_service": false
+}

@@ -1,0 +1,287 @@
+--- a/agent-service/src/lecturelens_agent/study/call_journal.py
++++ b/agent-service/src/lecturelens_agent/study/call_journal.py
+@@ -8 +8 @@
+-from .store import StudyError
++from .store import StudyError, reservation_error
+@@ -152 +152 @@
+-        "SELECT model_calls,(SELECT count(*) FROM study_event WHERE run_id=%s "
++        "SELECT model_calls,tool_calls,reserved_tokens,(SELECT count(*) FROM study_event WHERE run_id=%s "
+@@ -158,3 +158 @@
+-            from .store import BudgetExceeded
+-
+-            raise BudgetExceeded()
++            raise reservation_error(row, "model")
+@@ -188,4 +186,10 @@
+-        if run["model_calls"] >= 6 or run["reserved_tokens"] + tokens > 64000:
+-            from .store import BudgetExceeded
+-
+-            raise BudgetExceeded()
++        error = reservation_error(
++            run,
++            "model",
++            tokens,
++            operation_key=key,
++            **{k: metadata[k] for k in ("purpose", "review_stage", "reservation") if k in metadata},
++            **{k: detail[k] for k in ("node", "checkpoint_id") if k in detail},
++        )
++        if error:
++            raise error
+--- a/agent-service/src/lecturelens_agent/study/context.py
++++ b/agent-service/src/lecturelens_agent/study/context.py
+@@ -159,0 +160 @@
++    visible.pop("method_observation_scope", None)
+@@ -206,0 +208,24 @@
++def decision_texts(evidence, coverage, byte_limit=6000, *, focus=None):
++    """Keep method passages at the existing 600-character bound; budget previews.
++
++    Full sources remain in the authority and the independent review context.
++    The eight-ID selection/alias fence is unchanged, including preview-only IDs.
++    """
++    texts = {item["evidence_id"]: item["text"][:600] for item in evidence}
++    pinned = {method["evidence_id"] for method in (coverage or {}).get("methods", {}).values()}
++    remaining = byte_limit - sum(len(text.encode()) for ref, text in texts.items() if ref in pinned)
++    previews = sorted((ref for ref in texts if ref not in pinned), key=lambda ref: len(texts[ref].encode()))
++    # Two methods need at most 4800 bytes even with four-byte Unicode. Expand
++    # the explicit reread next, retaining a small visible preview for every ID.
++    if focus in previews:
++        previews.remove(focus)
++        minimum = sum(min(64, len(texts[ref].encode())) for ref in previews)
++        texts[focus] = texts[focus].encode()[: max(0, remaining - minimum)].decode("utf-8", errors="ignore")
++        remaining -= len(texts[focus].encode())
++    for index, ref in enumerate(previews):
++        share = max(0, remaining // (len(previews) - index))
++        texts[ref] = texts[ref].encode()[:share].decode("utf-8", errors="ignore")
++        remaining -= len(texts[ref].encode())
++    return texts
++
++
+@@ -224,0 +250,9 @@
++    from .method_scope import latest_coverage
++
++    coverage = latest_coverage(history)
++    focus = (
++        history[-1]["arguments"].get("evidence_id")
++        if history and history[-1]["tool"] == "read_evidence_window"
++        else None
++    )
++    texts = decision_texts(visible, coverage, focus=focus)
+@@ -233 +267 @@
+-                "text": item["text"][:600],
++                "text": texts[item["evidence_id"]],
+@@ -235,0 +270 @@
++                **({"text_truncated": True} if texts[item["evidence_id"]] != item["text"] else {}),
+@@ -239,0 +275,5 @@
++    if any(texts[item["evidence_id"]] != item["text"] for item in visible):
++        context["evidence_text_policy"] = (
++            "Truncated passages are previews. Read missing context before relying on an unseen detail "
++            "or concluding the course lacks support. Final review checks the full bounded sources."
++        )
+@@ -260,3 +299,0 @@
+-    from .method_scope import latest_coverage
+-
+-    coverage = latest_coverage(history)
+@@ -322,0 +360,4 @@
++        if index != len(history) - 1:
++            # The latest authorized coverage is already in the final context.
++            # Older method menus can be stale and duplicate the same observation.
++            result.pop("course_coverage", None)
+--- a/agent-service/src/lecturelens_agent/study/method_scope.py
++++ b/agent-service/src/lecturelens_agent/study/method_scope.py
+@@ -5,0 +6 @@
++import hashlib
+@@ -32,0 +34,42 @@
++def observation_scope(evidence, practice_kind):
++    # Hash exactly the bounded text the observer saw. These private fingerprints
++    # never replace Java's live ownership, revision and deletion fences.
++    return {
++        "practice_kind": practice_kind,
++        "sources": {
++            item["evidence_id"]: hashlib.sha256(item["text"][:1200].encode()).hexdigest()
++            for item in evidence[:8]
++        },
++    }
++
++
++def reusable_coverage(history, evidence, practice_kind):
++    current = observation_scope(evidence, practice_kind)
++    for item in reversed(history):
++        result = item["result"]
++        if "course_coverage" in result:
++            coverage = result["course_coverage"]
++            prior = result.get("method_observation_scope", {})
++            # Absence is contextual: a new hit may supply the missing method.
++            # Reuse only a positive observation with all its supporting sources
++            # still present verbatim. Final candidate review remains independent.
++            methods = coverage.get("methods", {})
++            refs = set(coverage.get("evidence_ids", [])) | {
++                method["evidence_id"] for method in methods.values()
++            }
++            if (
++                coverage.get("can_answer")
++                and methods
++                and prior.get("practice_kind") == practice_kind
++                and all(
++                    ref in current["sources"] and current["sources"][ref] == prior.get("sources", {}).get(ref)
++                    for ref in refs
++                )
++            ):
++                return coverage
++            return None
++        if item["tool"] == "search_course_evidence":
++            break
++    return None
++
++
+--- a/agent-service/src/lecturelens_agent/study/provider.py
++++ b/agent-service/src/lecturelens_agent/study/provider.py
+@@ -122,0 +123,14 @@
++
++
++def request_reservation(messages, schemas, output_tokens):
++    # httpx sends JSON with ensure_ascii=False and compact separators. Charge the
++    # same representation, rather than padding/ASCII escapes never sent on wire.
++    # UTF-8 bytes remain a conservative input estimate, not provider token usage.
++    from .context import compact_json
++
++    return {
++        "message_bytes": len(compact_json(messages).encode()),
++        "schema_bytes": len(compact_json(schemas).encode()),
++        "output_tokens": output_tokens,
++        "estimator": "compact_utf8_bytes_plus_output_tokens_v1",
++    }
+--- a/agent-service/src/lecturelens_agent/study/runtime.py
++++ b/agent-service/src/lecturelens_agent/study/runtime.py
+@@ -30,2 +30,2 @@
+-from .method_scope import latest_coverage
+-from .provider import decision_schemas
++from .method_scope import latest_coverage, observation_scope, reusable_coverage
++from .provider import decision_schemas, request_reservation
+@@ -182,2 +182,8 @@
+-            except BudgetExceeded:
+-                self.store.finish(run["run_id"], token, "budget_exceeded", "RUN_BUDGET_EXCEEDED")
++            except BudgetExceeded as error:
++                self.store.finish(
++                    run["run_id"],
++                    token,
++                    "budget_exceeded",
++                    "RUN_BUDGET_EXCEEDED",
++                    budget_diagnostics=error.diagnostics,
++                )
+@@ -229,6 +235,7 @@
+-            tokens = (
+-                len(json.dumps(wire_messages, ensure_ascii=False).encode())
+-                + len(json.dumps(schemas).encode())
+-                + output_tokens
+-            )
+-            metadata = {"attempt": row["model_calls"] + 1, "purpose": purpose}
++            reservation = request_reservation(wire_messages, schemas, output_tokens)
++            tokens = sum(reservation[key] for key in ("message_bytes", "schema_bytes", "output_tokens"))
++            metadata = {
++                "attempt": row["model_calls"] + 1,
++                "purpose": purpose,
++                "reservation": reservation,
++            }
+@@ -755,3 +762,6 @@
+-                        result["course_coverage"] = observe_methods(
+-                            found, arguments.get("practice_kind", "general")
+-                        )
++                        kind = arguments["practice_kind"]
++                        coverage = reusable_coverage(state["history"], found, kind)
++                        result["course_coverage"] = coverage or observe_methods(found, kind)
++                        result["method_observation_scope"] = observation_scope(found, kind)
++                        if coverage is not None:
++                            result["reused_method_observation"] = True
+@@ -795,9 +805,11 @@
+-                        # Existing observations remain valid under this revision fence
+-                        # while their exact sources remain selected. A window read need
+-                        # not pay for a second identical planning judgment. New searches
+-                        # still observe methods afresh; final review checks current fields.
+-                        retained_methods = coverage["methods"]
+-                        if retained_methods and all(
+-                            method["evidence_id"] in selected for method in retained_methods.values()
+-                        ):
+-                            result["course_coverage"] = coverage
++                        kind = next(
++                            (
++                                h["result"].get("practice_kind", "general")
++                                for h in reversed(state["history"])
++                                if h["tool"] == "search_course_evidence"
++                            ),
++                            "general",
++                        )
++                        retained = reusable_coverage(state["history"], observed, kind)
++                        if retained is not None:
++                            result["course_coverage"] = retained
+@@ -806,11 +818,2 @@
+-                            result["course_coverage"] = observe_methods(
+-                                observed,
+-                                next(
+-                                    (
+-                                        h["result"].get("practice_kind", "general")
+-                                        for h in reversed(state["history"])
+-                                        if h["tool"] == "search_course_evidence"
+-                                    ),
+-                                    "general",
+-                                ),
+-                            )
++                            result["course_coverage"] = observe_methods(observed, kind)
++                        result["method_observation_scope"] = observation_scope(observed, kind)
+--- a/agent-service/src/lecturelens_agent/study/store.py
++++ b/agent-service/src/lecturelens_agent/study/store.py
+@@ -61 +61,30 @@
+-    pass
++    def __init__(self, reason=None, **details):
++        self.diagnostics = {"reason": reason, **details} if reason else {}
++        super().__init__(reason or "RUN_BUDGET_EXCEEDED")
++
++
++def reservation_error(row, kind, tokens=0, **context):
++    reason = (
++        "model_calls"
++        if kind == "model" and row["model_calls"] >= 6
++        else "tool_calls"
++        if kind == "tool" and row["tool_calls"] >= 8
++        else "reserved_tokens"
++        if row["reserved_tokens"] + tokens > 64000
++        else None
++    )
++    if reason:
++        return BudgetExceeded(
++            reason,
++            kind=kind,
++            requested_tokens=tokens,
++            reserved_tokens=row["reserved_tokens"],
++            remaining_tokens=max(0, 64000 - row["reserved_tokens"]),
++            token_limit=64000,
++            model_calls=row["model_calls"],
++            model_call_limit=6,
++            tool_calls=row["tool_calls"],
++            tool_call_limit=8,
++            **context,
++        )
++    return None
+@@ -368 +397 @@
+-            raise BudgetExceeded()
++            raise BudgetExceeded("deadline", deadline=row["deadline"].isoformat())
+@@ -397,6 +426,3 @@
+-            if (
+-                (kind == "model" and row["model_calls"] >= 6)
+-                or (kind == "tool" and row["tool_calls"] >= 8)
+-                or row["reserved_tokens"] + tokens > 64000
+-            ):
+-                raise BudgetExceeded()
++            error = reservation_error(row, kind, tokens)
++            if error:
++                raise error
+@@ -446 +472 @@
+-                    raise BudgetExceeded()
++                    raise reservation_error(row, "tool")
+@@ -535 +561 @@
+-    def finish(self, run_id, token, status, error=None):
++    def finish(self, run_id, token, status, error=None, *, budget_diagnostics=None):
+@@ -540,0 +567,5 @@
++                    budget_diagnostics = {"reason": "deadline", "deadline": row["deadline"].isoformat()}
++                if budget_diagnostics:
++                    # The rejecting reservation transaction rolls back. Commit
++                    # its payload-free reason atomically with the fenced terminal.
++                    self._event(conn, run_id, "budget_rejected", budget_diagnostics)
