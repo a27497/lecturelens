@@ -194,7 +194,6 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                 exception
             );
         }
-
         List<OpenAiCompatibleChatCompletionResponse.Choice> choices = payload.choices();
         if (choices == null || choices.isEmpty()) {
             throw responseException(
@@ -231,11 +230,9 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             );
         }
         OpenAiCompatibleChatCompletionResponse.Usage usage = payload.usage();
-
         Map<String, Object> metadata = new HashMap<>();
         traceId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
         metadata.put("providerRetryCount", Math.max(0, retryCount));
-
         return new LlmResult(
             providerName(),
             textOrDefault(payload.model(), settings.model()),
@@ -248,7 +245,6 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             metadata
         );
     }
-
     private void handleErrorStatus(OpenAiCompatibleClientResponse response, ValidatedSettings settings) {
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             return;
