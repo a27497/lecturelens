@@ -306,6 +306,7 @@ docker compose --env-file .env down
 
 1. 记录当前 Java/Python 启动源、环境文件、模型路由哈希和数据库备份。
 2. 使用 agent-service/uv.lock 的锁定依赖，并确认独立 PostgreSQL/pgvector 可用；Agent 配置示例见 ../.env.agent.example 和 ../agent-service/README.md。
+   未发布工作区每个执行中的 Run 保留一个事务工作连接，外部 I/O 时处于 idle；另有独立 Session advisory lock 和 checkpoint saver 连接。该连接复用不持有跨外部调用的事务，不改变预算或取消围栏；连接容量应包含这些同时存活的连接。
 3. 明确启用的学习功能开关；反馈默认保持关闭，除非有单独发布授权。
 4. 只切换到已经冻结并验收的源码身份，不以工作区临时状态替代冻结候选。
 5. 发布后先验证课程权属、Evidence revision、模型路由、取消/恢复和删除路径，再扩大流量。

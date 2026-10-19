@@ -1,0 +1,105 @@
+{
+  "captured_at_utc": "2026-10-14T12:09:54.765142+00:00",
+  "python_checks": {
+    "tests": 704,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "complete_collection_covered_once": true,
+  "database_skips": 0,
+  "independent_pg_containers": 4,
+  "groups": [
+    {
+      "worker": 0,
+      "files": [
+        "tests/test_course_mcp.py",
+        "tests/test_study_quality.py",
+        "tests/test_study_computed_review.py",
+        "tests/test_study_support_review.py",
+        "tests/test_authority_url.py",
+        "tests/test_study_costs.py",
+        "tests/test_study_connections.py",
+        "tests/test_study_metrics_report.py",
+        "tests/test_benchmark_v2.py"
+      ],
+      "expected_cases": 160,
+      "port": 16609,
+      "database_name": "lecturelens_agent_test"
+    },
+    {
+      "worker": 1,
+      "files": [
+        "tests/test_study.py",
+        "tests/test_study_sequences.py",
+        "tests/test_models.py",
+        "tests/test_study_answer_points.py",
+        "tests/test_study_trace.py",
+        "tests/test_study_method_scope.py",
+        "tests/test_study_example_runtime.py"
+      ],
+      "expected_cases": 149,
+      "port": 16610,
+      "database_name": "lecturelens_agent_test"
+    },
+    {
+      "worker": 2,
+      "files": [
+        "tests/test_study_provider.py",
+        "tests/test_study_resilience.py",
+        "tests/test_study_feedback.py",
+        "tests/test_study_intervals.py",
+        "tests/test_benchmark.py",
+        "tests/test_study_context.py",
+        "tests/test_reviewer_probe.py",
+        "tests/test_study_solution.py"
+      ],
+      "expected_cases": 198,
+      "port": 16611,
+      "database_name": "lecturelens_agent_test"
+    },
+    {
+      "worker": 3,
+      "files": [
+        "tests/test_study_examples.py",
+        "tests/test_study_linear.py",
+        "tests/test_retrieval.py",
+        "tests/test_study_python_practice.py",
+        "tests/test_study_goals.py",
+        "tests/test_study_attempts.py",
+        "tests/test_study_eval.py",
+        "tests/test_feedback_eval.py"
+      ],
+      "expected_cases": 197,
+      "port": 16612,
+      "database_name": "lecturelens_agent_test"
+    }
+  ],
+  "phase_a_frozen_files_intact": true,
+  "ruff_check": "passed",
+  "ruff_format_check": "87 files passed",
+  "new_mechanism_tests": 13,
+  "report_reproduction_byte_identical": true,
+  "holdout_scored_attempts": 1,
+  "observations": 480,
+  "scored_queries": 120,
+  "retrieval_errors": 0,
+  "artifact_sha256": {
+    "freeze.json": "34c21a40f03b0e0c49b29eda20fa7584169e2c06f114bfcaf3cdc3d57d54c94d",
+    "holdout-attempt.json": "9eb18224e0a2d3842690d34e54682ee10fea4d027e9b555b3ed3a8829938af19",
+    "results/development/retrieval.jsonl": "dcf545631773e1970d911bda10fde0ec4a62e27efcce95b8e4b18d9f9482a84b",
+    "results/holdout/retrieval.jsonl": "4796dbe6e9e33a92ccc3fc6b4357b7bdc47e09c04f3b99334dbca3e51aec8574",
+    "results/report/summary.json": "173c4bb24675540ebfc4c983b9cc5476135db50d04d936ec90c6d230b90fec7f",
+    "results/report/failures.json": "1a5d5bad4eef829f3b3c4e272c06babadf68cea1dd9e62ef2839efdc11583b1b",
+    "provenance-verification.json": "15dc79d045ad3c98ed0f633488250321401c97c8c16d6d2cb216edae28ba6319"
+  },
+  "serial_acquisition_no_pytest_overlap": true,
+  "rrf_ce_top8_set_identical_for_all_120_queries": true,
+  "timed_query_counts": {
+    "development": 80,
+    "holdout": 40,
+    "per_method_total": 120,
+    "per_query_repetitions": 1
+  },
+  "bootstrap_draws": 5000
+}

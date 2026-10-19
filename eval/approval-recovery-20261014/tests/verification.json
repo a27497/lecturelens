@@ -1,0 +1,21 @@
+{
+  "full_python": {
+    "tests": 727,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "collected_cases": 727,
+  "unique_test_cases": 727,
+  "collected_files_once": true,
+  "exit_codes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "independent_postgresql_instances": 4,
+  "zero_skip": true,
+  "no_overlap_with_matrix": true,
+  "complete_collection_covered_once": true
+}

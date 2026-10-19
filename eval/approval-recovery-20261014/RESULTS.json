@@ -1,0 +1,91 @@
+{
+  "matrix": {
+    "n": 523,
+    "passed": 523,
+    "p50_ms": 1658.319,
+    "p95_ms": 2641.105,
+    "profiles": [
+      {
+        "profile": "practice",
+        "n": 182,
+        "passed": 182,
+        "p50_ms": 1334.281,
+        "p95_ms": 1612.948,
+        "outcomes": {
+          "succeeded": 150,
+          "MODEL_OUTCOME_UNKNOWN": 32
+        }
+      },
+      {
+        "profile": "practice_approval",
+        "n": 187,
+        "passed": 187,
+        "p50_ms": 2480.532,
+        "p95_ms": 2717.293,
+        "outcomes": {
+          "succeeded": 155,
+          "MODEL_OUTCOME_UNKNOWN": 32
+        }
+      },
+      {
+        "profile": "feedback_approval",
+        "n": 147,
+        "passed": 147,
+        "p50_ms": 2442.446,
+        "p95_ms": 2600.062,
+        "outcomes": {
+          "succeeded": 115,
+          "MODEL_OUTCOME_UNKNOWN": 32
+        }
+      },
+      {
+        "profile": "lifecycle",
+        "n": 3,
+        "passed": 3,
+        "p50_ms": 1110.401,
+        "p95_ms": 1125.691,
+        "outcomes": {
+          "USER_CANCELLED": 1,
+          "deleted": 2
+        }
+      },
+      {
+        "profile": "approval_lifecycle",
+        "n": 3,
+        "passed": 3,
+        "p50_ms": 1090.375,
+        "p95_ms": 1159.382,
+        "outcomes": {
+          "USER_CANCELLED": 1,
+          "deleted": 2
+        }
+      },
+      {
+        "profile": "retry_cap",
+        "n": 1,
+        "passed": 1,
+        "p50_ms": 1093.314,
+        "p95_ms": 1093.314,
+        "outcomes": {
+          "READ_CHECKPOINT_REPLAY": 1
+        }
+      }
+    ]
+  },
+  "approval_repeats": {
+    "n": 54,
+    "passed": 54,
+    "p50_ms": 1140.497,
+    "p95_ms": 1214.51,
+    "outcomes": {
+      "succeeded": 36,
+      "APPROVAL_REJECTED": 18
+    }
+  },
+  "all_planned_trials": 577,
+  "violations": 0,
+  "published_success": 456,
+  "unknown_model_outcome": 96,
+  "explicit_rejection": 18,
+  "candidate_sources_unchanged": true
+}

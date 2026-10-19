@@ -90,7 +90,9 @@ class FixedEvidence:
                 i for i, e in enumerate(self.evidence) if e["evidence_id"] == arguments["evidence_id"]
             )
             selected = self.evidence[max(0, index - 1) : index + 2]
-        return {**self.scope, "evidence": selected}
+        # Session context may be added to the caller's scope after construction;
+        # the authority response contains only the course identity, like Java/MCP.
+        return {k: self.scope[k] for k in ("owner_id", "course_id", "revision")} | {"evidence": selected}
 
 
 def main():

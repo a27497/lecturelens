@@ -1,0 +1,231 @@
+{
+  "captured_at_utc": "2026-10-14T08:21:33.667719+00:00",
+  "python": "3.12.14",
+  "postgres": "PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+  "dependencies": {
+    "psycopg": "3.3.5",
+    "mcp": "1.30.0",
+    "langgraph": "1.2.11",
+    "langgraph-checkpoint-postgres": "3.1.2",
+    "pytest": "9.1.1",
+    "ruff": "0.16.7"
+  },
+  "python_checks": {
+    "tests": 664,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "complete_collection_covered_once": true,
+  "database_skips": 0,
+  "groups": [
+    {
+      "worker": 0,
+      "files": [
+        "tests/test_course_mcp.py",
+        "tests/test_study_quality.py",
+        "tests/test_study_computed_review.py",
+        "tests/test_study_support_review.py",
+        "tests/test_authority_url.py",
+        "tests/test_study_costs.py",
+        "tests/test_study_connections.py"
+      ],
+      "expected_cases": 120,
+      "port": 15459,
+      "database_name": "lecturelens_agent_test",
+      "tests": 120,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 68.296,
+      "junit_sha256": "3a66aba0d273dc589f0aa921b97a612de76a6b5769fea9b5a05d8c49013d499c"
+    },
+    {
+      "worker": 1,
+      "files": [
+        "tests/test_study.py",
+        "tests/test_study_sequences.py",
+        "tests/test_models.py",
+        "tests/test_study_answer_points.py",
+        "tests/test_study_trace.py",
+        "tests/test_study_method_scope.py",
+        "tests/test_study_example_runtime.py"
+      ],
+      "expected_cases": 149,
+      "port": 15460,
+      "database_name": "lecturelens_agent_test",
+      "tests": 149,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 45.298,
+      "junit_sha256": "f42d4d0e24adba49c1f4e13f0db875ec49135b8f0ef2000d8e5bf7ca7edbff9c"
+    },
+    {
+      "worker": 2,
+      "files": [
+        "tests/test_study_provider.py",
+        "tests/test_study_resilience.py",
+        "tests/test_study_feedback.py",
+        "tests/test_study_intervals.py",
+        "tests/test_benchmark.py",
+        "tests/test_study_context.py",
+        "tests/test_reviewer_probe.py",
+        "tests/test_study_solution.py"
+      ],
+      "expected_cases": 198,
+      "port": 15461,
+      "database_name": "lecturelens_agent_test",
+      "tests": 198,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 55.411,
+      "junit_sha256": "9d561784d6885b4ea577358910b3904042d9c80a1f013148fe1cf6ac9c28f687"
+    },
+    {
+      "worker": 3,
+      "files": [
+        "tests/test_study_examples.py",
+        "tests/test_study_linear.py",
+        "tests/test_retrieval.py",
+        "tests/test_study_python_practice.py",
+        "tests/test_study_goals.py",
+        "tests/test_study_attempts.py",
+        "tests/test_study_eval.py",
+        "tests/test_feedback_eval.py"
+      ],
+      "expected_cases": 197,
+      "port": 15462,
+      "database_name": "lecturelens_agent_test",
+      "tests": 197,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 27.132,
+      "junit_sha256": "00bf49144bec3d4acb01d0e15bb837581643cf3f32d4c8f89b6247d25f545dae"
+    }
+  ],
+  "test_started_at_utc": "2026-10-14T08:15:00.191041+00:00",
+  "measurement_windows": {
+    "healthy": [
+      {
+        "label": "baseline",
+        "started_at_utc": "2026-10-14T07:53:16.718707+00:00",
+        "finished_at_utc": "2026-10-14T07:53:51.339265+00:00"
+      },
+      {
+        "label": "before",
+        "started_at_utc": "2026-10-14T07:53:51.340295+00:00",
+        "finished_at_utc": "2026-10-14T07:54:50.062933+00:00"
+      },
+      {
+        "label": "candidate",
+        "started_at_utc": "2026-10-14T07:54:50.064428+00:00",
+        "finished_at_utc": "2026-10-14T07:55:11.955972+00:00"
+      }
+    ],
+    "faults": [
+      {
+        "label": "baseline",
+        "started_at_utc": "2026-10-14T07:56:35.102222+00:00",
+        "finished_at_utc": "2026-10-14T08:03:26.025283+00:00"
+      },
+      {
+        "label": "candidate",
+        "started_at_utc": "2026-10-14T08:03:26.031312+00:00",
+        "finished_at_utc": "2026-10-14T08:11:58.243515+00:00"
+      }
+    ]
+  },
+  "no_test_measurement_overlap": true,
+  "process_audits_passed": true,
+  "check_results": {
+    "ruff_check": {
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    "ruff_format_check": {
+      "exit_code": 0,
+      "output": "79 files already formatted\n"
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "source_sha256": {
+    "baseline": "18f5a0d3cd963e4539ee8f2ff64f6e4b7a636d3f80944ec2b6f36c676d5ae7a7",
+    "before": "963ec9599818d42f0266fc3a110d334ae70fab178382b8c5b0933b678d0ab3ee",
+    "candidate": "6100c55cbacd1ce5eef454c7d47a951dfe3abb9c31e4a8c9f94d01586c120ed2"
+  },
+  "candidate_source_files": {
+    "__init__.py": "fdc2234c4de314c10ccfe65f69cab1ab429c482261253c70792892a9484c27de",
+    "app.py": "99e9360bd5b5562758f05407c6b75589bcf6d01c14b52a58306c5cba91d13db8",
+    "benchmark/__init__.py": "35ee0416300e68b02feeb960c545278414e177cf34190a0a15016ab57b122d58",
+    "benchmark/answers.py": "8101912f64c708be8f6edd7c84868d09df2b7b95d0d3f302cb27807d331cd5cd",
+    "benchmark/core.py": "a514ccdc3175e76ec2d80ace1cc8bf9ed497d03ddd1d93e19cf48221adf6b44c",
+    "benchmark/freeze.py": "a4cebf9402f54706bf00cfa1d6c1b3765eef94e8dc0c6fc539ed2d01b12b6a0c",
+    "benchmark/report.py": "b5094d5b54d5ae514607bcdf833cb99d4fbf6565bc9bebee890ca3119d0e2117",
+    "benchmark/reranker.py": "7fb6c8f6f93012339091c7ffe02393e1ed4e5b24ad59f5673ba64de6a75727b6",
+    "benchmark/run.py": "d5fbddf20b050d416c0e5b3fedca247b4c84d4181ae45079559124438646b346",
+    "benchmark/serve_reader.py": "b66b619c448da90a03c5e26146b0d602a55ce900ec1afb41167582a699cc5be6",
+    "contracts.py": "bfa7cd7e559a8a47eef7dac4f27cbd66af85c5957fb5913f1e8e8055d9819a06",
+    "course_mcp/__init__.py": "3a3151e0474414c889c9a1ac2c43bd6e82ba59d74cf4d32928fdb0db4404a74d",
+    "course_mcp/client.py": "89bdf77047de37ee882d8919726ae6cc477a1aa46579069883399218f1d42f6a",
+    "course_mcp/contracts.py": "ccc717a11d8a88ecdca7a8774e38708bfbfa6a0729f9e0e3d83f062cdea98249",
+    "course_mcp/server.py": "082bcd49174879c1ed67fc011578aca96de264bd84113af4804833215290e0ed",
+    "embedding.py": "b926f88e403da77ef134783349d97e1b88cd6ba012a2abe9c24887ce9f843bf4",
+    "retrieval.py": "07c3e784b70657e3bab0bc605fb8d35ebaf8147d10d8d70c90c53fbea0348dfe",
+    "store.py": "e1ea5dad4fcd74625135c7ec3a7a4b9effea92b4920244393a0456636ec1e09d",
+    "study/__init__.py": "b4cf474e3760e9cc117f211e7f6916cd9f35dcaec2d67ce9326b25770dd7a185",
+    "study/attempts.py": "a714bd030a6190a9f4278ed5375a2d584fcefdef04b81e1efe221e98b75b48f9",
+    "study/authority.py": "5b4629186886dd63e239d2d0931f9b82d981b9fcfdba76aa54122dd688249700",
+    "study/connections.py": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317",
+    "study/context.py": "ec04946767b46b4277943054dec82c26f345e615613b3d8c3849e51d876b2a5a",
+    "study/contracts.py": "142d0f6e605d3d946dd33210baf334f946ae8ebcc55fdba98c62e826d70565e2",
+    "study/costs.py": "193b85e5e33ba30d701fced0f8342d905050802f9b700dffbad600a5a3b89505",
+    "study/examples.py": "53bb9c028f752207a28c364bb2a966cc977f0958482a74a1c0eda760cf13bd64",
+    "study/failures.py": "b5ddd3b017277fa1b0191a9da63fbf62be2ee3c2c3400132713255f5ef3c5176",
+    "study/feedback.py": "7a7d5904ff89278bdad5cca47b1dc9e7c430a8cb002cfa78c6c7912b2f6f3999",
+    "study/feedback_store.py": "bcd0ec3ec4d77b5e0f84236dfd6c523ee2d7a7378151f6d3e1f874d4bb2fd5cd",
+    "study/goals.py": "23f3c1a0e644c842f8f3c4d3221453143b993dc4400aef46962818eb0e212a4a",
+    "study/grounded.py": "5be2cb5c143c2a1ec0aab714afb39c49e9049a65983aa184ac1256e4ed6f5833",
+    "study/intervals.py": "712717f32e910a8293c5f4a2751cf885c3dbadaf0678b8c679263139794fc585",
+    "study/linear.py": "f34b6f79f1c56b351ab861736735f40a6af0717df1b0d5048e4ddf42a6f36693",
+    "study/method_scope.py": "9f532c72ea69867e3e4feb78f746a0bd4e9aaee232693cbc22a839603036c6e2",
+    "study/models.py": "6057f9ce329f8b5001937feb8c55a3abe71642d1b6e228b433cffbae1ef7142f",
+    "study/provider.py": "abe9d9ed3bba7a67d9812cbdc2764e1ed0120f6267fb9f82680b4ddf4e500a75",
+    "study/quality.py": "02d6e6e9511edd1643c101df23116766d59af4c1e8fc8cd543eba80ee2aaf4b8",
+    "study/replay.py": "362c2c7769b415c5030b8623eaa5afc6cc0fb6783194abef3e3fcbe5354037f4",
+    "study/resilience.py": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671",
+    "study/runtime.py": "71d29fccc1c3123da83811219ecedc919d92f87fff619b8cc2461b566bdfb130",
+    "study/sequences.py": "ff087bd40d6eeddda06b6ea22aafccf62fb1080e883e382806b058da110c93a4",
+    "study/solution.py": "be3367138dc5d11fbf4dfac8f1d89a2840de54efe006a8109e8db12b407f8728",
+    "study/store.py": "0836acea86d75c0485239a64e638b2dfe5cdd9b22976a6651c1173dfd837128c",
+    "study/strings.py": "f850d26f0704e103ac9dd2f0a6514c26bf3f3edfb1eb472d2c2767a167b3151c",
+    "study/support_review.py": "c055cc6a2f45f22f29ba9cfc62a228c5a43b506c601fd63b8cde9aa81c151cc9",
+    "study/telemetry.py": "28d40ccc90529d5465e642fbc0b0af0498c53f88ea0628ecdbf4f15b1d98d836",
+    "study/trace.py": "0395b96e3ea70906e3709af6fa7b73f793617a7e91fd2d14bad4c7c3d9056bd6",
+    "study/trace_cli.py": "d2d6b199e0cf6ccf9befb26074a610121d8c7a3fef4974f2b9c9659ea00ba2d4"
+  },
+  "patch_sha256": "be783e3ca7457fb59157bb767c8efaea40ef2788685cd668e56d5c58a1c898c8",
+  "raw_sha256": {
+    "healthy-baseline.jsonl": "b2f21ffdd9935c037f9f1214218d79b87c13f1d263c7f04a3aba3ff5e2b75669",
+    "healthy-before.jsonl": "4baa3b73322de17575b7cd0a7675dbfb58afdbfd38b47770fe918352ab0dab69",
+    "healthy-candidate.jsonl": "dab103e69ef76d48d0e9dbfe0e302271d0125cfdbc85fe7b34d1db8e02379162",
+    "faults-baseline.jsonl": "7215cbb92e194239e6485440ada0b34a663caa78e7a0932c5af96cda36c31d4f",
+    "faults-candidate.jsonl": "1da6c20586e8a8ab71da14ef9279b71d631690066fd934eea911a50d36d8d43e"
+  },
+  "old_raw_files_unchanged": true,
+  "same_branch": "main",
+  "fault_counts_match_accepted_P0_1": true,
+  "formal_health_runs": 60,
+  "formal_fault_matrix_runs": 600,
+  "real_model_quality": "未运行",
+  "real_Java_process_faults": "未运行",
+  "Java_modified": false,
+  "Java_tests": "未运行（Java 未修改）",
+  "push": "未执行",
+  "deployment": "未执行"
+}

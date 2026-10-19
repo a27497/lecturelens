@@ -1,0 +1,29 @@
+{
+  "freeze_sha256": "34c21a40f03b0e0c49b29eda20fa7584169e2c06f114bfcaf3cdc3d57d54c94d",
+  "split": "holdout",
+  "started_at": "2026-10-14T12:12:17.527269+00:00",
+  "python": "3.12.14 (main, Aug 14 2026, 15:34:45) [Clang 22.1.3 ]",
+  "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+  "cpu_count": 8,
+  "host_start": {
+    "at": "2026-10-14T12:12:17.560673+00:00",
+    "loadavg": [
+      1.42578125,
+      1.99560546875,
+      1.6923828125
+    ],
+    "pytest_processes": []
+  },
+  "packages": {
+    "fastembed": "0.8.0",
+    "onnxruntime": "1.30.0",
+    "psycopg": "3.3.6",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu",
+    "transformers": "5.17.0",
+    "huggingface-hub": "1.32.0",
+    "pydantic": "2.13.5",
+    "tokenizers": "0.23.2"
+  },
+  "latency_repeats": 1
+}

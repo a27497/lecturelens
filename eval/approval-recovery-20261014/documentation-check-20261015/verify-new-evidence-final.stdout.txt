@@ -1,0 +1,1 @@
+{'approval_tests': {'tests': 23, 'failures': 0, 'errors': 0, 'skipped': 0}, 'approval_sample': '18/18', 'waiting_SIGKILL': '6/6', 'matrix_smoke': '30/30', 'ruff': 'passed', 'blank_schema': 'explicit error', 'original_deletion_ms': 7296.182}

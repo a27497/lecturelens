@@ -1,0 +1,18 @@
+{
+  "selection": "All baseline-v1 records except protocol_once; all protocol_once records from corrected fixture supplementary batch.",
+  "excluded_fixture_failures": {
+    "source": "baseline-v1.jsonl",
+    "scenario": "protocol_once",
+    "n": 20,
+    "reason": "MockProvider parsed repair prose as JSON. Original failures retained, never relabelled."
+  },
+  "files": {
+    "baseline-v1.jsonl": "9779bd6ae9bc40d9dd43a9801cdc9f618522b9d7db44c4ab69486a9e77279b24",
+    "baseline-protocol-repair.jsonl": "ec527f7620d7145dd126c3d8742fc71f036195f6aba0a5d374e68f6ab36a5387",
+    "baseline.jsonl": "5bb74365a1de973c9b307500f92f842e7764ea5ef80b4ce5c9b4e4ca7a052197",
+    "run-v1.py": "fa19b8c3520daff9d0fe71a5874b367cbe721d08bb75670ef3c430e7cb1657a1",
+    "run.py": "74edc783ec5e78a8a56d824c91b391eae052bd4d83cadfaa85f04b3abf6f9020"
+  },
+  "formal_n": 280,
+  "supplementary_healthy_controls": 20
+}

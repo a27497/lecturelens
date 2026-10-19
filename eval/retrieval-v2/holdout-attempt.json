@@ -1,0 +1,6 @@
+{
+  "freeze_sha256": "34c21a40f03b0e0c49b29eda20fa7584169e2c06f114bfcaf3cdc3d57d54c94d",
+  "reserved_at": "2026-10-14T12:12:17.527269+00:00",
+  "output": "eval/retrieval-v2/results/holdout",
+  "policy": "one attempt; no reset or retry"
+}
