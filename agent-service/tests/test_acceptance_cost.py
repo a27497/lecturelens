@@ -59,7 +59,10 @@ def test_inherited_pg_address_cannot_escape_the_isolated_database(monkeypatch):
     ledger = CostLedger(os.environ["AGENT_TEST_DATABASE_URL"])
     assert conninfo_to_dict(ledger.store.dsn)["hostaddr"] == "127.0.0.1"
     with ledger.store.connect() as conn:
-        assert str(conn.execute("SELECT inet_server_addr() AS address").fetchone()["address"]) == "127.0.0.1"
+        # Docker forwards the loopback listener to a bridge address. Verify
+        # libpq's actual client destination, not the server-side NAT address.
+        assert conn.info.hostaddr == "127.0.0.1"
+        assert conn.execute("SELECT current_database() AS name").fetchone()["name"] == "lecturelens_agent_test"
 
 
 @pytest.fixture
