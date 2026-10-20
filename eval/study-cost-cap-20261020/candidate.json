@@ -1,0 +1,18 @@
+{
+  "candidate_sha": "c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8",
+  "frozen_agent_sha": "7b60d94dc0a221217e595dfb5fe5205ba474d03a",
+  "initial_cost_implementation_sha": "576a2b2558bf426c2975fd323ce651f924d94086",
+  "address_pinning_implementation_sha": "e2972d473d0e88e69cd9ca5b69605991d761fe57",
+  "release": "/home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8",
+  "source_archive": "/home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/candidate-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8.tar",
+  "source_archive_sha256": "fd3648a4d8dc82485f11d36667cd4992ca3305f130dfcb8683a49b0ce40b66da",
+  "test_support_archive": "/home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/test-support-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8.tar",
+  "test_support_archive_sha256": "27ccb3f75307d500edcc38a22007b7c81f482a49003e44ad62e5efcbcb633868",
+  "install": "uv sync --frozen --offline --no-editable --python 3.12 --link-mode copy",
+  "files_sha256": {
+    "agent-service/src/lecturelens_agent/study/acceptance_cost.py": "a421abd4125458769c96b4987c266f87bbf25399af96810545d3537995271117",
+    "agent-service/src/lecturelens_agent/study/acceptance_egress.py": "4750c5a9976e2ce1d00336f48971fb7b264729b25a71462b298eabde45beb05c",
+    "agent-service/src/lecturelens_agent/study/acceptance_agent_manifest.json": "d391f860c0f4ecba9258d535b373726f3f9085a9561d0ae67a147be415e8a91c",
+    "scripts/eval/acceptance-cost-egress.py": "954f7a8d3b26941e90cca7f129b81150d47fa14916efb50a2a3ef76a310fea42"
+  }
+}

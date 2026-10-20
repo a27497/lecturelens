@@ -1,0 +1,151 @@
+{
+  "candidate_sha": "c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8",
+  "base_agent_sha": "7b60d94dc0a221217e595dfb5fe5205ba474d03a",
+  "mechanism_result": "PASS",
+  "real_model_quality": "NOT_RUN",
+  "paid_provider_requests": 0,
+  "model_probe_requests": 0,
+  "account_api_requests": 0,
+  "final_human_execution_authorization": "NOT_GIVEN",
+  "real_execution_started": false,
+  "account_isolation": "NOT_VERIFIED; no real provider credential used",
+  "provider_account_bill_hard_cap": "NOT_VERIFIED_OR_CONFIGURED",
+  "currency": "CNY",
+  "local_limit_micro_cny": 20000000,
+  "hard_cap_scope": "Only requests through this immutable isolated envelope, assuming the verified published prices/context/output contract and durable ledger. Not an account-level spending limit.",
+  "resource_caps": {
+    "input_wire_bytes": 65536,
+    "conservative_input_tokens_per_call": 1048576,
+    "decision_output_tokens": 900,
+    "practice_review_output_tokens_max": 1200,
+    "feedback_output_tokens": 900,
+    "calls_per_run": 6,
+    "calls_total": 12,
+    "money_implies_max_admissions": 9
+  },
+  "tests": {
+    "focused": {
+      "passed": 54,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "pytest_seconds": 22.95,
+      "record": "focused-run.json",
+      "output": "focused-output.txt",
+      "output_sha256": "359e2663e57e6eb88ad4905bfb8c725d8f3aeb9b3238fdfd36b298fa72615948",
+      "supervisor_status": "SUCCEEDED",
+      "cleanup_complete": true,
+      "network_counters": {
+        "database_connections": 0,
+        "denied_connections": 0,
+        "loopback_test_connections": 35
+      },
+      "network_atexit_record_count": 3
+    },
+    "full": {
+      "passed": 847,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "pytest_seconds": 188.71,
+      "record": "full-run.json",
+      "output": "full-output.txt",
+      "output_sha256": "35212e8c3c9abd404e943e45977f2fb3374211ea4784f617a7ca2501722273b2",
+      "supervisor_status": "SUCCEEDED",
+      "cleanup_complete": true,
+      "network_counters": {
+        "database_connections": 0,
+        "denied_connections": 0,
+        "loopback_test_connections": 45
+      },
+      "network_atexit_record_count": 4
+    }
+  },
+  "commands": {
+    "focused": "AGENT_TEST_DATABASE_URL=\"$P0_3A_TEST_DSN\" python3 /home/dev/projects/lecturelens/scripts/dev/run_check.py --name study-p0-3a-c7c5-focused --cwd /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8 --timeout 180 -- /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8/agent-service/.venv/bin/python scripts/eval/check-study-offline.py --database-port 25479 --network-records /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/network-c7c5-focused -- tests/test_acceptance_cost.py -q -s",
+    "full": "AGENT_TEST_DATABASE_URL=\"$P0_3A_TEST_DSN\" python3 /home/dev/projects/lecturelens/scripts/dev/run_check.py --name study-p0-3a-c7c5-full --cwd /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8 --timeout 600 -- /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8/agent-service/.venv/bin/python scripts/eval/check-study-offline.py --database-port 25479 --network-records /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/network-c7c5-full -- -q"
+  },
+  "command_notes": [
+    "P0_3A_TEST_DSN refers exclusively to the independent loopback test DB; credentials omitted from the public command.",
+    "Use fresh supervisor names and network-records directories when reproducing; do not overwrite saved records.",
+    "The source export is read-only. Noneditable package identity was verified separately; the guarded suite imports the frozen source via PYTHONPATH."
+  ],
+  "supervisor_source_sha256": "4c9b291b34003f7d7bf9461c1e0ec76a2295de45b83808cb03fc45fd2a746f5a",
+  "test_database": {
+    "container": "lecturelens-p0-3a-final-pg-20261020",
+    "image": "pgvector/pgvector:0.8.6-pg17",
+    "host": "127.0.0.1",
+    "port": 25479,
+    "dbname": "lecturelens_agent_test",
+    "postgresql": "17.11",
+    "fsync": "on",
+    "synchronous_commit": "on",
+    "storage": "new tmpfs 512m; live trial requires durable disk"
+  },
+  "healthy_and_checkpoint_recovered": {
+    "mock_requests": 9,
+    "practice": {
+      "models": 5,
+      "tools": 4,
+      "run_reserved": 61790,
+      "money_reserved_micro_cny": 10524160,
+      "questions": 2,
+      "status": "succeeded"
+    },
+    "feedback": {
+      "models": 4,
+      "tools": 2,
+      "run_reserved": 28524,
+      "money_reserved_micro_cny": 8417408,
+      "exact_attempt_persisted": true,
+      "status": "succeeded"
+    },
+    "local_reserved_micro_cny": 18941568,
+    "fake_usage_peak_upper_micro_cny": 5400,
+    "actual_provider_bill": null,
+    "paid_requests": 0
+  },
+  "concurrency": {
+    "same_operation_contenders": 16,
+    "successful_claims": 1,
+    "charges": 1
+  },
+  "sigkill_points": [
+    "after_reservation_commit_before_dispatch",
+    "after_dispatch_commit_fake_send_before_response",
+    "after_usage_commit_before_runtime_journal"
+  ],
+  "prior_trials": {
+    "576a_readonly_fixture": {
+      "diagnosis": "FAILED",
+      "full": "CANCELLED_BY_VERIFIED_SUPERVISOR",
+      "cause": "disposable copied source inherited read-only mode"
+    },
+    "41565_full": {
+      "status": "SUCCEEDED",
+      "passed": 844,
+      "note": "preceded address hardening; not the final candidate result"
+    },
+    "e297_address_assertion": {
+      "status": "FAILED",
+      "passed": 53,
+      "failed": 1,
+      "cause": "asserted container-side address rather than libpq client destination; test-only correction follows"
+    }
+  },
+  "network_caveats": [
+    "Python socket/DNS audit fence, not OS sandbox.",
+    "Native libpq counters are not captured; explicit hostaddr pinned to loopback and independent DSN validated.",
+    "Intentional fence denial self-test counters are in its temp directory. SIGKILL prevents child atexit counters."
+  ],
+  "production_database_access": false,
+  "production_service_mutations": false,
+  "merge_or_deploy": false,
+  "lint": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS, 97 files formatted",
+    "whitespace_check_scope": "code, docs and JSON; copied verbatim diagnostic outputs retain original whitespace"
+  },
+  "warning": "Existing Starlette/AnyIO BlockingPortal deprecation; no test skips.",
+  "stop": "Await final user authorization and actual account/environment verification; no automatic generation, feedback, retry, or deployment."
+}

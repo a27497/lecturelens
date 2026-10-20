@@ -1,0 +1,15 @@
+{
+  "verified_date_client_timezone": "2026-10-20 Asia/Shanghai",
+  "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "contract_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+  "model": "deepseek-flash",
+  "documented_model_version": "DeepSeek-V4.1-Flash-1017",
+  "input_cache_miss_peak_cny_per_million": 2,
+  "output_peak_cny_per_million": 8,
+  "documented_context": "1M tokens",
+  "local_conservative_input_token_ceiling": 1048576,
+  "account_queries": 0,
+  "model_queries_or_probes": 0,
+  "bill_hard_cap_at_provider": "NOT_VERIFIED",
+  "price_change_risk": "Published prices can change. Fresh verification is required before any separately authorized real trial; policy expires within 24h."
+}

@@ -1,0 +1,65 @@
+{
+  "status": "CANCELLED",
+  "started_at_utc": "2026-10-20T06:48:30.896755+00:00",
+  "runner_pid": 392369,
+  "runner_start_ticks": 599200,
+  "cwd": "/home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-576a2b2558bf426c2975fd323ce651f924d94086",
+  "executable": "python",
+  "argv_sha256": "53985439463f2e5e19fff6bbe206224b394d67ffcefe33dead529db021156404",
+  "timeout_seconds": 600.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": -15,
+  "exit_code": 143,
+  "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-p0-3a-frozen-full/output.log",
+  "disk_before": {
+    "used_bytes": 127341273088,
+    "available_bytes": 27536138240,
+    "allowed": true
+  },
+  "child_pid": 392373,
+  "pgid": 392373,
+  "child_start_ticks": 599205,
+  "cleanup": {
+    "pgid": 392373,
+    "signals": [
+      "SIGTERM"
+    ],
+    "errors": [],
+    "targets": [
+      {
+        "pid": 392373,
+        "ppid": 392369,
+        "pgid": 392373,
+        "state": "S",
+        "start_ticks": 599205,
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 397703,
+        "ppid": 392373,
+        "pgid": 397703,
+        "state": "R",
+        "start_ticks": 604685,
+        "signal": "SIGTERM"
+      }
+    ],
+    "reaped_descendants": [
+      {
+        "pid": 397703,
+        "returncode": -15
+      }
+    ],
+    "remaining": [],
+    "complete": true
+  },
+  "cancel_signal": "SIGTERM",
+  "finished_at_utc": "2026-10-20T06:49:26.094496+00:00",
+  "elapsed_seconds": 55.197761267000715,
+  "disk_after": {
+    "used_bytes": 127361519616,
+    "available_bytes": 27515891712,
+    "allowed": true
+  },
+  "log_sha256": "e6f311ff91c9c2ddae811df011965739c432919b58b150467c3c847920bdb768"
+}

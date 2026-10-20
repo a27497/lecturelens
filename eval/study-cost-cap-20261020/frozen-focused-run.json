@@ -1,0 +1,40 @@
+{
+  "status": "SUCCEEDED",
+  "started_at_utc": "2026-10-20T06:50:16.008175+00:00",
+  "runner_pid": 401149,
+  "runner_start_ticks": 609709,
+  "cwd": "/home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-41565cfd0690b2f2065c7d9dfcdf3525da4dfce2",
+  "executable": "python",
+  "argv_sha256": "fdc90282e836b62e0423a829605e9981a4c71965c84139ae4b8af6b038781d69",
+  "timeout_seconds": 180.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": 0,
+  "exit_code": 0,
+  "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-p0-3a-final-frozen-focused/output.log",
+  "disk_before": {
+    "used_bytes": 127801647104,
+    "available_bytes": 27075764224,
+    "allowed": true
+  },
+  "child_pid": 401156,
+  "pgid": 401156,
+  "child_start_ticks": 609716,
+  "cleanup": {
+    "pgid": 401156,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  },
+  "finished_at_utc": "2026-10-20T06:50:40.785401+00:00",
+  "elapsed_seconds": 24.777246005999586,
+  "disk_after": {
+    "used_bytes": 127814131712,
+    "available_bytes": 27063279616,
+    "allowed": true
+  },
+  "log_sha256": "4c41fef44330fc1a63307d7733337160f9423acff8b9b68cd2e1cfa67653b24c"
+}

@@ -1,0 +1,30 @@
+{
+  "base_agent_sha": "7b60d94dc0a221217e595dfb5fe5205ba474d03a",
+  "candidate_sha": "c7c5d3ddc1f0c4137c642f6b6ef20c7811a302d8",
+  "original_source_files_unchanged": 55,
+  "core_manifest_modules": 54,
+  "budget_runtime_provider_store_context_quality_unchanged": true,
+  "dependencies_unchanged": true,
+  "extra_files": [
+    "M\tagent-service/README.md",
+    "A\tagent-service/src/lecturelens_agent/study/acceptance_agent_manifest.json",
+    "A\tagent-service/src/lecturelens_agent/study/acceptance_cost.py",
+    "A\tagent-service/src/lecturelens_agent/study/acceptance_egress.py",
+    "A\tagent-service/tests/test_acceptance_cost.py",
+    "A\tdocs/ACCEPTANCE_COST_EGRESS.md",
+    "A\tscripts/eval/acceptance-cost-egress.py"
+  ],
+  "installed_dependencies": 83,
+  "version_difference_from_p0_2": {},
+  "original_dirty_sources_unchanged": {
+    "agent-service/src/lecturelens_agent/study/provider.py": "3b70650ec0fbd2423683b2b976a017eb9e2940a31a604776cf21f9f0602172c8",
+    "agent-service/tests/test_study_deepseek.py": "fc6e301ae03ff49fac0cfceede695e579063d1211fd90bce5d9d2499d0b33b19"
+  },
+  "pr36": {
+    "headRefOid": "bf90b28d2fb069744c37d90de68f747b6d176d44",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/a27497/lecturelens/pull/36"
+  },
+  "cost_source_changes_after_address_pinning": []
+}

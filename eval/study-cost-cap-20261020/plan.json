@@ -1,0 +1,32 @@
+{
+  "agent_candidate": "7b60d94dc0a221217e595dfb5fe5205ba474d03a",
+  "upstream": "https://api.deepseek.com/chat/completions",
+  "required_models": {
+    "decision": "deepseek-flash",
+    "review": "deepseek-flash"
+  },
+  "thinking": "disabled",
+  "max_output_tokens": {
+    "decision": 900,
+    "practice_review": 1200,
+    "feedback": 900
+  },
+  "max_wire_bytes": 65536,
+  "charged_input_token_ceiling_per_request": 1048576,
+  "input_peak_cny_per_million": 2,
+  "output_peak_cny_per_million": 8,
+  "price_source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "max_calls": 12,
+  "max_calls_per_run": 6,
+  "budget_micro_cny": 20000000,
+  "max_900_token_request_micro_cny": 2104352,
+  "max_1200_token_request_micro_cny": 2106752,
+  "twelve_call_unchecked_upper_micro_cny": 25266624,
+  "money_limit_implies_max_admitted_calls": 9,
+  "refund_policy": "never",
+  "unknown_outcome_policy": "stop_without_resending",
+  "live_authorization": "not_given_by_this_plan",
+  "account_spending_limit": "not_verified_or_configured",
+  "provider_requests": 0,
+  "verified_frozen_modules": 54
+}

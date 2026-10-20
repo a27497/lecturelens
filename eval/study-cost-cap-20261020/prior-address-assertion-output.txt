@@ -1,0 +1,29 @@
+..F.................................................COST_GATE_OFFLINE_SMOKE {"recovery": false, "mock_requests": 9, "local_reserved_micro_cny": 18941568, "fake_usage_peak_upper_micro_cny": 5400, "paid_requests": 0}
+.COST_GATE_OFFLINE_SMOKE {"recovery": true, "mock_requests": 9, "local_reserved_micro_cny": 18941568, "fake_usage_peak_upper_micro_cny": 5400, "paid_requests": 0}
+.
+=================================== FAILURES ===================================
+________ test_inherited_pg_address_cannot_escape_the_isolated_database _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d1409302510>
+
+    def test_inherited_pg_address_cannot_escape_the_isolated_database(monkeypatch):
+        monkeypatch.setenv("PGHOSTADDR", "203.0.113.1")
+        ledger = CostLedger(os.environ["AGENT_TEST_DATABASE_URL"])
+        assert conninfo_to_dict(ledger.store.dsn)["hostaddr"] == "127.0.0.1"
+        with ledger.store.connect() as conn:
+>           assert str(conn.execute("SELECT inet_server_addr() AS address").fetchone()["address"]) == "127.0.0.1"
+E           AssertionError: assert '172.17.0.6' == '127.0.0.1'
+E             
+E             - 127.0.0.1
+E             + 172.17.0.6
+
+tests/test_acceptance_cost.py:62: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-e2972d473d0e88e69cd9ca5b69605991d761fe57/agent-service/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_acceptance_cost.py::test_inherited_pg_address_cannot_escape_the_isolated_database
+1 failed, 53 passed, 1 warning in 23.03s

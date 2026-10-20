@@ -1,0 +1,10 @@
+.................................................COST_GATE_OFFLINE_SMOKE {"recovery": false, "mock_requests": 9, "local_reserved_micro_cny": 18941568, "fake_usage_peak_upper_micro_cny": 5400, "paid_requests": 0}
+.COST_GATE_OFFLINE_SMOKE {"recovery": true, "mock_requests": 9, "local_reserved_micro_cny": 18941568, "fake_usage_peak_upper_micro_cny": 5400, "paid_requests": 0}
+.
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-41565cfd0690b2f2065c7d9dfcdf3525da4dfce2/agent-service/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+51 passed, 1 warning in 22.98s

@@ -1,0 +1,44 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_frozen_module_manifest_detects_source_drift _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-dev/pytest-5/test_frozen_module_manifest_de0')
+
+    def test_frozen_module_manifest_detects_source_drift(tmp_path):
+        import lecturelens_agent
+    
+        package = Path(lecturelens_agent.__file__).parent
+        copied = tmp_path / "package"
+        shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+        assert verify_frozen_agent(copied) == 54
+>       with (copied / "study/provider.py").open("a") as output:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_acceptance_cost.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-dev/pytest-5/test_frozen_module_manifest_de0/package/study/provider.py')
+mode = 'a', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       PermissionError: [Errno 13] Permission denied: '/tmp/pytest-of-dev/pytest-5/test_frozen_module_manifest_de0/package/study/provider.py'
+
+/home/dev/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/pathlib.py:1013: PermissionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:53
+  /home/dev/projects/lecturelens-study-deepseek-cost-cap/.data/p0-3a/release-576a2b2558bf426c2975fd323ce651f924d94086/agent-service/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_acceptance_cost.py::test_frozen_module_manifest_detects_source_drift
+1 failed, 1 warning in 0.84s
