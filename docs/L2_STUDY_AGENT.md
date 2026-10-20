@@ -2,6 +2,8 @@
 
 日期：2026-09-15。实现边界：单课程、短会话、解释与两道练习。前置索引见 [Evidence 同步](L1_EVIDENCE_SYNC.md)。
 
+阅读说明：本页保留按阶段追加的实现与验收记录；其中“线上 C”“未发布工作区”按记录日期理解。main 的导航见[仓库导览](PROJECT_MAP.md)，维护环境身份见[部署快照](PROJECT_MAP.md#版本与部署快照)；后续已实现的可选审批与调用恢复以[审批恢复协议](STUDY_APPROVAL_RECOVERY.md)为准。
+
 ## 已实现的行为
 
 课程详情新增「学习助手」。用户输入目标，Java 核验当前用户、课程存在、处理成功及索引 READY；Python 创建 Session / Run，后台运行 LangGraph。模型通过标准 chat-completions `tool_calls` 选择工具，结果经过参数、引用、版本和预算校验后保存。模型消息使用标准 assistant tool_calls / tool_call_id 配对返回工具结果；不会用普通用户消息冒充工具返回。
@@ -53,7 +55,7 @@ LangGraph 采用同步 checkpoint 持久化；使用官方 `PostgresSaver`。每
 
 `AGENT_RUN_DEADLINE_SECONDS` 支持 30–300 秒，默认 90；deadline 从首次 worker claim 起持久保存，含重启停机时间。CPU 验收可显式加大预算，必须单独报告，不能记成满足默认延迟。
 
-取消请求即时将 Run 标记 `cancelled`；正在进行的外部模型请求采用协作式取消，可能继续到 HTTP 超时或返回，但不能发布为成功。达到预算则 `budget_exceeded`；工具或 provider 错误为 `failed`，脱敏代码对外。当前没有 `waiting_user` / 人工审批节点。语义复核失败可以反馈修订；工具参数不合法仍明确失败，不混为可修复的语义问题。
+取消请求即时将 Run 标记 `cancelled`；正在进行的外部模型请求采用协作式取消，可能继续到 HTTP 超时或返回，但不能发布为成功。达到预算则 `budget_exceeded`；不可恢复的工具或 provider 错误为 `failed`，脱敏代码对外。可选人工审批默认关闭，启用后进入 `awaiting_approval`，详见[审批与恢复](STUDY_APPROVAL_RECOVERY.md)。语义复核失败可以反馈修订；工具参数不合法仍明确失败，不混为可修复的语义问题。
 
 Java 删除立即关闭全部课程、Session、Run、答案及事件访问。Evidence DELETE 同步持久写入 Python tombstone；后台清理器取得 Session 锁后删除学习产物、工具结果、事件及 LangGraph checkpoints，失败会在后续轮询继续尝试。活动 worker 完成或退出后才能清理其 checkpoint，避免删除后又被旧线程写回。源版本变更使旧 Session 失效，新会话使用新 revision；旧版本学习产物不被当作当前资料。
 

@@ -2,6 +2,8 @@
 
 本文说明如何在本机部署 LectureLens，并使用部署者自己的基础设施密码和 AI Provider 凭据。产品能力与验证数据见[项目主页](../README.md)。
 
+本文是源码部署指南，不是维护环境当前版本清单。2026-10-20 只读核对显示远端 main、原开发工作树、Python 独立 release 和 Java JAR 身份不同；完整事实与未知项见[版本与部署快照](PROJECT_MAP.md#版本与部署快照)。main 中有代码或历史验收通过，均不表示已部署；本次文档整理不执行部署或更改配置。
+
 ## 部署说明
 
 LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MySQL、Redis、MinIO 和 RocketMQ 运行在使用者自己的环境中；ASR、LLM 与 VLM 请求使用部署者向第三方 Provider 申请的凭据，调用费用和数据合规责任也由部署者承担。
