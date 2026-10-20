@@ -8,7 +8,7 @@
   "account_api_requests": 0,
   "final_human_execution_authorization": "NOT_GIVEN",
   "real_execution_started": false,
-  "account_isolation": "NOT_VERIFIED; no real provider credential used",
+  "account_isolation": "USER_CONFIRMED_NOT_PREPARED: dedicated account or credentials not yet available",
   "provider_account_bill_hard_cap": "NOT_VERIFIED_OR_CONFIGURED",
   "currency": "CNY",
   "local_limit_micro_cny": 20000000,
@@ -147,5 +147,6 @@
     "whitespace_check_scope": "code, docs and JSON; copied verbatim diagnostic outputs retain original whitespace"
   },
   "warning": "Existing Starlette/AnyIO BlockingPortal deprecation; no test skips.",
-  "stop": "Await final user authorization and actual account/environment verification; no automatic generation, feedback, retry, or deployment."
+  "stop": "Await final user authorization and actual account/environment verification; no automatic generation, feedback, retry, or deployment.",
+  "account_status_source": "Direct user reply after offline completion; not a final real-execution authorization"
 }
