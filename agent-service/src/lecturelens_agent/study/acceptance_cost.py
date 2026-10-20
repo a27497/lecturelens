@@ -196,12 +196,20 @@ class CostLedger:
         config = conninfo_to_dict(dsn)
         if (
             config.get("host") != "127.0.0.1"
+            or config.get("hostaddr") not in (None, "127.0.0.1")
+            or config.get("service")
             or config.get("dbname") not in {"lecturelens_agent_test", "lecturelens_agent_acceptance"}
             or not 20_000 <= int(config.get("port", "0")) < 32_768
         ):
             raise CostDenied("COST_ISOLATED_DATABASE_REQUIRED")
+        # libpq can route using hostaddr/PGHOSTADDR instead of host. An explicit
+        # address also overrides inherited environment/service defaults.
         self.store = StudyStore(
-            make_conninfo(dsn, options=config.get("options", "") + " -csynchronous_commit=on")
+            make_conninfo(
+                dsn,
+                hostaddr="127.0.0.1",
+                options=config.get("options", "") + " -csynchronous_commit=on",
+            )
         )
 
     def install(self, policy):

@@ -18,7 +18,7 @@ import httpx
 import pytest
 import test_models
 from psycopg import sql
-from psycopg.conninfo import make_conninfo
+from psycopg.conninfo import conninfo_to_dict, make_conninfo
 from test_study_deepseek_preflight import Course, Wire, execute
 
 from lecturelens_agent.study.acceptance_cost import (
@@ -45,6 +45,21 @@ from lecturelens_agent.study.runtime import StudyRuntime
 from lecturelens_agent.study.store import StudyStore
 
 registry = test_models.registry
+
+
+@pytest.mark.parametrize("override", [{"hostaddr": "203.0.113.1"}, {"service": "untrusted-service"}])
+def test_libpq_address_overrides_are_rejected_without_connecting(override):
+    dsn = make_conninfo(host="127.0.0.1", port="25479", dbname="lecturelens_agent_test", **override)
+    with pytest.raises(CostDenied, match="ISOLATED_DATABASE_REQUIRED"):
+        CostLedger(dsn)
+
+
+def test_inherited_pg_address_cannot_escape_the_isolated_database(monkeypatch):
+    monkeypatch.setenv("PGHOSTADDR", "203.0.113.1")
+    ledger = CostLedger(os.environ["AGENT_TEST_DATABASE_URL"])
+    assert conninfo_to_dict(ledger.store.dsn)["hostaddr"] == "127.0.0.1"
+    with ledger.store.connect() as conn:
+        assert str(conn.execute("SELECT inet_server_addr() AS address").fetchone()["address"]) == "127.0.0.1"
 
 
 @pytest.fixture
