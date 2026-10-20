@@ -76,5 +76,6 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 - **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
 - **检索评测 v2：** `lecturelens_agent.benchmark_v2.run report` 从冻结的 120 题排名重算配对 CI 和失败分桶，开发/保留按课程隔离，保留检索仅运行一次。模型辅助标注不代表人类金标准，观测指标不认证回答质量。[结果与复现](../eval/retrieval-v2/README.md)
 - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
+- **隔离验收费用出口（实验）：** [费用控制与保证范围](../docs/ACCEPTANCE_COST_EGRESS.md)说明独立 PostgreSQL 金额预留、专用 loopback 代理和未知结果停止策略。普通 worker 不自动启用；离线机制通过不代表账户级账单硬限或真实模型质量通过。
 
 可选发布审批默认关闭：浏览器勾选或 START/START_FEEDBACK 使用 `approval_required=true`。审批与调用日志恢复语义见 [审批与崩溃恢复](../docs/STUDY_APPROVAL_RECOVERY.md)，逐点强制终止实测见 [报告](../eval/approval-recovery-20261014/README.md)。
