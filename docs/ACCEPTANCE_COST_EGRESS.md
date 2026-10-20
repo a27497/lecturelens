@@ -49,6 +49,6 @@ agent-service/.venv/bin/python scripts/eval/acceptance-cost-egress.py plan
 
 未来获得 P0-3 明确授权后，独立执行器才能使用 `serve`，提供包含授权记录、Session ID、价格确认/失效时间的 `mode=live` 不可变 policy，以及专用 credential FD。脚本不获取余额、不探测模型、不自动出题或反馈。endpoint 文件以 O_EXCL/0600 创建，只含本地 URL 与独立本地 capability，属于私有文件，不得打印或入 Git。worker 用该文件初始化 `AcceptanceProvider`，用 `worker_snapshot` 初始化独立 `StudyStore`；不能调用生产 loader、连接生产数据库或启动普通消费生产队列的 worker。
 
-数据库仅允许 loopback 的 20000–32767 端口，库名为 `lecturelens_agent_test` 或 `lecturelens_agent_acceptance`。连接强制 `synchronous_commit=on`，安装要求 `fsync=on`。测试库可用临时存储；真实费用库必须使用持久磁盘，并禁止从付款前的快照回滚后继续发送。singleton 的 policy 不允许修改、重新充值或自动解封。过期/未知/取消后需要停止和人工审阅，不能清空表继续试跑。
+数据库仅允许 loopback 的 20000–32767 端口，库名为 `lecturelens_agent_test` 或 `lecturelens_agent_acceptance`。拒绝非 loopback `hostaddr` 和 service 引用，显式固定 libpq 的 `hostaddr=127.0.0.1`，防止 `PGHOSTADDR` 覆盖。连接强制 `synchronous_commit=on`，安装要求 `fsync=on`。测试库可用临时存储；真实费用库必须使用持久磁盘，并禁止从付款前的快照回滚后继续发送。singleton 的 policy 不允许修改、重新充值或自动解封。过期/未知/取消后需要停止和人工审阅，不能清空表继续试跑。
 
 本工具未改变任何生产路由或服务，不需要执行生产回退。后续隔离验收要回退时，停止验收 worker 和对应代理，撤销专用凭据，保留费用表、失败 Run、journal、作答和产物；恢复原冻结运行时不等于获准绕过费用出口继续调用。
