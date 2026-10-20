@@ -158,7 +158,11 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
     assert verify_frozen_agent(copied) == 54
-    with (copied / "study/provider.py").open("a") as output:
+    altered = copied / "study/provider.py"
+    # Frozen artifacts are read-only. Only the disposable tampering sample may
+    # become writable; the source being certified keeps its original mode.
+    altered.chmod(altered.stat().st_mode | 0o200)
+    with altered.open("a") as output:
         output.write("\n# different candidate\n")
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_frozen_agent(copied)
