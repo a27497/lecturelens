@@ -27,6 +27,7 @@ Example commands from `frontend/` (run under the supervisor):
 npm ci
 npm run test:unit
 npm run type-check
+npm audit
 npm run build -- --outDir /isolated/pr1/dist
 
 ffmpeg -nostdin -f lavfi -i testsrc2=size=320x180:rate=12 -t 12 \
@@ -43,4 +44,4 @@ npm run test:browser -- --dist /isolated/pr1/dist \
 
 ## Release and rollback
 
-This change requires no service configuration, backend change or database migration. Release only after review and separately authorized deployment. Before release, verify a complete real long course, authenticated backend evidence access/version changes, expired authorization and supported desktop/mobile browsers. Revert the frontend commit or restore the prior frontend artifact through the normal release process to roll back; existing learning records require no conversion.
+This change requires no service configuration, backend change or database migration. Release only after review and separately authorized deployment. Before release, verify a complete real long course, authenticated backend evidence access/version changes, expired authorization and supported desktop/mobile browsers. Revert the frontend commits or restore the prior frontend artifact through the normal release process to roll back; existing learning records require no conversion.
