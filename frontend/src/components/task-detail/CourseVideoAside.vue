@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import type { SeekRequest } from "./courseLocation";
 import VideoPlaybackCard from "../VideoPlaybackCard.vue";
 import type { TaskEventPayload, TaskConnectionStatus, TaskDetailResponse } from "../../types/task";
 import { formatDurationBetween } from "../../utils/time";
@@ -10,6 +11,7 @@ type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported
 type VideoPlaybackExpose = { seekTo: (seconds: number) => void };
 
 const props = defineProps<{
+  seekRequest?: SeekRequest;
   task: TaskEventPayload | null;
   taskDetail: TaskDetailResponse | null;
   connectionStatus: TaskConnectionStatus;
@@ -26,7 +28,7 @@ const props = defineProps<{
   subtitleMessage: string;
 }>();
 
-defineEmits<{ refreshVideo: [] }>();
+defineEmits<{ refreshVideo: []; position: [milliseconds: number] }>();
 
 const playbackRef = ref<VideoPlaybackExpose | null>(null);
 const progress = computed(() => props.task?.progressPercent ?? props.taskDetail?.progressPercent ?? 0);
@@ -46,6 +48,8 @@ defineExpose({ seekTo });
   <aside class="course-video-aside" aria-label="课程视频和处理状态">
     <VideoPlaybackCard
       ref="playbackRef"
+      :seek-request="seekRequest"
+      @position="$emit('position', $event)"
       title="课程视频"
       description="播放上传的原始视频。"
       :playback-url="playbackUrl"

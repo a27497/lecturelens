@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -20,6 +20,8 @@ import CourseTechnicalPanel from "../components/task-detail/CourseTechnicalPanel
 import CourseVideoAside from "../components/task-detail/CourseVideoAside.vue";
 import CourseWorkspaceHeader from "../components/task-detail/CourseWorkspaceHeader.vue";
 import CourseWorkspaceNav from "../components/task-detail/CourseWorkspaceNav.vue";
+import { readCourseLocation, validPosition } from "../components/task-detail/courseLocation";
+import type { ContentView, SeekRequest } from "../components/task-detail/courseLocation";
 import type { CourseWorkspace } from "../components/task-detail/workspace";
 import { useTaskEventsStore } from "../stores/taskEvents";
 import { useTaskResultStore } from "../stores/taskResult";
@@ -28,7 +30,6 @@ import { isRetryableTaskStatus, shouldReloadTerminalTaskDetail } from "../utils/
 import { normalizeSubtitleLanguage } from "../utils/subtitleLanguage";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
-type VideoAsideExpose = { seekTo: (seconds: number) => void };
 
 const route = useRoute();
 const router = useRouter();
@@ -36,7 +37,17 @@ const taskEventsStore = useTaskEventsStore();
 const taskResultStore = useTaskResultStore();
 
 const activeWorkspace = ref<CourseWorkspace>("agent");
-const videoAsideRef = ref<VideoAsideExpose | null>(null);
+const readingView = ref<ContentView>();
+const positionMs = ref(0);
+const seekRequest = ref<SeekRequest>();
+const locateSequence = ref(0);
+const reviewingEvidence = ref(false);
+const evidenceRef = ref<HTMLElement | null>(null);
+let seekSequence = 0;
+let returnFocus: HTMLElement | null = null;
+let returnScroll = 0;
+let locationTimer: ReturnType<typeof setTimeout> | undefined;
+const pendingLocations = new Set<string>();
 const taskDetail = ref<TaskDetailResponse | null>(null);
 const taskDetailRequestVersion = ref(0);
 const cancelLoading = ref(false);
@@ -80,10 +91,21 @@ watch(taskId, (nextTaskId) => {
   void taskResultStore.load(nextTaskId);
   void refreshTaskPlayback(nextTaskId);
   void refreshTaskEmbeddedSubtitles(nextTaskId);
-  activeWorkspace.value = "agent";
+  clearTimeout(locationTimer);
+  pendingLocations.clear();
+  reviewingEvidence.value = false;
+  returnFocus = null;
+  applyLocation();
   completedResultReloadTaskId.value = "";
   terminalDetailReloadTaskId.value = "";
 }, { immediate: true });
+
+watch(() => route.query, () => {
+  const signature = locationSignature(route.query);
+  if (pendingLocations.delete(signature)) return;
+  clearTimeout(locationTimer);
+  applyLocation();
+});
 
 watch(() => task.value?.status, (status) => {
   const currentTaskId = taskId.value.trim();
@@ -99,6 +121,7 @@ watch(() => task.value?.status, (status) => {
 });
 
 onBeforeUnmount(() => {
+  clearTimeout(locationTimer);
   taskEventsStore.disconnect();
   taskResultStore.clear();
   clearTaskDetail();
@@ -106,8 +129,46 @@ onBeforeUnmount(() => {
   clearTaskEmbeddedSubtitles();
 });
 
+function locationSignature(query: typeof route.query) {
+  return JSON.stringify([taskId.value, query.view, query.text, query.at]);
+}
+function applyLocation() {
+  clearTimeout(locationTimer);
+  locationTimer = undefined;
+  const location = readCourseLocation(route.query);
+  activeWorkspace.value = location.workspace;
+  readingView.value = location.textView;
+  positionMs.value = location.milliseconds;
+  seekRequest.value = { milliseconds: location.milliseconds, sequence: ++seekSequence };
+  locateSequence.value++;
+  reviewingEvidence.value = false;
+}
+function writeLocation(push = false) {
+  clearTimeout(locationTimer);
+  locationTimer = undefined;
+  const query = { view: activeWorkspace.value, ...(readingView.value ? { text: readingView.value } : {}), at: String(positionMs.value) };
+  const signature = locationSignature(query);
+  if (signature === locationSignature(route.query)) return;
+  pendingLocations.add(signature);
+  // Explicit view changes create history; playback updates replace only the current entry.
+  void router[push ? "push" : "replace"]({ path: route.path, query }).finally(() => pendingLocations.delete(signature));
+}
+function updatePosition(milliseconds: number) {
+  if (!validPosition(milliseconds)) return;
+  positionMs.value = milliseconds;
+  if (!locationTimer) locationTimer = setTimeout(() => { locationTimer = undefined; writeLocation(); }, 1500);
+}
 function changeWorkspace(workspace: CourseWorkspace) {
   activeWorkspace.value = workspace;
+  reviewingEvidence.value = false;
+  writeLocation(true);
+}
+function changeReadingView(view: ContentView) { readingView.value = view; writeLocation(); }
+async function returnToLearning() {
+  reviewingEvidence.value = false;
+  await nextTick();
+  returnFocus?.focus({ preventScroll: true });
+  window.scrollTo({ top: returnScroll });
 }
 
 async function loadPublicRuntimeConfiguration() {
@@ -120,7 +181,20 @@ async function loadPublicRuntimeConfiguration() {
 }
 
 function seekTo(startTimeMillis: number) {
-  videoAsideRef.value?.seekTo(Math.max(0, startTimeMillis || 0) / 1000);
+  if (!validPosition(startTimeMillis)) return;
+  positionMs.value = startTimeMillis;
+  seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
+  readingView.value = "timeline";
+  locateSequence.value++;
+  if (activeWorkspace.value !== "content") {
+    if (!reviewingEvidence.value) {
+      returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      returnScroll = window.scrollY;
+    }
+    reviewingEvidence.value = true;
+    void nextTick(() => evidenceRef.value?.scrollIntoView({ block: "start" }));
+  }
+  writeLocation();
 }
 
 function reconnect() {
@@ -315,7 +389,8 @@ async function confirmRetryTask() {
         <div class="course-layout__media">
           <CourseVideoAside
             :key="taskId"
-            ref="videoAsideRef"
+            :seek-request="seekRequest"
+            @position="updatePosition"
             :task="task"
             :task-detail="taskDetail"
             :connection-status="taskEventsStore.connectionStatus"
@@ -338,7 +413,11 @@ async function confirmRetryTask() {
           <CourseWorkspaceNav :active="activeWorkspace" @change="changeWorkspace" />
           <el-alert v-if="taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
-          <KeepAlive v-else>
+          <div v-show="activeWorkspace === 'content' || reviewingEvidence" ref="evidenceRef" class="evidence-reading">
+            <div v-if="reviewingEvidence" class="evidence-reading__return"><span>回看课程原文，当前学习任务保留在下方。</span><button type="button" @click="returnToLearning">返回当前学习任务</button></div>
+            <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView" :visible="activeWorkspace === 'content' || reviewingEvidence" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+          </div>
+          <KeepAlive :key="taskId">
             <CourseOverviewPanel
               v-if="activeWorkspace === 'overview'"
               :task="task"
@@ -349,13 +428,12 @@ async function confirmRetryTask() {
               @navigate="changeWorkspace"
               @retry="confirmRetryTask"
             />
-            <CourseContentPanel v-else-if="activeWorkspace === 'content'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
             <CourseStudyPanel v-else-if="activeWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="activeWorkspace = $event" />
+            <CourseAgentPanel v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
             <CourseQaPanel v-else-if="activeWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
             <CourseFilesPanel v-else-if="activeWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
             <CourseTechnicalPanel
-              v-else
+              v-else-if="activeWorkspace === 'technical'"
               :task-id="taskId"
               :task="task"
               :task-detail="taskDetail"
@@ -373,6 +451,9 @@ async function confirmRetryTask() {
 <style scoped>
 .course-workspace-page { min-height: calc(100vh - var(--header-height)); background: var(--color-canvas); }
 .course-workspace-page__inner { width: min(1360px, calc(100% - 48px)); margin: 0 auto; padding: 30px 0 64px; }
+.evidence-reading { min-width: 0; scroll-margin-top: calc(var(--header-height) + 12px); }
+.evidence-reading__return { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-ink-soft); }
+.evidence-reading__return button { font: inherit; color: var(--color-brand); padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; }
 .demo-notice { margin-top: 18px; }
 .course-layout { display: grid; grid-template-columns: minmax(360px, 420px) minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 24px; }
 .course-layout__media { position: sticky; top: calc(var(--header-height) + 24px); min-width: 0; }

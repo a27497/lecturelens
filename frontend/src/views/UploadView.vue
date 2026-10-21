@@ -341,6 +341,7 @@ async function createTask() {
       description="请确认下方视频就是你准备整理的课程。确认无误后即可开始。"
     >
       <VideoPlaybackCard
+        :key="completedUploadId"
         title="原视频预览"
         description="这里播放刚刚上传的原始视频。"
         :playback-url="playbackUrl"
