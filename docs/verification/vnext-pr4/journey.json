@@ -1,0 +1,910 @@
+{
+  "mode": "candidate",
+  "api": "Real isolated Java/MySQL + Python/PostgreSQL and signed Evidence APIs",
+  "models": "Mock Provider; deterministic hash embeddings; no paid requests or quality certification",
+  "steps": [
+    {
+      "name": "01-course-reading",
+      "note": "Decoded synthetic video, real persisted transcript and read-only learning entry.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": []
+    },
+    {
+      "name": "02-tutor-question",
+      "note": "Explicit scoped QA completes without creating an Agent Session or Run.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": []
+    },
+    {
+      "name": "03-saved-study-run",
+      "note": "Explicit START creates the real persisted Run and artifact with frozen strict scope.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START"
+      ]
+    },
+    {
+      "name": "04-feedback-task",
+      "note": "Real saved answer v1 and feedback, with unsaved same-page answer/goal/note for continuity checks.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK"
+      ]
+    },
+    {
+      "name": "05-feedback-source",
+      "note": "Source revision checked via real Java APIs; drafts and original feedback stay intact.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK"
+      ]
+    },
+    {
+      "name": "06-return-task",
+      "note": "Return restores the existing task without any write or new model execution.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK"
+      ]
+    },
+    {
+      "name": "07-revision-history",
+      "note": "Immutable answer v1/v2 coexist; the disputed feedback remains attached to v1.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "08-server-restored",
+      "note": "Full reload restores the real server Run, answer v2, feedback v1 and disputed note; no new write.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "09-mobile-task",
+      "note": "390px task view and unsaved answer/note.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "10-mobile-source",
+      "note": "Keyboard source navigation retains a current-question summary and a return button.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "11-mobile-return",
+      "note": "Keyboard return restores existing task drafts; no persistence claim for unsaved inputs.",
+      "urlKeys": [
+        "view",
+        "text",
+        "at"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "12-course-switch",
+      "note": "A delayed real READ from course A does not populate course B; no Run created for B.",
+      "urlKeys": [
+        "view"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    },
+    {
+      "name": "13-deleted-course",
+      "note": "Actual authorized deletion followed by a denied owning-course read clears cached learning/material panels.",
+      "urlKeys": [
+        "view"
+      ],
+      "writes": [
+        "CREATE_SESSION",
+        "START",
+        "SAVE_ATTEMPT",
+        "START_FEEDBACK",
+        "SAVE_ATTEMPT",
+        "SAVE_FEEDBACK_NOTE"
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/me",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/public/runtime-configuration",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/qa/scoped",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "CREATE_SESSION",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/scoped-command",
+      "operation": "START",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/runs/98dbb599-25f9-4540-bb09-9f90bbc4f648/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "SAVE_ATTEMPT",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "START_FEEDBACK",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "SAVE_ATTEMPT",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "SAVE_FEEDBACK_NOTE",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/me",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/public/runtime-configuration",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "RUNS",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/me",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/public/runtime-configuration",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/playback-token",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_bcffb2750fe5467aaf950b1bde32ed57/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/command",
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "RUNS",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/me",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/public/runtime-configuration",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "operation": "RUNS",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "operation": null,
+      "status": 500
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "operation": null,
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "operation": null,
+      "status": 404
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "operation": null,
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "operation": null,
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "operation": null,
+      "status": 404
+    }
+  ],
+  "pageErrors": [],
+  "blocked": [],
+  "storageKeys": [
+    "courselingo.accessToken"
+  ],
+  "identities": {
+    "task": "task_ee7b551ebea14c539a73505051b7674a",
+    "otherCourse": "task_c116d1b69d1e499696c948a3703cb530",
+    "session": "ca141080-4bfe-587a-9b0d-e8933962db49",
+    "run": "98dbb599-25f9-4540-bb09-9f90bbc4f648",
+    "artifact": "c0cb0bdc-5001-5f6a-bdf7-26988a893961",
+    "attempt1": "8be7e73d-c7f6-4b79-9c61-e6a3e6cecbe4",
+    "attempt2": "fa1fef6d-05cd-4209-8ba9-c9fa5f4d506f",
+    "feedbackRun": "8ac5ecee-31f6-4747-9030-44c521622198"
+  },
+  "frozen": {
+    "kind": "segments",
+    "policy": "strict",
+    "version": 1,
+    "revision": 6,
+    "evidence_ids": [
+      "50206a42d3da77dc94c59bf255c7deb49aec71df753cf6a923ce416f664888af"
+    ]
+  }
+}

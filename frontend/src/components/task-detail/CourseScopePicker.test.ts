@@ -57,5 +57,5 @@ it("fails closed on source loading errors", async () => {
   const wrapper = mount(CourseScopePicker, { props: { taskId: 'task', modelValue: selected } });
   await flushPromises();
   expect(wrapper.emitted('update:modelValue')!.at(-1)).toEqual([null]);
-  expect(wrapper.get('[role="alert"]').text()).toContain('unavailable'); wrapper.unmount();
+  expect(wrapper.get('[role="alert"]').text()).toContain('范围加载失败'); wrapper.unmount();
 });

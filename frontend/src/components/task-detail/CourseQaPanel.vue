@@ -5,12 +5,13 @@ import { askCourseQa, getEvidenceIndexStatus, toReadableCourseQaError } from "..
 import type { EvidenceIndexStatus } from "../../api/qa";
 import type { CourseQaEvidenceItem, CourseQaResponse } from "../../types/qa";
 import { formatMillisRange } from "../../utils/time";
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 import type { LearningScope } from "../../api/learningScope";
 const props = defineProps<{ taskId: string; learningScope?: LearningScope | null }>();
-const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext] }>();
+const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; accessFailure: [] }>();
 const question = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
@@ -42,8 +43,8 @@ watch(() => props.taskId, (taskId, _previous, onCleanup) => {
     try {
       const status = await getEvidenceIndexStatus(taskId);
       if (active) indexStatus.value = status.status;
-    } catch {
-      if (active) indexStatus.value = "UNKNOWN";
+    } catch (failure) {
+      if (active) { indexStatus.value = "UNKNOWN"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); }
     }
     if (active) timer = setTimeout(poll, indexReady.value ? 30_000 : 3_000);
   }
@@ -71,7 +72,7 @@ async function submit() {
     const nextResponse = await askCourseQa(currentTaskId, { question: normalized, ...(props.learningScope ? { learning_scope: JSON.parse(JSON.stringify(props.learningScope)) } : {}) });
     if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; emit("frozenScope", nextResponse.learning_scope ?? null); }
   } catch (error) {
-    if (version === requestVersion.value && props.taskId === currentTaskId) errorMessage.value = toReadableCourseQaError(error);
+    if (version === requestVersion.value && props.taskId === currentTaskId) { errorMessage.value = toReadableCourseQaError(error); if (mayHaveLostCourseAccess(error)) emit("accessFailure"); }
   } finally {
     if (version === requestVersion.value && props.taskId === currentTaskId) loading.value = false;
   }
@@ -99,16 +100,15 @@ function originalText(item: CourseQaEvidenceItem): string {
 
 <template>
   <section class="workspace-panel qa-panel" aria-labelledby="qa-title">
-    <header><h2 id="qa-title">课程问答</h2><p>根据当前课程已经生成的内容回答问题。</p></header>
+    <header><h2 id="qa-title">课程问答 · Tutor</h2><p>只回答你的课程问题，不自动创建学习任务或练习。问题、回答和未提交追问仅保留在本页，刷新后不会在此恢复。</p></header>
     <p v-if="indexMessage" class="index-status" role="status">{{ indexMessage }}</p>
     <div class="qa-form">
-      <el-input v-model="question" type="textarea" :rows="4" maxlength="500" show-word-limit placeholder="输入与当前课程有关的问题" @keydown.ctrl.enter.prevent="submit" />
+      <el-input v-model="question" type="textarea" :rows="3" maxlength="500" show-word-limit placeholder="输入与当前课程有关的问题" aria-label="课程问题" @keydown.ctrl.enter.prevent="submit" />
       <div><el-button type="primary" :loading="loading" :disabled="!canSubmit" @click="submit">提问</el-button><el-button :disabled="loading && !response" @click="clear">清空</el-button></div>
     </div>
     <el-alert v-if="errorMessage" :closable="false" :title="errorMessage" type="warning" show-icon />
     <article v-if="response" class="qa-answer" aria-live="polite">
       <h3>回答</h3><p>{{ response.answer }}</p>
-      <CourseModelUsagePanel :task-id="taskId" :refresh-key="response.recordId" />
       <section class="qa-evidence" aria-labelledby="evidence-title">
         <h3 id="evidence-title">证据</h3>
         <el-empty v-if="response.evidence.length === 0" description="当前课程内容中没有找到明确依据" />
@@ -140,6 +140,7 @@ function originalText(item: CourseQaEvidenceItem): string {
           </div>
         </dl>
       </details>
+      <details class="answer-details"><summary>模型使用记录</summary><CourseModelUsagePanel :task-id="taskId" :refresh-key="response.recordId" /></details>
     </article>
   </section>
 </template>

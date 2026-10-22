@@ -4,8 +4,10 @@ import { fetchScopeEvidence, scopeLabel } from "../../api/learningScope";
 import type { LearningScope, ScopeEvidence } from "../../api/learningScope";
 import { formatMillisRange } from "../../utils/time";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
-const props = defineProps<{ taskId: string; modelValue: LearningScope | null; frozenScope?: LearningScope | null; refreshKey?: number }>();
-const emit = defineEmits<{ "update:modelValue": [scope: LearningScope | null]; seek: [milliseconds: number, context: EvidenceSeekContext] }>();
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
+const props = defineProps<{ taskId: string; modelValue: LearningScope | null; frozenScope?: LearningScope | null; refreshKey?: number; compact?: boolean }>();
+const emit = defineEmits<{ "update:modelValue": [scope: LearningScope | null]; seek: [milliseconds: number, context: EvidenceSeekContext]; accessFailure: [] }>();
+const editing = ref(false);
 const items = ref<ScopeEvidence[]>([]), revision = ref<number>();
 const cursor = ref<string | null>(null), loading = ref(false), error = ref("");
 const kind = ref<"course" | "segments">("course"), policy = ref<"strict" | "course">("strict");
@@ -32,7 +34,11 @@ async function load(more = false) {
       selected.value = []; emit("update:modelValue", null); error.value = "课程来源版本已变化，请重新确认整课或片段范围。";
     } else if (previous === undefined) publish();
   } catch (failure) {
-    if (current === generation) { emit("update:modelValue", null); error.value = failure instanceof Error ? failure.message : "范围加载失败，请重试"; }
+    if (current === generation) {
+      emit("update:modelValue", null);
+      error.value = failure instanceof Error && failure.message.startsWith("课程") ? failure.message : "范围加载失败，请重试或重新打开课程。";
+      if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    }
   } finally { if (current === generation) loading.value = false; }
 }
 watch(() => props.taskId, () => { generation++; revision.value = undefined; items.value = []; selected.value = []; kind.value = "course"; policy.value = "strict"; query.value = ""; emit("update:modelValue", null); void load(); }, { immediate: true });
@@ -41,6 +47,8 @@ onBeforeUnmount(() => generation++);
 </script>
 <template>
   <section class="scope-picker" aria-label="学习范围">
+    <details class="scope-options" :open="!compact || editing" @toggle="editing = ($event.target as HTMLDetailsElement).open">
+    <summary v-if="compact">下次范围：{{ modelValue ? scopeLabel(modelValue) : '待确认' }} · 更改范围</summary>
     <h3>下次提问或学习的范围</h3>
     <p>课程问答与解释/练习使用同一范围。已开始的执行保留原范围。</p>
     <label><input v-model="kind" type="radio" value="course" @change="publish" />整节课程</label>
@@ -65,7 +73,9 @@ onBeforeUnmount(() => generation++);
     <p v-if="error" role="alert">{{ error }}</p>
     <button type="button" :disabled="loading" @click="load()">{{ loading ? '正在核对范围…' : '刷新范围' }}</button>
     <button v-if="!modelValue && revision !== undefined" type="button" :disabled="kind === 'segments' && !selected.length" @click="publish">确认当前范围</button>
-    <details v-if="frozenScope !== undefined" class="frozen-scope" open>
+    </details>
+    <p v-if="compact && error" role="status">{{ error }}</p>
+    <details v-if="frozenScope !== undefined" class="frozen-scope" :open="!compact">
       <summary>当前学习记录范围：{{ scopeLabel(frozenScope) }}</summary>
       <p v-if="!frozenScope">旧学习记录按整课范围读取。</p>
       <template v-else><p>课程版本 {{ frozenScope.revision }}；此范围随执行保存，修改上方选择不会改变它。</p><ul v-if="frozenScope.kind === 'segments'"><li v-for="id in frozenScope.evidence_ids" :key="id">{{ label(id) }}</li></ul></template>
@@ -77,4 +87,6 @@ onBeforeUnmount(() => generation++);
 h3 { margin-top: 0; }.scope-picker label { margin-right: 12px; }.scope-picker p { color: var(--color-ink-soft); }
 .scope-items { max-height: 280px; overflow: auto; }.scope-item { display: flex; gap: 8px; padding: 8px 0; align-items: start; }.scope-item label { flex: 1; }
 fieldset { margin-block: 12px; border: 1px solid var(--color-border); }.frozen-scope { margin-top: 12px; }
+summary { cursor: pointer; line-height: 1.6; }.scope-options > summary { color: var(--color-brand); font-weight: 650; }
+.scope-picker button { font: inherit; padding: 6px 9px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
 </style>

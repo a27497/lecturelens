@@ -231,3 +231,38 @@ it("freezes the selected scope before session creation and reports the restored 
   expect(vi.mocked(studyCommand).mock.calls.find(c => c[1].operation === 'START')![1].learning_scope).toEqual(chosen);
   expect(wrapper.emitted('frozenScope')!.at(-1)).toEqual([chosen]); wrapper.unmount();
 });
+
+it("keeps each question draft when navigating and only emits page navigation metadata", async () => {
+  const attempt = { attempt_id: "a1", artifact_id: "artifact", question_index: 0, version: 1, answer_text: "Saved v1", created_at: "2026-10-01T00:00:00Z" };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
+    return { run, artifact, attempts: [attempt] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  const fields = wrapper.findAll(".practice-answer textarea");
+  await fields[0]!.setValue("UNSAVED question one");
+  await wrapper.findAll(".question-nav button")[1]!.trigger("click");
+  await fields[1]!.setValue("UNSAVED question two");
+  await wrapper.findAll(".question-nav button")[0]!.trigger("click");
+  expect((fields[0]!.element as HTMLTextAreaElement).value).toBe("UNSAVED question one");
+  expect((fields[1]!.element as HTMLTextAreaElement).value).toBe("UNSAVED question two");
+  expect(wrapper.findAll(".question-nav button")[0]!.text()).toContain("有未保存修改");
+  expect(wrapper.emitted("position")!.at(-1)).toEqual([{ goal: run.goal, question: artifact.questions[0]!.question, questionIndex: 0, totalQuestions: 2, savedQuestions: 1 }]);
+  expect(JSON.stringify(wrapper.emitted("position"))).not.toContain("UNSAVED");
+  expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => ["LIST", "READ", "RUNS"].includes(c.operation))).toBe(true);
+  wrapper.unmount();
+});
+
+it("requests an ownership recheck on a current access error but ignores an old course failure", async () => {
+  let rejectOld!: (reason: unknown) => void;
+  vi.mocked(studyStatus).mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectOld = reject; }));
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "old" }, global: { stubs } });
+  await flushPromises(); await wrapper.setProps({ taskId: "new" }); await flushPromises();
+  rejectOld({ response: { status: 404 } }); await flushPromises();
+  expect(wrapper.emitted("accessFailure")).toBeUndefined();
+  vi.mocked(studyStatus).mockRejectedValueOnce({ response: { status: 403 } });
+  await wrapper.setProps({ taskId: "revoked" }); await flushPromises();
+  expect(wrapper.emitted("accessFailure")).toEqual([[]]);
+  wrapper.unmount();
+});

@@ -130,3 +130,15 @@ it("stops polling when the course is deleted", async () => {
   expect(wrapper.text()).toContain("请重新打开课程");
   wrapper.unmount();
 });
+
+it("opens recorded sources for abstaining feedback without claiming answer assessment", async () => {
+  const abstained = structuredClone(feedback);
+  abstained.content = { kind: "insufficient_evidence", mode: "mock", reason: "No semantic assessment.", citations: abstained.content.citations };
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, feedback: abstained } }, global: { stubs } });
+  expect(wrapper.text()).toContain("反馈使用的课程材料（不代表已判断作答）");
+  expect(wrapper.find(".feedback-observation").exists()).toBe(false);
+  await wrapper.findAll("button").find(b => b.text() === "回看这段课程证据")!.trigger("click");
+  expect(wrapper.emitted("seek")).toEqual([[5000, { evidenceId: "e1", revision: 1 }]]);
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});

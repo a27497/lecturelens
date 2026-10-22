@@ -22,8 +22,8 @@ defineEmits<{
   <header class="workspace-header">
     <div class="workspace-header__copy">
       <RouterLink class="workspace-header__back" to="/tasks">← 返回我的课程</RouterLink>
-      <h1>课程详情</h1>
-      <p>查看视频、课程内容和学习资料。</p>
+      <h1>课程学习</h1>
+      <p>看课、回看来源，继续你的提问与练习。</p>
     </div>
     <div class="workspace-header__actions" aria-label="课程操作">
       <el-tag :type="getTaskStatusTagType(props.status)" effect="plain">
@@ -62,7 +62,7 @@ defineEmits<{
 }
 .workspace-header__copy { display: grid; gap: 7px; }
 .workspace-header__back { width: fit-content; color: var(--color-brand); font-size: 14px; font-weight: 650; text-decoration: none; }
-.workspace-header h1 { margin: 0; color: var(--color-ink); font-size: clamp(28px, 3vw, 38px); letter-spacing: -0.03em; }
+.workspace-header h1 { margin: 0; color: var(--color-ink); font-size: clamp(24px, 2.5vw, 30px); letter-spacing: -0.03em; }
 .workspace-header p { margin: 0; color: var(--color-ink-soft); }
 .workspace-header__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
 @media (max-width: 760px) {
