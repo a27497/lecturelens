@@ -33,7 +33,7 @@ it("restores a completed run, keeps answers private and preserves citation seek"
   expect(wrapper.text()).not.toContain("PRIVATE ANSWER");
   expect(vi.mocked(studyCommand).mock.calls.some(call => call[1].operation === "ANSWERS")).toBe(false);
   await wrapper.findAll("button").find(button => button.text().includes("跳到视频"))!.trigger("click");
-  expect(wrapper.emitted("seek")).toEqual([[1234]]);
+  expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "e1", revision: 1 }]]);
   await wrapper.findAll("button").find(button => button.text().includes("查看参考答案"))!.trigger("click");
   await flushPromises();
   expect(wrapper.text()).toContain("PRIVATE ANSWER");
@@ -195,5 +195,22 @@ it("restores the frozen approval choice and waiting draft after reload", async (
   expect(wrapper.text()).toContain("等待你的发布审批");
   expect(wrapper.find(".study-artifact").exists()).toBe(false);
   expect(studyEvents).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("uses the CREATE_SESSION source revision rather than the artifact edit revision", async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [] };
+    if (command.operation === "CREATE_SESSION") return { session_id: "session", revision: 2 };
+    if (command.operation === "START") return { run, artifact };
+    return {};
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  await wrapper.get("textarea").setValue("Explain the new course source");
+  await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
+  await flushPromises();
+  await wrapper.findAll("button").find(button => button.text().includes("跳到视频"))!.trigger("click");
+  expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "e1", revision: 2 }]]);
   wrapper.unmount();
 });

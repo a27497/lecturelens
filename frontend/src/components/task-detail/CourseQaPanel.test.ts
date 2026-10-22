@@ -28,7 +28,7 @@ it("renders the exact cited text returned by the API and keeps its video timesta
   await flushPromises();
   expect(wrapper.get(".evidence-item p").text()).toBe(snippet);
   await wrapper.findAll("button").find(button => button.text() === "跳到视频")!.trigger("click");
-  expect(wrapper.emitted("seek")).toEqual([[1234]]);
+  expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "stable-id", revision: 2 }]]);
 });
 
 

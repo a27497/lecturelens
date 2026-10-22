@@ -8,6 +8,9 @@ import {
   toReadableEmbeddedSubtitleError,
 } from "../api/embeddedSubtitles";
 import { requestTaskPlaybackToken, toReadablePlaybackError } from "../api/media";
+import { studyStatus } from "../api/study";
+import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
+import type { EvidenceSeekContext } from "../components/task-detail/evidenceSeekGuard";
 import { fetchPublicRuntimeConfiguration } from "../api/runtimeConfiguration";
 import { cancelTask, fetchTaskDetail, retryTask, toReadableTaskError } from "../api/task";
 import CourseContentPanel from "../components/task-detail/CourseContentPanel.vue";
@@ -48,6 +51,8 @@ let returnFocus: HTMLElement | null = null;
 let returnScroll = 0;
 let locationTimer: ReturnType<typeof setTimeout> | undefined;
 const pendingLocations = new Set<string>();
+const evidenceNavigationError = ref("");
+const evidenceSeekGuard = createEvidenceSeekGuard(async id => (await studyStatus(id)).revision, message => { evidenceNavigationError.value = message; });
 const taskDetail = ref<TaskDetailResponse | null>(null);
 const taskDetailRequestVersion = ref(0);
 const cancelLoading = ref(false);
@@ -121,6 +126,7 @@ watch(() => task.value?.status, (status) => {
 });
 
 onBeforeUnmount(() => {
+  evidenceSeekGuard.cancel();
   clearTimeout(locationTimer);
   taskEventsStore.disconnect();
   taskResultStore.clear();
@@ -133,6 +139,8 @@ function locationSignature(query: typeof route.query) {
   return JSON.stringify([taskId.value, query.view, query.text, query.at]);
 }
 function applyLocation() {
+  evidenceSeekGuard.cancel();
+  evidenceNavigationError.value = "";
   clearTimeout(locationTimer);
   locationTimer = undefined;
   const location = readCourseLocation(route.query);
@@ -159,12 +167,15 @@ function updatePosition(milliseconds: number) {
   if (!locationTimer) locationTimer = setTimeout(() => { locationTimer = undefined; writeLocation(); }, 1500);
 }
 function changeWorkspace(workspace: CourseWorkspace) {
+  evidenceSeekGuard.cancel();
+  evidenceNavigationError.value = "";
   activeWorkspace.value = workspace;
   reviewingEvidence.value = false;
   writeLocation(true);
 }
-function changeReadingView(view: ContentView) { readingView.value = view; writeLocation(); }
+function changeReadingView(view: ContentView) { evidenceSeekGuard.cancel(); readingView.value = view; writeLocation(); }
 async function returnToLearning() {
+  evidenceSeekGuard.cancel();
   reviewingEvidence.value = false;
   await nextTick();
   returnFocus?.focus({ preventScroll: true });
@@ -180,8 +191,12 @@ async function loadPublicRuntimeConfiguration() {
   }
 }
 
-function seekTo(startTimeMillis: number) {
+function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
   if (!validPosition(startTimeMillis)) return;
+  evidenceNavigationError.value = "";
+  void evidenceSeekGuard.seek(taskId.value, context, () => applySeek(startTimeMillis));
+}
+function applySeek(startTimeMillis: number) {
   positionMs.value = startTimeMillis;
   seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
   readingView.value = "timeline";
@@ -411,6 +426,7 @@ async function confirmRetryTask() {
 
         <section class="course-layout__content" aria-label="课程学习工作台">
           <CourseWorkspaceNav :active="activeWorkspace" @change="changeWorkspace" />
+          <el-alert v-if="evidenceNavigationError" :closable="false" :title="evidenceNavigationError" type="warning" show-icon />
           <el-alert v-if="taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
           <div v-show="activeWorkspace === 'content' || reviewingEvidence" ref="evidenceRef" class="evidence-reading">

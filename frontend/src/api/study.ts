@@ -23,7 +23,7 @@ export interface StudyApproval {
 }
 export interface StudyResponse {
   approval?: StudyApproval | null;
-  session_id?: string; mode?: string; events?: StudyEvent[];
+  session_id?: string; revision?: number; mode?: string; events?: StudyEvent[];
   sessions?: { session_id: string; revision: number; created_at?: string }[];
   runs?: { run_id: string; goal: string; status: RunStatus; created_at: string }[];
   run?: StudyRun | null; artifact?: StudyArtifact | null; questions?: PracticeQuestion[];

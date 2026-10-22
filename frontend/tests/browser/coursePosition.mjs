@@ -8,7 +8,7 @@ import { parseArgs } from 'node:util';
 
 const { values: args } = parseArgs({ options: {
   dist: { type: 'string' }, media: { type: 'string' }, long: { type: 'string' },
-  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' },
+  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' }, review: { type: 'boolean' },
 } });
 if (!args.dist || !args.media || !args.long || !args.output) throw Error('Require --dist, --media, --long, --output (see docs/COURSE_POSITION.md)');
 const dist = resolve(args.dist), output = resolve(args.output);
@@ -23,10 +23,11 @@ const learning = { run: { run_id: 'run', session_id: 'session', goal: 'Restored 
   artifact: { artifact_id: 'artifact', title: 'Fixture practice', explanation: 'A saved explanation.', evidence_ids: [citation.evidence_id], questions: [{ question: 'When does the loop stop?', evidence_ids: [citation.evidence_id] }], citations: [citation], revision: 1, mode: 'mock' },
   attempts: [attempt], feedback_enabled: true, feedback_runs: [feedbackRun] };
 function task(id) { return { taskId: id, status: 'SUCCEEDED', progressPercent: 100, currentStage: 'DONE', targetLanguage: 'zh-CN', startedAt: '2026-10-01T00:00:00Z', finishedAt: '2026-10-01T00:00:12Z' }; }
+let sourceRevision = 1, verificationDelay = 0, verificationFailure = false;
 function result(id) {
   const subtitles = id === 'empty' ? [] : id === 'long' ? Array.from({ length: 10000 }, (_, i) => ({ segmentIndex: i, startMillis: i * 350, endMillis: (i + 1) * 350, language: 'en', sourceText: `Long original passage ${i}` })) : [
     { segmentIndex: 1, startMillis: 0, endMillis: 1200, language: 'en', sourceText: 'First original passage' },
-    { segmentIndex: 7, startMillis: 2000, endMillis: 3000, language: 'en', sourceText: citation.text },
+    { segmentIndex: 7, startMillis: 2000, endMillis: 3000, language: 'en', sourceText: sourceRevision === 1 ? citation.text : "REVISED unrelated original" },
     { segmentIndex: 8, startMillis: 2500, endMillis: 2800, language: 'en', sourceText: 'Nested original passage' },
     { segmentIndex: 9, startMillis: 5000, endMillis: 10000, language: 'en', sourceText: 'Final original passage' },
     { segmentIndex: 10, startMillis: 11000, endMillis: 11000, language: 'en', sourceText: 'Empty interval' },
@@ -49,7 +50,11 @@ const server = createServer(async (req, res) => {
         data = { playbackUrl: corrupt ? '/broken.mp4' : id === 'long' ? '/long.mp4' : '/short.mp4', expiresAt: '2099-01-01T00:00:00Z' };
       } else if (path.endsWith('/embedded-subtitles')) data = { status: 'NOT_FOUND', selectedStreamIndex: null, tracks: [] };
       else if (path.endsWith('/results')) data = result(id);
-      else if (path.endsWith('/study/status')) data = { enabled: id !== 'empty', revision: 1 };
+      else if (path.endsWith('/study/status')) {
+        if (verificationDelay) await new Promise(r => setTimeout(r, verificationDelay));
+        if (verificationFailure) { res.writeHead(503); res.end(envelope(null)); return; }
+        data = { enabled: id !== 'empty', revision: sourceRevision };
+      }
       else if (path.endsWith('/evidence/index-status')) data = { status: 'READY' };
       else if (path.endsWith('/study/command')) {
         let body = ''; for await (const chunk of req) body += chunk;
@@ -109,6 +114,73 @@ try {
     console.log(JSON.stringify({ baseline: true, ...initial, currentRowsAfterSeek, transcriptVisibleAfterCitation: await page.locator('.timeline-view').count(), citationStartedPlayback: await video.evaluate(v => !v.paused) }));
     await video.evaluate(v => v.pause());
     await page.screenshot({ path: `${output}/baseline.png`, fullPage: true });
+  } else if (args.review) {
+    await check('rapid seeks and rapid workspace/history navigation keep the last intent', async () => {
+      tokenDelay = 500;
+      await page.goto(`${origin}/tasks/short?view=content&text=timeline&at=1000`);
+      await expect(page.locator('.timeline-row')).toHaveCount(5);
+      await page.evaluate(() => { const b = document.querySelectorAll('.timeline-row button'); for (const i of [3, 0, 2, 1, 3]) b[i].click(); });
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(5);
+      await expect.poll(() => new URL(page.url()).searchParams.get('at')).toBe('5000');
+      await page.evaluate(() => { const b = document.querySelectorAll('.workspace-nav button'); for (const i of [0, 2, 4, 2, 4]) b[i].click(); });
+      await expect(page.locator('.workspace-nav [aria-current=page]')).toHaveText('课程问答');
+      await expect.poll(() => new URL(page.url()).searchParams.get('view')).toBe('qa');
+      await page.goBack(); await page.goForward();
+      await expect(page.locator('.workspace-nav [aria-current=page]')).toHaveText('课程问答');
+      tokenDelay = 0;
+    });
+    await check('stale Tutor evidence does not open changed original or discard follow-up input', async () => {
+      await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
+      const input = page.getByPlaceholder('输入与当前课程有关的问题');
+      await input.fill('Question for revision one'); await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      await input.fill('Unsubmitted follow-up'); sourceRevision = 2;
+      await page.getByRole('button', { name: '刷新', exact: true }).click();
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(7);
+      await page.locator('.evidence-item button').click();
+      await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      await expect(input).toHaveValue('Unsubmitted follow-up');
+      expect(await video.evaluate(v => v.currentTime)).toBe(7);
+      await page.screenshot({ path: `${output}/stale-tutor.png`, fullPage: true });
+    });
+    await check('stale explanation and feedback retain the frozen session revision and answer draft', async () => {
+      sourceRevision = 1;
+      await page.goto(`${origin}/tasks/short?view=agent&at=7000`);
+      const answer = page.getByRole('textbox', { name: '第 1 题作答' });
+      await expect(answer).toHaveValue('Saved answer'); await answer.fill('Unsaved answer revision');
+      sourceRevision = 2;
+      await page.getByRole('button', { name: '回看这段课程证据', exact: true }).click();
+      await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
+      await expect(answer).toHaveValue('Unsaved answer revision');
+      await page.locator('.study-artifact > details summary').click(); await page.locator('.citation button').click();
+      await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+    });
+    await check('late verification cannot override a newer transcript seek or another course', async () => {
+      sourceRevision = 1;
+      await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Question'); await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      verificationDelay = 600;
+      await page.locator('.evidence-item button').click(); await nav('课程内容').click();
+      await page.getByRole('button', { name: '时间轴', exact: true }).click(); await page.locator('[data-segment="9"] button').click();
+      await new Promise(r => setTimeout(r, 800)); expect(await video.evaluate(v => v.currentTime)).toBe(5);
+      await nav('课程问答').click(); await page.locator('.evidence-item button').click();
+      await page.evaluate(() => { history.pushState({}, '', '/tasks/other?view=content&text=timeline&at=8000'); dispatchEvent(new PopStateEvent('popstate')); });
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(8);
+      await new Promise(r => setTimeout(r, 800)); expect(await video.evaluate(v => v.currentTime)).toBe(8);
+      verificationDelay = 0;
+    });
+    await check('unavailable verification fails closed and a retry can resume evidence review', async () => {
+      await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Question'); await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible(); verificationFailure = true;
+      await page.locator('.evidence-item button').click(); await expect(page.getByText(/无法核实课程证据/)).toBeVisible();
+      await expect(page.locator('.evidence-reading')).toBeHidden(); verificationFailure = false;
+      await page.locator('.evidence-item button').click(); await expect(current).toHaveAttribute('data-segment', '7');
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(2);
+    });
   } else {
     await check('delayed metadata restores URL position paused; overlap and gap boundaries', async () => {
       tokenDelay = 450;
