@@ -28,7 +28,7 @@ const props = defineProps<{
   subtitleMessage: string;
 }>();
 
-defineEmits<{ refreshVideo: []; position: [milliseconds: number]; interact: [] }>();
+defineEmits<{ refreshVideo: []; position: [milliseconds: number]; manualSeek: [] }>();
 
 const playbackRef = ref<VideoPlaybackExpose | null>(null);
 const progress = computed(() => props.task?.progressPercent ?? props.taskDetail?.progressPercent ?? 0);
@@ -50,7 +50,7 @@ defineExpose({ seekTo });
       ref="playbackRef"
       :seek-request="seekRequest"
       @position="$emit('position', $event)"
-      @interact="$emit('interact')"
+      @manual-seek="$emit('manualSeek')"
       title="课程视频"
       description="播放上传的原始视频。"
       :playback-url="playbackUrl"

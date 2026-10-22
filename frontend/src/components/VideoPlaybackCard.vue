@@ -25,7 +25,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   position: [milliseconds: number];
-  interact: [];
+  manualSeek: [];
   refresh: [];
 }>();
 
@@ -39,6 +39,7 @@ const activeSubtitleText = computed(() => subtitleIndex.value(currentTime.value)
 let lastReport = -Infinity;
 let resumeAfterReload = false;
 let hasPosition = false;
+let programmedSeekTarget: number | null = null;
 const resolvedSubtitleLabel = computed(() => props.subtitleLabel || "原视频自带字幕");
 const resolvedSubtitleStatus = computed<SubtitleStatus>(() => props.subtitleStatus || "none");
 const subtitleStatusText = computed(() => {
@@ -104,6 +105,21 @@ function handleLoadedMetadata(event: Event) {
   }
 }
 
+function handleSeeking(event: Event) {
+  if (!videoRef.value || event.currentTarget !== videoRef.value || pendingSeekSeconds.value !== null) return;
+  const seconds = videoRef.value.currentTime;
+  // Native controls can swallow input events. Distinguish their seeks from our own restoration/navigation.
+  if (programmedSeekTarget !== null && Math.abs(seconds - programmedSeekTarget) < 0.001) return;
+  programmedSeekTarget = null;
+  emit("manualSeek");
+}
+
+function handleSeeked(event: Event) {
+  if (event.currentTarget !== videoRef.value) return;
+  programmedSeekTarget = null;
+  updateCurrentTime(event);
+}
+
 function clearVideoError() {
   videoErrorMessage.value = "";
 }
@@ -129,8 +145,9 @@ function applyPendingSeek() {
   if (!videoRef.value || pendingSeekSeconds.value === null) return;
   const duration = videoRef.value.duration;
   const target = Number.isFinite(duration) ? Math.min(pendingSeekSeconds.value, Math.max(0, duration)) : pendingSeekSeconds.value;
+  programmedSeekTarget = target;
   try { videoRef.value.currentTime = target; }
-  catch { return; } // Metadata can precede a seekable resource; canplay retries the same request.
+  catch { programmedSeekTarget = null; return; } // Metadata can precede a seekable resource; canplay retries the same request.
   pendingSeekSeconds.value = null;
   currentTime.value = target;
   hasPosition = true;
@@ -178,12 +195,11 @@ defineExpose({
       :src="playbackUrl"
       controls
       preload="metadata"
-      @pointerdown="$emit('interact')"
-      @keydown="$emit('interact')"
       @loadedmetadata="handleLoadedMetadata"
       @canplay="clearVideoError(); applyPendingSeek()"
       @error="handleVideoError"
-      @seeked="updateCurrentTime"
+      @seeking="handleSeeking"
+      @seeked="handleSeeked"
       @timeupdate="updateCurrentTime"
       @pause="updateCurrentTime"
       @ended="updateCurrentTime"

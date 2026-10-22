@@ -116,6 +116,36 @@ try {
     await video.evaluate(v => v.pause());
     await page.screenshot({ path: `${output}/baseline.png`, fullPage: true });
   } else if (args.review) {
+    await check('native progress drag supersedes pending Evidence navigation', async () => {
+      await page.goto(`${origin}/tasks/short?view=qa&at=6000`);
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Native seek race');
+      await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      await expect(video).toHaveJSProperty('readyState', 4);
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(6);
+      verificationDelay = 700;
+      await page.locator('.evidence-item button').click();
+      await video.hover();
+      const cdp = await page.context().newCDPSession(page);
+      const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+      function find(node) {
+        if (node.attributes?.includes('-webkit-media-controls-timeline')) return node;
+        for (const child of [...(node.children || []), ...(node.shadowRoots || [])]) { const found = find(child); if (found) return found; }
+      }
+      const timeline = find(root); if (!timeline) throw Error('Native media timeline not inspectable');
+      const { model } = await cdp.send('DOM.getBoxModel', { backendNodeId: timeline.backendNodeId });
+      const q = model.content, x = q[0] + (q[2] - q[0]) * .65, y = (q[1] + q[5]) / 2;
+      await page.mouse.move(x - 15, y); await page.mouse.down(); await page.mouse.move(x + 15, y, { steps: 4 }); await page.mouse.up();
+      await expect.poll(() => video.evaluate(v => v.seeking)).toBe(false);
+      const manualPosition = await video.evaluate(v => v.currentTime);
+      console.log(JSON.stringify({ nativeTimelineDragSeconds: manualPosition }));
+      expect(manualPosition).toBeGreaterThan(6.5);
+      await new Promise(r => setTimeout(r, 1800));
+      expect(await video.evaluate(v => v.currentTime)).toBeCloseTo(manualPosition, 2);
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      verificationDelay = 0;
+    });
+
     await check('native video seek supersedes pending Evidence navigation', async () => {
       await page.goto(`${origin}/tasks/short?view=qa&at=6000`);
       await page.getByPlaceholder('输入与当前课程有关的问题').fill('Native seek race');

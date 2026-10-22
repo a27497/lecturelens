@@ -108,14 +108,15 @@ it("keeps the latest pending seek and ignores detached metadata positions", asyn
   wrapper.unmount();
 });
 
-it("reports direct player interaction without treating playback or programmed seeks as intent", async () => {
+it("reports manual media seeks without treating playback or programmed seeks as intent", async () => {
   const wrapper = mount(VideoPlaybackCard, { props: { title: "video", description: "", playbackUrl: "/media", loading: false, errorMessage: "" } });
   const video = wrapper.get("video");
   await video.trigger("timeupdate");
   wrapper.vm.seekTo(2);
-  await video.trigger("loadedmetadata"); await video.trigger("seeked");
-  expect(wrapper.emitted("interact")).toBeUndefined();
-  await video.trigger("pointerdown"); await video.trigger("keydown", { key: "ArrowLeft" });
-  expect(wrapper.emitted("interact")).toHaveLength(2);
+  await video.trigger("loadedmetadata"); await video.trigger("seeking"); await video.trigger("seeked");
+  expect(wrapper.emitted("manualSeek")).toBeUndefined();
+  (video.element as HTMLVideoElement).currentTime = 7;
+  await video.trigger("seeking");
+  expect(wrapper.emitted("manualSeek")).toHaveLength(1);
   wrapper.unmount();
 });

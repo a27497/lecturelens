@@ -419,7 +419,7 @@ async function confirmRetryTask() {
             :key="taskId"
             :seek-request="seekRequest"
             @position="updatePosition"
-            @interact="evidenceSeekGuard.cancel()"
+            @manual-seek="evidenceSeekGuard.cancel()"
             :task="task"
             :task-detail="taskDetail"
             :connection-status="taskEventsStore.connectionStatus"
