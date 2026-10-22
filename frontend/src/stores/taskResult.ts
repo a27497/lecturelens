@@ -67,6 +67,15 @@ export const useTaskResultStore = defineStore("taskResult", {
       }
     },
 
+    acceptVerified(taskId: string, result: TaskResultResponse) {
+      if (this.taskId !== taskId || result.taskId !== taskId) return;
+      // Supersede older result loads that could otherwise replace the verified snapshot.
+      this.requestVersion += 1;
+      this.result = result;
+      this.loading = false;
+      this.errorMessage = "";
+    },
+
     clear() {
       this.requestVersion += 1;
       this.taskId = "";

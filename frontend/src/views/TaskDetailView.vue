@@ -8,6 +8,7 @@ import {
   toReadableEmbeddedSubtitleError,
 } from "../api/embeddedSubtitles";
 import { requestTaskPlaybackToken, toReadablePlaybackError } from "../api/media";
+import { fetchTaskResult } from "../api/result";
 import { studyStatus } from "../api/study";
 import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
 import type { EvidenceSeekContext } from "../components/task-detail/evidenceSeekGuard";
@@ -52,7 +53,15 @@ let returnScroll = 0;
 let locationTimer: ReturnType<typeof setTimeout> | undefined;
 const pendingLocations = new Set<string>();
 const evidenceNavigationError = ref("");
-const evidenceSeekGuard = createEvidenceSeekGuard(async id => (await studyStatus(id)).revision, message => { evidenceNavigationError.value = message; });
+const evidenceSeekGuard = createEvidenceSeekGuard(
+  async id => (await studyStatus(id)).revision,
+  message => { evidenceNavigationError.value = message; },
+  async id => {
+    const source = await fetchTaskResult(id);
+    if (!source || source.taskId !== id) throw new Error("Course source mismatch");
+    return () => taskResultStore.acceptVerified(id, source);
+  },
+);
 const taskDetail = ref<TaskDetailResponse | null>(null);
 const taskDetailRequestVersion = ref(0);
 const cancelLoading = ref(false);
@@ -116,6 +125,8 @@ watch(() => task.value?.status, (status) => {
   const currentTaskId = taskId.value.trim();
   if (!currentTaskId) return;
   if (shouldReloadTerminalTaskDetail(status, currentTaskId, terminalDetailReloadTaskId.value)) {
+    evidenceSeekGuard.cancel();
+    reviewingEvidence.value = false;
     terminalDetailReloadTaskId.value = currentTaskId;
     void loadTaskDetail(currentTaskId);
   }
@@ -213,6 +224,8 @@ function applySeek(startTimeMillis: number) {
 }
 
 function reconnect() {
+  evidenceSeekGuard.cancel();
+  reviewingEvidence.value = false;
   taskEventsStore.reconnect();
   void loadTaskDetail(taskId.value);
   void taskResultStore.load(taskId.value);

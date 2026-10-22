@@ -23,7 +23,7 @@ const learning = { run: { run_id: 'run', session_id: 'session', goal: 'Restored 
   artifact: { artifact_id: 'artifact', title: 'Fixture practice', explanation: 'A saved explanation.', evidence_ids: [citation.evidence_id], questions: [{ question: 'When does the loop stop?', evidence_ids: [citation.evidence_id] }], citations: [citation], revision: 1, mode: 'mock' },
   attempts: [attempt], feedback_enabled: true, feedback_runs: [feedbackRun] };
 function task(id) { return { taskId: id, status: 'SUCCEEDED', progressPercent: 100, currentStage: 'DONE', targetLanguage: 'zh-CN', startedAt: '2026-10-01T00:00:00Z', finishedAt: '2026-10-01T00:00:12Z' }; }
-let sourceRevision = 1, verificationDelay = 0, verificationFailure = false;
+let sourceRevision = 1, verificationDelay = 0, verificationFailure = false, verificationReads = 0;
 function result(id) {
   const subtitles = id === 'empty' ? [] : id === 'long' ? Array.from({ length: 10000 }, (_, i) => ({ segmentIndex: i, startMillis: i * 350, endMillis: (i + 1) * 350, language: 'en', sourceText: `Long original passage ${i}` })) : [
     { segmentIndex: 1, startMillis: 0, endMillis: 1200, language: 'en', sourceText: 'First original passage' },
@@ -51,9 +51,10 @@ const server = createServer(async (req, res) => {
       } else if (path.endsWith('/embedded-subtitles')) data = { status: 'NOT_FOUND', selectedStreamIndex: null, tracks: [] };
       else if (path.endsWith('/results')) data = result(id);
       else if (path.endsWith('/study/status')) {
+        const checkedRevision = sourceRevision; verificationReads++;
         if (verificationDelay) await new Promise(r => setTimeout(r, verificationDelay));
         if (verificationFailure) { res.writeHead(503); res.end(envelope(null)); return; }
-        data = { enabled: id !== 'empty', revision: sourceRevision };
+        data = { enabled: id !== 'empty', revision: checkedRevision };
       }
       else if (path.endsWith('/evidence/index-status')) data = { status: 'READY' };
       else if (path.endsWith('/study/command')) {
@@ -63,7 +64,7 @@ const server = createServer(async (req, res) => {
         else if (command.operation === 'READ') data = learning;
         else if (command.operation === 'RUNS') data = { runs: [learning.run] };
         else { forbidden.push(command.operation); res.writeHead(500); res.end(); return; }
-      } else if (path.endsWith('/qa')) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: citation.evidence_id, revision: 1, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: citation.text, translatedSnippet: '', confidence: 1 }], usage: null };
+      } else if (path.endsWith('/qa')) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
       else if (path === '/api/public/runtime-configuration') data = { demoMode: false };
       else if (path === '/api/auth/me') data = { id: 1, email: 'fixture@example.invalid', role: 'USER' };
       else if (/^\/api\/tasks\/[^/]+$/.test(path)) data = task(id);
@@ -172,7 +173,30 @@ try {
       await new Promise(r => setTimeout(r, 800)); expect(await video.evaluate(v => v.currentTime)).toBe(8);
       verificationDelay = 0;
     });
+    await check('refresh invalidates a revision response already in flight', async () => {
+      sourceRevision = 1;
+      await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Question'); await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      const reads = verificationReads; verificationDelay = 600;
+      await page.locator('.evidence-item button').click(); await expect.poll(() => verificationReads).toBeGreaterThan(reads);
+      sourceRevision = 2; await page.getByRole('button', { name: '刷新', exact: true }).click();
+      await new Promise(r => setTimeout(r, 800));
+      expect(await video.evaluate(v => v.currentTime)).toBe(7); await expect(page.locator('.evidence-reading')).toBeHidden();
+      verificationDelay = 0;
+    });
+    await check('a new revision citation refreshes an older cached transcript before showing it', async () => {
+      sourceRevision = 1;
+      await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(7);
+      sourceRevision = 2;
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Question about revised source'); await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      await page.locator('.evidence-item button').click();
+      await expect(current).toContainText('REVISED unrelated original');
+    });
     await check('unavailable verification fails closed and a retry can resume evidence review', async () => {
+      sourceRevision = 1;
       await page.goto(`${origin}/tasks/short?view=qa&at=7000`);
       await page.getByPlaceholder('输入与当前课程有关的问题').fill('Question'); await page.getByRole('button', { name: '提问', exact: true }).click();
       await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible(); verificationFailure = true;

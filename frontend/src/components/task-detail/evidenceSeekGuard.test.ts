@@ -51,3 +51,23 @@ it("allows current transcript/chapter seeks to supersede a pending citation with
   await guard.seek("course", undefined, b); pending.resolve(1); await one;
   expect(a).not.toHaveBeenCalled(); expect(b).toHaveBeenCalledOnce(); expect(read).toHaveBeenCalledOnce();
 });
+
+it("publishes a fresh transcript and position only after both source fences pass", async () => {
+  const calls: string[] = [], read = vi.fn(async () => { calls.push("check"); return 1; });
+  const guard = createEvidenceSeekGuard(read, vi.fn(), async () => { calls.push("read"); return () => { calls.push("publish"); }; });
+  await guard.seek("course", context, () => { calls.push("seek"); });
+  expect(calls).toEqual(["check", "read", "check", "publish", "seek"]);
+});
+it("rejects a source replacement during transcript loading", async () => {
+  const publish = vi.fn(), apply = vi.fn(), fail = vi.fn(), read = vi.fn().mockResolvedValueOnce(1).mockResolvedValueOnce(2);
+  await createEvidenceSeekGuard(read, fail, async () => publish).seek("course", context, apply);
+  expect(publish).not.toHaveBeenCalled(); expect(apply).not.toHaveBeenCalled(); expect(fail).toHaveBeenCalledOnce();
+});
+it("discards transcript work completed after a navigation cancellation", async () => {
+  let complete!: (publish: () => void) => void;
+  const pending = new Promise<() => void>(resolve => { complete = resolve; });
+  const publish = vi.fn(), apply = vi.fn(), read = vi.fn(async () => 1), guard = createEvidenceSeekGuard(read, vi.fn(), () => pending);
+  const work = guard.seek("course", context, apply);
+  await Promise.resolve(); guard.cancel(); complete(publish); await work;
+  expect(publish).not.toHaveBeenCalled(); expect(apply).not.toHaveBeenCalled(); expect(read).toHaveBeenCalledOnce();
+});
