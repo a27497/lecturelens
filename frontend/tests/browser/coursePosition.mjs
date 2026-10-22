@@ -50,6 +50,8 @@ const server = createServer(async (req, res) => {
         data = { playbackUrl: corrupt ? '/broken.mp4' : id === 'long' ? '/long.mp4' : '/short.mp4', expiresAt: '2099-01-01T00:00:00Z' };
       } else if (path.endsWith('/embedded-subtitles')) data = { status: 'NOT_FOUND', selectedStreamIndex: null, tracks: [] };
       else if (path.endsWith('/results')) data = result(id);
+      else if (path.endsWith('/evidence')) data = { learningScopeVersion: 1, revision: sourceRevision, stale: false, nextCursor: null,
+        items: result(id).subtitles.slice(0, 200).map(row => ({ evidenceId: row.segmentIndex === 7 ? citation.evidence_id : `course:fixture:subtitle:${row.segmentIndex}:r${sourceRevision}`, revision: sourceRevision, sourceType: 'SUBTITLE', startMs: row.startMillis, endMs: row.endMillis, normalizedText: row.sourceText, retrievable: row.endMillis > row.startMillis })) };
       else if (path.endsWith('/study/status')) data = { enabled: id !== 'empty', revision: sourceRevision };
       else if (path.endsWith('/evidence/index-status')) {
         const checkedRevision = sourceRevision; verificationReads++;

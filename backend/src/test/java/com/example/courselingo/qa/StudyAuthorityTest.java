@@ -103,4 +103,36 @@ class StudyAuthorityTest {
             assertThatThrownBy(()->client.verify(path,"0",signature,body)).isInstanceOf(BusinessException.class);
         }
     }
+    LearningScope scope(String policy,String... ids) { return new LearningScope(1,"segments",policy,1,List.of(ids)); }
+    StudyEvidenceAuthority.Request scoped(String action, LearningScope scope, boolean expand, List<String> ids, String anchor) {
+        return new StudyEvidenceAuthority.Request(42L,"task",1,action,"topic",null,null,ids,anchor,scope,expand);
+    }
+    @Test void strictScopeBoundsSearchReadAndNeighborsBeforeRetrieval() {
+        var selection=scope("strict","e2");
+        when(dense.retrieve(eq("task"),eq(42L),anyList(),anyString(),isNull(),isNull(),eq(4))).thenAnswer(call->{
+            List<CourseEvidence> pool=call.getArgument(2);
+            assertThat(pool).extracting(CourseEvidence::evidenceId).containsExactly("e2");return pool;
+        });
+        assertThat(ids(authority.execute(scoped("SEARCH",selection,false,null,null)))).containsExactly("e2");
+        assertThat(ids(authority.execute(scoped("WINDOW",selection,false,null,"e2")))).containsExactly("e2");
+        assertThatThrownBy(()->authority.execute(scoped("READ",selection,false,List.of("e1"),null))).isInstanceOf(BusinessException.class);
+        assertThatThrownBy(()->authority.execute(scoped("WINDOW",selection,false,null,"e1"))).isInstanceOf(BusinessException.class);
+        assertThatThrownBy(()->authority.execute(scoped("SEARCH",selection,true,null,null))).isInstanceOf(BusinessException.class);
+        assertThat(authority.execute(scoped("CHECK",selection,false,null,null)).get("learning_scope")).isEqualTo(selection);
+    }
+    @Test void expansionRequiresUserPermissionAndExplicitSearchIntent() {
+        when(dense.retrieve(anyString(),anyLong(),anyList(),anyString(),isNull(),isNull(),anyInt()))
+            .thenAnswer(call->{List<CourseEvidence> pool=call.getArgument(2);return List.of(pool.getFirst());});
+        assertThat(ids(authority.execute(scoped("SEARCH",scope("course","e2"),false,null,null)))).containsExactly("e2");
+        assertThat(ids(authority.execute(scoped("SEARCH",scope("course","e2"),true,null,null)))).contains("e1");
+    }
+    @Test void malformedStaleAndCrossCourseSelectionsFailBeforeRetrieval() {
+        for(var selection:List.of(scope("strict"),scope("strict","foreign"),scope("strict","e1","e1"),
+                new LearningScope(1,"segments","strict",2,List.of("e1")))) {
+            assertThatThrownBy(()->authority.execute(scoped("CHECK",selection,false,null,null))).isInstanceOf(BusinessException.class);
+        }
+        assertThatThrownBy(()->authority.execute(new StudyEvidenceAuthority.Request(99L,"task",1,"CHECK",null,null,null,null,null,scope("strict","e1"),false))).isInstanceOf(BusinessException.class);
+        verifyNoInteractions(dense);
+    }
+
 }

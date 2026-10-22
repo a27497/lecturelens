@@ -8,6 +8,8 @@ import {
   toReadableEmbeddedSubtitleError,
 } from "../api/embeddedSubtitles";
 import { requestTaskPlaybackToken, toReadablePlaybackError } from "../api/media";
+import CourseScopePicker from "../components/task-detail/CourseScopePicker.vue";
+import type { LearningScope } from "../api/learningScope";
 import { fetchTaskResult } from "../api/result";
 import { getEvidenceIndexStatus } from "../api/qa";
 import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
@@ -53,6 +55,10 @@ let returnScroll = 0;
 let locationTimer: ReturnType<typeof setTimeout> | undefined;
 const pendingLocations = new Set<string>();
 const evidenceNavigationError = ref("");
+const learningScope = ref<LearningScope | null>(null);
+const agentScope = ref<LearningScope | null | undefined>();
+const qaScope = ref<LearningScope | null | undefined>();
+const scopeRefresh = ref(0);
 const evidenceSeekGuard = createEvidenceSeekGuard(
   async id => (await getEvidenceIndexStatus(id)).revision,
   message => { evidenceNavigationError.value = message; },
@@ -97,6 +103,7 @@ onMounted(() => {
 });
 
 watch(taskId, (nextTaskId) => {
+  learningScope.value=null; agentScope.value=undefined; qaScope.value=undefined;
   commandVersion.value += 1;
   cancelLoading.value = false;
   retryLoading.value = false;
@@ -224,6 +231,7 @@ function applySeek(startTimeMillis: number) {
 }
 
 function reconnect() {
+  scopeRefresh.value++;
   evidenceSeekGuard.cancel();
   reviewingEvidence.value = false;
   taskEventsStore.reconnect();
@@ -447,6 +455,7 @@ async function confirmRetryTask() {
             <div v-if="reviewingEvidence" class="evidence-reading__return"><span>回看课程原文，当前学习任务保留在下方。</span><button type="button" @click="returnToLearning">返回当前学习任务</button></div>
             <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView" :visible="activeWorkspace === 'content' || reviewingEvidence" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
           </div>
+          <CourseScopePicker :key="taskId" v-show="activeWorkspace === 'agent' || activeWorkspace === 'qa'" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="activeWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
           <KeepAlive :key="taskId">
             <CourseOverviewPanel
               v-if="activeWorkspace === 'overview'"
@@ -459,8 +468,8 @@ async function confirmRetryTask() {
               @retry="confirmRetryTask"
             />
             <CourseStudyPanel v-else-if="activeWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
-            <CourseQaPanel v-else-if="activeWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
+            <CourseAgentPanel :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
+            <CourseQaPanel :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="activeWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
             <CourseFilesPanel v-else-if="activeWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
             <CourseTechnicalPanel
               v-else-if="activeWorkspace === 'technical'"

@@ -8,6 +8,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from .learning_scope import check_scope_response, inject_scope
 from .store import StudyError
 
 AUDIENCE = "lecturelens-study-v1"
@@ -43,6 +44,7 @@ def forward_signed(url, payload, timestamp, signed):
     result = response.json()["data"]
     if any(result.get(k) != payload[k] for k in ("owner_id", "course_id", "revision")):
         raise StudyError("EVIDENCE_SCOPE_MISMATCH")
+    check_scope_response(payload, result)
     return result
 
 
@@ -76,6 +78,7 @@ class EvidenceAuthority:
             "action": action,
             **arguments,
         }
+        payload = inject_scope(scope, payload)
         body = request_body(payload)
         timestamp = str(int(time.time()))
         return forward_signed(

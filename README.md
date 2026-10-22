@@ -31,7 +31,9 @@ LectureLens 将**视频、课程内容与学习交互放在同一个工作区**�
 
 上传课程录屏、讲座或网课视频，系统处理媒体内容并组织字幕、中文译文、课程学习材料和时间线。可以一边观看视频，一边按时间阅读和定位内容。
 
-当前 PR1 前端候选新增视频与原文时间轴双向定位、暂停/恢复跟随，以及保留学习输入的证据回看；尚未部署，行为与验证边界见[课程定位说明](docs/COURSE_POSITION.md)。
+PR1 已在 main 实现视频与原文时间轴双向定位、暂停/恢复跟随，以及保留学习输入的证据回看；尚未部署，行为与验证边界见[课程定位说明](docs/COURSE_POSITION.md)。
+
+PR2 候选增加课程问答与 Study Agent 共用的结构化学习范围，并在服务端检索、工具调用和 Run 持久化中约束证据。候选尚未部署，协议、兼容性与发布条件见 [Learning scope](docs/LEARNING_SCOPE.md)。
 
 <img src="docs/images/lecturelens-course-reading.webp" alt="LectureLens 课程阅读工作区" width="900">
 

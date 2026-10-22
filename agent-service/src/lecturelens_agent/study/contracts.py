@@ -3,6 +3,7 @@ from typing import Annotated, Literal
 from pydantic import Field, model_validator
 
 from ..contracts import Contract, Identifier
+from .learning_scope import LearningScope
 from .linear import LinearRequest, LinearSelectionArgs
 from .strings import StringProgramPlan, render_string_program
 
@@ -44,12 +45,17 @@ class StudyCommand(StudyScope):
     feedback_id: Identifier | None = None
     note_text: Annotated[str, Field(min_length=1, max_length=2000)] | None = None
     disposition: Literal["disputed", "acknowledged"] | None = None
+    learning_scope: LearningScope | None = None
     approval_required: Annotated[bool, Field(strict=True)] = False
     approval_decision: Literal["approve", "edit", "reject"] | None = None
     approval_edit: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
 
     @model_validator(mode="after")
     def attempt_scope(self):
+        if self.learning_scope is not None and (
+            self.operation != "START" or self.learning_scope.revision != self.revision
+        ):
+            raise ValueError("Learning scope belongs to a new Run and the current revision")
         if self.operation in {"SAVE_ATTEMPT", "ATTEMPT_HISTORY", "START_FEEDBACK"}:
             if not all((self.session_id, self.run_id, self.artifact_id)) or self.question_index is None:
                 raise ValueError("An attempt requires an explicit artifact and question")
@@ -78,6 +84,13 @@ class StudyCommand(StudyScope):
 
 
 class SearchArgs(Contract):
+    expand_to_course: Annotated[
+        bool,
+        Field(
+            strict=True,
+            description="Only when the learner allowed course expansion; otherwise rejected by authority.",
+        ),
+    ] = False
     linear_request: Annotated[
         LinearRequest | None,
         Field(

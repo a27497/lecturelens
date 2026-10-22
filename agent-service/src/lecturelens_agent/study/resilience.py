@@ -12,6 +12,7 @@ import httpx
 from pydantic import ValidationError
 
 from .failures import failure_category
+from .learning_scope import check_scope_response, inject_scope, validate_scope_call
 from .store import BudgetExceeded, RunStopped, StudyError
 
 
@@ -19,6 +20,7 @@ def execute_read(read_once, span, scope, action="CHECK", **arguments):
     from ..course_mcp.contracts import ACTION_TO_TOOL, TOOLS, CourseResult
 
     try:
+        validate_scope_call(scope, action, arguments)
         if action not in ACTION_TO_TOOL:
             raise StudyError("MCP_INVALID_REQUEST", 422)
         _, schema, _ = TOOLS[ACTION_TO_TOOL[action]]
@@ -29,7 +31,14 @@ def execute_read(read_once, span, scope, action="CHECK", **arguments):
                 "authorization": {"timestamp": "0", "signature": "0" * 64},
             }
         )
-        if set(arguments) & {"owner_id", "course_id", "revision", "authorization", "action"}:
+        if set(arguments) & {
+            "owner_id",
+            "course_id",
+            "revision",
+            "authorization",
+            "action",
+            "learning_scope",
+        }:
             raise StudyError("MCP_INVALID_REQUEST", 422)
     except (ValidationError, KeyError):
         public_failure(span, action, "MCP_INVALID_REQUEST", "tool_rejected")
@@ -38,7 +47,9 @@ def execute_read(read_once, span, scope, action="CHECK", **arguments):
         public_failure(span, action, error.code, "tool_rejected")
         raise
     if span is None:
-        return read_once(scope, action, **arguments)
+        result = read_once(scope, action, **arguments)
+        check_scope_response(inject_scope(scope, {}), result)
+        return result
 
     store, run_id, token = (span[k] for k in ("store", "run_id", "token"))
     ordinal = span["read_ordinal"]
@@ -91,6 +102,7 @@ def execute_read(read_once, span, scope, action="CHECK", **arguments):
         try:
             result = read_once(scope, action, **arguments)
             guard(span)
+            check_scope_response(inject_scope(scope, {}), result)
             try:
                 CourseResult.model_validate(result)
             except ValidationError:

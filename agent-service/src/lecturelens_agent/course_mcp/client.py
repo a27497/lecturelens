@@ -15,6 +15,7 @@ from mcp.shared.exceptions import McpError
 from pydantic import ValidationError
 
 from ..study.authority import AUTHORITY_PATH, EvidenceAuthority, request_body, signature
+from ..study.learning_scope import check_scope_response, inject_scope
 from ..study.store import StudyError
 from .contracts import ACTION_TO_TOOL, TOOLS, CourseResult, authority_payload
 
@@ -152,6 +153,7 @@ class McpEvidenceAuthority:
             "course_id",
             "revision",
             "authorization",
+            "learning_scope",
             "action",
         }:
             raise StudyError("MCP_INVALID_REQUEST", 422)
@@ -160,6 +162,7 @@ class McpEvidenceAuthority:
             "action": action,
             **arguments,
         }
+        payload = inject_scope(scope, payload)
         peer = None
         started = time.monotonic()
         code = None
@@ -180,6 +183,7 @@ class McpEvidenceAuthority:
             result = peer[1].call(self._call, peer[2], name, args)
             if any(result[k] != scope[k] for k in ("owner_id", "course_id", "revision")):
                 raise StudyError("EVIDENCE_SCOPE_MISMATCH")
+            check_scope_response(payload, result)
             return result
         except Exception as error:  # noqa: BLE001 -- redact SDK/transport exceptions at the StudyError boundary
             mapped = failure(error)

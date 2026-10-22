@@ -5,6 +5,7 @@ import uuid
 
 from psycopg.types.json import Jsonb
 
+from .learning_scope import ACTIVE_SQL, public_status, stored_status
 from .store import StudyError
 
 SCHEMA = """
@@ -55,14 +56,14 @@ def start_feedback(store, conn, parent, command, mode):
             raise StudyError("REQUEST_KEY_CONFLICT")
         return store._view(conn, prior)
     if conn.execute(
-        "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running','awaiting_approval')",
+        f"SELECT 1 FROM study_run WHERE session_id=%s AND status IN ({ACTIVE_SQL})",
         (parent["session_id"],),
     ).fetchone():
         raise StudyError("SESSION_BUSY")
     config = store.model_resolver(command.owner_id) if mode == "real" and store.model_resolver else None
     row = conn.execute(
-        "INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,task_kind,source_attempt_id,approval_required) "
-        "VALUES (%s,%s,%s,%s,%s,%s,'feedback',%s,%s) RETURNING *",
+        "INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,task_kind,source_attempt_id,approval_required,learning_scope,status) "
+        "VALUES (%s,%s,%s,%s,%s,%s,'feedback',%s,%s,%s,%s) RETURNING *",
         (
             str(uuid.uuid4()),
             parent["session_id"],
@@ -72,6 +73,8 @@ def start_feedback(store, conn, parent, command, mode):
             Jsonb(config) if config else None,
             command.attempt_id,
             command.approval_required,
+            Jsonb(parent["learning_scope"]) if parent.get("learning_scope") is not None else None,
+            stored_status(parent, "queued"),
         ),
     ).fetchone()
     store._event(conn, row["run_id"], "run_queued", {})
@@ -118,7 +121,10 @@ def feedback_runs(conn, artifact_id):
         "WHERE a.artifact_id=%s ORDER BY r.created_at DESC LIMIT 20",
         (artifact_id,),
     ).fetchall()
-    return [row | {"feedback": feedback_view(conn, row["run_id"])} for row in rows]
+    return [
+        row | {"status": public_status(row["status"]), "feedback": feedback_view(conn, row["run_id"])}
+        for row in rows
+    ]
 
 
 def save_feedback(conn, run, content):

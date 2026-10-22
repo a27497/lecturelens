@@ -140,6 +140,24 @@ class CourseQaServiceTest {
     }
 
     @Test
+    void strictScopeWithoutHitsNeverCallsModelOrWholeCourseRetriever() {
+        var scope = new com.example.courselingo.evidence.LearningScope(1, "segments", "strict", 1, List.of("selected"));
+        when(currentUserService.currentUser("Bearer demo")).thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
+        when(evidenceRetriever.validateScope("task_1", 42L, scope)).thenReturn(scope);
+        when(rateLimitService.checkAndConsume(42L)).thenReturn(CourseQaRateLimitResult.allowed(10, 9));
+        when(evidenceRetriever.retrieve("task_1", 42L, "zh-CN", "unknown", scope)).thenReturn(List.of());
+        when(recordMapper.insert(any(CourseQaRecord.class))).thenAnswer(call -> { call.getArgument(0, CourseQaRecord.class).setId(101L); return 1; });
+        var response = service.ask("task_1", "Bearer demo", new CourseQaAskRequest("unknown", scope));
+        assertThat(response.answer()).contains("所选");
+        assertThat(response.learning_scope()).isEqualTo(scope);
+        assertThat(response.evidence()).isEmpty();
+        assertThat(llmProvider.requests).isEmpty();
+        verify(evidenceRetriever, never()).retrieve(any(), any(), any(), any());
+        verify(aiCallRecordService, never()).startCall(any(StartAiCallRecordCommand.class));
+    }
+
+    @Test
     void askReturnsControlledRefusalWithoutEvidenceWhenModelCitesNothing() {
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));

@@ -1,6 +1,6 @@
 # Course video and transcript position
 
-Implemented in the PR1 frontend candidate; not deployed. This improves navigation and continuity, not Agent task quality.
+Implemented on main through PR1; not deployed. This improves navigation and continuity, not Agent task quality.
 
 ## Behavior
 
