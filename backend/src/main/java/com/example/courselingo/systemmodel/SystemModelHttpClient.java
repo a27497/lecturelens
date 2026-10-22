@@ -71,7 +71,10 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
                     .header("Accept-Encoding", "identity");
             headers.forEach(builder::header);
             var call = http.newCall(builder.build());
-            call.timeout().timeout(timeout.toNanos(), TimeUnit.NANOSECONDS);
+            // Preflight consumes the same deadline; expiry must prevent the external send.
+            long remaining = timeout.toNanos() - (System.nanoTime() - start);
+            if (remaining <= 0) throw failure("TIMEOUT", LlmProviderFailureCategory.TIMEOUT);
+            call.timeout().timeout(remaining, TimeUnit.NANOSECONDS);
             try (var response = call.execute()) {
                 if (response.code() >= 300 && response.code() < 400)
                     throw failure("REDIRECT_FORBIDDEN", LlmProviderFailureCategory.INVALID_REQUEST);

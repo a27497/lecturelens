@@ -11,6 +11,33 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.*;
 
 class SystemModelDnsBoundaryTest {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"validation", "connection"})
+    void destinationValidationCannotSpendTheDeadlineAndThenStartABillableRequest(String stage) throws Exception {
+        var requests = new AtomicInteger();
+        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/chat/completions", exchange -> {
+            requests.incrementAndGet(); exchange.sendResponseHeaders(200, 2);
+            exchange.getResponseBody().write("{}".getBytes()); exchange.close();
+        });
+        server.start();
+        var policy = new SystemModelUrlPolicy() {
+            @Override public void checkDestination(URI uri) {
+                if (stage.equals("validation")) java.util.concurrent.locks.LockSupport.parkNanos(Duration.ofMillis(1200).toNanos());
+            }
+            @Override InetAddress[] publicAddresses(String host) {
+                if (stage.equals("connection")) java.util.concurrent.locks.LockSupport.parkNanos(Duration.ofMillis(1200).toNanos());
+                return new InetAddress[]{InetAddress.getLoopbackAddress()};
+            }
+        };
+        try (var http = new SystemModelHttpClient(128, policy)) {
+            assertThatThrownBy(() -> http.post(URI.create("http://deadline.invalid:" + server.getAddress().getPort() + "/chat/completions"),
+                    Map.of(), "application/json", new byte[0], Duration.ofMillis(1000)))
+                    .isInstanceOfSatisfying(SystemModelCallFailure.class, failure -> assertThat(failure.category()).isEqualTo("TIMEOUT"));
+            assertThat(requests.get()).isZero();
+        } finally { server.stop(0); }
+    }
+
     @Test void rebindingIsRejectedBeforeAnyPrivateServerReceivesCredentials() throws Exception {
         var requests = new AtomicInteger();
         var lookups = new AtomicInteger();
