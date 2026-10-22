@@ -5,8 +5,10 @@ import type { EvidenceIndexStatus } from "../../api/qa";
 import type { CourseQaEvidenceItem, CourseQaResponse } from "../../types/qa";
 import { formatMillisRange } from "../../utils/time";
 
+import type { EvidenceSeekContext } from "./evidenceSeekGuard";
+
 const props = defineProps<{ taskId: string }>();
-defineEmits<{ seek: [startTimeMillis: number] }>();
+defineEmits<{ seek: [startTimeMillis: number, context: EvidenceSeekContext] }>();
 const question = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
@@ -104,7 +106,7 @@ function originalText(item: CourseQaEvidenceItem): string {
           <article v-for="item in response.evidence" :key="`${item.sourceType}-${item.sourceId}-${item.startTimeMillis}`" class="evidence-item">
             <div><el-tag size="small" effect="plain">{{ sourceLabel(item.sourceType) }}</el-tag><strong>{{ item.timeText || formatMillisRange(item.startTimeMillis, item.endTimeMillis) }}</strong></div>
             <p>{{ evidenceText(item) }}</p><small v-if="originalText(item)">原文：{{ originalText(item) }}</small>
-            <el-button size="small" plain @click="$emit('seek', item.startTimeMillis)">跳到视频</el-button>
+            <el-button size="small" plain @click="$emit('seek', item.startTimeMillis, { evidenceId: item.evidenceId, revision: item.revision })">跳到视频</el-button>
           </article>
         </template>
       </section>

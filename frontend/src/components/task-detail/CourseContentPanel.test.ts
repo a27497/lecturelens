@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { shallowMount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
+import { flushPromises, shallowMount } from "@vue/test-utils";
 import CourseContentPanel from "./CourseContentPanel.vue";
 import CourseVisualEvidencePanel from "./CourseVisualEvidencePanel.vue";
 import type { ResultKeyframe, TaskResultResponse } from "../../types/result";
@@ -107,3 +107,74 @@ function keyframe(): ResultKeyframe {
     visualAnalysis: null,
   };
 }
+
+describe("course transcript position", () => {
+  function setup() {
+    const data = result([]);
+    data.subtitles = [
+      { segmentIndex: 3, startMillis: 1000, endMillis: 3000, language: "en", sourceText: "first passage" },
+      { segmentIndex: 4, startMillis: 2000, endMillis: 2500, language: "en", sourceText: "overlap passage" },
+      { segmentIndex: 5, startMillis: 5000, endMillis: 5000, language: "en", sourceText: "empty range" },
+    ];
+    return shallowMount(CourseContentPanel, { props: { taskId: "course", status: "SUCCEEDED", result: data, view: "timeline" as const, positionMs: 2100, visible: true }, global: { stubs: {
+      "el-button": { props: ["disabled"], template: '<button :disabled="disabled"><slot /></button>' },
+      "el-input": { props: ["modelValue"], emits: ["update:modelValue"], template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />' },
+    } } });
+  }
+  it("highlights actual intervals, leaves gaps empty and disables empty ranges", async () => {
+    const wrapper = setup();
+    expect(wrapper.get('[aria-current="true"]').attributes("data-segment")).toBe("4");
+    expect(wrapper.findAll(".timeline-row button")[2]!.attributes("disabled")).toBeDefined();
+    await wrapper.setProps({ positionMs: 3500 });
+    expect(wrapper.find('[aria-current="true"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("当前位置没有对应的原文片段");
+    wrapper.unmount();
+  });
+  it.each(["wheel", "touchstart", "pointerdown"])("pauses on %s and explicitly resumes", async event => {
+    const wrapper = setup();
+    await wrapper.get(".timeline-list").trigger(event);
+    expect(wrapper.get(".timeline-controls button").attributes("aria-pressed")).toBe("false");
+    await wrapper.setProps({ positionMs: 1400 });
+    expect(wrapper.get(".timeline-controls button").attributes("aria-pressed")).toBe("false");
+    await wrapper.get(".timeline-controls button").trigger("click");
+    expect(wrapper.get(".timeline-controls button").attributes("aria-pressed")).toBe("true");
+    wrapper.unmount();
+  });
+  it("does not scroll during manual reading, search or while hidden", async () => {
+    const wrapper = setup();
+    const list = wrapper.get(".timeline-list").element as HTMLElement;
+    vi.spyOn(list, "getBoundingClientRect").mockReturnValue({ top: 0, bottom: 100 } as DOMRect);
+    for (const row of wrapper.findAll(".timeline-row")) vi.spyOn(row.element, "getBoundingClientRect").mockReturnValue({ top: 400, bottom: 500 } as DOMRect);
+    await wrapper.get(".timeline-list").trigger("keydown", { key: "PageDown" });
+    await wrapper.setProps({ positionMs: 1400 });
+    expect(list.scrollTop).toBe(0);
+    await wrapper.get("input").setValue("first");
+    expect(wrapper.get(".timeline-controls button").attributes("aria-pressed")).toBe("false");
+    await wrapper.setProps({ visible: false });
+    await wrapper.get(".timeline-controls button").trigger("click");
+    expect(list.scrollTop).toBe(0);
+    await wrapper.setProps({ visible: true });
+    await flushPromises();
+    expect(list.scrollTop).toBeGreaterThan(0);
+    wrapper.unmount();
+  });
+  it("does not fabricate translation alignment from segment number", async () => {
+    const wrapper = setup();
+    const data = result([]);
+    data.subtitles = [{ segmentIndex: 3, startMillis: 1000, endMillis: 3000, language: "en", sourceText: "original" }];
+    data.translations = [{ segmentIndex: 3, startMillis: 2000, endMillis: 4000, sourceLanguage: "en", targetLanguage: "zh", translatedText: "MISALIGNED" }];
+    await wrapper.setProps({ result: data });
+    expect(wrapper.text()).not.toContain("MISALIGNED");
+    await wrapper.get(".timeline-row button").trigger("click");
+    expect(wrapper.emitted("seek")).toEqual([[1000]]);
+    wrapper.unmount();
+  });
+});
+
+it("waits for result availability before falling back from a restored visual view", async () => {
+  const wrapper = shallowMount(CourseContentPanel, { props: { taskId: "course", result: null, view: "visual" } });
+  expect(wrapper.emitted("update:view")).toBeUndefined();
+  await wrapper.setProps({ result: result([]) });
+  expect(wrapper.emitted("update:view")).toEqual([["translated"]]);
+  wrapper.unmount();
+});

@@ -5,11 +5,14 @@ import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun, StudyR
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import { randomUuid } from "../../utils/randomUuid";
 
+import type { EvidenceSeekContext } from "./evidenceSeekGuard";
+
 const props = defineProps<{
+  sourceRevision?: number;
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
-defineEmits<{ seek: [startMillis: number] }>();
+defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext] }>();
 const currentRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
 const approval = ref<StudyResponse["approval"]>(null);
@@ -193,7 +196,7 @@ async function showNotes(more = false) {
           <summary>查看课程证据（{{ item.evidence_ids?.length ?? 1 }} 段）</summary>
           <blockquote>{{ item.evidence_quote }}</blockquote>
           <template v-for="(id, citationIndex) in item.evidence_ids ?? [item.evidence_id]" :key="id">
-            <el-button v-if="feedback.content.citations.some(c => c.evidence_id === id)" text @click="$emit('seek', feedback.content.citations.find(c => c.evidence_id === id)!.start_ms)">{{ (item.evidence_ids?.length ?? 1) > 1 ? `回看课程证据 ${citationIndex + 1}` : '回看这段课程证据' }}</el-button>
+            <el-button v-if="feedback.content.citations.some(c => c.evidence_id === id)" text @click="$emit('seek', feedback.content.citations.find(c => c.evidence_id === id)!.start_ms, { evidenceId: id, revision: sourceRevision })">{{ (item.evidence_ids?.length ?? 1) > 1 ? `回看课程证据 ${citationIndex + 1}` : '回看这段课程证据' }}</el-button>
           </template>
         </details>
       </div>

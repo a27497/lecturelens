@@ -13,8 +13,10 @@ import { modelError } from "../../api/models";
 import { formatMillisRange } from "../../utils/time";
 import { randomUuid } from "../../utils/randomUuid";
 
+import type { EvidenceSeekContext } from "./evidenceSeekGuard";
+
 const props = defineProps<{ taskId: string; status?: string }>();
-defineEmits<{ seek: [startTimeMillis: number]; navigate: [workspace: "overview" | "content"] }>();
+defineEmits<{ seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
 const ready = ref(false);
@@ -23,6 +25,7 @@ const submitting = ref(false);
 const error = ref("");
 const goal = ref("");
 const sessionId = ref("");
+const sourceRevision = ref<number>();
 const run = ref<StudyRun | null>(null);
 const artifact = ref<StudyArtifact | null>(null);
 const events = ref<StudyEvent[]>([]);
@@ -58,7 +61,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
   controller = null; cursor = 0;
   enabled.value = null; ready.value = false; loading.value = true; error.value = "";
   submitting.value = false; revealing.value = false;
-  sessionId.value = ""; run.value = null; artifact.value = null; events.value = []; answers.value = null; attempts.value = [];
+  sessionId.value = ""; sourceRevision.value = undefined; run.value = null; artifact.value = null; events.value = []; answers.value = null; attempts.value = [];
   requestKey = ""; requestGoal = ""; sessionKey = randomUuid();
   recentRuns.value = [];
   sessions.value = []; feedbackRuns.value = []; feedbackEnabled.value = false;
@@ -78,6 +81,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
       if (current !== version) return;
       sessions.value = list.sessions ?? [];
       sessionId.value = selectedSession ?? sessions.value[0]?.session_id ?? "";
+      sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
       if (sessionId.value) {
         await refresh(current, task, undefined, selectedRun);
         const history = await studyCommand(task, { operation: "RUNS", session_id: sessionId.value });
@@ -114,6 +118,7 @@ async function start() {
       const response = await studyCommand(task, { operation: "CREATE_SESSION", request_key: sessionKey });
       if (current !== version) return;
       sessionId.value = response.session_id!;
+      sourceRevision.value = response.revision;
     }
     const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value });
     if (current !== version) return;
@@ -229,7 +234,7 @@ async function reveal() {
         <p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
-            <el-button text @click="$emit('seek', citation.start_ms)">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
+            <el-button text @click="$emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
             <code class="evidence-id">{{ citation.evidence_id }}</code><p>{{ citation.text }}</p>
           </div>
         </details>
@@ -237,7 +242,7 @@ async function reveal() {
         <div v-for="(question, index) in artifact.questions" :key="index" class="practice-question">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
           <PracticeAnswerForm v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
-          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :enabled="feedbackEnabled" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @seek="$emit('seek', $event)" />
+          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
           <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
