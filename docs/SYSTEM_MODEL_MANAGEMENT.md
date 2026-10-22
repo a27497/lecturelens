@@ -18,6 +18,8 @@
 
 ## 启用与版本冻结
 
+V25 is a prerequisite for this Java binary even with model management disabled: authentication reads `user_account.role`. Disabling management does not make a V24 business schema compatible. The pre-V25 check in the pipeline guard preserves its legacy execution boundary; it is not a replacement for the authentication migration.
+
 显式设置 `SYSTEM_MODEL_CONFIG_ENABLED=true`、`FLYWAY_ENABLED=true` 并向进程提供有效的 `SYSTEM_MODEL_MASTER_KEY`。主密钥缺失在启动期间报错，不等待第一次加解密。关闭该层时，不要求新增主密钥，不查询配置表，也不改变原 provider 选择。
 
 首次启用时，服务把当前 YAML/环境默认及其加密凭据捕获为不可变版本。以后默认变化也生成新版本；多实例应使用相同主密钥和部署默认。当前表是管理索引，完整版本是执行依据，两者与变更审计在同一事务更新。
@@ -119,7 +121,7 @@ bash scripts/admin/system-model-admin.sh revoke --user-id 123
 主动连通性测试只有管理员点击后发送，读取 `expectedVersion/modelId` 指定的已保存数据库配置，不接收临时地址、密钥或任意音频；当前版本不匹配返回 409。测试不改变绑定、配置版本、审计或任务快照，也不保存测试记录表。结果仅有通过状态、固定错误类别、耗时、版本、模型 ID 及最终地址，不返回原始错误、正文、转写或凭据。
 
 - 部署设置 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS`（逗号分隔的精确 HTTP(S) origin），默认空即禁止测试。白名单区分协议、域名和端口，不允许 path、查询、fragment 或 userinfo；默认端口规范化。示例：`https://api.deepseek.com,https://api.siliconflow.cn`。名单由部署者管理，页面不能修改。
-- 命中 origin 后仍检查 DNS 的全部 IP，禁止私有、回环、链路本地等地址；白名单不能绕过地址策略。传输禁用重定向和环境/JVM 代理，不固定连接 IP，DNS 重绑定窗口仍是已知限制。
+- 命中 origin 后仍检查 DNS 的全部 IP，禁止私有、回环、链路本地等地址；白名单不能绕过地址策略。Transport disables redirects and JVM HTTP/SOCKS proxies. Each database/probe connection consumes the checked public DNS addresses, retains the original hostname for TLS, and rejects literal private IPs; it does not perform an independent unchecked lookup. Address validation consumes the request deadline, and expiry prevents an external send.
 - 测试整次等待最多 10 秒，连接最多 3 秒，响应最多 64 KiB（含慢响应体），每实例最多两个请求，不排队、不自动重试。超时后若 worker 尚未退出仍占用并发名额，避免取消绕过限制；限额不是跨实例全局限流。
 - OPENAI_CHAT 只发一条短消息、32 个输出 token，并强制 `response_format: {type: json_object}`；使用严格 JSON 对象校验，拒绝重复字段及尾随内容。该测试不验证工具调用、视觉输入或教学质量。
 - ASR 使用仓库 MIT 授权的固定一秒合成音频，[夹具及复现说明](../backend/src/main/resources/system-model-probe/NOTICE.md)，不含真人或下载媒体。空转写可通过，只验证请求及响应协议，不验证识别质量。
