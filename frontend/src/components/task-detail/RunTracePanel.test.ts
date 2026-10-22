@@ -35,3 +35,32 @@ it("clears prior events if authority denies a refresh", async () => {
   expect(wrapper.find('[role="alert"]').exists()).toBe(true);
   expect(wrapper.text()).not.toContain("search_course_evidence"); wrapper.unmount();
 });
+it("shows distinct frozen decision/review models and keeps replay and unknown usage explicit", async () => {
+  vi.mocked(studyCommand).mockResolvedValue({ events: [{ sequence: 1, event_type: "model_replayed", payload: { model_selection: { model: "observed-a", version: 1, credential: "PRIVATE" }, purpose: "decision" } }] });
+  const wrapper = mountPanel();
+  await wrapper.setProps({ run: { ...run, model_selection: {
+    decision: { connection_id: "c", name: "personal", model: "frozen-a", version: 1,
+      single_turn_evidence: { ok: true, code: null, checked_at: 1700000000, version: 1 } },
+    review: { connection_id: null, name: "server", model: "frozen-b", version: 0 },
+  } } });
+  await wrapper.find("button").trigger("click"); await flushPromises();
+  expect(wrapper.text()).toContain("frozen-a"); expect(wrapper.text()).toContain("frozen-b");
+  expect(wrapper.text()).toContain("个人连接"); expect(wrapper.text()).toContain("服务器默认");
+  expect(wrapper.text()).toContain("2023-11-14T22:13:20.000Z");
+  expect(wrapper.text()).toContain("多轮工具兼容：未验证");
+  expect(wrapper.text()).toContain("重放已保存结果，非新调用");
+  expect(wrapper.text()).toContain("输入 Token：未知"); expect(wrapper.text()).not.toContain("PRIVATE");
+  vi.mocked(studyCommand).mockRejectedValueOnce(Error("404"));
+  await wrapper.find("button").trigger("click"); await flushPromises();
+  expect(wrapper.text()).not.toContain("frozen-a"); expect(wrapper.text()).not.toContain("frozen-b");
+  wrapper.unmount();
+});
+it("does not infer an environment source when a legacy selection omits connection identity", async () => {
+  vi.mocked(studyCommand).mockResolvedValue({ events: [] });
+  const wrapper = mountPanel();
+  await wrapper.setProps({ run: { ...run, model_selection: { decision: { name: "legacy", model: "legacy-model", version: 1 } } } });
+  await wrapper.find("button").trigger("click"); await flushPromises();
+  expect(wrapper.text()).toContain("来源未记录");
+  expect(wrapper.text()).not.toContain("服务器默认");
+  wrapper.unmount();
+});

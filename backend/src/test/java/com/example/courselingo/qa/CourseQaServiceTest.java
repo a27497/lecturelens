@@ -153,6 +153,8 @@ class CourseQaServiceTest {
         ArgumentCaptor<CourseQaRecord> recordCaptor = ArgumentCaptor.forClass(CourseQaRecord.class);
         verify(recordMapper).insert(recordCaptor.capture());
         assertThat(recordCaptor.getValue().getEvidenceJson()).isEqualTo("[]");
+        assertThat(recordCaptor.getValue().getInvocationState()).isEqualTo("SKIPPED_NO_EVIDENCE");
+        assertThat(recordCaptor.getValue().getAiCallRecordId()).isNull();
     }
 
     @Test
@@ -227,6 +229,10 @@ class CourseQaServiceTest {
 
     @Test
     void askCallsLlmRecordsQaAndAiCall() {
+        var models = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelExecutionService.class);
+        var frozen = new com.example.courselingo.systemmodel.SystemModelExecutionRef("exact-qa-snapshot", 7L, "task_1", 42L);
+        when(models.operation("task_1", 42L, "COURSE_QA")).thenReturn(frozen);
+        service.configureSystemModels(models);
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
@@ -249,6 +255,12 @@ class CourseQaServiceTest {
         assertThat(llmProvider.requests).hasSize(1);
         assertThat(llmProvider.requests.getFirst().metadata()).containsEntry("stage", "COURSE_QA");
         verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
+        var stored = ArgumentCaptor.forClass(CourseQaRecord.class);
+        verify(recordMapper).insert(stored.capture());
+        assertThat(stored.getValue().getExecutionSnapshotId()).isEqualTo("exact-qa-snapshot");
+        assertThat(stored.getValue().getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+        assertThat(stored.getValue().getAiCallRecordId()).isEqualTo(startedCall().id());
+        assertThat(llmProvider.requests.getFirst().execution()).isSameAs(frozen);
     }
 
     @Test
@@ -353,6 +365,12 @@ class CourseQaServiceTest {
             .isEqualTo(ErrorCode.AI_PROVIDER_FAILED);
 
         verify(aiCallRecordService).failCall(any(FailAiCallRecordCommand.class));
+        var stored = ArgumentCaptor.forClass(CourseQaRecord.class);
+        verify(recordMapper).insert(stored.capture());
+        assertThat(stored.getValue().getStatus()).isEqualTo("FAILED");
+        assertThat(stored.getValue().getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+        assertThat(stored.getValue().getModel()).isEqualTo("fake-model");
+        assertThat(stored.getValue().getTotalTokens()).isEqualTo(30);
     }
 
     private static AnalysisTask task() {

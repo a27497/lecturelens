@@ -1,0 +1,331 @@
+{
+  "base": "20fc374fe856c937a925fccfafd54b8a9502187d",
+  "pr35_fixture_head": "146cc883f045d89a87cfe9b083376c8dac204964",
+  "provider_calls": "No paid or real-provider certification calls; deterministic fixtures only",
+  "migration_fixtures_sha256": {
+    "V29__translation_scheduler_observation.sql": "ca9a240a1b583b738e7b6d17afcd9e2622c9126ffe8ed7c3491cc412ea84fe18",
+    "V27__pipeline_policy_snapshot.sql": "b36cbc4e48741f83c1b8a62c646c0760c147d584e1a3ad7a195bb2205ddc0f3a",
+    "V30__pipeline_translation_checkpoint.sql": "3967b2817aeeb2645fbaa0163c4b49b97b6af904da9aa3fb33cd9885d7d600ed",
+    "V26__translation_call_diagnostic.sql": "af657cf35c24949756609555aa1e2b8749f02078f3d2f9e291b2bfd8f3f3e859",
+    "V28__transcript_paragraph_alignment.sql": "ea388b35f9799a85e7da3250795f68d029b38d80fca547a3b980f171942092ca",
+    "V31__translation_usage_price_ledger.sql": "736c865093a6dcb7765df3fd1aaed5a6bd3b01f76b7d32f4d0bbd0f09f3c253e"
+  },
+  "browser": {
+    "pr3-browser-models-delivery": {
+      "browser": "153.0.8010.52",
+      "checks": [
+        "owner card separates current, adopted pipeline, exact QA and unknown usage without probes",
+        "trace displays independent frozen decision/review and replay without usage invention",
+        "permission denial removes previously visible model facts",
+        "late model record response cannot follow a course switch",
+        "390px model card stays within viewport"
+      ],
+      "errors": [],
+      "forbidden": [],
+      "media": "real decoded synthetic H.264; fixture business APIs; no provider calls"
+    },
+    "pr3-browser-pr1-pr2-3": {
+      "browser": "153.0.8010.52",
+      "checks": [
+        "delayed metadata restores URL position paused; overlap and gap boundaries",
+        "real decoded playback advances time and the active original passage",
+        "transcript click seeks paused video; keyboard controls and search pause follow",
+        "Tutor citation preserves question, answer and unsubmitted follow-up",
+        "practice feedback citation preserves goal, saved answer, draft and feedback identity",
+        "view history and refresh restore coordinate; refresh never starts a Run",
+        "token refresh preserves coordinate for paused and playing video",
+        "course switch clears cached drafts; stale delayed media cannot cross courses",
+        "real 65-minute media and 10,000 intervals support manual reading and resumption",
+        "390px layout and codec error retain readable course content"
+      ],
+      "errors": [],
+      "forbidden": [],
+      "media": "real decoded synthetic H.264; fixture business APIs; no provider calls"
+    },
+    "pr3-browser-pr2-review": {
+      "browser": "153.0.8010.52",
+      "checks": [
+        "native progress drag supersedes pending Evidence navigation",
+        "native video seek supersedes pending Evidence navigation",
+        "rapid seeks and rapid workspace/history navigation keep the last intent",
+        "stale Tutor evidence does not open changed original or discard follow-up input",
+        "stale explanation and feedback retain the frozen session revision and answer draft",
+        "late verification cannot override a newer transcript seek or another course",
+        "refresh invalidates a revision response already in flight",
+        "a new revision citation refreshes an older cached transcript before showing it",
+        "unavailable verification fails closed and a retry can resume evidence review"
+      ],
+      "errors": [],
+      "forbidden": [],
+      "media": "real decoded synthetic H.264; fixture business APIs; no provider calls"
+    }
+  },
+  "supervised_checks": [
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:28:58.649728+00:00",
+      "finished_at_utc": "2026-10-22T16:29:59.013311+00:00",
+      "exit_code": 1,
+      "log_sha256": "bd5a48c79fa3bf1714458b462823c1046e0f34440d25cc9898fa60b994a94530",
+      "check": "pr3-backend-boundaries-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:21:51.827114+00:00",
+      "finished_at_utc": "2026-10-22T16:22:09.206267+00:00",
+      "exit_code": 0,
+      "log_sha256": "6a05812921488487307b09ef384f237a61aeeba94a36d7e9834e398dfc4874e5",
+      "check": "pr3-backend-compile",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:24:05.124945+00:00",
+      "finished_at_utc": "2026-10-22T16:26:24.268074+00:00",
+      "exit_code": 0,
+      "log_sha256": "3d13cab11879850a0087d931a6c560e5094f454f580ce3f1bcb2cb180456ab26",
+      "check": "pr3-backend-full-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:33:47.208467+00:00",
+      "finished_at_utc": "2026-10-22T16:34:57.520698+00:00",
+      "exit_code": 0,
+      "log_sha256": "f0f5cc8038fac4b19121957383c59c795065bc76ab33284f7cfbc5adfe5a5e81",
+      "check": "pr3-backend-qa-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:26:49.899263+00:00",
+      "finished_at_utc": "2026-10-22T16:26:58.594191+00:00",
+      "exit_code": 1,
+      "log_sha256": "d3ca0c1c3782e8301716d0a32600e5f36fa13e0ee69800267261bb3f9214cc70",
+      "check": "pr3-browser-models-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:28:04.042969+00:00",
+      "finished_at_utc": "2026-10-22T16:28:08.371828+00:00",
+      "exit_code": 0,
+      "log_sha256": "1dfc7c84347729a5404175bd83a141f28bb116cf0711ff0a6d47e68e09ffc021",
+      "check": "pr3-browser-models-2",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:34:08.011313+00:00",
+      "finished_at_utc": "2026-10-22T16:34:19.720274+00:00",
+      "exit_code": 0,
+      "log_sha256": "1dfc7c84347729a5404175bd83a141f28bb116cf0711ff0a6d47e68e09ffc021",
+      "check": "pr3-browser-models-delivery",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:29:59.918773+00:00",
+      "finished_at_utc": "2026-10-22T16:30:05.731463+00:00",
+      "exit_code": 0,
+      "log_sha256": "1dfc7c84347729a5404175bd83a141f28bb116cf0711ff0a6d47e68e09ffc021",
+      "check": "pr3-browser-models-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:29:37.066512+00:00",
+      "finished_at_utc": "2026-10-22T16:30:00.485002+00:00",
+      "exit_code": 1,
+      "log_sha256": "beba2bf84875eca236c456f030e5bbc48bd77ab3567606626566e7118ca935c3",
+      "check": "pr3-browser-pr1-pr2",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:33:47.269470+00:00",
+      "finished_at_utc": "2026-10-22T16:34:22.798653+00:00",
+      "exit_code": 0,
+      "log_sha256": "71f7118520b11d0e56e98e3ac3c4daaae5d6a27930742470fe09e6c644252923",
+      "check": "pr3-browser-pr1-pr2-3",
+      "cleanup_complete": true
+    },
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:30:39.963511+00:00",
+      "finished_at_utc": "2026-10-22T16:30:52.125895+00:00",
+      "exit_code": 1,
+      "log_sha256": "b12e68b2b73c47098d61e1e3ef7285010a55c6ab40575ca1aec3a402d2613908",
+      "check": "pr3-browser-pr1-pr2-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:30:01.090543+00:00",
+      "finished_at_utc": "2026-10-22T16:30:19.011350+00:00",
+      "exit_code": 0,
+      "log_sha256": "92c8c5a2cb32d4e19ad16dd8fce0cc64bd336b60e2d32f02a00c4b9170daea74",
+      "check": "pr3-browser-pr2-review",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:26:10.685937+00:00",
+      "finished_at_utc": "2026-10-22T16:26:12.154662+00:00",
+      "exit_code": 0,
+      "log_sha256": "8be2d1ecf965f7dec9419fbed25c3b64e9996f6519c1090079941429bea1fd74",
+      "check": "pr3-frontend-audit",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:26:09.307589+00:00",
+      "finished_at_utc": "2026-10-22T16:26:28.046403+00:00",
+      "exit_code": 0,
+      "log_sha256": "e26d2cc3b4811a93238249ed72e8e7ca9e4c0347478adf26aae5debcc503999a",
+      "check": "pr3-frontend-build-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:28:57.464414+00:00",
+      "finished_at_utc": "2026-10-22T16:29:19.152067+00:00",
+      "exit_code": 0,
+      "log_sha256": "ed025a53a645af44ba68bb295b14881b2ab857ebd47c84182e91e33d14c0d85d",
+      "check": "pr3-frontend-build-2",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:31:59.834215+00:00",
+      "finished_at_utc": "2026-10-22T16:32:12.145295+00:00",
+      "exit_code": 0,
+      "log_sha256": "e5d103d94af7d0d25d3c48af933e5bf44bb84c1317aba8bd916a0ba6460b3287",
+      "check": "pr3-frontend-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:24:39.850564+00:00",
+      "finished_at_utc": "2026-10-22T16:25:18.112658+00:00",
+      "exit_code": 0,
+      "log_sha256": "e00e3a0b01d679d8c19462bd9575e22ab6d7e0ca064db1fa2b99953eea1410a7",
+      "check": "pr3-frontend-full-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:21:24.619718+00:00",
+      "finished_at_utc": "2026-10-22T16:21:33.855673+00:00",
+      "exit_code": 0,
+      "log_sha256": "1b23b61b66288c9b90e474317c4edef8a207858521200b4c68d19dc7fce87b3b",
+      "check": "pr3-frontend-install",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:31:17.194201+00:00",
+      "finished_at_utc": "2026-10-22T16:31:19.929069+00:00",
+      "exit_code": 0,
+      "log_sha256": "c2abd5325c064a6fd1ec98aea250f7d42a6361194d40aad2e5f3529043d02198",
+      "check": "pr3-frontend-model-tests-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:21:51.835291+00:00",
+      "finished_at_utc": "2026-10-22T16:22:07.992172+00:00",
+      "exit_code": 0,
+      "log_sha256": "a211efbdbb34f6577e7b4cd19fff1cba9f3065ded2559d1b670d7f876c34fb8a",
+      "check": "pr3-frontend-typecheck",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:36:45.826772+00:00",
+      "finished_at_utc": "2026-10-22T16:37:15.666062+00:00",
+      "exit_code": 0,
+      "log_sha256": "837bc228cb92b518191d20fe7e236eb295e66131852a69a3fd8d04a6873d007d",
+      "check": "pr3-mysql-rollback-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:30:38.656879+00:00",
+      "finished_at_utc": "2026-10-22T16:30:50.439501+00:00",
+      "exit_code": 0,
+      "log_sha256": "fc2fb0d9bba4bc545896705258def064cbb4ed6ada9a17c13a80ce2d9c97bd03",
+      "check": "pr3-pr2-mysql-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:26:12.216772+00:00",
+      "finished_at_utc": "2026-10-22T16:26:12.559121+00:00",
+      "exit_code": 1,
+      "log_sha256": "45b23d2a0a75d308d92f4834e313704e414ac54bb8ce6146294a836d8a804912",
+      "check": "pr3-python-format-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:29:37.026991+00:00",
+      "finished_at_utc": "2026-10-22T16:29:37.246474+00:00",
+      "exit_code": 0,
+      "log_sha256": "00a7f07f2dd4a1459bd76952c6f781e7b70e6fa643c75909fde50a665b52b5f6",
+      "check": "pr3-python-format-final",
+      "cleanup_complete": true
+    },
+    {
+      "status": "FAILED",
+      "started_at_utc": "2026-10-22T16:24:06.308714+00:00",
+      "finished_at_utc": "2026-10-22T16:27:56.731577+00:00",
+      "exit_code": 1,
+      "log_sha256": "879d43b4859853a31a69e96b51b04bd343e64cef8310a4a8b6c9c009e8234f3a",
+      "check": "pr3-python-full-1",
+      "cleanup_complete": true
+    },
+    {
+      "status": "CANCELLED",
+      "started_at_utc": "2026-10-22T16:28:56.397148+00:00",
+      "finished_at_utc": "2026-10-22T16:30:29.189131+00:00",
+      "exit_code": 143,
+      "log_sha256": "52a5cfe7d34516302f7ce5b3f7bd6a68c3587ec43eb1f8a2524e3730588caf54",
+      "check": "pr3-python-full-2",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:31:59.699388+00:00",
+      "finished_at_utc": "2026-10-22T16:35:34.516593+00:00",
+      "exit_code": 0,
+      "log_sha256": "045def16020eb6c85891ef273cf0ba371df299ec36db39bd911bb0e5e3e5cc21",
+      "check": "pr3-python-full-3",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:21:25.840222+00:00",
+      "finished_at_utc": "2026-10-22T16:21:27.038959+00:00",
+      "exit_code": 0,
+      "log_sha256": "8689bfef8105808bfafca0d4cbe07452f0320704b8e33bdc20af3ddb3d264f9a",
+      "check": "pr3-python-install",
+      "cleanup_complete": true
+    },
+    {
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-22T16:26:11.670098+00:00",
+      "finished_at_utc": "2026-10-22T16:26:12.069964+00:00",
+      "exit_code": 0,
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "check": "pr3-python-lint-1",
+      "cleanup_complete": true
+    }
+  ],
+  "limits": [
+    "No pipeline per-physical-call snapshot association is fabricated",
+    "No discovery, multi-turn provider compatibility or course quality certification",
+    "Raw local logs and private technical explanation remain outside Git"
+  ]
+}

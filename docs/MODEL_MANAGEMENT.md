@@ -29,6 +29,8 @@
 
 参考了 [OpenCode 的连接/模型配置流程](https://opencode.ai/docs/providers) 和 [DeepSeek Harness 的模型与执行框架分工](https://www.deepseek.com/harness/)。没有引入另一个 Agent 执行框架。
 
+课程与 Run 的[模型使用记录](MODEL_USAGE.md)分别展示当前配置、冻结选择、按次事件和四级验证证据。新 Run 会冻结该连接版本已有的单次检查观察；旧 Run 不从当前连接补齐。
+
 ## 职责与数据流
 
 ```mermaid

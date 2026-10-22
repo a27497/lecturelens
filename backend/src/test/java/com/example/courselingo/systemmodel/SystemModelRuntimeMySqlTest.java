@@ -355,7 +355,7 @@ class SystemModelRuntimeMySqlTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"normal", "revision_before", "owner_before", "delete_before", "revision_after"})
-    void scopedQaUsesFrozenModelAndAuthorityFences(String race) {
+    void scopedQaUsesFrozenModelAndAuthorityFences(String race) throws Exception {
         var a = target("scoped-qa-a", "https://api.deepseek.com", KEY_A);
         var b = target("scoped-qa-b", "https://other.example/v1", KEY_B);
         bind("COURSE_QA", a.model());
@@ -403,12 +403,12 @@ class SystemModelRuntimeMySqlTest {
         var entity = new com.example.courselingo.task.entity.AnalysisTask();
         entity.setId(task); entity.setUserId(user); entity.setStatus("SUCCEEDED"); entity.setTargetLanguage("zh-CN");
         when(tasks.selectByIdAndUserId(task, user)).thenReturn(entity);
-        var records = mock(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
-        var saved = new ArrayList<com.example.courselingo.qa.domain.CourseQaRecord>();
-        when(records.insert(any(com.example.courselingo.qa.domain.CourseQaRecord.class))).thenAnswer(call -> {
-            var record = call.getArgument(0, com.example.courselingo.qa.domain.CourseQaRecord.class);
-            record.setId(1L); saved.add(record); return 1;
-        });
+        var configuration = new com.baomidou.mybatisplus.core.MybatisConfiguration();
+        configuration.addMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
+        var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean();
+        factory.setDataSource(db.dataSource); factory.setConfiguration(configuration);
+        var records = new org.mybatis.spring.SqlSessionTemplate(factory.getObject())
+                .getMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
         var rate = mock(com.example.courselingo.qa.service.CourseQaRateLimitService.class);
         when(rate.checkAndConsume(user)).thenReturn(com.example.courselingo.qa.service.CourseQaRateLimitResult.allowed(10, 9));
         var qa = new com.example.courselingo.qa.service.CourseQaServiceImpl(users, tasks, retriever, records, provider, null, rate,
@@ -421,9 +421,19 @@ class SystemModelRuntimeMySqlTest {
             assertThat(result.usage().model()).isEqualTo("scoped-qa-a");
             assertThat(result.evidence()).extracting(com.example.courselingo.qa.dto.CourseQaEvidenceItem::evidenceId).containsExactly(selected);
             assertThat(receipts).hasSize(1);
+            var record = records.selectById(Long.parseLong(result.recordId()));
+            assertThat(record.getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+            assertThat(record.getExecutionSnapshotId()).isNotBlank();
+            var historical = executions.query(record.getExecutionSnapshotId());
+            assertThat(historical.routes().get("COURSE_QA").model()).isEqualTo("scoped-qa-a");
+            assertThat(registry.currentVersion()).isGreaterThan(historical.configVersion());
+            var beans = new StaticListableBeanFactory(Map.of("registry", registry, "executions", executions));
+            var usage = new CourseModelUsageService(db.jdbc, beans.getBeanProvider(SystemModelRegistry.class), beans.getBeanProvider(SystemModelExecutionService.class)).read(task, user);
+            assertThat(usage.current().routes()).filteredOn(r -> r.feature().equals("COURSE_QA")).singleElement().satisfies(r -> assertThat(r.model()).isEqualTo("scoped-qa-b"));
+            assertThat(usage.qa()).singleElement().satisfies(q -> assertThat(q.selection().routes().getFirst().model()).isEqualTo("scoped-qa-a"));
         } else {
             assertThatThrownBy(() -> qa.ask(task, "Bearer test", input)).isInstanceOf(RuntimeException.class);
-            assertThat(saved).noneMatch(record -> "SUCCEEDED".equals(record.getStatus()));
+            assertThat(records.selectByTaskIdAndUserId(task, user, 20)).noneMatch(record -> "SUCCEEDED".equals(record.getStatus()));
             assertThat(receipts).hasSize(race.equals("revision_after") ? 1 : 0);
         }
     }

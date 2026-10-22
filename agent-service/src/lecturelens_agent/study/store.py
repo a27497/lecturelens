@@ -300,6 +300,14 @@ class StudyStore:
                 "learning_scope": row.get("learning_scope"),
                 "model_selection": {
                     role: {key: config[key] for key in ("connection_id", "name", "version", "model")}
+                    | {
+                        "single_turn_evidence": {
+                            key: config["single_turn_evidence"].get(key)
+                            for key in ("ok", "code", "checked_at", "version")
+                        }
+                        if config.get("single_turn_evidence")
+                        else None
+                    }
                     for role, config in (row.get("model_config") or {}).items()
                 },
             },

@@ -9,7 +9,9 @@ export interface StudyRun {
   run_id: string; session_id: string; goal: string; request_key?: string; status: RunStatus;
   approval_required?: boolean;
   model_mode: "real" | "mock"; model_calls: number; tool_calls: number; error_code: string | null;
-  model_selection?: Record<string, { name: string; model: string; version: number }>;
+  created_at?: string;
+  model_selection?: Record<string, { connection_id?: string | null; name: string; model: string; version: number;
+    single_turn_evidence?: { ok: boolean; code: string | null; checked_at: number; version: number } | null }>;
 }
 export interface Citation { evidence_id: string; text: string; start_ms: number; end_ms: number; source_type: string }
 export interface PracticeQuestion { question: string; evidence_ids: string[]; answer?: string; rubric?: string }

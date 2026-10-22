@@ -206,6 +206,7 @@ public class CourseQaServiceImpl implements CourseQaService {
             String insufficient=learningScope!=null && learningScope.kind().equals("segments") && learningScope.policy().equals("strict")
                 ? "所选片段内没有足够证据，未检索范围外内容。" : CourseQaMessages.INSUFFICIENT_EVIDENCE;
             CourseQaRecord record = saveRecord(ticket,
+                execution, "SKIPPED_NO_EVIDENCE", null,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -226,6 +227,7 @@ public class CourseQaServiceImpl implements CourseQaService {
         }
         if (llmProvider == null) {
             saveRecord(ticket,
+                execution, "NOT_STARTED", null,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -242,6 +244,8 @@ public class CourseQaServiceImpl implements CourseQaService {
 
         AiCallRecordView started = startAiCall(normalizedTaskId, currentUser.userId(), evidence.size());
         long startedNanos = System.nanoTime();
+        String invocationState = "NOT_STARTED";
+        CourseQaUsage observedUsage = null;
         try {
             var prepared = CourseQaPromptFactory.prepare(
                 question,
@@ -267,12 +271,16 @@ public class CourseQaServiceImpl implements CourseQaService {
             LlmRequest routed = routedRequestFactory == null
                 ? requestForProvider
                 : routedRequestFactory.apply(AiModelStage.COURSE_QA, requestForProvider);
+            invocationState = "DISPATCHED";
             LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
+            invocationState = "RESPONSE_RECEIVED";
+            observedUsage = usage(result);
             CourseQaResponseParser.ParsedCourseQaResponse parsed = parser.parse(result.content(), visibleEvidence.size());
             List<CourseQaEvidenceItem> cited = evidenceSanitizer.sanitize(citedEvidence(visibleEvidence, parsed.citedEvidenceIndexes()));
             String answer = cited.isEmpty() ? CourseQaMessages.INSUFFICIENT_EVIDENCE : parsed.answer();
-            CourseQaUsage usage = usage(result);
+            CourseQaUsage usage = observedUsage;
             CourseQaRecord record = saveRecord(ticket,
+                execution, invocationState, started == null ? null : started.id(),
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -299,13 +307,14 @@ public class CourseQaServiceImpl implements CourseQaService {
             LlmStageException safeFailure = toStageFailure(exception);
             failAiCall(started, normalizedTaskId, currentUser.userId(), safeFailure, elapsedMillis(startedNanos));
             saveRecord(ticket,
+                execution, invocationState, started == null ? null : started.id(),
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
                 CourseQaMessages.INSUFFICIENT_EVIDENCE,
                 evidence,
                 "FAILED",
-                null,
+                observedUsage,
                 safeFailure.apiDetails().errorCode(),
                 safeFailure.safeDiagnosticSummary(),
                 null
@@ -342,6 +351,9 @@ public class CourseQaServiceImpl implements CourseQaService {
 
     private CourseQaRecord saveRecord(
         GenerationFence.Ticket ticket,
+        com.example.courselingo.systemmodel.SystemModelExecutionRef execution,
+        String invocationState,
+        Long callRecordId,
         String taskId,
         Long userId,
         String question,
@@ -355,6 +367,9 @@ public class CourseQaServiceImpl implements CourseQaService {
     ) {
         List<CourseQaEvidenceItem> safeEvidence = evidenceSanitizer.sanitize(evidence);
         CourseQaRecord record = new CourseQaRecord();
+        record.setExecutionSnapshotId(execution == null ? null : execution.snapshotId());
+        record.setInvocationState(invocationState);
+        record.setAiCallRecordId(callRecordId);
         record.setTaskId(taskId);
         record.setUserId(userId);
         record.setQuestion(question);

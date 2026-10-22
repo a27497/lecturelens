@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import CourseModelUsagePanel from "./CourseModelUsagePanel.vue";
 import { askCourseQa, getEvidenceIndexStatus, toReadableCourseQaError } from "../../api/qa";
 import type { EvidenceIndexStatus } from "../../api/qa";
 import type { CourseQaEvidenceItem, CourseQaResponse } from "../../types/qa";
@@ -107,6 +108,7 @@ function originalText(item: CourseQaEvidenceItem): string {
     <el-alert v-if="errorMessage" :closable="false" :title="errorMessage" type="warning" show-icon />
     <article v-if="response" class="qa-answer" aria-live="polite">
       <h3>回答</h3><p>{{ response.answer }}</p>
+      <CourseModelUsagePanel :task-id="taskId" :refresh-key="response.recordId" />
       <section class="qa-evidence" aria-labelledby="evidence-title">
         <h3 id="evidence-title">证据</h3>
         <el-empty v-if="response.evidence.length === 0" description="当前课程内容中没有找到明确依据" />
