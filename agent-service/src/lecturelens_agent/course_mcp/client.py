@@ -14,7 +14,7 @@ from mcp.client.stdio import stdio_client
 from mcp.shared.exceptions import McpError
 from pydantic import ValidationError
 
-from ..study.authority import AUTHORITY_PATH, EvidenceAuthority, request_body, signature
+from ..study.authority import EvidenceAuthority, authority_path, request_body, signature
 from ..study.learning_scope import check_scope_response, inject_scope
 from ..study.store import StudyError
 from .contracts import ACTION_TO_TOOL, TOOLS, CourseResult, authority_payload
@@ -172,7 +172,9 @@ class McpEvidenceAuthority:
             args = {k: v for k, v in payload.items() if k != "action"} | {
                 "authorization": {
                     "timestamp": timestamp,
-                    "signature": signature(self.secret, timestamp, request_body(payload), AUTHORITY_PATH),
+                    "signature": signature(
+                        self.secret, timestamp, request_body(payload), authority_path(payload)
+                    ),
                 }
             }
             try:

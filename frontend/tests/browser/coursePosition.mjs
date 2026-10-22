@@ -66,7 +66,7 @@ const server = createServer(async (req, res) => {
         else if (command.operation === 'READ') data = learning;
         else if (command.operation === 'RUNS') data = { runs: [learning.run] };
         else { forbidden.push(command.operation); res.writeHead(500); res.end(); return; }
-      } else if (path.endsWith('/qa')) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
+      } else if ((path.endsWith('/qa') || path.endsWith('/qa/scoped'))) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
       else if (path === '/api/public/runtime-configuration') data = { demoMode: false };
       else if (path === '/api/auth/me') data = { id: 1, email: 'fixture@example.invalid', role: 'USER' };
       else if (/^\/api\/tasks\/[^/]+$/.test(path)) data = task(id);

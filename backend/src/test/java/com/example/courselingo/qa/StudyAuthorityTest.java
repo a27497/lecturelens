@@ -125,6 +125,19 @@ class StudyAuthorityTest {
             .thenAnswer(call->{List<CourseEvidence> pool=call.getArgument(2);return List.of(pool.getFirst());});
         assertThat(ids(authority.execute(scoped("SEARCH",scope("course","e2"),false,null,null)))).containsExactly("e2");
         assertThat(ids(authority.execute(scoped("SEARCH",scope("course","e2"),true,null,null)))).contains("e1");
+        // Course expansion is an explicit learner permission, not a per-READ search flag.
+        assertThat(ids(authority.execute(scoped("READ",scope("course","e2"),false,List.of("e1"),null)))).containsExactly("e1");
+        assertThat(ids(authority.execute(scoped("WINDOW",scope("course","e2"),false,null,"e1")))).containsExactly("e1","e2");
+        assertThatThrownBy(()->authority.execute(scoped("READ",scope("course","e2"),false,List.of("foreign-id"),null))).isInstanceOf(BusinessException.class);
+    }
+    @Test void ownershipRevokedDuringScopedSourceReadStopsTheResponse() {
+        when(evidence.current("task",42L)).thenAnswer(call->{
+            jdbc.update("UPDATE analysis_task SET user_id=99 WHERE id='task'");
+            return List.of(item("e2",1000));
+        });
+        assertThatThrownBy(()->authority.execute(scoped("READ",scope("strict","e2"),false,List.of("e2"),null)))
+            .isInstanceOf(BusinessException.class);
+        verifyNoInteractions(dense);
     }
     @Test void malformedStaleAndCrossCourseSelectionsFailBeforeRetrieval() {
         for(var selection:List.of(scope("strict"),scope("strict","foreign"),scope("strict","e1","e1"),

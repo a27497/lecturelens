@@ -36,8 +36,21 @@ public class StudyController {
 
     @PostMapping("/api/tasks/{taskId}/study/command")
     public ApiResponse<JsonNode> command(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,false);
+    }
+
+    @PostMapping("/api/tasks/{taskId}/study/scoped-command")
+    public ApiResponse<JsonNode> scopedCommand(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,true);
+    }
+
+    private ApiResponse<JsonNode> submit(String taskId,String auth,Command command,boolean scoped) {
         enabled();
         long owner=users.currentUser(auth).userId();
+        // Old gateways ignore unknown JSON fields. A distinct route makes mixed-version
+        // requests fail before an old gateway can turn a scoped task into a legacy Run.
+        if (command==null || (scoped ? command.learning_scope()==null || !"START".equals(command.operation()) : command.learning_scope()!=null))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(invoke(taskId,owner,command));
     }
 
@@ -138,13 +151,24 @@ public class StudyController {
 
     @PostMapping("/internal/v1/study/evidence")
     public ApiResponse<Map<String,Object>> evidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,false);
+    }
+
+    @PostMapping("/internal/v1/study/scoped-evidence")
+    public ApiResponse<Map<String,Object>> scopedEvidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,true);
+    }
+
+    private ApiResponse<Map<String,Object>> readEvidence(HttpServletRequest request,boolean scoped) throws Exception {
         enabled();
         byte[] body=request.getInputStream().readNBytes(65537);
         if(body.length>65536) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        transport.verify("/internal/v1/study/evidence",request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
+        String path=scoped ? "/internal/v1/study/scoped-evidence" : "/internal/v1/study/evidence";
+        transport.verify(path,request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
         StudyEvidenceAuthority.Request payload;
         try { payload=json.readValue(body,StudyEvidenceAuthority.Request.class); }
         catch(Exception e) { throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST); }
+        if (scoped != (payload.learning_scope()!=null)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(authority.execute(payload));
     }
     public record Command(String operation,String session_id,String run_id,String request_key,String goal,long after,

@@ -64,7 +64,10 @@ export async function studyStatus(taskId: string): Promise<{ enabled: boolean; r
   return result.data.data;
 }
 export async function studyCommand(taskId: string, command: StudyCommand): Promise<StudyResponse> {
-  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/command`, command, { headers: authHeader() });
+  // Capability reads and writes can reach different gateway versions during rollout.
+  // Never fall back to the legacy route after a scoped request fails.
+  const route = command.learning_scope ? "scoped-command" : "command";
+  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/${route}`, command, { headers: authHeader() });
   return result.data.data;
 }
 
