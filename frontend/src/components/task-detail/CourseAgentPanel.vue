@@ -15,8 +15,9 @@ import { randomUuid } from "../../utils/randomUuid";
 
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
-const props = defineProps<{ taskId: string; status?: string }>();
-defineEmits<{ seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"] }>();
+import type { LearningScope } from "../../api/learningScope";
+const props = defineProps<{ taskId: string; status?: string; learningScope?: LearningScope | null }>();
+const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
 const ready = ref(false);
@@ -46,8 +47,9 @@ let requestKey = "";
 let requestGoal = "";
 let sessionKey = "";
 let cursor = 0;
+watch(run, value => emit("frozenScope", value ? value.learning_scope ?? null : undefined), { immediate: true });
 const active = computed(() => run.value !== null && ["queued", "running", "awaiting_approval"].includes(run.value.status));
-const canStart = computed(() => enabled.value && ready.value && !active.value && !submitting.value && goal.value.trim().length > 0);
+const canStart = computed(() => props.learningScope !== null && enabled.value && ready.value && !active.value && !submitting.value && goal.value.trim().length > 0);
 const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ awaiting_approval: "等待发布审批", queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
 const toolText: Record<string, string> = { search_course_evidence: "查找课程证据", read_evidence_window: "补读片段上下文", check_python_example: "核算例题", create_practice_set: "生成解释与练习", create_python_practice: "生成代码练习", create_interval_practice: "生成区间练习", create_sequence_practice: "生成排序步骤练习", report_insufficient_evidence: "确认课程证据不足" };
 
@@ -112,7 +114,9 @@ async function start() {
   const current = ++version; const task = props.taskId; const text = goal.value.trim();
   controller?.abort(); clearTimeout(timer); revealing.value = false;
   submitting.value = true; error.value = ""; artifact.value = null; answers.value = null; events.value = []; attempts.value = []; cursor = 0;
-  if (requestGoal !== text || !requestKey) { requestKey = randomUuid(); requestGoal = text; }
+  const selectedScope = props.learningScope ? JSON.parse(JSON.stringify(props.learningScope)) as LearningScope : undefined;
+  const fingerprint=JSON.stringify([text, selectedScope, approvalRequired.value]);
+  if (requestGoal !== fingerprint || !requestKey) { requestKey = randomUuid(); requestGoal = fingerprint; }
   try {
     if (!sessionId.value) {
       const response = await studyCommand(task, { operation: "CREATE_SESSION", request_key: sessionKey });
@@ -120,7 +124,7 @@ async function start() {
       sessionId.value = response.session_id!;
       sourceRevision.value = response.revision;
     }
-    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value });
+    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value, ...(selectedScope ? { learning_scope: selectedScope } : {}) });
     if (current !== version) return;
     run.value = response.run ?? null; artifact.value = response.artifact ?? null;
     approval.value = response.approval ?? null;

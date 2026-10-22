@@ -16,7 +16,7 @@ function unwrap<T>(response: ApiResponse<T>): T {
 
 export async function askCourseQa(taskId: string, request: CourseQaAskRequest): Promise<CourseQaResponse> {
   const response = await http.post<ApiResponse<CourseQaResponse>>(
-    `/api/tasks/${encodeURIComponent(taskId)}/qa`,
+    `/api/tasks/${encodeURIComponent(taskId)}/qa${request.learning_scope ? "/scoped" : ""}`,
     request,
     { headers: authHeader(), timeout: COURSE_QA_REQUEST_TIMEOUT_MS },
   );

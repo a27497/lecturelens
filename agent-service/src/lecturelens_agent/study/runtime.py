@@ -379,7 +379,16 @@ class StudyRuntime:
                 else ""
             )
             messages, aliases = build_messages(
-                SYSTEM + "\n" + instructions,
+                SYSTEM
+                + "\n"
+                + instructions
+                + (
+                    "\nFrozen learner learning_scope: "
+                    + json.dumps(run["learning_scope"])
+                    + ". Search selected Evidence first; expand_to_course requires policy=course. If selected evidence is insufficient, report insufficiency or explicitly request permitted expansion."
+                    if run.get("learning_scope")
+                    else ""
+                ),
                 run["goal"],
                 evidence,
                 state["history"],
@@ -817,7 +826,9 @@ class StudyRuntime:
                 elif name == "report_insufficient_evidence":
                     artifact = {
                         "kind": "insufficient_evidence",
-                        "title": "课程证据不足",
+                        "title": "所选范围内证据不足"
+                        if (run.get("learning_scope") or {}).get("kind") == "segments"
+                        else "课程证据不足",
                         "explanation": arguments["reason"],
                         "evidence_ids": [],
                         "citations": [],

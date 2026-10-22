@@ -1,4 +1,6 @@
+import type { LearningScope } from "../api/learningScope";
 export interface CourseQaAskRequest {
+  learning_scope?: LearningScope;
   question: string;
 }
 
@@ -25,6 +27,7 @@ export interface CourseQaUsage {
 }
 
 export interface CourseQaResponse {
+  learning_scope?: LearningScope | null;
   recordId: string;
   answer: string;
   evidence: CourseQaEvidenceItem[];

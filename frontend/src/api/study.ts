@@ -1,9 +1,11 @@
+import type { LearningScope } from "./learningScope";
 import { authHeader } from "./authToken";
 import { http } from "./http";
 import type { ApiResponse } from "../types/task";
 
 export type RunStatus = "queued" | "running" | "awaiting_approval" | "succeeded" | "failed" | "cancelled" | "budget_exceeded";
 export interface StudyRun {
+  learning_scope?: LearningScope | null;
   run_id: string; session_id: string; goal: string; request_key?: string; status: RunStatus;
   approval_required?: boolean;
   model_mode: "real" | "mock"; model_calls: number; tool_calls: number; error_code: string | null;
@@ -50,6 +52,7 @@ export interface StudyFeedbackRun {
 }
 export interface StudyEvent { sequence: number; event_type: string; payload: { [key: string]: unknown; tool?: string; status?: RunStatus; error_code?: string; accepted?: boolean } }
 export interface StudyCommand {
+  learning_scope?: LearningScope;
   approval_required?: boolean; approval_decision?: "approve" | "edit" | "reject"; approval_edit?: string;
   operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
@@ -61,7 +64,10 @@ export async function studyStatus(taskId: string): Promise<{ enabled: boolean; r
   return result.data.data;
 }
 export async function studyCommand(taskId: string, command: StudyCommand): Promise<StudyResponse> {
-  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/command`, command, { headers: authHeader() });
+  // Capability reads and writes can reach different gateway versions during rollout.
+  // Never fall back to the legacy route after a scoped request fails.
+  const route = command.learning_scope ? "scoped-command" : "command";
+  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/${route}`, command, { headers: authHeader() });
   return result.data.data;
 }
 

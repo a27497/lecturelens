@@ -7,8 +7,9 @@ import { formatMillisRange } from "../../utils/time";
 
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
-const props = defineProps<{ taskId: string }>();
-defineEmits<{ seek: [startTimeMillis: number, context: EvidenceSeekContext] }>();
+import type { LearningScope } from "../../api/learningScope";
+const props = defineProps<{ taskId: string; learningScope?: LearningScope | null }>();
+const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext] }>();
 const question = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
@@ -21,7 +22,7 @@ const indexMessage = computed(() => ({
   PENDING: "课程资料等待更新，完成后即可提问。", INDEXING: "正在准备课程资料，完成后即可提问。",
   FAILED: "课程资料更新暂时失败，系统会自动重试。",
 })[indexStatus.value]);
-const canSubmit = computed(() => indexReady.value && question.value.trim().length > 0 && question.value.trim().length <= 500 && !loading.value);
+const canSubmit = computed(() => props.learningScope !== null && indexReady.value && question.value.trim().length > 0 && question.value.trim().length <= 500 && !loading.value);
 const confidenceDetails = computed(() => (response.value?.evidence ?? [])
   .filter((item) => item.confidence !== null)
   .map((item, index) => ({
@@ -48,8 +49,14 @@ watch(() => props.taskId, (taskId, _previous, onCleanup) => {
   void poll();
 }, { immediate: true });
 
+watch(() => props.learningScope, () => {
+  // This selection is for the next question. Preserve a completed answer and its frozen scope;
+  // its citations must still pass the existing source-version guard after a refresh.
+  requestVersion.value++; loading.value = false; errorMessage.value = "";
+}, { deep: true });
+
 async function submit() {
-  if (loading.value || !indexReady.value) return;
+  if (loading.value || !indexReady.value || props.learningScope === null) return;
   const normalized = question.value.trim();
   if (!normalized) { errorMessage.value = "请输入课程问题"; return; }
   if (normalized.length > 500) { errorMessage.value = "问题不能超过 500 个字符"; return; }
@@ -60,8 +67,8 @@ async function submit() {
   errorMessage.value = "";
   response.value = null;
   try {
-    const nextResponse = await askCourseQa(currentTaskId, { question: normalized });
-    if (version === requestVersion.value && props.taskId === currentTaskId) response.value = nextResponse;
+    const nextResponse = await askCourseQa(currentTaskId, { question: normalized, ...(props.learningScope ? { learning_scope: JSON.parse(JSON.stringify(props.learningScope)) } : {}) });
+    if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; emit("frozenScope", nextResponse.learning_scope ?? null); }
   } catch (error) {
     if (version === requestVersion.value && props.taskId === currentTaskId) errorMessage.value = toReadableCourseQaError(error);
   } finally {
@@ -75,6 +82,7 @@ function clear() {
   loading.value = false;
   errorMessage.value = "";
   response.value = null;
+  emit("frozenScope", undefined);
 }
 
 function sourceLabel(sourceType: string): string {

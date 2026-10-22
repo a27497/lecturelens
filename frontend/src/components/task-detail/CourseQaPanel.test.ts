@@ -100,3 +100,35 @@ it("does not show the old course index state after switching tasks", async () =>
   expect(wrapper.get('[role="status"]').text()).toContain("自动重试");
   wrapper.unmount();
 });
+
+it("does not publish a late answer from the previous selection and retains the question", async () => {
+  const chosen = { version: 1 as const, kind: 'segments' as const, policy: 'strict' as const, revision: 1, evidence_ids: ['e1'] };
+  let resolveOld!: (value: never) => void;
+  vi.mocked(askCourseQa).mockImplementationOnce(() => new Promise(resolve => { resolveOld = resolve; })).mockResolvedValue({ recordId: 'new', answer: 'Current selection answer', evidence: [], usage: null });
+  const wrapper = mount(CourseQaPanel, { props: { taskId: 'task', learningScope: chosen }, global: { stubs: {
+    'el-input': { props: ['modelValue'], emits: ['update:modelValue'], template: `<textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
+    'el-button': { props: ['disabled'], template: `<button :disabled="disabled"><slot /></button>` }, 'el-alert': true, 'el-tag': true, 'el-empty': true,
+  } } });
+  await flushPromises(); await wrapper.get('textarea').setValue('Question retained'); await wrapper.findAll('button')[0]!.trigger('click'); await flushPromises();
+  await wrapper.setProps({ learningScope: { ...chosen, evidence_ids: ['e2'] } });
+  expect((wrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('Question retained');
+  await wrapper.findAll('button')[0]!.trigger('click'); await flushPromises();
+  resolveOld({ recordId: 'old', answer: 'Late old selection answer', evidence: [], usage: null } as never); await flushPromises();
+  expect(wrapper.text()).toContain('Current selection answer'); expect(wrapper.text()).not.toContain('Late old selection');
+  expect(vi.mocked(askCourseQa).mock.calls[0]![1].learning_scope).toEqual(chosen); wrapper.unmount();
+});
+
+it("retains completed answers and their frozen scope when the next scope becomes unavailable", async () => {
+  const chosen = { version: 1 as const, kind: 'segments' as const, policy: 'strict' as const, revision: 1, evidence_ids: ['e1'] };
+  vi.mocked(askCourseQa).mockResolvedValue({ recordId: 'saved', answer: 'Saved scoped answer', evidence: [], usage: null, learning_scope: chosen });
+  const wrapper = mount(CourseQaPanel, { props: { taskId: 'task', learningScope: chosen }, global: { stubs: {
+    'el-input': { props: ['modelValue'], emits: ['update:modelValue'], template: `<textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
+    'el-button': { props: ['disabled'], template: `<button :disabled="disabled"><slot /></button>` }, 'el-alert': true, 'el-tag': true, 'el-empty': true,
+  } } });
+  await flushPromises(); await wrapper.get('textarea').setValue('Saved question'); await wrapper.findAll('button')[0]!.trigger('click'); await flushPromises();
+  await wrapper.setProps({ learningScope: null });
+  expect(wrapper.text()).toContain('Saved scoped answer');
+  expect(wrapper.emitted('frozenScope')!.at(-1)).toEqual([chosen]);
+  expect((wrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('Saved question');
+  expect(wrapper.findAll('button')[0]!.attributes('disabled')).toBeDefined(); wrapper.unmount();
+});

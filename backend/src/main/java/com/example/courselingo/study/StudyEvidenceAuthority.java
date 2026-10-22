@@ -3,6 +3,7 @@ package com.example.courselingo.study;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.CourseEvidence;
+import com.example.courselingo.evidence.LearningScope;
 import com.example.courselingo.evidence.CourseEvidenceService;
 import com.example.courselingo.evidence.EvidenceIndexSynchronizer;
 import com.example.courselingo.qa.service.DenseEvidenceClient;
@@ -29,13 +30,23 @@ public class StudyEvidenceAuthority {
         return revision;
     }
 
+    public LearningScope validateScope(String taskId, Long owner, long revision, LearningScope scope) {
+        return scope == null ? null : LearningScope.validate(scope, revision, evidence.current(taskId, owner));
+    }
+
     public Map<String,Object> execute(Request request) {
         if (request.owner_id()==null || request.owner_id()<1 || request.course_id()==null || request.course_id().length()>128
                 || request.revision()<0 || request.action()==null) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         requireVersion(request);
+        var authorized = request.learning_scope()==null && "CHECK".equals(request.action()) ? List.<CourseEvidence>of()
+            : evidence.current(request.course_id(),request.owner_id()).stream().filter(CourseEvidence::retrievable).toList();
+        var scope=LearningScope.validate(request.learning_scope(),request.revision(),authorized);
+        if (Boolean.TRUE.equals(request.expand_to_course()) && (!"SEARCH".equals(request.action()) || scope==null || !scope.permitsExpansion()))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         List<CourseEvidence> selected=List.of();
         if (!"CHECK".equals(request.action())) {
-            var all=evidence.current(request.course_id(),request.owner_id()).stream().filter(CourseEvidence::retrievable).toList();
+            var all=scope==null ? authorized : scope.select(authorized,
+                scope.permitsExpansion() && (!"SEARCH".equals(request.action()) || Boolean.TRUE.equals(request.expand_to_course())));
             switch (request.action()) {
                 case "SEARCH" -> {
                     if (request.query()==null || request.query().isBlank() || request.query().length()>500
@@ -65,9 +76,11 @@ public class StudyEvidenceAuthority {
             }
         }
         requireVersion(request); // Source may change during retrieval; never return stale context.
-        return Map.of("owner_id",request.owner_id(),"course_id",request.course_id(),"revision",request.revision(),
+        var result=new LinkedHashMap<String,Object>(Map.of("owner_id",request.owner_id(),"course_id",request.course_id(),"revision",request.revision(),
             "evidence",selected.stream().map(e->Map.of("evidence_id",e.evidenceId(),"text",bounded(e.normalizedText()),
-                "start_ms",e.startMs(),"end_ms",e.endMs(),"source_type",e.sourceType())).toList());
+                "start_ms",e.startMs(),"end_ms",e.endMs(),"source_type",e.sourceType())).toList()));
+        if(scope!=null) result.put("learning_scope",scope);
+        return result;
     }
     private static List<CourseEvidence> timeline(List<CourseEvidence> all,CourseEvidence anchor) {
         return all.stream().filter(e->e.sourceType().equals(anchor.sourceType()))
@@ -101,5 +114,10 @@ public class StudyEvidenceAuthority {
     }
     private static String bounded(String text) { return text.length()>1200 ? text.substring(0,1200) : text; }
     public record Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
-                          List<String> evidence_ids,String evidence_id) { }
+                          List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course) {
+        public Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
+                       List<String> evidence_ids,String evidence_id) {
+            this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,null,null);
+        }
+    }
 }

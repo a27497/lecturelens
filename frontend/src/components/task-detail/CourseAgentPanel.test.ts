@@ -214,3 +214,20 @@ it("uses the CREATE_SESSION source revision rather than the artifact edit revisi
   expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "e1", revision: 2 }]]);
   wrapper.unmount();
 });
+
+it("freezes the selected scope before session creation and reports the restored Run scope", async () => {
+  const chosen = { version: 1 as const, kind: 'segments' as const, policy: 'strict' as const, revision: 1, evidence_ids: ['e1'] };
+  let finishSession!: (value: { session_id: string; revision: number }) => void;
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'CREATE_SESSION') return new Promise(resolve => { finishSession = resolve; });
+    if (command.operation === 'START') return { run: { ...run, learning_scope: command.learning_scope }, artifact };
+    return { sessions: [], runs: [] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task', learningScope: chosen }, global: { stubs } });
+  await flushPromises(); await wrapper.get('textarea').setValue('Selected stopping condition');
+  await wrapper.findAll('button').find(b => b.text() === '解释并出题')!.trigger('click'); await flushPromises();
+  await wrapper.setProps({ learningScope: { ...chosen, policy: 'course' } });
+  finishSession({ session_id: 'session', revision: 1 }); await flushPromises();
+  expect(vi.mocked(studyCommand).mock.calls.find(c => c[1].operation === 'START')![1].learning_scope).toEqual(chosen);
+  expect(wrapper.emitted('frozenScope')!.at(-1)).toEqual([chosen]); wrapper.unmount();
+});

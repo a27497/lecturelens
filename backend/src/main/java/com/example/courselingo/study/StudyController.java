@@ -4,6 +4,7 @@ import com.example.courselingo.auth.service.CurrentUserService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.response.ApiResponse;
+import com.example.courselingo.evidence.LearningScope;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,8 +36,21 @@ public class StudyController {
 
     @PostMapping("/api/tasks/{taskId}/study/command")
     public ApiResponse<JsonNode> command(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,false);
+    }
+
+    @PostMapping("/api/tasks/{taskId}/study/scoped-command")
+    public ApiResponse<JsonNode> scopedCommand(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,true);
+    }
+
+    private ApiResponse<JsonNode> submit(String taskId,String auth,Command command,boolean scoped) {
         enabled();
         long owner=users.currentUser(auth).userId();
+        // Old gateways ignore unknown JSON fields. A distinct route makes mixed-version
+        // requests fail before an old gateway can turn a scoped task into a legacy Run.
+        if (command==null || (scoped ? command.learning_scope()==null || !"START".equals(command.operation()) : command.learning_scope()!=null))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(invoke(taskId,owner,command));
     }
 
@@ -72,7 +86,10 @@ public class StudyController {
                  (command.approval_edit()!=null && (command.approval_edit().isBlank() || command.approval_edit().length()>4000))))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         long revision=authority.current(taskId,owner,Set.of("CREATE_SESSION","START","ANSWERS","SAVE_ATTEMPT","START_FEEDBACK","DECIDE_APPROVAL").contains(command.operation()));
+        if (command.learning_scope()!=null && !command.operation().equals("START")) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        var learningScope=authority.validateScope(taskId,owner,revision,command.learning_scope());
         Map<String,Object> payload=new LinkedHashMap<>();
+        if(learningScope!=null) payload.put("learning_scope",learningScope);
         payload.put("owner_id",owner); payload.put("course_id",taskId); payload.put("revision",revision); payload.put("operation",command.operation());
         if(command.session_id()!=null) payload.put("session_id",command.session_id());
         if(command.run_id()!=null) payload.put("run_id",command.run_id());
@@ -134,19 +151,37 @@ public class StudyController {
 
     @PostMapping("/internal/v1/study/evidence")
     public ApiResponse<Map<String,Object>> evidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,false);
+    }
+
+    @PostMapping("/internal/v1/study/scoped-evidence")
+    public ApiResponse<Map<String,Object>> scopedEvidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,true);
+    }
+
+    private ApiResponse<Map<String,Object>> readEvidence(HttpServletRequest request,boolean scoped) throws Exception {
         enabled();
         byte[] body=request.getInputStream().readNBytes(65537);
         if(body.length>65536) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        transport.verify("/internal/v1/study/evidence",request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
+        String path=scoped ? "/internal/v1/study/scoped-evidence" : "/internal/v1/study/evidence";
+        transport.verify(path,request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
         StudyEvidenceAuthority.Request payload;
         try { payload=json.readValue(body,StudyEvidenceAuthority.Request.class); }
         catch(Exception e) { throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST); }
+        if (scoped != (payload.learning_scope()!=null)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(authority.execute(payload));
     }
     public record Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                           String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                           String attempt_id,String feedback_id,String note_text,String disposition,
-                          Boolean approval_required,String approval_decision,String approval_edit) {
+                          Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope) {
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition,
+                       Boolean approval_required,String approval_decision,String approval_edit) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,approval_required,approval_decision,approval_edit,null);
+        }
         public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                        String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                        String attempt_id,String feedback_id,String note_text,String disposition) {

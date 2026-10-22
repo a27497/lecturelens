@@ -178,25 +178,25 @@ public class CourseQaServiceImpl implements CourseQaService {
         }
         GenerationFence.Ticket ticket = generationFence == null ? null
             : generationFence.begin(normalizedTaskId, currentUser.userId(), null);
+        var learningScope=evidenceRetriever.validateScope(normalizedTaskId,currentUser.userId(),request.learning_scope());
         CourseQaRateLimitResult rateLimit = rateLimitService.checkAndConsume(currentUser.userId());
         if (!rateLimit.allowed()) {
             throw new BusinessException(ErrorCode.TASK_RATE_LIMITED, "Course QA rate limit exceeded");
         }
-        List<CourseQaEvidenceItem> evidence = evidenceSanitizer.sanitize(evidenceRetriever.retrieve(
-            normalizedTaskId,
-            currentUser.userId(),
-            task.getTargetLanguage(),
-            question
-        )).stream()
+        List<CourseQaEvidenceItem> evidence = evidenceSanitizer.sanitize(learningScope==null ? evidenceRetriever.retrieve(
+            normalizedTaskId, currentUser.userId(), task.getTargetLanguage(), question
+        ) : evidenceRetriever.retrieve(normalizedTaskId,currentUser.userId(),task.getTargetLanguage(),question,learningScope)).stream()
             .distinct()
             .limit(properties.getMaxEvidenceItems())
             .toList();
         if (evidence.isEmpty()) {
+            String insufficient=learningScope!=null && learningScope.kind().equals("segments") && learningScope.policy().equals("strict")
+                ? "所选片段内没有足够证据，未检索范围外内容。" : CourseQaMessages.INSUFFICIENT_EVIDENCE;
             CourseQaRecord record = saveRecord(ticket,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
-                CourseQaMessages.INSUFFICIENT_EVIDENCE,
+                insufficient,
                 evidence,
                 "SUCCEEDED",
                 null,
@@ -206,9 +206,9 @@ public class CourseQaServiceImpl implements CourseQaService {
             );
             return new CourseQaResponse(
                 String.valueOf(record.getId()),
-                CourseQaMessages.INSUFFICIENT_EVIDENCE,
+                insufficient,
                 List.of(),
-                null
+                null, learningScope
             );
         }
         if (llmProvider == null) {
@@ -279,7 +279,7 @@ public class CourseQaServiceImpl implements CourseQaService {
                 result.duration().toMillis(),
                 elapsedMillis(startedNanos)
             );
-            return new CourseQaResponse(String.valueOf(record.getId()), answer, cited, usage);
+            return new CourseQaResponse(String.valueOf(record.getId()), answer, cited, usage, learningScope);
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
             failAiCall(started, normalizedTaskId, currentUser.userId(), safeFailure, elapsedMillis(startedNanos));
