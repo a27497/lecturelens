@@ -1,0 +1,347 @@
+{
+  "phase": 4,
+  "base_commit": "40f3a8b17527061731cdfb507f9173083f7fc858",
+  "backend_full": {
+    "exit_code": 0,
+    "suite_count": 225,
+    "tests": 1602,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase4/backend-full-final.log",
+    "junit_xml": ".data/system-model-management/phase4/full-final-reports"
+  },
+  "system_model_suites": [
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelProbeMySqlTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAsrMySqlTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelProbeTransportTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelSecretCipherTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelActivationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelAdminBoundaryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelHttpClientTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelUrlPolicyTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "real_mysql_tests": 79,
+  "frontend": {
+    "exit_code": 0,
+    "tests": 119,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "test_files": 29,
+    "log": ".data/system-model-management/phase4/frontend-full-final.log",
+    "junit_xml": ".data/system-model-management/phase4/frontend-final.xml",
+    "build_log": ".data/system-model-management/phase4/frontend-build-final.log",
+    "build_exit_code": 0
+  },
+  "python": {
+    "exit_code": 0,
+    "tests": 727,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": ".data/system-model-management/phase4/python-final.log",
+    "junit_xml": ".data/system-model-management/phase4/python-final.xml",
+    "database": "isolated PostgreSQL 17.11 / pgvector 0.8.6",
+    "warnings": 1
+  },
+  "personal_models": {
+    "frontend_tests": 8,
+    "python_tests": 26
+  },
+  "ruff": {
+    "check_exit_code": 0,
+    "format_exit_code": 0,
+    "formatted_files": 88,
+    "check_log": ".data/system-model-management/phase4/ruff-check-final.log",
+    "format_log": ".data/system-model-management/phase4/ruff-format-final.log",
+    "scope": "agent-service/src and agent-service/tests",
+    "verifier_check_log": ".data/system-model-management/phase4/verifier-lint-final.log",
+    "verifier_format_log": ".data/system-model-management/phase4/verifier-format-check-final.log"
+  },
+  "browser": {
+    "transport": "mock",
+    "realProviderCalls": 0,
+    "desktop": {
+      "width": 1440,
+      "height": 1000
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844
+    },
+    "noAutomaticProbes": true,
+    "keyClearedOnSaveAndReload": true,
+    "keyAbsentFromStorage": true,
+    "manualProbeCount": 1,
+    "userAdminRouteDenied": true,
+    "unexpectedPageErrors": []
+  },
+  "browser_request_count": 22,
+  "browser_log": ".data/system-model-management/phase4/browser/check-final.log",
+  "browser_script": ".data/system-model-management/phase4/browser/check.mjs",
+  "screenshots": [
+    ".data/system-model-management/phase4/browser/desktop.png",
+    ".data/system-model-management/phase4/browser/mobile.png"
+  ],
+  "probe_observations": [
+    {
+      "ok": true,
+      "category": "OK",
+      "elapsedMillis": 58,
+      "version": 3,
+      "modelId": 1,
+      "finalUrl": "https://bailian.example/api/v1/services/aigc/multimodal-generation/generation"
+    },
+    {
+      "ok": true,
+      "category": "OK",
+      "elapsedMillis": 29,
+      "version": 5,
+      "modelId": 2,
+      "finalUrl": "https://silicon.example/v1/audio/transcriptions"
+    },
+    {
+      "ok": true,
+      "category": "OK",
+      "elapsedMillis": 9,
+      "version": 39,
+      "modelId": 18,
+      "finalUrl": "https://api.deepseek.com/chat/completions"
+    }
+  ],
+  "probe_transport": "mock HTTP; real HTTP boundary tests only use local test server",
+  "asr_fixture": {
+    "file": "backend/src/main/resources/system-model-probe/tone.wav",
+    "sha256": "b0d37d5e191ec3a1aac79f780279c4180573be25c4e53a4844e6690a515c51e7",
+    "bytes": 32044,
+    "sample_rate": 16000,
+    "samples": 16000,
+    "duration_seconds": 1,
+    "license": "repository MIT; synthetic square wave; no third-party recording"
+  },
+  "credential_log_scan": {
+    "files_scanned": 240,
+    "canary_count": 15,
+    "matching_files": [],
+    "scope": "Final Java/frontend/Python logs and XML, packaging/build/Ruff, sanitized receipts and browser records; source scripts containing intentional synthetic test strings excluded."
+  },
+  "packaging": {
+    "exit_code": 0,
+    "log": ".data/system-model-management/phase4/backend-package-final.log"
+  },
+  "checks": [
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "name": "cli-shell-syntax",
+      "command": [
+        "bash",
+        "-n",
+        "scripts/admin/system-model-admin.sh"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "name": "mysql-version",
+      "command": [
+        "docker",
+        "exec",
+        "lecturelens-p14-phase4-mysql",
+        "mysql",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)\n"
+    },
+    {
+      "name": "postgres-version",
+      "command": [
+        "docker",
+        "exec",
+        "lecturelens-p14-phase4-postgres",
+        "postgres",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "postgres (PostgreSQL) 17.11 (Debian 17.11-1.pgdg12+2)\n"
+    },
+    {
+      "name": "remove-isolated-mysql",
+      "command": [
+        "docker",
+        "rm",
+        "--force",
+        "--volumes",
+        "lecturelens-p14-phase4-mysql"
+      ],
+      "exit_code": 0,
+      "output": "lecturelens-p14-phase4-mysql\n"
+    },
+    {
+      "name": "remove-isolated-postgres",
+      "command": [
+        "docker",
+        "rm",
+        "--force",
+        "--volumes",
+        "lecturelens-p14-phase4-postgres"
+      ],
+      "exit_code": 0,
+      "output": "lecturelens-p14-phase4-postgres\n"
+    },
+    {
+      "name": "compat-mysql-version",
+      "command": [
+        "docker",
+        "exec",
+        "lecturelens-p14-phase4-compat-mysql",
+        "mysql",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)\n"
+    },
+    {
+      "name": "remove-isolated-compat-mysql",
+      "command": [
+        "docker",
+        "rm",
+        "--force",
+        "--volumes",
+        "lecturelens-p14-phase4-compat-mysql"
+      ],
+      "exit_code": 0,
+      "output": "lecturelens-p14-phase4-compat-mysql\n"
+    }
+  ],
+  "prior_records": [
+    {
+      "log": ".data/system-model-management/phase4/frontend-type-initial.log",
+      "outcome": "failed: unused neutral component import, fixed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/frontend-type-second.log",
+      "outcome": "failed: input element typing in new tests, fixed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/backend-targeted-initial.log",
+      "outcome": "failed: reused test request appended both user and admin Authorization headers; fixture fixed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/backend-targeted-second.log",
+      "outcome": "292 targeted tests passed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/frontend-targeted-initial.log",
+      "outcome": "21 targeted tests passed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/frontend-targeted-second.log",
+      "outcome": "27 targeted tests passed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/frontend-full-before-layout.log",
+      "outcome": "119 tests passed before final route-import/layout changes"
+    },
+    {
+      "log": ".data/system-model-management/phase4/browser/check-initial.log",
+      "outcome": "failed mobile page overflow assertion; screenshots retained; grid/table sizing fixed"
+    },
+    {
+      "log": ".data/system-model-management/phase4/backend-full-before-options.log",
+      "outcome": "1601 tests passed before sharing Qwen runtime options with probe"
+    },
+    {
+      "log": ".data/system-model-management/phase4/backend-full-before-capability-map.log",
+      "outcome": "1602 tests passed before the additional ASR-to-legacy-vision capability compatibility case"
+    }
+  ],
+  "real_provider_calls": false,
+  "production_deployment": false,
+  "online_configuration_changed": false,
+  "known_limits": [
+    "DNS validation does not pin connection IP",
+    "Probe concurrency is per instance",
+    "Pre-phase3 snapshots without ASR need draining before upgrade",
+    "Connectivity is protocol validation, not speech/vision/tool-call or educational quality evaluation"
+  ],
+  "not_implemented": [
+    "Python agent-service reading system configuration",
+    "Anthropic / Responses / new protocols",
+    "Load balancing / automatic failover / plugins",
+    "Remote embedding switching",
+    "system_model_probe_record / idempotency keys / rollback preview"
+  ]
+}

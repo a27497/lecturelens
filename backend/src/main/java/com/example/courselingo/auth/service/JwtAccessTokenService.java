@@ -1,6 +1,7 @@
 package com.example.courselingo.auth.service;
 
 import com.example.courselingo.auth.entity.UserAccount;
+import com.example.courselingo.auth.entity.UserRole;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.infrastructure.JwtAccessTokenProperties;
@@ -34,6 +35,7 @@ public class JwtAccessTokenService {
                 .subject(String.valueOf(userAccount.getId()))
                 .claim("email", userAccount.getEmail())
                 .claim("status", userAccount.getStatus())
+                .claim("role", userAccount.getRole() == null ? UserRole.USER.name() : userAccount.getRole().name())
                 .claim("type", ACCESS_TOKEN_TYPE)
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(expiresAt))
@@ -54,7 +56,8 @@ public class JwtAccessTokenService {
             if (!ACCESS_TOKEN_TYPE.equals(claims.get("type", String.class))) {
                 throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
             }
-            return new AccessTokenClaims(parseUserId(claims.getSubject()));
+            String role = claims.get("role", String.class);
+            return new AccessTokenClaims(parseUserId(claims.getSubject()), role == null ? UserRole.USER : UserRole.valueOf(role));
         } catch (ExpiredJwtException exception) {
             throw new BusinessException(ErrorCode.AUTH_TOKEN_EXPIRED);
         } catch (BusinessException exception) {

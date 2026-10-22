@@ -16,4 +16,14 @@ public interface VisionAnalysisService {
     ) {
         return scan(taskId, userId);
     }
+
+    default VisionAnalysisScanResult scan(
+            String taskId,
+            Long userId,
+            Path sourceVideo,
+            Path workspace,
+            String language,
+            com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
+        return scan(taskId, userId, sourceVideo, workspace, language);
+    }
 }

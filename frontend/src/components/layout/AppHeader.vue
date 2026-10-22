@@ -18,9 +18,17 @@ const navItems = computed(() =>
         { label: "我的课程", to: "/tasks" },
         { label: "上传课程", to: "/upload" },
         { label: "模型管理", to: "/settings/models" },
+        ...(authStore.isAdmin ? [{ label: "系统模型", to: "/admin/settings/models" }] : []),
       ]
     : [],
 );
+
+watch(() => authStore.isAuthenticated, async authenticated => {
+  if (authenticated) {
+    try { await authStore.loadCurrentUser(); }
+    catch { /* The API session boundary handles expired authentication. */ }
+  }
+}, { immediate: true });
 
 watch(
   () => route.fullPath,

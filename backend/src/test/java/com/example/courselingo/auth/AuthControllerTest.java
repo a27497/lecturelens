@@ -93,6 +93,17 @@ class AuthControllerTest {
     }
 
     @Test
+    void registerRejectsClientSuppliedRole() throws Exception {
+        Mockito.clearInvocations(registrationService);
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"demo@example.com\",\"password\":\"Password123!\",\"role\":\"ADMIN\"}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(not(containsString("Password123!"))));
+        Mockito.verify(registrationService, Mockito.never()).register(any());
+    }
+
+    @Test
     void registerReturnsApiResponseSuccessForValidRequest() throws Exception {
         when(registrationService.register(any()))
             .thenReturn(new RegisterResponse(1L, "demo@example.com", "ACTIVE"));
@@ -136,6 +147,7 @@ class AuthControllerTest {
             .andExpect(jsonPath("$.data.user.userId").value(1))
             .andExpect(jsonPath("$.data.user.email").value("demo@example.com"))
             .andExpect(jsonPath("$.data.user.status").value("ACTIVE"))
+            .andExpect(jsonPath("$.data.user.role").value("USER"))
             .andExpect(jsonPath("$.data.password").doesNotExist())
             .andExpect(jsonPath("$.data.passwordHash").doesNotExist())
             .andExpect(jsonPath("$.data.tokenHash").doesNotExist())
@@ -198,6 +210,7 @@ class AuthControllerTest {
             .andExpect(jsonPath("$.data.userId").value(1))
             .andExpect(jsonPath("$.data.email").value("demo@example.com"))
             .andExpect(jsonPath("$.data.status").value("ACTIVE"))
+            .andExpect(jsonPath("$.data.role").value("USER"))
             .andExpect(jsonPath("$.data.password").doesNotExist())
             .andExpect(jsonPath("$.data.passwordHash").doesNotExist())
             .andExpect(jsonPath("$.data.refreshToken").doesNotExist())

@@ -13,12 +13,44 @@ public class AiModelRoutedLlmRequestFactory {
     public static final String METADATA_BASE_URL = "modelRouting.baseUrl";
 
     private final AiModelRouter router;
+    private final com.example.courselingo.systemmodel.SystemModelExecutionService executions;
 
     public AiModelRoutedLlmRequestFactory(AiModelRouter router) {
+        this(router, null);
+    }
+
+    public AiModelRoutedLlmRequestFactory(
+            AiModelRouter router,
+            com.example.courselingo.systemmodel.SystemModelExecutionService executions) {
         this.router = router;
+        this.executions = executions;
     }
 
     public LlmRequest apply(AiModelStage stage, LlmRequest request) {
+        if (request != null && request.execution() != null) {
+            if (executions == null)
+                throw new com.example.courselingo.common.exception.BusinessException(
+                        com.example.courselingo.common.error.ErrorCode.SYSTEM_MODEL_DISABLED);
+            var resolved = executions.route(request.execution(), stage.name());
+            Map<String, Object> metadata = new LinkedHashMap<>(request.metadata());
+            metadata.put(METADATA_STAGE, stage.name());
+            metadata.put(METADATA_MODEL_NAME, resolved.model());
+            metadata.put(METADATA_BASE_URL, resolved.baseUrl());
+            metadata.put("systemModel.source", resolved.source());
+            return new LlmRequest(
+                    request.requestId(),
+                    request.taskId(),
+                    request.messages(),
+                    request.timeout() == null && resolved.timeoutMillis() != null
+                            ? java.time.Duration.ofMillis(resolved.timeoutMillis())
+                            : request.timeout(),
+                    request.temperature() == null ? resolved.temperature() : request.temperature(),
+                    request.maxTokens() == null ? resolved.maxTokens() : request.maxTokens(),
+                    request.maxAttempts() == null ? resolved.maxAttempts() : request.maxAttempts(),
+                    metadata,
+                    request.responseFormat(),
+                    request.execution());
+        }
         if (request == null || router == null || !router.enabled()) {
             return request;
         }

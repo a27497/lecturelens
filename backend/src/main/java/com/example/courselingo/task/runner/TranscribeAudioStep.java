@@ -329,9 +329,10 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 );
             }
         }
+        SpeechToTextProvider adapter = speechToTextProvider.forExecution(context.taskContext().systemModels());
         Path audioFile = audio.audioFile();
         long audioSizeBytes = readFileSize(audioFile, "ASR audio file size cannot be read");
-        long maxAudioSizeBytes = chunkingProperties.effectiveMaxAudioFileSizeBytes();
+        long maxAudioSizeBytes = Math.min(chunkingProperties.effectiveMaxAudioFileSizeBytes(), adapter.maxAudioFileSizeBytes());
         if (maxAudioSizeBytes <= 0L) {
             throw new BusinessException(ErrorCode.COMMON_VALIDATION_FAILED, "ASR max audio file size is not configured");
         }
@@ -344,7 +345,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             );
             return clampSingleResult(
                 context,
-                transcribeOne(audio.audioFile(), context),
+                transcribeOne(audio.audioFile(), context, adapter),
                 authoritativeAudioDurationMillis
             );
         }
@@ -375,7 +376,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 chunkingProperties.getChunkDuration(),
                 chunkingProperties.getMaxChunks()
             );
-            ChunkSizeStats chunkSizeStats = validateChunks(chunks, authoritativeAudioDurationMillis);
+            ChunkSizeStats chunkSizeStats = validateChunks(chunks, authoritativeAudioDurationMillis, adapter.maxAudioFileSizeBytes());
             LOGGER.info(
                 "ASR chunks created: taskId={}, chunkCount={}, maxChunkSizeBytes={}, minChunkSizeBytes={}, concurrency={}",
                 context.taskId(),
@@ -384,7 +385,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 chunkSizeStats.minChunkSizeBytes(),
                 Math.min(chunks.size(), chunkingProperties.effectiveConcurrency())
             );
-            List<ChunkTranscriptionResult> chunkResults = transcribeChunksConcurrently(context, chunks);
+            List<ChunkTranscriptionResult> chunkResults = transcribeChunksConcurrently(context, chunks, adapter);
             return mergeChunkResults(
                 context,
                 chunkResults.stream()
@@ -392,7 +393,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                     .map(ChunkTranscriptionResult::result)
                     .toList(),
                 chunks,
-                authoritativeAudioDurationMillis
+                authoritativeAudioDurationMillis,
+                adapter
             );
         } finally {
             deleteDirectoryQuietly(chunkDirectory);
@@ -401,7 +403,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
 
     private List<ChunkTranscriptionResult> transcribeChunksConcurrently(
         PipelineAnalysisTaskStepContext context,
-        List<AudioChunk> chunks
+        List<AudioChunk> chunks,
+        SpeechToTextProvider adapter
     ) {
         int totalChunks = chunks.size();
         int concurrency = Math.min(totalChunks, chunkingProperties.effectiveConcurrency());
@@ -429,7 +432,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             for (int i = 0; i < totalChunks; i++) {
                 int chunkIndex = i;
                 AudioChunk chunk = chunks.get(i);
-                completionService.submit(() -> transcribeChunk(context, chunk, chunkIndex, totalChunks, completedChunks));
+                completionService.submit(() -> transcribeChunk(context, chunk, chunkIndex, totalChunks, completedChunks, adapter));
             }
 
             List<ChunkTranscriptionResult> results = new ArrayList<>(totalChunks);
@@ -464,7 +467,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         AudioChunk chunk,
         int zeroBasedChunkIndex,
         int totalChunks,
-        AtomicInteger completedChunks
+        AtomicInteger completedChunks,
+        SpeechToTextProvider adapter
     ) {
         int chunkNumber = zeroBasedChunkIndex + 1;
         ensureTaskStillRunning(context);
@@ -485,7 +489,8 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
                 chunk.audioFile(),
                 context,
                 chunkNumber,
-                totalChunks
+                totalChunks,
+                adapter
             );
             int nextCompleted = completedChunks.incrementAndGet();
             LOGGER.info(
@@ -509,9 +514,9 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         }
     }
 
-    private SpeechToTextResult transcribeOne(Path audioFile, PipelineAnalysisTaskStepContext context) {
+    private SpeechToTextResult transcribeOne(Path audioFile, PipelineAnalysisTaskStepContext context, SpeechToTextProvider adapter) {
         long startedNanos = System.nanoTime();
-        SpeechToTextResult result = speechToTextProvider.transcribe(new SpeechToTextRequest(
+        SpeechToTextResult result = adapter.transcribe(new SpeechToTextRequest(
             audioFile,
             normalizeSourceLanguage(context.sourceLanguage()),
             context.requestId(),
@@ -539,16 +544,18 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         Path audioFile,
         PipelineAnalysisTaskStepContext context,
         int chunkNumber,
-        int totalChunks
+        int totalChunks,
+        SpeechToTextProvider adapter
     ) {
-        int maxAttempts = Math.max(1, chunkingProperties.getChunkRetry().getMaxAttempts());
+        int maxAttempts = Math.max(1, adapter.maxAttempts() == null
+            ? chunkingProperties.getChunkRetry().getMaxAttempts() : adapter.maxAttempts());
         RuntimeException lastFailure = null;
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             ensureTaskStillRunning(context);
             long attemptStartedNanos = System.nanoTime();
             refreshClaim(context, "chunk-attempt-start");
             try {
-                SpeechToTextResult result = transcribeOne(audioFile, context);
+                SpeechToTextResult result = transcribeOne(audioFile, context, adapter);
                 refreshClaim(context, "chunk-attempt-complete");
                 return result;
             } catch (RuntimeException exception) {
@@ -686,14 +693,14 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         }
     }
 
-    private ChunkSizeStats validateChunks(List<AudioChunk> chunks, long authoritativeAudioDurationMillis) {
+    private ChunkSizeStats validateChunks(List<AudioChunk> chunks, long authoritativeAudioDurationMillis, long providerMaxBytes) {
         if (chunks == null || chunks.isEmpty()) {
             throw new BusinessException(ErrorCode.MEDIA_FFMPEG_FAILED, "ASR chunking produced no chunks");
         }
         if (chunks.size() > chunkingProperties.getMaxChunks()) {
             throw new BusinessException(ErrorCode.COMMON_VALIDATION_FAILED, ASR_CHUNK_LIMIT_MESSAGE);
         }
-        long maxChunkBytes = chunkingProperties.effectiveMaxChunkFileSizeBytes();
+        long maxChunkBytes = Math.min(chunkingProperties.effectiveMaxChunkFileSizeBytes(), providerMaxBytes);
         long minChunkSizeBytes = Long.MAX_VALUE;
         long maxChunkSizeBytes = 0L;
         for (AudioChunk chunk : chunks) {
@@ -717,14 +724,15 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         PipelineAnalysisTaskStepContext context,
         List<SpeechToTextResult> results,
         List<AudioChunk> chunks,
-        long authoritativeAudioDurationMillis
+        long authoritativeAudioDurationMillis,
+        SpeechToTextProvider adapter
     ) {
         List<TranscribedSegment> segments = new ArrayList<>();
         Duration totalDuration = Duration.ZERO;
         long providerReportedDurationMillis = 0L;
         int timelineClampedSegmentCount = 0;
         int timelineDroppedSegmentCount = 0;
-        String provider = speechToTextProvider.providerName();
+        String provider = adapter.providerName();
         String language = context.sourceLanguage();
         for (int chunkIndex = 0; chunkIndex < results.size(); chunkIndex++) {
             SpeechToTextResult result = results.get(chunkIndex);
@@ -789,6 +797,17 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             timelineDroppedSegmentCount,
             chunks.size()
         );
+        Map<String, Object> metadata = new java.util.LinkedHashMap<>();
+        metadata.put("chunkCount", chunks.size());
+        metadata.put("chunkDurationSeconds", chunkingProperties.getChunkDuration().toSeconds());
+        metadata.put("cumulativeProviderDurationMillis", totalDuration.toMillis());
+        metadata.put("transcriptSource", "ASR");
+        for (String key : List.of("systemModelSnapshotId", "systemModelConfigVersion", "systemModelSource")) {
+            Object value = results.getFirst().metadata().get(key);
+            if (results.stream().anyMatch(result -> !Objects.equals(value, result.metadata().get(key))))
+                throw new IllegalStateException("ASR chunks used inconsistent execution snapshots");
+            if (value != null) metadata.put(key, value);
+        }
         return new SpeechToTextResult(
             provider,
             language,
@@ -796,12 +815,7 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
             segments,
             totalDuration,
             authoritativeAudioDurationMillis,
-            Map.of(
-                "chunkCount", chunks.size(),
-                "chunkDurationSeconds", chunkingProperties.getChunkDuration().toSeconds(),
-                "cumulativeProviderDurationMillis", totalDuration.toMillis(),
-                "transcriptSource", "ASR"
-            )
+            metadata
         );
     }
 
