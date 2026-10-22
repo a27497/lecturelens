@@ -117,6 +117,20 @@ class AnalysisTaskRunnerTest {
     }
 
     @Test
+    void disabledManagementRejectsPinnedRunAndRetryBeforeClaimOrStateChange() {
+        var guard = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelDisabledTaskGuard.class);
+        ((AnalysisTaskRunnerImpl) runner).configureDisabledModels(guard);
+        doThrow(new BusinessException(ErrorCode.SYSTEM_MODEL_CONFIG_UNAVAILABLE))
+            .when(guard).requireLegacyTask("task_1");
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task(AnalysisTaskStatus.QUEUED));
+        assertThatThrownBy(() -> runner.run(message())).isInstanceOf(BusinessException.class);
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task(AnalysisTaskStatus.RETRYING));
+        assertThatThrownBy(() -> runner.retry(message())).isInstanceOf(BusinessException.class);
+        org.mockito.Mockito.verifyNoInteractions(executor, boundedTaskExecutor, taskClaimService);
+        assertThat(updatedStates).isEmpty();
+    }
+
+    @Test
     void runFailsWhenTaskDoesNotExist() {
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(null);
 

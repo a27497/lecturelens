@@ -1,0 +1,210 @@
+{
+  "verified_at": "2026-10-15T17:38:22.979519+00:00",
+  "deployment_commit": "13f8fc03d61d608157be1b7c3c0b5d474536acfd",
+  "backend_jar_sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+  "frontend_index_sha256": "a79d253e88fa1d4f1b7ca7f26bf2f044893b12743b9eab133a731d7da7a63352",
+  "flyway_version": 25,
+  "config_version": 1,
+  "target_user_id": 9,
+  "actual_me_role": "ADMIN",
+  "token_claimed_role": "USER",
+  "unauthenticated_status": 401,
+  "ordinary_user_status": 403,
+  "provider_count": 0,
+  "model_count": 0,
+  "binding_count": 0,
+  "unfinished_analysis_tasks": 0,
+  "backend_service": {
+    "MainPID": "2659162",
+    "ExecMainStartTimestamp": "Thu 2026-10-15 17:32:00 UTC",
+    "ActiveState": "active"
+  },
+  "preserved_services": {
+    "lecturelens-live-agent": {
+      "MainPID": "5102",
+      "ExecMainStartTimestamp": "Thu 2026-10-15 06:20:58 UTC",
+      "ActiveState": "active"
+    },
+    "lecturelens-live-model": {
+      "MainPID": "5105",
+      "ExecMainStartTimestamp": "Thu 2026-10-15 06:20:58 UTC",
+      "ActiveState": "active"
+    }
+  },
+  "disk_available_bytes": 13810057216,
+  "asr_environment_unchanged": true,
+  "asr_environment_names": [
+    "ASR_CHUNK_CONCURRENCY",
+    "ASR_CHUNK_DURATION",
+    "ASR_CHUNK_MAX_FILE_SIZE",
+    "ASR_MAX_AUDIO_FILE_SIZE",
+    "ASR_PROVIDER",
+    "BAILIAN_ASR_API_KEY",
+    "BAILIAN_ASR_ENDPOINT",
+    "BAILIAN_ASR_MODEL",
+    "SILICONFLOW_API_KEY",
+    "SILICONFLOW_ASR_BASE_URL",
+    "SILICONFLOW_ASR_ENABLED"
+  ],
+  "changed_environment_names": [
+    "INVOCATION_ID",
+    "JOURNAL_STREAM",
+    "SYSTEMD_EXEC_PID",
+    "SYSTEM_MODEL_CONFIG_ENABLED",
+    "SYSTEM_MODEL_MASTER_KEY",
+    "SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS"
+  ],
+  "feature_status": [
+    {
+      "key": "TRANSLATION_FULL_TEXT",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "SUBTITLE_TRANSLATION",
+      "connected": true,
+      "active": false,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "LEARNING_PACKAGE",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "COURSE_QA",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "COURSE_CHAPTER",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "VISION_FRAME_ANALYSIS",
+      "connected": true,
+      "active": false,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "https://api.siliconflow.cn/v1/chat/completions",
+      "configurationStatus": "MISSING_KEY"
+    },
+    {
+      "key": "ASR_TRANSCRIPTION",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 1,
+      "finalUrl": "https://ws-7133crgrd736hgz8.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "FUSION_SUMMARY",
+      "connected": false,
+      "active": false,
+      "source": "UNCONNECTED",
+      "version": 1,
+      "finalUrl": null,
+      "configurationStatus": "UNCONNECTED"
+    }
+  ],
+  "probe_policy": {
+    "allowedOrigins": [
+      "https://api.deepseek.com"
+    ],
+    "timeoutMillis": 10000,
+    "concurrency": 2,
+    "responseLimitBytes": 65536,
+    "asrFixtureSha256": "b0d37d5e191ec3a1aac79f780279c4180573be25c4e53a4844e6690a515c51e7"
+  },
+  "http_checks": [
+    {
+      "path": "/actuator/health",
+      "http_status": 200,
+      "bytes": 15
+    },
+    {
+      "path": "/api/me",
+      "http_status": 200,
+      "bytes": 206
+    },
+    {
+      "path": "/api/admin/system-models/catalog",
+      "http_status": 401,
+      "bytes": 164
+    },
+    {
+      "path": "/api/admin/system-models/catalog",
+      "http_status": 403,
+      "bytes": 152
+    },
+    {
+      "path": "/api/admin/system-models/catalog",
+      "http_status": 200,
+      "bytes": 3138
+    },
+    {
+      "path": "/api/admin/system-models/status?version=1",
+      "http_status": 200,
+      "bytes": 1578
+    },
+    {
+      "path": "/api/admin/system-models/probe-policy",
+      "http_status": 200,
+      "bytes": 327
+    },
+    {
+      "path": "/api/admin/system-models/versions/1",
+      "http_status": 200,
+      "bytes": 3268
+    },
+    {
+      "path": "/api/admin/system-models/executions?taskId=task_b70a0cc1192e49f2a712a907301c973d",
+      "http_status": 200,
+      "bytes": 131
+    },
+    {
+      "path": "/api/admin/system-models/audit",
+      "http_status": 200,
+      "bytes": 472
+    },
+    {
+      "path": "/healthz",
+      "http_status": 200,
+      "bytes": 128
+    },
+    {
+      "path": "/health",
+      "http_status": 200,
+      "bytes": 15
+    },
+    {
+      "path": "/admin/settings/models",
+      "http_status": 200,
+      "bytes": 513
+    }
+  ],
+  "responses_have_no_plaintext_credentials_or_ciphertext": true,
+  "provider_calls": 0,
+  "authenticated_verification": "120-second JWT kept only in process memory; no token or signing key persisted"
+}

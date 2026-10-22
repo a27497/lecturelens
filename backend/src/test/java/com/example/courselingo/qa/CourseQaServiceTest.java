@@ -111,6 +111,22 @@ class CourseQaServiceTest {
     }
 
     @Test
+    void invalidScopeIsRejectedBeforeConfigFreezeRetrievalOrModelCall() {
+        var models = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelExecutionService.class);
+        service.configureSystemModels(models);
+        var scope = new com.example.courselingo.evidence.LearningScope(1, "segments", "strict", 99, List.of("foreign"));
+        when(currentUserService.currentUser("Bearer demo")).thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
+        when(evidenceRetriever.validateScope("task_1", 42L, scope))
+            .thenThrow(new BusinessException(ErrorCode.COMMON_BAD_REQUEST));
+        assertThatThrownBy(() -> service.ask("task_1", "Bearer demo", new CourseQaAskRequest("hello", scope)))
+            .isInstanceOf(BusinessException.class);
+        org.mockito.Mockito.verifyNoInteractions(models, rateLimitService, aiCallRecordService);
+        verify(evidenceRetriever, never()).retrieve(any(), any(), any(), any(), any());
+        assertThat(llmProvider.requests).isEmpty();
+    }
+
+    @Test
     void askReturnsInsufficientEvidenceWithoutCallingLlm() {
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));

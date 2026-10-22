@@ -94,6 +94,20 @@ class TaskCreationServiceTest {
     }
 
     @Test
+    void enabledSystemModelsFreezeBeforePublishingCreatedTask() {
+        var models = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelExecutionService.class);
+        service.configureSystemModels(models);
+        when(uploadSessionMapper.selectByIdAndUserId("up_1", 42L)).thenReturn(uploadSession("up_1", 42L, "STORED"));
+        when(rateLimitService.checkAndConsume(42L)).thenReturn(AnalysisRateLimitResult.allowed(10, 9));
+        when(analysisTaskMapper.insert(any(AnalysisTask.class))).thenReturn(1);
+        var response = service.create(new CreateAnalysisTaskRequest("up_1", "zh-CN"), "Bearer access-token");
+        var order = org.mockito.Mockito.inOrder(analysisTaskMapper, models, messageProducer);
+        order.verify(analysisTaskMapper).insert(any(AnalysisTask.class));
+        order.verify(models).freezePipeline(response.taskId(), 42L);
+        order.verify(messageProducer).send(eq(AnalysisTaskMessageTag.ANALYSIS_CREATED), any(AnalysisTaskMessage.class));
+    }
+
+    @Test
     void ownerCanCreateTaskFromStoredSessionAndMessageUsesCreatedTag() {
         when(uploadSessionMapper.selectByIdAndUserId("up_1", 42L)).thenReturn(uploadSession("up_1", 42L, "STORED"));
         when(rateLimitService.checkAndConsume(42L)).thenReturn(AnalysisRateLimitResult.allowed(10, 9));

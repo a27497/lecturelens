@@ -52,6 +52,8 @@ public final class BailianAsrProvider implements SpeechToTextProvider {
         try {
             // As with the existing provider, the provider's configured timeout controls the HTTP call.
             response = transport.send(endpoint, properties.getApiKey(), body, properties.getRequestTimeout());
+        } catch (AsrCallFailure safe) {
+            throw safe;
         } catch (AsrProviderException exception) {
             // Preserve classification, but never trust a transport's message or cause.
             throw new AsrProviderException("Bailian ASR transport failed", exception.retryable(),

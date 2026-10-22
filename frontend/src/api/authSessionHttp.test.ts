@@ -30,3 +30,19 @@ it("discards late A responses and cannot clear B credentials on an old 401", asy
   await expect(http.get("/api/uploads", { adapter })).rejects.toThrow("session changed");
   expect(adapter).not.toHaveBeenCalled();
 });
+
+it("keeps a valid user session when an administrator API returns 403", async () => {
+  saveAuthTokens("user-token", "refresh", "user@example.test");
+  const reset = vi.fn();
+  dispose = installAuthSessionBoundary(reset);
+  const request = http.get("/api/admin/system-models/catalog", {
+    headers: authHeader(),
+    adapter: async config => {
+      throw new AxiosError("forbidden", "ERR_BAD_REQUEST", config, undefined,
+        { status: 403, statusText: "Forbidden", headers: {}, config, data: { code: "COMMON_FORBIDDEN" } });
+    },
+  });
+  await expect(request).rejects.toThrow("forbidden");
+  expect(reset).not.toHaveBeenCalled();
+  expect(localStorage.getItem(ACCESS_TOKEN_KEYS[0])).toBe("user-token");
+});

@@ -8,6 +8,12 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 
 系统优先读取视频内覆盖充分的字幕，只有字幕缺失或覆盖不足时才调用外部 ASR。OCR 与 VLM 均为可选能力，关闭后不影响字幕、翻译、章节、学习资料和导出主链路。
 
+[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本、视觉和 ASR，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；ASR 绑定支持热切换，管理员页面为 `/admin/settings/models`，仅管理员可见且后端逐接口授权。手动连通性测试默认禁止，部署者可用 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS` 指定精确 origin 白名单；仍禁止私有地址、代理和重定向，固定 10 秒 / 每实例两并发 / 64 KiB 响应上限。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
+
+V25 must be applied before this Java binary serves authenticated traffic, including when `SYSTEM_MODEL_CONFIG_ENABLED=false`, because account queries include the new role column. Verify the migration and retain the additive schema on rollback. Follow the [integration rollout and snapshot guard constraints](SYSTEM_MODEL_MANAGEMENT.md#integration-with-structured-learning-scope); earlier workers must be stopped before snapshot-bearing traffic resumes.
+
+系统层启用后，启动会把当前部署默认及加密凭据写为不可变版本；新任务创建时冻结版本，运行中的任务继续原版本。多实例应提供相同主密钥和部署默认。切换回未启用系统层的旧 worker 前应先排空已冻结任务，不让旧 worker 忽略新快照；现有无快照任务首次接管标记 ADOPTED。普通配置保存不需要重启。历史及执行查询不会返回版本原文或密文；本次实现仅在隔离测试环境验收，没有修改线上配置。
+
 ## 环境要求
 
 - Java 21
@@ -66,7 +72,7 @@ JWT_ACCESS_SECRET
 
 ## 4. ASR 配置
 
-下面保留 SiliconFlow 配置。百炼同步转写、显式 provider 选择及推荐分片参数见[百炼 ASR](ASR_BAILIAN.md)。凭据由运行环境注入；启用百炼需要包含该实现的新构建产物，仅修改环境变量不能升级旧 JAR。
+系统配置层开启时，`ASR_TRANSCRIPTION` 绑定可切换百炼/SiliconFlow；任务创建时冻结供应商，新绑定仅影响新任务。无绑定沿用下方 provider/enabled/Mock 配置；绑定失败不回退 Mock。完整端点、分片限制与旧快照升级要求见[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md#asr-运行时选择)。下面保留 SiliconFlow 配置。百炼同步转写、显式 provider 选择及推荐分片参数见[百炼 ASR](ASR_BAILIAN.md)。凭据由运行环境注入；启用百炼需要包含该实现的新构建产物，仅修改环境变量不能升级旧 JAR。
 
 ```dotenv
 SILICONFLOW_ASR_ENABLED=true
@@ -166,6 +172,10 @@ docker compose --env-file .env ps
 ```
 
 Compose 配置见 [`compose.yaml`](../compose.yaml)。它会启动 MySQL、Redis、MinIO、RocketMQ NameServer 和 RocketMQ Broker/Proxy，并初始化 MinIO bucket。确认容器状态正常后再启动后端。
+
+自管 MySQL 在启用 binlog、由非 SUPER 账号执行迁移时，需要设置 `log_bin_trust_function_creators=ON`，或由具备所需权限的账号执行 V25。
+V25 创建配置版本和审计保护触发器；缺少该设置或权限会报 `HY000/1419`。Compose 已设置该实例参数，binlog 保持开启。
+该参数放宽实例内触发器/函数创建的 binlog 权限检查，不授予应用账号 SUPER；迁移账号仍需相应的数据库级 DDL/触发器权限。
 
 当前固定 MinIO vendor 镜像的匿名获取问题仍未修复，普通部署配置保留原始镜像 pin。CI 的无 Key Mock E2E 显式加载 [`compose.ci-minio.yml`](../compose.ci-minio.yml)，通过 [`Dockerfile.ci`](../infra/minio/Dockerfile.ci) 从与原镜像 release 对应的同一 commit 的官方源码构建；源码归档 SHA256、Go 工具链和基础镜像 digest 均固定，不声称与 vendor binary byte-identical。该 CI 路径已在 fresh GitHub hosted runner 上通过完整 Mock E2E；远端结果和验证边界见 [CI 后续记录](REPOSITORY_CLOSEOUT.md#2026-10-07-successor-ci-only-minio-source-build)。
 

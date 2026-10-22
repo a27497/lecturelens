@@ -6,9 +6,9 @@ import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
 import com.example.courselingo.ai.llm.LlmRequest;
 import com.example.courselingo.ai.llm.LlmResponseFormat;
 import com.example.courselingo.ai.llm.LlmResult;
-import com.example.courselingo.ai.llm.LlmUsage;
 import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.ai.llm.LlmStructuredOutputExecutor;
+import com.example.courselingo.ai.llm.LlmUsage;
 import com.example.courselingo.ai.record.domain.AiCallStage;
 import com.example.courselingo.ai.record.domain.AiCallType;
 import com.example.courselingo.ai.record.dto.AiCallRecordView;
@@ -30,25 +30,33 @@ import com.example.courselingo.modelrouting.AiModelRoutedLlmRequestFactory;
 import com.example.courselingo.modelrouting.AiModelStage;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
+import com.example.courselingo.task.service.GenerationFence;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
-import com.example.courselingo.task.service.GenerationFence;
 
 @Service
 public class CourseChapterServiceImpl implements CourseChapterService {
+    private com.example.courselingo.systemmodel.SystemModelExecutionService systemModels;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureSystemModels(
+            com.example.courselingo.systemmodel.SystemModelExecutionService systemModels) {
+        this.systemModels = systemModels;
+    }
 
     private GenerationFence generationFence;
 
@@ -148,6 +156,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         if (!properties.isEnabled()) {
             throw new BusinessException(ErrorCode.COMMON_VALIDATION_FAILED, "Course chapter generation is disabled");
         }
+        var execution =
+                systemModels == null
+                        ? null
+                        : systemModels.operation(task.getId(), task.getUserId(), "COURSE_CHAPTER");
         GenerationFence.Ticket ticket = generationFence == null ? null
             : generationFence.begin(task.getId(), task.getUserId(), "chapter:" + task.getTargetLanguage());
         CourseChapterEvidenceBundle bundle = evidenceBuilder.build(task.getId(), task.getUserId(), task.getTargetLanguage());
@@ -173,7 +185,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 properties.getMaxAttempts(),
                 Map.of("stage", AiModelStage.COURSE_CHAPTER.name(), "targetLanguage", task.getTargetLanguage()),
                 LlmResponseFormat.JSON_OBJECT
-            );
+            )
+                            .withExecution(execution);
             LlmRequest routed = routedRequestFactory == null ? request : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, request);
             LlmResult result = executePrimaryWithTextRecovery(task, routed);
             boolean repairAttempted = false;
@@ -198,8 +211,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                     properties.getLlmTimeout(),
                     0.0d, properties.getMaxTokens(), 1,
                     Map.of("stage", AiModelStage.COURSE_CHAPTER.name(), "repair", true),
-                    LlmResponseFormat.JSON_OBJECT
-                );
+                    LlmResponseFormat.JSON_OBJECT)
+                                .withExecution(execution);
                 LlmRequest routedRepair = routedRequestFactory == null
                     ? repair
                     : routedRequestFactory.apply(AiModelStage.COURSE_CHAPTER, repair);
@@ -242,8 +255,9 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 throw new BusinessException(ErrorCode.AI_PROVIDER_FAILED, "Course chapter coverage validation failed");
             }
             LOGGER.info(
-                "event=course_chapter_generation_validated repairAttempted={} coverageCompleted={} fallbackUsed={} chapterCount={} "
-                    + "evidenceCount={} timelineCoverage={} evidenceCoverage={} maxGapMillis={}",
+                    "event=course_chapter_generation_validated repairAttempted={}"
+                        + " coverageCompleted={} fallbackUsed={} chapterCount={} evidenceCount={}"
+                        + " timelineCoverage={} evidenceCoverage={} maxGapMillis={}",
                 repairAttempted,
                 coverageCompleted,
                 fallbackUsed,
@@ -280,7 +294,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                         new CourseChapterUsage("deterministic-fallback", "", null, null, null, durationMillis)
                     );
                     LOGGER.warn(
-                        "event=course_chapter_provider_output_fallback category={} chapterCount={} evidenceCount={}",
+                            "event=course_chapter_provider_output_fallback category={}"
+                                + " chapterCount={} evidenceCount={}",
                         safeFailure.details().category(), rows.size(), bundle.evidence().size()
                     );
                     return rows.stream().map(this::toResponse).toList();
@@ -297,7 +312,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
             if (request.responseFormat() != LlmResponseFormat.JSON_OBJECT
-                || safeFailure.details().category() != LlmProviderFailureCategory.OUTPUT_INVALID) {
+                || "DATABASE".equals(request.metadata().get("systemModel.source"))
+                    || safeFailure.details().category() != LlmProviderFailureCategory.OUTPUT_INVALID) {
                 throw exception;
             }
             Map<String, Object> metadata = new LinkedHashMap<>(request.metadata());
@@ -311,8 +327,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
                 request.maxTokens(),
                 1,
                 metadata,
-                LlmResponseFormat.TEXT
-            );
+                LlmResponseFormat.TEXT)
+                            .withExecution(request.execution());
             LOGGER.warn(
                 "event=course_chapter_provider_output_recovery category={} nextResponseFormat={}",
                 safeFailure.details().category(), LlmResponseFormat.TEXT

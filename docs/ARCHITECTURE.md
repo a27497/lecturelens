@@ -102,6 +102,8 @@ Python 按账号保存个人决策/复核连接，凭据以 Fernet 加密；新 
 
 模型地址受 origin allowlist 和 URL 校验限制，不跟随重定向或环境代理；修改目标地址必须重新输入或明确清除密钥。密钥不回显、不写浏览器存储或公开事件。加密密钥必须持久保存，直接替换会使旧连接及快照无法解密。模型连接测试只验证可调用性，不能证明教学质量。配置见[模型管理](MODEL_MANAGEMENT.md)。
 
+Java 的[系统模型配置层](SYSTEM_MODEL_MANAGEMENT.md)默认关闭。启用时校验环境主密钥与迁移前提，文本/视觉/ASR 按功能独立绑定；新任务与操作冻结不可变版本，执行快照不复制凭据，调用前从版本内解密。历史和执行接口只返回专用脱敏投影；Redis 通知用于失效缓存，创建快照仍读数据库版本。ASR 工厂按任务快照创建独立适配器，分片、重试与合并共用该实例；管理员页面与个人学习 Agent 页面分开；主动测试须管理员点击并命中部署 origin 白名单，使用独立的有界传输和合成音频夹具；Python 个人连接与 Run 配置不变。
+
 ## 媒体摄取与异步任务
 
 ### 上传与任务状态
@@ -188,6 +190,7 @@ Course 工具默认使用 internal transport，可选官方 MCP SDK stdio Client
 ## 安全与可观测性
 
 - JWT access/refresh rotation，refresh token 哈希保存。上传、课程、结果和制品始终按服务端身份过滤；非法 scope 不泄露资源是否存在。
+- 系统模型管理使用数据库当前 USER/ADMIN 角色授权；JWT 角色不替代实时账号检查。首次授权和撤权使用离线 MySQL CLI，角色更新与审计同事务。
 - 内部 HMAC 绑定 audience、POST、实际路径、时间戳和原始请求体 hash；retrieval 与 study audience 隔离，不同端点签名不能互换。签名不能替代 owner/revision/deletion 检查。
 - MinIO bucket 禁止公开读写，API 不返回内部 object key 或本地路径。共享凭据泄漏检测识别 Bearer、明确密钥标签和私钥形态，普通教学术语不作为凭据。
 - HTTP 日志记录安全 trace/request ID、无 query string 的路径、状态与时长，不记录请求/响应正文、Cookie 或 Authorization。错误脱敏并限长；Java AI 调用审计只保存元数据，Python 私有 Trace 按上述授权边界读取。

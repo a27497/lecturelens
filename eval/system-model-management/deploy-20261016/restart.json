@@ -1,0 +1,9 @@
+{
+  "restart_requested_at": "2026-10-15T17:32:00.787852+00:00",
+  "unfinished_tasks_before_restart": 0,
+  "flyway_latest_success": true,
+  "audit_protection_triggers": 4,
+  "target_role": "ADMIN",
+  "service": "lecturelens-live-backend",
+  "systemd_override": "/etc/systemd/system/lecturelens-live-backend.service.d/99-system-models.conf"
+}

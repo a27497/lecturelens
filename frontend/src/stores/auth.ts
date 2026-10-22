@@ -6,7 +6,7 @@ import {
   saveAuthTokens,
   USER_EMAIL_KEY,
 } from "../api/authToken";
-import { login, register, type AuthUser, type LoginRequest, type RegisterRequest } from "../api/auth";
+import { currentUser, login, register, type AuthUser, type LoginRequest, type RegisterRequest } from "../api/auth";
 import { setAuthInvalidHandler } from "../api/http";
 
 interface AuthState {
@@ -28,10 +28,18 @@ export const useAuthStore = defineStore("auth", {
 
   getters: {
     isAuthenticated: (state) => state.accessToken.trim().length > 0,
+    isAdmin: (state) => state.user?.role === "ADMIN",
     displayEmail: (state) => state.user?.email || state.userEmail,
   },
 
   actions: {
+    async loadCurrentUser(force = false) {
+      if (!this.isAuthenticated) return null;
+      if (!force && this.user) return this.user;
+      try { this.user = await currentUser(); }
+      catch (error) { this.user = null; throw error; }
+      return this.user;
+    },
     async login(request: LoginRequest, nextPath?: string) {
       this.loading = true;
       this.errorMessage = "";

@@ -2,6 +2,8 @@
 
 百炼实现既有 `SpeechToTextProvider`，用于确定性课程媒体准备。Task State、取消、恢复、重试预算和字幕持久化沿用原链路；它不证明 Study Agent 的模型任务质量。
 
+启用[系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)后，可把 `ASR_TRANSCRIPTION` 绑定到 BAILIAN_ASR 模型，`baseUrl` 使用下表的完整同步 HTTPS 端点。每个任务冻结供应商、模型、凭据版本及非密钥选项，后续更改绑定只影响新任务；全部分片与重试保持原快照。没有绑定时仍按原 provider/enabled/Mock 规则选择；数据库绑定出错不会回退 Mock。分片大小与时长继续受部署参数约束，切换到 SiliconFlow 时也需要满足其输入上限。
+
 显式 `ASR_PROVIDER=bailian|siliconflow|mock|none` 优先于旧 `*_ENABLED` 开关。未指定时保留单一旧开关兼容；多个启用开关冲突会拒绝启动，不自动降级到 Mock。
 
 | 环境变量 | 默认 / 含义 |
