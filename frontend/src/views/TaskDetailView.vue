@@ -54,6 +54,8 @@ const lastLearningWorkspace = ref<"agent" | "qa">("agent");
 const learningWorkspace = computed(() => !classicLayout.value && activeWorkspace.value === "content" ? lastLearningWorkspace.value : activeWorkspace.value);
 const materialsRef = ref<HTMLElement | null>(null);
 const readingTarget = ref<HTMLElement | null>(null);
+const readerRef = ref<{ currentView: () => ContentView } | null>(null);
+const evidenceErrorRef = ref<HTMLElement | null>(null);
 const learningRef = ref<HTMLElement | null>(null);
 const learningTask = ref<LearningTaskPosition | null>(null);
 const courseBlocked = ref(false);
@@ -152,6 +154,16 @@ watch(() => route.query, () => {
   applyLocation();
 });
 
+watch([evidenceNavigationError, narrowScreen], ([message, narrow]) => {
+  if (!message || !narrow) return;
+  const currentTaskId = taskId.value;
+  void nextTick(() => {
+    if (taskId.value === currentTaskId && evidenceNavigationError.value === message && narrowScreen.value) {
+      evidenceErrorRef.value?.scrollIntoView({ block: "start" });
+    }
+  });
+});
+
 watch(() => task.value?.status, (status) => {
   const currentTaskId = taskId.value.trim();
   if (!currentTaskId) return;
@@ -201,7 +213,8 @@ function writeLocation(push = false) {
   locationTimer = undefined;
   const query = { view: activeWorkspace.value, ...(readingView.value ? { text: readingView.value } : {}), at: String(positionMs.value), ...(classicLayout.value ? { layout: "classic" } : {}) };
   const signature = locationSignature(query);
-  if (signature === locationSignature(route.query)) return;
+  // A return to the current URL must also supersede an earlier queued navigation.
+  if (signature === locationSignature(route.query) && pendingLocations.size === 0) return;
   pendingLocations.add(signature);
   // Explicit view changes create history; playback updates replace only the current entry.
   void router[push ? "push" : "replace"]({ path: route.path, query }).finally(() => pendingLocations.delete(signature));
@@ -219,7 +232,11 @@ function changeWorkspace(workspace: CourseWorkspace) {
   reviewingEvidence.value = false;
   writeLocation(true);
 }
-function changeLayout() { classicLayout.value = !classicLayout.value; writeLocation(true); }
+function changeLayout() {
+  readingView.value = readerRef.value?.currentView() ?? readingView.value;
+  classicLayout.value = !classicLayout.value;
+  writeLocation(true);
+}
 async function showMaterials() {
   changeWorkspace("content");
   await nextTick();
@@ -514,7 +531,7 @@ async function confirmRetryTask() {
         <p>已停止显示此课程的缓存内容。请从课程列表重新打开；已保存记录仍由服务端权限决定是否可读取。</p>
         <RouterLink to="/tasks">返回我的课程</RouterLink>
       </section>
-      <div v-else class="course-layout" :class="{ 'course-layout--continuous': !classicLayout, 'is-reading': activeWorkspace === 'content' || reviewingEvidence }">
+      <div v-else class="course-layout" :class="{ 'course-layout--continuous': !classicLayout, 'is-reading': !evidenceNavigationError && (activeWorkspace === 'content' || reviewingEvidence) }">
         <div ref="materialsRef" class="course-layout__media" aria-label="视频与课程材料">
           <CourseVideoAside
             :key="taskId"
@@ -549,7 +566,7 @@ async function confirmRetryTask() {
             <p v-else>先阅读课程，向 Tutor 提问；需要自测时再发起解释与练习。</p>
           </div>
           <CourseWorkspaceNav :active="activeWorkspace" :compact="!classicLayout" @change="changeWorkspace" />
-          <el-alert v-if="evidenceNavigationError" :closable="false" :title="evidenceNavigationError" type="warning" show-icon />
+          <div v-if="evidenceNavigationError" ref="evidenceErrorRef" class="evidence-navigation-error"><el-alert :closable="false" :title="evidenceNavigationError" type="warning" show-icon /></div>
           <el-alert v-if="taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
           <!-- Move one reader between layouts; do not duplicate or remount its local state. -->
@@ -559,7 +576,7 @@ async function confirmRetryTask() {
                 <span>{{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
                 <button type="button" @click="returnToLearning">返回当前学习任务</button>
               </div>
-              <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+              <CourseContentPanel ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
             </div>
           </Teleport>
           <CourseScopePicker :key="taskId" :compact="!classicLayout" v-show="learningWorkspace === 'agent' || learningWorkspace === 'qa'" @access-failure="loadTaskDetail(taskId)" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="learningWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
@@ -603,6 +620,7 @@ async function confirmRetryTask() {
 <style scoped>
 .course-workspace-page { min-height: calc(100vh - var(--header-height)); background: var(--color-canvas); }
 .course-workspace-page__inner { width: min(1360px, calc(100% - 48px)); margin: 0 auto; padding: 30px 0 64px; }
+.evidence-navigation-error { scroll-margin-top: calc(var(--header-height) + 76px); }
 .evidence-reading { min-width: 0; scroll-margin-top: calc(var(--header-height) + 12px); }
 .evidence-reading__return { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-ink-soft); }
 .evidence-reading__return button { font: inherit; color: var(--color-brand); padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; }

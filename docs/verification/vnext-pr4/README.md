@@ -1,5 +1,7 @@
 # PR4 continuous workspace verification
 
+This implementation evidence is frozen at `f9e656d30750dd21f538a74b5c46f6e17f19300f`. Later review fixes retain these original records; current candidate validation is recorded in the PR description.
+
 Base: `9e21a0ba5cab56703c69e7f0c7c8e7bee5cc0f1c`; its main CI run [39822782858](https://github.com/a27497/lecturelens/actions/runs/39822782858) has four successful jobs. Implementation uses an independent clean worktree, isolated build directories, databases and Chromium 153. No deployment, production DDL, paid model, real-provider probe, #35/#36 integration or migration change occurred. Java and Python production sources are unchanged.
 
 ## Baseline and same-task comparison

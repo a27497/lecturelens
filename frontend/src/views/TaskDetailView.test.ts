@@ -25,7 +25,7 @@ const Agent = defineComponent({
   setup(_props, { emit }) { const text = ref(""); onMounted(() => emit("frozenScope", frozen)); return { text }; },
   template: `<div class="mock-agent"><input v-model="text" aria-label="目标草稿" /><button @click="$emit('seek', 2000, { evidenceId: 'e1', revision: 1 })">回看来源</button><button @click="$emit('accessFailure')">核对权限</button></div>`,
 });
-const Reader = defineComponent({ props: ["visible"], setup() { return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /></div>` });
+const Reader = defineComponent({ props: ["visible", "view"], setup(props, { expose }) { expose({ currentView: () => props.view ?? "translated" }); return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /></div>` });
 const stubs = {
   CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { template: `<div>视频</div>` },
   CourseScopePicker: { props: ["frozenScope"], emits: ["update:modelValue"], template: `<div class="mock-scope"><span>{{ JSON.stringify(frozenScope) }}</span><button @click="$emit('update:modelValue', { version: 1, kind: 'course', policy: 'strict', revision: 2, evidence_ids: [] })">重新选择范围</button></div>` },
@@ -45,9 +45,9 @@ beforeEach(() => {
   HTMLElement.prototype.scrollIntoView = vi.fn(); HTMLElement.prototype.scrollTo = vi.fn(); window.scrollTo = vi.fn();
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
-async function open() {
+async function open(path = "/tasks/one?view=agent&at=1000") {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/tasks", component: { template: "<div />" } }, { path: "/tasks/:taskId", component: { template: "<div />" } }] });
-  await router.push("/tasks/one?view=agent&at=1000"); await router.isReady();
+  await router.push(path); await router.isReady();
   const wrapper = mount(TaskDetailView, { attachTo: document.body, global: { plugins: [createPinia(), router], stubs } });
   await flushPromises(); return { wrapper, router };
 }
@@ -122,4 +122,45 @@ it("stops hidden narrow-screen following and resumes only when the reader is sho
   query.matches = false; change(); await flushPromises();
   expect(wrapper.findComponent(Reader).props("visible")).toBe(true);
   wrapper.unmount(); expect(query.removeEventListener).toHaveBeenCalledWith("change", change);
+});
+
+it.each([
+  ["/tasks/one?view=content", "timeline"],
+  ["/tasks/one?view=content&layout=classic", "translated"],
+])("retains the resolved reader view when toggling layout from %s", async (path, view) => {
+  const { wrapper, router } = await open(path);
+  const reader = wrapper.get('.mock-reader input').element;
+  await wrapper.get('.layout-switch').trigger('click'); await flushPromises();
+  expect(router.currentRoute.value.query.text).toBe(view);
+  expect(wrapper.findComponent(Reader).props('view')).toBe(view);
+  expect(wrapper.get('.mock-reader input').element).toBe(reader);
+  await router.back(); await flushPromises();
+  expect(wrapper.get('.mock-reader input').element).toBe(reader);
+  wrapper.unmount();
+});
+it("returns a failed source review to the narrow task without discarding its draft", async () => {
+  let change!: () => void;
+  const query = { matches: false, addEventListener: vi.fn((_event, listener) => { change = listener; }), removeEventListener: vi.fn() };
+  vi.mocked(window.matchMedia).mockReturnValue(query as unknown as MediaQueryList);
+  const { wrapper } = await open(); await wrapper.get('.mock-agent input').setValue('retained answer');
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.get('.course-layout').classes()).toContain('is-reading');
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ revision: 2, status: 'READY' } as never);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  query.matches = true; change(); await flushPromises();
+  expect(wrapper.get('.course-layout').classes()).not.toContain('is-reading');
+  expect(wrapper.get('.evidence-navigation-error').isVisible()).toBe(true);
+  expect(wrapper.get('.evidence-navigation-error').element.scrollIntoView).toHaveBeenCalled();
+  expect(wrapper.get<HTMLInputElement>('.mock-agent input').element.value).toBe('retained answer');
+  expect(wrapper.findComponent(Reader).props('visible')).toBe(false);
+  wrapper.unmount();
+});
+
+it("a rapid layout round trip supersedes its queued URL change", async () => {
+  const { wrapper, router } = await open('/tasks/one?view=agent&text=timeline&at=0');
+  const toggle = wrapper.get<HTMLButtonElement>('.layout-switch').element;
+  toggle.click(); toggle.click(); await flushPromises();
+  expect(wrapper.get('.layout-switch').text()).toBe('经典布局');
+  expect(router.currentRoute.value.query.layout).toBeUndefined();
+  wrapper.unmount();
 });

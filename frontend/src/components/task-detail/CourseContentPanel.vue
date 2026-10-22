@@ -14,6 +14,8 @@ const emit = defineEmits<{ seek: [startTimeMillis: number]; "update:view": [view
 
 const localView = ref<ContentView>("translated");
 const activeView = computed({ get: () => props.view ?? localView.value, set: (view: ContentView) => { localView.value = view; emit("update:view", view); } });
+// Layout changes preserve the resolved view, including the legacy automatic default.
+defineExpose({ currentView: () => activeView.value });
 const following = ref(true);
 const timelineRef = ref<HTMLElement | null>(null);
 const rowElements = new Map<number, HTMLElement>();

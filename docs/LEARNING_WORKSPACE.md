@@ -14,7 +14,11 @@ Tutor remains ordinary scoped course QA. Only the explicit **解释并出题** a
 | Course view, transcript view, playback coordinate and layout | Validated `view`, `text`, integer millisecond `at`, and optional `layout=classic` query parameters. Reload starts paused. The URL does not identify a saved question or persist the active question number. |
 | Unsaved Tutor input, next goal, answer draft and feedback-note draft | Component memory for this page and course only. Evidence review and same-course panel/layout changes retain it. Reload, navigation away or course switch discards it. `KeepAlive` is not server persistence. |
 
+Switching to another saved Session/Run or feedback record reads that record anew; save current answers and notes before changing records. Unsaved drafts are not a cross-record recovery mechanism.
+
 Student answers and notes are not written to URLs or local storage. Read-only page entry, source review and history reads do not create a Session, start a Run or save an answer. A subordinate record error triggers an owning-course recheck. Confirmed 401/403/404 on that course read clears the cached panes and player; a missing individual record or transient error does not independently revoke the entire course. Old-course responses are fenced by request generations and component keys. The page cannot detect a server-side permission change before a subsequent read/event exposes it.
+
+Changing layouts preserves the resolved transcript view and writes it into the URL. A failed source check keeps unverified text hidden and makes the task and notice available on narrow screens.
 
 Engineering details remain available in **更多课程工具**, Trace, **模型设置与执行说明** and **保存、恢复与课程记录**. Model records remain lazy, owner-scoped and read-only.
 
