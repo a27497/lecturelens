@@ -50,13 +50,13 @@ const server = createServer(async (req, res) => {
         data = { playbackUrl: corrupt ? '/broken.mp4' : id === 'long' ? '/long.mp4' : '/short.mp4', expiresAt: '2099-01-01T00:00:00Z' };
       } else if (path.endsWith('/embedded-subtitles')) data = { status: 'NOT_FOUND', selectedStreamIndex: null, tracks: [] };
       else if (path.endsWith('/results')) data = result(id);
-      else if (path.endsWith('/study/status')) {
+      else if (path.endsWith('/study/status')) data = { enabled: id !== 'empty', revision: sourceRevision };
+      else if (path.endsWith('/evidence/index-status')) {
         const checkedRevision = sourceRevision; verificationReads++;
         if (verificationDelay) await new Promise(r => setTimeout(r, verificationDelay));
         if (verificationFailure) { res.writeHead(503); res.end(envelope(null)); return; }
-        data = { enabled: id !== 'empty', revision: checkedRevision };
+        data = { status: 'READY', revision: checkedRevision };
       }
-      else if (path.endsWith('/evidence/index-status')) data = { status: 'READY' };
       else if (path.endsWith('/study/command')) {
         let body = ''; for await (const chunk of req) body += chunk;
         const command = JSON.parse(body); commands.push(command.operation);

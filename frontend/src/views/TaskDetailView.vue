@@ -9,7 +9,7 @@ import {
 } from "../api/embeddedSubtitles";
 import { requestTaskPlaybackToken, toReadablePlaybackError } from "../api/media";
 import { fetchTaskResult } from "../api/result";
-import { studyStatus } from "../api/study";
+import { getEvidenceIndexStatus } from "../api/qa";
 import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
 import type { EvidenceSeekContext } from "../components/task-detail/evidenceSeekGuard";
 import { fetchPublicRuntimeConfiguration } from "../api/runtimeConfiguration";
@@ -54,7 +54,7 @@ let locationTimer: ReturnType<typeof setTimeout> | undefined;
 const pendingLocations = new Set<string>();
 const evidenceNavigationError = ref("");
 const evidenceSeekGuard = createEvidenceSeekGuard(
-  async id => (await studyStatus(id)).revision,
+  async id => (await getEvidenceIndexStatus(id)).revision,
   message => { evidenceNavigationError.value = message; },
   async id => {
     const source = await fetchTaskResult(id);
