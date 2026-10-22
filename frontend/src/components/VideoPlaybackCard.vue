@@ -25,6 +25,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   position: [milliseconds: number];
+  interact: [];
   refresh: [];
 }>();
 
@@ -177,6 +178,8 @@ defineExpose({
       :src="playbackUrl"
       controls
       preload="metadata"
+      @pointerdown="$emit('interact')"
+      @keydown="$emit('interact')"
       @loadedmetadata="handleLoadedMetadata"
       @canplay="clearVideoError(); applyPendingSeek()"
       @error="handleVideoError"

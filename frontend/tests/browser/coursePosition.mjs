@@ -116,6 +116,28 @@ try {
     await video.evaluate(v => v.pause());
     await page.screenshot({ path: `${output}/baseline.png`, fullPage: true });
   } else if (args.review) {
+    await check('native video seek supersedes pending Evidence navigation', async () => {
+      await page.goto(`${origin}/tasks/short?view=qa&at=6000`);
+      await page.getByPlaceholder('输入与当前课程有关的问题').fill('Native seek race');
+      await page.getByRole('button', { name: '提问', exact: true }).click();
+      await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
+      await expect(video).toHaveJSProperty('readyState', 4);
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(6);
+      verificationDelay = 700;
+      await page.locator('.evidence-item button').click();
+      await video.focus(); await video.press('ArrowLeft');
+      await expect.poll(() => video.evaluate(v => v.currentTime)).toBeCloseTo(5.88, 2);
+      await new Promise(r => setTimeout(r, 1800));
+      expect(await video.evaluate(v => v.currentTime)).toBeCloseTo(5.88, 2);
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      // Playback frames must not cancel a subsequent valid Evidence request.
+      await video.evaluate(v => v.play());
+      await page.locator('.evidence-item button').click();
+      await expect(page.locator('.evidence-reading')).toBeVisible();
+      await expect(current).toContainText('Second original passage');
+      await video.evaluate(v => v.pause());
+      verificationDelay = 0;
+    });
     await check('rapid seeks and rapid workspace/history navigation keep the last intent', async () => {
       tokenDelay = 500;
       await page.goto(`${origin}/tasks/short?view=content&text=timeline&at=1000`);
