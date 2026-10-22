@@ -72,7 +72,7 @@ Exactly one CREATE_SESSION, one START, two SAVE_ATTEMPT, one START_FEEDBACK and 
 
 | Check | Result |
 | --- | --- |
-| Frontend full suite | 216 passed / 39 files |
+| Frontend full suite | 217 passed / 39 files |
 | Type check + isolated production build | Passed; existing >500kB chunk warning remains |
 | npm audit | 0 vulnerabilities; no new dependencies |
 | Python + separate real PostgreSQL/pgvector test DB | 759 passed, 0 skipped; one pre-existing HTTP test warning |
@@ -80,10 +80,11 @@ Exactly one CREATE_SESSION, one START, two SAVE_ATTEMPT, one START_FEEDBACK and 
 | Explicit PR2 LearningScopeMySqlIT | 1 passed, 0 skipped |
 | Classic fallback PR1 / PR2 / PR3 browser | 10 / 9 / 6 passed |
 | Continuous layout revision/race browser | 9 passed |
+| Hidden narrow reader / desktop resize | 1 passed |
 | Continuous 65-minute decoded synthetic media / 10,000 intervals | 1 passed |
 | Same-task comparison / real backend journey | 9 comparison captures / 13 real journey captures |
 
-Unit tests include course-level 401/403/404 clearing, successful owning-course rechecks retaining drafts, old-course denied responses, same component identity across source/layout changes, stale-source hiding, per-question drafts and frozen/current scope separation. Browser fault-injection checks retain the original PR1/PR2 fences: native media seeking supersedes pending navigation, stale QA/explanation/feedback links fail closed, double revision reads bracket transcript refresh, late requests cannot cross courses, manual reading/search and resume-follow work. These browser races use fixture APIs; the main saved-learning journey uses actual backends. No source mutation of a real course is claimed.
+Unit tests include course-level 401/403/404 clearing, successful owning-course rechecks retaining drafts, old-course denied responses, same component identity across source/layout changes, stale-source hiding, per-question drafts, frozen/current scope separation and responsive reader visibility. A final review caught that CSS-hidden mobile material still received a visible prop; the prop now follows the media query, with a real 10,000-interval browser regression for stopped/resumed following. Browser fault-injection checks retain the original PR1/PR2 fences: native media seeking supersedes pending navigation, stale QA/explanation/feedback links fail closed, double revision reads bracket transcript refresh, late requests cannot cross courses, manual reading/search and resume-follow work. These browser races use fixture APIs; the main saved-learning journey uses actual backends. No source mutation of a real course is claimed.
 
 [verification.json](verification.json) preserves source/image checksums and terminal log hashes, including failed trials. Full local logs stay outside Git. Initial unit expectations needed updating for the new explicit layout field and readable error copy; an early build caught test fixture types. The first real media lacked audio/subtitles and the pipeline failed as designed; that check was cancelled and replaced with embedded-subtitle media. The next real trial found the abstention-source UI gap, which was fixed and regression-tested without turning Mock into an assessor. Two starts failed to bind the first isolated browser port; subsequent runs use the separate 18436 port. The initial model-card browser scenario needed to open its new secondary disclosure. Original failures/cancellations remain distinct from final passes.
 

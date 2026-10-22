@@ -25,7 +25,7 @@ const Agent = defineComponent({
   setup(_props, { emit }) { const text = ref(""); onMounted(() => emit("frozenScope", frozen)); return { text }; },
   template: `<div class="mock-agent"><input v-model="text" aria-label="目标草稿" /><button @click="$emit('seek', 2000, { evidenceId: 'e1', revision: 1 })">回看来源</button><button @click="$emit('accessFailure')">核对权限</button></div>`,
 });
-const Reader = defineComponent({ setup() { return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /></div>` });
+const Reader = defineComponent({ props: ["visible"], setup() { return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /></div>` });
 const stubs = {
   CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { template: `<div>视频</div>` },
   CourseScopePicker: { props: ["frozenScope"], emits: ["update:modelValue"], template: `<div class="mock-scope"><span>{{ JSON.stringify(frozenScope) }}</span><button @click="$emit('update:modelValue', { version: 1, kind: 'course', policy: 'strict', revision: 2, evidence_ids: [] })">重新选择范围</button></div>` },
@@ -43,7 +43,7 @@ beforeEach(() => {
   vi.mocked(probeTaskEmbeddedSubtitles).mockResolvedValue({ status: "NOT_FOUND", tracks: [], selectedStreamIndex: null });
   vi.mocked(fetchPublicRuntimeConfiguration).mockResolvedValue({ demoMode: false } as never);
   HTMLElement.prototype.scrollIntoView = vi.fn(); HTMLElement.prototype.scrollTo = vi.fn(); window.scrollTo = vi.fn();
-  window.matchMedia = vi.fn().mockReturnValue({ matches: false });
+  window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
 async function open() {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/tasks", component: { template: "<div />" } }, { path: "/tasks/:taskId", component: { template: "<div />" } }] });
@@ -107,4 +107,19 @@ it("hides an unverified source while preserving the task and never applies a sta
   expect(wrapper.find('.evidence-reading').isVisible()).toBe(false); expect(wrapper.get<HTMLInputElement>('.mock-agent input').element.value).toBe('keep task draft');
   expect(wrapper.text()).toContain('课程资料已更新');
   wrapper.unmount();
+});
+
+it("stops hidden narrow-screen following and resumes only when the reader is shown", async () => {
+  let change!: () => void;
+  const query = { matches: true, addEventListener: vi.fn((_event, listener) => { change = listener; }), removeEventListener: vi.fn() };
+  vi.mocked(window.matchMedia).mockReturnValue(query as unknown as MediaQueryList);
+  const { wrapper } = await open();
+  expect(wrapper.findComponent(Reader).props("visible")).toBe(false);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props("visible")).toBe(true);
+  await wrapper.findAll('button').find(b => b.text() === '返回当前学习任务')!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props("visible")).toBe(false);
+  query.matches = false; change(); await flushPromises();
+  expect(wrapper.findComponent(Reader).props("visible")).toBe(true);
+  wrapper.unmount(); expect(query.removeEventListener).toHaveBeenCalledWith("change", change);
 });

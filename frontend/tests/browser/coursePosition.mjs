@@ -495,6 +495,27 @@ try {
       await video.evaluate(v => v.pause());
       await page.screenshot({ path: `${output}/long-timeline.png` });
     });
+    if (args.continuous) await check('390px hidden reader stops following and viewport resize resumes it', async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`${origin}/tasks/long?view=content&text=timeline&at=1000`);
+      await expect.poll(() => video.evaluate(v => v.duration), { timeout: 15000 }).toBe(3900);
+      const list = page.locator('.timeline-list');
+      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      const before = await list.evaluate(el => el.scrollTop);
+      await seek(3000); await new Promise(r => setTimeout(r, 200));
+      expect(await list.evaluate(el => el.scrollTop)).toBe(before);
+      await page.getByRole('button', { name: '看视频与原文', exact: true }).click();
+      await expect(current).toHaveAttribute('data-segment', '8571');
+      await expect.poll(() => list.evaluate(el => el.scrollTop)).toBeGreaterThan(before);
+      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      await expect(page.locator('.evidence-reading')).toBeVisible();
+      await seek(3200);
+      await expect.poll(() => current.evaluate(el => { const a = el.getBoundingClientRect(), b = el.parentElement.getBoundingClientRect(); return a.top >= b.top && a.top < b.bottom; })).toBe(true);
+      await page.screenshot({ path: `${output}/reader-resize.png` });
+    });
     await check('390px layout and codec error retain readable course content', async () => {
       await page.setViewportSize({ width: 390, height: 844 });
       corrupt = true;

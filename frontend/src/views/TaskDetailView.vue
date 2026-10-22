@@ -47,6 +47,9 @@ const taskResultStore = useTaskResultStore();
 
 const activeWorkspace = ref<CourseWorkspace>("agent");
 const classicLayout = ref(false);
+const narrowQuery = window.matchMedia("(max-width: 900px)");
+const narrowScreen = ref(narrowQuery.matches);
+function updateNarrowScreen() { narrowScreen.value = narrowQuery.matches; }
 const lastLearningWorkspace = ref<"agent" | "qa">("agent");
 const learningWorkspace = computed(() => !classicLayout.value && activeWorkspace.value === "content" ? lastLearningWorkspace.value : activeWorkspace.value);
 const materialsRef = ref<HTMLElement | null>(null);
@@ -55,6 +58,9 @@ const learningRef = ref<HTMLElement | null>(null);
 const learningTask = ref<LearningTaskPosition | null>(null);
 const courseBlocked = ref(false);
 const verifyingEvidence = ref(false);
+const readerVisible = computed(() => !verifyingEvidence.value && !evidenceNavigationError.value &&
+  (classicLayout.value ? activeWorkspace.value === "content" || reviewingEvidence.value :
+    !narrowScreen.value || activeWorkspace.value === "content" || reviewingEvidence.value));
 let evidenceRequest = 0;
 const readingView = ref<ContentView>();
 const positionMs = ref(0);
@@ -115,6 +121,7 @@ const canRetryTask = computed(() => isRetryableTaskStatus(task.value?.status));
 const isDemoMode = ref(false);
 
 onMounted(() => {
+  narrowQuery.addEventListener("change", updateNarrowScreen);
   void loadPublicRuntimeConfiguration();
 });
 
@@ -161,6 +168,7 @@ watch(() => task.value?.status, (status) => {
 });
 
 onBeforeUnmount(() => {
+  narrowQuery.removeEventListener("change", updateNarrowScreen);
   cancelEvidenceNavigation();
   clearTimeout(locationTimer);
   taskEventsStore.disconnect();
@@ -257,7 +265,7 @@ async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
       if (applied && reviewingEvidence.value) {
         await nextTick();
         if (request === evidenceRequest) {
-          if (classicLayout.value || window.matchMedia("(max-width: 900px)").matches) {
+          if (classicLayout.value || narrowScreen.value) {
             evidenceRef.value?.scrollIntoView({ block: "start" });
             if (!classicLayout.value) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[aria-current=true]")?.scrollIntoView({ block: "nearest" });
           }
@@ -546,12 +554,12 @@ async function confirmRetryTask() {
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
           <!-- Move one reader between layouts; do not duplicate or remount its local state. -->
           <Teleport :to="readingTarget || 'body'" :disabled="classicLayout || !readingTarget">
-            <div v-show="!verifyingEvidence && !evidenceNavigationError && (!classicLayout || activeWorkspace === 'content' || reviewingEvidence)" ref="evidenceRef" class="evidence-reading">
+            <div v-show="readerVisible" ref="evidenceRef" class="evidence-reading">
               <div v-if="reviewingEvidence" class="evidence-reading__return">
                 <span>{{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
                 <button type="button" @click="returnToLearning">返回当前学习任务</button>
               </div>
-              <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="!verifyingEvidence && !evidenceNavigationError && (!classicLayout || activeWorkspace === 'content' || reviewingEvidence)" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+              <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
             </div>
           </Teleport>
           <CourseScopePicker :key="taskId" :compact="!classicLayout" v-show="learningWorkspace === 'agent' || learningWorkspace === 'qa'" @access-failure="loadTaskDetail(taskId)" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="learningWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />

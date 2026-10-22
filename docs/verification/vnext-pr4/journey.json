@@ -206,43 +206,43 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/playback-token",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
@@ -254,163 +254,175 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles/2/download",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
       "operation": null,
       "status": 206
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "LIST",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/qa/scoped",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/qa/scoped",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "CREATE_SESSION",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/scoped-command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/scoped-command",
       "operation": "START",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/runs/98dbb599-25f9-4540-bb09-9f90bbc4f648/events",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/runs/ae44a62c-e855-4999-bc0f-29ae414973a0/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "SAVE_ATTEMPT",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "START_FEEDBACK",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "SAVE_ATTEMPT",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "SAVE_FEEDBACK_NOTE",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "ATTEMPT_HISTORY",
       "status": 200
     },
@@ -422,43 +434,43 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/playback-token",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
@@ -470,79 +482,85 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
       "operation": null,
       "status": 206
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "LIST",
       "status": 200
     },
     {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles/2/download",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "RUNS",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
@@ -554,43 +572,43 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
-      "operation": null,
-      "status": 200
-    },
-    {
-      "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/playback-token",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence",
+      "operation": null,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
@@ -602,139 +620,145 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
       "operation": null,
       "status": 206
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "LIST",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles/2/download",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/events",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/results",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/playback-token",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/playback-token",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/embedded-subtitles",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/embedded-subtitles",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/evidence",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/evidence",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/status",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/study/status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/results",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/status",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/study/status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/media/uploads/up_bcffb2750fe5467aaf950b1bde32ed57/stream",
+      "path": "/api/media/uploads/up_03962b1be9984da28f200d5e2eabf52f/stream",
       "operation": null,
       "status": 206
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/evidence/index-status",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/study/command",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/study/command",
       "operation": "LIST",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_c116d1b69d1e499696c948a3703cb530/embedded-subtitles/2/download",
+      "path": "/api/tasks/task_3fd7a7ae8a4b46af9c25d0290b61a618/embedded-subtitles/2/download",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "RUNS",
       "status": 200
     },
@@ -746,43 +770,43 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/events",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/playback-token",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
@@ -794,91 +818,103 @@
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/media/uploads/up_c34abf15588a471eb9b3e014f530d9d5/stream",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
       "operation": null,
       "status": 206
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence/index-status",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence/index-status",
       "operation": null,
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles/2/download",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles/2/download",
       "operation": null,
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "LIST",
       "status": 200
     },
     {
+      "method": "GET",
+      "path": "/api/media/uploads/up_dc8389e116504fb2aa68439b41d65b6e/stream",
+      "operation": null,
+      "status": 206
+    },
+    {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "READ",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/study/command",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/study/command",
       "operation": "RUNS",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/events",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/events",
       "operation": null,
       "status": 500
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5",
       "operation": null,
       "status": 404
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/results",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/results",
       "operation": null,
       "status": 404
     },
     {
       "method": "POST",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/playback-token",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/playback-token",
       "operation": null,
       "status": 404
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/embedded-subtitles",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/embedded-subtitles",
       "operation": null,
       "status": 404
     },
     {
       "method": "GET",
-      "path": "/api/tasks/task_ee7b551ebea14c539a73505051b7674a/evidence",
+      "path": "/api/tasks/task_423e6cf2370443819150fea575eed3b5/evidence",
       "operation": null,
       "status": 404
     }
@@ -889,14 +925,14 @@
     "courselingo.accessToken"
   ],
   "identities": {
-    "task": "task_ee7b551ebea14c539a73505051b7674a",
-    "otherCourse": "task_c116d1b69d1e499696c948a3703cb530",
-    "session": "ca141080-4bfe-587a-9b0d-e8933962db49",
-    "run": "98dbb599-25f9-4540-bb09-9f90bbc4f648",
-    "artifact": "c0cb0bdc-5001-5f6a-bdf7-26988a893961",
-    "attempt1": "8be7e73d-c7f6-4b79-9c61-e6a3e6cecbe4",
-    "attempt2": "fa1fef6d-05cd-4209-8ba9-c9fa5f4d506f",
-    "feedbackRun": "8ac5ecee-31f6-4747-9030-44c521622198"
+    "task": "task_423e6cf2370443819150fea575eed3b5",
+    "otherCourse": "task_3fd7a7ae8a4b46af9c25d0290b61a618",
+    "session": "763569e2-6313-5894-9367-3310a3765926",
+    "run": "ae44a62c-e855-4999-bc0f-29ae414973a0",
+    "artifact": "8054ed02-3a69-56d0-b9af-cec7d5f1dfd8",
+    "attempt1": "2570fa9b-9e8e-489f-9250-1fe926a069a6",
+    "attempt2": "66435694-ba84-4da7-8599-d49b830ab50f",
+    "feedbackRun": "d1736fd6-1586-4403-98c5-130c6552107f"
   },
   "frozen": {
     "kind": "segments",
@@ -904,7 +940,7 @@
     "version": 1,
     "revision": 6,
     "evidence_ids": [
-      "50206a42d3da77dc94c59bf255c7deb49aec71df753cf6a923ce416f664888af"
+      "6d102ee74b624b1feb64daa5c1f7b6d0c019356442f6e34eaac39eb6cb02692a"
     ]
   }
 }

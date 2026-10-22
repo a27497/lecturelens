@@ -3,7 +3,7 @@
   "services_code": "unchanged Java/Python baseline; actual isolated MySQL/PostgreSQL; Mock model/hash embedding",
   "provider_quality": "unverified",
   "tests": {
-    "frontend": 216,
+    "frontend": 217,
     "python_postgres": 759,
     "java_mysql": 1668,
     "java_scope_mysql_explicit": 1,
@@ -13,7 +13,8 @@
     "continuous_pr2_browser": 9,
     "continuous_long_media": 1,
     "real_journey_captures": 13,
-    "npm_audit_vulnerabilities": 0
+    "npm_audit_vulnerabilities": 0,
+    "continuous_hidden_reader": 1
   },
   "checks": [
     {
@@ -201,6 +202,94 @@
       "finished_at_utc": "2026-10-22T18:13:39.536719+00:00",
       "elapsed_seconds": 21.724309962002735,
       "log_sha256": "e4b9bc80b1f0a81f0916ece2219ad06a4c783c756f800df33c9f4c789afc6077",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-applications",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:23:52.474399+00:00",
+      "finished_at_utc": "2026-10-22T18:25:12.351838+00:00",
+      "elapsed_seconds": 79.87746035700548,
+      "log_sha256": "761714f6afd6a12ea8e4c68b25275bf8010eef0fee027de07f5facd9d89c5696",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-build",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:22:30.201234+00:00",
+      "finished_at_utc": "2026-10-22T18:22:51.047877+00:00",
+      "elapsed_seconds": 20.846668854996096,
+      "log_sha256": "97365eb567d692923bad5f1902332c9aa8c005441c5d7ecf5f9189dfba612b86",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-comparison",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:24:23.788357+00:00",
+      "finished_at_utc": "2026-10-22T18:24:29.808585+00:00",
+      "elapsed_seconds": 6.020248320994142,
+      "log_sha256": "19eb599cc836699de57e26983d2f9f99d43c826f9fb13e3d371ca93879aedfaf",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-infrastructure",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:22:54.358960+00:00",
+      "finished_at_utc": "2026-10-22T18:23:18.122730+00:00",
+      "elapsed_seconds": 23.76381516400579,
+      "log_sha256": "a4f37f4af17dbbfe3bd8aa2ce854901fdab001eac6d09c042cc16e613e353881",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-pr2-browser",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:23:30.983181+00:00",
+      "finished_at_utc": "2026-10-22T18:23:48.816634+00:00",
+      "elapsed_seconds": 17.833475434999855,
+      "log_sha256": "e4b9bc80b1f0a81f0916ece2219ad06a4c783c756f800df33c9f4c789afc6077",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-real-journey",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:24:23.788195+00:00",
+      "finished_at_utc": "2026-10-22T18:24:50.116972+00:00",
+      "elapsed_seconds": 26.328797239002597,
+      "log_sha256": "39dc033bd8a092316cb5c85f490a452271ac468b3747ae6fd7a5cf3da2d1bfde",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-follow-unit",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:22:30.203269+00:00",
+      "finished_at_utc": "2026-10-22T18:22:57.227500+00:00",
+      "elapsed_seconds": 27.02425751899864,
+      "log_sha256": "d5733ee9e1aa9c66dd3650182ad2768a5fc7cb942ff55cba71bf9993727b2134",
+      "cleanup_complete": true
+    },
+    {
+      "name": "final-hidden-reader-browser",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "child_returncode": 0,
+      "started_at_utc": "2026-10-22T18:23:30.981107+00:00",
+      "finished_at_utc": "2026-10-22T18:24:02.829324+00:00",
+      "elapsed_seconds": 31.848241498999414,
+      "log_sha256": "88ee81ad6adbde2ec3d4ce1d37c506957459284b4e34b22f4fd09d6edeee59c1",
       "cleanup_complete": true
     },
     {
@@ -604,25 +693,25 @@
     "frontend/src/views/RecruiterDemoView.test.ts": "3765dcc2e6ae900dc28a01df75ebab035b2ec4f0419ad15643478ab367ac4df3",
     "frontend/src/views/RecruiterDemoView.vue": "9cd7243712bc5339d01a128452dff141b4ef02573ff0e13a89852e0e49927a12",
     "frontend/src/views/RegisterView.vue": "d2a47b6ea4fca039211f088161353deaca1a0de7b9354462b8a8af0e4a721d8e",
-    "frontend/src/views/TaskDetailView.test.ts": "53af22a10cbb3b2115bb31cf0593b6db011904f65ea9fa5378d256ce5c31caae",
-    "frontend/src/views/TaskDetailView.vue": "897ecda5ddf1293593ac3b4d34609682a919ca4e903205125998ab04f4796ca0",
+    "frontend/src/views/TaskDetailView.test.ts": "fdef90a08754e1c72b0494d67939d2c383bd973e2f5e57ca1107f90b2dce9a4f",
+    "frontend/src/views/TaskDetailView.vue": "199421504e18e78b96a48bf06e9e3257d7eebc300569749bf2a8860e3204f62a",
     "frontend/src/views/TaskListView.vue": "dd329409c4dce53dd917f27864f26dfcba337b13bc20e23ffb1e0e6477dc4ab6",
     "frontend/src/views/UploadView.vue": "6f2bf4f05b8866b0e0bc6dd218855fb568ba05fcb5c5f4afbb75c65714a24812",
     "frontend/src/vite-env.d.ts": "67ba1f5b1f143fc83aaae9454c491d181061a1e1feff96966887dc45c117d694",
-    "frontend/tests/browser/coursePosition.mjs": "46fe5c54d85dee71c412b6853963e810433d99d7df0f0cd4c5a99fc0ff621491",
+    "frontend/tests/browser/coursePosition.mjs": "3f5829b796c29054084e25c7ccd88b2752234be7a589ccc16aad14eca5d82c26",
     "frontend/tests/browser/learningJourney.mjs": "1e9b2d4d251b510e41c463941049b02a50072cacc81f4f01d916f981c37ef9dc"
   },
   "images_sha256": {
     "before-desktop-source.png": "01ec7e800826453fbea7002b52ebca3801d8265687ff7ae220ae56649408d4d6",
-    "after-desktop-source.png": "510cdbdf30f370416abdefa3e876d8a6a4657bf01c6ba88fd0be25a93aa90e2c",
+    "after-desktop-source.png": "0f4a2f428b71fc57d7849c49e481f2364287723b0c264f84bdf56621f16cc43c",
     "before-mobile-start.png": "e053b298c859acf4dba6ec70bae6d9689668f54fb6dd53de765620518cc89237",
-    "after-mobile-start.png": "10ee48de20aef132861d6f9842996c7b1043bcd361708d78e3d09d570de46a85",
+    "after-mobile-start.png": "9cc3af86d08dc6bad2222e3e5063d6bfb03c770966910aec25b62bf07071a66a",
     "after-mobile-source.png": "7d66492f1e4f5f20a819cefb8c34149d9b2ac9692cb961f80c6c1e603e4308bf",
-    "server-feedback-source.png": "d64bf6b5cfbf04cafae21922b87bb233a9b0db2c07c287fb78e4491ee50946fd",
-    "server-answer-history.png": "ec495008b6161554c1b3c217f0167f3d63e39fc5e19da2bec65515ac9dc3204b",
-    "server-restored.png": "d5e6a51d57c264a157adaf92b561f04fb59e881b796a4acce8578ee04669ca2d",
+    "server-feedback-source.png": "14e2f983282fba8f5a24e0b016f19952663e04e0fb12a52fe3298e4f98350b46",
+    "server-answer-history.png": "8ae8ffa00db390f9e7d701e789009889d29d60e3e47ecb02f39d1a46507fb9ff",
+    "server-restored.png": "f6f9601c11fc53bc29ba1b6264a028d41a0495726e5cb28f93f71dbcca259716",
     "server-mobile-source.png": "3b2d30c04accdc42998664fab065185bfae03ab0ae33399b322e83b5a1019f43",
-    "server-deleted-course.png": "672e910b2c71f8d9cef979504516cf95976ec91df1843041002e52d546ddfc03"
+    "server-deleted-course.png": "aa0ba7ca80a1b8882cfb4fed55eef8ca15a5ae0bf310ca6450336e0c9402b518"
   },
   "preservation": {
     "services": true,
