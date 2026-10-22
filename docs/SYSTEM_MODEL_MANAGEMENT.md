@@ -18,7 +18,7 @@
 
 ## 启用与版本冻结
 
-V25 is a prerequisite for this Java binary even with model management disabled: authentication reads `user_account.role`. Disabling management does not make a V24 business schema compatible. The pre-V25 check in the pipeline guard preserves its legacy execution boundary; it is not a replacement for the authentication migration.
+V25 is a prerequisite for this Java binary even with model management disabled: authentication reads `user_account.role`. Disabling management does not make a V24 business schema compatible. The pipeline guard also requires the snapshot table before executing tasks, including in disabled mode.
 
 显式设置 `SYSTEM_MODEL_CONFIG_ENABLED=true`、`FLYWAY_ENABLED=true` 并向进程提供有效的 `SYSTEM_MODEL_MASTER_KEY`。主密钥缺失在启动期间报错，不等待第一次加解密。关闭该层时，不要求新增主密钥，不查询配置表，也不改变原 provider 选择。
 
@@ -150,8 +150,10 @@ bash ./mvnw -B test
 
 The integration baseline includes PR1 and PR2. Scoped QA validates owner/course/revision and canonical selection before freezing an operation; retrieval still filters the authorized scope before ranking. The scoped QA/Study/Evidence routes, signed path and no-fallback contract remain unchanged. Model routing does not grant Evidence access. Python user connections, PostgreSQL scope states and Run/checkpoint snapshots are unchanged.
 
-When management is disabled and Flyway initializes the database, the integration binary refuses startup if a pinned pipeline remains active. With Flyway disabled it preserves the default database-free startup, but actual execution still fails closed when the database is unavailable. It also rejects run/retry of any pipeline with an existing system snapshot before claiming or changing task state. Legacy tasks without a snapshot retain their original path. The execution check requires a reachable configured business database, but no model master key. Only an actual missing-table SQL state permits pre-V25 behavior; denied SELECT or hidden metadata fails closed.
+When management is disabled and Flyway initializes the database, the integration binary refuses startup if a pinned pipeline remains active. With Flyway disabled it preserves the default database-free startup, but actual execution still fails closed when the database is unavailable. It also rejects run/retry of any pipeline with an existing system snapshot before claiming or changing task state. Legacy tasks without a snapshot retain their original path. The execution check requires a reachable configured business database, but no model master key. Missing tables, denied SELECT, hidden metadata and connection failures all fail closed; schema damage cannot authorize a fallback to environment defaults.
 
 This guard is absent from earlier binaries. Do not run old and scope-aware/system-snapshot workers on the same task queue during activation or rollback. Stop task ingress and dispatch, drain/cancel active work, stop all old Java consumers, back up and migrate the independent MySQL schema, then start compatible Java gateways/workers before reopening traffic. Preserve PR2's Java → Python → frontend release order; this integration does not change Python. Rollback requires the same quiescence barrier; retain system configuration versions, encryption keys, execution snapshots, MySQL migrations and PostgreSQL scope/checkpoint fences. Never delete or rewrite snapshots to make an old worker resume a new task. A completed pinned task needs a compatible enabled version for later pipeline retry.
 
 Readiness of these mechanisms is not authorization to deploy. PR1/PR2 media, production authentication, long-course/device and recovery gates remain required. QA record-to-snapshot presentation and four-level model diagnostics remain separate PR3 work.
+
+Database vision calls share a single total deadline and attempt cap across the legacy adapter's status/error retry paths. ASR destination DNS validation runs inside the protected transport's request deadline, rather than before a fresh deadline is started. These bounds do not change trusted ENV adapter behavior.

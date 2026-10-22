@@ -29,12 +29,15 @@ class SystemModelDisabledTaskGuardTest {
                 .isInstanceOf(BusinessException.class).hasNoCause();
     }
 
-    @Test void oldSchemaNeedsNoMasterKeyAndPinnedTasksCannotUseLegacyDefaults() {
+    @Test void missingSchemaFailsClosedAndPinnedTasksCannotUseLegacyDefaults() {
         var jdbc = new JdbcTemplate(new DriverManagerDataSource(
                 "jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE", "sa", ""));
         jdbc.execute("CREATE TABLE analysis_task (id varchar PRIMARY KEY, status varchar)");
-        var guard = new SystemModelDisabledTaskGuard(jdbc);
-        guard.requireLegacyTask("legacy");
+        assertThatThrownBy(() -> new SystemModelDisabledTaskGuard(jdbc))
+                .isInstanceOf(BusinessException.class).hasNoCause();
+        var guard = new SystemModelDisabledTaskGuard(jdbc, false);
+        assertThatThrownBy(() -> guard.requireLegacyTask("legacy"))
+                .isInstanceOf(BusinessException.class).hasNoCause();
         jdbc.execute("CREATE TABLE system_model_execution_snapshot(task_id varchar, operation_type varchar)");
         jdbc.update("INSERT INTO analysis_task VALUES ('pinned','SUCCEEDED')");
         jdbc.update("INSERT INTO system_model_execution_snapshot VALUES ('pinned','PIPELINE')");

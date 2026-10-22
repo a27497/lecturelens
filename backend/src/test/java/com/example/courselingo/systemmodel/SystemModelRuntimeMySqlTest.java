@@ -119,6 +119,22 @@ class SystemModelRuntimeMySqlTest {
     }
 
     @Test
+    void missingSnapshotTableAfterV25CannotAuthorizeLegacyExecution() {
+        executions.freezePipeline(task, user);
+        db.jdbc.execute("RENAME TABLE system_model_execution_snapshot TO preserved_review_snapshot");
+        try {
+            assertThatThrownBy(() -> new SystemModelDisabledTaskGuard(db.jdbc))
+                    .isInstanceOf(BusinessException.class).hasNoCause();
+            var guard = new SystemModelDisabledTaskGuard(db.jdbc, false);
+            assertThatThrownBy(() -> guard.requireLegacyTask(task))
+                    .isInstanceOf(BusinessException.class).hasNoCause();
+        } finally {
+            db.jdbc.execute("RENAME TABLE preserved_review_snapshot TO system_model_execution_snapshot");
+        }
+        assertThat(executions.pipeline(task, user).taskId()).isEqualTo(task);
+    }
+
+    @Test
     void revokedSnapshotReadPermissionCannotMasqueradeAsLegacySchema() throws Exception {
         executions.freezePipeline(task, user);
         String account = "scope_guard_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);

@@ -40,11 +40,7 @@ public final class SystemModelDisabledTaskGuard {
         try {
             if (!Boolean.FALSE.equals(query.get())) throw SystemModelConfigCodec.unavailable();
         } catch (BusinessException safe) { throw safe;
-        } catch (org.springframework.jdbc.BadSqlGrammarException failure) {
-            // A pre-V25 schema has no table. Hidden metadata or denied SELECT is not
-            // proof of a legacy schema; only an actual missing-table response permits it.
-            if (!"42S02".equals(failure.getSQLException().getSQLState()))
-                throw SystemModelConfigCodec.unavailable();
+        // A missing table can be schema damage after V25; it cannot prove a task is legacy.
         } catch (RuntimeException ignored) { throw SystemModelConfigCodec.unavailable(); }
     }
 }

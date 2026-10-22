@@ -115,7 +115,7 @@ public final class AsrAdapterFactories {
     private static void check(SystemModelUrlPolicy urls, java.net.URI uri) {
         try {
             urls.normalize(uri.toString());
-            urls.checkDestination(uri);
+            // DNS validation belongs inside the bounded transport deadline.
         } catch (RuntimeException ignored) {
             throw new AsrCallFailure(AsrCallFailure.Category.INVALID_REQUEST, false, null);
         }
@@ -139,6 +139,8 @@ public final class AsrAdapterFactories {
             }
             throw new AsrCallFailure(
                     category, failure.details().retryable(), failure.details().httpStatus());
+        } catch (com.example.courselingo.common.exception.BusinessException forbidden) {
+            throw new AsrCallFailure(AsrCallFailure.Category.INVALID_REQUEST, false, null);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.courselingo.systemmodel;
 
-import com.example.courselingo.ai.llm.JavaHttpOpenAiCompatibleLlmClient;
-import com.example.courselingo.ai.llm.OpenAiCompatibleLlmClient;
+import com.example.courselingo.ai.llm.*;
 import com.example.courselingo.modelrouting.*;
 import com.example.courselingo.vision.analysis.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,17 +32,35 @@ final class SystemModelVisionProvider implements VisionModelProvider {
 
     @Override
     public VisionAnalysisResult analyze(VisionAnalysisRequest request) {
+        long started = System.nanoTime();
         var ref = request.route().execution();
         var resolved = executions.route(ref, "VISION_FRAME_ANALYSIS");
         String key = resolved.hasKey() ? executions.credential(ref, "VISION_FRAME_ANALYSIS") : null;
         boolean database = "DATABASE".equals(resolved.source());
-        OpenAiCompatibleLlmClient client =
-                database
-                        ? r -> {
-                            urls.checkDestination(r.uri());
-                            return http.complete(r);
-                        }
-                        : new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5));
+        OpenAiCompatibleLlmClient client;
+        if (database) {
+            urls.normalize(resolved.baseUrl());
+            long budget = (resolved.timeoutMillis() == null
+                    ? properties.getTimeout() : Duration.ofMillis(resolved.timeoutMillis())).toNanos();
+            int limit = resolved.maxAttempts() == null ? 1 : resolved.maxAttempts();
+            var attempts = new java.util.concurrent.atomic.AtomicInteger();
+            // The legacy adapter can restart its retry loop after an exception. Database
+            // routes must keep one frozen attempt count and deadline across that loop.
+            client = r -> {
+                long remaining = Math.min(r.timeout().toNanos(), budget - (System.nanoTime() - started));
+                if (remaining <= 0 || Thread.currentThread().isInterrupted())
+                    throw new SystemModelCallFailure("TIMEOUT",
+                            LlmProviderFailureCategory.TIMEOUT, null, false);
+                if (attempts.incrementAndGet() > limit)
+                    throw new SystemModelCallFailure("ATTEMPTS_EXHAUSTED",
+                            LlmProviderFailureCategory.INVALID_REQUEST, null, false);
+                // The protected transport owns DNS validation within this remaining budget.
+                return http.complete(new OpenAiCompatibleChatCompletionRequest(
+                        r.uri(), r.headers(), r.method(), r.contentType(), r.body(), Duration.ofNanos(remaining)));
+            };
+        } else {
+            client = new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5));
+        }
         var provider =
                 new OpenAiCompatibleVisionProvider(
                         properties, client, ignored -> key, new ObjectMapper(), database);

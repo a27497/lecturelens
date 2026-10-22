@@ -453,19 +453,20 @@ class SystemModelAsrMySqlTest {
     void dnsChangeToMixedPublicAndPrivateAddressesIsRejectedBeforeHttp() {
         bind(target(SystemModelProtocol.SILICONFLOW_ASR, KEY_A).model());
         var ref = freeze();
-        var denied =
-                new SystemModelUrlPolicy(
-                        host ->
-                                new InetAddress[] {
-                                    InetAddress.getByName("8.8.8.8"),
-                                    InetAddress.getByName("127.0.0.1")
-                                });
-        var provider =
-                new SystemModelAsrProvider(
-                        executions, List.of(AsrAdapterFactories.siliconFlow(http, denied)));
-        assertThatThrownBy(() -> provider.forExecution(ref).transcribe(request(ref)))
-                .isInstanceOf(AsrProviderException.class)
-                .hasNoCause();
+        var lookups = new java.util.concurrent.atomic.AtomicInteger();
+        var denied = new SystemModelUrlPolicy(host -> {
+            lookups.incrementAndGet();
+            return new InetAddress[]{InetAddress.getByName("8.8.8.8"), InetAddress.getByName("127.0.0.1")};
+        });
+        try (var protectedHttp = new SystemModelHttpClient(128, denied)) {
+            var provider = new SystemModelAsrProvider(executions,
+                    List.of(AsrAdapterFactories.siliconFlow(protectedHttp, denied)));
+            assertThatThrownBy(() -> provider.forExecution(ref).transcribe(request(ref)))
+                    .isInstanceOfSatisfying(AsrCallFailure.class,
+                            failure -> assertThat(failure.category()).isEqualTo(AsrCallFailure.Category.INVALID_REQUEST))
+                    .hasNoCause();
+            assertThat(lookups.get()).isEqualTo(1);
+        }
         verifyNoInteractions(http);
     }
 
