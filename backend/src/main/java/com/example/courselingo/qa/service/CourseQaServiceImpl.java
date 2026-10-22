@@ -401,13 +401,16 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (aiCallRecordService == null) {
             return null;
         }
+        // The router has no model identity before dispatch. Keep it unknown in the
+        // local call ledger; the frozen selection and returned model are separate facts.
+        String diagnosticModel = llmProvider.modelNameForDiagnostics();
         return aiCallRecordService.startCall(new StartAiCallRecordCommand(
             taskId,
             userId,
             AiCallType.LLM,
             AiCallStage.COURSE_QA,
             safeProviderName(),
-            llmProvider.modelNameForDiagnostics(),
+            diagnosticModel == null || diagnosticModel.isBlank() ? null : diagnosticModel,
             null,
             inputUnits
         ));

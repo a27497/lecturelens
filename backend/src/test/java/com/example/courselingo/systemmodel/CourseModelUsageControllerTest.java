@@ -23,7 +23,7 @@ class CourseModelUsageControllerTest {
         verifyNoInteractions(usage);
         when(users.currentUser("Bearer owner")).thenReturn(new CurrentUserResponse(42L, "owner@example.invalid", "ACTIVE"));
         when(usage.read("course", 42L)).thenReturn(new CourseModelUsageService.Usage("course", null, List.of(), List.of(), List.of()));
-        mvc.perform(get("/api/tasks/course/model-usage?owner=999&snapshotId=foreign").header("Authorization", "Bearer owner")).andExpect(status().isOk());
+        mvc.perform(get("/api/tasks/course/model-usage?owner=999&snapshotId=foreign").header("Authorization", "Bearer owner")).andExpect(status().isOk()).andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header().string("Cache-Control", "no-store"));
         verify(usage).read("course", 42L);
         when(usage.read("foreign", 42L)).thenThrow(new BusinessException(ErrorCode.TASK_NOT_FOUND));
         mvc.perform(get("/api/tasks/foreign/model-usage").header("Authorization", "Bearer owner")).andExpect(status().isNotFound());

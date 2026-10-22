@@ -39,13 +39,18 @@ class CourseModelUsageMySqlTest {
             qa(db, task, owner, null, null);
             qa(db, task, owner, "qa-snapshot", "RESPONSE_RECEIVED");
             qa(db, task, owner, "foreign-snapshot", "DISPATCHED");
+            qa(db, task, owner, "missing-snapshot", "RESPONSE_RECEIVED");
+            qa(db, task, owner, "own-snapshot", "RESPONSE_RECEIVED");
+            String otherCourse = db.task(owner);
+            snapshot(db, "other-course-snapshot", otherCourse, owner, payload, "COURSE_QA", "CREATED");
+            qa(db, task, owner, "other-course-snapshot", "RESPONSE_RECEIVED");
             var view = service.read(task, owner);
             assertThat(view.pipeline()).singleElement().satisfies(s -> assertThat(s.origin()).isEqualTo("ADOPTED"));
             assertThat(view.qa()).filteredOn(q -> q.selection() != null).singleElement()
                     .satisfies(q -> assertThat(q.selection().snapshotId()).isEqualTo("qa-snapshot"));
             assertThat(view.qa()).allMatch(q -> q.totalTokens() == null);
             String publicJson = new ObjectMapper().writeValueAsString(view);
-            assertThat(publicJson).contains("model-a", "own-snapshot").doesNotContain("PRIVATE_CREDENTIAL", "private-endpoint", "9876", "providerId", "baseUrl", "credential", "foreign-snapshot", "config_json");
+            assertThat(publicJson).contains("model-a", "own-snapshot").doesNotContain("PRIVATE_CREDENTIAL", "private-endpoint", "9876", "providerId", "baseUrl", "credential", "foreign-snapshot", "other-course-snapshot", "missing-snapshot", "config_json");
             assertThatThrownBy(() -> service.read(task, other)).isInstanceOf(BusinessException.class);
             assertThatThrownBy(() -> service.read(foreign, owner)).isInstanceOf(BusinessException.class);
             db.jdbc.update("UPDATE analysis_task SET deleted_at=CURRENT_TIMESTAMP WHERE id=?", task);
@@ -62,6 +67,53 @@ class CourseModelUsageMySqlTest {
             var beans = new StaticListableBeanFactory();
             var service = new CourseModelUsageService(db.jdbc, beans.getBeanProvider(SystemModelRegistry.class), beans.getBeanProvider(SystemModelExecutionService.class));
             assertThat(service.read(task, owner).qa()).singleElement().satisfies(q -> assertThat(q.selection()).isNull());
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"transfer", "delete"})
+    void ownershipMutationSerializesWithTheActualReadOnlyTransaction(String mutation) throws Exception {
+        try (var db = new SystemModelMySqlFixture()) {
+            long owner = db.user(), other = db.user(); String task = db.task(owner);
+            var entered = new java.util.concurrent.CountDownLatch(1);
+            var release = new java.util.concurrent.CountDownLatch(1);
+            var registry = mock(SystemModelRegistry.class);
+            when(registry.currentVersion()).thenAnswer(call -> {
+                entered.countDown();
+                if (!release.await(10, java.util.concurrent.TimeUnit.SECONDS)) throw new AssertionError("release timeout");
+                return 0L;
+            });
+            when(registry.load(0L)).thenReturn(new SystemModelStoredConfig(List.of(), List.of(), Map.of(), Map.of(), "synthetic", false));
+            when(registry.resolve(any(), anyString())).thenReturn(new SystemModelResolvedRoute("COURSE_QA", "MOCK", SystemModelProtocol.OPENAI_CHAT,
+                    null, null, null, null, "synthetic-model", Set.of("TEXT_CHAT"), null, null, null, null, false, null));
+            var executions = new SystemModelExecutionService(db.jdbc, registry, db.transactions);
+            var beans = new StaticListableBeanFactory(Map.of("registry", registry, "executions", executions));
+            var target = new CourseModelUsageService(db.jdbc, beans.getBeanProvider(SystemModelRegistry.class), beans.getBeanProvider(SystemModelExecutionService.class));
+            var proxy = new org.springframework.aop.framework.ProxyFactory(target);
+            proxy.setProxyTargetClass(true);
+            proxy.addAdvice(new org.springframework.transaction.interceptor.TransactionInterceptor(db.transactions,
+                    new org.springframework.transaction.annotation.AnnotationTransactionAttributeSource()));
+            var service = (CourseModelUsageService) proxy.getProxy();
+            try (var workers = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+                var reading = workers.submit(() -> service.read(task, owner));
+                try {
+                    assertThat(entered.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+                    var writerEntered = new java.util.concurrent.CountDownLatch(1);
+                    var writing = workers.submit(() -> {
+                        writerEntered.countDown();
+                        return mutation.equals("transfer")
+                                ? db.jdbc.update("UPDATE analysis_task SET user_id=? WHERE id=?", other, task)
+                                : db.jdbc.update("UPDATE analysis_task SET deleted_at=CURRENT_TIMESTAMP WHERE id=?", task);
+                    });
+                    assertThat(writerEntered.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+                    assertThatThrownBy(() -> writing.get(200, java.util.concurrent.TimeUnit.MILLISECONDS))
+                            .isInstanceOf(java.util.concurrent.TimeoutException.class);
+                    release.countDown();
+                    assertThat(reading.get(10, java.util.concurrent.TimeUnit.SECONDS).taskId()).isEqualTo(task);
+                    assertThat(writing.get(10, java.util.concurrent.TimeUnit.SECONDS)).isEqualTo(1);
+                    assertThatThrownBy(() -> service.read(task, owner)).isInstanceOf(BusinessException.class);
+                } finally { release.countDown(); }
+            }
         }
     }
 
@@ -85,16 +137,14 @@ class CourseModelUsageMySqlTest {
     @Test
     void bothFuturePr35MigrationOrdersAndLegacyNullUpgradeWorkWithoutOutOfOrder() throws Exception {
         for (boolean pr35First : List.of(false, true)) {
-            try (var db = new SystemModelMySqlFixture()) {
-                // Recreate an actual pre-PR3 database, including its Flyway history.
-                db.jdbc.execute("ALTER TABLE course_qa_record DROP COLUMN execution_snapshot_id, DROP COLUMN invocation_state, DROP COLUMN ai_call_record_id");
-                db.jdbc.update("DELETE FROM flyway_schema_history WHERE version IS NULL AND script='R__course_qa_model_usage.sql'");
+            Path base = temp.resolve(UUID.randomUUID().toString()); Files.createDirectories(base);
+            try (var files = Files.list(Path.of("src/main/resources/db/migration"))) {
+                for (var f : files.filter(p -> p.getFileName().toString().startsWith("V")).toList()) Files.copy(f, base.resolve(f.getFileName()));
+            }
+            // Start at genuine V25: never synthesize an upgrade by rewriting Flyway history.
+            try (var db = new SystemModelMySqlFixture("filesystem:" + base)) {
                 long owner = db.user(); String task = db.task(owner);
                 db.jdbc.update("INSERT INTO course_qa_record(task_id,user_id,question,answer,evidence_json,status) VALUES (?,?,'legacy','legacy','[]','SUCCEEDED')", task, owner);
-                Path base = temp.resolve(UUID.randomUUID().toString()); Files.createDirectories(base);
-                try (var files = Files.list(Path.of("src/main/resources/db/migration"))) {
-                    for (var f : files.filter(p -> p.getFileName().toString().startsWith("V")).toList()) Files.copy(f, base.resolve(f.getFileName()));
-                }
                 if (pr35First) copyFuture(base);
                 migrate(db, base).migrate();
                 Files.copy(Path.of("src/main/resources/db/migration/R__course_qa_model_usage.sql"), base.resolve("R__course_qa_model_usage.sql"));

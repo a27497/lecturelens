@@ -171,6 +171,27 @@ try {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await card.screenshot({ path: `${output}/model-usage-mobile.png` });
     });
+    await check('malformed historical probe and Mock observations remain unverified without renderer errors', async () => {
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      const valid = { ok: true, code: null, checked_at: 1700000000, version: 3 };
+      const historical = [
+        { ...valid, checked_at: undefined }, { ...valid, checked_at: null },
+        { ...valid, checked_at: 'invalid' }, { ...valid, version: '3' },
+        { ...valid, ok: 'false' }, valid,
+      ];
+      for (let i = 0; i < historical.length; i++) {
+        learning.run.model_selection.decision.single_turn_evidence = historical[i];
+        learning.run.model_mode = i === historical.length - 1 ? 'mock' : 'real';
+        await page.reload();
+        await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+        await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
+        const trace = page.getByRole('region', { name: 'Agent Trace' });
+        await expect(trace.getByText('单轮协议：未验证', { exact: false })).toHaveCount(2);
+        await expect(trace.getByText('多轮工具兼容：未验证', { exact: false })).toHaveCount(2);
+        await expect(trace.getByText('真实课程质量：未验证', { exact: false })).toHaveCount(2);
+      }
+      await page.getByRole('region', { name: 'Agent Trace' }).screenshot({ path: `${output}/model-evidence-legacy.png` });
+    });
   } else if (args.baseline) {
     await page.goto(`${origin}/tasks/short?view=content&text=timeline&at=2500`);
     await expect(video).toHaveJSProperty('readyState', 4);

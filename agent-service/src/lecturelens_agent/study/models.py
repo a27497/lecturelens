@@ -18,6 +18,7 @@ from psycopg.types.json import Jsonb
 from pydantic import Field, SecretStr, TypeAdapter, ValidationError
 
 from ..contracts import Contract, Identifier
+from .model_evidence import single_turn_evidence
 from .provider import ChatProvider
 from .store import BudgetExceeded, StudyError, StudyStore
 
@@ -198,12 +199,11 @@ class ModelRegistry:
         row = self.connection(conn, owner, binding.connection_id)
         if not row["enabled"] or binding.model not in row["model_ids"]:
             raise StudyError("MODEL_BINDING_UNAVAILABLE", 409)
-        check = row["checks"].get(binding.model)
+        checks = row["checks"]
+        check = checks.get(binding.model) if isinstance(checks, dict) else None
         # Only this connection version's recorded single-request observation is frozen.
         # Directory visibility and single-turn success never imply multi-turn or course quality.
-        evidence = None
-        if check and check.get("version") == row["version"]:
-            evidence = {key: check.get(key) for key in ("ok", "code", "checked_at", "version")}
+        evidence = single_turn_evidence(check, row["version"])
         return {key: row[key] for key in ["connection_id", "name", "version", "base_url", "credential"]} | {
             "model": binding.model,
             "single_turn_evidence": evidence,

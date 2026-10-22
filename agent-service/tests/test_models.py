@@ -610,3 +610,60 @@ def test_wrong_version_check_is_not_frozen_as_compatibility_evidence(registry):
             ),
         )
     assert reg.freeze(owner)["decision"]["single_turn_evidence"] is None
+
+
+@pytest.mark.parametrize(
+    "check",
+    [
+        {"ok": True, "version": 1},
+        {"ok": True, "version": 1, "checked_at": None},
+        {"ok": True, "version": 1, "checked_at": "1700000000"},
+        {"ok": True, "version": 1, "checked_at": -1},
+        {"ok": True, "version": 1, "checked_at": 10**20},
+        {"ok": True, "version": True, "checked_at": 1700000000},
+        {"ok": "false", "version": 1, "checked_at": 1700000000},
+        {"ok": True, "version": 1, "checked_at": 1700000000, "code": "MODEL_CHECK_FAILED"},
+        "legacy-string",
+    ],
+)
+def test_malformed_historical_probe_is_not_frozen_or_projected(registry, check):
+    from psycopg.types.json import Jsonb
+
+    reg, owner = registry
+    saved = save(registry)
+    route(registry, saved["connection_id"])
+    with reg.store.connect() as conn:
+        conn.execute(
+            "UPDATE agent_model_connection SET checks=%s WHERE connection_id=%s",
+            (Jsonb({"generator": check}), saved["connection_id"]),
+        )
+    frozen = reg.freeze(owner)
+    assert frozen["decision"]["single_turn_evidence"] is None
+    store = StudyStore(reg.store.dsn, reg.freeze)
+    scope = {"owner_id": owner, "course_id": "legacy-probe-" + uuid.uuid4().hex, "revision": 1}
+    scope["session_id"] = store.command(
+        StudyCommand(**scope, operation="CREATE_SESSION", request_key="session"), "real"
+    )["session_id"]
+    public = store.command(
+        StudyCommand(**scope, operation="START", request_key="run", goal="Explain the stopping condition"),
+        "real",
+    )
+    # Old Run bytes remain immutable; only their public evidence projection is validated.
+    with reg.store.connect() as conn:
+        config = conn.execute(
+            "SELECT model_config FROM study_run WHERE run_id=%s", (public["run"]["run_id"],)
+        ).fetchone()["model_config"]
+        config["decision"]["single_turn_evidence"] = check
+        conn.execute(
+            "UPDATE study_run SET model_config=%s WHERE run_id=%s",
+            (Jsonb(config), public["run"]["run_id"]),
+        )
+    historical = store.command(StudyCommand(**scope, operation="READ"), "real")
+    assert historical["run"]["model_selection"]["decision"]["single_turn_evidence"] is None
+    with reg.store.connect() as conn:
+        assert (
+            conn.execute(
+                "SELECT model_config FROM study_run WHERE run_id=%s", (public["run"]["run_id"],)
+            ).fetchone()["model_config"]
+            == config
+        )
