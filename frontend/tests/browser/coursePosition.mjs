@@ -8,7 +8,7 @@ import { parseArgs } from 'node:util';
 
 const { values: args } = parseArgs({ options: {
   dist: { type: 'string' }, media: { type: 'string' }, long: { type: 'string' },
-  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' }, review: { type: 'boolean' },
+  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' }, review: { type: 'boolean' }, models: { type: 'boolean' },
 } });
 if (!args.dist || !args.media || !args.long || !args.output) throw Error('Require --dist, --media, --long, --output (see docs/COURSE_POSITION.md)');
 const dist = resolve(args.dist), output = resolve(args.output);
@@ -23,6 +23,12 @@ const learning = { run: { run_id: 'run', session_id: 'session', goal: 'Restored 
   artifact: { artifact_id: 'artifact', title: 'Fixture practice', explanation: 'A saved explanation.', evidence_ids: [citation.evidence_id], questions: [{ question: 'When does the loop stop?', evidence_ids: [citation.evidence_id] }], citations: [citation], revision: 1, mode: 'mock' },
   attempts: [attempt], feedback_enabled: true, feedback_runs: [feedbackRun] };
 function task(id) { return { taskId: id, status: 'SUCCEEDED', progressPercent: 100, currentStage: 'DONE', targetLanguage: 'zh-CN', startedAt: '2026-10-01T00:00:00Z', finishedAt: '2026-10-01T00:00:12Z' }; }
+const modelSelection = (id, version, model, origin = 'CREATED') => ({ snapshotId: id, configVersion: version, origin, recordedAt: '2026-10-01 00:00:00', routes: [{ feature: 'COURSE_QA', source: 'DATABASE', model }] });
+let modelDelay = 0, modelDenied = false, modelReads = 0;
+if (args.models) learning.run = { ...learning.run, model_mode: 'real', model_calls: 2, created_at: '2026-10-01T00:00:00Z', model_selection: {
+  decision: { connection_id: 'personal', name: 'Personal fixture', model: 'decision-frozen-a', version: 3 },
+  review: { connection_id: null, name: 'Server default fixture', model: 'review-frozen-b', version: 0 },
+} };
 let sourceRevision = 1, verificationDelay = 0, verificationFailure = false, verificationReads = 0;
 function result(id) {
   const subtitles = id === 'empty' ? [] : id === 'long' ? Array.from({ length: 10000 }, (_, i) => ({ segmentIndex: i, startMillis: i * 350, endMillis: (i + 1) * 350, language: 'en', sourceText: `Long original passage ${i}` })) : [
@@ -49,6 +55,16 @@ const server = createServer(async (req, res) => {
         if (tokenDelay) await new Promise(r => setTimeout(r, tokenDelay));
         data = { playbackUrl: corrupt ? '/broken.mp4' : id === 'long' ? '/long.mp4' : '/short.mp4', expiresAt: '2099-01-01T00:00:00Z' };
       } else if (path.endsWith('/embedded-subtitles')) data = { status: 'NOT_FOUND', selectedStreamIndex: null, tracks: [] };
+      else if (path.endsWith('/model-usage')) {
+        modelReads++;
+        if (modelDelay) await new Promise(r => setTimeout(r, modelDelay));
+        if (modelDenied) { res.writeHead(404); res.end(envelope(null)); return; }
+        data = { taskId: id, current: modelSelection(null, 9, 'current-model-b', 'CURRENT'),
+          pipeline: [{ ...modelSelection('pipeline-a', 4, 'pipeline-model-a', 'ADOPTED'), routes: [{ feature: 'ASR_TRANSCRIPTION', source: 'ENV', model: 'pipeline-model-a' }] }],
+          qa: [{ recordId: '123', invocationState: 'SKIPPED_NO_EVIDENCE', callRecordId: null, provider: null, model: null, status: 'SUCCEEDED', totalTokens: null, recordedAt: '2026-10-01', selection: modelSelection('qa-a', 5, 'historical-model-a') },
+            { recordId: 'legacy', invocationState: null, callRecordId: null, provider: 'legacy-provider', model: 'legacy-model', status: 'SUCCEEDED', totalTokens: null, recordedAt: '2026-09-01', selection: null }],
+          calls: [{ recordId: '456', stage: 'SUBTITLE_TRANSLATION', provider: 'fixture', model: 'observed-model-a', status: 'SUCCEEDED', totalTokens: null, startedAt: '2026-10-01' }] };
+      }
       else if (path.endsWith('/results')) data = result(id);
       else if (path.endsWith('/evidence')) data = { learningScopeVersion: 1, revision: sourceRevision, stale: false, nextCursor: null,
         items: result(id).subtitles.slice(0, 200).map(row => ({ evidenceId: row.segmentIndex === 7 ? citation.evidence_id : `course:fixture:subtitle:${row.segmentIndex}:r${sourceRevision}`, revision: sourceRevision, sourceType: 'SUBTITLE', startMs: row.startMillis, endMs: row.endMillis, normalizedText: row.sourceText, retrievable: row.endMillis > row.startMillis })) };
@@ -64,11 +80,12 @@ const server = createServer(async (req, res) => {
         const command = JSON.parse(body); commands.push(command.operation);
         if (command.operation === 'LIST') data = { sessions: id === 'empty' ? [] : [{ session_id: 'session', revision: 1 }] };
         else if (command.operation === 'READ') data = learning;
+        else if (command.operation === 'EVENTS' && args.models) data = { events: [{ sequence: 1, event_type: 'model_started', payload: { purpose: 'decision', model_selection: { model: 'decision-frozen-a', version: 3 } } }, { sequence: 2, event_type: 'model_replayed', payload: { purpose: 'review', model_selection: { model: 'review-frozen-b', version: 0 } } }] };
         else if (command.operation === 'RUNS') data = { runs: [learning.run] };
         else { forbidden.push(command.operation); res.writeHead(500); res.end(); return; }
       } else if ((path.endsWith('/qa') || path.endsWith('/qa/scoped'))) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
       else if (path === '/api/public/runtime-configuration') data = { demoMode: false };
-      else if (path === '/api/auth/me') data = { id: 1, email: 'fixture@example.invalid', role: 'USER' };
+      else if (path === '/api/me') data = { id: 1, email: 'fixture@example.invalid', role: 'USER' };
       else if (/^\/api\/tasks\/[^/]+$/.test(path)) data = task(id);
       else { errors.push(`Unhandled fixture ${path}`); res.writeHead(404); res.end(); return; }
       res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(envelope(data)); return;
@@ -102,7 +119,80 @@ const checks = [];
 async function check(name, run) { if (args.only && !name.includes(args.only)) return; await run(); checks.push(name); console.log(`PASS ${name}`); }
 async function seek(seconds) { await video.evaluate((v, t) => { v.currentTime = t; }, seconds); await expect.poll(() => video.evaluate(v => v.seeking)).toBe(false); }
 try {
-  if (args.baseline) {
+  if (args.models) {
+    await check('owner card separates current, adopted pipeline, exact QA and unknown usage without probes', async () => {
+      await page.goto(`${origin}/tasks/short?view=agent`);
+      await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+      expect(modelReads).toBe(0);
+      const card = page.getByRole('region', { name: '课程模型使用记录' });
+      await card.getByRole('button', { name: '模型使用记录', exact: true }).click();
+      await expect(card.getByText('historical-model-a', { exact: false })).toBeVisible();
+      await card.locator('summary').click();
+      await expect(card.getByText('current-model-b', { exact: false })).toBeVisible();
+      await expect(card.getByText('接管时冻结（非创建时）', { exact: false })).toBeVisible();
+      await expect(card.getByText('跳过调用：证据不足', { exact: false })).toBeVisible();
+      await expect(card.getByText('冻结配置：未记录', { exact: true })).toBeVisible();
+      await expect(card.getByText('多轮工具兼容：未验证', { exact: false })).toBeVisible();
+      await card.screenshot({ path: `${output}/model-usage.png` });
+    });
+    await check('trace displays independent frozen decision/review and replay without usage invention', async () => {
+      await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
+      const trace = page.getByRole('region', { name: 'Agent Trace' });
+      await expect(trace.getByText('decision-frozen-a', { exact: false }).first()).toBeVisible();
+      await expect(trace.getByText('review-frozen-b', { exact: false }).first()).toBeVisible();
+      await expect(trace.getByText('重放已保存结果，非新调用', { exact: false })).toBeVisible();
+      await expect(trace.getByText('输入 Token：未知', { exact: false }).first()).toBeVisible();
+      await trace.screenshot({ path: `${output}/agent-model-trace.png` });
+    });
+    await check('permission denial removes previously visible model facts', async () => {
+      modelDenied = true;
+      const card = page.getByRole('region', { name: '课程模型使用记录' });
+      await card.getByRole('button', { name: '刷新模型使用记录' }).click();
+      await expect(card.getByRole('alert')).toBeVisible();
+      await expect(card.getByText('historical-model-a', { exact: false })).toHaveCount(0);
+      modelDenied = false;
+    });
+    await check('late model record response cannot follow a course switch', async () => {
+      modelDelay = 900;
+      const reads = modelReads;
+      await page.getByRole('button', { name: '刷新模型使用记录', exact: true }).click();
+      await expect.poll(() => modelReads).toBe(reads + 1);
+      await page.evaluate(() => { history.pushState({}, '', '/tasks/other?view=agent'); window.dispatchEvent(new PopStateEvent('popstate')); });
+      await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+      await new Promise(r => setTimeout(r, 1100));
+      await expect(page.getByText('historical-model-a', { exact: false })).toHaveCount(0);
+      modelDelay = 0;
+    });
+    await check('390px model card stays within viewport', async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      const card = page.getByRole('region', { name: '课程模型使用记录' });
+      await card.getByRole('button', { name: '模型使用记录', exact: true }).click();
+      await expect(card.getByText('historical-model-a', { exact: false })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await card.screenshot({ path: `${output}/model-usage-mobile.png` });
+    });
+    await check('malformed historical probe and Mock observations remain unverified without renderer errors', async () => {
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      const valid = { ok: true, code: null, checked_at: 1700000000, version: 3 };
+      const historical = [
+        { ...valid, checked_at: undefined }, { ...valid, checked_at: null },
+        { ...valid, checked_at: 'invalid' }, { ...valid, version: '3' },
+        { ...valid, ok: 'false' }, valid,
+      ];
+      for (let i = 0; i < historical.length; i++) {
+        learning.run.model_selection.decision.single_turn_evidence = historical[i];
+        learning.run.model_mode = i === historical.length - 1 ? 'mock' : 'real';
+        await page.reload();
+        await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+        await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
+        const trace = page.getByRole('region', { name: 'Agent Trace' });
+        await expect(trace.getByText('单轮协议：未验证', { exact: false })).toHaveCount(2);
+        await expect(trace.getByText('多轮工具兼容：未验证', { exact: false })).toHaveCount(2);
+        await expect(trace.getByText('真实课程质量：未验证', { exact: false })).toHaveCount(2);
+      }
+      await page.getByRole('region', { name: 'Agent Trace' }).screenshot({ path: `${output}/model-evidence-legacy.png` });
+    });
+  } else if (args.baseline) {
     await page.goto(`${origin}/tasks/short?view=content&text=timeline&at=2500`);
     await expect(video).toHaveJSProperty('readyState', 4);
     const initial = { restoredVideoSeconds: await video.evaluate(v => v.currentTime), workspace: await page.locator('.workspace-nav [aria-current=page]').textContent() };
@@ -271,9 +361,17 @@ try {
       tokenDelay = 0;
     });
     await check('real decoded playback advances time and the active original passage', async () => {
-      await seek(0); await video.evaluate(v => v.play());
-      await expect.poll(() => video.evaluate(v => v.currentTime)).toBeGreaterThan(2);
-      await video.evaluate(v => v.pause());
+      await seek(0);
+      // Pause in the media event loop so a busy Node process cannot sample past the 2-3s passage.
+      await video.evaluate(v => new Promise((resolve, reject) => {
+        const timer = setTimeout(() => { v.removeEventListener('timeupdate', pauseAtPassage); reject(Error('decoded playback timeout')); }, 15000);
+        function pauseAtPassage() {
+          if (v.currentTime < 2) return;
+          v.pause(); clearTimeout(timer); v.removeEventListener('timeupdate', pauseAtPassage); resolve();
+        }
+        v.addEventListener('timeupdate', pauseAtPassage); v.play().catch(reject);
+      }));
+      expect(await video.evaluate(v => v.currentTime)).toBeGreaterThanOrEqual(2);
       await expect(current).toHaveAttribute('data-segment', '7');
       expect(await video.evaluate(v => v.getVideoPlaybackQuality().totalVideoFrames)).toBeGreaterThan(0);
     });
@@ -363,7 +461,8 @@ try {
     });
     await check('real 65-minute media and 10,000 intervals support manual reading and resumption', async () => {
       await page.goto(`${origin}/tasks/long?view=content&text=timeline&at=3000000`);
-      await expect.poll(() => video.evaluate(v => v.duration)).toBe(3900);
+      // Loading and rendering 10,000 fixture intervals can outlast the default 5s assertion under concurrent DB tests.
+      await expect.poll(() => video.evaluate(v => v.duration), { timeout: 15000 }).toBe(3900);
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(3000);
       await expect(current).toHaveAttribute('data-segment', '8571');
       const list = page.locator('.timeline-list');

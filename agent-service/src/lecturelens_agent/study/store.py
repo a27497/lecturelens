@@ -10,6 +10,7 @@ from psycopg.types.json import Jsonb
 
 from .failures import failure_category
 from .learning_scope import ACTIVE_SQL, public_status, stored_status
+from .model_evidence import single_turn_evidence
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS study_session (
@@ -300,6 +301,11 @@ class StudyStore:
                 "learning_scope": row.get("learning_scope"),
                 "model_selection": {
                     role: {key: config[key] for key in ("connection_id", "name", "version", "model")}
+                    | {
+                        "single_turn_evidence": single_turn_evidence(
+                            config.get("single_turn_evidence"), config.get("version")
+                        )
+                    }
                     for role, config in (row.get("model_config") or {}).items()
                 },
             },

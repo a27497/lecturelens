@@ -21,6 +21,10 @@ final class SystemModelMySqlFixture implements AutoCloseable {
     final DataSourceTransactionManager transactions;
 
     SystemModelMySqlFixture() throws Exception {
+        this("classpath:db/migration");
+    }
+
+    SystemModelMySqlFixture(String... locations) throws Exception {
         var uri = URI.create(base.substring(5));
         if (!java.util.Set.of("localhost", "127.0.0.1").contains(uri.getHost())
                 || !uri.getPath().endsWith("_test"))
@@ -37,7 +41,7 @@ final class SystemModelMySqlFixture implements AutoCloseable {
         dataSource = new DriverManagerDataSource(url, username, password);
         jdbc = new JdbcTemplate(dataSource);
         transactions = new DataSourceTransactionManager(dataSource);
-        Flyway.configure().dataSource(dataSource).load().migrate();
+        Flyway.configure().dataSource(dataSource).locations(locations).load().migrate();
     }
 
     long user() {

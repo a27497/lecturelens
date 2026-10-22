@@ -12,6 +12,8 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 
 V25 must be applied before this Java binary serves authenticated traffic, including when `SYSTEM_MODEL_CONFIG_ENABLED=false`, because account queries include the new role column. Verify the migration and retain the additive schema on rollback. Follow the [integration rollout and snapshot guard constraints](SYSTEM_MODEL_MANAGEMENT.md#integration-with-structured-learning-scope); earlier workers must be stopped before snapshot-bearing traffic resumes.
 
+模型使用记录还需要先应用 `R__course_qa_model_usage.sql`，系统配置关闭时也需要。它增加三个可空 QA 关联字段，保留 V25 水位以兼容待整合 #35 的 V26–V31；不要用 outOfOrder 或修改既有迁移替代。回滚保留增量字段与历史记录，见[迁移与回滚约束](MODEL_USAGE.md#mysql-迁移与回滚)。
+
 系统层启用后，启动会把当前部署默认及加密凭据写为不可变版本；新任务创建时冻结版本，运行中的任务继续原版本。多实例应提供相同主密钥和部署默认。切换回未启用系统层的旧 worker 前应先排空已冻结任务，不让旧 worker 忽略新快照；现有无快照任务首次接管标记 ADOPTED。普通配置保存不需要重启。历史及执行查询不会返回版本原文或密文；本次实现仅在隔离测试环境验收，没有修改线上配置。
 
 ## 环境要求

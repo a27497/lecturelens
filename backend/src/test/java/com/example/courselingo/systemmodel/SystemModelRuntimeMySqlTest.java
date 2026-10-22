@@ -355,7 +355,7 @@ class SystemModelRuntimeMySqlTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"normal", "revision_before", "owner_before", "delete_before", "revision_after"})
-    void scopedQaUsesFrozenModelAndAuthorityFences(String race) {
+    void scopedQaUsesFrozenModelAndAuthorityFences(String race) throws Exception {
         var a = target("scoped-qa-a", "https://api.deepseek.com", KEY_A);
         var b = target("scoped-qa-b", "https://other.example/v1", KEY_B);
         bind("COURSE_QA", a.model());
@@ -403,12 +403,12 @@ class SystemModelRuntimeMySqlTest {
         var entity = new com.example.courselingo.task.entity.AnalysisTask();
         entity.setId(task); entity.setUserId(user); entity.setStatus("SUCCEEDED"); entity.setTargetLanguage("zh-CN");
         when(tasks.selectByIdAndUserId(task, user)).thenReturn(entity);
-        var records = mock(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
-        var saved = new ArrayList<com.example.courselingo.qa.domain.CourseQaRecord>();
-        when(records.insert(any(com.example.courselingo.qa.domain.CourseQaRecord.class))).thenAnswer(call -> {
-            var record = call.getArgument(0, com.example.courselingo.qa.domain.CourseQaRecord.class);
-            record.setId(1L); saved.add(record); return 1;
-        });
+        var configuration = new com.baomidou.mybatisplus.core.MybatisConfiguration();
+        configuration.addMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
+        var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean();
+        factory.setDataSource(db.dataSource); factory.setConfiguration(configuration);
+        var records = new org.mybatis.spring.SqlSessionTemplate(factory.getObject())
+                .getMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
         var rate = mock(com.example.courselingo.qa.service.CourseQaRateLimitService.class);
         when(rate.checkAndConsume(user)).thenReturn(com.example.courselingo.qa.service.CourseQaRateLimitResult.allowed(10, 9));
         var qa = new com.example.courselingo.qa.service.CourseQaServiceImpl(users, tasks, retriever, records, provider, null, rate,
@@ -421,12 +421,176 @@ class SystemModelRuntimeMySqlTest {
             assertThat(result.usage().model()).isEqualTo("scoped-qa-a");
             assertThat(result.evidence()).extracting(com.example.courselingo.qa.dto.CourseQaEvidenceItem::evidenceId).containsExactly(selected);
             assertThat(receipts).hasSize(1);
+            var record = records.selectById(Long.parseLong(result.recordId()));
+            assertThat(record.getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+            assertThat(record.getExecutionSnapshotId()).isNotBlank();
+            var historical = executions.query(record.getExecutionSnapshotId());
+            assertThat(historical.routes().get("COURSE_QA").model()).isEqualTo("scoped-qa-a");
+            assertThat(registry.currentVersion()).isGreaterThan(historical.configVersion());
+            var beans = new StaticListableBeanFactory(Map.of("registry", registry, "executions", executions));
+            var usage = new CourseModelUsageService(db.jdbc, beans.getBeanProvider(SystemModelRegistry.class), beans.getBeanProvider(SystemModelExecutionService.class)).read(task, user);
+            assertThat(usage.current().routes()).filteredOn(r -> r.feature().equals("COURSE_QA")).singleElement().satisfies(r -> assertThat(r.model()).isEqualTo("scoped-qa-b"));
+            assertThat(usage.qa()).singleElement().satisfies(q -> assertThat(q.selection().routes().getFirst().model()).isEqualTo("scoped-qa-a"));
         } else {
             assertThatThrownBy(() -> qa.ask(task, "Bearer test", input)).isInstanceOf(RuntimeException.class);
-            assertThat(saved).noneMatch(record -> "SUCCEEDED".equals(record.getStatus()));
+            assertThat(records.selectByTaskIdAndUserId(task, user, 20)).noneMatch(record -> "SUCCEEDED".equals(record.getStatus()));
             assertThat(receipts).hasSize(race.equals("revision_after") ? 1 : 0);
         }
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"success", "no_usage", "provider_failure", "parse_failure", "no_evidence", "missing_provider", "preparation_failure", "cancel_after", "revision_after", "delete_after", "transfer_after"})
+    void qaUsageFactsRetainTheExactRequestAcrossOutcomes(String scenario) throws Exception {
+        var a = target("usage-a", "https://api.deepseek.com", KEY_A);
+        var b = target("usage-b", "https://other.example/v1", KEY_B);
+        bind("COURSE_QA", a.model());
+        var fence = new com.example.courselingo.task.service.GenerationFence(db.jdbc, db.transactions);
+        var requests = new ArrayList<LlmRequest>();
+        long otherOwner = db.user();
+        LlmProvider provider = new LlmProvider() {
+            public String providerName() { return "deterministic-test"; }
+            public String modelNameForDiagnostics() { return "deterministic-model"; }
+            public LlmResult generate(LlmRequest request) {
+                requests.add(request);
+                bind("COURSE_QA", b.model());
+                assertThat(executions.route(request.execution(), "COURSE_QA").model()).isEqualTo("usage-a");
+                switch (scenario) {
+                    case "provider_failure" -> throw new IllegalStateException("synthetic failure before a result");
+                    case "cancel_after" -> db.jdbc.update("UPDATE analysis_task SET status='CANCELED' WHERE id=?", task);
+                    case "revision_after" -> new org.springframework.transaction.support.TransactionTemplate(db.transactions).executeWithoutResult(status -> fence.sourceChanging(task, user));
+                    case "delete_after" -> db.jdbc.update("UPDATE analysis_task SET deleted_at=CURRENT_TIMESTAMP WHERE id=?", task);
+                    case "transfer_after" -> db.jdbc.update("UPDATE analysis_task SET user_id=? WHERE id=?", otherOwner, task);
+                    default -> { }
+                }
+                return new LlmResult("deterministic-test", "usage-a",
+                        scenario.equals("parse_failure") ? "invalid-json" : "{\"answer\":\"Synthetic answer\",\"citedEvidenceIndexes\":[0]}",
+                        "stop", scenario.equals("no_usage") ? null : new LlmUsage(11, 7, 18), Duration.ofMillis(1), Map.of());
+            }
+        };
+        var routed = scenario.equals("preparation_failure") ? new AiModelRoutedLlmRequestFactory(router, executions) {
+            @Override public LlmRequest apply(AiModelStage stage, LlmRequest request) { throw new IllegalStateException("synthetic preparation failure"); }
+        } : new AiModelRoutedLlmRequestFactory(router, executions);
+        var harness = qaHarness(scenario.equals("missing_provider") ? null : provider, fence, routed, scenario.equals("no_evidence"));
+        boolean success = Set.of("success", "no_usage", "no_evidence").contains(scenario);
+        var question = new com.example.courselingo.qa.dto.CourseQaAskRequest("Explain the synthetic course passage");
+        if (success) harness.service().ask(task, "Bearer test", question);
+        else assertThatThrownBy(() -> harness.service().ask(task, "Bearer test", question)).isInstanceOf(RuntimeException.class);
+        var records = harness.records().selectByTaskIdAndUserId(task, user, 20);
+        var beans = new StaticListableBeanFactory(Map.of("registry", registry, "executions", executions));
+        var usage = new CourseModelUsageService(db.jdbc, beans.getBeanProvider(SystemModelRegistry.class), beans.getBeanProvider(SystemModelExecutionService.class));
+        if (Set.of("delete_after", "transfer_after").contains(scenario)) {
+            assertThat(records).isEmpty();
+            assertThatThrownBy(() -> usage.read(task, user)).isInstanceOf(BusinessException.class);
+            if (scenario.equals("transfer_after")) {
+                assertThat(usage.read(task, otherOwner).qa()).isEmpty();
+                assertThat(usage.read(task, otherOwner).calls()).isEmpty();
+                assertThat(usage.read(task, otherOwner).pipeline()).isEmpty();
+            }
+            return;
+        }
+        assertThat(records).hasSize(1);
+        var record = records.getFirst();
+        String expected = scenario.equals("no_evidence") ? "SKIPPED_NO_EVIDENCE"
+                : Set.of("missing_provider", "preparation_failure").contains(scenario) ? "NOT_STARTED"
+                : scenario.equals("provider_failure") ? "DISPATCHED" : "RESPONSE_RECEIVED";
+        assertThat(record.getInvocationState()).isEqualTo(expected);
+        assertThat(record.getStatus()).isEqualTo(success ? "SUCCEEDED" : "FAILED");
+        assertThat(executions.query(record.getExecutionSnapshotId()).routes().get("COURSE_QA").model()).isEqualTo("usage-a");
+        if (requests.isEmpty()) assertThat(Set.of("no_evidence", "missing_provider", "preparation_failure")).contains(scenario);
+        else assertThat(record.getExecutionSnapshotId()).isEqualTo(requests.getFirst().execution().snapshotId());
+        if (Set.of("no_evidence", "missing_provider").contains(scenario)) assertThat(record.getAiCallRecordId()).isNull();
+        else {
+            var call = harness.calls().selectById(record.getAiCallRecordId());
+            assertThat(call.getTaskId()).isEqualTo(task); assertThat(call.getUserId()).isEqualTo(user);
+            assertThat(call.getStatus()).isEqualTo(success ? "SUCCEEDED" : "FAILED");
+        }
+        assertThat(record.getTotalTokens()).isEqualTo(expected.equals("RESPONSE_RECEIVED") && !scenario.equals("no_usage") ? 18 : null);
+        assertThat(usage.read(task, user).qa()).singleElement().satisfies(q -> {
+            assertThat(q.recordId()).isEqualTo(String.valueOf(record.getId()));
+            assertThat(q.selection().snapshotId()).isEqualTo(record.getExecutionSnapshotId());
+            assertThat(q.totalTokens()).isEqualTo(record.getTotalTokens());
+        });
+    }
+
+    @Test
+    void managedQaWithARealCallLedgerAcceptsUnknownPreDispatchModelIdentity() throws Exception {
+        var a = target("managed-qa-ledger", "https://api.deepseek.com", KEY_A); bind("COURSE_QA", a.model());
+        var receipts = new AtomicInteger();
+        OpenAiCompatibleLlmClient wire = request -> { receipts.incrementAndGet(); return response(200, "{\"answer\":\"Synthetic answer\",\"citedEvidenceIndexes\":[0]}"); };
+        var provider = new SystemModelLlmProvider(executions, wire, urls, wire);
+        var harness = qaHarness(provider, new com.example.courselingo.task.service.GenerationFence(db.jdbc, db.transactions), new AiModelRoutedLlmRequestFactory(router, executions), false);
+        var result = harness.service().ask(task, "Bearer test", new com.example.courselingo.qa.dto.CourseQaAskRequest("Explain the synthetic course passage"));
+        var record = harness.records().selectById(Long.valueOf(result.recordId()));
+        assertThat(receipts.get()).isEqualTo(1);
+        assertThat(record.getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+        assertThat(record.getModel()).isEqualTo("managed-qa-ledger");
+        assertThat(harness.calls().selectById(record.getAiCallRecordId()).getModel()).isNull();
+    }
+
+    @Test
+    void concurrentQaRequestsKeepDistinctSnapshotAndCallReferencesWhenBReturnsBeforeA() throws Exception {
+        var a = target("concurrent-a", "https://api.deepseek.com", KEY_A);
+        var b = target("concurrent-b", "https://other.example/v1", KEY_B);
+        bind("COURSE_QA", a.model());
+        var entered = new CountDownLatch(1); var release = new CountDownLatch(1);
+        var refs = new ConcurrentHashMap<String, SystemModelExecutionRef>();
+        LlmProvider provider = new LlmProvider() {
+            public String providerName() { return "deterministic-test"; }
+            public String modelNameForDiagnostics() { return "deterministic-model"; }
+            public LlmResult generate(LlmRequest request) {
+                String model = executions.route(request.execution(), "COURSE_QA").model(); refs.put(model, request.execution());
+                if (model.equals("concurrent-a")) {
+                    entered.countDown();
+                    try { if (!release.await(10, TimeUnit.SECONDS)) throw new AssertionError("release timeout"); }
+                    catch (InterruptedException error) { throw new AssertionError(error); }
+                }
+                return new LlmResult("deterministic-test", model, "{\"answer\":\"" + model + "\",\"citedEvidenceIndexes\":[0]}", "stop", null, Duration.ofMillis(1), Map.of());
+            }
+        };
+        var harness = qaHarness(provider, new com.example.courselingo.task.service.GenerationFence(db.jdbc, db.transactions), new AiModelRoutedLlmRequestFactory(router, executions), false);
+        var question = new com.example.courselingo.qa.dto.CourseQaAskRequest("Explain the synthetic course passage");
+        try (var worker = Executors.newSingleThreadExecutor()) {
+            var first = worker.submit(() -> harness.service().ask(task, "Bearer test", question));
+            try {
+                assertThat(entered.await(10, TimeUnit.SECONDS)).isTrue(); bind("COURSE_QA", b.model());
+                var second = harness.service().ask(task, "Bearer test", question); release.countDown();
+                var resultA = first.get(10, TimeUnit.SECONDS);
+                for (var result : List.of(resultA, second)) {
+                    var record = harness.records().selectById(Long.valueOf(result.recordId()));
+                    assertThat(record.getExecutionSnapshotId()).isEqualTo(refs.get(result.usage().model()).snapshotId());
+                    assertThat(record.getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+                }
+                var rows = harness.records().selectByTaskIdAndUserId(task, user, 20);
+                assertThat(rows).hasSize(2);
+                assertThat(rows).extracting(com.example.courselingo.qa.domain.CourseQaRecord::getExecutionSnapshotId).doesNotHaveDuplicates();
+                assertThat(rows).extracting(com.example.courselingo.qa.domain.CourseQaRecord::getAiCallRecordId).doesNotHaveDuplicates();
+            } finally { release.countDown(); }
+        }
+    }
+
+    private QaHarness qaHarness(LlmProvider provider, com.example.courselingo.task.service.GenerationFence fence, AiModelRoutedLlmRequestFactory routed, boolean noEvidence) throws Exception {
+        var config = new com.baomidou.mybatisplus.core.MybatisConfiguration();
+        config.addMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
+        config.addMapper(com.example.courselingo.ai.record.mapper.AiCallRecordMapper.class);
+        var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean(); factory.setDataSource(db.dataSource); factory.setConfiguration(config);
+        var session = new org.mybatis.spring.SqlSessionTemplate(factory.getObject());
+        var records = session.getMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
+        var calls = session.getMapper(com.example.courselingo.ai.record.mapper.AiCallRecordMapper.class);
+        var users = mock(com.example.courselingo.auth.service.CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(user, "synthetic@example.invalid", "ACTIVE"));
+        var tasks = mock(com.example.courselingo.task.mapper.AnalysisTaskMapper.class);
+        var entity = new com.example.courselingo.task.entity.AnalysisTask(); entity.setId(task); entity.setUserId(user); entity.setTargetLanguage("zh-CN"); entity.setStatus("SUCCEEDED");
+        when(tasks.selectByIdAndUserId(task, user)).thenReturn(entity);
+        var evidence = mock(com.example.courselingo.qa.service.CourseQaEvidenceRetriever.class);
+        when(evidence.retrieve(eq(task), eq(user), anyString(), anyString())).thenReturn(noEvidence ? List.of() : List.of(new com.example.courselingo.qa.dto.CourseQaEvidenceItem("SUBTITLE", "synthetic", 0L, 1000L, "00:00", "Synthetic course passage", null, null)));
+        var rate = mock(com.example.courselingo.qa.service.CourseQaRateLimitService.class);
+        when(rate.checkAndConsume(user)).thenReturn(com.example.courselingo.qa.service.CourseQaRateLimitResult.allowed(10, 9));
+        var service = new com.example.courselingo.qa.service.CourseQaServiceImpl(users, tasks, evidence, records, provider,
+                new com.example.courselingo.ai.record.service.AiCallRecordServiceImpl(calls, Clock.systemUTC(), new com.example.courselingo.ai.record.service.AiCallRecordSanitizer()), rate, Clock.systemUTC(), new com.example.courselingo.qa.service.CourseQaResponseParser(), routed);
+        service.configureSystemModels(executions); service.configureGenerationFence(fence);
+        return new QaHarness(service, records, calls);
+    }
+    private record QaHarness(com.example.courselingo.qa.service.CourseQaServiceImpl service, com.example.courselingo.qa.mapper.CourseQaRecordMapper records, com.example.courselingo.ai.record.mapper.AiCallRecordMapper calls) {}
 
     @Test
     void runningAUsesOldVersionWhileNewBUsesNewVersion() throws Exception {

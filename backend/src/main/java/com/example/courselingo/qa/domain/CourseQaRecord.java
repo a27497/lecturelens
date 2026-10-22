@@ -60,6 +60,20 @@ public class CourseQaRecord {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
+    @TableField("execution_snapshot_id")
+    private String executionSnapshotId;
+    @TableField("invocation_state")
+    private String invocationState;
+    @TableField("ai_call_record_id")
+    private Long aiCallRecordId;
+
+    public String getExecutionSnapshotId() { return executionSnapshotId; }
+    public void setExecutionSnapshotId(String value) { executionSnapshotId = value; }
+    public String getInvocationState() { return invocationState; }
+    public void setInvocationState(String value) { invocationState = value; }
+    public Long getAiCallRecordId() { return aiCallRecordId; }
+    public void setAiCallRecordId(Long value) { aiCallRecordId = value; }
+
     public Long getId() {
         return id;
     }

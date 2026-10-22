@@ -122,7 +122,7 @@ cp .env.agent.example .env.agent.local
 
 以上仅用于准备配置文件，不等于完成启动。后续请按 [部署指南](docs/DEPLOYMENT.md) 配置服务、密钥、模型和课程处理管线；不应将示例凭据用于实际部署。
 
-[系统模型管理](docs/SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本/视觉的独立功能绑定、不可变配置版本和任务快照，默认关闭；ASR 已支持按任务快照运行时切换，管理员页面位于 `/admin/settings/models`，支持仅点击触发的有界连通性测试。现有 Python 个人模型管理保持独立。
+[系统模型管理](docs/SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本/视觉的独立功能绑定、不可变配置版本和任务快照，默认关闭；ASR 已支持按任务快照运行时切换，管理员页面位于 `/admin/settings/models`，支持仅点击触发的有界连通性测试。现有 Python 个人模型管理保持独立。课程页提供[只读模型使用记录](docs/MODEL_USAGE.md)，区分当前配置、冻结选择与调用事实；兼容性和课程质量证据分别展示。
 
 [部署说明](docs/DEPLOYMENT.md) · [API 文档](docs/API.md) · [Agent 服务](agent-service/README.md) · [更多产品截图](docs/PRODUCT_GALLERY.md)
 

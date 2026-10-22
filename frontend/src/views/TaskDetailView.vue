@@ -20,6 +20,7 @@ import CourseContentPanel from "../components/task-detail/CourseContentPanel.vue
 import CourseFilesPanel from "../components/task-detail/CourseFilesPanel.vue";
 import CourseOverviewPanel from "../components/task-detail/CourseOverviewPanel.vue";
 import CourseAgentPanel from "../components/task-detail/CourseAgentPanel.vue";
+import CourseModelUsagePanel from "../components/task-detail/CourseModelUsagePanel.vue";
 import CourseQaPanel from "../components/task-detail/CourseQaPanel.vue";
 import CourseStudyPanel from "../components/task-detail/CourseStudyPanel.vue";
 import CourseTechnicalPanel from "../components/task-detail/CourseTechnicalPanel.vue";
@@ -419,6 +420,8 @@ async function confirmRetryTask() {
         type="info"
         show-icon
       />
+
+      <CourseModelUsagePanel v-if="hasTaskId && task" :key="taskId" :task-id="taskId" />
 
       <el-empty v-if="!hasTaskId" description="课程地址中缺少任务 ID" />
       <div v-else class="course-layout">

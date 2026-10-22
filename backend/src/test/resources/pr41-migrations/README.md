@@ -1,0 +1,1 @@
+Test-only original repeatable SQL from PR41 commit c6b8ee8f9d65e75974ec2de7af4a780849c591a2. It verifies upgrading a database that already recorded that checksum. Production Flyway does not scan this directory.
