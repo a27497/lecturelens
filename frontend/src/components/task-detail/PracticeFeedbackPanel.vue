@@ -4,6 +4,7 @@ import { studyCommand } from "../../api/study";
 import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun, StudyResponse } from "../../api/study";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import { randomUuid } from "../../utils/randomUuid";
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
@@ -12,7 +13,7 @@ const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
-defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext] }>();
+const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; accessFailure: [] }>();
 const currentRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
 const approval = ref<StudyResponse["approval"]>(null);
@@ -81,7 +82,9 @@ async function refresh() {
     if (current === generation) {
       const status = (error as { response?: { status?: number } })?.response?.status;
       if (status && [401, 403, 404, 409].includes(status) && currentRun.value) {
-        currentRun.value = { ...currentRun.value, status: "failed", error_code: "COURSE_UNAVAILABLE_OR_CHANGED" };
+        currentRun.value = { ...currentRun.value, status: "failed", error_code: "COURSE_UNAVAILABLE_OR_CHANGED", feedback: null };
+        notes.value = null; approval.value = null;
+        if (mayHaveLostCourseAccess(error)) emit("accessFailure");
         message.value = "课程、会话或登录状态已变化，请重新打开课程。";
       } else message.value = "反馈连接暂时中断，正在恢复。";
     }
@@ -107,8 +110,9 @@ async function start() {
       pendingStart = null; pendingNote = null; noteText.value = ""; notes.value = null;
       if (active.value) schedule();
     }
-  } catch {
+  } catch (failure) {
     if (current !== generation) return;
+    if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
     message.value = "反馈请求未确认。请等待当前学习任务结束，或重试同一请求。";
     try {
       const result = await studyCommand(props.taskId, { ...scope(), operation: "READ" });
@@ -126,7 +130,7 @@ async function cancel() {
     if (current === generation && result.run && currentRun.value) {
       currentRun.value = { ...currentRun.value, status: result.run.status }; clearTimeout(timer);
     }
-  } catch { if (current === generation) message.value = "取消未确认，请重试。"; }
+  } catch (failure) { if (current === generation) { message.value = "取消未确认，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); } }
 }
 async function saveNote() {
   if (!feedback.value || !currentRun.value || !noteText.value.trim() || noteText.value.length > 2000 || savingNote.value) return;
@@ -142,8 +146,9 @@ async function saveNote() {
     const result = await studyCommand(props.taskId, command);
     if (current !== generation || feedback.value?.feedback_id !== command.feedback_id) return;
     if (result.note) { feedback.value.note = result.note; pendingNote = null; notes.value = null; message.value = "你的核对意见已保存，原反馈和作答保持可查看。"; }
-  } catch {
+  } catch (failure) {
     if (current !== generation) return;
+    if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
     await refresh();
     if (current !== generation || feedback.value?.feedback_id !== command.feedback_id) return;
     const saved = feedback.value?.note;
@@ -162,7 +167,7 @@ async function showNotes(more = false) {
     const result = await studyCommand(props.taskId, { operation: "FEEDBACK_NOTES", session_id: props.sessionId,
       run_id: currentRun.value.run_id, feedback_id: feedback.value.feedback_id, ...(more && nextBefore.value ? { before_version: nextBefore.value } : {}) });
     if (current === generation && feedback.value?.feedback_id === feedbackId) { notes.value = [...(more ? notes.value ?? [] : []), ...result.notes ?? []]; nextBefore.value = result.next_before_version ?? null; }
-  } catch { if (current === generation) message.value = "核对记录暂不可用，请重试。"; }
+  } catch (failure) { if (current === generation) { message.value = "核对记录暂不可用，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); } }
   finally { if (current === generation) loadingNotes.value = false; }
 }
 </script>
@@ -187,6 +192,7 @@ async function showNotes(more = false) {
       <p v-if="feedback.content.mode === 'mock'">演示反馈，不代表模型判断。</p>
       <p v-else>实验阶段的学习建议，可核对和更正，不作为成绩或掌握程度记录。</p>
       <p v-if="attempt && feedback.attempt_id !== attempt.attempt_id" role="status">你已保存新版作答，下面反馈仅对应旧版。</p>
+      <el-button @click="$emit('revise')">修订本题作答</el-button>
       <details><summary>查看本次反馈对应的作答</summary><p>{{ feedback.answer_text }}</p></details>
       <p v-if="feedback.content.kind === 'insufficient_evidence'">{{ feedback.content.reason }}</p>
       <p v-if="feedback.content.human_guidance">人工修改建议：{{ feedback.content.human_guidance }}</p>
@@ -200,6 +206,13 @@ async function showNotes(more = false) {
           </template>
         </details>
       </div>
+      <details v-if="!feedback.content.observations?.length && feedback.content.citations.length" class="feedback-sources" open>
+        <summary>反馈使用的课程材料（不代表已判断作答）</summary>
+        <div v-for="citation in feedback.content.citations" :key="citation.evidence_id">
+          <blockquote>{{ citation.text }}</blockquote>
+          <el-button text @click="$emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">回看这段课程证据</el-button>
+        </div>
+      </details>
       <div v-if="feedback.note" class="feedback-note"><strong>{{ feedback.note.disposition === 'disputed' ? '你已标记反馈不准确' : '你已核对反馈' }}</strong><p>{{ feedback.note.note_text }}</p></div>
       <details><summary>核对或更正反馈</summary>
         <label>核对结果 <select v-model="disposition" :disabled="savingNote"><option value="disputed">反馈不准确</option><option value="acknowledged">已核对</option></select></label>

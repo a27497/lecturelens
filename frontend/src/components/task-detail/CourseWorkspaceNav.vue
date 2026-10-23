@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CourseWorkspace } from "./workspace";
 
-defineProps<{ active: CourseWorkspace }>();
+defineProps<{ active: CourseWorkspace; compact?: boolean }>();
 defineEmits<{ change: [workspace: CourseWorkspace] }>();
 
 const items: Array<{ value: CourseWorkspace; label: string }> = [
@@ -13,12 +13,13 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "files", label: "下载" },
   { value: "technical", label: "处理详情" },
 ];
+const primary = ["agent", "qa", "content"];
 </script>
 
 <template>
   <nav class="workspace-nav" aria-label="课程内容导航">
     <button
-      v-for="item in items"
+      v-for="item in items.filter(item => !compact || primary.includes(item.value))"
       :key="item.value"
       type="button"
       :class="{ 'is-active': active === item.value }"
@@ -27,6 +28,10 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
     >
       {{ item.label }}
     </button>
+    <details v-if="compact" class="workspace-more" :open="!primary.includes(active)">
+      <summary>更多课程工具</summary>
+      <button v-for="item in items.filter(item => !primary.includes(item.value))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ item.label }}</button>
+    </details>
   </nav>
 </template>
 
@@ -35,4 +40,6 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
 .workspace-nav button { flex: 1 0 auto; padding: 10px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--color-ink-soft); font: inherit; font-weight: 650; cursor: pointer; }
 .workspace-nav button:hover { color: var(--color-ink); background: var(--color-canvas); }
 .workspace-nav button.is-active { border-color: var(--color-border-strong, var(--color-border)); background: var(--color-brand-soft, #edf4f0); color: var(--color-brand-strong, var(--color-brand)); }
+.workspace-more { flex: 1 0 auto; }.workspace-more summary { cursor: pointer; padding: 10px; color: var(--color-ink-soft); }.workspace-more[open] { flex-basis: 100%; }
+.workspace-nav:has(.workspace-more) { flex-wrap: wrap; overflow: visible; }
 </style>

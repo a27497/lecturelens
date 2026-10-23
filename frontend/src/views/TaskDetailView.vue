@@ -10,6 +10,8 @@ import {
 import { requestTaskPlaybackToken, toReadablePlaybackError } from "../api/media";
 import CourseScopePicker from "../components/task-detail/CourseScopePicker.vue";
 import type { LearningScope } from "../api/learningScope";
+import { mayHaveLostCourseAccess } from "../api/courseAccess";
+import type { LearningTaskPosition } from "../components/task-detail/learningTaskPosition";
 import { fetchTaskResult } from "../api/result";
 import { getEvidenceIndexStatus } from "../api/qa";
 import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
@@ -44,6 +46,24 @@ const taskEventsStore = useTaskEventsStore();
 const taskResultStore = useTaskResultStore();
 
 const activeWorkspace = ref<CourseWorkspace>("agent");
+const classicLayout = ref(false);
+const narrowQuery = window.matchMedia("(max-width: 900px)");
+const narrowScreen = ref(narrowQuery.matches);
+function updateNarrowScreen() { narrowScreen.value = narrowQuery.matches; }
+const lastLearningWorkspace = ref<"agent" | "qa">("agent");
+const learningWorkspace = computed(() => !classicLayout.value && activeWorkspace.value === "content" ? lastLearningWorkspace.value : activeWorkspace.value);
+const materialsRef = ref<HTMLElement | null>(null);
+const readingTarget = ref<HTMLElement | null>(null);
+const readerRef = ref<{ currentView: () => ContentView } | null>(null);
+const evidenceErrorRef = ref<HTMLElement | null>(null);
+const learningRef = ref<HTMLElement | null>(null);
+const learningTask = ref<LearningTaskPosition | null>(null);
+const courseBlocked = ref(false);
+const verifyingEvidence = ref(false);
+const readerVisible = computed(() => !verifyingEvidence.value && !evidenceNavigationError.value &&
+  (classicLayout.value ? activeWorkspace.value === "content" || reviewingEvidence.value :
+    !narrowScreen.value || activeWorkspace.value === "content" || reviewingEvidence.value));
+let evidenceRequest = 0;
 const readingView = ref<ContentView>();
 const positionMs = ref(0);
 const seekRequest = ref<SeekRequest>();
@@ -61,7 +81,10 @@ const agentScope = ref<LearningScope | null | undefined>();
 const qaScope = ref<LearningScope | null | undefined>();
 const scopeRefresh = ref(0);
 const evidenceSeekGuard = createEvidenceSeekGuard(
-  async id => (await getEvidenceIndexStatus(id)).revision,
+  async id => {
+    try { return (await getEvidenceIndexStatus(id)).revision; }
+    catch (failure) { if (id === taskId.value && mayHaveLostCourseAccess(failure)) void loadTaskDetail(id); throw failure; }
+  },
   message => { evidenceNavigationError.value = message; },
   async id => {
     const source = await fetchTaskResult(id);
@@ -100,10 +123,12 @@ const canRetryTask = computed(() => isRetryableTaskStatus(task.value?.status));
 const isDemoMode = ref(false);
 
 onMounted(() => {
+  narrowQuery.addEventListener("change", updateNarrowScreen);
   void loadPublicRuntimeConfiguration();
 });
 
 watch(taskId, (nextTaskId) => {
+  courseBlocked.value = false; learningTask.value = null; lastLearningWorkspace.value = "agent";
   learningScope.value=null; agentScope.value=undefined; qaScope.value=undefined;
   commandVersion.value += 1;
   cancelLoading.value = false;
@@ -129,11 +154,21 @@ watch(() => route.query, () => {
   applyLocation();
 });
 
+watch([evidenceNavigationError, narrowScreen], ([message, narrow]) => {
+  if (!message || !narrow) return;
+  const currentTaskId = taskId.value;
+  void nextTick(() => {
+    if (taskId.value === currentTaskId && evidenceNavigationError.value === message && narrowScreen.value) {
+      evidenceErrorRef.value?.scrollIntoView({ block: "start" });
+    }
+  });
+});
+
 watch(() => task.value?.status, (status) => {
   const currentTaskId = taskId.value.trim();
   if (!currentTaskId) return;
   if (shouldReloadTerminalTaskDetail(status, currentTaskId, terminalDetailReloadTaskId.value)) {
-    evidenceSeekGuard.cancel();
+    cancelEvidenceNavigation();
     reviewingEvidence.value = false;
     terminalDetailReloadTaskId.value = currentTaskId;
     void loadTaskDetail(currentTaskId);
@@ -145,7 +180,8 @@ watch(() => task.value?.status, (status) => {
 });
 
 onBeforeUnmount(() => {
-  evidenceSeekGuard.cancel();
+  narrowQuery.removeEventListener("change", updateNarrowScreen);
+  cancelEvidenceNavigation();
   clearTimeout(locationTimer);
   taskEventsStore.disconnect();
   taskResultStore.clear();
@@ -155,15 +191,17 @@ onBeforeUnmount(() => {
 });
 
 function locationSignature(query: typeof route.query) {
-  return JSON.stringify([taskId.value, query.view, query.text, query.at]);
+  return JSON.stringify([taskId.value, query.view, query.text, query.at, query.layout]);
 }
 function applyLocation() {
-  evidenceSeekGuard.cancel();
+  cancelEvidenceNavigation();
   evidenceNavigationError.value = "";
   clearTimeout(locationTimer);
   locationTimer = undefined;
   const location = readCourseLocation(route.query);
+  classicLayout.value = location.classic;
   activeWorkspace.value = location.workspace;
+  if (location.workspace === "qa" || location.workspace === "agent") lastLearningWorkspace.value = location.workspace;
   readingView.value = location.textView;
   positionMs.value = location.milliseconds;
   seekRequest.value = { milliseconds: location.milliseconds, sequence: ++seekSequence };
@@ -173,9 +211,10 @@ function applyLocation() {
 function writeLocation(push = false) {
   clearTimeout(locationTimer);
   locationTimer = undefined;
-  const query = { view: activeWorkspace.value, ...(readingView.value ? { text: readingView.value } : {}), at: String(positionMs.value) };
+  const query = { view: activeWorkspace.value, ...(readingView.value ? { text: readingView.value } : {}), at: String(positionMs.value), ...(classicLayout.value ? { layout: "classic" } : {}) };
   const signature = locationSignature(query);
-  if (signature === locationSignature(route.query)) return;
+  // A return to the current URL must also supersede an earlier queued navigation.
+  if (signature === locationSignature(route.query) && pendingLocations.size === 0) return;
   pendingLocations.add(signature);
   // Explicit view changes create history; playback updates replace only the current entry.
   void router[push ? "push" : "replace"]({ path: route.path, query }).finally(() => pendingLocations.delete(signature));
@@ -186,15 +225,34 @@ function updatePosition(milliseconds: number) {
   if (!locationTimer) locationTimer = setTimeout(() => { locationTimer = undefined; writeLocation(); }, 1500);
 }
 function changeWorkspace(workspace: CourseWorkspace) {
-  evidenceSeekGuard.cancel();
+  cancelEvidenceNavigation();
   evidenceNavigationError.value = "";
   activeWorkspace.value = workspace;
+  if (workspace === "qa" || workspace === "agent") lastLearningWorkspace.value = workspace;
   reviewingEvidence.value = false;
   writeLocation(true);
 }
-function changeReadingView(view: ContentView) { evidenceSeekGuard.cancel(); readingView.value = view; writeLocation(); }
+function changeLayout() {
+  readingView.value = readerRef.value?.currentView() ?? readingView.value;
+  classicLayout.value = !classicLayout.value;
+  writeLocation(true);
+}
+async function showMaterials() {
+  changeWorkspace("content");
+  await nextTick();
+  materialsRef.value?.scrollTo({ top: 0 });
+  (classicLayout.value ? evidenceRef.value : materialsRef.value)?.scrollIntoView({ block: "start" });
+}
+async function showLearning() {
+  changeWorkspace(lastLearningWorkspace.value);
+  await nextTick();
+  learningRef.value?.scrollIntoView({ block: "start" });
+  const input = learningRef.value?.querySelector<HTMLTextAreaElement>(".practice-question.is-current textarea") ?? learningRef.value?.querySelector<HTMLTextAreaElement>(".qa-form textarea, .agent-panel textarea");
+  input?.focus({ preventScroll: true });
+}
+function changeReadingView(view: ContentView) { cancelEvidenceNavigation(); readingView.value = view; writeLocation(); }
 async function returnToLearning() {
-  evidenceSeekGuard.cancel();
+  cancelEvidenceNavigation();
   reviewingEvidence.value = false;
   await nextTick();
   returnFocus?.focus({ preventScroll: true });
@@ -210,10 +268,31 @@ async function loadPublicRuntimeConfiguration() {
   }
 }
 
-function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
+async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
   if (!validPosition(startTimeMillis)) return;
+  const request = ++evidenceRequest;
   evidenceNavigationError.value = "";
-  void evidenceSeekGuard.seek(taskId.value, context, () => applySeek(startTimeMillis));
+  verifyingEvidence.value = Boolean(context);
+  let applied = false;
+  try { await evidenceSeekGuard.seek(taskId.value, context, () => { applySeek(startTimeMillis); applied = true; }); }
+  finally {
+    if (request === evidenceRequest) {
+      verifyingEvidence.value = false;
+      // Wait until the verified reader is visible before measuring or moving it.
+      if (applied && reviewingEvidence.value) {
+        await nextTick();
+        if (request === evidenceRequest) {
+          if (classicLayout.value || narrowScreen.value) {
+            evidenceRef.value?.scrollIntoView({ block: "start" });
+            if (!classicLayout.value) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[aria-current=true]")?.scrollIntoView({ block: "nearest" });
+          }
+          else if (materialsRef.value && evidenceRef.value) {
+            materialsRef.value.scrollTop += evidenceRef.value.getBoundingClientRect().top - materialsRef.value.getBoundingClientRect().top - 8;
+          }
+        }
+      }
+    }
+  }
 }
 function applySeek(startTimeMillis: number) {
   positionMs.value = startTimeMillis;
@@ -226,20 +305,34 @@ function applySeek(startTimeMillis: number) {
       returnScroll = window.scrollY;
     }
     reviewingEvidence.value = true;
-    void nextTick(() => evidenceRef.value?.scrollIntoView({ block: "start" }));
   }
   writeLocation();
 }
 
 function reconnect() {
   scopeRefresh.value++;
-  evidenceSeekGuard.cancel();
+  cancelEvidenceNavigation();
   reviewingEvidence.value = false;
+  evidenceNavigationError.value = "";
   taskEventsStore.reconnect();
   void loadTaskDetail(taskId.value);
   void taskResultStore.load(taskId.value);
   void refreshTaskPlayback(taskId.value);
   void refreshTaskEmbeddedSubtitles(taskId.value);
+}
+
+function blockCourse() {
+  if (courseBlocked.value) return;
+  courseBlocked.value = true;
+  cancelEvidenceNavigation();
+  taskEventsStore.disconnect(); taskResultStore.clear();
+  clearTaskDetail(); clearTaskPlayback(); clearTaskEmbeddedSubtitles();
+  learningScope.value = null; agentScope.value = undefined; qaScope.value = undefined;
+  learningTask.value = null; returnFocus = null; reviewingEvidence.value = false;
+}
+
+function cancelEvidenceNavigation() {
+  evidenceSeekGuard.cancel(); evidenceRequest++; verifyingEvidence.value = false;
 }
 
 function clearTaskDetail() {
@@ -256,8 +349,11 @@ async function loadTaskDetail(currentTaskId: string) {
   try {
     const response = await fetchTaskDetail(normalizedTaskId);
     if (version === taskDetailRequestVersion.value) taskDetail.value = response;
-  } catch {
-    if (version === taskDetailRequestVersion.value) taskDetail.value = null;
+  } catch (error) {
+    if (version === taskDetailRequestVersion.value) {
+      taskDetail.value = null;
+      if (mayHaveLostCourseAccess(error)) blockCourse();
+    }
   }
 }
 
@@ -421,16 +517,28 @@ async function confirmRetryTask() {
         show-icon
       />
 
-      <CourseModelUsagePanel v-if="hasTaskId && task" :key="taskId" :task-id="taskId" />
+      <div v-if="hasTaskId && !courseBlocked" class="workspace-wayfinding" aria-label="学习工作区导航">
+        <div class="workspace-wayfinding__actions">
+          <button type="button" @click="showMaterials">看视频与原文</button>
+          <button type="button" @click="showLearning">{{ lastLearningWorkspace === 'qa' ? '返回课程问答' : learningTask?.totalQuestions ? `继续第 ${learningTask.questionIndex + 1} 题` : '返回学习任务' }}</button>
+        </div>
+        <button type="button" class="layout-switch" @click="changeLayout">{{ classicLayout ? '连续工作区' : '经典布局' }}</button>
+      </div>
 
       <el-empty v-if="!hasTaskId" description="课程地址中缺少任务 ID" />
-      <div v-else class="course-layout">
-        <div class="course-layout__media">
+      <section v-else-if="courseBlocked" role="alert" class="course-unavailable">
+        <h2>课程不可用或权限已变化</h2>
+        <p>已停止显示此课程的缓存内容。请从课程列表重新打开；已保存记录仍由服务端权限决定是否可读取。</p>
+        <RouterLink to="/tasks">返回我的课程</RouterLink>
+      </section>
+      <div v-else class="course-layout" :class="{ 'course-layout--continuous': !classicLayout, 'is-reading': !evidenceNavigationError && (activeWorkspace === 'content' || reviewingEvidence) }">
+        <div ref="materialsRef" class="course-layout__media" aria-label="视频与课程材料">
           <CourseVideoAside
             :key="taskId"
+            :compact="!classicLayout"
             :seek-request="seekRequest"
             @position="updatePosition"
-            @manual-seek="evidenceSeekGuard.cancel()"
+            @manual-seek="cancelEvidenceNavigation"
             :task="task"
             :task-detail="taskDetail"
             :connection-status="taskEventsStore.connectionStatus"
@@ -447,21 +555,34 @@ async function confirmRetryTask() {
             :subtitle-message="subtitleMessage"
             @refresh-video="refreshTaskVideo"
           />
+          <p v-if="verifyingEvidence" role="status">正在核对来源版本，当前学习任务保留。</p>
+          <div ref="readingTarget" class="materials-reading-target" />
         </div>
 
-        <section class="course-layout__content" aria-label="课程学习工作台">
-          <CourseWorkspaceNav :active="activeWorkspace" @change="changeWorkspace" />
-          <el-alert v-if="evidenceNavigationError" :closable="false" :title="evidenceNavigationError" type="warning" show-icon />
+        <section ref="learningRef" class="course-layout__content" aria-label="课程学习工作台">
+          <div v-if="!classicLayout" class="learning-context">
+            <p class="learning-context__eyebrow">同一节课 · 继续学习</p>
+            <p v-if="learningTask && lastLearningWorkspace === 'agent'"><strong>当前任务：</strong>{{ learningTask.goal }}<span v-if="learningTask.totalQuestions"> · 第 {{ learningTask.questionIndex + 1 }}/{{ learningTask.totalQuestions }} 题</span></p>
+            <p v-else>先阅读课程，向 Tutor 提问；需要自测时再发起解释与练习。</p>
+          </div>
+          <CourseWorkspaceNav :active="activeWorkspace" :compact="!classicLayout" @change="changeWorkspace" />
+          <div v-if="evidenceNavigationError" ref="evidenceErrorRef" class="evidence-navigation-error"><el-alert :closable="false" :title="evidenceNavigationError" type="warning" show-icon /></div>
           <el-alert v-if="taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
-          <div v-show="activeWorkspace === 'content' || reviewingEvidence" ref="evidenceRef" class="evidence-reading">
-            <div v-if="reviewingEvidence" class="evidence-reading__return"><span>回看课程原文，当前学习任务保留在下方。</span><button type="button" @click="returnToLearning">返回当前学习任务</button></div>
-            <CourseContentPanel :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView" :visible="activeWorkspace === 'content' || reviewingEvidence" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
-          </div>
-          <CourseScopePicker :key="taskId" v-show="activeWorkspace === 'agent' || activeWorkspace === 'qa'" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="activeWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
+          <!-- Move one reader between layouts; do not duplicate or remount its local state. -->
+          <Teleport :to="readingTarget || 'body'" :disabled="classicLayout || !readingTarget">
+            <div v-show="readerVisible" ref="evidenceRef" class="evidence-reading">
+              <div v-if="reviewingEvidence" class="evidence-reading__return">
+                <span>{{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
+                <button type="button" @click="returnToLearning">返回当前学习任务</button>
+              </div>
+              <CourseContentPanel ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+            </div>
+          </Teleport>
+          <CourseScopePicker :key="taskId" :compact="!classicLayout" v-show="learningWorkspace === 'agent' || learningWorkspace === 'qa'" @access-failure="loadTaskDetail(taskId)" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="learningWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
           <KeepAlive :key="taskId">
             <CourseOverviewPanel
-              v-if="activeWorkspace === 'overview'"
+              v-if="learningWorkspace === 'overview'"
               :task="task"
               :task-detail="taskDetail"
               :result="result"
@@ -470,12 +591,12 @@ async function confirmRetryTask() {
               @navigate="changeWorkspace"
               @retry="confirmRetryTask"
             />
-            <CourseStudyPanel v-else-if="activeWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="activeWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
-            <CourseQaPanel :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="activeWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
-            <CourseFilesPanel v-else-if="activeWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
+            <CourseStudyPanel v-else-if="learningWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
+            <CourseAgentPanel @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
+            <CourseQaPanel @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="learningWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
+            <CourseFilesPanel v-else-if="learningWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
             <CourseTechnicalPanel
-              v-else-if="activeWorkspace === 'technical'"
+              v-else-if="learningWorkspace === 'technical'"
               :task-id="taskId"
               :task="task"
               :task-detail="taskDetail"
@@ -486,6 +607,12 @@ async function confirmRetryTask() {
           </KeepAlive>
         </section>
       </div>
+      <details v-if="hasTaskId && !courseBlocked" class="workspace-recovery">
+        <summary>保存、恢复与课程记录</summary>
+        <p>服务端保存学习会话、执行、作答版本、反馈与核对意见。刷新后读取最近的已保存学习记录。</p>
+        <p>网址只恢复课程视图、布局与视频位置，恢复后保持暂停。未提交的问题、目标、作答和核对文字仅留在当前页面；刷新或离开后不会恢复。</p>
+        <CourseModelUsagePanel v-if="task" :key="taskId" :task-id="taskId" />
+      </details>
     </div>
   </main>
 </template>
@@ -493,6 +620,7 @@ async function confirmRetryTask() {
 <style scoped>
 .course-workspace-page { min-height: calc(100vh - var(--header-height)); background: var(--color-canvas); }
 .course-workspace-page__inner { width: min(1360px, calc(100% - 48px)); margin: 0 auto; padding: 30px 0 64px; }
+.evidence-navigation-error { scroll-margin-top: calc(var(--header-height) + 76px); }
 .evidence-reading { min-width: 0; scroll-margin-top: calc(var(--header-height) + 12px); }
 .evidence-reading__return { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-ink-soft); }
 .evidence-reading__return button { font: inherit; color: var(--color-brand); padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; }
@@ -504,4 +632,38 @@ async function confirmRetryTask() {
 @media (max-width: 1024px) { .course-workspace-page :deep(button) { min-height: 40px; } }
 @media (max-width: 900px) { .course-workspace-page__inner { width: min(100% - 32px, 760px); }.course-layout { grid-template-columns: 1fr; }.course-layout__media { position: static; } }
 @media (max-width: 520px) { .course-workspace-page__inner { width: min(100% - 24px, 760px); padding-top: 22px; }.course-layout { margin-top: 18px; } }
+</style>
+
+<style scoped>
+.workspace-wayfinding { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; position: sticky; top: var(--header-height); z-index: 5; background: var(--color-canvas); border-bottom: 1px solid var(--color-border); }
+.workspace-wayfinding__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.workspace-wayfinding button { font: inherit; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
+.workspace-wayfinding .layout-switch { font-size: 13px; color: var(--color-ink-soft); }
+.course-layout--continuous { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.course-layout--continuous .course-layout__media { display: grid; gap: 16px; max-height: calc(100dvh - var(--header-height) - 88px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; top: calc(var(--header-height) + 68px); }
+.materials-reading-target:empty { display: none; }
+.course-layout__content { scroll-margin-top: calc(var(--header-height) + 76px); }
+.course-layout--continuous :deep(.content-panel), .course-layout--continuous :deep(.qa-panel), .course-layout--continuous :deep(.agent-panel) { padding: 20px; }
+.course-layout--continuous :deep(.reading-copy) { max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; }
+.course-layout--continuous :deep(.timeline-list) { max-height: 46vh; }
+.course-layout--continuous :deep(.course-video-player) { max-height: 28vh; object-fit: contain; }
+.course-layout--continuous .evidence-reading { scroll-margin-top: calc(var(--header-height) + 76px); }
+.course-layout--continuous :deep(.timeline-row) { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.course-layout--continuous :deep(.timeline-row__time) { display: flex; gap: 12px; }
+.learning-context p { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+.learning-context__eyebrow { font-size: 13px; color: var(--color-brand); font-weight: 700; margin-bottom: 5px !important; }
+.workspace-recovery, .course-unavailable { margin-top: 20px; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); line-height: 1.7; }
+.workspace-recovery summary { cursor: pointer; font-weight: 650; }
+@media (max-width: 900px) {
+  .course-layout--continuous { grid-template-columns: 1fr; }
+  .course-layout--continuous .course-layout__media { position: static; max-height: none; overflow: visible; }
+  .course-layout--continuous:not(.is-reading) .course-layout__media { display: none; }
+  .course-layout--continuous.is-reading .course-layout__content { display: none; }
+  .course-layout--continuous :deep(.timeline-list) { max-height: 40vh; }
+  .evidence-reading__return { position: sticky; top: calc(var(--header-height) + 66px); z-index: 4; padding: 10px; background: var(--color-surface); border: 1px solid var(--color-border); }
+}
+@media (max-width: 520px) {
+  .workspace-wayfinding { align-items: stretch; }.workspace-wayfinding .layout-switch { padding: 4px 8px; }
+  .course-layout--continuous :deep(.content-panel), .course-layout--continuous :deep(.qa-panel), .course-layout--continuous :deep(.agent-panel) { padding: 14px; }
+}
 </style>

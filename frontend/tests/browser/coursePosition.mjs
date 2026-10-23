@@ -8,7 +8,7 @@ import { parseArgs } from 'node:util';
 
 const { values: args } = parseArgs({ options: {
   dist: { type: 'string' }, media: { type: 'string' }, long: { type: 'string' },
-  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' }, review: { type: 'boolean' }, models: { type: 'boolean' },
+  only: { type: 'string' }, chromium: { type: 'string' }, output: { type: 'string' }, baseline: { type: 'boolean' }, review: { type: 'boolean' }, models: { type: 'boolean' }, classic: { type: 'boolean' }, continuous: { type: 'boolean' },
 } });
 if (!args.dist || !args.media || !args.long || !args.output) throw Error('Require --dist, --media, --long, --output (see docs/COURSE_POSITION.md)');
 const dist = resolve(args.dist), output = resolve(args.output);
@@ -112,11 +112,21 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 await page.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
 page.on('pageerror', error => errors.push(String(error)));
 await page.addInitScript(() => localStorage.setItem('courselingo.accessToken', 'isolated-fixture-token'));
+if (args.classic) await page.addInitScript(() => {
+  const url = new URL(location.href);
+  if (url.pathname.startsWith('/tasks/')) { url.searchParams.set('layout', 'classic'); history.replaceState({}, '', url); }
+});
 const video = page.locator('video');
 const current = page.locator('.timeline-row[aria-current=true]');
 const nav = label => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', { name: label, exact: true });
 const checks = [];
 async function check(name, run) { if (args.only && !name.includes(args.only)) return; await run(); checks.push(name); console.log(`PASS ${name}`); }
+async function expectReviewCancelled() {
+  if (args.continuous) {
+    await expect(page.locator('.evidence-reading__return')).toBeHidden();
+    await expect(page.locator('.evidence-reading')).toBeVisible();
+  } else await expect(page.locator('.evidence-reading')).toBeHidden();
+}
 async function seek(seconds) { await video.evaluate((v, t) => { v.currentTime = t; }, seconds); await expect.poll(() => video.evaluate(v => v.seeking)).toBe(false); }
 try {
   if (args.models) {
@@ -124,6 +134,8 @@ try {
       await page.goto(`${origin}/tasks/short?view=agent`);
       await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
       expect(modelReads).toBe(0);
+      const recovery = page.locator('.workspace-recovery');
+      if (await recovery.count()) await recovery.evaluate(el => { el.open = true; });
       const card = page.getByRole('region', { name: '课程模型使用记录' });
       await card.getByRole('button', { name: '模型使用记录', exact: true }).click();
       await expect(card.getByText('historical-model-a', { exact: false })).toBeVisible();
@@ -146,6 +158,8 @@ try {
     });
     await check('permission denial removes previously visible model facts', async () => {
       modelDenied = true;
+      const recovery = page.locator('.workspace-recovery');
+      if (await recovery.count()) await recovery.evaluate(el => { el.open = true; });
       const card = page.getByRole('region', { name: '课程模型使用记录' });
       await card.getByRole('button', { name: '刷新模型使用记录' }).click();
       await expect(card.getByRole('alert')).toBeVisible();
@@ -165,6 +179,8 @@ try {
     });
     await check('390px model card stays within viewport', async () => {
       await page.setViewportSize({ width: 390, height: 844 });
+      const recovery = page.locator('.workspace-recovery');
+      if (await recovery.count()) await recovery.evaluate(el => { el.open = true; });
       const card = page.getByRole('region', { name: '课程模型使用记录' });
       await card.getByRole('button', { name: '模型使用记录', exact: true }).click();
       await expect(card.getByText('historical-model-a', { exact: false })).toBeVisible();
@@ -234,7 +250,7 @@ try {
       expect(manualPosition).toBeGreaterThan(6.5);
       await new Promise(r => setTimeout(r, 1800));
       expect(await video.evaluate(v => v.currentTime)).toBeCloseTo(manualPosition, 2);
-      await expect(page.locator('.evidence-reading')).toBeHidden();
+      await expectReviewCancelled();
       verificationDelay = 0;
     });
 
@@ -251,7 +267,7 @@ try {
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBeCloseTo(5.88, 2);
       await new Promise(r => setTimeout(r, 1800));
       expect(await video.evaluate(v => v.currentTime)).toBeCloseTo(5.88, 2);
-      await expect(page.locator('.evidence-reading')).toBeHidden();
+      await expectReviewCancelled();
       // Playback frames must not cancel a subsequent valid Evidence request.
       await video.evaluate(v => v.play());
       await page.locator('.evidence-item button').click();
@@ -267,7 +283,7 @@ try {
       await page.evaluate(() => { const b = document.querySelectorAll('.timeline-row button'); for (const i of [3, 0, 2, 1, 3]) b[i].click(); });
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(5);
       await expect.poll(() => new URL(page.url()).searchParams.get('at')).toBe('5000');
-      await page.evaluate(() => { const b = document.querySelectorAll('.workspace-nav button'); for (const i of [0, 2, 4, 2, 4]) b[i].click(); });
+      await page.evaluate(() => { const b = [...document.querySelectorAll('.workspace-nav button')]; for (const name of ['学习助手', '课程内容', '课程问答', '课程内容', '课程问答']) b.find(x => x.textContent.trim() === name).click(); });
       await expect(page.locator('.workspace-nav [aria-current=page]')).toHaveText('课程问答');
       await expect.poll(() => new URL(page.url()).searchParams.get('view')).toBe('qa');
       await page.goBack(); await page.goForward();
@@ -326,7 +342,7 @@ try {
       await page.locator('.evidence-item button').click(); await expect.poll(() => verificationReads).toBeGreaterThan(reads);
       sourceRevision = 2; await page.getByRole('button', { name: '刷新', exact: true }).click();
       await new Promise(r => setTimeout(r, 800));
-      expect(await video.evaluate(v => v.currentTime)).toBe(7); await expect(page.locator('.evidence-reading')).toBeHidden();
+      expect(await video.evaluate(v => v.currentTime)).toBe(7); await expectReviewCancelled();
       verificationDelay = 0;
     });
     await check('a new revision citation refreshes an older cached transcript before showing it', async () => {
@@ -478,6 +494,27 @@ try {
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBeGreaterThan(3200.5);
       await video.evaluate(v => v.pause());
       await page.screenshot({ path: `${output}/long-timeline.png` });
+    });
+    if (args.continuous) await check('390px hidden reader stops following and viewport resize resumes it', async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`${origin}/tasks/long?view=content&text=timeline&at=1000`);
+      await expect.poll(() => video.evaluate(v => v.duration), { timeout: 15000 }).toBe(3900);
+      const list = page.locator('.timeline-list');
+      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      const before = await list.evaluate(el => el.scrollTop);
+      await seek(3000); await new Promise(r => setTimeout(r, 200));
+      expect(await list.evaluate(el => el.scrollTop)).toBe(before);
+      await page.getByRole('button', { name: '看视频与原文', exact: true }).click();
+      await expect(current).toHaveAttribute('data-segment', '8571');
+      await expect.poll(() => list.evaluate(el => el.scrollTop)).toBeGreaterThan(before);
+      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await expect(page.locator('.evidence-reading')).toBeHidden();
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      await expect(page.locator('.evidence-reading')).toBeVisible();
+      await seek(3200);
+      await expect.poll(() => current.evaluate(el => { const a = el.getBoundingClientRect(), b = el.parentElement.getBoundingClientRect(); return a.top >= b.top && a.top < b.bottom; })).toBe(true);
+      await page.screenshot({ path: `${output}/reader-resize.png` });
     });
     await check('390px layout and codec error retain readable course content', async () => {
       await page.setViewportSize({ width: 390, height: 844 });

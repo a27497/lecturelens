@@ -11,6 +11,7 @@ type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported
 type VideoPlaybackExpose = { seekTo: (seconds: number) => void };
 
 const props = defineProps<{
+  compact?: boolean;
   seekRequest?: SeekRequest;
   task: TaskEventPayload | null;
   taskDetail: TaskDetailResponse | null;
@@ -66,7 +67,7 @@ defineExpose({ seekTo });
       @refresh="$emit('refreshVideo')"
     />
 
-    <section class="course-status" aria-labelledby="course-status-title">
+    <section v-if="!compact || !isSucceeded" class="course-status" aria-labelledby="course-status-title">
       <div class="course-status__heading">
         <div>
           <span>处理状态</span>

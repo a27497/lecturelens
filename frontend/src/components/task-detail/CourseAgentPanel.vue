@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
-import { studyCommand, studyEvents, studyStatus } from "../../api/study";
-import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun } from "../../api/study";
+import { studyCommand as sendStudyCommand, studyEvents, studyStatus } from "../../api/study";
+import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun, StudyCommand } from "../../api/study";
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
+import type { LearningTaskPosition } from "./learningTaskPosition";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
@@ -17,7 +19,7 @@ import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 import type { LearningScope } from "../../api/learningScope";
 const props = defineProps<{ taskId: string; status?: string; learningScope?: LearningScope | null }>();
-const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"] }>();
+const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"]; position: [position: LearningTaskPosition | null]; accessFailure: [] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
 const ready = ref(false);
@@ -39,6 +41,9 @@ const approvalRequired = ref(false);
 const approval = ref<StudyResponse["approval"]>(null);
 const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
+const questionIndex = ref(0);
+const questionDrafts = ref<Record<number, boolean>>({});
+const questionElements = new Map<number, HTMLElement>();
 const preparing = computed(() => Boolean(props.status && props.status !== "SUCCEEDED"));
 let version = 0;
 let controller: AbortController | null = null;
@@ -48,6 +53,28 @@ let requestGoal = "";
 let sessionKey = "";
 let cursor = 0;
 watch(run, value => emit("frozenScope", value ? value.learning_scope ?? null : undefined), { immediate: true });
+watch(() => artifact.value?.artifact_id, () => { questionIndex.value = 0; questionDrafts.value = {}; });
+watch(() => ({ run: run.value, artifact: artifact.value, index: questionIndex.value, saved: attempts.value.length }), ({ run, artifact, index, saved }) => {
+  emit("position", run ? { goal: run.goal, question: artifact?.questions[index]?.question ?? "", questionIndex: index, totalQuestions: artifact?.questions.length ?? 0, savedQuestions: saved } : null);
+}, { immediate: true });
+
+async function chooseQuestion(index: number) {
+  if (!artifact.value?.questions[index]) return;
+  questionIndex.value = index;
+  await nextTick();
+  const question = questionElements.get(index);
+  question?.scrollIntoView({ block: "start" });
+  question?.querySelector<HTMLTextAreaElement>("textarea")?.focus({ preventScroll: true });
+}
+
+async function studyCommand(task: string, command: StudyCommand) {
+  const current = version;
+  try { return await sendStudyCommand(task, command); }
+  catch (failure) {
+    if (current === version && task === props.taskId && mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    throw failure;
+  }
+}
 const active = computed(() => run.value !== null && ["queued", "running", "awaiting_approval"].includes(run.value.status));
 const canStart = computed(() => props.learningScope !== null && enabled.value && ready.value && !active.value && !submitting.value && goal.value.trim().length > 0);
 const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ awaiting_approval: "等待发布审批", queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
@@ -92,7 +119,12 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
       }
     }
     if (current === version && active.value) connect(current, task);
-  } catch (failure) { if (current === version) error.value = toUserFriendlyError(failure, "学习助手暂不可用"); }
+  } catch (failure) {
+    if (current === version) {
+      error.value = toUserFriendlyError(failure, "学习助手暂不可用");
+      if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    }
+  }
   finally { if (current === version) loading.value = false; }
 }
 
@@ -188,7 +220,7 @@ async function reveal() {
 
 <template>
   <section class="agent-panel workspace-panel" aria-labelledby="agent-title">
-    <header><h2 id="agent-title">学习助手</h2><p>提出一个学习目标，结合课程证据获得解释与两道自测题。<RouterLink to="/settings/models">管理模型</RouterLink></p></header>
+    <header><h2 id="agent-title">学习助手 · 解释与练习</h2><p>显式执行后，结合课程证据生成解释与自测题。只想问一个问题，可以切换到“课程问答”。</p></header>
     <p v-if="loading" role="status">正在读取学习会话…</p>
     <div v-else-if="preparing" role="status"><p>课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。</p><el-button @click="$emit('navigate', 'overview')">查看处理进度</el-button></div>
     <div v-else-if="enabled === false" role="status">
@@ -221,7 +253,6 @@ async function reveal() {
       <div v-if="run" class="run-progress" aria-live="polite">
         <strong>{{ stateText }}</strong>
         <p class="run-goal">{{ run.goal }}</p>
-        <p v-if="run.model_selection?.decision">决策：{{ run.model_selection.decision.name }} · {{ run.model_selection.decision.model }}<br />复核：{{ run.model_selection.review?.name }} · {{ run.model_selection.review?.model }}</p>
         <ol v-if="events.length">
           <li v-for="event in events.filter(e => ['tool_started', 'run_resumed', 'quality_checked', 'protocol_retry_scheduled'].includes(e.event_type))" :key="event.sequence">
             {{ event.event_type === 'quality_checked' ? (event.payload.accepted ? '模型复核已完成' : '草稿需要修订') : event.event_type === 'protocol_retry_scheduled' ? '模型返回格式有误，正在尝试纠正（最多一次）' : event.event_type === 'run_resumed' ? '已从保存的进度继续' : toolText[event.payload.tool ?? ''] ?? '处理学习任务' }}
@@ -242,16 +273,28 @@ async function reveal() {
             <code class="evidence-id">{{ citation.evidence_id }}</code><p>{{ citation.text }}</p>
           </div>
         </details>
-        <h3 v-if="artifact.questions.length">两道自测题</h3>
-        <div v-for="(question, index) in artifact.questions" :key="index" class="practice-question">
+        <h3 v-if="artifact.questions.length">自测练习</h3>
+        <template v-if="artifact.questions.length">
+          <p class="practice-guidance">已有 {{ attempts.length }}/{{ artifact.questions.length }} 题保存记录；这不是掌握程度评分。先保存作答，再获取反馈，回看来源后可另存新版。</p>
+          <nav class="question-nav" aria-label="练习题目">
+            <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
+          </nav>
+        </template>
+        <div v-for="(question, index) in artifact.questions" v-show="questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
-          <PracticeAnswerForm v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
-          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
+          <PracticeAnswerForm v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
+          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
+          <p v-else-if="!feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
           <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
+        </div>
+        <div v-if="artifact.questions.length > 1" class="actions">
+          <el-button :disabled="questionIndex === 0" @click="chooseQuestion(questionIndex - 1)">上一题</el-button>
+          <el-button :disabled="questionIndex === artifact.questions.length - 1" @click="chooseQuestion(questionIndex + 1)">下一题</el-button>
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
       </article>
       <RunTracePanel v-if="run" :task-id="taskId" :session-id="sessionId" :run="run" :artifact="artifact" />
+      <details class="agent-settings"><summary>模型设置与执行说明</summary><p>Trace 和模型记录展示已保存的执行事实；打开不会创建学习任务。</p><RouterLink to="/settings/models">管理模型</RouterLink></details>
     </div>
     <div v-if="error" role="alert"><el-alert :title="error" type="error" :closable="false" /><el-button v-if="!run && !loading" @click="load()">重新连接</el-button><RouterLink to="/settings/models">检查模型配置</RouterLink></div>
   </section>
@@ -267,4 +310,7 @@ header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p,
 .question-text, .answer p { white-space: pre-wrap; overflow-wrap: anywhere; }
 .learning-history .el-button { max-width: 100%; height: auto; min-height: 32px; white-space: normal; text-align: left; line-height: 1.6; }
 .learning-history .el-button :deep(span) { min-width: 0; overflow-wrap: anywhere; }
+.question-nav { display: flex; flex-wrap: wrap; gap: 8px; }.question-nav button { font: inherit; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
+.question-nav [aria-current] { background: var(--color-brand-soft); border-color: var(--color-brand); }.practice-guidance { color: var(--color-ink-soft); line-height: 1.6; }.practice-question { scroll-margin-top: calc(var(--header-height) + 92px); }
+.agent-settings { margin-top: 16px; color: var(--color-ink-soft); }
 </style>

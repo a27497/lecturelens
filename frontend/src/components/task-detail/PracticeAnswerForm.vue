@@ -3,12 +3,13 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
 import type { StudyAttempt, StudyCommand } from "../../api/study";
 import { randomUuid } from "../../utils/randomUuid";
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   attempt?: StudyAttempt;
 }>();
-const emit = defineEmits<{ saved: [attempt: StudyAttempt] }>();
+const emit = defineEmits<{ saved: [attempt: StudyAttempt]; draftChange: [dirty: boolean]; accessFailure: [] }>();
 const text = ref("");
 const latest = ref<StudyAttempt>();
 const saving = ref(false);
@@ -19,6 +20,7 @@ const message = ref("");
 let generation = 0;
 let pending: StudyCommand | null = null;
 const dirty = computed(() => text.value !== (latest.value?.answer_text ?? ""));
+watch(dirty, value => emit("draftChange", value), { immediate: true });
 const canSave = computed(() => dirty.value && text.value.trim().length > 0 && text.value.length <= 4000 && !saving.value);
 const scope = () => ({ session_id: props.sessionId, run_id: props.runId, artifact_id: props.artifactId, question_index: props.questionIndex });
 
@@ -50,8 +52,9 @@ async function save() {
   try {
     const result = await studyCommand(task, command);
     if (current === generation && result.attempt) accept(result.attempt);
-  } catch {
+  } catch (failure) {
     if (current !== generation) return;
+    if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
     message.value = "保存未确认，你的文字仍在本页。请重试保存。";
     try {
       const result = await studyCommand(task, { ...scope(), operation: "READ" });
@@ -77,7 +80,12 @@ async function showHistory(more = false) {
     if (current !== generation) return;
     history.value = [...(more ? history.value ?? [] : []), ...result.attempts ?? []];
     nextBefore.value = result.next_before_version ?? null;
-  } catch { if (current === generation) message.value = "修改记录暂不可用，请重试。"; }
+  } catch (failure) {
+    if (current === generation) {
+      message.value = "修改记录暂不可用，请重试。";
+      if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    }
+  }
   finally { if (current === generation) loadingHistory.value = false; }
 }
 </script>

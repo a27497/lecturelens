@@ -14,5 +14,5 @@ export function readCourseLocation(query: LocationQuery) {
   const workspace = typeof query.view === "string" && workspaces.includes(query.view as CourseWorkspace) ? query.view as CourseWorkspace : "agent";
   const textView = typeof query.text === "string" && textViews.includes(query.text as ContentView) ? query.text as ContentView : undefined;
   const at = typeof query.at === "string" && /^\d{1,9}$/.test(query.at) ? Number(query.at) : 0;
-  return { workspace, textView, milliseconds: validPosition(at) ? at : 0 };
+  return { workspace, textView, milliseconds: validPosition(at) ? at : 0, classic: query.layout === "classic" };
 }
