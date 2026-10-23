@@ -8,7 +8,7 @@
 
 **LectureLens 是一个围绕课程内容工作的 AI 学习平台。**
 
-[查看产品界面](#产品体验) · [了解核心能力](#核心能力) · [技术实现](#技术实现) · [从源码运行](#从源码运行)
+[快速导览](#先用-2-分钟认识仓库) · [查看产品界面](#产品体验) · [技术实现](#技术实现) · [从源码运行](#从源码运行)
 
 [![CI](https://github.com/a27497/lecturelens/actions/workflows/ci.yml/badge.svg)](https://github.com/a27497/lecturelens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-447566.svg)](LICENSE)
@@ -18,6 +18,25 @@
 <sub>课程工作区 · 基于合成测试数据的真实产品界面。下面展示已保存真实模型结果在原生界面中的呈现。</sub>
 
 </div>
+
+## 先用 2 分钟认识仓库
+
+LectureLens 面向两件学习任务：**把视频整理成可阅读的课程资料**，以及**围绕课程证据解释、练习和反馈**。Study Agent 仍处于实验阶段；下文介绍仓库中的实现，具体部署可能使用其他版本，见[版本与部署快照](docs/PROJECT_MAP.md#版本与部署快照)。
+
+| 从用户动作看三条链路 | 谁负责 | 先看哪里 |
+| --- | --- | --- |
+| 上传视频 → 异步处理 → 已有字幕或 ASR → 翻译 → 学习资料 | Java 媒体管线；MySQL 保存课程事实，MinIO 保存媒体与制品 | [TaskController](backend/src/main/java/com/example/courselingo/task/controller/TaskController.java)、[Pipeline](backend/src/main/java/com/example/courselingo/task/runner/PipelineAnalysisTaskWorkExecutor.java) |
+| 课程 Evidence 更新 → 版本化同步 → Python 检索索引 READY | Java 保持证据权威；Python 在 PostgreSQL/pgvector 建派生索引 | [EvidenceIndexSynchronizer](backend/src/main/java/com/example/courselingo/evidence/EvidenceIndexSynchronizer.java)、[Retriever](agent-service/src/lecturelens_agent/retrieval.py) |
+| 学习目标 → Java 鉴权 → Python Session/Run → 模型选工具、观察和复核 → 保存产物 | Vue 发起交互；Python 管学习执行，Java 持续检查证据权限与版本 | [CourseAgentPanel](frontend/src/components/task-detail/CourseAgentPanel.vue)、[StudyRuntime](agent-service/src/lecturelens_agent/study/runtime.py) |
+
+媒体准备、Evidence 索引和 Agent 执行各有独立状态与失败边界。普通课程问答另走单轮 RAG；模型选择工具并根据观察继续或停止，发生在 Study Agent 中。
+
+**按目录找代码：** `frontend/` 是 Vue 交互，`backend/` 是 Java 课程与权限权威，`agent-service/` 是 Python Agent 与检索；`docs/` 解释设计和接口，`eval/` 保存历史验收与失败证据。
+
+- **5 分钟看代码：** [仓库地图与三条调用链](docs/PROJECT_MAP.md)，含每条链路的源码和回归入口。
+- **理解设计：** [架构与文档导航](docs/ARCHITECTURE.md)、[Agent 产品契约](docs/AGENT_PRODUCT_CONTRACT.md)。
+- **判断验证范围：** [历史评测索引](eval/README.md)。机制测试与真实模型质量分别报告；自动评分、长期记忆和复习调度尚未交付。
+- **理解公开历史：** 首次公开提交是 2026-07-14 的项目快照（863 个文件、80,456 行新增）；Python 服务于后续引入，见[公开历史](docs/PROJECT_MAP.md#公开历史)。
 
 ## 为什么做 LectureLens？
 

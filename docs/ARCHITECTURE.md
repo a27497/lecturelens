@@ -1,6 +1,17 @@
 # LectureLens 当前架构
 
-本文描述当前仓库的组件、状态和故障边界。Study Agent 已完成有限课程范围验收，仍属实验能力，尚未发布；线上配置保持不变。质量结论见 [AU 完成报告](../eval/phase-completion/FINAL_AU.md)，实验过程与失败记录见[评测索引](../eval/README.md)。接口字段和表结构分别以 [API](API.md) 与[数据库参考](DB_SCHEMA.md)为准。
+本文描述 main 中的组件、状态和故障边界；首次阅读可先看[仓库导览与三条调用链](PROJECT_MAP.md)。Study Agent 仍属实验能力；[AU 完成报告](../eval/phase-completion/FINAL_AU.md)是冻结候选的有限范围历史验收，不代表当前 main 或维护部署重新通过验收。部署与源码存在版本差异，见[2026-10-20 快照](PROJECT_MAP.md#版本与部署快照)。
+
+## 文档阅读导航
+
+| 阅读目的 | 当前入口与范围 |
+| --- | --- |
+| 找目录、端到端源码与回归入口 | [PROJECT_MAP](PROJECT_MAP.md)：按本次 main 基线核对的导航 |
+| 理解职责、权限和数据边界 | 本文与[产品契约](AGENT_PRODUCT_CONTRACT.md)；契约末尾的日期记录是历史实验过程 |
+| 查接口、数据与启动条件 | [API](API.md)、[数据库参考](DB_SCHEMA.md)、[部署指南](DEPLOYMENT.md)、[Python 服务](../agent-service/README.md) |
+| 深入三条实现链路 | 本文媒体摄取章节、[Evidence 同步](L1_EVIDENCE_SYNC.md)、[Agent 执行](L2_STUDY_AGENT.md)；可选审批以[审批恢复协议](STUDY_APPROVAL_RECOVERY.md)为准 |
+| 评估能力与证据 | [评测索引](../eval/README.md)、[历史验收](../HUMAN_ACCEPTANCE_REPORT.md)；机制、真实质量与不同冻结候选分别阅读 |
+| 了解早期设计 | [Study Agent 蓝图](STUDY_AGENT_BLUEPRINT.md)、[迁移审计](AGENT_MIGRATION_AUDIT.md)是阶段设计与历史材料，实现状态以源码和当前入口为准 |
 
 ## 组件与数据所有权
 
@@ -90,9 +101,9 @@ Java 先验证当前用户、课程存在、处理成功及索引 READY，再签
 
 ### 预算、取消与删除
 
-默认 Run 上限为 6 次模型调用、8 次逻辑工具执行、64,000 保守 token 预留和 90 秒 deadline。调用前持久扣减，内部权威读取另受查询/窗口上限约束；Provider 实际 usage 单独记录，缺失 usage 不计作零成本。deadline 从首次领取起计时，包含重启停机时间；配置范围为 30–300 秒。模型响应最多 128 KiB，请求按剩余运行时间限时；Authority HTTP 使用独立的 10 秒超时，返回后仍须通过 Run deadline 检查。
+默认 Run 上限为 6 次模型调用、8 次工具预算扣减（逻辑工具与额外只读重试共享）、64,000 保守 token 预留和 90 秒 deadline。调用前持久扣减，正常内部权威读取另受查询/窗口上限约束；Provider 实际 usage 单独记录，缺失 usage 不计作零成本。deadline 从首次领取起计时，包含重启停机时间；配置范围为 30–300 秒。模型响应最多 128 KiB，请求按剩余运行时间限时；Authority HTTP 使用独立的 10 秒超时，返回后仍须通过 Run deadline 检查。
 
-取消立即将 Run 标为 `cancelled`。外部请求可能继续到返回或 HTTP 超时，晚到结果不能发布或覆盖新 Run 状态。预算耗尽为 `budget_exceeded`；工具、Provider、持续格式错误、修订耗尽、权限或版本变化均终止执行。没有人工审批或 `waiting_user` 节点。
+取消立即将 Run 标为 `cancelled`。外部请求可能继续到返回或 HTTP 超时，晚到结果不能发布或覆盖新 Run 状态。预算耗尽为 `budget_exceeded`；不可恢复的工具/Provider 错误、持续格式错误、修订耗尽、权限或版本变化均终止执行。有界只读重试共用持久预算；可选发布审批默认关闭，启用时通过独立 `approval` 节点进入 `awaiting_approval`，等待期间暂停执行 deadline，但不重置预算。协议与恢复边界见[审批与恢复](STUDY_APPROVAL_RECOVERY.md)。
 
 Java 删除课程后立即关闭课程、Session、Run、答案和事件访问。后台将 DELETE 变更同步到 Python，持久写入无正文 tombstone，撤销旧同步资格，阻止晚到请求恢复课程。派生索引随 DELETE 清除；学习记录、工具结果、事件和 checkpoint 的清理须取得 Session 锁，失败继续重试。必须等活动 worker 完成或退出后清理 checkpoint，避免旧线程写回。源 revision 变化使旧 Session 失效，新会话使用新 revision。
 
