@@ -109,6 +109,20 @@ def tool_arguments(raw):
     return json.loads(value), repairs
 
 
+def request_reservation(messages, schemas, output_tokens):
+    # httpx sends JSON with ensure_ascii=False and compact separators. Charge the
+    # same representation, rather than padding/ASCII escapes never sent on wire.
+    # UTF-8 bytes remain a conservative input estimate, not provider token usage.
+    from .context import compact_json
+
+    return {
+        "message_bytes": len(compact_json(messages).encode()),
+        "schema_bytes": len(compact_json(schemas).encode()),
+        "output_tokens": output_tokens,
+        "estimator": "compact_utf8_bytes_plus_output_tokens_v1",
+    }
+
+
 def decision_schemas(messages):
     first_user = next(
         (message.get("content", "") for message in messages if message.get("role") == "user"), ""

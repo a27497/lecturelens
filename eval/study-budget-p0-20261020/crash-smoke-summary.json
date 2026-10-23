@@ -1,0 +1,332 @@
+[
+  {
+    "profile": "practice",
+    "point": "provider.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1255.186,
+    "recovery_p95_ms": 1255.186,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1230.804,
+    "recovery_p95_ms": 1230.804,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1246.209,
+    "recovery_p95_ms": 1246.209,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1526.894,
+    "recovery_p95_ms": 1526.894,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1289.859,
+    "recovery_p95_ms": 1289.859,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1228.1,
+    "recovery_p95_ms": 1228.1,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1163.046,
+    "recovery_p95_ms": 1163.046,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "provider.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1244.72,
+    "recovery_p95_ms": 1244.72,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1292.052,
+    "recovery_p95_ms": 1292.052,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice",
+    "point": "store.save_tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1225.052,
+    "recovery_p95_ms": 1225.052,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1207.105,
+    "recovery_p95_ms": 1207.105,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1217.926,
+    "recovery_p95_ms": 1217.926,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1207.507,
+    "recovery_p95_ms": 1207.507,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2610.9790000000003,
+    "recovery_p95_ms": 2610.9790000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:1:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1167.698,
+    "recovery_p95_ms": 1167.698,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:1:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1333.16,
+    "recovery_p95_ms": 1333.16,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1209.037,
+    "recovery_p95_ms": 1209.037,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "provider.decide:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1305.482,
+    "recovery_p95_ms": 1305.482,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:2:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2357.497,
+    "recovery_p95_ms": 2357.497,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "store.save_tool:2:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2316.376,
+    "recovery_p95_ms": 2316.376,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.pause:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2352.85,
+    "recovery_p95_ms": 2352.85,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.pause:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1192.269,
+    "recovery_p95_ms": 1192.269,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.publish:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1169.394,
+    "recovery_p95_ms": 1169.394,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "practice_approval",
+    "point": "approval.publish:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1183.14,
+    "recovery_p95_ms": 1183.14,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1258.978,
+    "recovery_p95_ms": 1258.978,
+    "outcomes": {
+      "MODEL_OUTCOME_UNKNOWN": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "model_journal.complete:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2511.2470000000003,
+    "recovery_p95_ms": 2511.2470000000003,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.pause:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 2405.159,
+    "recovery_p95_ms": 2405.159,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.pause:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1208.634,
+    "recovery_p95_ms": 1208.634,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.publish:0:before",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1165.727,
+    "recovery_p95_ms": 1165.727,
+    "outcomes": {
+      "succeeded": 1
+    }
+  },
+  {
+    "profile": "feedback_approval",
+    "point": "approval.publish:0:after",
+    "n": 1,
+    "passed": 1,
+    "recovery_p50_ms": 1380.635,
+    "recovery_p95_ms": 1380.635,
+    "outcomes": {
+      "succeeded": 1
+    }
+  }
+]

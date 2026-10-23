@@ -157,6 +157,7 @@ def repair_observation(quality):
 def decision_observation(result):
     # The journal keeps raw source quotes. Visible Evidence already supplies the text.
     visible = dict(result)
+    visible.pop("method_observation_scope", None)
     if visible.get("linear_request"):
         from .linear import effective_linear_request
 
@@ -204,6 +205,30 @@ def visible_references(value, selected):
     return result
 
 
+def decision_texts(evidence, coverage, byte_limit=6000, *, focus=None):
+    """Keep method passages at the existing 600-character bound; budget previews.
+
+    Full sources remain in the authority and the independent review context.
+    The eight-ID selection/alias fence is unchanged, including preview-only IDs.
+    """
+    texts = {item["evidence_id"]: item["text"][:600] for item in evidence}
+    pinned = {method["evidence_id"] for method in (coverage or {}).get("methods", {}).values()}
+    remaining = byte_limit - sum(len(text.encode()) for ref, text in texts.items() if ref in pinned)
+    previews = sorted((ref for ref in texts if ref not in pinned), key=lambda ref: len(texts[ref].encode()))
+    # Two methods need at most 4800 bytes even with four-byte Unicode. Expand
+    # the explicit reread next, retaining a small visible preview for every ID.
+    if focus in previews:
+        previews.remove(focus)
+        minimum = sum(min(64, len(texts[ref].encode())) for ref in previews)
+        texts[focus] = texts[focus].encode()[: max(0, remaining - minimum)].decode("utf-8", errors="ignore")
+        remaining -= len(texts[focus].encode())
+    for index, ref in enumerate(previews):
+        share = max(0, remaining // (len(previews) - index))
+        texts[ref] = texts[ref].encode()[:share].decode("utf-8", errors="ignore")
+        remaining -= len(texts[ref].encode())
+    return texts
+
+
 def build_messages(system, goal, evidence, history, previous_turns, budget=None):
     # Source and translated evidence often cover the identical video interval.
     # Keep one copy in the prompt; canonical IDs remain in the runtime checkpoint.
@@ -222,6 +247,15 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
     # but only the aliases with actual visible text are accepted as returned citations.
     reverse = {forward[item["evidence_id"]]: item["evidence_id"] for item in visible}
     from .goals import goal_constraints
+    from .method_scope import latest_coverage
+
+    coverage = latest_coverage(history)
+    focus = (
+        history[-1]["arguments"].get("evidence_id")
+        if history and history[-1]["tool"] == "read_evidence_window"
+        else None
+    )
+    texts = decision_texts(visible, coverage, focus=focus)
 
     context = {
         "goal": goal,
@@ -230,13 +264,19 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         "evidence": [
             {
                 "evidence_id": forward[item["evidence_id"]],
-                "text": item["text"][:600],
+                "text": texts[item["evidence_id"]],
                 "start_ms": item["start_ms"],
                 "end_ms": item["end_ms"],
+                **({"text_truncated": True} if texts[item["evidence_id"]] != item["text"] else {}),
             }
             for item in visible
         ],
     }
+    if any(texts[item["evidence_id"]] != item["text"] for item in visible):
+        context["evidence_text_policy"] = (
+            "Truncated passages are previews. Read missing context before relying on an unseen detail "
+            "or concluding the course lacks support. Final review checks the full bounded sources."
+        )
     if budget is not None:
         context["budget"] = budget
     for item in reversed(history):
@@ -257,9 +297,6 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         from .strings import novel_string_input
 
         context["new_input_option"] = novel_string_input(goal, evidence)
-    from .method_scope import latest_coverage
-
-    coverage = latest_coverage(history)
     if coverage is not None:
         context["course_coverage"] = aliases_in(
             visible_references(
@@ -320,6 +357,10 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
             if index == len(history) - 1
             else aliases_in(visible_references(decision_observation(item["result"]), selected), forward)
         )
+        if index != len(history) - 1:
+            # The latest authorized coverage is already in the final context.
+            # Older method menus can be stale and duplicate the same observation.
+            result.pop("course_coverage", None)
         messages.append({"role": "tool", "tool_call_id": call_id, "content": compact_json(result)})
     return messages, reverse
 
