@@ -1,0 +1,55 @@
+{
+  "base_sha": "e34d8c596d74d4320ce6a224359190374520e4d3",
+  "main_application_modules_unchanged": 56,
+  "python_tests": {
+    "passed": 838,
+    "skipped": 0,
+    "failed": 0,
+    "warning": "Existing Starlette/AnyIO deprecation",
+    "seconds": 237.37,
+    "new_expense_cases_included": 79
+  },
+  "lint": "PASS",
+  "format": "PASS",
+  "dependency_changes": false,
+  "supervisor_status": "SUCCEEDED",
+  "supervisor_cleanup_complete": true,
+  "paid_provider_requests": 0,
+  "account_api_requests": 0,
+  "real_provider_certification": "NOT_RUN",
+  "teaching_quality": "NOT_RUN",
+  "pr5_b": "BLOCKED",
+  "network_python_counts": {
+    "database_connections": 3,
+    "loopback_test_connections": 75,
+    "denied_connections": 0
+  },
+  "network_limits": "Python audit fence only; native libpq pinned independently. Deliberate denial probes have separate child records. os._exit/SIGKILL cannot flush atexit counters. No OS sandbox certification.",
+  "test_database": {
+    "postgresql": "17.11",
+    "pgvector": "0.8.7",
+    "type": "independent test container / persistent named volume, process crash tests only",
+    "prior_implementation_and_ci_pgvector": "0.8.6"
+  },
+  "retained_failed_trials": [
+    "Initial plan assertion expected old 54 instead of current 56 modules",
+    "Explicit secondary port forwarding rejected by unchanged network fence; focused failure retained, partial full run cancelled by supervisor identity",
+    "Original deadline reproduction (two failures); initial injection before admit distinguished from the reproduced defect",
+    "Review network test construction: generated source quoting and wrapped httpx exception inspection; corrected tests without weakening the fence"
+  ],
+  "ci": "Use the PR checks for the exact published HEAD; local success is not CI success.",
+  "prior_implementation_result": {
+    "passed": 831,
+    "skipped": 0,
+    "failed": 0,
+    "warning": "Existing Starlette/AnyIO deprecation",
+    "seconds": 235.15,
+    "new_expense_cases_included": 72
+  },
+  "deadline_regressions": {
+    "old_result": "two expired windows still entered Fake sender (0.001s and stale 90s)",
+    "fixed_result": "both refused before sender, reservation retained; wall rollback also refused",
+    "state": "not_sent",
+    "stop_code": "COST_DEADLINE_BEFORE_SEND"
+  }
+}
