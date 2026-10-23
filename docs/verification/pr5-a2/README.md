@@ -19,7 +19,8 @@ the published HEAD separately.
 
 ## Verification scope
 
-- Full Python regression uses a separate PostgreSQL 17.11 / pgvector 0.8.6 test DB,
+- The final local regression uses a separate PostgreSQL 17.11 / pgvector 0.8.7
+  test DB; the original implementation used 0.8.6 and CI pins 0.8.6,
   including the 79-case expense suite; database tests must not be skipped.
 - The new suite exercises exact budget boundaries, decision/review/feedback, strict
   scoped and legacy Runs, saved-attempt feedback, journal/expense identity matching,

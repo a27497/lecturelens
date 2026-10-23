@@ -27,8 +27,9 @@
   "network_limits": "Python audit fence only; native libpq pinned independently. Deliberate denial probes have separate child records. os._exit/SIGKILL cannot flush atexit counters. No OS sandbox certification.",
   "test_database": {
     "postgresql": "17.11",
-    "pgvector": "0.8.6",
-    "type": "independent test container / persistent named volume, process crash tests only"
+    "pgvector": "0.8.7",
+    "type": "independent test container / persistent named volume, process crash tests only",
+    "prior_implementation_and_ci_pgvector": "0.8.6"
   },
   "retained_failed_trials": [
     "Initial plan assertion expected old 54 instead of current 56 modules",
