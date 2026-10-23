@@ -7,6 +7,7 @@ may install the singleton envelope; restarting a proxy cannot replenish it.
 
 import hashlib
 import json
+import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -56,6 +57,26 @@ CREATE TABLE IF NOT EXISTS acceptance_cost_event (
 
 class CostDenied(StudyError):
     pass
+
+
+@dataclass(frozen=True)
+class DispatchWindow:
+    deadline: datetime
+    monotonic_deadline: float
+
+    @classmethod
+    def until(cls, deadline, maximum):
+        # Capture before commit so DB/adapter delays consume the same window.
+        # A wall-clock rollback must not grant additional execution time.
+        tick = time.monotonic()
+        remaining = min(maximum, (deadline - datetime.now(timezone.utc)).total_seconds())
+        return cls(deadline, tick + remaining)
+
+    def remaining(self):
+        return min(
+            (self.deadline - datetime.now(timezone.utc)).total_seconds(),
+            self.monotonic_deadline - time.monotonic(),
+        )
 
 
 def verify_frozen_agent(package=None):
@@ -399,7 +420,8 @@ class CostLedger:
                 "SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (claim["run_id"],)
             ).fetchone()
             try:
-                CostPolicy(**envelope["policy"]).validate()
+                policy = CostPolicy(**envelope["policy"])
+                policy.validate()
                 valid_policy = True
             except CostDenied:
                 valid_policy = False
@@ -412,12 +434,28 @@ class CostLedger:
                     (claim["run_id"], claim["operation_key"]),
                 ).fetchone()
                 error = None if row else self._denial(conn, "COST_DUPLICATE_CALL", claim["run_id"])
+                window = DispatchWindow.until(
+                    min(run["deadline"], datetime.fromisoformat(policy.expires_at)),
+                    20 if run.get("task_kind") == "feedback" else 90,
+                )
         if error:
             raise error
-        return min(
-            20 if run.get("task_kind") == "feedback" else 90,
-            (run["deadline"] - datetime.now(timezone.utc)).total_seconds(),
-        )
+        return window
+
+    def expire_before_send(self, claim):
+        # The gateway has not entered its sender. Keep the durable reservation
+        # and stop the campaign; neither a restart nor a new key can refund it.
+        code = "COST_DEADLINE_BEFORE_SEND"
+        with self.store.connect() as conn:
+            conn.execute("SELECT singleton FROM acceptance_cost_envelope FOR UPDATE")
+            conn.execute(
+                "UPDATE acceptance_cost_call SET state='not_sent',error_code=%s,completed_at=now() "
+                "WHERE run_id=%s AND operation_key=%s AND state='sent'",
+                (code, claim["run_id"], claim["operation_key"]),
+            )
+            conn.execute("UPDATE acceptance_cost_envelope SET blocked_code=%s", (code,))
+            error = self._denial(conn, code, claim["run_id"])
+        raise error
 
     def settle(self, claim, response, error_code=None):
         usage = None

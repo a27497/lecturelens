@@ -10,8 +10,9 @@ workflow or production migration is modified. No PR35/36 integration is included
 
 ## Local result
 
-Final local regression: **831 passed, 0 failed, 0 skipped**, including the new
-72-case expense suite; 235.15 seconds. Ruff check and format passed. The existing
+Final local regression after the deadline correction: **838 passed, 0 failed,
+0 skipped**, including the 79-case expense suite; 237.37 seconds. The original
+831/72 result (235.15 seconds) remains historical evidence for the original HEAD. Ruff check and format passed. The existing
 Starlette/AnyIO warning remains. The supervisor finished SUCCEEDED with complete
 cleanup. See [machine-readable summary](verification.json). CI must be read for
 the published HEAD separately.
@@ -19,7 +20,7 @@ the published HEAD separately.
 ## Verification scope
 
 - Full Python regression uses a separate PostgreSQL 17.11 / pgvector 0.8.6 test DB,
-  including the new 72-case expense suite; database tests must not be skipped.
+  including the 79-case expense suite; database tests must not be skipped.
 - The new suite exercises exact budget boundaries, decision/review/feedback, strict
   scoped and legacy Runs, saved-attempt feedback, journal/expense identity matching,
   independent owner/Run rejection, 16 contenders, cancellation, and three real
@@ -39,6 +40,30 @@ Authority/media behavior in this new suite uses explicit synthetic fixtures;
 there is no new Java/browser/media end-to-end acceptance. Responses are Fake even
 when the existing runtime uses `model_mode=real` to exercise ChatProvider. Mock
 usage and monetary reservations are not bills or teaching-quality scores.
+
+## Deadline and additional fault checks
+
+A controlled clock reproduced sends after expiry in the original adapter: one
+case passed a clamped 1ms timeout, another reused a stale 90s value. Both failed
+trials are retained. Dispatch now carries the Run/policy absolute deadline and a
+monotonic limit captured before commit; the gateway checks again before sender
+entry. Exhaustion records `not_sent`, stops the campaign and retains the charge.
+Both original failures now reject without invoking the Fake sender. A wall-clock
+rollback cannot extend the monotonic allowance; feedback remains capped at 20s.
+
+Additional checks cover 16 concurrent dispatches (one permit), duplicate settlement
+without refund/overwriting an observation, SIGKILL inside the actual Fake sender,
+and refusing both the original and a different operation after that crash. Numeric
+IP HTTP, disallowed low ports, external DNS and normal Python children are denied.
+Forced-exit children prove denial before exiting but cannot flush atexit counters;
+missing records are not zero traffic. Python hooks do not contain native programs,
+site-disabled Python, or authenticate every allowed high-port loopback service.
+
+Seven added cases bring the expense suite from 72 to 79. Test-construction failures
+in the new nested network probe are also retained (source quoting and traversing
+httpx's wrapped exception); the network implementation/allowlist was not relaxed.
+The 56 original application files, dependencies, workflow and Run budgets remain
+unchanged. No new live sender or credential path was added.
 
 ## Reproduction
 

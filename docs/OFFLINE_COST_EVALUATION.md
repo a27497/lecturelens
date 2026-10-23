@@ -30,6 +30,10 @@ proxy settings, pins libpq hostaddr, disables user site imports and installs a
 Python DNS/socket audit fence before pytest, including spawned Python children.
 Only the specified test PG and ephemeral loopback servers are allowed. This is
 not an OS sandbox; native library traffic is not covered by Python socket counts.
+Normal spawned Python interpreters inherit the fence; native programs or Python
+started with site/environment loading disabled are not contained by it. The
+loopback range is an allowance, not authentication of each local listener. Abrupt
+exit/SIGKILL cannot flush atexit counters; absent records do not mean zero traffic.
 Never supply a production DSN, service config, key or account to this entry.
 
 The 56 pre-existing application modules are verified against an immutable SHA256
@@ -73,6 +77,16 @@ An observed response committed only in the expense ledger does not substitute fo
 the runtime's committed journal. Cancellation before dispatch rejects sending;
 cancellation after dispatch cannot prove a remote computation or charge stopped.
 The offline tests make no remote request to validate that distinction.
+
+Dispatch carries an absolute deadline bounded by both the Run and policy, plus a
+monotonic limit captured before commit (at most 20 seconds for feedback, otherwise
+90). The gateway recomputes remaining time immediately before entering its sender.
+An exhausted window is never clamped positive: the call becomes `not_sent`, its
+reservation remains charged and `COST_DEADLINE_BEFORE_SEND` stops the campaign.
+A crash before that stop commits leaves the already committed `sent` claim
+unresolved, which also prevents another admission. Wall-clock rollback cannot
+replenish the window. This local boundary does not prove supplier receipt, stop
+remote work, or guarantee scheduling/physical I/O after control enters a sender.
 
 ## Fourteen-module compatibility audit
 

@@ -22,9 +22,14 @@ class CostGateway:
 
     def forward(self, run_id, purpose, raw):
         claim, packed = self.ledger.admit(run_id, purpose, raw)
-        timeout = self.ledger.dispatch(claim)
+        window = self.ledger.dispatch(claim)
+        # Recheck after dispatch commits, at the last controllable send boundary.
+        # A stale relative timeout must never become a fresh positive allowance.
+        timeout = window.remaining()
+        if timeout <= 0:
+            self.ledger.expire_before_send(claim)
         try:
-            response = self.sender(packed, max(0.001, timeout))
+            response = self.sender(packed, timeout)
             if response.status_code != 200 or len(response.content) > 128 * 1024:
                 raise CostDenied("COST_UPSTREAM_OUTCOME_UNKNOWN")
             try:

@@ -956,3 +956,271 @@ def test_cost_gated_frozen_generation_answer_feedback_persist(gate, monkeypatch,
             }
         ),
     )
+
+
+@pytest.mark.parametrize("expiry_point", ["dispatch_validation", "gateway_boundary"])
+def test_expiry_between_dispatch_validation_and_sender_never_sends(gate, monkeypatch, expiry_point):
+    import lecturelens_agent.study.acceptance_cost as cost
+
+    class Clock(datetime):
+        current = datetime.now(timezone.utc)
+
+        @classmethod
+        def now(cls, tz=None):
+            return cls.current if tz else cls.current.replace(tzinfo=None)
+
+    run = started(gate)
+    raw = journal(gate, run)
+    monkeypatch.setattr(cost, "datetime", Clock)
+    dispatch = gate.ledger.dispatch
+
+    def expire_at_boundary(claim):
+        if expiry_point == "dispatch_validation":
+            active = gate.ledger._active
+
+            def expire_after_validation(row):
+                valid = active(row)
+                if valid:
+                    Clock.current += timedelta(seconds=120)
+                return valid
+
+            monkeypatch.setattr(gate.ledger, "_active", expire_after_validation)
+        window = dispatch(claim)
+        if expiry_point == "gateway_boundary":
+            Clock.current += timedelta(seconds=120)
+        return window
+
+    monkeypatch.setattr(gate.ledger, "dispatch", expire_at_boundary)
+    sent = []
+    gateway = CostGateway(
+        gate.ledger, lambda packed, timeout: sent.append(timeout) or httpx.Response(200, json=response())
+    )
+    try:
+        with pytest.raises(CostDenied, match="DEADLINE_BEFORE_SEND"):
+            gateway.forward(run["run_id"], "decision", raw)
+    finally:
+        print("DEADLINE_FAULT", expiry_point, "sender_timeouts", sent)
+    assert sent == []
+    snapshot = gate.ledger.snapshot()
+    assert snapshot["envelope"]["reserved_micro_cny"] == 2_104_352
+    assert snapshot["envelope"]["calls"] == 1
+    assert snapshot["envelope"]["blocked_code"] == "COST_DEADLINE_BEFORE_SEND"
+    assert snapshot["calls"][0]["state"] == "not_sent"
+    with pytest.raises(CostDenied, match="CAMPAIGN_STOPPED"):
+        CostGateway(CostLedger(gate.dsn), lambda *_: pytest.fail("no retry")).forward(
+            run["run_id"], "decision", raw
+        )
+
+
+def test_monotonic_expiry_cannot_be_extended_by_wall_clock_rollback(gate, monkeypatch):
+    import lecturelens_agent.study.acceptance_cost as cost
+
+    class Clock(datetime):
+        current = datetime.now(timezone.utc)
+
+        @classmethod
+        def now(cls, tz=None):
+            return cls.current if tz else cls.current.replace(tzinfo=None)
+
+    tick = [1000.0]
+    monkeypatch.setattr(cost, "datetime", Clock)
+    monkeypatch.setattr(cost, "time", SimpleNamespace(monotonic=lambda: tick[0]))
+    run = started(gate)
+    raw = journal(gate, run)
+    dispatch = gate.ledger.dispatch
+
+    def stall(claim):
+        window = dispatch(claim)
+        tick[0] += 120
+        Clock.current -= timedelta(hours=1)
+        return window
+
+    monkeypatch.setattr(gate.ledger, "dispatch", stall)
+    with pytest.raises(CostDenied, match="DEADLINE_BEFORE_SEND"):
+        CostGateway(gate.ledger, lambda *_: pytest.fail("expired sender")).forward(
+            run["run_id"], "decision", raw
+        )
+    assert gate.ledger.snapshot()["calls"][0]["state"] == "not_sent"
+
+
+def test_dispatch_window_preserves_absolute_and_request_time_caps(monkeypatch):
+    import lecturelens_agent.study.acceptance_cost as cost
+
+    class Clock(datetime):
+        current = datetime.now(timezone.utc)
+
+        @classmethod
+        def now(cls, tz=None):
+            return cls.current if tz else cls.current.replace(tzinfo=None)
+
+    tick = [1000.0]
+    monkeypatch.setattr(cost, "datetime", Clock)
+    monkeypatch.setattr(cost, "time", SimpleNamespace(monotonic=lambda: tick[0]))
+    policy_end = Clock.current + timedelta(seconds=5)
+    policy_window = cost.DispatchWindow.until(policy_end, 20)
+    feedback_window = cost.DispatchWindow.until(Clock.current + timedelta(seconds=90), 20)
+    assert policy_window.remaining() == 5
+    assert feedback_window.remaining() == 20
+    tick[0] += 6
+    Clock.current += timedelta(seconds=6)
+    assert policy_window.remaining() < 0
+    assert feedback_window.remaining() == 14
+
+
+def test_concurrent_dispatch_and_duplicate_settlement_cannot_reuse_a_charge(gate):
+    run = started(gate)
+    raw = journal(gate, run)
+    claim, _ = gate.ledger.admit(run["run_id"], "decision", raw)
+
+    def dispatch(_):
+        try:
+            return gate.ledger.dispatch(claim)
+        except CostDenied as error:
+            return error.code
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        outcomes = list(pool.map(dispatch, range(16)))
+    assert sum(not isinstance(value, str) for value in outcomes) == 1
+    assert outcomes.count("COST_DUPLICATE_CALL") == 15
+    gate.ledger.settle(claim, response())
+    before = gate.ledger.snapshot()
+    with pytest.raises(CostDenied, match="DUPLICATE_SETTLEMENT"):
+        gate.ledger.settle(claim, response(usage={"prompt_tokens": 0, "completion_tokens": 0}))
+    after = gate.ledger.snapshot()
+    assert after["calls"] == before["calls"]
+    assert after["envelope"]["calls"] == 1
+    assert after["envelope"]["reserved_micro_cny"] == 2_104_352
+    assert after["envelope"]["blocked_code"] == "COST_DUPLICATE_SETTLEMENT"
+    finish_journal(gate, run, "first")
+    changed = journal(gate, run, "no-new-charge")
+    with pytest.raises(CostDenied, match="CAMPAIGN_STOPPED"):
+        CostGateway(CostLedger(gate.dsn), lambda *_: pytest.fail("no send")).forward(
+            run["run_id"], "decision", changed
+        )
+
+
+def test_sigkill_inside_sender_blocks_new_operation_and_keeps_unknown_cost(gate, tmp_path):
+    run = started(gate)
+    raw = journal(gate, run)
+    marker = tmp_path / "sender-entered"
+    code = """
+import json,os,signal,sys
+from pathlib import Path
+from lecturelens_agent.study.acceptance_cost import CostLedger
+from lecturelens_agent.study.acceptance_egress import CostGateway
+data=json.loads(sys.stdin.readline())
+def sender(*_):
+    Path(data['marker']).write_text('synthetic sender entered, no network')
+    os.kill(os.getpid(),signal.SIGKILL)
+CostGateway(CostLedger(data['dsn']),sender).forward(data['run_id'],'decision',data['raw'].encode())
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        input=json.dumps(
+            {"dsn": gate.dsn, "run_id": run["run_id"], "raw": raw.decode(), "marker": str(marker)}
+        ),
+        text=True,
+        capture_output=True,
+        timeout=10,
+    )
+    assert result.returncode == -signal.SIGKILL and marker.exists()
+    before = gate.ledger.snapshot()
+    assert before["calls"][0]["state"] == "sent"
+    assert before["calls"][0]["provider_usage"] is None
+    assert before["calls"][0]["provider_billed_micro_cny"] is None
+    recovered = CostLedger(gate.dsn)
+    recovered.install(gate.policy)
+    with pytest.raises(CostDenied, match="DUPLICATE_CALL"):
+        recovered.admit(run["run_id"], "decision", raw)
+    finish_journal(gate, run, "first")
+    changed = journal(gate, run, "different-operation-after-crash")
+    with pytest.raises(CostDenied, match="OUTCOME_PENDING_OR_UNKNOWN"):
+        recovered.admit(run["run_id"], "decision", changed)
+    after = recovered.snapshot()
+    assert after["calls"] == before["calls"]
+    assert after["envelope"]["reserved_micro_cny"] == 2_104_352
+    assert after["envelope"]["calls"] == 1
+
+
+def test_guarded_runner_blocks_numeric_http_and_python_children_even_on_exit(gate, tmp_path):
+    root = Path(__file__).resolve().parents[2]
+    test = tmp_path / "test_network_review.py"
+    test.write_text(
+        """
+import json, os, pathlib, signal, socket, subprocess, sys
+import httpx, pytest
+
+def test_no_external_traffic_or_inherited_secrets():
+    for name in ['AGENT_LLM_API_KEY', 'DEEPSEEK_API_KEY', 'HTTPS_PROXY', 'HTTP_PROXY',
+                 'ALL_PROXY', 'NO_PROXY', 'PGPASSWORD', 'PGSERVICE', 'PGHOSTADDR']:
+        assert name not in os.environ
+    with pytest.raises(PermissionError):
+        socket.create_connection(('203.0.113.1',443),timeout=0.1)
+    with pytest.raises(PermissionError):
+        socket.create_connection(('127.0.0.1',5432),timeout=0.1)
+    with pytest.raises(PermissionError):
+        socket.getaddrinfo('api.deepseek.com',443)
+    with httpx.Client(trust_env=False,timeout=0.1) as client:
+        with pytest.raises(httpx.ConnectError) as error:
+            client.get('http://203.0.113.1/')
+        pending, seen, denied = [error.value], set(), False
+        while pending:
+            cause = pending.pop()
+            if id(cause) in seen:
+                continue
+            seen.add(id(cause))
+            denied |= isinstance(cause,PermissionError)
+            pending.extend(item for item in (cause.__cause__,cause.__context__,*cause.args)
+                           if isinstance(item,BaseException))
+        assert denied
+    probe = "import os,socket; assert os.environ['LECTURELENS_PREFLIGHT_GUARDED']=='1'; socket.create_connection(('203.0.113.1',443),timeout=0.1)"
+    child = subprocess.run([sys.executable,'-c',probe],capture_output=True,text=True,timeout=5)
+    assert child.returncode == 1 and 'PermissionError' in child.stderr
+    records = pathlib.Path(os.environ['LECTURELENS_PREFLIGHT_NETWORK_RECORDS'])
+    # Abrupt exits cannot flush atexit counters. Prove denial before the exit,
+    # and retain that observability limit instead of treating absent logs as 0.
+    for ending, expected in [("os._exit(23)",23),("os.kill(os.getpid(),signal.SIGKILL)",-signal.SIGKILL)]:
+        code = "import os,signal,socket\\ntry: socket.create_connection(('203.0.113.1',443),timeout=0.1)\\nexcept PermissionError: print(os.getpid(),flush=True)\\nelse: raise AssertionError('unfenced child')\\n" + ending
+        child = subprocess.run([sys.executable,'-c',code],capture_output=True,text=True,timeout=5)
+        assert child.returncode == expected,child.stderr
+        assert child.stdout.strip().isdigit()
+        assert not (records/(child.stdout.strip()+'.json')).exists()
+"""
+    )
+    env = dict(os.environ)
+    env.update(
+        {
+            k: "synthetic-must-be-stripped"
+            for k in (
+                "AGENT_LLM_API_KEY",
+                "DEEPSEEK_API_KEY",
+                "HTTPS_PROXY",
+                "HTTP_PROXY",
+                "ALL_PROXY",
+                "NO_PROXY",
+                "PGPASSWORD",
+                "PGSERVICE",
+                "PGHOSTADDR",
+            )
+        }
+    )
+    records = tmp_path / "review-network"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(root / "scripts/eval/check-study-offline.py"),
+            "--database-port",
+            conninfo_to_dict(gate.dsn)["port"],
+            "--network-records",
+            str(records),
+            "--",
+            str(test),
+            "-q",
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=20,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert sum(json.loads(p.read_text())["denied_connections"] for p in records.glob("*.json")) == 5
