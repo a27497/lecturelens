@@ -50,7 +50,7 @@ onBeforeUnmount(() => generation++);
     <details v-if="frozenScope !== undefined" class="frozen-scope" :open="!compact">
       <summary>当前范围：{{ scopeLabel(frozenScope) }}</summary>
       <p v-if="!frozenScope">旧学习记录按整课范围读取。</p>
-      <template v-else><p>课程版本 {{ frozenScope.revision }}；此范围随执行保存，修改上方选择不会改变它。</p><ul v-if="frozenScope.kind === 'segments'"><li v-for="id in frozenScope.evidence_ids" :key="id">{{ label(id) }}</li></ul></template>
+      <template v-else><p>课程版本 {{ frozenScope.revision }}；此范围随执行保存，修改下次范围不会改变它。</p><ul v-if="frozenScope.kind === 'segments'"><li v-for="id in frozenScope.evidence_ids" :key="id">{{ label(id) }}</li></ul></template>
     </details>
     <details class="scope-options" :open="!compact || editing" @toggle="editing = ($event.target as HTMLDetailsElement).open">
     <summary v-if="compact">下次：{{ modelValue ? scopeLabel(modelValue) : '待确认' }} · 更改</summary>

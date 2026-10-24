@@ -77,6 +77,7 @@ try {
       });
       await check('real media playback, pause and location', async () => {
         if (width === 390) { if (args.refined) await nav('课程内容').click(); else await page.getByRole('button', { name: '看视频与原文', exact: true }).click(); }
+        if (args.refined && width === 390) await expect(page.locator('.workspace-more')).not.toHaveAttribute('open');
         const video = page.locator('video'); await expect.poll(() => video.evaluate(v => v.readyState)).toBeGreaterThan(1);
         await video.evaluate(v => v.play()); await expect.poll(() => video.evaluate(v => v.currentTime)).toBeGreaterThan(0.1);
         await video.evaluate(v => { v.pause(); v.currentTime = 12; }); await expect.poll(() => video.evaluate(v => Math.abs(v.currentTime - 12))).toBeLessThan(.2);

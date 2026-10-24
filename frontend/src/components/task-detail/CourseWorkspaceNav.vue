@@ -32,7 +32,7 @@ function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
     >
       {{ label(item.value, item.label, compact) }}
     </button>
-    <details v-if="compact" class="workspace-more" :open="!primary.includes(active)">
+    <details v-if="compact" class="workspace-more" :open="!primary.includes(active) && !(materials && active === 'content')">
       <summary>更多</summary>
       <button v-for="item in items.filter(item => !primary.includes(item.value) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ label(item.value, item.label, compact) }}</button>
     </details>
