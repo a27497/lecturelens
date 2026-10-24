@@ -190,7 +190,7 @@ async function showNotes(more = false) {
       </select>
     </label>
     <div class="feedback-actions">
-      <el-button v-if="enabled" :disabled="answerDirty || !attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
+      <el-button v-if="enabled" :type="feedback ? 'default' : 'primary'" :disabled="answerDirty || !attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
       <span v-if="answerDirty" role="status">请先保存本页修改，再获取新版反馈；下方已有反馈仍对应其已保存版本。</span>
       <span v-else-if="attempt" class="feedback-version">将使用已保存第 {{ attempt.version }} 版作答</span>
       <span v-if="!attempt">先保存作答，再结合课程证据获取建议。</span>
@@ -245,4 +245,10 @@ p, blockquote { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7
 blockquote { margin: 8px 0; border-left: 3px solid var(--color-border); padding-left: 12px; }
 .feedback-note { background: var(--color-canvas); padding: 12px; }
 summary { cursor: pointer; } select { max-width: 100%; margin: 8px; }
+
+
+.practice-feedback article { padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-subtle); }
+.practice-feedback h4 { color: var(--color-ink); margin-block: 0 8px; }
+.feedback-version { font-size: 12px; color: var(--color-ink-soft); }
+.feedback-observation { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border); }
 </style>

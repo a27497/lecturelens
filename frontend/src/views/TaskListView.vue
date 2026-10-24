@@ -441,7 +441,7 @@ function courseTitle(task: TaskSummaryResponse): string {
   if (!date) {
     return "课程视频";
   }
-  return `课程视频 · ${date.toLocaleDateString(undefined, { month: "long", day: "numeric" })}`;
+  return `课程视频 · ${date.toLocaleDateString("zh-CN", { month: "long", day: "numeric" })}`;
 }
 
 function readableFailure(task: TaskSummaryResponse): string {
@@ -564,12 +564,13 @@ function formatTime(value: string | null): string {
             <div class="course-item__title-row">
               <div>
                 <h2>{{ courseTitle(task) }}</h2>
-                <p>{{ courseSecondaryStatus(task) }}</p>
+                <p>{{ task.status === 'SUCCEEDED' ? '可观看、提问与练习' : courseSecondaryStatus(task) }}</p>
               </div>
               <StatusBadge :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
             </div>
 
-            <div class="course-progress">
+            <div v-if="isRunningTaskStatus(task.status)" class="course-progress" aria-label="材料准备进度">
+              <small>材料准备</small>
               <el-progress
                 :percentage="task.progressPercent ?? 0"
                 :show-text="false"
@@ -579,6 +580,13 @@ function formatTime(value: string | null): string {
               <span>{{ task.progressPercent ?? 0 }}%</span>
             </div>
 
+
+            <p v-if="task.status === 'FAILED'" class="course-item__failure">
+              {{ readableFailure(task) }}
+            </p>
+
+            <details class="course-item__technical">
+              <summary>材料信息与编号</summary>
             <dl class="course-item__meta">
               <div>
                 <dt>课程语言</dt>
@@ -594,12 +602,6 @@ function formatTime(value: string | null): string {
               </div>
             </dl>
 
-            <p v-if="task.status === 'FAILED'" class="course-item__failure">
-              {{ readableFailure(task) }}
-            </p>
-
-            <details class="course-item__technical">
-              <summary>课程编号</summary>
               <div>
                 <code :title="task.taskId">{{ shortenTaskId(task.taskId) }}</code>
                 <button type="button" @click="copyTaskId(task.taskId)">复制编号</button>
@@ -902,5 +904,18 @@ function formatTime(value: string | null): string {
   .course-item__actions :deep(.el-button) {
     width: 100%;
   }
+}
+
+
+.task-list-page .course-library { border: 0; padding: 0; background: transparent; box-shadow: none; }
+.course-progress { grid-template-columns: auto minmax(0, 1fr) 42px; }
+.course-progress small { color: var(--color-ink-soft); font-size: 12px; }
+.course-item { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 22px; margin-top: 14px; gap: 20px; }
+.task-list { border-top: 0; }
+.course-item__summary { gap: 12px; }
+.course-item__meta { gap: 10px 24px; }
+@media (max-width: 760px) {
+  .task-list-page { padding-top: 26px; gap: 20px; }
+  .course-item { padding: 16px; }
 }
 </style>

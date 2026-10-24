@@ -71,7 +71,7 @@ it("the content URL keeps the current learning panel and its frozen scope indepe
   const { wrapper, router } = await open();
   const input = wrapper.get<HTMLInputElement>('.mock-agent input'); await input.setValue('same-page draft');
   await wrapper.get('.mock-scope button').trigger('click');
-  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程内容')!.trigger('click'); await flushPromises();
+  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程材料')!.trigger('click'); await flushPromises();
   expect(router.currentRoute.value.query.view).toBe('content');
   expect(wrapper.get('.mock-agent input').element).toBe(input.element); expect(input.element.value).toBe('same-page draft');
   expect(wrapper.get('.mock-scope span').text()).toContain('e1'); expect(wrapper.get('.mock-scope span').text()).toContain('"revision":1');

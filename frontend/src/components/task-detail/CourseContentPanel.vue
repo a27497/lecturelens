@@ -9,7 +9,7 @@ import { formatMillisRange } from "../../utils/time";
 
 import { createTimeIndex } from "../../utils/timeIndex";
 import type { ContentView } from "./courseLocation";
-const props = defineProps<{ compact?: boolean; taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
+const props = defineProps<{ referenceMs?: number; compact?: boolean; taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
 const emit = defineEmits<{ seek: [startTimeMillis: number]; "update:view": [view: ContentView] }>();
 
 const localView = ref<ContentView>("translated");
@@ -46,6 +46,7 @@ const rows = computed(() => (props.result?.subtitles ?? []).map((subtitle) => {
 }));
 const timeIndex = computed(() => createTimeIndex(rows.value, row => row.startMillis, row => row.endMillis));
 const currentRow = computed(() => timeIndex.value(props.positionMs ?? 0));
+const referenceSegment = computed(() => props.referenceMs === undefined ? undefined : timeIndex.value(props.referenceMs)?.segmentIndex);
 const currentSegment = computed(() => currentRow.value?.segmentIndex);
 function canSeek(start: number, end: number) { return Number.isFinite(start) && start >= 0 && Number.isFinite(end) && end > start; }
 function pauseFollow() { following.value = false; scrollGeneration++; }
@@ -144,16 +145,17 @@ function emptyText(pending: string): string {
     </article>
     <section v-else-if="activeView === 'timeline'" class="timeline-view" aria-label="课程时间轴">
       <div class="timeline-search"><el-input v-model="keyword" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
-      <el-alert v-if="hasFullTextOnlyTranslation" :closable="false" title="当前为全文翻译模式，时间轴仅展示原文；中文全文请切换到“中文译文”。" type="info" show-icon />
+      <p v-if="compact && hasFullTextOnlyTranslation" class="timeline-language-note">时间轴显示原文；中文全文见“中文译文”。</p>
+      <el-alert v-if="!compact && hasFullTextOnlyTranslation" :closable="false" title="当前为全文翻译模式，时间轴仅展示原文；中文全文请切换到“中文译文”。" type="info" show-icon />
       <div class="timeline-controls">
         <button type="button" :aria-pressed="following" @click="following ? pauseFollow() : resumeFollow()">{{ following ? '正在跟随视频 · 暂停跟随' : '回到当前播放位置并跟随' }}</button>
         <span>{{ currentRow ? `当前片段 #${currentSegment}` : '当前位置没有对应的原文片段' }}</span>
       </div>
       <el-empty v-if="rows.length === 0" :description="emptyText(status === 'SUCCEEDED' ? '本课程没有可定位的字幕片段' : '时间轴生成中')" />
       <el-empty v-else-if="filteredRows.length === 0" description="没有找到包含该关键词的片段" />
-      <div v-else v-memo="[filteredRows, currentSegment]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
-        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex">
-          <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span>#{{ row.segmentIndex }}</span></div>
+      <div v-else v-memo="[filteredRows, currentSegment, referenceSegment]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
+        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
+          <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span></div>
           <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : (result?.translations.length ? '此片段暂无对齐译文' : segmentTranslationEmptyText)) }}</p></div>
           <el-button size="small" plain :disabled="!canSeek(row.startMillis, row.endMillis)" @click="resumeFollow(); emit('seek', row.startMillis)">跳到视频</el-button>
         </article>
@@ -190,4 +192,9 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-row { display: grid; grid-template-columns: 110px minmax(0,1fr) auto; gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--color-border); }
 .timeline-row__time { display: grid; gap: 4px; color: var(--color-brand); font-size: 13px; }.timeline-row p { margin: 0 0 8px; line-height: 1.65; }.timeline-row__translation { color: var(--color-ink-soft); }
 @media (max-width: 680px) { .timeline-search { align-items: stretch; flex-direction: column; }.timeline-row { grid-template-columns: 1fr; } }
+
+
+.timeline-language-note { margin: 0; color: var(--color-ink-soft); font-size: 12px; line-height: 1.6; }
+.timeline-row[data-reference=true] { padding: 14px; margin-block: 6px; border: 1px solid var(--color-brand); border-left: 3px solid var(--color-brand); border-radius: var(--radius-md); background: var(--color-brand-soft); }
+.reference-label { padding: 2px 6px; border-radius: var(--radius-sm); background: var(--color-brand); color: white; font-size: 11px; }
 </style>

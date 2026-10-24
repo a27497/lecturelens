@@ -47,7 +47,7 @@ function logout() {
   <header class="app-header">
     <div class="app-header__inner">
       <RouterLink class="app-header__brand" :to="authStore.isAuthenticated ? '/tasks' : '/'" :aria-label="authStore.isAuthenticated ? 'LectureLens 我的课程' : 'LectureLens 首页'">
-        {{ appStore.appName }}
+        <img src="/favicon.svg" alt="" width="24" height="24" />{{ appStore.appName }}
       </RouterLink>
 
       <nav class="app-header__nav" aria-label="主导航">
@@ -133,6 +133,9 @@ function logout() {
 }
 
 .app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   justify-self: start;
   color: var(--color-ink);
   font-size: 18px;

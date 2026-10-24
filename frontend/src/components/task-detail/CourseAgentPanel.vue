@@ -18,7 +18,7 @@ import { randomUuid } from "../../utils/randomUuid";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 import type { LearningScope } from "../../api/learningScope";
-const props = defineProps<{ taskId: string; status?: string; learningScope?: LearningScope | null }>();
+const props = defineProps<{ taskId: string; status?: string; compact?: boolean; learningScope?: LearningScope | null }>();
 const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"]; position: [position: LearningTaskPosition | null]; accessFailure: [] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
@@ -244,8 +244,8 @@ async function reveal() {
 </script>
 
 <template>
-  <section class="agent-panel workspace-panel" aria-labelledby="agent-title">
-    <header><div class="agent-heading"><h2 id="agent-title">解释与练习</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
+  <section class="agent-panel workspace-panel" :class="{ 'agent-panel--compact': compact, 'has-practice': Boolean(artifact?.questions.length) }" aria-labelledby="agent-title">
+    <header><div class="agent-heading"><h2 id="agent-title">{{ compact && artifact?.questions.length ? artifact.title : '解释与练习' }}</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
     <p v-if="loading" role="status">正在读取学习会话…</p>
     <div v-else-if="preparing" role="status"><p>课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。</p><el-button @click="$emit('navigate', 'overview')">查看处理进度</el-button></div>
     <div v-else-if="enabled === false" role="status">
@@ -257,7 +257,7 @@ async function reveal() {
       <div v-if="!ready" role="status"><p>{{ readinessText }}</p><el-button text @click="$emit('navigate', 'overview')">查看处理进度</el-button><el-button text @click="load()">刷新状态</el-button></div>
       <p v-if="run?.model_mode === 'mock' && !artifact" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
       <div v-if="run" class="run-progress" :class="{ 'run-progress--ready': artifact }" aria-live="polite">
-        <strong>{{ stateText }}</strong><small v-if="artifact && run.model_mode === 'mock'">Mock 流程测试</small>
+        <strong>{{ compact && artifact?.questions.length && run.status === 'succeeded' ? '练习已生成' : stateText }}</strong><small v-if="artifact && run.model_mode === 'mock'">Mock 流程测试</small>
         <p v-if="!artifact" class="run-goal">{{ run.goal }}</p>
         <el-button v-if="active" :disabled="submitting" @click="cancel">取消本次执行</el-button>
         <details v-if="events.length"><summary>执行进度详情</summary><ol>
@@ -273,7 +273,7 @@ async function reveal() {
       </div>
       <StudyApprovalPanel v-if="run?.status === 'awaiting_approval' && approval" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :approval="approval" @decided="async () => { await refresh(version, taskId); if (active) connect(version, taskId); }" />
       <article v-if="artifact" class="study-artifact">
-        <h3>{{ artifact.title }}</h3><p v-if="artifact.human_edited">说明经课程所有者人工修改。</p>
+        <h3 v-if="!compact || !artifact.questions.length">{{ artifact.title }}</h3><p v-if="artifact.human_edited">说明经课程所有者人工修改。</p>
         <details class="artifact-explanation" :open="!artifact.questions.length"><summary>阅读课程解释</summary><p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
@@ -282,10 +282,10 @@ async function reveal() {
           </div>
         </details></details>
         <template v-if="artifact.questions.length">
-          <p class="practice-guidance">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题 · 非掌握程度评分</p>
+          <div class="practice-toolbar"><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
-          </nav>
+          </nav></div>
         </template>
         <div v-for="(question, index) in artifact.questions" v-show="questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
@@ -322,8 +322,10 @@ async function reveal() {
         <p>显示最近 20 次执行，选择后可继续查看练习和已保存作答。</p>
         <ol><li v-for="previous in recentRuns" :key="previous.run_id"><el-button text @click="openHistory(false, sessionId, previous.run_id)">{{ previous.goal }}</el-button></li></ol>
       </details>
+      <details class="execution-details" :open="!compact"><summary>执行与模型详情</summary>
       <RunTracePanel v-if="run" :task-id="taskId" :session-id="sessionId" :run="run" :artifact="artifact" />
       <details class="agent-settings"><summary>模型设置与执行说明</summary><p>Trace 和模型记录展示已保存的执行事实；打开不会创建学习任务。</p><RouterLink to="/settings/models">管理模型</RouterLink></details>
+      </details>
     </div>
     <div v-if="error" role="alert"><el-alert :title="error" type="error" :closable="false" /><el-button v-if="!run && !loading" @click="load()">重新连接</el-button><RouterLink to="/settings/models">检查模型配置</RouterLink></div>
   </section>
@@ -353,4 +355,26 @@ header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p,
 .question-nav { display: flex; flex-wrap: wrap; gap: 8px; }.question-nav button { font: inherit; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
 .question-nav [aria-current] { background: var(--color-brand-soft); border-color: var(--color-brand); }.practice-guidance { color: var(--color-ink-soft); line-height: 1.6; }.practice-question { scroll-margin-top: calc(var(--header-height) + 92px); }
 .agent-settings { margin-top: 16px; color: var(--color-ink-soft); }
+
+
+.agent-panel--compact { gap: 10px; }
+.agent-panel--compact header h2 { font-size: 18px; line-height: 1.5; }
+.agent-panel--compact .agent-heading { align-items: flex-start; }
+.agent-panel--compact .agent-heading button { flex-shrink: 0; font-size: 12px; }
+.agent-panel--compact .run-progress--ready { margin-top: 2px; padding: 0 !important; border-radius: 0; background: transparent; color: var(--color-ink-soft); }
+.agent-panel--compact .run-progress--ready strong { font-weight: 500; font-size: 12px; }
+.agent-panel--compact .study-artifact { margin-top: 10px; padding-top: 12px; gap: 10px; }
+.practice-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.practice-toolbar .practice-guidance { order: 2; font-size: 12px; }
+.agent-panel--compact .question-nav button { font-size: 13px; padding: 7px 12px; }
+.agent-panel--compact .question-nav { gap: 6px; }
+.agent-panel--compact .practice-question { padding-top: 6px; }
+.agent-panel--compact .artifact-explanation > summary { font-size: 13px; }
+.execution-details { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--color-border); font-size: 13px; color: var(--color-ink-soft); }
+.execution-details > summary { padding-block: 4px; }
+@media (max-width: 520px) {
+  .agent-panel--compact header h2 { font-size: 16px; }
+  .agent-panel--compact .study-artifact { margin-top: 6px; padding-top: 10px; }
+  .agent-panel--compact .question-nav button { min-height: 38px; }
+}
 </style>

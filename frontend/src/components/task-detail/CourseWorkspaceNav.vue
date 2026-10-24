@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CourseWorkspace } from "./workspace";
 
-defineProps<{ active: CourseWorkspace; compact?: boolean }>();
+defineProps<{ active: CourseWorkspace; compact?: boolean; materials?: boolean }>();
 defineEmits<{ change: [workspace: CourseWorkspace] }>();
 
 const items: Array<{ value: CourseWorkspace; label: string }> = [
@@ -14,28 +14,36 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "technical", label: "处理详情" },
 ];
 const primary = ["agent", "qa"];
+function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
+  if (!compact) return fallback;
+  return value === "content" ? "课程材料" : value === "agent" ? "解释与练习" : value === "qa" ? "Tutor 问答" : fallback;
+}
 </script>
 
 <template>
   <nav class="workspace-nav" aria-label="课程内容导航">
     <button
-      v-for="item in items.filter(item => !compact || primary.includes(item.value))"
+      v-for="item in items.filter(item => !compact || primary.includes(item.value) || (materials && item.value === 'content'))"
       :key="item.value"
       type="button"
       :class="{ 'is-active': active === item.value }"
       :aria-current="active === item.value ? 'page' : undefined"
       @click="$emit('change', item.value)"
     >
-      {{ item.label }}
+      {{ label(item.value, item.label, compact) }}
     </button>
     <details v-if="compact" class="workspace-more" :open="!primary.includes(active)">
       <summary>更多</summary>
-      <button v-for="item in items.filter(item => !primary.includes(item.value))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ item.label }}</button>
+      <button v-for="item in items.filter(item => !primary.includes(item.value) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ label(item.value, item.label, compact) }}</button>
     </details>
   </nav>
 </template>
 
 <style scoped>
+.workspace-nav:has(.workspace-more) { border: 0; border-bottom: 1px solid var(--color-border); padding: 0 0 8px; border-radius: 0; gap: 4px; }
+.workspace-nav:has(.workspace-more) button { flex: 1 0 0; min-width: 0; padding: 10px 8px; font-size: 14px; }
+.workspace-more summary { font-size: 13px; }
+
 .workspace-nav { display: flex; gap: 4px; min-width: 0; overflow-x: auto; padding: 5px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); scrollbar-width: thin; }
 .workspace-nav button { flex: 1 0 auto; padding: 10px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--color-ink-soft); font: inherit; font-weight: 650; cursor: pointer; }
 .workspace-nav button:hover { color: var(--color-ink); background: var(--color-canvas); }

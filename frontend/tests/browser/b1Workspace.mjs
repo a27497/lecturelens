@@ -4,10 +4,10 @@ import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
 import { createB1Fixture } from './b1Fixture.mjs';
 
-const { values: args } = parseArgs({ options: { dist: { type: 'string', default: 'dist' }, media: { type: 'string' }, output: { type: 'string' }, chromium: { type: 'string' } } });
+const { values: args } = parseArgs({ options: { dist: { type: 'string', default: 'dist' }, media: { type: 'string' }, output: { type: 'string' }, chromium: { type: 'string' }, refined: { type: 'boolean' } } });
 if (!args.media || !args.output) throw Error('Require --media approved-synthetic.mp4 --output separate-evidence-directory');
 const output = resolve(args.output); await mkdir(output, { recursive: true });
-const fixture = await createB1Fixture(args), results = [];
+const fixture = await createB1Fixture(args), results = [], measurements = [];
 const browser = await chromium.launch({ executablePath: args.chromium, headless: true, args: ['--no-sandbox'] });
 let failed = false;
 const entryChecks = [];
@@ -38,12 +38,18 @@ try {
     const count = op => fixture.requests.filter(r => r.operation === op).length;
     const generation = () => count('START') + count('START_FEEDBACK') + count('CREATE_SESSION');
     const change = data => context.request.post(fixture.origin + '/__fixture', { data });
-    const nav = name => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', { name, exact: true });
+    const nav = name => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', { name: ({ '学习助手': /^(学习助手|解释与练习)$/, '课程问答': /^(课程问答|Tutor 问答)$/, '课程内容': /^(课程内容|课程材料)$/ })[name] ?? name, exact: true });
+    const courseAction = async name => { const button = page.getByRole('button', { name, exact: true }); if (!await button.isVisible()) await page.locator('.course-controls > summary').click(); await button.click(); };
     const answer = () => page.locator('.practice-question.is-current textarea').first();
     const feedback = () => page.locator('.practice-question.is-current .practice-feedback');
     const save = () => page.locator('.practice-question.is-current').getByRole('button', { name: '保存作答', exact: true });
     const capture = async name => {
+      await page.evaluate(async () => { await Promise.race([Promise.allSettled(document.getAnimations().filter(a => a.effect?.getComputedTiming().iterations !== Infinity).map(a => a.finished)), new Promise(resolve => setTimeout(resolve, 750))]); });
       await page.screenshot({ path: `${output}/${width}-${name}.png`, fullPage: false });
+      measurements.push({ width, state: name, ...await page.evaluate(() => {
+        const box = selector => { const el = document.querySelector(selector); if (!el || !el.getClientRects().length) return null; const r = el.getBoundingClientRect(); return { top:r.top, bottom:r.bottom, width:r.width, height:r.height }; };
+        return { question:box('.practice-question.is-current .question-text'), answer:box('.practice-question.is-current textarea'), save:box('.practice-question.is-current .answer-actions button'), reference:box('.timeline-row[data-reference=true]') ?? box('.timeline-row[aria-current=true]'), nav:box('.workspace-nav') };
+      }) });
       await writeFile(`${output}/${width}-${name}.aria.txt`, await page.locator('body').ariaSnapshot());
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     };
@@ -51,20 +57,39 @@ try {
     try {
       await check('authenticated entry and ready-course action', async () => {
         await page.goto(fixture.origin + '/'); await expect(page).toHaveURL(fixture.origin + '/tasks');
+        await capture('library');
+        if (args.refined) {
+          await expect(page.locator('.course-item').filter({ has: page.getByRole('button', { name: '进入学习', exact: true }) }).locator('.course-progress')).toHaveCount(0);
+          await expect(page.getByLabel('材料准备进度')).toBeVisible();
+          const info = page.locator('.course-item').first().locator('.course-item__technical');
+          await info.locator('summary').click();
+          await expect(info.locator('code')).toBeVisible();
+          expect(generation()).toBe(0);
+          await info.locator('summary').click();
+        }
         await page.getByRole('button', { name: '进入学习', exact: true }).click();
         await expect(answer()).toBeVisible(); expect(generation()).toBe(0);
         await expect(page.locator('.new-study-goal')).not.toHaveAttribute('open');
         await expect.poll(() => page.locator('video').evaluate(v => v.readyState)).toBeGreaterThan(1);
         await page.evaluate(() => scrollTo(0, 0)); await capture('workspace');
         expect(await answer().evaluate(el => el.getBoundingClientRect().top)).toBeLessThan((width === 1440 ? 900 : 844) - 24);
+        if (args.refined && width === 390) await expect(save()).toBeInViewport();
       });
       await check('real media playback, pause and location', async () => {
-        if (width === 390) await page.getByRole('button', { name: '看视频与原文', exact: true }).click();
+        if (width === 390) { if (args.refined) await nav('课程内容').click(); else await page.getByRole('button', { name: '看视频与原文', exact: true }).click(); }
         const video = page.locator('video'); await expect.poll(() => video.evaluate(v => v.readyState)).toBeGreaterThan(1);
         await video.evaluate(v => v.play()); await expect.poll(() => video.evaluate(v => v.currentTime)).toBeGreaterThan(0.1);
         await video.evaluate(v => { v.pause(); v.currentTime = 12; }); await expect.poll(() => video.evaluate(v => Math.abs(v.currentTime - 12))).toBeLessThan(.2);
         await capture('materials');
-        await page.getByRole('button', { name: /继续第 1 题/ }).click();
+        if (args.refined) {
+          await page.locator('.timeline-row[data-segment="1"] button').click();
+          await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(0);
+          const back = page.getByRole('button', { name: '返回当前学习任务', exact: true });
+          if (await back.isVisible()) await back.click();
+          await video.evaluate(v => { v.currentTime = 12; });
+          await expect.poll(() => video.evaluate(v => Math.abs(v.currentTime - 12))).toBeLessThan(.2);
+        }
+        if (args.refined) await nav('学习助手').click(); else await page.getByRole('button', { name: /继续第 1 题/ }).click();
       });
       await check('Tutor is independent and keeps its draft across view changes', async () => {
         await nav('课程问答').click(); await page.getByRole('textbox', { name: '课程问题', exact: true }).fill('这两组相差多少分？');
@@ -83,7 +108,7 @@ try {
         await answer().fill('第一页尚未保存'); const node = await answer().elementHandle();
         await page.getByRole('button', { name: '第 2 题', exact: true }).click(); await answer().fill('第二题草稿');
         await page.getByRole('button', { name: /第 1 题/ }).click(); await expect(answer()).toHaveValue('第一页尚未保存');
-        await page.getByRole('button', { name: '经典布局', exact: true }).click(); await expect(answer()).toHaveValue('第一页尚未保存');
+        await courseAction('经典布局'); await expect(answer()).toHaveValue('第一页尚未保存');
         await page.getByRole('button', { name: '连续工作区', exact: true }).click();
         expect(await answer().evaluate((el, old) => el === old, node)).toBe(true);
         await expect.poll(() => page.locator('video').evaluate(v => Math.abs(v.currentTime - 12))).toBeLessThan(.2);
@@ -115,11 +140,19 @@ try {
         const back = page.getByRole('button', { name: '返回当前学习任务', exact: true }); await expect(back).toBeVisible();
         if (width === 390) {
           await expect(page.locator('.workspace-wayfinding')).toBeHidden();
+          if (args.refined) await expect(page.locator('.mobile-workspace-nav-target')).toBeHidden();
           await expect(page.locator('.workspace-header')).toBeHidden();
           await expect(page.locator('video')).toBeHidden();
           expect(await page.locator('.timeline-row[aria-current=true]').evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(290);
         }
-        await capture('source'); await back.click(); await expect(answer()).toHaveValue('正在修订，但还没保存');
+        if (args.refined) {
+          await expect(page.locator('.timeline-row[data-reference=true]')).toContainText('当前引用');
+          await page.locator('video').evaluate(v => { v.currentTime = 35; });
+          await expect.poll(() => page.locator('video').evaluate(v => v.currentTime)).toBe(35);
+          await expect(page.locator('.timeline-row[data-reference=true]')).toContainText('Group A scores 84');
+          await page.locator('video').evaluate(v => { v.currentTime = 12; });
+        }
+        await capture('source'); await back.click(); if (args.refined) await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(0); await expect(answer()).toHaveValue('正在修订，但还没保存');
         await expect(feedback().getByRole('button', { name: '回看这段课程证据', exact: true })).toBeFocused();
         expect(generation()).toBe(before);
       });
@@ -229,6 +262,19 @@ try {
         await expect(page.getByText('课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。', { exact: true })).toBeVisible();
         expect(generation()).toBe(before); await capture('preparing');
       });
+      if (args.refined) await check('failed and cancelled material states stay visible with retry access', async () => {
+        const before = generation();
+        for (const [id, label] of [['failed','处理失败'],['cancelled','已取消']]) {
+          await page.goto(fixture.origin + '/tasks/' + id);
+          await expect(page.locator('.workspace-header__actions .el-tag')).toBeVisible();
+          await expect(page.locator('.workspace-header__actions .el-tag')).toHaveText(label);
+          await expect(page.locator('.workspace-header__actions .el-tag')).toBeInViewport();
+          await expect.poll(async () => (await page.locator('.workspace-header__actions .el-tag').boundingBox()).width).toBeGreaterThan(50);
+          await expect(page.getByRole('button', { name: '重新处理', exact: true })).toBeVisible();
+          await capture('material-' + id);
+        }
+        expect(generation()).toBe(before);
+      });
       expect(errors).toEqual([]); expect(external).toEqual([]); expect(fixture.errors).toEqual([]);
       results.push({ width, height: width === 1440 ? 900 : 844, status: 'PASS', checks, errors, external, fixtureErrors: [...fixture.errors], requests: [...fixture.requests], physicalProviderCalls: 0 });
     } catch (e) {
@@ -237,5 +283,5 @@ try {
       console.error(e);
     } finally { await context.close(); }
   }
-} finally { await browser.close(); await fixture.close(); await writeFile(`${output}/results.json`, JSON.stringify({ entryChecks, cases: results }, null, 2)); }
+} finally { await browser.close(); await fixture.close(); await writeFile(`${output}/measurements.json`, JSON.stringify(measurements,null,2)); await writeFile(`${output}/results.json`, JSON.stringify({ entryChecks, cases: results }, null, 2)); }
 if (failed) process.exitCode = 1;
