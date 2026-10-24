@@ -4,11 +4,12 @@ import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
 import { createB1Fixture } from './b1Fixture.mjs';
 
-const { values: args } = parseArgs({ options: { dist: { type: 'string', default: 'dist' }, media: { type: 'string' }, output: { type: 'string' }, chromium: { type: 'string' }, refined: { type: 'boolean' } } });
+const { values: args } = parseArgs({ options: { dist: { type: 'string', default: 'dist' }, media: { type: 'string' }, output: { type: 'string' }, chromium: { type: 'string' }, refined: { type: 'boolean' }, 'legacy-baseline': { type: 'boolean' } } });
+if (Boolean(args.refined) === Boolean(args['legacy-baseline'])) throw Error('Select exactly one mode: --refined for current B1, or --legacy-baseline for archived P2-1 dist.');
 if (!args.media || !args.output) throw Error('Require --media approved-synthetic.mp4 --output separate-evidence-directory');
 const output = resolve(args.output); await mkdir(output, { recursive: true });
 const fixture = await createB1Fixture(args), results = [], measurements = [];
-const browser = await chromium.launch({ executablePath: args.chromium, headless: true, args: ['--no-sandbox'] });
+const browser = await chromium.launch({ executablePath: args.chromium, headless: true, chromiumSandbox: true }).catch(async error => { await fixture.close(); throw error; });
 let failed = false;
 const entryChecks = [];
 try {
@@ -285,5 +286,5 @@ try {
       console.error(e);
     } finally { await context.close(); }
   }
-} finally { await browser.close(); await fixture.close(); await writeFile(`${output}/measurements.json`, JSON.stringify(measurements,null,2)); await writeFile(`${output}/results.json`, JSON.stringify({ entryChecks, cases: results }, null, 2)); }
+} finally { await browser.close(); await fixture.close(); await writeFile(`${output}/measurements.json`, JSON.stringify(measurements,null,2)); await writeFile(`${output}/results.json`, JSON.stringify({ mode: args.refined ? 'refined' : 'legacy-baseline', chromiumSandbox: true, entryChecks, cases: results }, null, 2)); }
 if (failed) process.exitCode = 1;

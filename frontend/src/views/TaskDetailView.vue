@@ -255,6 +255,10 @@ async function showLearning() {
 }
 function changeReadingView(view: ContentView) { cancelEvidenceNavigation(); readingView.value = view; writeLocation(); }
 async function returnToLearning() {
+  if (activeWorkspace.value === "content") {
+    await showLearning();
+    return;
+  }
   cancelEvidenceNavigation();
   reviewingEvidence.value = false;
   await nextTick();
@@ -274,6 +278,7 @@ async function loadPublicRuntimeConfiguration() {
 async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
   if (!validPosition(startTimeMillis)) return;
   const request = ++evidenceRequest;
+  referenceMs.value = undefined;
   evidenceNavigationError.value = "";
   verifyingEvidence.value = Boolean(context);
   let applied = false;
@@ -303,7 +308,7 @@ function applySeek(startTimeMillis: number, reference = false) {
   seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
   readingView.value = "timeline";
   locateSequence.value++;
-  if (activeWorkspace.value !== "content") {
+  if (reference || activeWorkspace.value !== "content") {
     if (!reviewingEvidence.value) {
       returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       returnScroll = window.scrollY;
