@@ -590,7 +590,7 @@ async function confirmRetryTask() {
           <Teleport :to="readingTarget || 'body'" :disabled="classicLayout || !readingTarget">
             <div v-show="readerVisible" ref="evidenceRef" class="evidence-reading">
               <div v-if="reviewingEvidence" class="evidence-reading__return">
-                <span>{{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
+                <span><small v-if="isDemoMode" class="review-mode">本地演示 · 无外部 AI</small> {{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
                 <button type="button" @click="returnToLearning">返回当前学习任务</button>
               </div>
               <CourseContentPanel :reference-ms="reviewingEvidence ? referenceMs : undefined" :compact="!classicLayout" ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
@@ -640,6 +640,7 @@ async function confirmRetryTask() {
 .evidence-navigation-error { scroll-margin-top: calc(var(--header-height) + 76px); }
 .evidence-reading { min-width: 0; scroll-margin-top: calc(var(--header-height) + 12px); }
 .evidence-reading__return { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-ink-soft); }
+.review-mode { display: inline-block; margin-right: 6px; padding: 1px 5px; border-radius: var(--radius-sm); background: var(--color-brand-soft); color: var(--color-brand); font-size: 11px; }
 .evidence-reading__return button { font: inherit; color: var(--color-brand); padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; }
 .demo-notice { margin-top: 8px; }
 .course-layout { display: grid; grid-template-columns: minmax(360px, 420px) minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 24px; }

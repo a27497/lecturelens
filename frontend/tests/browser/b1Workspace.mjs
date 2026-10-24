@@ -146,6 +146,7 @@ try {
           expect(await page.locator('.timeline-row[aria-current=true]').evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(290);
         }
         if (args.refined) {
+          await expect(page.locator('.evidence-reading__return .review-mode')).toBeVisible();
           await expect(page.locator('.timeline-row[data-reference=true]')).toContainText('当前引用');
           await page.locator('video').evaluate(v => { v.currentTime = 35; });
           await expect.poll(() => page.locator('video').evaluate(v => v.currentTime)).toBe(35);
