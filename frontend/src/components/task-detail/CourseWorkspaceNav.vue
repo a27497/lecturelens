@@ -13,7 +13,7 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "files", label: "下载" },
   { value: "technical", label: "处理详情" },
 ];
-const primary = ["agent", "qa", "content"];
+const primary = ["agent", "qa"];
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const primary = ["agent", "qa", "content"];
       {{ item.label }}
     </button>
     <details v-if="compact" class="workspace-more" :open="!primary.includes(active)">
-      <summary>更多课程工具</summary>
+      <summary>更多</summary>
       <button v-for="item in items.filter(item => !primary.includes(item.value))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ item.label }}</button>
     </details>
   </nav>

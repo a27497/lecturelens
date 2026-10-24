@@ -9,7 +9,7 @@ import { formatMillisRange } from "../../utils/time";
 
 import { createTimeIndex } from "../../utils/timeIndex";
 import type { ContentView } from "./courseLocation";
-const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
+const props = defineProps<{ compact?: boolean; taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
 const emit = defineEmits<{ seek: [startTimeMillis: number]; "update:view": [view: ContentView] }>();
 
 const localView = ref<ContentView>("translated");
@@ -126,8 +126,8 @@ function emptyText(pending: string): string {
 </script>
 
 <template>
-  <section class="workspace-panel content-panel" aria-labelledby="content-title">
-    <header><h2 id="content-title">课程内容</h2><p>阅读完整课程文本，或按时间查看字幕片段。</p></header>
+  <section class="workspace-panel content-panel" :class="{ 'content-panel--compact': compact }" aria-labelledby="content-title">
+    <header><h2 id="content-title">课程内容</h2><p v-if="!compact">阅读完整课程文本，或按时间查看字幕片段。</p></header>
     <nav class="subnav" aria-label="课程内容视图">
       <button v-for="item in views" :key="item.value" type="button" :aria-pressed="activeView === item.value" :class="{ 'is-active': activeView === item.value }" @click="activeView = item.value">{{ item.label }}</button>
     </nav>
@@ -170,6 +170,9 @@ function emptyText(pending: string): string {
 </template>
 
 <style scoped>
+.content-panel.content-panel--compact { gap: 12px; }
+.content-panel--compact header h2 { font-size: 18px; }
+.content-panel--compact .timeline-view { gap: 10px; }
 .workspace-panel { display: grid; gap: 22px; min-width: 0; padding: clamp(20px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-low); }
 header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } header p { color: var(--color-ink-soft); }
 .subnav { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }

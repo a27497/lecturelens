@@ -32,7 +32,7 @@ interface TaskFilterOption {
 const TASK_FILTERS: TaskFilterOption[] = [
   { label: "全部", value: "ALL" },
   { label: "处理中", value: "RUNNING" },
-  { label: "已完成", value: "SUCCEEDED" },
+  { label: "材料就绪", value: "SUCCEEDED" },
   { label: "失败", value: "FAILED" },
   { label: "已取消", value: "CANCELED" },
 ];
@@ -356,7 +356,7 @@ function fallbackCopyText(text: string) {
 
 function primaryActionText(task: TaskSummaryResponse): string {
   if (task.status === "SUCCEEDED") {
-    return "查看结果";
+    return "进入学习";
   }
   if (isRunningTaskStatus(task.status)) {
     return "查看进度";
@@ -367,7 +367,7 @@ function primaryActionText(task: TaskSummaryResponse): string {
 function courseStatusLabel(task: TaskSummaryResponse): string {
   const status = String(task.status || "").toUpperCase();
   if (status === "SUCCEEDED") {
-    return "已完成";
+    return "材料已就绪";
   }
   if (status === "FAILED") {
     return "处理失败";
@@ -485,7 +485,7 @@ function formatTime(value: string | null): string {
   <main class="task-list-page page-container">
     <PageHeading
       title="我的课程"
-      description="查看课程视频的处理进度和结果。"
+      description="选择已就绪的课程，继续阅读、提问与练习。"
     >
       <template #actions>
         <RouterLink to="/upload">

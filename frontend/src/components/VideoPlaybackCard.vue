@@ -8,6 +8,7 @@ import { formatApiTimestamp } from "../utils/time";
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 
 const props = defineProps<{
+  compact?: boolean;
   seekRequest?: SeekRequest;
   title: string;
   description: string;
@@ -164,7 +165,7 @@ defineExpose({
     <div class="video-card__header">
       <div>
         <h2>{{ title }}</h2>
-        <p>{{ description }}</p>
+        <p v-if="!compact">{{ description }}</p>
       </div>
       <el-button :loading="loading" @click="$emit('refresh')">刷新播放链接</el-button>
     </div>
@@ -218,6 +219,8 @@ defineExpose({
       </div>
     </div>
 
+    <component :is="compact ? 'details' : 'div'" class="video-card__metadata">
+      <summary v-if="compact">播放与字幕信息</summary>
     <p
       class="video-card__subtitle"
       :class="`video-card__subtitle--${resolvedSubtitleStatus}`"
@@ -228,10 +231,13 @@ defineExpose({
     <p v-if="expiresAt" class="video-card__expiry">
       播放链接有效期至 {{ formatApiTimestamp(expiresAt) }}
     </p>
+    </component>
   </section>
 </template>
 
 <style scoped>
+.video-card__metadata { font-size: 13px; color: var(--color-ink-soft); }
+.video-card__metadata summary { cursor: pointer; padding-block: 4px; }
 .video-card {
   display: grid;
   gap: 14px;

@@ -142,3 +142,29 @@ it("opens recorded sources for abstaining feedback without claiming answer asses
   expect(studyCommand).not.toHaveBeenCalled();
   wrapper.unmount();
 });
+
+it("keeps old feedback readable while a dirty answer prevents inference on the unsaved version", async () => {
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, answerDirty: true, initial }, global: { stubs } });
+  const button = wrapper.findAll('button').find(b => b.text() === '重新获取证据反馈')!;
+  expect(button.attributes('disabled')).toBeDefined();
+  expect(wrapper.text()).toContain('请先保存本页修改');
+  expect(wrapper.text()).toContain('第 1 版作答的证据反馈');
+  await wrapper.findAll('button').find(b => b.text() === '回看这段课程证据')!.trigger('click');
+  expect(wrapper.emitted('seek')).toEqual([[5000, { evidenceId: 'e1', revision: 1 }]]);
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("cancelling a feedback-history switch keeps the selected version and unsaved note", async () => {
+  const older = { ...initial, run_id: 'older-feedback' };
+  Object.defineProperty(window, 'confirm', { configurable: true, value: vi.fn(() => false) });
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial, history: [initial, older] }, global: { stubs } });
+  await wrapper.get('textarea').setValue('unsubmitted correction');
+  const select = wrapper.get<HTMLSelectElement>('.feedback-history select');
+  await select.setValue('older-feedback'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(select.element.value).toBe(initial.run_id);
+  expect(wrapper.get<HTMLTextAreaElement>('textarea').element.value).toBe('unsubmitted correction');
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});

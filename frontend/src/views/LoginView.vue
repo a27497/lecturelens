@@ -51,12 +51,12 @@ async function submitLogin() {
 
   errorMessage.value = "";
   try {
+    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/tasks";
     await authStore.login({
       email: form.email.trim(),
       password: form.password,
-    });
+    }, redirect);
     ElMessage.success("登录成功");
-    const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/upload";
     await router.push(redirect);
   } catch (error) {
     errorMessage.value = toReadableAuthError(error);

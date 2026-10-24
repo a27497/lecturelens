@@ -11,9 +11,9 @@ import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 const props = defineProps<{
   sourceRevision?: number;
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
-  approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
+  answerDirty?: boolean; approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
-const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; accessFailure: [] }>();
+const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; draftChange: [dirty: boolean]; accessFailure: [] }>();
 const currentRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
 const approval = ref<StudyResponse["approval"]>(null);
@@ -31,6 +31,8 @@ let pendingStart: StudyCommand | null = null;
 let pendingNote: StudyCommand | null = null;
 const active = computed(() => currentRun.value && ["queued", "running", "awaiting_approval"].includes(currentRun.value.status));
 const feedback = computed(() => currentRun.value?.feedback);
+const noteDirty = computed(() => Boolean(noteText.value.trim()) && noteText.value !== (feedback.value?.note?.note_text ?? ""));
+watch(noteDirty, value => emit("draftChange", value), { immediate: true });
 const historyRuns = computed(() => {
   const rows = new Map((props.history ?? []).map(row => [row.run_id, row]));
   for (const row of observedRuns.value) rows.set(row.run_id, row);
@@ -55,10 +57,17 @@ onBeforeUnmount(() => { generation++; clearTimeout(timer); });
 function rememberRun() {
   if (currentRun.value) observedRuns.value = [...observedRuns.value.filter(row => row.run_id !== currentRun.value!.run_id), currentRun.value].slice(-20);
 }
+async function changeFeedback(event: Event) {
+  const select = event.target as HTMLSelectElement;
+  const selected = select.value;
+  select.value = currentRun.value?.run_id ?? "";
+  await selectRun(selected);
+}
 async function selectRun(id: string) {
   if (active.value || starting.value || savingNote.value || loadingNotes.value) return;
   const selected = historyRuns.value.find(row => row.run_id === id);
   if (!selected || selected.run_id === currentRun.value?.run_id) return;
+  if (noteDirty.value && !window.confirm("切换反馈会放弃本页未保存的核对文字。确定继续吗？")) return;
   rememberRun(); generation++; clearTimeout(timer);
   currentRun.value = selected; pendingStart = null; pendingNote = null;
   noteText.value = ""; notes.value = null; nextBefore.value = null; message.value = "";
@@ -92,6 +101,7 @@ async function refresh() {
   finally { if (current === generation && active.value) schedule(); }
 }
 async function start() {
+  if (props.answerDirty) return;
   if (!props.enabled || !props.attempt || active.value || currentRun.value?.status === "awaiting_approval" || starting.value || savingNote.value) return;
   const current = generation;
   const answer = props.attempt;
@@ -175,12 +185,14 @@ async function showNotes(more = false) {
 <template>
   <section class="practice-feedback" :aria-label="`第 ${questionIndex + 1} 题证据反馈`">
     <label v-if="historyRuns.length > 1" class="feedback-history">最近反馈
-      <select :value="currentRun?.run_id" :aria-label="`第 ${questionIndex + 1} 题反馈记录`" :disabled="Boolean(active) || starting || savingNote || loadingNotes" @change="selectRun(($event.target as HTMLSelectElement).value)">
+      <select :value="currentRun?.run_id" :aria-label="`第 ${questionIndex + 1} 题反馈记录`" :disabled="Boolean(active) || starting || savingNote || loadingNotes" @change="changeFeedback">
         <option v-for="(previous, index) in historyRuns" :key="previous.run_id" :value="previous.run_id">{{ index + 1 }} · 第 {{ previous.answer_version }} 版作答 · {{ historyStatus[previous.status] }}</option>
       </select>
     </label>
     <div class="feedback-actions">
-      <el-button v-if="enabled" :disabled="!attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
+      <el-button v-if="enabled" :disabled="answerDirty || !attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
+      <span v-if="answerDirty" role="status">请先保存本页修改，再获取新版反馈；下方已有反馈仍对应其已保存版本。</span>
+      <span v-else-if="attempt" class="feedback-version">将使用已保存第 {{ attempt.version }} 版作答</span>
       <span v-if="!attempt">先保存作答，再结合课程证据获取建议。</span>
       <span v-if="active" role="status">{{ currentRun?.status === 'awaiting_approval' ? '等待发布审批' : '正在阅读证据并复核反馈…' }}</span>
       <el-button v-if="active" @click="cancel">取消反馈</el-button>
