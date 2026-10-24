@@ -178,3 +178,19 @@ it("waits for result availability before falling back from a restored visual vie
   expect(wrapper.emitted("update:view")).toEqual([["translated"]]);
   wrapper.unmount();
 });
+
+it("keeps the verified reference distinct from a later playback position", async () => {
+  const data = result([]);
+  data.subtitles = [
+    { segmentIndex: 1, startMillis: 0, endMillis: 1000, language: "en", sourceText: "cited passage" },
+    { segmentIndex: 2, startMillis: 1000, endMillis: 2000, language: "en", sourceText: "later playback" },
+  ];
+  const wrapper = shallowMount(CourseContentPanel, { props: { taskId: "course", result: data, view: "timeline", positionMs: 100, referenceMs: 100 } });
+  expect(wrapper.get('[data-reference=true]').text()).toContain('cited passage');
+  await wrapper.setProps({ positionMs: 1200 });
+  expect(wrapper.get('[aria-current=true]').text()).toContain('later playback');
+  expect(wrapper.get('[data-reference=true]').text()).toContain('cited passage');
+  await wrapper.setProps({ referenceMs: undefined });
+  expect(wrapper.find('[data-reference=true]').exists()).toBe(false);
+  wrapper.unmount();
+});
