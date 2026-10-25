@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { createTimeIndex } from "../utils/timeIndex";
 import type { SeekRequest } from "./task-detail/courseLocation";
 import { parseVttCues } from "../utils/vtt";
@@ -8,6 +8,8 @@ import { formatApiTimestamp } from "../utils/time";
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 
 const props = defineProps<{
+  compact?: boolean;
+  inactive?: boolean;
   seekRequest?: SeekRequest;
   title: string;
   description: string;
@@ -64,13 +66,25 @@ const subtitleStatusText = computed(() => {
 
 watch(() => props.playbackUrl, () => {
   // A refreshed token creates a new media element. Keep its coordinate and explicit play intent.
-  if (videoRef.value) resumeAfterReload = !videoRef.value.paused && !videoRef.value.ended;
+  if (videoRef.value) resumeAfterReload = !props.inactive && !videoRef.value.paused && !videoRef.value.ended;
   if (pendingSeekSeconds.value === null && hasPosition) pendingSeekSeconds.value = currentTime.value;
   videoErrorMessage.value = "";
 });
 watch(() => props.seekRequest, request => {
   if (request) seekTo(request.milliseconds / 1000);
 }, { immediate: true });
+// v-show/CSS keep the media instance alive. Hidden controls must never leave audio running.
+watch(() => props.inactive, inactive => { if (inactive) pausePlayback(); }, { flush: "sync" });
+onBeforeUnmount(pausePlayback);
+
+function pausePlayback() {
+  resumeAfterReload = false;
+  videoRef.value?.pause();
+}
+function guardPlayback() {
+  // A pending play() or refreshed source can finish after the workspace became hidden.
+  if (props.inactive) pausePlayback();
+}
 
 function reportPosition(force = false) {
   const now = performance.now();
@@ -99,7 +113,7 @@ function handleLoadedMetadata(event: Event) {
   videoErrorMessage.value = "";
   if (pendingSeekSeconds.value !== null) applyPendingSeek();
   else updateCurrentTime(event);
-  if (resumeAfterReload && videoRef.value) {
+  if (resumeAfterReload && !props.inactive && videoRef.value) {
     resumeAfterReload = false;
     void videoRef.value.play().catch(() => undefined);
   }
@@ -164,7 +178,7 @@ defineExpose({
     <div class="video-card__header">
       <div>
         <h2>{{ title }}</h2>
-        <p>{{ description }}</p>
+        <p v-if="!compact">{{ description }}</p>
       </div>
       <el-button :loading="loading" @click="$emit('refresh')">刷新播放链接</el-button>
     </div>
@@ -196,6 +210,7 @@ defineExpose({
       controls
       preload="metadata"
       @loadedmetadata="handleLoadedMetadata"
+      @play="guardPlayback"
       @canplay="clearVideoError(); applyPendingSeek()"
       @error="handleVideoError"
       @seeking="handleSeeking"
@@ -218,6 +233,8 @@ defineExpose({
       </div>
     </div>
 
+    <component :is="compact ? 'details' : 'div'" class="video-card__metadata">
+      <summary v-if="compact">播放与字幕信息</summary>
     <p
       class="video-card__subtitle"
       :class="`video-card__subtitle--${resolvedSubtitleStatus}`"
@@ -228,10 +245,13 @@ defineExpose({
     <p v-if="expiresAt" class="video-card__expiry">
       播放链接有效期至 {{ formatApiTimestamp(expiresAt) }}
     </p>
+    </component>
   </section>
 </template>
 
 <style scoped>
+.video-card__metadata { font-size: 13px; color: var(--color-ink-soft); }
+.video-card__metadata summary { cursor: pointer; padding-block: 4px; }
 .video-card {
   display: grid;
   gap: 14px;

@@ -78,7 +78,7 @@ it("does not restore an older artifact when starting a new goal fails", async ()
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
   await flushPromises();
   expect(wrapper.find(".study-artifact").exists()).toBe(true);
-  await wrapper.findAll("textarea")[0]!.setValue("新的学习目标");
+  await wrapper.get('textarea[aria-label="学习目标"]').setValue("新的学习目标");
   await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
   await flushPromises();
   expect(wrapper.find(".study-artifact").exists()).toBe(false);
@@ -97,7 +97,7 @@ it("ignores late answers from a completed run after a new run starts", async () 
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
   await flushPromises();
   await wrapper.findAll("button").find(button => button.text().includes("查看参考答案"))!.trigger("click");
-  await wrapper.findAll("textarea")[0]!.setValue("新的学习目标");
+  await wrapper.get('textarea[aria-label="学习目标"]').setValue("新的学习目标");
   await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
   await flushPromises();
   resolveAnswers({ questions: [{ question: "old", evidence_ids: ["e1"], answer: "OLD PRIVATE ANSWER" }] });
@@ -147,7 +147,7 @@ it("keeps learning unavailable while evidence is being prepared and can refresh"
   vi.mocked(getEvidenceIndexStatus).mockResolvedValueOnce({ status: "INDEXING" } as Awaited<ReturnType<typeof getEvidenceIndexStatus>>);
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
   await flushPromises();
-  await wrapper.findAll("textarea")[0]!.setValue("解释停止条件");
+  await wrapper.get('textarea[aria-label="学习目标"]').setValue("解释停止条件");
   expect(wrapper.findAll("button").find(button => button.text() === "解释并出题")!.attributes("disabled")).toBeDefined();
   await wrapper.findAll("button").find(button => button.text() === "刷新状态")!.trigger("click");
   await flushPromises();
@@ -264,5 +264,50 @@ it("requests an ownership recheck on a current access error but ignores an old c
   vi.mocked(studyStatus).mockRejectedValueOnce({ response: { status: 403 } });
   await wrapper.setProps({ taskId: "revoked" }); await flushPromises();
   expect(wrapper.emitted("accessFailure")).toEqual([[]]);
+  wrapper.unmount();
+});
+
+it("prioritizes the restored question over the folded new goal, and guards draft loss on history switch", async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
+    if (command.operation === "RUNS") return { runs: [{ ...run, created_at: "2026-10-24" }] };
+    return { run, artifact };
+  });
+  Object.defineProperty(window, "confirm", { configurable: true, value: vi.fn(() => false) });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  expect(wrapper.get('.new-study-goal').attributes('open')).toBeUndefined();
+  expect(wrapper.get('.study-artifact').element.compareDocumentPosition(wrapper.get('.new-study-goal').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  const input = wrapper.get<HTMLTextAreaElement>('.practice-answer textarea');
+  await input.setValue('unsaved work');
+  const count = vi.mocked(studyCommand).mock.calls.length;
+  await wrapper.get('.learning-history button').trigger('click'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(vi.mocked(studyCommand).mock.calls).toHaveLength(count);
+  expect(wrapper.get('.practice-answer textarea').element).toBe(input.element);
+  expect(input.element.value).toBe('unsaved work');
+  wrapper.unmount();
+});
+
+it("clears discarded feedback-note draft markers when history reload unmounts the feedback panel", async () => {
+  const savedFeedback = { feedback_id: "feedback", attempt_id: "answer", answer_version: 1, question_index: 0, answer_text: "saved", note: null,
+    content: { kind: "guidance", mode: "mock", citations: [] } };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
+    if (command.operation === "RUNS") return { runs: [{ ...run, created_at: "2026-10-26" }] };
+    return { run, artifact, feedback_enabled: true, feedback_runs: [{ run_id: "feedback-run", status: "succeeded", attempt_id: "answer", answer_version: 1, question_index: 0, feedback: savedFeedback }] } as never;
+  });
+  Object.defineProperty(window, "confirm", { configurable: true, value: vi.fn(() => true) });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  const note = wrapper.get('.practice-question.is-current .practice-feedback textarea');
+  await note.setValue('discarded feedback note');
+  await wrapper.get('.learning-history button').trigger('click'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(wrapper.get('.practice-question.is-current .practice-feedback textarea').element).not.toBe(note.element);
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-feedback textarea').element.value).toBe('');
+  await wrapper.get('.learning-history button').trigger('click'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(vi.mocked(studyCommand).mock.calls.every(([, command]) => ['LIST', 'RUNS', 'READ'].includes(command.operation))).toBe(true);
   wrapper.unmount();
 });

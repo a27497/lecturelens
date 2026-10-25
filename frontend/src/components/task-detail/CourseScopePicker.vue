@@ -46,9 +46,14 @@ watch(() => props.refreshKey, () => { void load(); });
 onBeforeUnmount(() => generation++);
 </script>
 <template>
-  <section class="scope-picker" aria-label="学习范围">
+  <section class="scope-picker" :class="{ 'scope-picker--compact': compact }" aria-label="学习范围">
+    <details v-if="frozenScope !== undefined" class="frozen-scope" :open="!compact">
+      <summary>当前范围：{{ scopeLabel(frozenScope) }}</summary>
+      <p v-if="!frozenScope">旧学习记录按整课范围读取。</p>
+      <template v-else><p>课程版本 {{ frozenScope.revision }}；此范围随执行保存，修改下次范围不会改变它。</p><ul v-if="frozenScope.kind === 'segments'"><li v-for="id in frozenScope.evidence_ids" :key="id">{{ label(id) }}</li></ul></template>
+    </details>
     <details class="scope-options" :open="!compact || editing" @toggle="editing = ($event.target as HTMLDetailsElement).open">
-    <summary v-if="compact">下次范围：{{ modelValue ? scopeLabel(modelValue) : '待确认' }} · 更改范围</summary>
+    <summary v-if="compact">下次：{{ modelValue ? scopeLabel(modelValue) : '待确认' }} · 更改</summary>
     <h3>下次提问或学习的范围</h3>
     <p>课程问答与解释/练习使用同一范围。已开始的执行保留原范围。</p>
     <label><input v-model="kind" type="radio" value="course" @change="publish" />整节课程</label>
@@ -75,11 +80,7 @@ onBeforeUnmount(() => generation++);
     <button v-if="!modelValue && revision !== undefined" type="button" :disabled="kind === 'segments' && !selected.length" @click="publish">确认当前范围</button>
     </details>
     <p v-if="compact && error" role="status">{{ error }}</p>
-    <details v-if="frozenScope !== undefined" class="frozen-scope" :open="!compact">
-      <summary>当前学习记录范围：{{ scopeLabel(frozenScope) }}</summary>
-      <p v-if="!frozenScope">旧学习记录按整课范围读取。</p>
-      <template v-else><p>课程版本 {{ frozenScope.revision }}；此范围随执行保存，修改上方选择不会改变它。</p><ul v-if="frozenScope.kind === 'segments'"><li v-for="id in frozenScope.evidence_ids" :key="id">{{ label(id) }}</li></ul></template>
-    </details>
+
   </section>
 </template>
 <style scoped>
@@ -89,4 +90,12 @@ h3 { margin-top: 0; }.scope-picker label { margin-right: 12px; }.scope-picker p 
 fieldset { margin-block: 12px; border: 1px solid var(--color-border); }.frozen-scope { margin-top: 12px; }
 summary { cursor: pointer; line-height: 1.6; }.scope-options > summary { color: var(--color-brand); font-weight: 650; }
 .scope-picker button { font: inherit; padding: 6px 9px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
+
+
+.scope-picker--compact { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 12px; }
+.scope-picker--compact .frozen-scope { margin: 0; }
+.scope-picker--compact summary { font-size: 12px; line-height: 1.5; padding: 4px 0; }
+.scope-picker--compact > details[open] { flex-basis: 100%; }
+.scope-picker--compact > p { flex-basis: 100%; margin: 4px 0; }
+.scope-picker--compact .scope-options > summary { font-weight: 500; }
 </style>

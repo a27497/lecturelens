@@ -54,6 +54,9 @@ const lastLearningWorkspace = ref<"agent" | "qa">("agent");
 const learningWorkspace = computed(() => !classicLayout.value && activeWorkspace.value === "content" ? lastLearningWorkspace.value : activeWorkspace.value);
 const materialsRef = ref<HTMLElement | null>(null);
 const readingTarget = ref<HTMLElement | null>(null);
+const mobileNavTarget = ref<HTMLElement | null>(null);
+// A verified citation stays anchored as playback advances; plain timeline seeks are not citations.
+const referenceMs = ref<number>();
 const readerRef = ref<{ currentView: () => ContentView } | null>(null);
 const evidenceErrorRef = ref<HTMLElement | null>(null);
 const learningRef = ref<HTMLElement | null>(null);
@@ -69,6 +72,9 @@ const positionMs = ref(0);
 const seekRequest = ref<SeekRequest>();
 const locateSequence = ref(0);
 const reviewingEvidence = ref(false);
+// Match both the mobile material-column CSS and the citation v-show, without remounting media.
+const playerVisible = computed(() => classicLayout.value || !narrowScreen.value ||
+  (!evidenceNavigationError.value && activeWorkspace.value === "content" && !reviewingEvidence.value));
 const evidenceRef = ref<HTMLElement | null>(null);
 let seekSequence = 0;
 let returnFocus: HTMLElement | null = null;
@@ -252,6 +258,10 @@ async function showLearning() {
 }
 function changeReadingView(view: ContentView) { cancelEvidenceNavigation(); readingView.value = view; writeLocation(); }
 async function returnToLearning() {
+  if (activeWorkspace.value === "content") {
+    await showLearning();
+    return;
+  }
   cancelEvidenceNavigation();
   reviewingEvidence.value = false;
   await nextTick();
@@ -271,10 +281,11 @@ async function loadPublicRuntimeConfiguration() {
 async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
   if (!validPosition(startTimeMillis)) return;
   const request = ++evidenceRequest;
+  referenceMs.value = undefined;
   evidenceNavigationError.value = "";
   verifyingEvidence.value = Boolean(context);
   let applied = false;
-  try { await evidenceSeekGuard.seek(taskId.value, context, () => { applySeek(startTimeMillis); applied = true; }); }
+  try { await evidenceSeekGuard.seek(taskId.value, context, () => { applySeek(startTimeMillis, Boolean(context)); applied = true; }); }
   finally {
     if (request === evidenceRequest) {
       verifyingEvidence.value = false;
@@ -284,7 +295,7 @@ async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
         if (request === evidenceRequest) {
           if (classicLayout.value || narrowScreen.value) {
             evidenceRef.value?.scrollIntoView({ block: "start" });
-            if (!classicLayout.value) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[aria-current=true]")?.scrollIntoView({ block: "nearest" });
+            if (!classicLayout.value) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[data-reference=true]")?.scrollIntoView({ block: "start" });
           }
           else if (materialsRef.value && evidenceRef.value) {
             materialsRef.value.scrollTop += evidenceRef.value.getBoundingClientRect().top - materialsRef.value.getBoundingClientRect().top - 8;
@@ -294,12 +305,13 @@ async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
     }
   }
 }
-function applySeek(startTimeMillis: number) {
+function applySeek(startTimeMillis: number, reference = false) {
+  referenceMs.value = reference ? startTimeMillis : undefined;
   positionMs.value = startTimeMillis;
   seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
   readingView.value = "timeline";
   locateSequence.value++;
-  if (activeWorkspace.value !== "content") {
+  if (reference || activeWorkspace.value !== "content") {
     if (!reviewingEvidence.value) {
       returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       returnScroll = window.scrollY;
@@ -494,9 +506,12 @@ async function confirmRetryTask() {
 </script>
 
 <template>
-  <main class="course-workspace-page">
+  <main class="course-workspace-page" :class="{ 'is-mobile-evidence': !classicLayout && narrowScreen && reviewingEvidence }">
     <div class="course-workspace-page__inner">
       <CourseWorkspaceHeader
+        :compact="!classicLayout"
+        :demo-mode="isDemoMode"
+        v-show="!courseBlocked && !(reviewingEvidence && narrowScreen && !classicLayout)"
         :status="task?.status"
         :can-cancel="canCancelTask"
         :can-retry="canRetryTask"
@@ -506,10 +521,12 @@ async function confirmRetryTask() {
         @refresh="reconnect"
         @cancel="confirmCancelTask"
         @retry="confirmRetryTask"
-      />
+      >
+        <template v-if="!classicLayout" #workspace-actions><button type="button" class="layout-switch" @click="changeLayout">经典布局</button></template>
+      </CourseWorkspaceHeader>
 
       <el-alert
-        v-if="isDemoMode"
+        v-if="isDemoMode && classicLayout"
         class="demo-notice"
         :closable="false"
         title="当前使用本地演示数据，未调用外部 AI 服务。"
@@ -517,13 +534,15 @@ async function confirmRetryTask() {
         show-icon
       />
 
-      <div v-if="hasTaskId && !courseBlocked" class="workspace-wayfinding" aria-label="学习工作区导航">
+      <div v-if="hasTaskId && !courseBlocked && classicLayout" v-show="!(reviewingEvidence && narrowScreen && !classicLayout)" class="workspace-wayfinding" aria-label="学习工作区导航">
         <div class="workspace-wayfinding__actions">
-          <button type="button" @click="showMaterials">看视频与原文</button>
-          <button type="button" @click="showLearning">{{ lastLearningWorkspace === 'qa' ? '返回课程问答' : learningTask?.totalQuestions ? `继续第 ${learningTask.questionIndex + 1} 题` : '返回学习任务' }}</button>
+          <button type="button" :aria-pressed="activeWorkspace === 'content'" @click="showMaterials">看视频与原文</button>
+          <button type="button" :aria-pressed="activeWorkspace !== 'content'" @click="showLearning">{{ lastLearningWorkspace === 'qa' ? '返回课程问答' : learningTask?.totalQuestions ? `继续第 ${learningTask.questionIndex + 1} 题` : '解释与练习' }}</button>
         </div>
         <button type="button" class="layout-switch" @click="changeLayout">{{ classicLayout ? '连续工作区' : '经典布局' }}</button>
       </div>
+
+      <div v-if="hasTaskId && !courseBlocked && !classicLayout" v-show="!reviewingEvidence" ref="mobileNavTarget" class="mobile-workspace-nav-target" />
 
       <el-empty v-if="!hasTaskId" description="课程地址中缺少任务 ID" />
       <section v-else-if="courseBlocked" role="alert" class="course-unavailable">
@@ -534,8 +553,10 @@ async function confirmRetryTask() {
       <div v-else class="course-layout" :class="{ 'course-layout--continuous': !classicLayout, 'is-reading': !evidenceNavigationError && (activeWorkspace === 'content' || reviewingEvidence) }">
         <div ref="materialsRef" class="course-layout__media" aria-label="视频与课程材料">
           <CourseVideoAside
+            v-show="!(reviewingEvidence && narrowScreen && !classicLayout)"
             :key="taskId"
             :compact="!classicLayout"
+            :inactive="!playerVisible"
             :seek-request="seekRequest"
             @position="updatePosition"
             @manual-seek="cancelEvidenceNavigation"
@@ -560,12 +581,17 @@ async function confirmRetryTask() {
         </div>
 
         <section ref="learningRef" class="course-layout__content" aria-label="课程学习工作台">
-          <div v-if="!classicLayout" class="learning-context">
+          <div v-if="!classicLayout && !learningTask" class="learning-context">
             <p class="learning-context__eyebrow">同一节课 · 继续学习</p>
-            <p v-if="learningTask && lastLearningWorkspace === 'agent'"><strong>当前任务：</strong>{{ learningTask.goal }}<span v-if="learningTask.totalQuestions"> · 第 {{ learningTask.questionIndex + 1 }}/{{ learningTask.totalQuestions }} 题</span></p>
-            <p v-else>先阅读课程，向 Tutor 提问；需要自测时再发起解释与练习。</p>
+            <p>先阅读课程，向 Tutor 提问；需要自测时再发起解释与练习。</p>
           </div>
-          <CourseWorkspaceNav :active="activeWorkspace" :compact="!classicLayout" @change="changeWorkspace" />
+          <aside v-if="reviewingEvidence && learningTask && lastLearningWorkspace === 'agent' && !classicLayout" class="learning-evidence-context">
+            <strong>正在核对第 {{ learningTask.questionIndex + 1 }} 题</strong>
+            <p>{{ learningTask.question }}</p><button type="button" @click="returnToLearning">返回本题作答</button>
+          </aside>
+          <Teleport :to="mobileNavTarget || 'body'" :disabled="classicLayout || !narrowScreen || !mobileNavTarget">
+            <CourseWorkspaceNav :active="activeWorkspace" :compact="!classicLayout" :materials="!classicLayout && narrowScreen" @change="changeWorkspace" />
+          </Teleport>
           <div v-if="evidenceNavigationError" ref="evidenceErrorRef" class="evidence-navigation-error"><el-alert :closable="false" :title="evidenceNavigationError" type="warning" show-icon /></div>
           <el-alert v-if="taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="taskResultStore.loading && !result" :rows="6" animated />
@@ -573,10 +599,10 @@ async function confirmRetryTask() {
           <Teleport :to="readingTarget || 'body'" :disabled="classicLayout || !readingTarget">
             <div v-show="readerVisible" ref="evidenceRef" class="evidence-reading">
               <div v-if="reviewingEvidence" class="evidence-reading__return">
-                <span>{{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
+                <span><small v-if="isDemoMode" class="review-mode">本地演示 · 无外部 AI</small> {{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
                 <button type="button" @click="returnToLearning">返回当前学习任务</button>
               </div>
-              <CourseContentPanel ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+              <CourseContentPanel :reference-ms="reviewingEvidence ? referenceMs : undefined" :compact="!classicLayout" ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
             </div>
           </Teleport>
           <CourseScopePicker :key="taskId" :compact="!classicLayout" v-show="learningWorkspace === 'agent' || learningWorkspace === 'qa'" @access-failure="loadTaskDetail(taskId)" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="learningWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
@@ -592,7 +618,7 @@ async function confirmRetryTask() {
               @retry="confirmRetryTask"
             />
             <CourseStudyPanel v-else-if="learningWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
+            <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
             <CourseQaPanel @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="learningWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
             <CourseFilesPanel v-else-if="learningWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
             <CourseTechnicalPanel
@@ -607,7 +633,7 @@ async function confirmRetryTask() {
           </KeepAlive>
         </section>
       </div>
-      <details v-if="hasTaskId && !courseBlocked" class="workspace-recovery">
+      <details v-if="hasTaskId && !courseBlocked" v-show="!(reviewingEvidence && narrowScreen && !classicLayout)" class="workspace-recovery">
         <summary>保存、恢复与课程记录</summary>
         <p>服务端保存学习会话、执行、作答版本、反馈与核对意见。刷新后读取最近的已保存学习记录。</p>
         <p>网址只恢复课程视图、布局与视频位置，恢复后保持暂停。未提交的问题、目标、作答和核对文字仅留在当前页面；刷新或离开后不会恢复。</p>
@@ -623,8 +649,9 @@ async function confirmRetryTask() {
 .evidence-navigation-error { scroll-margin-top: calc(var(--header-height) + 76px); }
 .evidence-reading { min-width: 0; scroll-margin-top: calc(var(--header-height) + 12px); }
 .evidence-reading__return { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-ink-soft); }
+.review-mode { display: inline-block; margin-right: 6px; padding: 1px 5px; border-radius: var(--radius-sm); background: var(--color-brand-soft); color: var(--color-brand); font-size: 11px; }
 .evidence-reading__return button { font: inherit; color: var(--color-brand); padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; }
-.demo-notice { margin-top: 18px; }
+.demo-notice { margin-top: 8px; }
 .course-layout { display: grid; grid-template-columns: minmax(360px, 420px) minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 24px; }
 .course-layout__media { position: sticky; top: calc(var(--header-height) + 24px); min-width: 0; }
 .course-layout__content { display: grid; gap: 16px; min-width: 0; }
@@ -632,9 +659,8 @@ async function confirmRetryTask() {
 @media (max-width: 1024px) { .course-workspace-page :deep(button) { min-height: 40px; } }
 @media (max-width: 900px) { .course-workspace-page__inner { width: min(100% - 32px, 760px); }.course-layout { grid-template-columns: 1fr; }.course-layout__media { position: static; } }
 @media (max-width: 520px) { .course-workspace-page__inner { width: min(100% - 24px, 760px); padding-top: 22px; }.course-layout { margin-top: 18px; } }
-</style>
 
-<style scoped>
+
 .workspace-wayfinding { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; position: sticky; top: var(--header-height); z-index: 5; background: var(--color-canvas); border-bottom: 1px solid var(--color-border); }
 .workspace-wayfinding__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .workspace-wayfinding button { font: inherit; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
@@ -665,5 +691,68 @@ async function confirmRetryTask() {
 @media (max-width: 520px) {
   .workspace-wayfinding { align-items: stretch; }.workspace-wayfinding .layout-switch { padding: 4px 8px; }
   .course-layout--continuous :deep(.content-panel), .course-layout--continuous :deep(.qa-panel), .course-layout--continuous :deep(.agent-panel) { padding: 14px; }
+}
+
+
+.course-workspace-page__inner { padding-top: 16px; }
+.learning-evidence-context { position: sticky; top: calc(var(--header-height) + 58px); z-index: 7; padding: 12px; border: 1px solid var(--color-brand); border-radius: var(--radius-md); background: var(--color-brand-soft); }
+.learning-evidence-context p { margin: 6px 0; font-size: 14px; line-height: 1.6; }
+.learning-evidence-context button { font: inherit; padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-brand); cursor: pointer; }
+.course-layout--continuous { gap: 24px; margin-top: 20px; }
+.course-layout--continuous .course-layout__content { padding: 18px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); gap: 12px; }
+.course-layout--continuous :deep(.agent-panel), .course-layout--continuous :deep(.qa-panel) { padding: 0; border: 0; box-shadow: none; }
+.course-layout--continuous :deep(.scope-picker) { margin: 0; padding: 10px 12px; background: var(--color-canvas); font-size: 13px; }
+
+.course-layout--continuous .learning-context__eyebrow { margin: 0 !important; font-size: 12px; letter-spacing: .04em; }
+.course-layout--continuous :deep(.agent-panel > header h2), .course-layout--continuous :deep(.qa-panel h2) { font-size: 20px; }
+.course-layout--continuous :deep(.agent-panel > header p) { font-size: 13px; line-height: 1.6; }
+.course-layout--continuous :deep(.study-artifact) { margin-top: 12px; gap: 12px; }
+.course-layout--continuous :deep(.question-text) { font-size: 17px; line-height: 1.7; }
+.course-layout--continuous :deep(.el-textarea__inner) { font-size: 15px; line-height: 1.7; }
+.course-layout--continuous :deep(.practice-feedback h4) { margin-block: 8px; }
+.course-layout--continuous :deep(.run-progress) { margin-top: 10px; }
+.workspace-wayfinding [aria-pressed=true] { background: var(--color-brand-soft); border-color: var(--color-brand); }
+button:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
+@media (max-width: 900px) {
+  .course-workspace-page__inner { padding-top: 14px; }
+  .course-layout--continuous .course-layout__content { padding: 14px; }
+  .course-layout--continuous :deep(.el-textarea__inner) { font-size: 16px; }
+  .course-layout--continuous :deep(.agent-panel), .course-layout--continuous :deep(.qa-panel) { padding: 0; }
+  .is-mobile-evidence .course-layout { margin-top: 0; }
+  .is-mobile-evidence .course-layout__media { gap: 0; }
+  .is-mobile-evidence .evidence-reading__return { top: var(--header-height); z-index: 6; margin-bottom: 8px; padding: 10px; flex-direction: column; gap: 8px; }
+  .is-mobile-evidence .evidence-reading__return > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; }
+  .is-mobile-evidence .evidence-reading__return button { width: 100%; min-height: 44px; }
+  .is-mobile-evidence :deep(.timeline-list) { max-height: none; overflow: visible; }
+  .is-mobile-evidence :deep(.timeline-row) { scroll-margin-top: calc(var(--header-height) + 136px); font-size: 15px; }
+}
+
+
+.mobile-workspace-nav-target { display: none; }
+.course-layout--continuous { margin-top: 18px; gap: 22px; }
+.course-layout--continuous .course-layout__media, .course-layout--continuous .course-layout__content { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); padding: 18px; box-shadow: 0 3px 16px rgb(29 36 33 / 3%); }
+.course-layout--continuous .course-layout__media { max-height: calc(100dvh - var(--header-height) - 30px); top: calc(var(--header-height) + 14px); gap: 16px; }
+.course-layout--continuous :deep(.content-panel) { padding: 16px 0 0; border: 0; border-top: 1px solid var(--color-border); border-radius: 0; box-shadow: none; gap: 12px; }
+.course-layout--continuous :deep(.content-panel > header) { display: none; }
+.course-layout--continuous :deep(.course-video-player) { max-height: 25vh; border-radius: var(--radius-md); }
+.course-layout--continuous :deep(.video-card__header h2) { font-size: 15px; font-weight: 650; }
+.course-layout--continuous :deep(.video-card__header .el-button) { font-size: 12px; }
+.course-layout--continuous :deep(.video-card) { gap: 10px; }
+.course-layout--continuous :deep(.scope-picker) { padding: 0 0 10px; background: transparent; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; }
+.course-layout--continuous .learning-evidence-context { top: calc(var(--header-height) + 10px); }
+.layout-switch { font: inherit; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-ink-soft); border-radius: var(--radius-sm); padding: 7px 12px; cursor: pointer; }
+@media (max-width: 900px) {
+  .mobile-workspace-nav-target { display: block; position: sticky; top: var(--header-height); z-index: 10; background: var(--color-canvas); padding-block: 8px; }
+  .mobile-workspace-nav-target :deep(.workspace-nav) { background: transparent; padding-bottom: 0; border: 0; }
+  .mobile-workspace-nav-target :deep(.workspace-nav button) { font-size: 13px; min-height: 42px; padding: 8px 6px; }
+  .mobile-workspace-nav-target :deep(.workspace-more) { flex: 0 0 auto; }
+  .mobile-workspace-nav-target :deep(.workspace-more summary) { padding: 12px 8px; font-size: 12px; }
+  .course-layout--continuous { margin-top: 8px; }
+  .course-layout--continuous .course-layout__media, .course-layout--continuous .course-layout__content { padding: 14px; }
+  .course-layout--continuous .course-layout__media { max-height: none; }
+  .course-layout--continuous :deep(.scope-picker) { padding-bottom: 8px; }
+  .is-mobile-evidence .course-layout__media { padding: 10px; }
+  .is-mobile-evidence .evidence-reading__return { border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; padding: 8px 0; }
+  .is-mobile-evidence :deep(.timeline-row[data-reference=true]) { scroll-margin-top: calc(var(--header-height) + 128px); }
 }
 </style>

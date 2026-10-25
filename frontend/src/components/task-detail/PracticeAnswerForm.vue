@@ -94,7 +94,7 @@ async function showHistory(more = false) {
   <div class="practice-answer">
     <el-input v-model="text" type="textarea" :rows="3" maxlength="4000" :disabled="saving" placeholder="写下你的理解，然后保存作答。" :aria-label="`第 ${questionIndex + 1} 题作答`" />
     <div class="answer-actions">
-      <el-button :disabled="!canSave" :loading="saving" @click="save">保存作答</el-button>
+      <el-button type="primary" :disabled="!canSave" :loading="saving" @click="save">保存作答</el-button>
       <span role="status">{{ dirty ? '有尚未保存的修改' : latest ? `已保存第 ${latest.version} 版` : '尚未作答' }}</span>
       <el-button v-if="latest" text :loading="loadingHistory" @click="showHistory()">修改记录</el-button>
     </div>

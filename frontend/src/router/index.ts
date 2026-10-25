@@ -57,6 +57,8 @@ router.beforeEach(async (to) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
 
+  if (to.path === "/" && isAuthenticated) return { path: "/tasks" };
+
   if (to.meta.requiresAuth && !isAuthenticated) {
     return {
       path: "/login",
@@ -71,7 +73,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guestOnly && isAuthenticated) {
-    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : "/upload";
+    const redirect = typeof to.query.redirect === "string" ? to.query.redirect : "/tasks";
     return redirect;
   }
 

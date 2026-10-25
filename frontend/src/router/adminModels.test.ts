@@ -69,3 +69,13 @@ it("denies access and removes the cached role when the current role cannot be re
   expect(router.currentRoute.value.path).toBe("/tasks");
   expect(auth.isAdmin).toBe(false);
 });
+
+it("uses the course library after login while preserving explicit course redirects", async () => {
+  expect(router.resolve('/upload').name).toBe('upload');
+  expect(router.resolve('/tasks').name).toBe('tasks');
+  await router.push('/'); expect(router.currentRoute.value.path).toBe('/tasks');
+  await router.push('/login'); expect(router.currentRoute.value.path).toBe('/tasks');
+  await router.push('/login?redirect=/tasks/course-old?layout=classic');
+  expect(router.currentRoute.value.path).toBe('/tasks/course-old');
+  expect(router.currentRoute.value.query.layout).toBe('classic');
+});

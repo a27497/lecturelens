@@ -25,9 +25,9 @@ const Agent = defineComponent({
   setup(_props, { emit }) { const text = ref(""); onMounted(() => emit("frozenScope", frozen)); return { text }; },
   template: `<div class="mock-agent"><input v-model="text" aria-label="目标草稿" /><button @click="$emit('seek', 2000, { evidenceId: 'e1', revision: 1 })">回看来源</button><button @click="$emit('accessFailure')">核对权限</button></div>`,
 });
-const Reader = defineComponent({ props: ["visible", "view"], setup(props, { expose }) { expose({ currentView: () => props.view ?? "translated" }); return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /></div>` });
+const Reader = defineComponent({ props: ["visible", "view", "referenceMs"], emits: ["seek"], setup(props, { expose }) { expose({ currentView: () => props.view ?? "translated" }); return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /><button @click="$emit('seek', 4000)">普通时间轴定位</button></div>` });
 const stubs = {
-  CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { template: `<div>视频</div>` },
+  CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { name: "CourseVideoAside", props: ["inactive"], template: `<div>视频</div>` },
   CourseScopePicker: { props: ["frozenScope"], emits: ["update:modelValue"], template: `<div class="mock-scope"><span>{{ JSON.stringify(frozenScope) }}</span><button @click="$emit('update:modelValue', { version: 1, kind: 'course', policy: 'strict', revision: 2, evidence_ids: [] })">重新选择范围</button></div>` },
   CourseModelUsagePanel: true, CourseQaPanel: true, CourseStudyPanel: true, CourseFilesPanel: true, CourseTechnicalPanel: true, CourseOverviewPanel: true,
   "el-button": { template: `<button><slot /></button>` }, "el-tag": { template: `<span><slot /></span>` }, "el-alert": { props: ["title"], template: `<p role="alert">{{ title }}</p>` }, "el-skeleton": true, "el-empty": true,
@@ -71,7 +71,7 @@ it("the content URL keeps the current learning panel and its frozen scope indepe
   const { wrapper, router } = await open();
   const input = wrapper.get<HTMLInputElement>('.mock-agent input'); await input.setValue('same-page draft');
   await wrapper.get('.mock-scope button').trigger('click');
-  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程内容')!.trigger('click'); await flushPromises();
+  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程材料')!.trigger('click'); await flushPromises();
   expect(router.currentRoute.value.query.view).toBe('content');
   expect(wrapper.get('.mock-agent input').element).toBe(input.element); expect(input.element.value).toBe('same-page draft');
   expect(wrapper.get('.mock-scope span').text()).toContain('e1'); expect(wrapper.get('.mock-scope span').text()).toContain('"revision":1');
@@ -124,6 +124,34 @@ it("stops hidden narrow-screen following and resumes only when the reader is sho
   wrapper.unmount(); expect(query.removeEventListener).toHaveBeenCalledWith("change", change);
 });
 
+it("marks every CSS-hidden mobile player inactive across tabs, references and breakpoints", async () => {
+  let change!: () => void;
+  const query = { matches: true, addEventListener: vi.fn((_event, listener) => { change = listener; }), removeEventListener: vi.fn() };
+  vi.mocked(window.matchMedia).mockReturnValue(query as unknown as MediaQueryList);
+  const { wrapper } = await open();
+  const inactive = () => wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive");
+  expect(inactive()).toBe(true);
+  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程材料')!.trigger('click'); await flushPromises();
+  expect(inactive()).toBe(false);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(inactive()).toBe(true);
+  query.matches = false; change(); await flushPromises(); expect(inactive()).toBe(false);
+  query.matches = true; change(); await flushPromises(); expect(inactive()).toBe(true);
+  await wrapper.get('.layout-switch').trigger('click'); await flushPromises(); expect(inactive()).toBe(false);
+  wrapper.unmount();
+});
+
+it("marks the material-column player inactive after a stale mobile reference hides the column", async () => {
+  vi.mocked(window.matchMedia).mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as MediaQueryList);
+  const { wrapper } = await open('/tasks/one?view=content');
+  expect(wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive")).toBe(false);
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ revision: 2, status: 'READY' } as never);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.get('.evidence-navigation-error').text()).toContain('课程资料已更新');
+  expect(wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive")).toBe(true);
+  wrapper.unmount();
+});
+
 it.each([
   ["/tasks/one?view=content", "timeline"],
   ["/tasks/one?view=content&layout=classic", "translated"],
@@ -162,5 +190,53 @@ it("a rapid layout round trip supersedes its queued URL change", async () => {
   toggle.click(); toggle.click(); await flushPromises();
   expect(wrapper.get('.layout-switch').text()).toBe('经典布局');
   expect(router.currentRoute.value.query.layout).toBeUndefined();
+  wrapper.unmount();
+});
+
+it.each([
+  ["agent", false], ["content", false], ["agent", true], ["content", true],
+])("verified references from %s retain a return to learning (narrow=%s)", async (view, narrow) => {
+  vi.mocked(window.matchMedia).mockReturnValue({ matches: narrow, addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as MediaQueryList);
+  const { wrapper, router } = await open(`/tasks/one?view=${view}`);
+  const input = wrapper.get<HTMLInputElement>('.mock-agent input');
+  await input.setValue('unsaved learning draft');
+  const reader = wrapper.get('.mock-reader').element;
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBe(2000);
+  expect(wrapper.findComponent(Reader).props('visible')).toBe(true);
+  expect(wrapper.get('.evidence-reading__return').text()).toContain('返回当前学习任务');
+  await wrapper.get('.evidence-reading__return button').trigger('click'); await flushPromises();
+  expect(router.currentRoute.value.query.view).toBe('agent');
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBeUndefined();
+  expect(wrapper.get('.mock-reader').element).toBe(reader);
+  expect(wrapper.get('.mock-agent input').element).toBe(input.element);
+  expect(input.element.value).toBe('unsaved learning draft');
+  wrapper.unmount();
+});
+
+it("drops an existing verified marker before a failed recheck, without discarding the draft", async () => {
+  const { wrapper } = await open();
+  await wrapper.get('.mock-agent input').setValue('keep draft');
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBe(2000);
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ revision: 2, status: 'READY' } as never);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBeUndefined();
+  expect(wrapper.findComponent(Reader).props('visible')).toBe(false);
+  expect(wrapper.get<HTMLInputElement>('.mock-agent input').element.value).toBe('keep draft');
+  wrapper.unmount();
+});
+
+it("ordinary timeline seeks and course changes never retain a verified marker", async () => {
+  const { wrapper, router } = await open();
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBe(2000);
+  await wrapper.get('.mock-reader button').trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBeUndefined();
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBe(2000);
+  await router.push('/tasks/two?view=content'); await flushPromises();
+  expect(wrapper.findComponent(Reader).props('referenceMs')).toBeUndefined();
+  expect(wrapper.find('.evidence-reading__return').exists()).toBe(false);
   wrapper.unmount();
 });

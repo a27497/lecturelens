@@ -12,6 +12,7 @@ type VideoPlaybackExpose = { seekTo: (seconds: number) => void };
 
 const props = defineProps<{
   compact?: boolean;
+  inactive?: boolean;
   seekRequest?: SeekRequest;
   task: TaskEventPayload | null;
   taskDetail: TaskDetailResponse | null;
@@ -49,6 +50,8 @@ defineExpose({ seekTo });
   <aside class="course-video-aside" aria-label="课程视频和处理状态">
     <VideoPlaybackCard
       ref="playbackRef"
+      :compact="compact"
+      :inactive="inactive"
       :seek-request="seekRequest"
       @position="$emit('position', $event)"
       @manual-seek="$emit('manualSeek')"
@@ -100,7 +103,7 @@ defineExpose({ seekTo });
       <p v-if="connectionError" class="course-status__error" role="alert">{{ connectionError }}</p>
     </section>
 
-    <details class="course-details">
+    <details v-if="!compact" class="course-details">
       <summary>课程信息</summary>
       <dl>
         <div><dt>任务 ID</dt><dd>{{ taskDetail?.taskId || task?.taskId || "暂无" }}</dd></div>
