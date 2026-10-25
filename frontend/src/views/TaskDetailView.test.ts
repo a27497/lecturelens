@@ -27,7 +27,7 @@ const Agent = defineComponent({
 });
 const Reader = defineComponent({ props: ["visible", "view", "referenceMs"], emits: ["seek"], setup(props, { expose }) { expose({ currentView: () => props.view ?? "translated" }); return { text: ref("") }; }, template: `<div class="mock-reader"><input v-model="text" aria-label="原文筛选" /><button @click="$emit('seek', 4000)">普通时间轴定位</button></div>` });
 const stubs = {
-  CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { template: `<div>视频</div>` },
+  CourseAgentPanel: Agent, CourseContentPanel: Reader, CourseVideoAside: { name: "CourseVideoAside", props: ["inactive"], template: `<div>视频</div>` },
   CourseScopePicker: { props: ["frozenScope"], emits: ["update:modelValue"], template: `<div class="mock-scope"><span>{{ JSON.stringify(frozenScope) }}</span><button @click="$emit('update:modelValue', { version: 1, kind: 'course', policy: 'strict', revision: 2, evidence_ids: [] })">重新选择范围</button></div>` },
   CourseModelUsagePanel: true, CourseQaPanel: true, CourseStudyPanel: true, CourseFilesPanel: true, CourseTechnicalPanel: true, CourseOverviewPanel: true,
   "el-button": { template: `<button><slot /></button>` }, "el-tag": { template: `<span><slot /></span>` }, "el-alert": { props: ["title"], template: `<p role="alert">{{ title }}</p>` }, "el-skeleton": true, "el-empty": true,
@@ -122,6 +122,34 @@ it("stops hidden narrow-screen following and resumes only when the reader is sho
   query.matches = false; change(); await flushPromises();
   expect(wrapper.findComponent(Reader).props("visible")).toBe(true);
   wrapper.unmount(); expect(query.removeEventListener).toHaveBeenCalledWith("change", change);
+});
+
+it("marks every CSS-hidden mobile player inactive across tabs, references and breakpoints", async () => {
+  let change!: () => void;
+  const query = { matches: true, addEventListener: vi.fn((_event, listener) => { change = listener; }), removeEventListener: vi.fn() };
+  vi.mocked(window.matchMedia).mockReturnValue(query as unknown as MediaQueryList);
+  const { wrapper } = await open();
+  const inactive = () => wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive");
+  expect(inactive()).toBe(true);
+  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '课程材料')!.trigger('click'); await flushPromises();
+  expect(inactive()).toBe(false);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(inactive()).toBe(true);
+  query.matches = false; change(); await flushPromises(); expect(inactive()).toBe(false);
+  query.matches = true; change(); await flushPromises(); expect(inactive()).toBe(true);
+  await wrapper.get('.layout-switch').trigger('click'); await flushPromises(); expect(inactive()).toBe(false);
+  wrapper.unmount();
+});
+
+it("marks the material-column player inactive after a stale mobile reference hides the column", async () => {
+  vi.mocked(window.matchMedia).mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as MediaQueryList);
+  const { wrapper } = await open('/tasks/one?view=content');
+  expect(wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive")).toBe(false);
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ revision: 2, status: 'READY' } as never);
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(wrapper.get('.evidence-navigation-error').text()).toContain('课程资料已更新');
+  expect(wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive")).toBe(true);
+  wrapper.unmount();
 });
 
 it.each([

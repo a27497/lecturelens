@@ -77,8 +77,16 @@ try {
                 });
                 await check('continued playback preserves the citation; return keeps draft and single DOM instances', async () => {
                     const cited = await marker().getAttribute('data-segment');
-                    await page.locator('video').evaluate(async (v) => { await v.play(); });
-                    await expect.poll(() => page.locator('video').evaluate(v => v.currentTime)).toBeGreaterThan(12.15);
+                    if (width === 1440) {
+                        await page.locator('video').evaluate(async (v) => { await v.play(); });
+                        await expect.poll(() => page.locator('video').evaluate(v => v.currentTime)).toBeGreaterThan(12.15);
+                    } else {
+                        // Mobile source review hides the retained player: only a visible control can resume it.
+                        await expect(page.locator('video')).toBeHidden();
+                        expect(await page.locator('video').evaluate(v => v.paused)).toBe(true);
+                        await page.locator('video').evaluate(v => { v.currentTime = 14; });
+                        await expect.poll(() => page.locator('video').evaluate(v => v.currentTime)).toBeGreaterThan(13.9);
+                    }
                     expect(await marker().getAttribute('data-segment')).toBe(cited);
                     await page.locator('video').evaluate(v => v.pause());
                     await page.getByRole('button', { name: '返回当前学习任务', exact: true }).click();

@@ -72,6 +72,9 @@ const positionMs = ref(0);
 const seekRequest = ref<SeekRequest>();
 const locateSequence = ref(0);
 const reviewingEvidence = ref(false);
+// Match both the mobile material-column CSS and the citation v-show, without remounting media.
+const playerVisible = computed(() => classicLayout.value || !narrowScreen.value ||
+  (!evidenceNavigationError.value && activeWorkspace.value === "content" && !reviewingEvidence.value));
 const evidenceRef = ref<HTMLElement | null>(null);
 let seekSequence = 0;
 let returnFocus: HTMLElement | null = null;
@@ -553,6 +556,7 @@ async function confirmRetryTask() {
             v-show="!(reviewingEvidence && narrowScreen && !classicLayout)"
             :key="taskId"
             :compact="!classicLayout"
+            :inactive="!playerVisible"
             :seek-request="seekRequest"
             @position="updatePosition"
             @manual-seek="cancelEvidenceNavigation"
@@ -583,7 +587,7 @@ async function confirmRetryTask() {
           </div>
           <aside v-if="reviewingEvidence && learningTask && lastLearningWorkspace === 'agent' && !classicLayout" class="learning-evidence-context">
             <strong>正在核对第 {{ learningTask.questionIndex + 1 }} 题</strong>
-            <p>{{ learningTask.question }}</p><button type="button" @click="showLearning">返回本题作答</button>
+            <p>{{ learningTask.question }}</p><button type="button" @click="returnToLearning">返回本题作答</button>
           </aside>
           <Teleport :to="mobileNavTarget || 'body'" :disabled="classicLayout || !narrowScreen || !mobileNavTarget">
             <CourseWorkspaceNav :active="activeWorkspace" :compact="!classicLayout" :materials="!classicLayout && narrowScreen" @change="changeWorkspace" />

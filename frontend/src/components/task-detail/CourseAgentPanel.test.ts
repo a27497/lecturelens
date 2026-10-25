@@ -288,3 +288,26 @@ it("prioritizes the restored question over the folded new goal, and guards draft
   expect(input.element.value).toBe('unsaved work');
   wrapper.unmount();
 });
+
+it("clears discarded feedback-note draft markers when history reload unmounts the feedback panel", async () => {
+  const savedFeedback = { feedback_id: "feedback", attempt_id: "answer", answer_version: 1, question_index: 0, answer_text: "saved", note: null,
+    content: { kind: "guidance", mode: "mock", citations: [] } };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
+    if (command.operation === "RUNS") return { runs: [{ ...run, created_at: "2026-10-26" }] };
+    return { run, artifact, feedback_enabled: true, feedback_runs: [{ run_id: "feedback-run", status: "succeeded", attempt_id: "answer", answer_version: 1, question_index: 0, feedback: savedFeedback }] } as never;
+  });
+  Object.defineProperty(window, "confirm", { configurable: true, value: vi.fn(() => true) });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  const note = wrapper.get('.practice-question.is-current .practice-feedback textarea');
+  await note.setValue('discarded feedback note');
+  await wrapper.get('.learning-history button').trigger('click'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(wrapper.get('.practice-question.is-current .practice-feedback textarea').element).not.toBe(note.element);
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-feedback textarea').element.value).toBe('');
+  await wrapper.get('.learning-history button').trigger('click'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(vi.mocked(studyCommand).mock.calls.every(([, command]) => ['LIST', 'RUNS', 'READ'].includes(command.operation))).toBe(true);
+  wrapper.unmount();
+});

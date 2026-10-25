@@ -120,3 +120,46 @@ it("reports manual media seeks without treating playback or programmed seeks as 
   expect(wrapper.emitted("manualSeek")).toHaveLength(1);
   wrapper.unmount();
 });
+
+it("pauses an inactive player without discarding its coordinate or resuming on return", async () => {
+  const wrapper = mount(VideoPlaybackCard, { props: { title: "video", description: "", playbackUrl: "/media", loading: false, errorMessage: "" } });
+  const video = wrapper.get("video").element as HTMLVideoElement;
+  video.currentTime = 17;
+  const pause = vi.spyOn(video, "pause"), play = vi.spyOn(video, "play");
+  await wrapper.setProps({ inactive: true });
+  expect(pause).toHaveBeenCalledOnce();
+  expect(video.currentTime).toBe(17);
+  await wrapper.setProps({ inactive: false });
+  expect(wrapper.get("video").element).toBe(video);
+  expect(play).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("cancels token-refresh play intent when hidden and rejects a late play event", async () => {
+  const wrapper = mount(VideoPlaybackCard, { props: { title: "video", description: "", playbackUrl: "/old", loading: false, errorMessage: "" } });
+  const video = wrapper.get("video").element as HTMLVideoElement;
+  Object.defineProperty(video, "paused", { configurable: true, value: false });
+  video.currentTime = 8; await wrapper.get("video").trigger("timeupdate");
+  const play = vi.spyOn(video, "play"), pause = vi.spyOn(video, "pause");
+  await wrapper.setProps({ playbackUrl: "/new" });
+  await wrapper.setProps({ inactive: true });
+  await wrapper.get("video").trigger("loadedmetadata");
+  expect(video.currentTime).toBe(8); expect(play).not.toHaveBeenCalled();
+  await wrapper.get("video").trigger("play");
+  expect(pause).toHaveBeenCalledTimes(2);
+  await wrapper.setProps({ inactive: false });
+  await wrapper.get("video").trigger("loadedmetadata");
+  expect(play).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("keeps explicit playback intent on a visible token refresh and pauses on unmount", async () => {
+  const wrapper = mount(VideoPlaybackCard, { props: { title: "video", description: "", playbackUrl: "/old", loading: false, errorMessage: "" } });
+  const video = wrapper.get("video").element as HTMLVideoElement;
+  Object.defineProperty(video, "paused", { configurable: true, value: false });
+  const play = vi.spyOn(video, "play").mockResolvedValue(undefined), pause = vi.spyOn(video, "pause");
+  await wrapper.setProps({ playbackUrl: "/new" });
+  await wrapper.get("video").trigger("loadedmetadata");
+  expect(play).toHaveBeenCalledOnce(); expect(pause).not.toHaveBeenCalled();
+  wrapper.unmount(); expect(pause).toHaveBeenCalledOnce();
+});
