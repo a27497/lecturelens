@@ -46,3 +46,11 @@ export async function getEvidenceIndexStatus(taskId: string): Promise<EvidenceIn
   );
   return unwrap(response.data);
 }
+
+export async function readCourseQaHistory(taskId: string, before?: string): Promise<import("../types/qa").CourseQaHistoryPage> {
+  const result = await http.get<ApiResponse<import("../types/qa").CourseQaHistoryPage>>(
+    `/api/tasks/${encodeURIComponent(taskId)}/qa/history`,
+    { headers: authHeader(), params: { limit: 20, ...(before ? { before } : {}) } },
+  );
+  return result.data.data;
+}

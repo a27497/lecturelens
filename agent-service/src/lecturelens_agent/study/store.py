@@ -262,6 +262,7 @@ class StudyStore:
         from .approval import approval_view
         from .attempts import current_attempts
         from .feedback_store import enabled, feedback_runs, feedback_view
+        from .results import practice_results
 
         artifact = (
             conn.execute(
@@ -276,6 +277,7 @@ class StudyStore:
             public["questions"] = [
                 {"question": q["question"], "evidence_ids": q["evidence_ids"]} for q in public["questions"]
             ]
+        attempts = current_attempts(conn, artifact["artifact_id"]) if artifact else []
         return {
             "run": {
                 k: row[k]
@@ -311,7 +313,12 @@ class StudyStore:
             },
             "approval": approval_view(conn, row),
             "artifact": public,
-            "attempts": current_attempts(conn, artifact["artifact_id"]) if artifact else [],
+            "attempts": attempts,
+            "practice_results": practice_results(
+                conn, artifact["artifact_id"], len(public["questions"]), attempts
+            )
+            if artifact
+            else [],
             "feedback_enabled": enabled(),
             "feedback": feedback_view(conn, row["run_id"]) if row["task_kind"] == "feedback" else None,
             "feedback_runs": feedback_runs(conn, artifact["artifact_id"]) if artifact else [],

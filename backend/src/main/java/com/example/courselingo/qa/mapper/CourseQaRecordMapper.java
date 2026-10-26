@@ -9,6 +9,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CourseQaRecordMapper extends BaseMapper<CourseQaRecord> {
 
+    default List<CourseQaRecord> selectHistory(String taskId, Long userId, Long before, int limit) {
+        return selectList(Wrappers.<CourseQaRecord>lambdaQuery()
+            .eq(CourseQaRecord::getTaskId, taskId).eq(CourseQaRecord::getUserId, userId)
+            .lt(before != null, CourseQaRecord::getId, before)
+            .orderByDesc(CourseQaRecord::getId).last("LIMIT " + Math.max(1, Math.min(limit, 51))));
+    }
+
     default List<CourseQaRecord> selectByTaskIdAndUserId(String taskId, Long userId, int limit) {
         int safeLimit = Math.max(1, Math.min(limit, 100));
         return selectList(Wrappers.<CourseQaRecord>lambdaQuery()

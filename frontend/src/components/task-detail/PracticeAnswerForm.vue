@@ -88,6 +88,7 @@ async function showHistory(more = false) {
   }
   finally { if (current === generation) loadingHistory.value = false; }
 }
+defineExpose({ showHistory });
 </script>
 
 <template>

@@ -180,6 +180,12 @@ async function showNotes(more = false) {
   } catch (failure) { if (current === generation) { message.value = "核对记录暂不可用，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); } }
   finally { if (current === generation) loadingNotes.value = false; }
 }
+async function showFeedback(row: StudyFeedbackRun) {
+  if (row.question_index !== props.questionIndex) return;
+  observedRuns.value = [...observedRuns.value.filter(item => item.run_id !== row.run_id), row];
+  await selectRun(row.run_id);
+}
+defineExpose({ showFeedback });
 </script>
 
 <template>

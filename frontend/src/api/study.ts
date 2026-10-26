@@ -31,6 +31,7 @@ export interface StudyResponse {
   sessions?: { session_id: string; revision: number; created_at?: string }[];
   runs?: { run_id: string; goal: string; status: RunStatus; created_at: string }[];
   run?: StudyRun | null; artifact?: StudyArtifact | null; questions?: PracticeQuestion[];
+  practice_results?: PracticeResult[];
   attempt?: StudyAttempt; attempts?: StudyAttempt[]; next_before_version?: number | null;
   feedback_enabled?: boolean; feedback?: StudyFeedback | null; feedback_runs?: StudyFeedbackRun[];
   note?: FeedbackNote; notes?: FeedbackNote[];
@@ -107,4 +108,9 @@ export async function studyEvents(taskId: string, sessionId: string, runId: stri
       }
     }
   } finally { reader.releaseLock(); }
+}
+
+export interface PracticeResult {
+  question_index: number; attempt: StudyAttempt | null; feedback_run: StudyFeedbackRun | null;
+  latest_feedback_status: RunStatus | null; latest_feedback_answer_version?: number | null;
 }

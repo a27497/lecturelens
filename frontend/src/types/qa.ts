@@ -33,3 +33,10 @@ export interface CourseQaResponse {
   evidence: CourseQaEvidenceItem[];
   usage: CourseQaUsage | null;
 }
+
+export interface CourseQaHistoryItem {
+  recordId: string; question: string; answer: string; status: "SUCCEEDED" | "FAILED";
+  createdAt: string | null; evidence: CourseQaEvidenceItem[];
+  sourceStatus: "current" | "partial" | "unavailable" | "none";
+}
+export interface CourseQaHistoryPage { items: CourseQaHistoryItem[]; nextCursor: string | null }

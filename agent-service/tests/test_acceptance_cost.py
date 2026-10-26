@@ -196,7 +196,7 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
-    assert verify_frozen_agent(copied) == 56
+    assert verify_frozen_agent(copied) == 57
     altered = copied / "study/provider.py"
     # Frozen artifacts are read-only. Only the disposable tampering sample may
     # become writable; the source being certified keeps its original mode.
@@ -224,7 +224,7 @@ def test_cli_plan_is_read_only_and_fake_policy_cannot_activate(gate, tmp_path):
     result = subprocess.run([*command, "plan"], capture_output=True, text=True, check=True, timeout=10)
     plan = json.loads(result.stdout)
     assert plan["provider_requests"] == 0 and plan["money_limit_implies_max_admitted_calls"] == 9
-    assert plan["verified_frozen_modules"] == 56
+    assert plan["verified_frozen_modules"] == 57
     policy_file = tmp_path / "fake-policy.json"
     policy_file.write_text(json.dumps(asdict(gate.policy)))
     endpoint = tmp_path / "must-not-exist.json"
@@ -1224,3 +1224,14 @@ def test_no_external_traffic_or_inherited_secrets():
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert sum(json.loads(p.read_text())["denied_connections"] for p in records.glob("*.json")) == 5
+
+
+def test_review_read_extension_preserves_prior_frozen_manifest_identity():
+    import lecturelens_agent
+
+    package = Path(lecturelens_agent.__file__).parent
+    prior = json.loads((Path(__file__).parent / "fixtures/acceptance_agent_702b2f8.json").read_text())
+    current = json.loads((package / "study/acceptance_agent_manifest.json").read_text())
+    assert len(prior) == 56
+    assert set(current) - set(prior) == {"study/results.py"}
+    assert {key for key in prior if current[key] != prior[key]} == {"study/store.py"}

@@ -9,7 +9,7 @@ const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; result:
 defineEmits<{ seek: [startTimeMillis: number] }>();
 const activeView = ref<StudyView>("summary");
 const learning = computed(() => props.result?.learningPackage ?? null);
-const emptyDescription = computed(() => props.status === "FAILED" ? "处理失败，未生成学习资料" : props.status === "CANCELED" ? "处理已取消，未生成学习资料" : "学习资料生成中");
+const emptyDescription = computed(() => props.status === "FAILED" ? "处理失败，未生成学习资料" : props.status === "CANCELED" ? "处理已取消，未生成学习资料" : props.status === "SUCCEEDED" ? "本课程尚无已保存学习资料" : "学习资料生成中");
 const views: Array<{ value: StudyView; label: string }> = [
   { value: "summary", label: "摘要与重点" },
   { value: "chapters", label: "课程章节" },
@@ -36,7 +36,7 @@ function glossaryText(item: { translation?: string; definition?: string }): stri
       <el-empty v-if="!learning" :description="emptyDescription" />
       <template v-else>
         <div><p class="study-label">学习资料</p><h3>{{ learning.title || "课程学习资料" }}</h3></div>
-        <article><h4>课程摘要</h4><p>{{ learning.summary || "暂无课程摘要" }}</p></article>
+        <p class="source-boundary">摘要与重点为已保存的学习资料；未附可核验来源的文本不标作可信引用。章节时间入口用于视频定位。</p><article><h4>课程摘要</h4><p>{{ learning.summary || "暂无课程摘要" }}</p></article>
         <article><h4>重点</h4><el-empty v-if="learning.keyPoints.length === 0" description="暂无重点内容" /><ol v-else><li v-for="point in learning.keyPoints" :key="point.index">{{ point.text }}</li></ol></article>
       </template>
     </section>
