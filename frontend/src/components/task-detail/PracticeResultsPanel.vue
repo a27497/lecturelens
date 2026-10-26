@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
-import type { PracticeResult, StudyArtifact, StudyFeedbackRun } from "../../api/study";
+import type { PracticeResult, StudyArtifact, StudyFeedbackRun, StudyAttempt } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import { formatMillisRange } from "../../utils/time";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 const props = defineProps<{ taskId: string; sessionId: string; runId: string; artifact: StudyArtifact }>();
 const emit = defineEmits<{
+  observedAttempts: [attempts: StudyAttempt[]];
   open: [index: number, kind: "question" | "history" | "feedback", feedback?: StudyFeedbackRun];
   seek: [milliseconds: number, context: EvidenceSeekContext, index: number]; accessFailure: [];
 }>();
@@ -17,12 +18,13 @@ let generation = 0;
 watch(() => [props.taskId, props.runId, props.artifact.artifact_id], () => { generation++; rows.value = []; void load(); }, { immediate: true });
 onBeforeUnmount(() => { generation++; });
 async function load() {
-  const current = generation; loading.value = true; error.value = "";
+  const current = ++generation; loading.value = true; error.value = "";
   try {
     const result = await studyCommand(props.taskId, { operation: "READ", session_id: props.sessionId, run_id: props.runId });
     if (current !== generation) return;
     if (result.artifact?.artifact_id !== props.artifact.artifact_id || !result.practice_results) throw new Error("Results unavailable");
     rows.value = result.practice_results;
+    emit("observedAttempts", result.attempts ?? rows.value.flatMap(row => row.attempt ? [row.attempt] : []));
   } catch (failure) {
     if (current !== generation) return;
     rows.value = []; error.value = "学习结果暂时无法读取，请重试；已保存记录不受影响。";

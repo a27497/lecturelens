@@ -22,27 +22,43 @@ const historySourceStatus = ref("");
 let historyGeneration = 0;
 let answerSelection = 0;
 onBeforeUnmount(() => { historyGeneration++; requestVersion.value++; });
-async function loadHistory(more = false, restore = false) {
-  if (historyLoading.value) return;
-  const current = historyGeneration; const task = props.taskId; const selection = answerSelection;
+async function loadHistory(more = false, restore = false, revalidate = true) {
+  if (more && historyLoading.value) return;
+  const current = ++historyGeneration; const task = props.taskId; const selection = answerSelection;
   historyLoading.value = true; historyError.value = "";
+  // Until this explicit read succeeds, saved citations are no longer current observations.
+  if (!more && revalidate) {
+    history.value = history.value.map(item => ({ ...item, evidence: [], sourceStatus: "unavailable" }));
+    if (response.value) { response.value = { ...response.value, evidence: [] }; historySourceStatus.value = "unavailable"; }
+  }
   try {
     const page = await readCourseQaHistory(task, more ? historyCursor.value ?? undefined : undefined);
     if (current !== historyGeneration || task !== props.taskId) return;
     history.value = [...(more ? history.value : []), ...page.items]; historyCursor.value = page.nextCursor;
-    if (restore && !response.value && !loading.value && selection === answerSelection && page.items[0]) selectHistory(page.items[0]);
+    if (!more && revalidate && response.value && !loading.value) {
+      const selected = page.items.find(item => item.recordId === response.value?.recordId);
+      if (selected) applyHistory(selected);
+      // A selected record outside this page keeps its answer, but no trusted sources.
+    }
+    const recentSuccess = page.items.find(item => item.status === "SUCCEEDED");
+    if (restore && !response.value && !loading.value && selection === answerSelection && recentSuccess) selectHistory(recentSuccess, true);
   } catch (error) {
     if (current !== historyGeneration) return;
-    historyError.value = "历史问答暂时无法读取，请重试。";
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    historyError.value = status === 409 ? "课程版本已变化，请刷新课程后重试；已保存问答不受影响。" : "历史问答暂时无法读取，请重试；已保存问答不受影响。";
+    if (response.value) { response.value = { ...response.value, evidence: [] }; historySourceStatus.value = "unavailable"; }
     if (mayHaveLostCourseAccess(error)) { history.value = []; response.value = null; emit("accessFailure"); }
   } finally { if (current === historyGeneration) historyLoading.value = false; }
 }
-function selectHistory(item: CourseQaHistoryItem) {
+function selectHistory(item: CourseQaHistoryItem, validated = false) {
   if (loading.value) return;
   requestVersion.value++; answerSelection++;
+  applyHistory(historyLoading.value && !validated ? { ...item, evidence: [], sourceStatus: "unavailable" } : item);
+  emit("frozenScope", undefined);
+}
+function applyHistory(item: CourseQaHistoryItem) {
   selectedQuestion.value = item.question; historySourceStatus.value = item.sourceStatus;
   response.value = { recordId: item.recordId, answer: item.status === "SUCCEEDED" ? item.answer : "这次提问未形成已保存的回答，可明确重新提问。", evidence: item.evidence, usage: null };
-  emit("frozenScope", undefined);
 }
 
 const loading = ref(false);
@@ -96,7 +112,7 @@ async function submit() {
   const normalized = question.value.trim();
   if (!normalized) { errorMessage.value = "请输入课程问题"; return; }
   if (normalized.length > 500) { errorMessage.value = "问题不能超过 500 个字符"; return; }
-  answerSelection++;
+  answerSelection++; historyGeneration++; historyLoading.value = false;
   const currentTaskId = props.taskId;
   const version = requestVersion.value + 1;
   requestVersion.value = version;
@@ -105,7 +121,7 @@ async function submit() {
   response.value = null;
   try {
     const nextResponse = await askCourseQa(currentTaskId, { question: normalized, ...(props.learningScope ? { learning_scope: JSON.parse(JSON.stringify(props.learningScope)) } : {}) });
-    if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; selectedQuestion.value = normalized; historySourceStatus.value = ""; void loadHistory(); emit("frozenScope", nextResponse.learning_scope ?? null); }
+    if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; selectedQuestion.value = normalized; historySourceStatus.value = ""; void loadHistory(false, false, false); emit("frozenScope", nextResponse.learning_scope ?? null); }
   } catch (error) {
     if (version === requestVersion.value && props.taskId === currentTaskId) { errorMessage.value = toReadableCourseQaError(error); if (mayHaveLostCourseAccess(error)) emit("accessFailure"); }
   } finally {

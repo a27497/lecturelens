@@ -53,6 +53,11 @@ async function toggleResults() {
   resultsElement.value?.focus({ preventScroll: true });
 }
 const answerForms = new Map<number, { showHistory: () => Promise<void> }>();
+function observeAttempts(rows: StudyAttempt[]) {
+  const latest = new Map(attempts.value.map(row => [row.question_index, row]));
+  for (const row of rows) if (row.artifact_id === artifact.value?.artifact_id && row.version > (latest.get(row.question_index)?.version ?? 0)) latest.set(row.question_index, row);
+  attempts.value = [...latest.values()];
+}
 const feedbackPanels = new Map<number, { showFeedback: (row: StudyFeedbackRun) => Promise<void> }>();
 async function openResult(index: number, kind: "question" | "history" | "feedback", feedback?: StudyFeedbackRun) {
   await chooseQuestion(index);
@@ -314,7 +319,7 @@ async function reveal() {
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
           </nav></div>
         </template>
-        <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
+        <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @observed-attempts="observeAttempts" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
         <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
           <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />

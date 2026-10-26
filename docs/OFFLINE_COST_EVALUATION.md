@@ -1,7 +1,10 @@
 # Offline Study expense evaluation
 
-The opt-in experiment reuses the existing acceptance expense ledger against main
-e34d8c596d74d4320ce6a224359190374520e4d3. It exercises the real Study runtime,
+The opt-in experiment reuses the existing acceptance expense ledger. Historical
+candidate e34d8c596d74d4320ce6a224359190374520e4d3 retains its original 56-module
+manifest and validation entry. The current P3 read extension has an independent
+57-module development identity; see [desktop review](DESKTOP_LEARNING_REVIEW.md#候选身份).
+No historical model-quality result is attributed to the development candidate. It exercises the real Study runtime,
 ChatProvider parser, journal and PostgreSQL with deterministic synthetic responses.
 It does not change ordinary workers, user routing, Java QA, migrations or budgets.
 
@@ -36,8 +39,12 @@ loopback range is an allowance, not authentication of each local listener. Abrup
 exit/SIGKILL cannot flush atexit counters; absent records do not mean zero traffic.
 Never supply a production DSN, service config, key or account to this entry.
 
-The 56 pre-existing application modules are verified against an immutable SHA256
-manifest. Any change requires a separately reviewed new candidate. Expense code,
+The historical validator checks the original manifest digest, exact application
+module set and all 56 source hashes, and rejects current P3 or mixed sources.
+The offline ledger and plan explicitly use the separately named development
+candidate and its own pinned 57-module manifest digest. Historical policies cannot
+claim this new source. Positive reconstruction and source/manifest tampering tests
+exercise both boundaries. Any change requires a separately reviewed new candidate. Expense code,
 runner and fixture identity also belongs to the enclosing commit/artifact digest.
 The ordinary application's initialization never installs the expense tables;
 only explicit isolated tests create them. Per-test schemas and synthetic owners

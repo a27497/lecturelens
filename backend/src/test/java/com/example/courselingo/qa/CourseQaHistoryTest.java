@@ -22,7 +22,7 @@ class CourseQaHistoryTest {
     ObjectMapper json = new ObjectMapper();
     CourseQaHistoryService service = new CourseQaHistoryService(users, records, jdbc, json);
     static final String OWN = "SELECT content_revision FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL";
-    static final String SOURCE = "SELECT e.payload FROM course_evidence e JOIN analysis_task t ON t.id=e.task_id AND t.user_id=e.user_id\nAND t.content_revision=e.revision AND t.deleted_at IS NULL AND t.status='SUCCEEDED'\nWHERE e.task_id=? AND e.user_id=? AND e.revision=? AND e.evidence_id=?\n";
+    static final String SOURCE = "SELECT e.evidence_id,e.payload FROM course_evidence e JOIN analysis_task t ON t.id=e.task_id AND t.user_id=e.user_id\nAND t.content_revision=e.revision AND t.deleted_at IS NULL AND t.status='SUCCEEDED'\nWHERE e.task_id=? AND e.user_id=? AND e.revision=? AND e.evidence_id IN (?)";
     void owner() {
         when(users.currentUser("auth")).thenReturn(new CurrentUserResponse(7L,"test@example.invalid","ACTIVE"));
         when(jdbc.queryForList(OWN, Long.class, "course", 7L)).thenReturn(List.of(2L));
@@ -50,16 +50,16 @@ class CourseQaHistoryTest {
     }
     @Test void oldRevisionMissingAndMalformedSourcesNeverBecomeTrusted() throws Exception {
         owner(); var source=new CourseQaEvidenceItem("SUBTITLE","1",10L,20L,"","saved text","",null,"old",1L);
-        when(records.selectHistory("course",7L,null,21)).thenReturn(List.of(row(3,json.writeValueAsString(List.of(source))),row(2,"not-json")));
+        when(records.selectHistory("course",7L,null,21)).thenReturn(List.of(row(3,json.writeValueAsString(List.of(source))),row(2,"not-json"),row(1,json.writeValueAsString(List.of(new CourseQaEvidenceItem("SUBTITLE","1",10L,20L,"","legacy","",null,null,2L))))));
         var page=service.read("course","auth",null,20);
         assertThat(page.items().getFirst().evidence()).isEmpty(); assertThat(page.items().getFirst().sourceStatus()).isEqualTo("unavailable");
-        verify(jdbc,never()).queryForList(SOURCE,String.class,"course",7L,2L,"old");
+        verify(jdbc,never()).queryForList(SOURCE,"course",7L,2L,"old");
     }
     @Test void currentSourcesUseAuthoritativeTextAndRecheckRevision() throws Exception {
         owner(); var citation=new CourseQaEvidenceItem("SUBTITLE","forged",999L,999L,"","old text","",null,"valid",2L);
         var source=new CourseEvidence("valid","course",7L,2,"SUBTITLE","1",List.of(),10,20,"en","real text","real text",null,false,"v1","hash",true,"source",null,false);
         when(records.selectHistory("course",7L,null,21)).thenReturn(List.of(row(3,json.writeValueAsString(List.of(citation)))));
-        when(jdbc.queryForList(SOURCE,String.class,"course",7L,2L,"valid")).thenReturn(List.of(json.writeValueAsString(source)));
+        when(jdbc.queryForList(SOURCE,"course",7L,2L,"valid")).thenReturn(List.of(java.util.Map.of("evidence_id", "valid", "payload", json.writeValueAsString(source))));
         var item=service.read("course","auth",null,20).items().getFirst();
         assertThat(item.evidence().getFirst().snippet()).isEqualTo("real text"); assertThat(item.evidence().getFirst().startTimeMillis()).isEqualTo(10);
         when(jdbc.queryForList(OWN,Long.class,"course",7L)).thenReturn(List.of(2L),List.of(3L));
@@ -71,4 +71,40 @@ class CourseQaHistoryTest {
         assertThat(service.read("course","auth",null,20).items().getFirst().createdAt())
             .isEqualTo(java.time.Instant.parse("2026-10-26T06:00:00Z"));
     }
+    @Test void fiftyRecordsWithEightRepeatedCitationsUseOneAuthoritativeBatch() throws Exception {
+        owner();
+        var source = new CourseEvidence("valid","course",7L,2,"SUBTITLE","1",List.of(),10,20,"en","real text","real text",null,false,"v1","hash",true,"source",null,false);
+        var citation = new CourseQaEvidenceItem("SUBTITLE","forged",999L,999L,"","old text","",null,"valid",2L);
+        var saved = json.writeValueAsString(java.util.Collections.nCopies(8, citation));
+        var rows = java.util.stream.LongStream.rangeClosed(1,50).mapToObj(id -> row(id,saved)).toList();
+        when(records.selectHistory("course",7L,null,51)).thenReturn(rows);
+        when(jdbc.queryForList(SOURCE,"course",7L,2L,"valid")).thenReturn(List.of(java.util.Map.of("evidence_id","valid","payload",json.writeValueAsString(source))));
+        var page = service.read("course","auth",null,50);
+        assertThat(page.items()).hasSize(50);
+        assertThat(page.items()).allSatisfy(item -> {
+            assertThat(item.evidence()).hasSize(8);
+            assertThat(item.evidence()).allSatisfy(e -> assertThat(e.snippet()).isEqualTo("real text"));
+        });
+        verify(jdbc,times(1)).queryForList(SOURCE,"course",7L,2L,"valid");
+        verify(jdbc,times(2)).queryForList(OWN,Long.class,"course",7L);
+        verifyNoMoreInteractions(jdbc);
+    }
+    @Test void batchRejectsWrongOwnerRevisionIdentityCorruptAndDuplicatePayloads() throws Exception {
+        owner();
+        var citation = new CourseQaEvidenceItem("SUBTITLE","1",10L,20L,"","saved","",null,"valid",2L);
+        when(records.selectHistory("course",7L,null,21)).thenReturn(List.of(row(1,json.writeValueAsString(List.of(citation)))));
+        for (var source : List.of(
+            new CourseEvidence("valid","course",8L,2,"SUBTITLE","1",List.of(),10,20,"en","wrong owner","",null,false,"v1","hash",true,"source",null,false),
+            new CourseEvidence("valid","course",7L,3,"SUBTITLE","1",List.of(),10,20,"en","wrong revision","",null,false,"v1","hash",true,"source",null,false),
+            new CourseEvidence("other","course",7L,2,"SUBTITLE","1",List.of(),10,20,"en","wrong id","",null,false,"v1","hash",true,"source",null,false))) {
+            when(jdbc.queryForList(SOURCE,"course",7L,2L,"valid")).thenReturn(List.of(java.util.Map.of("evidence_id","valid","payload",json.writeValueAsString(source))));
+            assertThat(service.read("course","auth",null,20).items().getFirst().evidence()).isEmpty();
+        }
+        when(jdbc.queryForList(SOURCE,"course",7L,2L,"valid")).thenReturn(List.of(java.util.Map.of("evidence_id","valid","payload","bad-json")));
+        assertThat(service.read("course","auth",null,20).items().getFirst().evidence()).isEmpty();
+        var duplicate = java.util.Map.<String,Object>of("evidence_id","valid","payload","{}");
+        when(jdbc.queryForList(SOURCE,"course",7L,2L,"valid")).thenReturn(List.of(duplicate,duplicate));
+        assertThat(service.read("course","auth",null,20).items().getFirst().evidence()).isEmpty();
+    }
+
 }

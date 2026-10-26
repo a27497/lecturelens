@@ -6,16 +6,18 @@ import json
 
 from lecturelens_agent.study.acceptance_cost import (
     FROZEN_AGENT,
+    DEVELOPMENT_AGENT,
     INPUT_TOKEN_CEILING,
     MAX_BODY,
     MODEL,
-    verify_frozen_agent,
+    verify_development_agent,
 )
 
 
 def plan():
     return {
-        "agent_candidate": FROZEN_AGENT,
+        "historical_agent_candidate": FROZEN_AGENT,
+        "agent_candidate": DEVELOPMENT_AGENT,
         "mode": "fake_only",
         "required_models": {"decision": MODEL, "review": MODEL},
         "max_output_tokens": {
@@ -35,7 +37,7 @@ def plan():
         "provider_billed_micro_cny": None,
         "provider_requests": 0,
         "live_authorization": False,
-        "verified_frozen_modules": verify_frozen_agent(),
+        "verified_development_modules": verify_development_agent(),
         "pricing_scope": "historical conservative simulation assumptions, not supplier billing certification",
     }
 
