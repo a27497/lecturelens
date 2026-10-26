@@ -8,7 +8,7 @@ export interface PracticeContinuation {
 }
 
 // These are saved-work suggestions, never correctness or mastery decisions.
-export function practiceContinuation(rows: PracticeResult[]): PracticeContinuation | null {
+export function practiceContinuation(rows: PracticeResult[], feedbackRuns: StudyFeedbackRun[] = []): PracticeContinuation | null {
   const ordered = [...rows].sort((a, b) => a.question_index - b.question_index);
   for (const row of ordered) {
     const feedback = row.feedback_run?.feedback;
@@ -23,7 +23,11 @@ export function practiceContinuation(rows: PracticeResult[]): PracticeContinuati
     if (!row.attempt) continue;
     const n = row.question_index + 1;
     if (['queued', 'running', 'awaiting_approval'].includes(row.latest_feedback_status ?? '')) {
-      return { index: row.question_index, label: `查看第 ${n} 题反馈进度`, reason: `第 ${row.latest_feedback_answer_version ?? row.attempt.version} 版反馈尚未完成；可查看进度或已有反馈。` };
+      const answerVersion = row.latest_feedback_answer_version ?? row.attempt.version;
+      // Results retain a completed feedback; the active Run identity is in the same READ's recent runs.
+      const feedback = feedbackRuns.find(run => run.question_index === row.question_index
+        && run.status === row.latest_feedback_status && run.answer_version === answerVersion);
+      return { index: row.question_index, label: `查看第 ${n} 题反馈进度`, feedback, reason: `第 ${row.latest_feedback_answer_version ?? row.attempt.version} 版反馈尚未完成；可查看进度或已有反馈。` };
     }
     if (row.feedback_run?.feedback && row.feedback_run.attempt_id !== row.attempt.attempt_id) {
       return { index: row.question_index, label: `继续第 ${n} 题订正`, feedback: row.feedback_run,

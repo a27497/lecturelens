@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
 import type { FeedbackNote, StudyAttempt, StudyCommand, StudyFeedbackRun, StudyResponse } from "../../api/study";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
@@ -16,6 +16,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; draftChange: [dirty: boolean]; accessFailure: []; progressChange: [] }>();
 const currentRun = ref<StudyFeedbackRun>();
+const feedbackElement = ref<HTMLElement>();
 const previewRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
 const approval = ref<StudyResponse["approval"]>(null);
@@ -202,12 +203,17 @@ async function showFeedback(row: StudyFeedbackRun) {
   if (row.question_index !== props.questionIndex) return;
   observedRuns.value = [...observedRuns.value.filter(item => item.run_id !== row.run_id), row];
   await selectRun(row.run_id);
+  await nextTick();
+  // Another navigation may hide this question while its feedback READ is pending.
+  if (feedbackElement.value?.closest('.practice-question')?.classList.contains('is-current') === false) return;
+  feedbackElement.value?.scrollIntoView({ block: "start" });
+  feedbackElement.value?.focus({ preventScroll: true });
 }
 defineExpose({ showFeedback });
 </script>
 
 <template>
-  <section class="practice-feedback" :aria-label="`第 ${questionIndex + 1} 题证据反馈`">
+  <section ref="feedbackElement" class="practice-feedback" tabindex="-1" :aria-label="`第 ${questionIndex + 1} 题证据反馈`">
     <label v-if="historyRuns.length > 1" class="feedback-history">最近反馈
       <select :value="currentRun?.run_id" :aria-label="`第 ${questionIndex + 1} 题反馈记录`" :disabled="Boolean(active) || starting || savingNote || loadingNotes" @change="changeFeedback">
         <option v-for="(previous, index) in historyRuns" :key="previous.run_id" :value="previous.run_id">{{ index + 1 }} · 第 {{ previous.answer_version }} 版作答 · {{ historyStatus[previous.status] }}</option>
@@ -268,7 +274,7 @@ defineExpose({ showFeedback });
 </template>
 
 <style scoped>
-.practice-feedback { display: grid; gap: 8px; border-top: 1px solid var(--color-border); padding-top: 12px; }
+.practice-feedback { display: grid; gap: 8px; border-top: 1px solid var(--color-border); padding-top: 12px; scroll-margin-top: calc(var(--header-height) + 92px); }
 .feedback-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 p, blockquote { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
 blockquote { margin: 8px 0; border-left: 3px solid var(--color-border); padding-left: 12px; }

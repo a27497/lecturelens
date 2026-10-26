@@ -16,6 +16,15 @@ it('keeps an active newer feedback distinct from the older completed feedback', 
   const next = practiceContinuation([{ question_index: 1, attempt, feedback_run: feedback, latest_feedback_status: 'running', latest_feedback_answer_version: 2 }]);
   expect(next?.reason).toContain('第 2 版反馈尚未完成'); expect(next?.feedback).toBeUndefined();
 });
+it.each(['queued', 'running', 'awaiting_approval'] as const)('opens the actual %s Run instead of an older completed feedback', status => {
+  const active: StudyFeedbackRun = { ...feedback, run_id: 'active-feedback', attempt_id: attempt.attempt_id, answer_version: attempt.version, status, feedback: null };
+  const rows: PracticeResult[] = [{ question_index: 1, attempt, feedback_run: feedback, latest_feedback_status: status, latest_feedback_answer_version: 2 }];
+  const wrongQuestion = { ...active, run_id: 'other-question', question_index: 0 };
+  const wrongVersion = { ...active, run_id: 'old-version', answer_version: 1 };
+  const next = practiceContinuation(rows, [wrongQuestion, wrongVersion, active, feedback]);
+  expect(next?.label).toBe('查看第 2 题反馈进度');
+  expect(next?.feedback).toBe(active);
+});
 it('offers unsaved questions and does not treat acknowledged feedback as a grade', () => {
   const rows: PracticeResult[] = [{ question_index: 0, attempt: null, feedback_run: null, latest_feedback_status: null }];
   expect(practiceContinuation(rows)?.label).toBe('继续第 1 题作答');

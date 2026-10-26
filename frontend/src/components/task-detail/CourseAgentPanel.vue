@@ -49,7 +49,7 @@ const progressRows = ref<PracticeResult[] | null>(null);
 const progressLoading = ref(false);
 const progressError = ref("");
 let progressSequence = 0;
-const continuation = computed(() => progressRows.value ? practiceContinuation(progressRows.value) : null);
+const continuation = computed(() => progressRows.value ? practiceContinuation(progressRows.value, feedbackRuns.value) : null);
 function acceptProgress(response: StudyResponse) {
   const rows = response.practice_results;
   const count = artifact.value?.questions.length ?? 0;
@@ -61,6 +61,7 @@ function acceptProgress(response: StudyResponse) {
     return false;
   }
   progressRows.value = rows!; progressError.value = "";
+  feedbackRuns.value = response.feedback_runs ?? [];
   observeAttempts(response.attempts ?? rows!.flatMap(row => row.attempt ? [row.attempt] : []));
   return true;
 }
@@ -251,9 +252,12 @@ async function refresh(current: number, task: string, expectedKey?: string, sele
   approval.value = response.approval ?? null;
   observeAttempts(response.attempts ?? []);
   feedbackEnabled.value = response.feedback_enabled ?? false;
-  feedbackRuns.value = response.feedback_runs ?? [];
-  // A completion snapshot can predate a save followed by a newer progress read.
-  if (progressAtRead === progressSequence && artifact.value?.questions.length) acceptProgress(response);
+  // A completion snapshot can predate a save followed by a newer progress read,
+  // including its feedback status and persisted check note.
+  if (progressAtRead === progressSequence) {
+    feedbackRuns.value = response.feedback_runs ?? [];
+    if (artifact.value?.questions.length) acceptProgress(response);
+  }
   if (!goal.value && run.value) goal.value = run.value.goal;
 }
 
