@@ -1,0 +1,5 @@
+task_id	user_id	revision	source_type	evidence_count
+task_98df1f4e47c84791a9fe4f2d23beea86	1	4	SUBTITLE_TRANSLATION	1
+task_98df1f4e47c84791a9fe4f2d23beea86	1	4	SUBTITLE	1
+task_id	user_id	revision	manifest_hash
+task_98df1f4e47c84791a9fe4f2d23beea86	1	4	cf744553df5b0bdc51ba731dfa2f0a26a92b31df445269fdc73f6ccaf6d5652c

@@ -14,7 +14,7 @@ const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   answerDirty?: boolean; approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
-const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; draftChange: [dirty: boolean]; accessFailure: [] }>();
+const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; draftChange: [dirty: boolean]; accessFailure: []; progressChange: [] }>();
 const currentRun = ref<StudyFeedbackRun>();
 const previewRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
@@ -58,6 +58,7 @@ watch(() => props.initial, value => {
   if (props.readOnly && value) void refresh();
   if (active.value) schedule();
 });
+watch(() => [currentRun.value?.run_id, currentRun.value?.status, feedback.value?.feedback_id, feedback.value?.note?.version].join(":"), () => { if (!props.readOnly) emit("progressChange"); });
 onBeforeUnmount(() => { generation++; clearTimeout(timer); });
 
 function rememberRun() {

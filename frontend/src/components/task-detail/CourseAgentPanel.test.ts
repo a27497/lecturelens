@@ -311,3 +311,113 @@ it("clears discarded feedback-note draft markers when history reload unmounts th
   expect(vi.mocked(studyCommand).mock.calls.every(([, command]) => ['LIST', 'RUNS', 'READ'].includes(command.operation))).toBe(true);
   wrapper.unmount();
 });
+
+function continuationState() {
+  const attempts = [0, 1].map(question_index => ({ attempt_id: `a${question_index}`, artifact_id: artifact.artifact_id, question_index, version: 1, answer_text: `saved question ${question_index + 1}`, created_at: '2026-10-26T00:00:00Z' }));
+  const feedback_runs = attempts.map((attempt, index) => ({ run_id: `f${index}`, status: 'succeeded' as const, error_code: null, attempt_id: attempt.attempt_id, answer_version: 1, question_index: index,
+    feedback: { feedback_id: `feedback${index}`, attempt_id: attempt.attempt_id, answer_version: 1, question_index: index, answer_text: attempt.answer_text,
+      content: { kind: 'guidance' as const, mode: 'mock', citations: artifact.citations, observations: [{ learner_quote: attempt.answer_text, observation: 'Check this claim against the original.', next_step: 'Inspect source, then revise.', action: 'revise' as const, evidence_id: 'e1', evidence_quote: 'The algorithm stops.' }] },
+      note: index === 0 ? { note_id: 'note0', version: 1, disposition: 'acknowledged' as const, note_text: 'checked first source', created_at: attempt.created_at } : null } }));
+  const practice_results = attempts.map((attempt, question_index) => ({ question_index, attempt, feedback_run: feedback_runs[question_index]!, latest_feedback_status: 'succeeded' as const, latest_feedback_answer_version: 1 }));
+  return { run, artifact, attempts, feedback_runs, practice_results, feedback_enabled: true };
+}
+
+it('continues the pending second feedback through real child panels, preserving question and note drafts without model commands', async () => {
+  const state = continuationState();
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.run_id === 'f1') return { run: { ...run, run_id: 'f1' }, feedback: state.feedback_runs[1]!.feedback };
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  await flushPromises();
+  await wrapper.get('.practice-question.is-current .practice-answer textarea').setValue('question one local draft');
+  await wrapper.get('.practice-question.is-current .practice-feedback textarea').setValue('unsaved note one');
+  expect(wrapper.get('.practice-continuation').text()).toContain('第 2 题');
+  await wrapper.get('.practice-continuation .continue-practice').trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-question.is-current .question-text').text()).toContain(artifact.questions[1]!.question);
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea').element.value).toBe('saved question 2');
+  expect(wrapper.get('.practice-question.is-current .practice-feedback').text()).toContain('Check this claim');
+  await wrapper.findAll('.question-nav button')[0]!.trigger('click');
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea').element.value).toBe('question one local draft');
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-feedback textarea').element.value).toBe('unsaved note one');
+  expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => ['LIST','READ','RUNS'].includes(c.operation))).toBe(true);
+  wrapper.unmount();
+});
+
+it('refreshes continuation from another tab: keeps local draft while recognizing v2 and old v1 feedback in the actual answer form', async () => {
+  let state = continuationState();
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => command.operation === 'LIST' ? { sessions: [{ session_id: 'session', revision: 1 }] } : state);
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } }); await flushPromises();
+  await wrapper.findAll('.question-nav button')[1]!.trigger('click');
+  const text = wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea'); await text.setValue('local correction draft');
+  const second = { ...state.attempts[1]!, attempt_id: 'a1-v2', version: 2, answer_text: 'server correction v2' };
+  state = { ...state, attempts: [state.attempts[0]!, second], practice_results: [state.practice_results[0]!, { ...state.practice_results[1]!, attempt: second }] };
+  await wrapper.get('.practice-continuation .refresh-practice-progress').trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-continuation').text()).toContain('第 2 版');
+  expect(wrapper.get('.practice-continuation').text()).toContain('第 1 版');
+  expect(text.element.value).toBe('local correction draft');
+  expect(wrapper.get('.practice-question.is-current .practice-answer').text()).toContain('服务器已保存第 2 版作答');
+  expect(wrapper.get('.practice-question.is-current .practice-feedback').text()).toContain('下面反馈仅对应旧版');
+  expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => ['LIST','READ','RUNS'].includes(c.operation))).toBe(true); wrapper.unmount();
+});
+
+it('does not navigate using a failed progress read, preserves saved content and exposes a retry', async () => {
+  const state = continuationState(); let fail = false;
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.operation === 'READ' && fail) throw { response: { status: 409 } };
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } }); await flushPromises();
+  await wrapper.get('.practice-question.is-current .practice-answer textarea').setValue('keep my draft'); fail = true;
+  await wrapper.get('.continue-practice').trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-continuation').text()).toContain('课程版本或学习记录已变化');
+  expect(wrapper.find('.continue-practice').exists()).toBe(false);
+  expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea').element.value).toBe('keep my draft');
+  fail = false; await wrapper.get('.refresh-practice-progress').trigger('click'); await flushPromises();
+  expect(wrapper.get('.continue-practice').text()).toContain('第 2 题'); wrapper.unmount();
+});
+
+it('fences a late continuation read after course change and does not jump when another tab changes the suggested question', async () => {
+  let state = continuationState(); let delayed = false;
+  let resolve!: (value: typeof state) => void;
+  vi.mocked(studyCommand).mockImplementation(async (task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.operation === 'READ' && delayed && task === 'old') return new Promise(r => { resolve = r; });
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'old' }, global: { stubs } }); await flushPromises();
+  delayed = true; await wrapper.get('.refresh-practice-progress').trigger('click'); await flushPromises();
+  await wrapper.setProps({ taskId: 'new' }); await flushPromises();
+  resolve({ ...state, practice_results: [] }); await flushPromises();
+  expect(wrapper.get('.continue-practice').text()).toContain('第 2 题');
+  const updated = { ...state.feedback_runs[1]!, feedback: { ...state.feedback_runs[1]!.feedback, note: { ...state.feedback_runs[0]!.feedback.note!, note_id: 'note1' } } };
+  state = { ...state, practice_results: [{ ...state.practice_results[0]!, feedback_run: { ...state.feedback_runs[0]!, feedback: { ...state.feedback_runs[0]!.feedback, content: { ...state.feedback_runs[0]!.feedback.content, observations: [] } } } }, { ...state.practice_results[1]!, feedback_run: { ...updated, feedback: { ...updated.feedback, content: { ...updated.feedback.content, observations: [] } } } }] };
+  await wrapper.get('.continue-practice').trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-question.is-current .question-text').text()).toContain(artifact.questions[0]!.question);
+  expect(wrapper.get('.practice-continuation').text()).toContain('学习进度已更新'); wrapper.unmount();
+});
+
+it('recomputes continuation after the real child saves a check note without another run', async () => {
+  let state = continuationState();
+  const note = { note_id: 'new-note', version: 1, disposition: 'acknowledged' as const, note_text: 'Checked source; correction needed.', created_at: '2026-10-26T00:00:00Z' };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.operation === 'SAVE_FEEDBACK_NOTE') {
+      const row = state.practice_results[1]!;
+      state = { ...state, practice_results: [state.practice_results[0]!, { ...row, feedback_run: { ...row.feedback_run, feedback: { ...row.feedback_run.feedback, note } } }] };
+      return { note };
+    }
+    if (command.run_id === 'f1') return { run: { ...run, run_id: 'f1' }, feedback: state.feedback_runs[1]!.feedback };
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } }); await flushPromises();
+  await wrapper.get('.continue-practice').trigger('click'); await flushPromises();
+  const panel = wrapper.get('.practice-question.is-current .practice-feedback');
+  await panel.get('textarea').setValue(note.note_text); await panel.findAll('select').at(-1)!.setValue('acknowledged');
+  await panel.findAll('button').find(b => b.text() === '保存核对意见')!.trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-continuation').text()).not.toContain('尚无核对记录');
+  expect(wrapper.get('.practice-continuation').text()).toContain('核对记录不表示已订正');
+  expect(vi.mocked(studyCommand).mock.calls.some(([, c]) => ['START', 'START_FEEDBACK', 'CREATE_SESSION'].includes(c.operation))).toBe(false); wrapper.unmount();
+});
