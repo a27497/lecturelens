@@ -599,6 +599,26 @@ class MockProvider:
 
     mode = "mock"
 
+    def flashcards(self, messages, schemas, timeout):
+        body = json.loads(messages[-1]["content"])
+        if not body["history"]:
+            return {"name": "search_card_evidence", "arguments": {"query": body["goal"][:500]}}
+        if not body["evidence"]:
+            return {"name": "stop_cards", "arguments": {"reason": "没有可引用的课程证据。"}}
+        return {
+            "name": "create_evidence_cards",
+            "arguments": {
+                "cards": [
+                    {
+                        "front": "引用片段讲了什么？（Mock 演示）",
+                        "back": e["text"][:1500],
+                        "evidence_ids": [e["evidence_id"]],
+                    }
+                    for e in body["evidence"][:3]
+                ]
+            },
+        }
+
     def feedback(self, messages, schemas, timeout, *, review=False):
         # Demo only: it intentionally makes no claim to assess semantic correctness.
         body = json.loads(messages[-1]["content"])

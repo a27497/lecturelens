@@ -15,6 +15,7 @@ dependencies = [
   "certifi>=2026.10.19",
   "cryptography>=46,<49",
   "mcp>=1.26,<2",
+  "fsrs==6.3.0",
 ]
 
 [dependency-groups]

@@ -7,7 +7,7 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 - Python 保存 Session/Run、checkpoint、解释与练习、不可变作答版本、反馈和用户核对记录；PostgreSQL 同时保存派生 Evidence 索引。
 - Java/MySQL 负责账号、课程与媒体事实、Evidence 权属/revision/删除检查和浏览器网关。Python 不读写 MySQL，不接收浏览器自报身份或用户 JWT。
 - Java 后台推送 Evidence 清单与差量，Python 使用固定版本的本地 ONNX Embedding 建索引；学习请求只消费已就绪索引，不触发全文索引。
-- 普通课程 QA 与媒体准备保持独立路径。自动评分、长期学习记忆和复习调度尚未交付。
+- 普通课程 QA 与媒体准备保持独立路径。自动评分与长期学习记忆尚未交付；证据闪卡与 FSRS 自评调度实验性已实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 设计](../docs/P7_EVIDENCE_FLASHCARDS.md)。
 
 详细约束见[项目契约](../docs/AGENT_PRODUCT_CONTRACT.md)和[Evidence 同步](../docs/L1_EVIDENCE_SYNC.md)。
 

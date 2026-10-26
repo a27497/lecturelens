@@ -23,8 +23,10 @@ from .support_review import output_tokens
 
 FROZEN_AGENT = "e34d8c596d74d4320ce6a224359190374520e4d3"
 FROZEN_MANIFEST_SHA256 = "d94e896c768c0bf74c66b11f2105a1e541fe01f1c94ea1f14710d5c1a2777f00"
-DEVELOPMENT_AGENT = "p3-read-review-480fc58639fd4a59"
-DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
+PRIOR_DEVELOPMENT_AGENT = "p3-read-review-480fc58639fd4a59"
+DEVELOPMENT_AGENT = "p7-flashcards-56df1f68a682ab00"
+PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
+DEVELOPMENT_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -107,8 +109,8 @@ def verify_frozen_agent(package=None):
 
 
 def verify_development_agent(package=None):
-    """Independent read candidate; offline mechanics, no inherited quality claim."""
-    return _verify_agent(package, "development_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """P7 offline mechanics candidate; no inherited P3/AU quality or live permission."""
+    return _verify_agent(package, "p7_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)
