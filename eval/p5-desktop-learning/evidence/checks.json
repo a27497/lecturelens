@@ -25,14 +25,16 @@
     "exit_code": 1,
     "started_at_utc": "2026-10-26T15:33:03.684935+00:00",
     "finished_at_utc": "2026-10-26T15:33:08.238890+00:00",
-    "log_sha256": "ac1e732421e67e4a234eaab5968919433abe77926729bd812ebdd278bd5fe16b"
+    "log_sha256": "ac1e732421e67e4a234eaab5968919433abe77926729bd812ebdd278bd5fe16b",
+    "expected_outcome": "failure before the corresponding implementation fix"
   },
   "p5-before-continuation": {
     "status": "FAILED",
     "exit_code": 1,
     "started_at_utc": "2026-10-26T15:32:52.772312+00:00",
     "finished_at_utc": "2026-10-26T15:32:57.613822+00:00",
-    "log_sha256": "63814995939213b5c08b4b0649ea4546e04de9ffff1bc62c2a63ee83d433f2f3"
+    "log_sha256": "63814995939213b5c08b4b0649ea4546e04de9ffff1bc62c2a63ee83d433f2f3",
+    "expected_outcome": "failure before the corresponding implementation fix"
   },
   "p5-delivery-vue-tests": {
     "status": "SUCCEEDED",
@@ -72,6 +74,49 @@
   "python-prior-output": {
     "pytest_result": "845 passed, 2 warnings in 503.67s",
     "supervisor": "interrupted, original record retained without altering status",
-    "fresh_terminal_check": "p5-python-terminal in progress"
+    "fresh_terminal_check": "p5-python-terminal SUCCEEDED; 845 passed, 0 skipped"
+  },
+  "p5-final-state-race-tests": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:35:51.382594+00:00",
+    "finished_at_utc": "2026-10-26T16:36:25.487595+00:00",
+    "log_sha256": "3f48791fb632d2ab0eaffd5129b38bf25cefcf2dc17658539d44c2222d3642b2"
+  },
+  "p5-final-state-race-build": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:36:25.542284+00:00",
+    "finished_at_utc": "2026-10-26T16:36:40.195199+00:00",
+    "log_sha256": "b0ac9479952075323744072a44fef4bbf9e39a4d73c9cd8386a60a725c9af379"
+  },
+  "p5-before-late-completion": {
+    "status": "FAILED",
+    "exit_code": 1,
+    "started_at_utc": "2026-10-26T16:35:15.198476+00:00",
+    "finished_at_utc": "2026-10-26T16:35:19.880545+00:00",
+    "log_sha256": "db205c1d656b213886d64ebb587095c9a39ca48a79c99057184c35505d3a4037",
+    "expected_outcome": "failure before the corresponding implementation fix"
+  },
+  "p5-exact-head-journey": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:33:27.289012+00:00",
+    "finished_at_utc": "2026-10-26T16:34:31.738593+00:00",
+    "log_sha256": "f9b5b2074b3669fa86fc4bd9d76169bc0e10bed7fbf5951015e5200c4f13a3b9"
+  },
+  "p5-exact-head-boundaries": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:34:31.799000+00:00",
+    "finished_at_utc": "2026-10-26T16:35:44.841392+00:00",
+    "log_sha256": "cc128f9bcb0401a514a01a724c3ccf8dcaa03461b78226c8f8bc633bd2cbe703"
+  },
+  "p5-python-terminal": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:32:35.379902+00:00",
+    "finished_at_utc": "2026-10-26T16:41:17.849613+00:00",
+    "log_sha256": "20d6bcab6e49bf264c886c10c18289f59f06aeab565fca7b3dbff74df5793f00"
   }
 }

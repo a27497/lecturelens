@@ -3,7 +3,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 import CourseAgentPanel from "./CourseAgentPanel.vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
 import { studyCommand, studyEvents, studyStatus } from "../../api/study";
-import type { StudyArtifact, StudyRun } from "../../api/study";
+import type { StudyArtifact, StudyRun, StudyEvent } from "../../api/study";
 
 vi.mock("../../api/qa", () => ({ getEvidenceIndexStatus: vi.fn() }));
 vi.mock("../../api/study", () => ({ studyStatus: vi.fn(), studyCommand: vi.fn(), studyEvents: vi.fn() }));
@@ -420,4 +420,36 @@ it('recomputes continuation after the real child saves a check note without anot
   expect(wrapper.get('.practice-continuation').text()).not.toContain('尚无核对记录');
   expect(wrapper.get('.practice-continuation').text()).toContain('核对记录不表示已订正');
   expect(vi.mocked(studyCommand).mock.calls.some(([, c]) => ['START', 'START_FEEDBACK', 'CREATE_SESSION'].includes(c.operation))).toBe(false); wrapper.unmount();
+});
+
+it('keeps saved progress when a late completion read arrives after the answer form saves', async () => {
+  const state = continuationState();
+  const empty = { ...state, attempts: [], feedback_runs: [], practice_results: state.practice_results.map(row => ({ ...row, attempt: null, feedback_run: null, latest_feedback_status: null })) };
+  const saved = { ...empty, attempts: [state.attempts[0]!], practice_results: [{ ...empty.practice_results[0]!, attempt: state.attempts[0]! }, empty.practice_results[1]!] };
+  let reads = 0; let finish!: () => void; let event!: (value: StudyEvent) => void;
+  let late!: (value: typeof empty) => void;
+  vi.mocked(studyEvents).mockImplementation((_task, _session, _run, _after, _signal, callback) => {
+    event = callback; return new Promise(resolve => { finish = resolve; });
+  });
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.operation === 'SAVE_ATTEMPT') return { attempt: state.attempts[0]! };
+    if (command.operation === 'READ') {
+      reads++;
+      if (reads === 1) return { run: { ...run, status: 'running' }, artifact: null };
+      if (reads === 2) return empty;
+      if (reads === 3) return new Promise(resolve => { late = resolve; });
+      return saved;
+    }
+    return {};
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } }); await flushPromises();
+  event({ sequence: 1, event_type: 'run_finished', payload: {} }); await flushPromises(); finish(); await flushPromises();
+  const form = wrapper.get('.practice-question.is-current .practice-answer'); await form.get('textarea').setValue(state.attempts[0]!.answer_text);
+  await form.findAll('button').find(b => b.text() === '保存作答')!.trigger('click'); await flushPromises();
+  expect(wrapper.get('.practice-continuation').text()).toContain('作答已保存');
+  late(empty); await flushPromises();
+  expect(wrapper.get('.practice-guidance').text()).toContain('已保存 1/2');
+  expect(wrapper.get('.practice-continuation').text()).toContain('作答已保存');
+  expect(form.get<HTMLTextAreaElement>('textarea').element.value).toBe(state.attempts[0]!.answer_text); wrapper.unmount();
 });

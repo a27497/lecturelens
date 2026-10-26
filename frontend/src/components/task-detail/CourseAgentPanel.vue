@@ -242,16 +242,18 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
 }
 
 async function refresh(current: number, task: string, expectedKey?: string, selectedRun?: string) {
+  const progressAtRead = progressSequence;
   const id = selectedRun ?? run.value?.run_id;
   const response = await studyCommand(task, { operation: "READ", session_id: sessionId.value, ...(id ? { run_id: id } : {}) });
   if (current !== version || (expectedKey && response.run?.request_key !== expectedKey)) return;
   run.value = response.run ?? null; artifact.value = response.artifact ?? null;
   approvalRequired.value = response.run?.approval_required ?? approvalRequired.value;
   approval.value = response.approval ?? null;
-  attempts.value = response.attempts ?? [];
+  observeAttempts(response.attempts ?? []);
   feedbackEnabled.value = response.feedback_enabled ?? false;
   feedbackRuns.value = response.feedback_runs ?? [];
-  if (artifact.value?.questions.length) acceptProgress(response);
+  // A completion snapshot can predate a save followed by a newer progress read.
+  if (progressAtRead === progressSequence && artifact.value?.questions.length) acceptProgress(response);
   if (!goal.value && run.value) goal.value = run.value.goal;
 }
 
