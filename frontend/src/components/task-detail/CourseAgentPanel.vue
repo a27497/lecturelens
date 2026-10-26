@@ -44,6 +44,14 @@ const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
 const questionIndex = ref(0);
 const resultsOpen = ref(false);
+const resultsElement = ref<HTMLElement>();
+async function toggleResults() {
+  if (resultsOpen.value) { await chooseQuestion(questionIndex.value); return; }
+  resultsOpen.value = true;
+  await nextTick();
+  resultsElement.value?.scrollIntoView({ block: "start" });
+  resultsElement.value?.focus({ preventScroll: true });
+}
 const answerForms = new Map<number, { showHistory: () => Promise<void> }>();
 const feedbackPanels = new Map<number, { showFeedback: (row: StudyFeedbackRun) => Promise<void> }>();
 async function openResult(index: number, kind: "question" | "history" | "feedback", feedback?: StudyFeedbackRun) {
@@ -301,12 +309,12 @@ async function reveal() {
           </div>
         </details></details>
         <template v-if="artifact.questions.length">
-          <div class="practice-toolbar"><el-button @click="resultsOpen = !resultsOpen">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
+          <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
           </nav></div>
         </template>
-        <PracticeResultsPanel v-if="resultsOpen && run && artifact" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @access-failure="$emit('accessFailure')" @seek="seekResult" />
+        <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
         <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
           <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
@@ -317,6 +325,7 @@ async function reveal() {
         <div v-if="artifact.questions.length > 1" class="actions">
           <el-button :disabled="questionIndex === 0" @click="chooseQuestion(questionIndex - 1)">上一题</el-button>
           <el-button :disabled="questionIndex === artifact.questions.length - 1" @click="chooseQuestion(questionIndex + 1)">下一题</el-button>
+          <el-button v-if="!resultsOpen && questionIndex === artifact.questions.length - 1" @click="toggleResults">查看练习结果</el-button>
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
       </article>
