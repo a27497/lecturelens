@@ -1,0 +1,31 @@
+{
+  "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+  "author": "LectureLens P6 / Codex",
+  "license": "CC0-1.0",
+  "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+  "course_key": "p6-holdout-synthetic-v1",
+  "revision": 1,
+  "evidence": [
+    {
+      "evidence_id": "h-e1",
+      "text": "队列按先进先出处理：从队尾入队，从队首出队。栈按后进先出处理：在栈顶入栈和出栈。",
+      "start_ms": 0,
+      "end_ms": 10000,
+      "source_type": "SUBTITLE"
+    },
+    {
+      "evidence_id": "h-e2",
+      "text": "空队列依次入队 A、B、C 后，第一次出队得到 A，剩余顺序 B、C。空栈依次入栈 A、B、C 后，第一次出栈得到 C，剩余底到顶 A、B。",
+      "start_ms": 10000,
+      "end_ms": 20000,
+      "source_type": "SUBTITLE"
+    },
+    {
+      "evidence_id": "h-e3",
+      "text": "本课未提供队列存储容量、机器内存或单次操作秒数；不能声称队列最多存 100 个元素或出队恰好用 1 秒。",
+      "start_ms": 20000,
+      "end_ms": 30000,
+      "source_type": "SUBTITLE"
+    }
+  ]
+}

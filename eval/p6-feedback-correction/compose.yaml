@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17
+    environment:
+      POSTGRES_USER: p6
+      POSTGRES_DB: lecturelens_p6_test
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:25486:5432"
+    volumes:
+      - p6_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U p6 -d lecturelens_p6_test"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+volumes:
+  p6_postgres:

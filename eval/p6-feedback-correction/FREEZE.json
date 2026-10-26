@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "frozen_at_utc": "2026-10-26T18:40:08.198560+00:00",
+  "baseline_main": "1b4dc696cc61e4f3828c6f0c6a7eaabab8dd451f",
+  "before_any_p6_feedback_output": true,
+  "holdout_status": "NOT_RUN; no mock or real outputs; private task quality holdout requires a fresh independent course for generalization",
+  "files": {
+    "development/course.json": "3e752eab045c3d8025a1f69b5fdd8b27c47bb5bfa57d9c3b8876f6c2f804d843",
+    "development/standard.json": "d53ea1f8799da248a2a2a5d88e45ce99094f2d364bd1cfb494d265e8fac70e43",
+    "development/initial-answers.json": "3e955293eb151fce70fd53b3fdd17243ad8c921c2bd33eccf03136b2c8c7b9f2",
+    "holdout/course.json": "12e4c48242dc8fa42570919e184dc18b66f1e322322642c0bb8a750e11ed1317",
+    "holdout/standard.json": "125b2be21d0fdd41a7f239a185e0a224c9417255077734d99090136f797aa395",
+    "rubric.json": "e4e73e02530b5ee401c31224a25f469c4fe67cbb0ed43de6573c4dbbb4ded3ca"
+  }
+}

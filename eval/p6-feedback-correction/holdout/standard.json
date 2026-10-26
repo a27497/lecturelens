@@ -1,0 +1,125 @@
+{
+  "authority": "独立预定标准；不使用产品参考答案或反馈作为评分权威；AI编写待真人双评校准。",
+  "items": [
+    {
+      "item_id": "h1",
+      "question": "队列和栈分别按什么顺序处理？",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "h1-f1",
+          "key_fact": "队列先进先出",
+          "required_evidence": [
+            "h-e1"
+          ],
+          "acceptable": [
+            "FIFO且解释先入先出"
+          ],
+          "common_errors": [
+            "后进先出"
+          ]
+        },
+        {
+          "id": "h1-f2",
+          "key_fact": "栈后进先出",
+          "required_evidence": [
+            "h-e1"
+          ],
+          "acceptable": [
+            "LIFO且解释后入先出"
+          ],
+          "common_errors": [
+            "先进先出"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "h2",
+      "question": "空队列入队 A、B、C，第一次出队是什么？剩余顺序是什么？",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "h2-f1",
+          "key_fact": "第一次出队A",
+          "required_evidence": [
+            "h-e2"
+          ],
+          "acceptable": [
+            "A先出"
+          ],
+          "common_errors": [
+            "C先出"
+          ]
+        },
+        {
+          "id": "h2-f2",
+          "key_fact": "剩余B、C",
+          "required_evidence": [
+            "h-e2"
+          ],
+          "acceptable": [
+            "B在前C在后"
+          ],
+          "common_errors": [
+            "C、B"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "h3",
+      "question": "本课能确定队列最多存100个元素吗？",
+      "insufficient": true,
+      "facts": [
+        {
+          "id": "h3-f1",
+          "key_fact": "不能确定，缺容量或内存信息",
+          "required_evidence": [
+            "h-e3"
+          ],
+          "acceptable": [
+            "材料未提供容量"
+          ],
+          "common_errors": [
+            "肯定100",
+            "无限容量"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "h4",
+      "question": "空栈入栈 A、B、C 后第一次出栈与剩余底到顶顺序是什么？",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "h4-f1",
+          "key_fact": "出栈C",
+          "required_evidence": [
+            "h-e2"
+          ],
+          "acceptable": [
+            "最后进入的C先出"
+          ],
+          "common_errors": [
+            "A先出"
+          ]
+        },
+        {
+          "id": "h4-f2",
+          "key_fact": "剩余底到顶A、B",
+          "required_evidence": [
+            "h-e2"
+          ],
+          "acceptable": [
+            "A在下B在上"
+          ],
+          "common_errors": [
+            "B、A"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+  "author": "LectureLens P6 / Codex",
+  "license": "CC0-1.0",
+  "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+  "course_key": "p6-development-synthetic-v1",
+  "revision": 1,
+  "evidence": [
+    {
+      "evidence_id": "d-e1",
+      "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+      "start_ms": 0,
+      "end_ms": 10000,
+      "source_type": "SUBTITLE"
+    },
+    {
+      "evidence_id": "d-e2",
+      "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+      "start_ms": 10000,
+      "end_ms": 20000,
+      "source_type": "SUBTITLE"
+    },
+    {
+      "evidence_id": "d-e3",
+      "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+      "start_ms": 20000,
+      "end_ms": 30000,
+      "source_type": "SUBTITLE"
+    },
+    {
+      "evidence_id": "d-e4",
+      "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+      "start_ms": 30000,
+      "end_ms": 40000,
+      "source_type": "SUBTITLE"
+    }
+  ]
+}

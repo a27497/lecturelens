@@ -1,0 +1,41 @@
+{
+  "samples": [
+    {
+      "id": "correct",
+      "item_id": "d1",
+      "answer": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+      "scenario": "完全正确"
+    },
+    {
+      "id": "one_error",
+      "item_id": "d1",
+      "answer": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+      "scenario": "一个事实错误"
+    },
+    {
+      "id": "partial",
+      "item_id": "d1",
+      "answer": "最多 n 次比较。",
+      "scenario": "部分正确，缺停止规则"
+    },
+    {
+      "id": "confused",
+      "item_id": "d4",
+      "answer": "停止条件和上界都是 n，所以完全同义。",
+      "scenario": "概念混淆"
+    },
+    {
+      "id": "insufficient",
+      "item_id": "d3",
+      "answer": "查了3次，所以精确用了3秒。",
+      "scenario": "课程证据不足但无据推断"
+    },
+    {
+      "id": "stale",
+      "item_id": "d1",
+      "answer": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+      "scenario": "反馈绑定v1；订正v2后回看旧反馈；旧反馈不得变成v2反馈",
+      "v2": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。"
+    }
+  ]
+}

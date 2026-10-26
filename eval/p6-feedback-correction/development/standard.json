@@ -1,0 +1,129 @@
+{
+  "authority": "独立预定标准；不使用产品参考答案或反馈作为评分权威；AI编写待真人双评校准。",
+  "items": [
+    {
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "d1-f1",
+          "key_fact": "首个匹配即停止；无匹配检查完整列表后停止",
+          "required_evidence": [
+            "d-e2"
+          ],
+          "acceptable": [
+            "找到即停，否则遍历完停止"
+          ],
+          "common_errors": [
+            "自动停止但无条件",
+            "找到后仍必须查完"
+          ]
+        },
+        {
+          "id": "d1-f2",
+          "key_fact": "最多 n 次比较",
+          "required_evidence": [
+            "d-e2"
+          ],
+          "acceptable": [
+            "比较次数不超过列表长度"
+          ],
+          "common_errors": [
+            "最多1次",
+            "n是停止条件而不是上界"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "d2",
+      "question": "在 [4,9,4] 中分别查找 4 和 7，需要几次比较、结果是什么？",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "d2-f1",
+          "key_fact": "查找4比较1次且找到",
+          "required_evidence": [
+            "d-e3"
+          ],
+          "acceptable": [
+            "第一个4命中即停"
+          ],
+          "common_errors": [
+            "两个4所以比较2次",
+            "总是比较3次"
+          ]
+        },
+        {
+          "id": "d2-f2",
+          "key_fact": "查找7比较3次且未找到",
+          "required_evidence": [
+            "d-e3"
+          ],
+          "acceptable": [
+            "遍历3项后失败"
+          ],
+          "common_errors": [
+            "比较0次",
+            "不存在所以无须检查"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "d3",
+      "question": "根据本课，查找7精确需要多少秒？",
+      "insufficient": true,
+      "facts": [
+        {
+          "id": "d3-f1",
+          "key_fact": "证据不能确定精确秒数，缺单次耗时或机器速度",
+          "required_evidence": [
+            "d-e4"
+          ],
+          "acceptable": [
+            "不知道精确秒数，并说明缺何种依据"
+          ],
+          "common_errors": [
+            "3次等于3秒",
+            "凭常识给出毫秒数"
+          ]
+        }
+      ]
+    },
+    {
+      "item_id": "d4",
+      "question": "停止条件与有限步上界有什么区别？请结合本课查找说明。",
+      "insufficient": false,
+      "facts": [
+        {
+          "id": "d4-f1",
+          "key_fact": "停止条件决定何时结束，上界限制最多步骤",
+          "required_evidence": [
+            "d-e1"
+          ],
+          "acceptable": [
+            "规则与数量保证不同"
+          ],
+          "common_errors": [
+            "两个术语同义"
+          ]
+        },
+        {
+          "id": "d4-f2",
+          "key_fact": "找到或查完是停止规则，最多n次是上界",
+          "required_evidence": [
+            "d-e2"
+          ],
+          "acceptable": [
+            "给出对应查找例子"
+          ],
+          "common_errors": [
+            "把n叫作匹配规则"
+          ]
+        }
+      ]
+    }
+  ]
+}

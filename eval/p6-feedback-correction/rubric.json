@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "labels": [
+    "correct",
+    "incorrect",
+    "missing",
+    "unsupported"
+  ],
+  "missing_policy": "空白/退出/超时保留为incomplete，不以缺失当作正确；率分母另报eligible与missing。",
+  "fact_scoring": "逐关键事实点按语义评分；correct=准确且不矛盾；incorrect=与课程相反；missing=未回答；unsupported=材料外断言。缺必需部分不能算correct。",
+  "trial_fields": [
+    "trial_id",
+    "rater_id",
+    "initial",
+    "final",
+    "detected",
+    "supported",
+    "feedback_flagged",
+    "feedback_wrong",
+    "accepted_wrong_feedback",
+    "false_refusal",
+    "honest_insufficiency",
+    "rationale"
+  ],
+  "booleans": "反馈条件评分false_refusal和accepted_wrong_feedback；honest_insufficiency仅证据不足题。其余条件用null表示不适用。",
+  "support_rule": "supported只列final=correct且学生明确提交证据ID及推理、评分者核验全部必需位置足以支持的事实点。点开来源或acknowledged不等于理解/发现错误。",
+  "detection_rule": "detected只列初答非correct且学生在再次作答前独立写明原错误及改法的事实点；反馈指出/文字变化均不能单独代替。",
+  "feedback_rule": "feedback_flagged=反馈准确指出的初答错误点；feedback_wrong=反馈含实质错误断言（布尔）；accepted_wrong_feedback=学生明确接受该错误建议（布尔）；false_refusal=充分证据题反馈却拒答；honest_insufficiency=明确边界、缺何依据且未杜撰。",
+  "agreement": "盲评者R1/R2独立评分；按trial+事实+initial/final标签算原始一致率与Cohen kappa；二元/集合字段逐字段一致率另报。kappa期望一致=1时null。先保留原分再第三人裁决；不覆盖分歧。"
+}
