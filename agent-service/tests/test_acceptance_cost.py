@@ -23,6 +23,8 @@ from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict, make_conninfo
 
 from lecturelens_agent.study.acceptance_cost import (
+    DEVELOPMENT_AGENT,
+    FROZEN_AGENT,
     INPUT_TOKEN_CEILING,
     MAX_BODY,
     MODEL,
@@ -30,6 +32,7 @@ from lecturelens_agent.study.acceptance_cost import (
     CostDenied,
     CostLedger,
     CostPolicy,
+    verify_development_agent,
     verify_frozen_agent,
     worker_snapshot,
 )
@@ -196,7 +199,9 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
-    assert verify_frozen_agent(copied) == 56
+    assert verify_development_agent(copied) == 57
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_frozen_agent(copied)
     altered = copied / "study/provider.py"
     # Frozen artifacts are read-only. Only the disposable tampering sample may
     # become writable; the source being certified keeps its original mode.
@@ -204,7 +209,7 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     with altered.open("a") as output:
         output.write("\n# different candidate\n")
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
-        verify_frozen_agent(copied)
+        verify_development_agent(copied)
 
 
 def test_worker_can_only_hold_the_unspendable_placeholder(gate):
@@ -224,7 +229,9 @@ def test_cli_plan_is_read_only_and_fake_policy_cannot_activate(gate, tmp_path):
     result = subprocess.run([*command, "plan"], capture_output=True, text=True, check=True, timeout=10)
     plan = json.loads(result.stdout)
     assert plan["provider_requests"] == 0 and plan["money_limit_implies_max_admitted_calls"] == 9
-    assert plan["verified_frozen_modules"] == 56
+    assert plan["verified_development_modules"] == 57
+    assert plan["historical_agent_candidate"] == FROZEN_AGENT
+    assert plan["agent_candidate"] == DEVELOPMENT_AGENT
     policy_file = tmp_path / "fake-policy.json"
     policy_file.write_text(json.dumps(asdict(gate.policy)))
     endpoint = tmp_path / "must-not-exist.json"
@@ -1224,3 +1231,58 @@ def test_no_external_traffic_or_inherited_secrets():
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert sum(json.loads(p.read_text())["denied_connections"] for p in records.glob("*.json")) == 5
+
+
+def test_review_read_extension_preserves_prior_frozen_manifest_identity():
+    import lecturelens_agent
+
+    package = Path(lecturelens_agent.__file__).parent
+    prior = json.loads((Path(__file__).parent / "fixtures/acceptance_agent_702b2f8.json").read_text())
+    frozen = json.loads((package / "study/acceptance_agent_manifest.json").read_text())
+    assert frozen == prior
+    current = json.loads((package / "study/development_agent_manifest.json").read_text())
+    assert DEVELOPMENT_AGENT != FROZEN_AGENT
+    assert len(prior) == 56
+    assert set(current) - set(prior) == {"study/results.py"}
+    assert {key for key in prior if current[key] != prior[key]} == {"study/store.py"}
+
+
+def test_historical_identity_positive_and_tampering_rejected(tmp_path):
+    import lecturelens_agent
+
+    package = Path(lecturelens_agent.__file__).parent
+    copied = tmp_path / "historical"
+    shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    prior_store = Path(__file__).parent / "fixtures/acceptance_store_702b2f8.py.txt"
+    (copied / "study/store.py").write_bytes(prior_store.read_bytes())
+    (copied / "study/results.py").unlink()
+    assert verify_frozen_agent(copied) == 56
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_development_agent(copied)
+    with (copied / "study/store.py").open("a") as out:
+        out.write("\n# tampered\n")
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_frozen_agent(copied)
+
+
+def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permission():
+    now = datetime.now(timezone.utc)
+    policy = CostPolicy("synthetic", now.isoformat(), (now + timedelta(hours=1)).isoformat())
+    policy.validate()
+    with pytest.raises(CostDenied, match="POLICY_INVALID"):
+        replace(policy, candidate_sha=FROZEN_AGENT).validate()
+    with pytest.raises(CostDenied, match="POLICY_INVALID"):
+        replace(policy, mode="live", authorization_id="not-authorized").validate()
+
+
+def test_development_manifest_tampering_is_rejected(tmp_path, monkeypatch):
+    from lecturelens_agent.study import acceptance_cost
+
+    original = Path(acceptance_cost.__file__)
+    raw = original.with_name("development_agent_manifest.json").read_text()
+    changed = json.loads(raw)
+    changed["study/store.py"] = "0" * 64
+    (tmp_path / "development_agent_manifest.json").write_text(json.dumps(changed))
+    monkeypatch.setattr(acceptance_cost, "__file__", str(tmp_path / original.name))
+    with pytest.raises(CostDenied, match="MANIFEST_CHANGED"):
+        verify_development_agent()

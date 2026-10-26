@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import CourseModelUsagePanel from "./CourseModelUsagePanel.vue";
-import { askCourseQa, getEvidenceIndexStatus, toReadableCourseQaError } from "../../api/qa";
+import { askCourseQa, readCourseQaHistory, getEvidenceIndexStatus, toReadableCourseQaError } from "../../api/qa";
 import type { EvidenceIndexStatus } from "../../api/qa";
-import type { CourseQaEvidenceItem, CourseQaResponse } from "../../types/qa";
+import type { CourseQaEvidenceItem, CourseQaResponse, CourseQaHistoryItem } from "../../types/qa";
 import { formatMillisRange } from "../../utils/time";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 
@@ -13,6 +13,54 @@ import type { LearningScope } from "../../api/learningScope";
 const props = defineProps<{ taskId: string; learningScope?: LearningScope | null }>();
 const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; accessFailure: [] }>();
 const question = ref("");
+const history = ref<CourseQaHistoryItem[]>([]);
+const historyCursor = ref<string | null>(null);
+const historyLoading = ref(false);
+const historyError = ref("");
+const selectedQuestion = ref("");
+const historySourceStatus = ref("");
+let historyGeneration = 0;
+let answerSelection = 0;
+onBeforeUnmount(() => { historyGeneration++; requestVersion.value++; });
+async function loadHistory(more = false, restore = false, revalidate = true) {
+  if (more && historyLoading.value) return;
+  const current = ++historyGeneration; const task = props.taskId; const selection = answerSelection;
+  historyLoading.value = true; historyError.value = "";
+  // Until this explicit read succeeds, saved citations are no longer current observations.
+  if (!more && revalidate) {
+    history.value = history.value.map(item => ({ ...item, evidence: [], sourceStatus: "unavailable" }));
+    if (response.value) { response.value = { ...response.value, evidence: [] }; historySourceStatus.value = "unavailable"; }
+  }
+  try {
+    const page = await readCourseQaHistory(task, more ? historyCursor.value ?? undefined : undefined);
+    if (current !== historyGeneration || task !== props.taskId) return;
+    history.value = [...(more ? history.value : []), ...page.items]; historyCursor.value = page.nextCursor;
+    if (!more && revalidate && response.value && !loading.value) {
+      const selected = page.items.find(item => item.recordId === response.value?.recordId);
+      if (selected) applyHistory(selected);
+      // A selected record outside this page keeps its answer, but no trusted sources.
+    }
+    const recentSuccess = page.items.find(item => item.status === "SUCCEEDED");
+    if (restore && !response.value && !loading.value && selection === answerSelection && recentSuccess) selectHistory(recentSuccess, true);
+  } catch (error) {
+    if (current !== historyGeneration) return;
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    historyError.value = status === 409 ? "课程版本已变化，请刷新课程后重试；已保存问答不受影响。" : "历史问答暂时无法读取，请重试；已保存问答不受影响。";
+    if (response.value) { response.value = { ...response.value, evidence: [] }; historySourceStatus.value = "unavailable"; }
+    if (mayHaveLostCourseAccess(error)) { history.value = []; response.value = null; emit("accessFailure"); }
+  } finally { if (current === historyGeneration) historyLoading.value = false; }
+}
+function selectHistory(item: CourseQaHistoryItem, validated = false) {
+  if (loading.value) return;
+  requestVersion.value++; answerSelection++;
+  applyHistory(historyLoading.value && !validated ? { ...item, evidence: [], sourceStatus: "unavailable" } : item);
+  emit("frozenScope", undefined);
+}
+function applyHistory(item: CourseQaHistoryItem) {
+  selectedQuestion.value = item.question; historySourceStatus.value = item.sourceStatus;
+  response.value = { recordId: item.recordId, answer: item.status === "SUCCEEDED" ? item.answer : "这次提问未形成已保存的回答，可明确重新提问。", evidence: item.evidence, usage: null };
+}
+
 const loading = ref(false);
 const errorMessage = ref("");
 const response = ref<CourseQaResponse | null>(null);
@@ -35,6 +83,8 @@ const confidenceDetails = computed(() => (response.value?.evidence ?? [])
 
 watch(() => props.taskId, (taskId, _previous, onCleanup) => {
   clear();
+  historyGeneration++; historyLoading.value = false; history.value = []; historyCursor.value = null; historyError.value = "";
+  void loadHistory(false, true);
   indexStatus.value = "UNKNOWN";
   let active = true;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -62,6 +112,7 @@ async function submit() {
   const normalized = question.value.trim();
   if (!normalized) { errorMessage.value = "请输入课程问题"; return; }
   if (normalized.length > 500) { errorMessage.value = "问题不能超过 500 个字符"; return; }
+  answerSelection++; historyGeneration++; historyLoading.value = false;
   const currentTaskId = props.taskId;
   const version = requestVersion.value + 1;
   requestVersion.value = version;
@@ -70,7 +121,7 @@ async function submit() {
   response.value = null;
   try {
     const nextResponse = await askCourseQa(currentTaskId, { question: normalized, ...(props.learningScope ? { learning_scope: JSON.parse(JSON.stringify(props.learningScope)) } : {}) });
-    if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; emit("frozenScope", nextResponse.learning_scope ?? null); }
+    if (version === requestVersion.value && props.taskId === currentTaskId) { response.value = nextResponse; selectedQuestion.value = normalized; historySourceStatus.value = ""; void loadHistory(false, false, false); emit("frozenScope", nextResponse.learning_scope ?? null); }
   } catch (error) {
     if (version === requestVersion.value && props.taskId === currentTaskId) { errorMessage.value = toReadableCourseQaError(error); if (mayHaveLostCourseAccess(error)) emit("accessFailure"); }
   } finally {
@@ -79,11 +130,12 @@ async function submit() {
 }
 
 function clear() {
+  answerSelection++;
   requestVersion.value += 1;
   question.value = "";
   loading.value = false;
   errorMessage.value = "";
-  response.value = null;
+  response.value = null; selectedQuestion.value = ""; historySourceStatus.value = "";
   emit("frozenScope", undefined);
 }
 
@@ -100,15 +152,26 @@ function originalText(item: CourseQaEvidenceItem): string {
 
 <template>
   <section class="workspace-panel qa-panel" aria-labelledby="qa-title">
-    <header><h2 id="qa-title">课程问答 · Tutor</h2><p>只回答你的课程问题，不自动创建学习任务或练习。问题、回答和未提交追问仅保留在本页，刷新后不会在此恢复。</p></header>
+    <header><h2 id="qa-title">课程问答 · Tutor</h2><p>只回答你的课程问题，不自动创建学习任务或练习。已保存问答可从历史恢复；未提交的问题草稿仅保留在本页。</p></header>
     <p v-if="indexMessage" class="index-status" role="status">{{ indexMessage }}</p>
     <div class="qa-form">
       <el-input v-model="question" type="textarea" :rows="3" maxlength="500" show-word-limit placeholder="输入与当前课程有关的问题" aria-label="课程问题" @keydown.ctrl.enter.prevent="submit" />
       <div><el-button type="primary" :loading="loading" :disabled="!canSubmit" @click="submit">提问</el-button><el-button :disabled="loading && !response" @click="clear">清空</el-button></div>
     </div>
     <el-alert v-if="errorMessage" :closable="false" :title="errorMessage" type="warning" show-icon />
+    <details class="qa-history" open>
+      <summary>历史问答 <span>{{ history.length ? `· 已载入 ${history.length} 条` : '' }}</span></summary>
+      <div class="history-toolbar"><el-button :loading="historyLoading" @click="loadHistory()">刷新历史</el-button><span v-if="historyLoading" role="status">正在读取已保存问答…</span></div>
+      <p v-if="historyError" role="alert">{{ historyError }}</p>
+      <p v-else-if="!historyLoading && !history.length">尚无历史问答。输入课程问题后点击“提问”。</p>
+      <ol><li v-for="item in history" :key="item.recordId"><button type="button" :disabled="loading" :aria-pressed="response?.recordId === item.recordId" @click="selectHistory(item)">{{ item.question }}<small>{{ item.createdAt ? new Date(item.createdAt).toLocaleString() : '历史记录' }} · {{ item.status === 'SUCCEEDED' ? '已保存回答' : '未完成回答' }}</small></button></li></ol>
+      <el-button v-if="historyCursor && history.length < 100" :loading="historyLoading" @click="loadHistory(true)">更早的问答</el-button>
+      <p v-if="historyCursor && history.length >= 100">已载入最近100条，可刷新回到最新记录。</p>
+    </details>
     <article v-if="response" class="qa-answer" aria-live="polite">
-      <h3>回答</h3><p>{{ response.answer }}</p>
+      <h3>回答</h3><strong class="answered-question">{{ selectedQuestion }}</strong>
+      <p v-if="historySourceStatus" class="history-help">正在查看已保存问答；学习范围选择用于下一次提问。选择历史不会生成新回答。</p>
+      <p v-if="['unavailable', 'partial'].includes(historySourceStatus)" role="status">部分历史来源已失效或版本已变化，不作为当前可信引用展示。</p><p>{{ response.answer }}</p>
       <section class="qa-evidence" aria-labelledby="evidence-title">
         <h3 id="evidence-title">证据</h3>
         <el-empty v-if="response.evidence.length === 0" description="当前课程内容中没有找到明确依据" />
@@ -146,6 +209,12 @@ function originalText(item: CourseQaEvidenceItem): string {
 </template>
 
 <style scoped>
+.qa-history { padding: 14px; background: var(--color-canvas); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.qa-history summary { cursor: pointer; font-weight: 650; }.history-toolbar { margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+.qa-history ol { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 6px; max-height: 230px; overflow: auto; }
+.qa-history li button { width: 100%; padding: 10px; text-align: left; border: 1px solid transparent; background: var(--color-surface); color: var(--color-ink); border-radius: var(--radius-sm); cursor: pointer; overflow-wrap: anywhere; }
+.qa-history button[aria-pressed="true"] { border-color: var(--color-brand); }.qa-history small { display: block; margin-top: 5px; color: var(--color-ink-soft); }
+.history-help { font-size: 13px !important; color: var(--color-ink-soft) !important; }
 .workspace-panel { display: grid; gap: 22px; min-width: 0; padding: clamp(20px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-low); }
 header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } header p { color: var(--color-ink-soft); }
 .qa-form, .qa-answer, .qa-evidence { display: grid; gap: 14px; }.qa-form > div { display: flex; gap: 10px; }

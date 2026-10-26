@@ -1,9 +1,9 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { expect, it, vi } from "vitest";
 import CourseQaPanel from "./CourseQaPanel.vue";
-import { askCourseQa, getEvidenceIndexStatus } from "../../api/qa";
+import { askCourseQa, getEvidenceIndexStatus, readCourseQaHistory } from "../../api/qa";
 
-vi.mock("../../api/qa", () => ({ getEvidenceIndexStatus: vi.fn().mockResolvedValue({ status: "READY" }), askCourseQa: vi.fn(), toReadableCourseQaError: () => "error" }));
+vi.mock("../../api/qa", () => ({ readCourseQaHistory: vi.fn().mockResolvedValue({ items: [], nextCursor: null }), getEvidenceIndexStatus: vi.fn().mockResolvedValue({ status: "READY" }), askCourseQa: vi.fn(), toReadableCourseQaError: () => "error" }));
 
 it("renders the exact cited text returned by the API and keeps its video timestamp", async () => {
   const snippet = "The emcee introduces maritime history; ie ot is a literal source example.";
@@ -131,4 +131,30 @@ it("retains completed answers and their frozen scope when the next scope becomes
   expect(wrapper.emitted('frozenScope')!.at(-1)).toEqual([chosen]);
   expect((wrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('Saved question');
   expect(wrapper.findAll('button')[0]!.attributes('disabled')).toBeDefined(); wrapper.unmount();
+});
+
+it("restores persisted Tutor history without asking and preserves an unsent follow-up when selecting history", async () => {
+  vi.mocked(readCourseQaHistory).mockResolvedValueOnce({ items: [{ recordId: "saved-1", question: "历史问题", answer: "持久回答", status: "SUCCEEDED", createdAt: null, sourceStatus: "unavailable", evidence: [] }], nextCursor: null });
+  const before = vi.mocked(askCourseQa).mock.calls.length;
+  const wrapper = mount(CourseQaPanel, { props: { taskId: "course" }, global: { stubs: {
+    "el-input": { props: ["modelValue"], emits: ["update:modelValue"], template: `<textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
+    "el-button": { template: '<button><slot /></button>' }, "el-empty": true, "el-alert": true,
+  } } });
+  await flushPromises();
+  expect(wrapper.text()).toContain("持久回答"); expect(wrapper.text()).toContain("不作为当前可信引用");
+  expect(wrapper.findAll(".evidence-item")).toHaveLength(0);
+  await wrapper.get("textarea").setValue("未提交追问");
+  await wrapper.get(".qa-history li button").trigger("click");
+  expect((wrapper.get("textarea").element as HTMLTextAreaElement).value).toBe("未提交追问");
+  expect(vi.mocked(askCourseQa).mock.calls.length).toBe(before);
+  wrapper.unmount();
+});
+
+it("restores history even when the next-question scope finishes loading first", async () => {
+  let resolve!: (value: never) => void;
+  vi.mocked(readCourseQaHistory).mockImplementationOnce(() => new Promise(r => { resolve = r; }));
+  const wrapper = mount(CourseQaPanel, { props: { taskId: "course" }, global: { stubs: { "el-input": true, "el-button": true, "el-empty": true, "el-alert": true } } });
+  await wrapper.setProps({ learningScope: { version: 1, kind: "course", policy: "strict", revision: 3, evidence_ids: [] } });
+  resolve({ items: [{ recordId: "saved", question: "历史问题", answer: "刷新恢复的答案", status: "SUCCEEDED", createdAt: null, sourceStatus: "none", evidence: [] }], nextCursor: null } as never);
+  await flushPromises(); expect(wrapper.get('.qa-answer').text()).toContain('刷新恢复的答案'); wrapper.unmount();
 });

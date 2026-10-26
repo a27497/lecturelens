@@ -30,8 +30,10 @@ watch(() => [props.taskId, props.sessionId, props.runId, props.artifactId, props
 }, { immediate: true });
 watch(() => props.attempt, value => {
   if (!value || (latest.value && value.version <= latest.value.version)) return;
-  if (!dirty.value) text.value = value.answer_text;
-  latest.value = value;
+  const hasDraft = dirty.value;
+  if (!hasDraft) text.value = value.answer_text;
+  latest.value = value; pending = null; history.value = null;
+  message.value = hasDraft ? `服务器已保存第 ${value.version} 版作答；本页未保存文字已保留，请核对后再保存。` : "";
 });
 onBeforeUnmount(() => { generation++; });
 
@@ -88,6 +90,7 @@ async function showHistory(more = false) {
   }
   finally { if (current === generation) loadingHistory.value = false; }
 }
+defineExpose({ showHistory });
 </script>
 
 <template>

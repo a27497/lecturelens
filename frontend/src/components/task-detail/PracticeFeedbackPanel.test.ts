@@ -168,3 +168,28 @@ it("cancelling a feedback-history switch keeps the selected version and unsaved 
   expect(studyCommand).not.toHaveBeenCalled();
   wrapper.unmount();
 });
+
+it("ignores an older same-feedback read after a newer explicit open observes another tab's note", async () => {
+  let finish!: (value: StudyResponse) => void;
+  vi.mocked(studyCommand).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: structuredClone(initial), history: [structuredClone(initial)] }, global: { stubs } });
+  const panel = wrapper.vm as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> };
+  const oldRead = panel.showFeedback(initial);
+  const updated = structuredClone(feedback);
+  updated.note = { note_id: "latest", version: 2, disposition: "acknowledged", note_text: "latest other tab note", created_at: "2026-10-26" };
+  vi.mocked(studyCommand).mockResolvedValueOnce({ run: { ...run, status: "succeeded" }, feedback: updated });
+  await panel.showFeedback(initial); await flushPromises();
+  finish({ run: { ...run, status: "succeeded" }, feedback: structuredClone(feedback) }); await oldRead; await flushPromises();
+  expect(wrapper.get(".feedback-note").text()).toContain("latest other tab note"); wrapper.unmount();
+});
+it("a late poll cannot restore running status after cancellation", async () => {
+  let finish!: (value: StudyResponse) => void;
+  vi.mocked(studyCommand).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, status: "running", feedback: null } }, global: { stubs } });
+  await vi.advanceTimersByTimeAsync(1500);
+  vi.mocked(studyCommand).mockResolvedValueOnce({ run: { ...run, status: "cancelled" } });
+  await wrapper.findAll("button").find(b => b.text() === "取消反馈")!.trigger("click"); await flushPromises();
+  finish({ run }); await flushPromises();
+  expect(wrapper.text()).toContain("反馈已取消"); await vi.advanceTimersByTimeAsync(5000);
+  expect(studyCommand).toHaveBeenCalledTimes(2); wrapper.unmount();
+});

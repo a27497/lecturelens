@@ -9,12 +9,14 @@ import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 const props = defineProps<{
+  readOnly?: boolean;
   sourceRevision?: number;
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   answerDirty?: boolean; approvalRequired?: boolean; enabled: boolean; attempt?: StudyAttempt; initial?: StudyFeedbackRun; history?: StudyFeedbackRun[];
 }>();
 const emit = defineEmits<{ seek: [startMillis: number, context: EvidenceSeekContext]; revise: []; draftChange: [dirty: boolean]; accessFailure: [] }>();
 const currentRun = ref<StudyFeedbackRun>();
+const previewRun = ref<StudyFeedbackRun>();
 const observedRuns = ref<StudyFeedbackRun[]>([]);
 const approval = ref<StudyResponse["approval"]>(null);
 const starting = ref(false);
@@ -26,6 +28,7 @@ const notes = ref<FeedbackNote[] | null>(null);
 const nextBefore = ref<number | null>(null);
 const loadingNotes = ref(false);
 let generation = 0;
+let readSequence = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let pendingStart: StudyCommand | null = null;
 let pendingNote: StudyCommand | null = null;
@@ -43,13 +46,16 @@ const historyStatus = { awaiting_approval: "等待发布审批", queued: "等待
 const scope = () => ({ session_id: props.sessionId, run_id: props.runId, artifact_id: props.artifactId, question_index: props.questionIndex });
 
 watch(() => [props.taskId, props.sessionId, props.runId, props.artifactId, props.questionIndex], () => {
+  previewRun.value = undefined;
   generation++; clearTimeout(timer); pendingStart = null; pendingNote = null;
   observedRuns.value = []; currentRun.value = props.initial; starting.value = false; savingNote.value = false;
   message.value = ""; noteText.value = ""; notes.value = null; nextBefore.value = null;
   if (active.value || currentRun.value?.status === "awaiting_approval") schedule();
+  else if (props.readOnly && currentRun.value) void refresh();
 }, { immediate: true });
 watch(() => props.initial, value => {
-  if (value && !starting.value && !active.value) currentRun.value = value;
+  if (value && !starting.value && !active.value && !noteDirty.value) currentRun.value = value;
+  if (props.readOnly && value) void refresh();
   if (active.value) schedule();
 });
 onBeforeUnmount(() => { generation++; clearTimeout(timer); });
@@ -64,9 +70,15 @@ async function changeFeedback(event: Event) {
   await selectRun(selected);
 }
 async function selectRun(id: string) {
-  if (active.value || starting.value || savingNote.value || loadingNotes.value) return;
+  if (starting.value || savingNote.value || loadingNotes.value) { message.value = "正在保存或读取记录，请完成后再打开反馈。"; return; }
   const selected = historyRuns.value.find(row => row.run_id === id);
-  if (!selected || selected.run_id === currentRun.value?.run_id) return;
+  if (!selected) return;
+  if (selected.run_id === currentRun.value?.run_id) { await refresh(); return; }
+  if (active.value) {
+    if (selected.status === "succeeded" && selected.feedback) previewRun.value = { ...selected };
+    else message.value = "新版反馈仍在执行，仅可只读打开已完成反馈。";
+    return;
+  }
   if (noteDirty.value && !window.confirm("切换反馈会放弃本页未保存的核对文字。确定继续吗？")) return;
   rememberRun(); generation++; clearTimeout(timer);
   currentRun.value = selected; pendingStart = null; pendingNote = null;
@@ -80,15 +92,19 @@ function schedule() {
 }
 async function refresh() {
   if (!currentRun.value) return;
-  const current = generation; const id = currentRun.value.run_id;
+  const current = generation; const id = currentRun.value.run_id; const request = ++readSequence;
   try {
     const result = await studyCommand(props.taskId, { operation: "READ", session_id: props.sessionId, run_id: id });
-    if (current !== generation || currentRun.value?.run_id !== id) return;
+    if (current !== generation || request !== readSequence || currentRun.value?.run_id !== id) return;
+    const hadDraft = noteDirty.value;
+    const priorNoteVersion = feedback.value?.note?.version ?? 0;
     if (result.run) currentRun.value = { ...currentRun.value, status: result.run.status, error_code: result.run.error_code, feedback: result.feedback ?? null };
     approval.value = result.approval ?? null;
-    message.value = "";
+    const changedNote = priorNoteVersion !== (feedback.value?.note?.version ?? 0);
+    if (changedNote) { notes.value = null; pendingNote = null; }
+    message.value = hadDraft && changedNote ? "服务器核对记录已更新；本页未保存文字已保留，请核对后再保存。" : "";
   } catch (error) {
-    if (current === generation) {
+    if (current === generation && request === readSequence) {
       const status = (error as { response?: { status?: number } })?.response?.status;
       if (status && [401, 403, 404, 409].includes(status) && currentRun.value) {
         currentRun.value = { ...currentRun.value, status: "failed", error_code: "COURSE_UNAVAILABLE_OR_CHANGED", feedback: null };
@@ -98,10 +114,10 @@ async function refresh() {
       } else message.value = "反馈连接暂时中断，正在恢复。";
     }
   }
-  finally { if (current === generation && active.value) schedule(); }
+  finally { if (current === generation && request === readSequence && active.value) schedule(); }
 }
 async function start() {
-  if (props.answerDirty) return;
+  if (props.readOnly || props.answerDirty) return;
   if (!props.enabled || !props.attempt || active.value || currentRun.value?.status === "awaiting_approval" || starting.value || savingNote.value) return;
   const current = generation;
   const answer = props.attempt;
@@ -133,6 +149,7 @@ async function start() {
   } finally { if (current === generation) starting.value = false; }
 }
 async function cancel() {
+  readSequence++;
   if (!currentRun.value || !active.value) return;
   const current = generation;
   try {
@@ -140,10 +157,10 @@ async function cancel() {
     if (current === generation && result.run && currentRun.value) {
       currentRun.value = { ...currentRun.value, status: result.run.status }; clearTimeout(timer);
     }
-  } catch (failure) { if (current === generation) { message.value = "取消未确认，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); } }
+  } catch (failure) { if (current === generation) { message.value = "取消未确认，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); if (active.value) schedule(); } }
 }
 async function saveNote() {
-  if (!feedback.value || !currentRun.value || !noteText.value.trim() || noteText.value.length > 2000 || savingNote.value) return;
+  if (props.readOnly || !feedback.value || !currentRun.value || !noteText.value.trim() || noteText.value.length > 2000 || savingNote.value) return;
   const current = generation;
   if (!pendingNote || pendingNote.note_text !== noteText.value || pendingNote.disposition !== disposition.value) pendingNote = {
     operation: "SAVE_FEEDBACK_NOTE", session_id: props.sessionId, run_id: currentRun.value.run_id,
@@ -151,7 +168,7 @@ async function saveNote() {
     note_text: noteText.value, disposition: disposition.value,
   };
   const command = pendingNote;
-  savingNote.value = true;
+  readSequence++; savingNote.value = true;
   try {
     const result = await studyCommand(props.taskId, command);
     if (current !== generation || feedback.value?.feedback_id !== command.feedback_id) return;
@@ -180,6 +197,12 @@ async function showNotes(more = false) {
   } catch (failure) { if (current === generation) { message.value = "核对记录暂不可用，请重试。"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); } }
   finally { if (current === generation) loadingNotes.value = false; }
 }
+async function showFeedback(row: StudyFeedbackRun) {
+  if (row.question_index !== props.questionIndex) return;
+  observedRuns.value = [...observedRuns.value.filter(item => item.run_id !== row.run_id), row];
+  await selectRun(row.run_id);
+}
+defineExpose({ showFeedback });
 </script>
 
 <template>
@@ -190,7 +213,7 @@ async function showNotes(more = false) {
       </select>
     </label>
     <div class="feedback-actions">
-      <el-button v-if="enabled" :type="feedback ? 'default' : 'primary'" :disabled="answerDirty || !attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
+      <el-button v-if="enabled && !readOnly" :type="feedback ? 'default' : 'primary'" :disabled="answerDirty || !attempt || Boolean(active) || currentRun?.status === 'awaiting_approval' || starting || savingNote" :loading="starting" @click="start">{{ currentRun ? '重新获取证据反馈' : '获取证据反馈' }}</el-button>
       <span v-if="answerDirty" role="status">请先保存本页修改，再获取新版反馈；下方已有反馈仍对应其已保存版本。</span>
       <span v-else-if="attempt" class="feedback-version">将使用已保存第 {{ attempt.version }} 版作答</span>
       <span v-if="!attempt">先保存作答，再结合课程证据获取建议。</span>
@@ -226,7 +249,7 @@ async function showNotes(more = false) {
         </div>
       </details>
       <div v-if="feedback.note" class="feedback-note"><strong>{{ feedback.note.disposition === 'disputed' ? '你已标记反馈不准确' : '你已核对反馈' }}</strong><p>{{ feedback.note.note_text }}</p></div>
-      <details><summary>核对或更正反馈</summary>
+      <details v-if="!readOnly"><summary>核对或更正反馈</summary>
         <label>核对结果 <select v-model="disposition" :disabled="savingNote"><option value="disputed">反馈不准确</option><option value="acknowledged">已核对</option></select></label>
         <el-input v-model="noteText" type="textarea" :rows="2" maxlength="2000" :disabled="savingNote" placeholder="说明你核对到的问题或更正依据。" aria-label="反馈核对意见" />
         <el-button :disabled="!noteText.trim() || savingNote" :loading="savingNote" @click="saveNote">保存核对意见</el-button>
@@ -234,6 +257,11 @@ async function showNotes(more = false) {
         <div v-if="notes"><p v-for="note in notes" :key="note.note_id">第 {{ note.version }} 版 · {{ note.disposition === 'disputed' ? '反馈不准确' : '已核对' }}：{{ note.note_text }}</p><el-button v-if="nextBefore" @click="showNotes(true)">更早的核对记录</el-button></div>
       </details>
     </article>
+    <aside v-if="previewRun" class="feedback-preview" aria-label="旧版反馈只读预览">
+      <p>正在只读查看旧版反馈；新版反馈继续执行，本页核对草稿保留。</p>
+      <el-button @click="previewRun = undefined">关闭旧版反馈</el-button>
+      <PracticeFeedbackPanel :key="previewRun.run_id" :read-only="true" :enabled="false" :task-id="taskId" :session-id="sessionId" :run-id="runId" :artifact-id="artifactId" :question-index="questionIndex" :source-revision="sourceRevision" :initial="previewRun" :attempt="attempt" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" @revise="$emit('revise')" @access-failure="$emit('accessFailure')" />
+    </aside>
     <p v-if="message" role="status">{{ message }}</p>
   </section>
 </template>

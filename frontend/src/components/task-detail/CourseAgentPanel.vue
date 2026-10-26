@@ -8,6 +8,7 @@ import type { LearningTaskPosition } from "./learningTaskPosition";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
+import PracticeResultsPanel from "./PracticeResultsPanel.vue";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
@@ -42,6 +43,36 @@ const approval = ref<StudyResponse["approval"]>(null);
 const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
 const questionIndex = ref(0);
+const resultsOpen = ref(false);
+const resultsElement = ref<HTMLElement>();
+async function toggleResults() {
+  if (resultsOpen.value) { await chooseQuestion(questionIndex.value); return; }
+  resultsOpen.value = true;
+  await nextTick();
+  resultsElement.value?.scrollIntoView({ block: "start" });
+  resultsElement.value?.focus({ preventScroll: true });
+}
+const answerForms = new Map<number, { showHistory: () => Promise<void> }>();
+function observeAttempts(rows: StudyAttempt[]) {
+  const latest = new Map(attempts.value.map(row => [row.question_index, row]));
+  for (const row of rows) if (row.artifact_id === artifact.value?.artifact_id && row.version > (latest.get(row.question_index)?.version ?? 0)) latest.set(row.question_index, row);
+  attempts.value = [...latest.values()];
+}
+const feedbackPanels = new Map<number, { showFeedback: (row: StudyFeedbackRun) => Promise<void> }>();
+async function openResult(index: number, kind: "question" | "history" | "feedback", feedback?: StudyFeedbackRun) {
+  await chooseQuestion(index);
+  if (kind === "history") await answerForms.get(index)?.showHistory();
+  if (kind === "feedback" && feedback) {
+    // An older persisted result may be outside the recent-feedback window, including when generation is disabled.
+    if (!feedbackPanels.has(index)) { feedbackRuns.value = [...feedbackRuns.value, feedback]; await nextTick(); }
+    await feedbackPanels.get(index)?.showFeedback(feedback);
+  }
+}
+
+async function seekResult(milliseconds: number, context: EvidenceSeekContext, index: number) {
+  await chooseQuestion(index);
+  emit("seek", milliseconds, context);
+}
 const newGoalOpen = ref(false);
 const historyElement = ref<HTMLDetailsElement>();
 function showHistory() {
@@ -64,13 +95,14 @@ let sessionKey = "";
 let cursor = 0;
 watch(() => run.value?.run_id, () => { newGoalOpen.value = false; });
 watch(run, value => emit("frozenScope", value ? value.learning_scope ?? null : undefined), { immediate: true });
-watch(() => artifact.value?.artifact_id, () => { questionIndex.value = 0; questionDrafts.value = {}; feedbackDrafts.value = {}; });
+watch(() => artifact.value?.artifact_id, () => { questionIndex.value = 0; resultsOpen.value = false; questionDrafts.value = {}; feedbackDrafts.value = {}; });
 watch(() => ({ run: run.value, artifact: artifact.value, index: questionIndex.value, saved: attempts.value.length }), ({ run, artifact, index, saved }) => {
   emit("position", run ? { goal: run.goal, question: artifact?.questions[index]?.question ?? "", questionIndex: index, totalQuestions: artifact?.questions.length ?? 0, savedQuestions: saved } : null);
 }, { immediate: true });
 
 async function chooseQuestion(index: number) {
   if (!artifact.value?.questions[index]) return;
+  resultsOpen.value = false;
   questionIndex.value = index;
   await nextTick();
   const question = questionElements.get(index);
@@ -282,21 +314,23 @@ async function reveal() {
           </div>
         </details></details>
         <template v-if="artifact.questions.length">
-          <div class="practice-toolbar"><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
+          <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
           </nav></div>
         </template>
-        <div v-for="(question, index) in artifact.questions" v-show="questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
+        <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @observed-attempts="observeAttempts" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
+        <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
-          <PracticeAnswerForm v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
-          <PracticeFeedbackPanel v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
+          <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
+          <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
           <p v-else-if="!feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
           <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
         <div v-if="artifact.questions.length > 1" class="actions">
           <el-button :disabled="questionIndex === 0" @click="chooseQuestion(questionIndex - 1)">上一题</el-button>
           <el-button :disabled="questionIndex === artifact.questions.length - 1" @click="chooseQuestion(questionIndex + 1)">下一题</el-button>
+          <el-button v-if="!resultsOpen && questionIndex === artifact.questions.length - 1" @click="toggleResults">查看练习结果</el-button>
         </div>
         <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
       </article>

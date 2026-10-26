@@ -14,6 +14,7 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "technical", label: "处理详情" },
 ];
 const primary = ["agent", "qa"];
+const isPrimary = (value: string, materials?: boolean) => primary.includes(value) || (!materials && value === "study");
 function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
   if (!compact) return fallback;
   return value === "content" ? "课程材料" : value === "agent" ? "解释与练习" : value === "qa" ? "Tutor 问答" : fallback;
@@ -23,7 +24,7 @@ function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
 <template>
   <nav class="workspace-nav" aria-label="课程内容导航">
     <button
-      v-for="item in items.filter(item => !compact || primary.includes(item.value) || (materials && item.value === 'content'))"
+      v-for="item in items.filter(item => !compact || isPrimary(item.value, materials) || (materials && item.value === 'content'))"
       :key="item.value"
       type="button"
       :class="{ 'is-active': active === item.value }"
@@ -32,9 +33,9 @@ function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
     >
       {{ label(item.value, item.label, compact) }}
     </button>
-    <details v-if="compact" class="workspace-more" :open="!primary.includes(active) && !(materials && active === 'content')">
+    <details v-if="compact" class="workspace-more" :open="!isPrimary(active, materials) && !(materials && active === 'content')">
       <summary>更多</summary>
-      <button v-for="item in items.filter(item => !primary.includes(item.value) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ label(item.value, item.label, compact) }}</button>
+      <button v-for="item in items.filter(item => !isPrimary(item.value, materials) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ label(item.value, item.label, compact) }}</button>
     </details>
   </nav>
 </template>

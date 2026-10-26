@@ -22,6 +22,9 @@ from .store import StudyError, StudyStore
 from .support_review import output_tokens
 
 FROZEN_AGENT = "e34d8c596d74d4320ce6a224359190374520e4d3"
+FROZEN_MANIFEST_SHA256 = "d94e896c768c0bf74c66b11f2105a1e541fe01f1c94ea1f14710d5c1a2777f00"
+DEVELOPMENT_AGENT = "p3-read-review-480fc58639fd4a59"
+DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -79,9 +82,16 @@ class DispatchWindow:
         )
 
 
-def verify_frozen_agent(package=None):
+def _verify_agent(package, manifest_name, manifest_sha256):
     package = Path(package) if package is not None else Path(__file__).resolve().parent.parent
-    manifest = json.loads(Path(__file__).with_name("acceptance_agent_manifest.json").read_text())
+    raw = Path(__file__).with_name(manifest_name).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != manifest_sha256:
+        raise CostDenied("COST_AGENT_MANIFEST_CHANGED")
+    manifest = json.loads(raw)
+    excluded = {"study/acceptance_cost.py", "study/acceptance_egress.py"}
+    modules = {str(path.relative_to(package)) for path in package.rglob("*.py")}
+    if modules - excluded != set(manifest):
+        raise CostDenied("COST_AGENT_IDENTITY_CHANGED")
     if any(
         not (package / path).is_file()
         or hashlib.sha256((package / path).read_bytes()).hexdigest() != expected
@@ -89,6 +99,16 @@ def verify_frozen_agent(package=None):
     ):
         raise CostDenied("COST_AGENT_IDENTITY_CHANGED")
     return len(manifest)
+
+
+def verify_frozen_agent(package=None):
+    """Historical 56-module identity only; P3 mixed/new sources must fail."""
+    return _verify_agent(package, "acceptance_agent_manifest.json", FROZEN_MANIFEST_SHA256)
+
+
+def verify_development_agent(package=None):
+    """Independent read candidate; offline mechanics, no inherited quality claim."""
+    return _verify_agent(package, "development_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)
@@ -102,7 +122,7 @@ class CostPolicy:
     authorization_id: str | None = None
     budget_micro_cny: int = 20_000_000
     max_calls: int = 12
-    candidate_sha: str = FROZEN_AGENT
+    candidate_sha: str = DEVELOPMENT_AGENT
 
     def validate(self):
         start = datetime.fromisoformat(self.verified_at)
@@ -113,7 +133,7 @@ class CostPolicy:
             or not start <= datetime.now(timezone.utc) < end <= start + timedelta(hours=24)
             or self.mode != "fake"
             or self.authorization_id is not None
-            or self.candidate_sha != FROZEN_AGENT
+            or self.candidate_sha != DEVELOPMENT_AGENT
             or type(self.budget_micro_cny) is not int
             or not 0 < self.budget_micro_cny <= 20_000_000
             or type(self.max_calls) is not int
@@ -247,7 +267,7 @@ class CostLedger:
         )
 
     def install(self, policy):
-        verify_frozen_agent()
+        verify_development_agent()
         policy.validate()
         value = asdict(policy)
         fingerprint = hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
