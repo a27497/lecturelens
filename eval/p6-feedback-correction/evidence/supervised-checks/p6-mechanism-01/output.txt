@@ -1,0 +1,1 @@
+6 scripted trials exported; read-only counts unchanged; real provider calls=0

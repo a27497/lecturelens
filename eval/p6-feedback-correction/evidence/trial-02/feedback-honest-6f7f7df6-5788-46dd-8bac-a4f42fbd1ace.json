@@ -1,0 +1,56 @@
+{
+  "run": {
+    "run_id": "6f7f7df6-5788-46dd-8bac-a4f42fbd1ace",
+    "session_id": "8c65ef9c-6943-5c49-8fba-3e599dd2b0d9",
+    "goal": "第 1 题第 1 版作答的课程证据反馈",
+    "request_key": "feedback",
+    "status": "succeeded",
+    "model_mode": "mock",
+    "model_calls": 4,
+    "tool_calls": 2,
+    "reserved_tokens": 20912,
+    "error_code": null,
+    "created_at": "2026-10-26 18:43:08.920558+00:00",
+    "finished_at": "2026-10-26 18:43:09.247276+00:00",
+    "task_kind": "feedback",
+    "approval_required": false,
+    "learning_scope": null,
+    "model_selection": {}
+  },
+  "approval": null,
+  "artifact": null,
+  "attempts": [],
+  "practice_results": [],
+  "feedback_enabled": true,
+  "feedback": {
+    "feedback_id": "fb965920-b281-54c7-a6b5-9554c1a41df8",
+    "content": {
+      "kind": "insufficient_evidence",
+      "mode": "mock",
+      "policy": "evidence_guidance_v5",
+      "reason": "课程未提供速度或单次耗时，不能确定精确秒数。",
+      "citations": [
+        {
+          "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+          "end_ms": 30000,
+          "start_ms": 20000,
+          "evidence_id": "d-e3",
+          "source_type": "SUBTITLE"
+        },
+        {
+          "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+          "end_ms": 40000,
+          "start_ms": 30000,
+          "evidence_id": "d-e4",
+          "source_type": "SUBTITLE"
+        }
+      ]
+    },
+    "attempt_id": "99089c12-df74-4caa-a0a1-2cac6fd3eac3",
+    "answer_version": 1,
+    "question_index": 0,
+    "answer_text": "查了3次，所以精确用了3秒。",
+    "note": null
+  },
+  "feedback_runs": []
+}

@@ -1,0 +1,1331 @@
+{
+  "data_kind": "MOCK",
+  "freeze_hash": "a49a9456e34f19ed06a242c338c63e0b6f0c1d3748041e79783fadd1e11854a7",
+  "trials": [
+    {
+      "trial_id": "read-correct",
+      "item_id": "d1",
+      "condition": "reading",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-3597e404816d41d0969a98637896d71e",
+        "revision": 1,
+        "session_id": "ea99f549-cb9c-5459-b7e0-d409ff5b5db2",
+        "run_id": "054c6ebe-f3cb-4c6d-af75-606ac3b27424",
+        "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "318ed520-ecfd-4186-8627-b07e2aa25c5a",
+        "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+        "created_at": "2026-10-26 18:42:09.640965+00:00"
+      },
+      "final": {
+        "attempt_id": "71d09d0f-d5e8-4bc4-9252-ffece933c6a5",
+        "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+        "created_at": "2026-10-26 18:42:09.652739+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "71d09d0f-d5e8-4bc4-9252-ffece933c6a5",
+          "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+          "created_at": "2026-10-26 18:42:09.652739+00:00"
+        },
+        {
+          "attempt_id": "318ed520-ecfd-4186-8627-b07e2aa25c5a",
+          "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+          "created_at": "2026-10-26 18:42:09.640965+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "054c6ebe-f3cb-4c6d-af75-606ac3b27424",
+        "session_id": "ea99f549-cb9c-5459-b7e0-d409ff5b5db2",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40455,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:09.121801+00:00",
+        "finished_at": "2026-10-26 18:42:09.617041+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "feedback": [],
+      "sidecar": {
+        "trial_id": "read-correct",
+        "item_id": "d1",
+        "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+        "condition": "reading",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-3597e404816d41d0969a98637896d71e",
+          "revision": 1,
+          "session_id": "ea99f549-cb9c-5459-b7e0-d409ff5b5db2",
+          "run_id": "054c6ebe-f3cb-4c6d-af75-606ac3b27424",
+          "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+          "question_index": 0
+        },
+        "initial_attempt_id": "318ed520-ecfd-4186-8627-b07e2aa25c5a",
+        "final_attempt_id": "71d09d0f-d5e8-4bc4-9252-ffece933c6a5",
+        "feedback_exposures": [],
+        "source_checks": [
+          {
+            "evidence_id": "d-e2",
+            "at": "2026-10-26T18:42:09.648579+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "原来的最多1次有误，应为最多n次。",
+          "at": "2026-10-26T18:42:09.648596+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-correct",
+      "item_id": "d1",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-3c5090326e3a4099927a98f0d4961c49",
+        "revision": 1,
+        "session_id": "6fd25153-e6cf-5040-97a5-dfb0684e9b8a",
+        "run_id": "da5b2e7f-4ee7-4e84-87db-e9b491f3eed1",
+        "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "5c5958f0-3543-41de-b17f-97ed22fe9b2b",
+        "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+        "created_at": "2026-10-26 18:42:10.283611+00:00"
+      },
+      "final": {
+        "attempt_id": "b3f0d555-07ea-4c0b-b876-ab08c616bc19",
+        "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+        "created_at": "2026-10-26 18:42:10.645686+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "b3f0d555-07ea-4c0b-b876-ab08c616bc19",
+          "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+          "created_at": "2026-10-26 18:42:10.645686+00:00"
+        },
+        {
+          "attempt_id": "5c5958f0-3543-41de-b17f-97ed22fe9b2b",
+          "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+          "created_at": "2026-10-26 18:42:10.283611+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "da5b2e7f-4ee7-4e84-87db-e9b491f3eed1",
+        "session_id": "6fd25153-e6cf-5040-97a5-dfb0684e9b8a",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40455,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:09.827013+00:00",
+        "finished_at": "2026-10-26 18:42:10.257301+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "feedback": [
+        {
+          "run": {
+            "run_id": "f38ebac3-ba92-4ffe-9167-20cc7afc04b6",
+            "session_id": "6fd25153-e6cf-5040-97a5-dfb0684e9b8a",
+            "goal": "第 1 题第 1 版作答的课程证据反馈",
+            "request_key": "feedback",
+            "status": "succeeded",
+            "model_mode": "mock",
+            "model_calls": 4,
+            "tool_calls": 2,
+            "reserved_tokens": 25280,
+            "error_code": null,
+            "created_at": "2026-10-26 18:42:10.294804+00:00",
+            "finished_at": "2026-10-26 18:42:10.614593+00:00",
+            "task_kind": "feedback",
+            "approval_required": false,
+            "learning_scope": null,
+            "model_selection": {}
+          },
+          "feedback": {
+            "feedback_id": "785c90da-4d5b-5e0a-a2c6-b5a61e0b9c82",
+            "content": {
+              "kind": "guidance",
+              "mode": "mock",
+              "policy": "evidence_guidance_v5",
+              "citations": [
+                {
+                  "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+                  "end_ms": 10000,
+                  "start_ms": 0,
+                  "evidence_id": "d-e1",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+                  "end_ms": 20000,
+                  "start_ms": 10000,
+                  "evidence_id": "d-e2",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "end_ms": 30000,
+                  "start_ms": 20000,
+                  "evidence_id": "d-e3",
+                  "source_type": "SUBTITLE"
+                }
+              ],
+              "observations": [
+                {
+                  "action": "revise",
+                  "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+                  "evidence_id": "d-e1",
+                  "observation": "最多1次有误，课程说最多n次比较。",
+                  "evidence_ids": [
+                    "d-e1",
+                    "d-e2",
+                    "d-e3"
+                  ],
+                  "learner_quote": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+                  "evidence_quote": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。\n\n本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。\n\n在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "anchor_evidence_ids": [
+                    "d-e2"
+                  ]
+                }
+              ]
+            },
+            "attempt_id": "5c5958f0-3543-41de-b17f-97ed22fe9b2b",
+            "answer_version": 1,
+            "question_index": 0,
+            "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+            "note": {
+              "note_id": "62712727-a835-4b68-aa5e-8197e95c4d77",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。原来的最多1次有误，应为最多n次。",
+              "created_at": "2026-10-26 18:42:10.634072+00:00"
+            }
+          },
+          "notes": [
+            {
+              "note_id": "62712727-a835-4b68-aa5e-8197e95c4d77",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。原来的最多1次有误，应为最多n次。",
+              "created_at": "2026-10-26 18:42:10.634072+00:00"
+            }
+          ],
+          "exposure": {
+            "run_id": "f38ebac3-ba92-4ffe-9167-20cc7afc04b6",
+            "feedback_id": "785c90da-4d5b-5e0a-a2c6-b5a61e0b9c82",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:10.630009+00:00"
+          },
+          "stale_after_revision": true
+        }
+      ],
+      "sidecar": {
+        "trial_id": "feedback-correct",
+        "item_id": "d1",
+        "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+        "condition": "feedback",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-3c5090326e3a4099927a98f0d4961c49",
+          "revision": 1,
+          "session_id": "6fd25153-e6cf-5040-97a5-dfb0684e9b8a",
+          "run_id": "da5b2e7f-4ee7-4e84-87db-e9b491f3eed1",
+          "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+          "question_index": 0
+        },
+        "initial_attempt_id": "5c5958f0-3543-41de-b17f-97ed22fe9b2b",
+        "final_attempt_id": "b3f0d555-07ea-4c0b-b876-ab08c616bc19",
+        "feedback_exposures": [
+          {
+            "run_id": "f38ebac3-ba92-4ffe-9167-20cc7afc04b6",
+            "feedback_id": "785c90da-4d5b-5e0a-a2c6-b5a61e0b9c82",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:10.630009+00:00"
+          }
+        ],
+        "source_checks": [
+          {
+            "evidence_id": "d-e2",
+            "at": "2026-10-26T18:42:10.641929+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "原来的最多1次有误，应为最多n次。",
+          "at": "2026-10-26T18:42:10.641955+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-misled",
+      "item_id": "d1",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-b116d8d33ffc47ff813c798abb56611e",
+        "revision": 1,
+        "session_id": "8de99c56-1474-5d7b-a5cb-3aafc6cc764b",
+        "run_id": "14f75f01-a22f-474b-a528-f8fb1dae617c",
+        "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "4a274703-0c83-4f01-bc66-9d26961329e6",
+        "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+        "created_at": "2026-10-26 18:42:11.371577+00:00"
+      },
+      "final": {
+        "attempt_id": "33764230-ab89-402e-bef4-29ece1c9ab20",
+        "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+        "created_at": "2026-10-26 18:42:11.775980+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "33764230-ab89-402e-bef4-29ece1c9ab20",
+          "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+          "created_at": "2026-10-26 18:42:11.775980+00:00"
+        },
+        {
+          "attempt_id": "4a274703-0c83-4f01-bc66-9d26961329e6",
+          "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+          "created_at": "2026-10-26 18:42:11.371577+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "14f75f01-a22f-474b-a528-f8fb1dae617c",
+        "session_id": "8de99c56-1474-5d7b-a5cb-3aafc6cc764b",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40455,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:10.898780+00:00",
+        "finished_at": "2026-10-26 18:42:11.350252+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "feedback": [
+        {
+          "run": {
+            "run_id": "288ccd51-b5de-4737-9d95-425112bcd56b",
+            "session_id": "8de99c56-1474-5d7b-a5cb-3aafc6cc764b",
+            "goal": "第 1 题第 1 版作答的课程证据反馈",
+            "request_key": "feedback",
+            "status": "succeeded",
+            "model_mode": "mock",
+            "model_calls": 4,
+            "tool_calls": 2,
+            "reserved_tokens": 25310,
+            "error_code": null,
+            "created_at": "2026-10-26 18:42:11.382933+00:00",
+            "finished_at": "2026-10-26 18:42:11.722493+00:00",
+            "task_kind": "feedback",
+            "approval_required": false,
+            "learning_scope": null,
+            "model_selection": {}
+          },
+          "feedback": {
+            "feedback_id": "cb554d1d-b780-5b09-b2c8-f3a13469ccc6",
+            "content": {
+              "kind": "guidance",
+              "mode": "mock",
+              "policy": "evidence_guidance_v5",
+              "citations": [
+                {
+                  "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+                  "end_ms": 10000,
+                  "start_ms": 0,
+                  "evidence_id": "d-e1",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+                  "end_ms": 20000,
+                  "start_ms": 10000,
+                  "evidence_id": "d-e2",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "end_ms": 30000,
+                  "start_ms": 20000,
+                  "evidence_id": "d-e3",
+                  "source_type": "SUBTITLE"
+                }
+              ],
+              "observations": [
+                {
+                  "action": "revise",
+                  "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+                  "evidence_id": "d-e1",
+                  "observation": "最多n次错误，应改为最多1次。",
+                  "evidence_ids": [
+                    "d-e1",
+                    "d-e2",
+                    "d-e3"
+                  ],
+                  "learner_quote": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+                  "evidence_quote": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。\n\n本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。\n\n在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "anchor_evidence_ids": [
+                    "d-e2"
+                  ]
+                }
+              ]
+            },
+            "attempt_id": "4a274703-0c83-4f01-bc66-9d26961329e6",
+            "answer_version": 1,
+            "question_index": 0,
+            "answer_text": "找到首个匹配即停，否则检查完整列表后停止；最多 n 次比较。",
+            "note": {
+              "note_id": "133dad20-54f2-42e1-918a-957ad73d4c66",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。[故意错误刺激] 接受反馈，把n次改为1次。",
+              "created_at": "2026-10-26 18:42:11.756738+00:00"
+            }
+          },
+          "notes": [
+            {
+              "note_id": "133dad20-54f2-42e1-918a-957ad73d4c66",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。[故意错误刺激] 接受反馈，把n次改为1次。",
+              "created_at": "2026-10-26 18:42:11.756738+00:00"
+            }
+          ],
+          "exposure": {
+            "run_id": "288ccd51-b5de-4737-9d95-425112bcd56b",
+            "feedback_id": "cb554d1d-b780-5b09-b2c8-f3a13469ccc6",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:11.745162+00:00"
+          },
+          "stale_after_revision": true
+        }
+      ],
+      "sidecar": {
+        "trial_id": "feedback-misled",
+        "item_id": "d1",
+        "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+        "condition": "feedback",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-b116d8d33ffc47ff813c798abb56611e",
+          "revision": 1,
+          "session_id": "8de99c56-1474-5d7b-a5cb-3aafc6cc764b",
+          "run_id": "14f75f01-a22f-474b-a528-f8fb1dae617c",
+          "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+          "question_index": 0
+        },
+        "initial_attempt_id": "4a274703-0c83-4f01-bc66-9d26961329e6",
+        "final_attempt_id": "33764230-ab89-402e-bef4-29ece1c9ab20",
+        "feedback_exposures": [
+          {
+            "run_id": "288ccd51-b5de-4737-9d95-425112bcd56b",
+            "feedback_id": "cb554d1d-b780-5b09-b2c8-f3a13469ccc6",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:11.745162+00:00"
+          }
+        ],
+        "source_checks": [
+          {
+            "evidence_id": "d-e2",
+            "at": "2026-10-26T18:42:11.769874+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "[故意错误刺激] 接受反馈，把n次改为1次。",
+          "at": "2026-10-26T18:42:11.769893+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-honest",
+      "item_id": "d3",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-5d56f934972549aabe0d5cc42e3c2c99",
+        "revision": 1,
+        "session_id": "ecb73998-92ad-5337-9d39-a2e9995acdf0",
+        "run_id": "83bd9b13-02e6-42be-8171-b8bb9016f846",
+        "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "59840017-fa37-4aa0-88ff-0b2df5381084",
+        "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "查了3次，所以精确用了3秒。",
+        "created_at": "2026-10-26 18:42:12.529574+00:00"
+      },
+      "final": {
+        "attempt_id": "58d647e2-afa3-4946-b57a-b09d3b10e1b3",
+        "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "不能确定秒数，课程没有给出单次比较耗时或机器速度。",
+        "created_at": "2026-10-26 18:42:12.920654+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "58d647e2-afa3-4946-b57a-b09d3b10e1b3",
+          "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "不能确定秒数，课程没有给出单次比较耗时或机器速度。",
+          "created_at": "2026-10-26 18:42:12.920654+00:00"
+        },
+        {
+          "attempt_id": "59840017-fa37-4aa0-88ff-0b2df5381084",
+          "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "查了3次，所以精确用了3秒。",
+          "created_at": "2026-10-26 18:42:12.529574+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "83bd9b13-02e6-42be-8171-b8bb9016f846",
+        "session_id": "ecb73998-92ad-5337-9d39-a2e9995acdf0",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40507,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:12.064025+00:00",
+        "finished_at": "2026-10-26 18:42:12.506213+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "根据本课，查找7精确需要多少秒？",
+      "feedback": [
+        {
+          "run": {
+            "run_id": "8be3a0f5-f7b9-4956-ab64-d6b1a19d066b",
+            "session_id": "ecb73998-92ad-5337-9d39-a2e9995acdf0",
+            "goal": "第 1 题第 1 版作答的课程证据反馈",
+            "request_key": "feedback",
+            "status": "succeeded",
+            "model_mode": "mock",
+            "model_calls": 4,
+            "tool_calls": 2,
+            "reserved_tokens": 20912,
+            "error_code": null,
+            "created_at": "2026-10-26 18:42:12.541559+00:00",
+            "finished_at": "2026-10-26 18:42:12.873031+00:00",
+            "task_kind": "feedback",
+            "approval_required": false,
+            "learning_scope": null,
+            "model_selection": {}
+          },
+          "feedback": {
+            "feedback_id": "de54bd35-f9f3-5132-9e0a-a5f9c6a579c9",
+            "content": {
+              "kind": "insufficient_evidence",
+              "mode": "mock",
+              "policy": "evidence_guidance_v5",
+              "reason": "课程未提供速度或单次耗时，不能确定精确秒数。",
+              "citations": [
+                {
+                  "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "end_ms": 30000,
+                  "start_ms": 20000,
+                  "evidence_id": "d-e3",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+                  "end_ms": 40000,
+                  "start_ms": 30000,
+                  "evidence_id": "d-e4",
+                  "source_type": "SUBTITLE"
+                }
+              ]
+            },
+            "attempt_id": "59840017-fa37-4aa0-88ff-0b2df5381084",
+            "answer_version": 1,
+            "question_index": 0,
+            "answer_text": "查了3次，所以精确用了3秒。",
+            "note": {
+              "note_id": "a1e963af-e29c-4792-812d-75affae651c3",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。3次不等于3秒，缺耗时依据。",
+              "created_at": "2026-10-26 18:42:12.907253+00:00"
+            }
+          },
+          "notes": [
+            {
+              "note_id": "a1e963af-e29c-4792-812d-75affae651c3",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。3次不等于3秒，缺耗时依据。",
+              "created_at": "2026-10-26 18:42:12.907253+00:00"
+            }
+          ],
+          "exposure": {
+            "run_id": "8be3a0f5-f7b9-4956-ab64-d6b1a19d066b",
+            "feedback_id": "de54bd35-f9f3-5132-9e0a-a5f9c6a579c9",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:12.900409+00:00"
+          },
+          "stale_after_revision": true
+        }
+      ],
+      "sidecar": {
+        "trial_id": "feedback-honest",
+        "item_id": "d3",
+        "question": "根据本课，查找7精确需要多少秒？",
+        "condition": "feedback",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-5d56f934972549aabe0d5cc42e3c2c99",
+          "revision": 1,
+          "session_id": "ecb73998-92ad-5337-9d39-a2e9995acdf0",
+          "run_id": "83bd9b13-02e6-42be-8171-b8bb9016f846",
+          "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+          "question_index": 0
+        },
+        "initial_attempt_id": "59840017-fa37-4aa0-88ff-0b2df5381084",
+        "final_attempt_id": "58d647e2-afa3-4946-b57a-b09d3b10e1b3",
+        "feedback_exposures": [
+          {
+            "run_id": "8be3a0f5-f7b9-4956-ab64-d6b1a19d066b",
+            "feedback_id": "de54bd35-f9f3-5132-9e0a-a5f9c6a579c9",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:12.900409+00:00"
+          }
+        ],
+        "source_checks": [
+          {
+            "evidence_id": "d-e4",
+            "at": "2026-10-26T18:42:12.915819+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "3次不等于3秒，缺耗时依据。",
+          "at": "2026-10-26T18:42:12.915838+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-refusal",
+      "item_id": "d4",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-7214ad2f082340f6904789ab7b474c5e",
+        "revision": 1,
+        "session_id": "c5ec8477-b730-5391-87a1-bd74512efc54",
+        "run_id": "7229214e-3577-42d6-851c-26852c1361c5",
+        "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "93d9fc00-4403-4d98-a868-89d5c0309ef1",
+        "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "停止条件和上界都是 n，所以完全同义。",
+        "created_at": "2026-10-26 18:42:13.701885+00:00"
+      },
+      "final": {
+        "attempt_id": "6a48afc0-0228-49f8-bb5d-2beefd6946d3",
+        "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "停止条件和上界都是 n，所以完全同义。",
+        "created_at": "2026-10-26 18:42:14.089566+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "6a48afc0-0228-49f8-bb5d-2beefd6946d3",
+          "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "停止条件和上界都是 n，所以完全同义。",
+          "created_at": "2026-10-26 18:42:14.089566+00:00"
+        },
+        {
+          "attempt_id": "93d9fc00-4403-4d98-a868-89d5c0309ef1",
+          "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "停止条件和上界都是 n，所以完全同义。",
+          "created_at": "2026-10-26 18:42:13.701885+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "7229214e-3577-42d6-851c-26852c1361c5",
+        "session_id": "c5ec8477-b730-5391-87a1-bd74512efc54",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40449,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:13.247065+00:00",
+        "finished_at": "2026-10-26 18:42:13.680065+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "停止条件与有限步上界有什么区别？请结合本课查找说明。",
+      "feedback": [
+        {
+          "run": {
+            "run_id": "417caa07-32bf-4e8c-aca8-1562d4c2dd5a",
+            "session_id": "c5ec8477-b730-5391-87a1-bd74512efc54",
+            "goal": "第 1 题第 1 版作答的课程证据反馈",
+            "request_key": "feedback",
+            "status": "succeeded",
+            "model_mode": "mock",
+            "model_calls": 4,
+            "tool_calls": 2,
+            "reserved_tokens": 21993,
+            "error_code": null,
+            "created_at": "2026-10-26 18:42:13.713997+00:00",
+            "finished_at": "2026-10-26 18:42:14.053167+00:00",
+            "task_kind": "feedback",
+            "approval_required": false,
+            "learning_scope": null,
+            "model_selection": {}
+          },
+          "feedback": {
+            "feedback_id": "91b3f8ce-9f9c-598c-817e-16b96dafc430",
+            "content": {
+              "kind": "insufficient_evidence",
+              "mode": "mock",
+              "policy": "evidence_guidance_v5",
+              "reason": "课程证据不足，无法区分停止条件和上界。",
+              "citations": [
+                {
+                  "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+                  "end_ms": 10000,
+                  "start_ms": 0,
+                  "evidence_id": "d-e1",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+                  "end_ms": 20000,
+                  "start_ms": 10000,
+                  "evidence_id": "d-e2",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "end_ms": 30000,
+                  "start_ms": 20000,
+                  "evidence_id": "d-e3",
+                  "source_type": "SUBTITLE"
+                }
+              ]
+            },
+            "attempt_id": "93d9fc00-4403-4d98-a868-89d5c0309ef1",
+            "answer_version": 1,
+            "question_index": 0,
+            "answer_text": "停止条件和上界都是 n，所以完全同义。",
+            "note": {
+              "note_id": "961e1f6e-a750-4945-b9ca-16a346d446fb",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。未发现问题，保留原答。",
+              "created_at": "2026-10-26 18:42:14.077032+00:00"
+            }
+          },
+          "notes": [
+            {
+              "note_id": "961e1f6e-a750-4945-b9ca-16a346d446fb",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。未发现问题，保留原答。",
+              "created_at": "2026-10-26 18:42:14.077032+00:00"
+            }
+          ],
+          "exposure": {
+            "run_id": "417caa07-32bf-4e8c-aca8-1562d4c2dd5a",
+            "feedback_id": "91b3f8ce-9f9c-598c-817e-16b96dafc430",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:14.072856+00:00"
+          },
+          "stale_after_revision": true
+        }
+      ],
+      "sidecar": {
+        "trial_id": "feedback-refusal",
+        "item_id": "d4",
+        "question": "停止条件与有限步上界有什么区别？请结合本课查找说明。",
+        "condition": "feedback",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-7214ad2f082340f6904789ab7b474c5e",
+          "revision": 1,
+          "session_id": "c5ec8477-b730-5391-87a1-bd74512efc54",
+          "run_id": "7229214e-3577-42d6-851c-26852c1361c5",
+          "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+          "question_index": 0
+        },
+        "initial_attempt_id": "93d9fc00-4403-4d98-a868-89d5c0309ef1",
+        "final_attempt_id": "6a48afc0-0228-49f8-bb5d-2beefd6946d3",
+        "feedback_exposures": [
+          {
+            "run_id": "417caa07-32bf-4e8c-aca8-1562d4c2dd5a",
+            "feedback_id": "91b3f8ce-9f9c-598c-817e-16b96dafc430",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:14.072856+00:00"
+          }
+        ],
+        "source_checks": [
+          {
+            "evidence_id": "d-e1",
+            "at": "2026-10-26T18:42:14.085024+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          },
+          {
+            "evidence_id": "d-e2",
+            "at": "2026-10-26T18:42:14.085042+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "未发现问题，保留原答。",
+          "at": "2026-10-26T18:42:14.085047+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-missed",
+      "item_id": "d2",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-03cfaa39aaf6475e9d6fcdad94e226ab",
+        "revision": 1,
+        "session_id": "7710a08d-6208-526b-a083-eb45135d8374",
+        "run_id": "4bf88d12-6382-4609-8235-e5ce80d9421c",
+        "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+        "question_index": 0
+      },
+      "initial": {
+        "attempt_id": "7ec02435-0c7f-4ef8-a2f3-2583d8c34e5e",
+        "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+        "question_index": 0,
+        "version": 1,
+        "answer_text": "查找4比较3次且找到；查找7比较3次且未找到。",
+        "created_at": "2026-10-26 18:42:14.787975+00:00"
+      },
+      "final": {
+        "attempt_id": "d4ed301f-8899-41fc-8827-c0734a6e4a8b",
+        "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+        "question_index": 0,
+        "version": 2,
+        "answer_text": "查找4比较3次且找到；查找7比较3次且未找到。",
+        "created_at": "2026-10-26 18:42:15.137566+00:00"
+      },
+      "history": [
+        {
+          "attempt_id": "d4ed301f-8899-41fc-8827-c0734a6e4a8b",
+          "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+          "question_index": 0,
+          "version": 2,
+          "answer_text": "查找4比较3次且找到；查找7比较3次且未找到。",
+          "created_at": "2026-10-26 18:42:15.137566+00:00"
+        },
+        {
+          "attempt_id": "7ec02435-0c7f-4ef8-a2f3-2583d8c34e5e",
+          "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+          "question_index": 0,
+          "version": 1,
+          "answer_text": "查找4比较3次且找到；查找7比较3次且未找到。",
+          "created_at": "2026-10-26 18:42:14.787975+00:00"
+        }
+      ],
+      "parent_run": {
+        "run_id": "4bf88d12-6382-4609-8235-e5ce80d9421c",
+        "session_id": "7710a08d-6208-526b-a083-eb45135d8374",
+        "goal": "按指定题目进行合成测量机制演练",
+        "request_key": "practice",
+        "status": "succeeded",
+        "model_mode": "mock",
+        "model_calls": 4,
+        "tool_calls": 3,
+        "reserved_tokens": 40595,
+        "error_code": null,
+        "created_at": "2026-10-26 18:42:14.330809+00:00",
+        "finished_at": "2026-10-26 18:42:14.766340+00:00",
+        "task_kind": "practice",
+        "approval_required": false,
+        "learning_scope": null,
+        "model_selection": {}
+      },
+      "question": "在 [4,9,4] 中分别查找 4 和 7，需要几次比较、结果是什么？",
+      "feedback": [
+        {
+          "run": {
+            "run_id": "2e99f598-b9f6-4df4-9400-9a2d86e2ba9f",
+            "session_id": "7710a08d-6208-526b-a083-eb45135d8374",
+            "goal": "第 1 题第 1 版作答的课程证据反馈",
+            "request_key": "feedback",
+            "status": "succeeded",
+            "model_mode": "mock",
+            "model_calls": 4,
+            "tool_calls": 2,
+            "reserved_tokens": 25137,
+            "error_code": null,
+            "created_at": "2026-10-26 18:42:14.799330+00:00",
+            "finished_at": "2026-10-26 18:42:15.104187+00:00",
+            "task_kind": "feedback",
+            "approval_required": false,
+            "learning_scope": null,
+            "model_selection": {}
+          },
+          "feedback": {
+            "feedback_id": "958e588e-025e-52b8-b5e7-44bf4ddcfb06",
+            "content": {
+              "kind": "guidance",
+              "mode": "mock",
+              "policy": "evidence_guidance_v5",
+              "citations": [
+                {
+                  "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+                  "end_ms": 20000,
+                  "start_ms": 10000,
+                  "evidence_id": "d-e2",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+                  "end_ms": 30000,
+                  "start_ms": 20000,
+                  "evidence_id": "d-e3",
+                  "source_type": "SUBTITLE"
+                },
+                {
+                  "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+                  "end_ms": 40000,
+                  "start_ms": 30000,
+                  "evidence_id": "d-e4",
+                  "source_type": "SUBTITLE"
+                }
+              ],
+              "observations": [
+                {
+                  "action": "retain",
+                  "next_step": "这段与课程证据一致的表述可以保留。",
+                  "evidence_id": "d-e2",
+                  "observation": "两种查找的比较次数都正确。",
+                  "evidence_ids": [
+                    "d-e2",
+                    "d-e3",
+                    "d-e4"
+                  ],
+                  "learner_quote": "查找4比较3次且找到；查找7比较3次且未找到。",
+                  "evidence_quote": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。\n\n在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。\n\n本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+                  "anchor_evidence_ids": [
+                    "d-e3"
+                  ]
+                }
+              ]
+            },
+            "attempt_id": "7ec02435-0c7f-4ef8-a2f3-2583d8c34e5e",
+            "answer_version": 1,
+            "question_index": 0,
+            "answer_text": "查找4比较3次且找到；查找7比较3次且未找到。",
+            "note": {
+              "note_id": "320b1e4b-c3d9-4658-9e20-1b6de55be3fe",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。未发现问题，接受反馈并保留原答。",
+              "created_at": "2026-10-26 18:42:15.123925+00:00"
+            }
+          },
+          "notes": [
+            {
+              "note_id": "320b1e4b-c3d9-4658-9e20-1b6de55be3fe",
+              "version": 1,
+              "disposition": "acknowledged",
+              "note_text": "[脚本演员，非真人] 核对课程来源。未发现问题，接受反馈并保留原答。",
+              "created_at": "2026-10-26 18:42:15.123925+00:00"
+            }
+          ],
+          "exposure": {
+            "run_id": "2e99f598-b9f6-4df4-9400-9a2d86e2ba9f",
+            "feedback_id": "958e588e-025e-52b8-b5e7-44bf4ddcfb06",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:15.119732+00:00"
+          },
+          "stale_after_revision": true
+        }
+      ],
+      "sidecar": {
+        "trial_id": "feedback-missed",
+        "item_id": "d2",
+        "question": "在 [4,9,4] 中分别查找 4 和 7，需要几次比较、结果是什么？",
+        "condition": "feedback",
+        "data_kind": "MOCK",
+        "scope": {
+          "owner_id": 600006,
+          "course_id": "p6-development-synthetic-v1-03cfaa39aaf6475e9d6fcdad94e226ab",
+          "revision": 1,
+          "session_id": "7710a08d-6208-526b-a083-eb45135d8374",
+          "run_id": "4bf88d12-6382-4609-8235-e5ce80d9421c",
+          "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+          "question_index": 0
+        },
+        "initial_attempt_id": "7ec02435-0c7f-4ef8-a2f3-2583d8c34e5e",
+        "final_attempt_id": "d4ed301f-8899-41fc-8827-c0734a6e4a8b",
+        "feedback_exposures": [
+          {
+            "run_id": "2e99f598-b9f6-4df4-9400-9a2d86e2ba9f",
+            "feedback_id": "958e588e-025e-52b8-b5e7-44bf4ddcfb06",
+            "answer_version_at_exposure": 1,
+            "at": "2026-10-26T18:42:15.119732+00:00"
+          }
+        ],
+        "source_checks": [
+          {
+            "evidence_id": "d-e3",
+            "at": "2026-10-26T18:42:15.132734+00:00",
+            "observer": "SCRIPTED_ACTOR"
+          }
+        ],
+        "discovery": {
+          "text": "未发现问题，接受反馈并保留原答。",
+          "at": "2026-10-26T18:42:15.132747+00:00",
+          "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+        },
+        "participant": "SCRIPTED_ACTOR",
+        "status": "complete"
+      },
+      "course_snapshot": {
+        "origin": "本轮独立编写的合成教学材料；不摘录外部课程。",
+        "author": "LectureLens P6 / Codex",
+        "license": "CC0-1.0",
+        "source_verification": "仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。",
+        "course_key": "p6-development-synthetic-v1",
+        "revision": 1,
+        "evidence": [
+          {
+            "evidence_id": "d-e1",
+            "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+            "start_ms": 0,
+            "end_ms": 10000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e2",
+            "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+            "start_ms": 10000,
+            "end_ms": 20000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e3",
+            "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+            "start_ms": 20000,
+            "end_ms": 30000,
+            "source_type": "SUBTITLE"
+          },
+          {
+            "evidence_id": "d-e4",
+            "text": "本课没有给出机器速度、单次比较耗时或运行秒数，不能从比较次数推出精确运行秒数。",
+            "start_ms": 30000,
+            "end_ms": 40000,
+            "source_type": "SUBTITLE"
+          }
+        ]
+      }
+    }
+  ],
+  "incomplete_trials": []
+}

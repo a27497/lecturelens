@@ -1,0 +1,23 @@
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 25%]
+........................................................................ [ 34%]
+........................................................................ [ 42%]
+........................................................................ [ 51%]
+........................................................................ [ 59%]
+........................................................................ [ 68%]
+........................................................................ [ 76%]
+........................................................................ [ 85%]
+........................................................................ [ 93%]
+.....................................................                    [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.13/site-packages/starlette/testclient.py:53
+  /home/dev/projects/lecturelens-p6-validation/agent-service/.venv/lib/python3.13/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+tests/test_tls_trust.py::test_active_ca_bundle_excludes_compromised_chain_root
+  /home/dev/projects/lecturelens-p6-validation/agent-service/tests/test_tls_trust.py:14: CryptographyDeprecationWarning: Parsed a serial number which wasn't positive (i.e., it was negative or zero), which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.
+    roots = x509.load_pem_x509_certificates(Path(certifi.where()).read_bytes())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+845 passed, 2 warnings in 219.21s (0:03:39)

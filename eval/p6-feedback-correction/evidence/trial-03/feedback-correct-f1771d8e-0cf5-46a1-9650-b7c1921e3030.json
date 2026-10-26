@@ -1,0 +1,95 @@
+{
+  "run": {
+    "run_id": "f1771d8e-0cf5-46a1-9650-b7c1921e3030",
+    "session_id": "929983c9-646a-5f77-a03f-11ed7d53bfcb",
+    "goal": "按指定题目进行合成测量机制演练",
+    "request_key": "practice",
+    "status": "succeeded",
+    "model_mode": "mock",
+    "model_calls": 4,
+    "tool_calls": 3,
+    "reserved_tokens": 40455,
+    "error_code": null,
+    "created_at": "2026-10-26 18:47:59.844232+00:00",
+    "finished_at": "2026-10-26 18:48:00.282040+00:00",
+    "task_kind": "practice",
+    "approval_required": false,
+    "learning_scope": null,
+    "model_selection": {}
+  },
+  "approval": null,
+  "artifact": {
+    "kind": "practice",
+    "mode": "mock",
+    "title": "演示练习（固定测试模型）",
+    "revision": 1,
+    "citations": [
+      {
+        "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+        "end_ms": 10000,
+        "start_ms": 0,
+        "evidence_id": "d-e1",
+        "source_type": "SUBTITLE"
+      },
+      {
+        "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+        "end_ms": 20000,
+        "start_ms": 10000,
+        "evidence_id": "d-e2",
+        "source_type": "SUBTITLE"
+      },
+      {
+        "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+        "end_ms": 30000,
+        "start_ms": 20000,
+        "evidence_id": "d-e3",
+        "source_type": "SUBTITLE"
+      }
+    ],
+    "questions": [
+      {
+        "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+        "evidence_ids": [
+          "d-e2",
+          "d-e1",
+          "d-e3"
+        ]
+      },
+      {
+        "question": "请从引用片段找出一个重要概念并解释。",
+        "evidence_ids": [
+          "d-e1",
+          "d-e2"
+        ]
+      }
+    ],
+    "explanation": "演示：请结合引用片段阅读课程内容。本输出用于验证执行与恢复流程。",
+    "evidence_ids": [
+      "d-e1",
+      "d-e2"
+    ],
+    "quality_check": "mock_demo",
+    "rubric_policy": "answer_points_v1",
+    "artifact_id": "d8508af2-15e2-578a-88df-2ff48145ef16"
+  },
+  "attempts": [],
+  "practice_results": [
+    {
+      "question_index": 0,
+      "attempt": null,
+      "feedback_run": null,
+      "latest_feedback_status": null,
+      "latest_feedback_answer_version": null
+    },
+    {
+      "question_index": 1,
+      "attempt": null,
+      "feedback_run": null,
+      "latest_feedback_status": null,
+      "latest_feedback_answer_version": null
+    }
+  ],
+  "feedback_enabled": true,
+  "feedback": null,
+  "feedback_runs": []
+}

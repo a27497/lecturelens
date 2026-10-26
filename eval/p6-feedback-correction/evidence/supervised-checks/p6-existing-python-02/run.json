@@ -1,0 +1,45 @@
+{
+  "status": "SUCCEEDED",
+  "started_at_utc": "2026-10-26T18:43:58.815621+00:00",
+  "runner_pid": 3259483,
+  "runner_start_ticks": 4642364,
+  "cwd": "/home/dev/projects/lecturelens-p6-validation/agent-service",
+  "executable": "python",
+  "argv_sha256": "a4aecc7c4caed13bf9e1e4d1e1f2079b725631dbb7d54640234ffbfb4331e6a9",
+  "timeout_seconds": 600.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": 0,
+  "exit_code": 0,
+  "log_path": "/home/dev/projects/lecturelens-p6-validation/.data/dev-checks/p6-existing-python-02/output.log",
+  "disk_before": {
+    "used_bytes": 149490745344,
+    "available_bytes": 109398851584,
+    "allowed": true
+  },
+  "child_pid": 3259563,
+  "pgid": 3259563,
+  "child_start_ticks": 4642396,
+  "cleanup": {
+    "pgid": 3259563,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [
+      {
+        "pid": 3272362,
+        "returncode": 0
+      }
+    ],
+    "remaining": [],
+    "complete": true
+  },
+  "finished_at_utc": "2026-10-26T18:47:39.284260+00:00",
+  "elapsed_seconds": 220.46865776999766,
+  "disk_after": {
+    "used_bytes": 149594324992,
+    "available_bytes": 109295271936,
+    "allowed": true
+  },
+  "log_sha256": "a6a5a809a4190b9ac611a834b9e83604dc44647cb1ffde312dbccb56797d51ab"
+}

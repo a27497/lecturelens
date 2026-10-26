@@ -1,0 +1,63 @@
+{
+  "run": {
+    "run_id": "bdb0b361-d9ce-4487-8102-5093d4bab68c",
+    "session_id": "56a0d7cf-d7fb-5a30-8e53-cb740d2db8bf",
+    "goal": "第 1 题第 1 版作答的课程证据反馈",
+    "request_key": "feedback",
+    "status": "succeeded",
+    "model_mode": "mock",
+    "model_calls": 4,
+    "tool_calls": 2,
+    "reserved_tokens": 21993,
+    "error_code": null,
+    "created_at": "2026-10-26 18:43:10.038678+00:00",
+    "finished_at": "2026-10-26 18:43:10.382920+00:00",
+    "task_kind": "feedback",
+    "approval_required": false,
+    "learning_scope": null,
+    "model_selection": {}
+  },
+  "approval": null,
+  "artifact": null,
+  "attempts": [],
+  "practice_results": [],
+  "feedback_enabled": true,
+  "feedback": {
+    "feedback_id": "a75773c6-cc1c-5fe7-a9bc-30cce4d0d8d2",
+    "content": {
+      "kind": "insufficient_evidence",
+      "mode": "mock",
+      "policy": "evidence_guidance_v5",
+      "reason": "课程证据不足，无法区分停止条件和上界。",
+      "citations": [
+        {
+          "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+          "end_ms": 10000,
+          "start_ms": 0,
+          "evidence_id": "d-e1",
+          "source_type": "SUBTITLE"
+        },
+        {
+          "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+          "end_ms": 20000,
+          "start_ms": 10000,
+          "evidence_id": "d-e2",
+          "source_type": "SUBTITLE"
+        },
+        {
+          "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+          "end_ms": 30000,
+          "start_ms": 20000,
+          "evidence_id": "d-e3",
+          "source_type": "SUBTITLE"
+        }
+      ]
+    },
+    "attempt_id": "cae4c3bc-9947-41a5-ab83-63c4236b46d7",
+    "answer_version": 1,
+    "question_index": 0,
+    "answer_text": "停止条件和上界都是 n，所以完全同义。",
+    "note": null
+  },
+  "feedback_runs": []
+}

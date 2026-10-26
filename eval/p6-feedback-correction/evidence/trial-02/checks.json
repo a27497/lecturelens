@@ -1,0 +1,164 @@
+{
+  "warning": "Mock 数据，不代表教学效果",
+  "trials": [
+    {
+      "trial_id": "read-correct",
+      "before": {
+        "runs": 1,
+        "model_calls": 4,
+        "tool_calls": 3
+      },
+      "after": {
+        "runs": 1,
+        "model_calls": 4,
+        "tool_calls": 3
+      },
+      "provider_calls_before": 4,
+      "provider_calls_after": 4,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    },
+    {
+      "trial_id": "feedback-correct",
+      "before": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "after": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "provider_calls_before": 8,
+      "provider_calls_after": 8,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    },
+    {
+      "trial_id": "feedback-misled",
+      "before": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "after": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "provider_calls_before": 8,
+      "provider_calls_after": 8,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    },
+    {
+      "trial_id": "feedback-honest",
+      "before": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "after": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "provider_calls_before": 8,
+      "provider_calls_after": 8,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    },
+    {
+      "trial_id": "feedback-refusal",
+      "before": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "after": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "provider_calls_before": 8,
+      "provider_calls_after": 8,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    },
+    {
+      "trial_id": "feedback-missed",
+      "before": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "after": {
+        "runs": 2,
+        "model_calls": 8,
+        "tool_calls": 5
+      },
+      "provider_calls_before": 8,
+      "provider_calls_after": 8,
+      "operations": [
+        "LIST",
+        "RUNS",
+        "READ",
+        "EVENTS",
+        "ATTEMPT_HISTORY",
+        "FEEDBACK_NOTES_IF_PRESENT",
+        "fixture source READ"
+      ],
+      "actual_postgres": true,
+      "java_authority": "FIXTURE_REPLAY_NOT_RUN"
+    }
+  ],
+  "real_paid_provider_calls": 0,
+  "browser": "BROWSER_NOT_RUN",
+  "baseline": "3fba4a2b20ca1f43e1a05d80545ab1d3d0df83c8"
+}

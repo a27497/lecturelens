@@ -1,0 +1,244 @@
+{
+  "data_kind": "MOCK",
+  "trials": [
+    {
+      "trial_id": "read-correct",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "reading",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-3597e404816d41d0969a98637896d71e",
+        "revision": 1,
+        "session_id": "ea99f549-cb9c-5459-b7e0-d409ff5b5db2",
+        "run_id": "054c6ebe-f3cb-4c6d-af75-606ac3b27424",
+        "artifact_id": "d780ce9e-fb86-5142-8dc8-d5e78800228c",
+        "question_index": 0
+      },
+      "initial_attempt_id": "318ed520-ecfd-4186-8627-b07e2aa25c5a",
+      "final_attempt_id": "71d09d0f-d5e8-4bc4-9252-ffece933c6a5",
+      "feedback_exposures": [],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:42:09.648579+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "原来的最多1次有误，应为最多n次。",
+        "at": "2026-10-26T18:42:09.648596+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    },
+    {
+      "trial_id": "feedback-correct",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-3c5090326e3a4099927a98f0d4961c49",
+        "revision": 1,
+        "session_id": "6fd25153-e6cf-5040-97a5-dfb0684e9b8a",
+        "run_id": "da5b2e7f-4ee7-4e84-87db-e9b491f3eed1",
+        "artifact_id": "b2b47186-a291-57be-8f2b-f07752cbabde",
+        "question_index": 0
+      },
+      "initial_attempt_id": "5c5958f0-3543-41de-b17f-97ed22fe9b2b",
+      "final_attempt_id": "b3f0d555-07ea-4c0b-b876-ab08c616bc19",
+      "feedback_exposures": [
+        {
+          "run_id": "f38ebac3-ba92-4ffe-9167-20cc7afc04b6",
+          "feedback_id": "785c90da-4d5b-5e0a-a2c6-b5a61e0b9c82",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:42:10.630009+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:42:10.641929+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "原来的最多1次有误，应为最多n次。",
+        "at": "2026-10-26T18:42:10.641955+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    },
+    {
+      "trial_id": "feedback-misled",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-b116d8d33ffc47ff813c798abb56611e",
+        "revision": 1,
+        "session_id": "8de99c56-1474-5d7b-a5cb-3aafc6cc764b",
+        "run_id": "14f75f01-a22f-474b-a528-f8fb1dae617c",
+        "artifact_id": "d45360f9-346d-5a40-a14c-15e2e5989a01",
+        "question_index": 0
+      },
+      "initial_attempt_id": "4a274703-0c83-4f01-bc66-9d26961329e6",
+      "final_attempt_id": "33764230-ab89-402e-bef4-29ece1c9ab20",
+      "feedback_exposures": [
+        {
+          "run_id": "288ccd51-b5de-4737-9d95-425112bcd56b",
+          "feedback_id": "cb554d1d-b780-5b09-b2c8-f3a13469ccc6",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:42:11.745162+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:42:11.769874+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "[故意错误刺激] 接受反馈，把n次改为1次。",
+        "at": "2026-10-26T18:42:11.769893+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    },
+    {
+      "trial_id": "feedback-honest",
+      "item_id": "d3",
+      "question": "根据本课，查找7精确需要多少秒？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-5d56f934972549aabe0d5cc42e3c2c99",
+        "revision": 1,
+        "session_id": "ecb73998-92ad-5337-9d39-a2e9995acdf0",
+        "run_id": "83bd9b13-02e6-42be-8171-b8bb9016f846",
+        "artifact_id": "5a017c95-0200-5281-937d-495ed737f8a8",
+        "question_index": 0
+      },
+      "initial_attempt_id": "59840017-fa37-4aa0-88ff-0b2df5381084",
+      "final_attempt_id": "58d647e2-afa3-4946-b57a-b09d3b10e1b3",
+      "feedback_exposures": [
+        {
+          "run_id": "8be3a0f5-f7b9-4956-ab64-d6b1a19d066b",
+          "feedback_id": "de54bd35-f9f3-5132-9e0a-a5f9c6a579c9",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:42:12.900409+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e4",
+          "at": "2026-10-26T18:42:12.915819+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "3次不等于3秒，缺耗时依据。",
+        "at": "2026-10-26T18:42:12.915838+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    },
+    {
+      "trial_id": "feedback-refusal",
+      "item_id": "d4",
+      "question": "停止条件与有限步上界有什么区别？请结合本课查找说明。",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-7214ad2f082340f6904789ab7b474c5e",
+        "revision": 1,
+        "session_id": "c5ec8477-b730-5391-87a1-bd74512efc54",
+        "run_id": "7229214e-3577-42d6-851c-26852c1361c5",
+        "artifact_id": "91960ca1-ae34-511b-9fc6-cbd19c7285f5",
+        "question_index": 0
+      },
+      "initial_attempt_id": "93d9fc00-4403-4d98-a868-89d5c0309ef1",
+      "final_attempt_id": "6a48afc0-0228-49f8-bb5d-2beefd6946d3",
+      "feedback_exposures": [
+        {
+          "run_id": "417caa07-32bf-4e8c-aca8-1562d4c2dd5a",
+          "feedback_id": "91b3f8ce-9f9c-598c-817e-16b96dafc430",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:42:14.072856+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e1",
+          "at": "2026-10-26T18:42:14.085024+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        },
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:42:14.085042+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "未发现问题，保留原答。",
+        "at": "2026-10-26T18:42:14.085047+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    },
+    {
+      "trial_id": "feedback-missed",
+      "item_id": "d2",
+      "question": "在 [4,9,4] 中分别查找 4 和 7，需要几次比较、结果是什么？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-03cfaa39aaf6475e9d6fcdad94e226ab",
+        "revision": 1,
+        "session_id": "7710a08d-6208-526b-a083-eb45135d8374",
+        "run_id": "4bf88d12-6382-4609-8235-e5ce80d9421c",
+        "artifact_id": "5ab60766-095a-52f0-a101-31fc9039b3f3",
+        "question_index": 0
+      },
+      "initial_attempt_id": "7ec02435-0c7f-4ef8-a2f3-2583d8c34e5e",
+      "final_attempt_id": "d4ed301f-8899-41fc-8827-c0734a6e4a8b",
+      "feedback_exposures": [
+        {
+          "run_id": "2e99f598-b9f6-4df4-9400-9a2d86e2ba9f",
+          "feedback_id": "958e588e-025e-52b8-b5e7-44bf4ddcfb06",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:42:15.119732+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e3",
+          "at": "2026-10-26T18:42:15.132734+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "未发现问题，接受反馈并保留原答。",
+        "at": "2026-10-26T18:42:15.132747+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete"
+    }
+  ],
+  "incomplete_trials": []
+}

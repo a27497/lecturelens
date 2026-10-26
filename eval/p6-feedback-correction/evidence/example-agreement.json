@@ -1,0 +1,43 @@
+{
+  "fact_labels": 22,
+  "raw_agreement": 0.9545454545454546,
+  "cohen_kappa": 0.9176029962546817,
+  "other_field_agreement": {
+    "detected": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "supported": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "feedback_flagged": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "feedback_wrong": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "accepted_wrong_feedback": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "false_refusal": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    },
+    "honest_insufficiency": {
+      "n": 6,
+      "d": 6,
+      "rate": 1.0
+    }
+  },
+  "note": "脚本示例评分不可冒充真人双评；裁决前计算一致性并保留原分。"
+}

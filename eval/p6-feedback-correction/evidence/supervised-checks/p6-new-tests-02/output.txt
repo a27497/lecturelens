@@ -1,0 +1,52 @@
+..............................F                                          [100%]
+=================================== FAILURES ===================================
+________ test_live_pagination_export_does_not_truncate_history_or_notes ________
+
+live = (<lecturelens_agent.study.store.StudyStore object at 0x71329e4874d0>, {'data_kind': 'MOCK', 'trials': [{'trial_id': 'r...author': 'LectureLens P6 / Codex', 'license': 'CC0-1.0', 'source_verification': '仓库内原始文字与固定段落ID；时间为合成定位，不是视频实录。', ...})
+tmp_path = PosixPath('/tmp/pytest-of-dev/pytest-6/test_live_pagination_export_do0')
+
+    def test_live_pagination_export_does_not_truncate_history_or_notes(live, tmp_path):
+        from lecturelens_agent.study.contracts import StudyCommand
+        from mock_flow import run_trial
+    
+        store, _manifest, course = live
+        item = m.load(ROOT / "development/standard.json")["items"][0]
+        fixture = (
+            "pagination",
+            "feedback",
+            "最多1次。",
+            "找到或查完停止，最多n次。",
+            "应为最多n次。",
+            "revise",
+            False,
+            "原来的1次有误，应为n次。",
+        )
+>       trial, _export, _audit = run_trial(store, course, item, fixture, tmp_path)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+eval/p6-feedback-correction/tests/test_measure.py:245: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+eval/p6-feedback-correction/mock_flow.py:179: in run_trial
+    response = command(
+eval/p6-feedback-correction/mock_flow.py:148: in command
+    return store.command(
+agent-service/src/lecturelens_agent/study/store.py:225: in command
+    return start_feedback(self, conn, run, command, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+store = <lecturelens_agent.study.store.StudyStore object at 0x71329e4874d0>
+conn = <psycopg.Connection [BAD] at 0x71329e4877a0>
+parent = {'run_id': '1ccc63f5-08a8-442b-9b7b-17b24002e6be', 'session_id': '40d6ca4c-ae9b-5237-a56e-a125b4a5a0c8', 'request_key': 'practice', 'goal': '按指定题目进行合成测量机制演练', ...}
+command = StudyCommand(owner_id=600006, course_id='p6-development-synthetic-v1-072947bdbadd4ee6abdafe29c68acdd5', revision=1, op..._text=None, disposition=None, learning_scope=None, approval_required=False, approval_decision=None, approval_edit=None)
+mode = 'mock'
+
+    def start_feedback(store, conn, parent, command, mode):
+        if not enabled():
+>           raise StudyError("FEEDBACK_DISABLED", 409)
+E           lecturelens_agent.study.store.StudyError: FEEDBACK_DISABLED
+
+agent-service/src/lecturelens_agent/study/feedback_store.py:38: StudyError
+=========================== short test summary info ============================
+FAILED eval/p6-feedback-correction/tests/test_measure.py::test_live_pagination_export_does_not_truncate_history_or_notes
+1 failed, 30 passed in 1.95s

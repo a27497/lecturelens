@@ -1,0 +1,65 @@
+{
+  "status": "CANCELLED",
+  "started_at_utc": "2026-10-26T18:42:56.699543+00:00",
+  "runner_pid": 3253646,
+  "runner_start_ticks": 4636148,
+  "cwd": "/home/dev/projects/lecturelens-p6-validation/agent-service",
+  "executable": "python",
+  "argv_sha256": "e5b170299a8270490fff2f48b8c483a8d6553da3830d2d829ad2bc0075d15d70",
+  "timeout_seconds": 600.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": -15,
+  "exit_code": 143,
+  "log_path": "/home/dev/projects/lecturelens-p6-validation/.data/dev-checks/p6-existing-python/output.log",
+  "disk_before": {
+    "used_bytes": 149468516352,
+    "available_bytes": 109421080576,
+    "allowed": true
+  },
+  "child_pid": 3253737,
+  "pgid": 3253737,
+  "child_start_ticks": 4636184,
+  "cleanup": {
+    "pgid": 3253737,
+    "signals": [
+      "SIGTERM"
+    ],
+    "errors": [],
+    "targets": [
+      {
+        "pid": 3253737,
+        "ppid": 3253646,
+        "pgid": 3253737,
+        "state": "S",
+        "start_ticks": 4636184,
+        "signal": "SIGTERM"
+      },
+      {
+        "pid": 3259347,
+        "ppid": 3253737,
+        "pgid": 3259347,
+        "state": "S",
+        "start_ticks": 4642152,
+        "signal": "SIGTERM"
+      }
+    ],
+    "reaped_descendants": [
+      {
+        "pid": 3259347,
+        "returncode": -15
+      }
+    ],
+    "remaining": [],
+    "complete": true
+  },
+  "cancel_signal": "SIGTERM",
+  "finished_at_utc": "2026-10-26T18:43:58.734922+00:00",
+  "elapsed_seconds": 62.0354030410017,
+  "disk_after": {
+    "used_bytes": 149490724864,
+    "available_bytes": 109398872064,
+    "allowed": true
+  },
+  "log_sha256": "9a3e2123af8fbd0c676bf53e2db8cac01d73186b8361916743d8e1eeb832ad8a"
+}

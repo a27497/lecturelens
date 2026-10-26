@@ -1,0 +1,80 @@
+{
+  "run": {
+    "run_id": "34b4fc02-8108-4ee5-b1c3-adb1633930be",
+    "session_id": "929983c9-646a-5f77-a03f-11ed7d53bfcb",
+    "goal": "第 1 题第 1 版作答的课程证据反馈",
+    "request_key": "feedback",
+    "status": "succeeded",
+    "model_mode": "mock",
+    "model_calls": 4,
+    "tool_calls": 2,
+    "reserved_tokens": 25280,
+    "error_code": null,
+    "created_at": "2026-10-26 18:48:00.312305+00:00",
+    "finished_at": "2026-10-26 18:48:00.623533+00:00",
+    "task_kind": "feedback",
+    "approval_required": false,
+    "learning_scope": null,
+    "model_selection": {}
+  },
+  "approval": null,
+  "artifact": null,
+  "attempts": [],
+  "practice_results": [],
+  "feedback_enabled": true,
+  "feedback": {
+    "feedback_id": "cb7a4a39-6331-5e45-8be3-064b0429a976",
+    "content": {
+      "kind": "guidance",
+      "mode": "mock",
+      "policy": "evidence_guidance_v5",
+      "citations": [
+        {
+          "text": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。",
+          "end_ms": 10000,
+          "start_ms": 0,
+          "evidence_id": "d-e1",
+          "source_type": "SUBTITLE"
+        },
+        {
+          "text": "本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。",
+          "end_ms": 20000,
+          "start_ms": 10000,
+          "evidence_id": "d-e2",
+          "source_type": "SUBTITLE"
+        },
+        {
+          "text": "在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+          "end_ms": 30000,
+          "start_ms": 20000,
+          "evidence_id": "d-e3",
+          "source_type": "SUBTITLE"
+        }
+      ],
+      "observations": [
+        {
+          "action": "revise",
+          "next_step": "对照上述反馈和课程证据，修改这段作答，再保存新版本。",
+          "evidence_id": "d-e1",
+          "observation": "最多1次有误，课程说最多n次比较。",
+          "evidence_ids": [
+            "d-e1",
+            "d-e2",
+            "d-e3"
+          ],
+          "learner_quote": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+          "evidence_quote": "停止条件是决定何时结束的规则。有限步上界是最多执行多少步的保证；二者不是同一个概念。\n\n本课线性查找从左向右逐个比较，找到第一个目标就停止；若未找到，则检查完整列表后停止。列表长度为 n 时最多比较 n 次。\n\n在列表 [4,9,4] 中查找 4，第一次比较就找到，比较次数为 1；在同一列表中查找 7，比较次数为 3，报告未找到。",
+          "anchor_evidence_ids": [
+            "d-e2"
+          ]
+        }
+      ]
+    },
+    "attempt_id": "f2cd17fe-8854-4c26-a830-74ad7c25fb82",
+    "answer_version": 1,
+    "question_index": 0,
+    "answer_text": "找到首个匹配即停，否则查完整个列表；最多 1 次比较。",
+    "note": null
+  },
+  "feedback_runs": []
+}

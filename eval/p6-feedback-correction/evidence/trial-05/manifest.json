@@ -1,0 +1,351 @@
+{
+  "data_kind": "MOCK",
+  "trials": [
+    {
+      "trial_id": "read-correct",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "reading",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-0ffaf8b53f9f432c91f8e10a10dcacc8",
+        "revision": 1,
+        "session_id": "03e1baa7-36c4-5831-878c-3be5a840552d",
+        "run_id": "6dae9dde-05a7-4671-8638-0bee5ed02aa4",
+        "artifact_id": "649cd88f-aa62-5144-801e-d0479c7dcc04",
+        "question_index": 0
+      },
+      "initial_attempt_id": "8265adbc-fc0c-4b7b-8478-e689c2fa5e63",
+      "final_attempt_id": "88242f87-0649-4c34-a7f6-168b0031b567",
+      "feedback_exposures": [],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:51:41.208066+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "原来的最多1次有误，应为最多n次。",
+        "at": "2026-10-26T18:51:41.208085+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "88242f87-0649-4c34-a7f6-168b0031b567",
+        "claims": [
+          {
+            "fact_id": "d1-f1",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          },
+          {
+            "fact_id": "d1-f2",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-correct",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-bdc8ed05972e481db110a7e74d0d63cb",
+        "revision": 1,
+        "session_id": "f2e03738-cc81-5b42-99fd-b30d47eac3d4",
+        "run_id": "83a48510-2a20-42bb-b2c6-159d2e2ef4fe",
+        "artifact_id": "eb5aa73a-ce41-501d-ae9d-9d0b0c1bf846",
+        "question_index": 0
+      },
+      "initial_attempt_id": "4a074aac-d913-42dc-b614-4dcd315fa84b",
+      "final_attempt_id": "abfa51f7-7148-497b-9ad2-5ecff368e25c",
+      "feedback_exposures": [
+        {
+          "run_id": "794114da-32ad-4342-90c3-f5b19253fa43",
+          "feedback_id": "8241667b-3684-5d85-a2fa-05f3ad5ebbce",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:51:42.344211+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:51:42.356684+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "原来的最多1次有误，应为最多n次。",
+        "at": "2026-10-26T18:51:42.356725+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "abfa51f7-7148-497b-9ad2-5ecff368e25c",
+        "claims": [
+          {
+            "fact_id": "d1-f1",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          },
+          {
+            "fact_id": "d1-f2",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-misled",
+      "item_id": "d1",
+      "question": "本课线性查找在什么条件停止？长度 n 的列表最多比较多少次？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-24c4bcbe201a4e90898a243aa225aae7",
+        "revision": 1,
+        "session_id": "d581d854-131b-5ad8-83fd-5eb00277886e",
+        "run_id": "f6bff620-bcc3-4d6a-b834-3a5b0ca8d610",
+        "artifact_id": "91599331-e9e0-5ca7-a3ec-74a437c5adc5",
+        "question_index": 0
+      },
+      "initial_attempt_id": "4f116665-527c-4fb2-97e9-b5f2bb527b2f",
+      "final_attempt_id": "06d387bf-0520-425c-b331-44e563ff4f5b",
+      "feedback_exposures": [
+        {
+          "run_id": "b7f64f9e-9c86-4b6b-a9db-d03dc1c27ba8",
+          "feedback_id": "fb62662a-7c9c-5bd0-b761-82ee4b41a48b",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:51:43.475779+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:51:43.492100+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "[故意错误刺激] 接受反馈，把n次改为1次。",
+        "at": "2026-10-26T18:51:43.492116+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "06d387bf-0520-425c-b331-44e563ff4f5b",
+        "claims": [
+          {
+            "fact_id": "d1-f1",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          },
+          {
+            "fact_id": "d1-f2",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-honest",
+      "item_id": "d3",
+      "question": "根据本课，查找7精确需要多少秒？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-c96ae5cc34024b3ca85c19973d7912b0",
+        "revision": 1,
+        "session_id": "598f6b1c-8329-59c6-9182-9a2a9a9ad27a",
+        "run_id": "b477e67f-0f4f-40d4-988a-9abbd1a36788",
+        "artifact_id": "ed679d57-9c1e-5869-b78a-9fe71b715ad4",
+        "question_index": 0
+      },
+      "initial_attempt_id": "82ec04de-78d5-4544-9296-b3bc120432b3",
+      "final_attempt_id": "1581c0ff-9a58-4e0f-ab46-a1602c40c792",
+      "feedback_exposures": [
+        {
+          "run_id": "3a88b30f-7a05-4061-a0a3-d71f20fe74df",
+          "feedback_id": "47181a09-84d0-512c-bb0a-ae2c26be341a",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:51:44.552241+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e4",
+          "at": "2026-10-26T18:51:44.563760+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "3次不等于3秒，缺耗时依据。",
+        "at": "2026-10-26T18:51:44.563773+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "1581c0ff-9a58-4e0f-ab46-a1602c40c792",
+        "claims": [
+          {
+            "fact_id": "d3-f1",
+            "evidence_ids": [
+              "d-e4"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-refusal",
+      "item_id": "d4",
+      "question": "停止条件与有限步上界有什么区别？请结合本课查找说明。",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-dc5d02bd50654596a9838a39779f1e33",
+        "revision": 1,
+        "session_id": "475b725f-ff61-590d-a9dc-1bc0742e85c2",
+        "run_id": "06fd725b-3c40-4dfa-bd7a-cb84aaab789b",
+        "artifact_id": "c6224431-6c54-550d-9f42-e70865a08652",
+        "question_index": 0
+      },
+      "initial_attempt_id": "62e1fc10-46f6-4dda-91e0-b184475e1481",
+      "final_attempt_id": "f3b5d631-9cf9-4d6e-ac79-ca575b95ce79",
+      "feedback_exposures": [
+        {
+          "run_id": "4d11968d-863b-414b-b3a8-890cc61d041f",
+          "feedback_id": "1e2efb2a-be86-5bb6-9455-35d6dedad283",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:51:45.677212+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e1",
+          "at": "2026-10-26T18:51:45.693125+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        },
+        {
+          "evidence_id": "d-e2",
+          "at": "2026-10-26T18:51:45.693146+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "未发现问题，保留原答。",
+        "at": "2026-10-26T18:51:45.693150+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "f3b5d631-9cf9-4d6e-ac79-ca575b95ce79",
+        "claims": [
+          {
+            "fact_id": "d4-f1",
+            "evidence_ids": [
+              "d-e1"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          },
+          {
+            "fact_id": "d4-f2",
+            "evidence_ids": [
+              "d-e2"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    },
+    {
+      "trial_id": "feedback-missed",
+      "item_id": "d2",
+      "question": "在 [4,9,4] 中分别查找 4 和 7，需要几次比较、结果是什么？",
+      "condition": "feedback",
+      "data_kind": "MOCK",
+      "scope": {
+        "owner_id": 600006,
+        "course_id": "p6-development-synthetic-v1-681e46d87e0f44159f4774ea854dcded",
+        "revision": 1,
+        "session_id": "888b4ad7-90b9-5bf3-8a08-a05147bb6c30",
+        "run_id": "7bbd10eb-a205-41a6-93ec-dd5720690c94",
+        "artifact_id": "286a882c-ceb3-52e9-a892-864d21f6a9d5",
+        "question_index": 0
+      },
+      "initial_attempt_id": "fcd5a0e2-1c57-42c4-82d9-952e344e6e18",
+      "final_attempt_id": "49133884-7de8-4f88-9399-735949194a98",
+      "feedback_exposures": [
+        {
+          "run_id": "570c8ecd-5bdd-410c-bb89-0f28fd28d68d",
+          "feedback_id": "c5529b5f-9ee5-5eb6-af29-c6ed73d9f361",
+          "answer_version_at_exposure": 1,
+          "at": "2026-10-26T18:51:46.853780+00:00"
+        }
+      ],
+      "source_checks": [
+        {
+          "evidence_id": "d-e3",
+          "at": "2026-10-26T18:51:46.871075+00:00",
+          "observer": "SCRIPTED_ACTOR"
+        }
+      ],
+      "discovery": {
+        "text": "未发现问题，接受反馈并保留原答。",
+        "at": "2026-10-26T18:51:46.871091+00:00",
+        "origin": "SCRIPTED_ACTOR_NOT_STUDENT"
+      },
+      "participant": "SCRIPTED_ACTOR",
+      "status": "complete",
+      "final_evidence": {
+        "attempt_id": "49133884-7de8-4f88-9399-735949194a98",
+        "claims": [
+          {
+            "fact_id": "d2-f1",
+            "evidence_ids": [
+              "d-e3"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          },
+          {
+            "fact_id": "d2-f2",
+            "evidence_ids": [
+              "d-e3"
+            ],
+            "reason": "[脚本演员，非真人] 以课程此处的规则支持最终表述。"
+          }
+        ]
+      }
+    }
+  ],
+  "incomplete_trials": []
+}

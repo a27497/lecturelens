@@ -1,0 +1,338 @@
+{
+  "warning": "Mock 数据，不代表教学效果",
+  "data_kind": "MOCK",
+  "export_hash": "53fde0456031b1d3b87599f3614b7eb64deb174c35dc470cbc583cce59725e3c",
+  "ratings_hash": "e3df525f162cee7f218d13f30ced863ec16d9e2b2e9fcc0e65f031ab3d28246c",
+  "freeze_hash": "a49a9456e34f19ed06a242c338c63e0b6f0c1d3748041e79783fadd1e11854a7",
+  "incomplete_trials": [],
+  "scoring_origin": "SCRIPTED_EXAMPLE_NOT_HUMAN",
+  "conditions": {
+    "reading": {
+      "completed_trials": 1,
+      "initial_factual_accuracy": {
+        "n": 1,
+        "d": 2,
+        "rate": 0.5
+      },
+      "error_discovery": {
+        "n": 1,
+        "d": 1,
+        "rate": 1.0
+      },
+      "final_factual_accuracy": {
+        "n": 2,
+        "d": 2,
+        "rate": 1.0
+      },
+      "fully_correct_final_answers": {
+        "n": true,
+        "d": 1,
+        "rate": 1.0
+      },
+      "correction_rate": {
+        "n": 1,
+        "d": 1,
+        "rate": 1.0
+      },
+      "evidence_supported_corrections": {
+        "n": 1,
+        "d": 1,
+        "rate": 1.0
+      },
+      "correct_to_wrong_transition": {
+        "n": 0,
+        "d": 1,
+        "rate": 0.0
+      },
+      "feedback_misleading_transition": null,
+      "feedback_wrong_trials": null,
+      "wrong_feedback_acceptance": null,
+      "feedback_missed_errors": null,
+      "retained_missed_errors": null,
+      "false_refusal": null,
+      "honest_insufficiency": {
+        "n": 0,
+        "d": 0,
+        "rate": null
+      },
+      "cases": [
+        {
+          "trial_id": "read-correct",
+          "initial_errors": [
+            "d1-f2"
+          ],
+          "corrected": [
+            "d1-f2"
+          ],
+          "degraded": [],
+          "rating": {
+            "trial_id": "read-correct",
+            "item_id": "d1",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d1-f1": "correct",
+              "d1-f2": "incorrect"
+            },
+            "final": {
+              "d1-f1": "correct",
+              "d1-f2": "correct"
+            },
+            "detected": [
+              "d1-f2"
+            ],
+            "supported": [
+              "d1-f1",
+              "d1-f2"
+            ],
+            "feedback_flagged": [],
+            "feedback_wrong": null,
+            "accepted_wrong_feedback": null,
+            "false_refusal": null,
+            "honest_insufficiency": null,
+            "rationale": "脚本评分示例：初答上界1错误；自查记录在再答前明确指出应为n。新版与d-e2一致。非真人评分。"
+          }
+        }
+      ]
+    },
+    "feedback": {
+      "completed_trials": 5,
+      "initial_factual_accuracy": {
+        "n": 4,
+        "d": 9,
+        "rate": 0.4444444444444444
+      },
+      "error_discovery": {
+        "n": 2,
+        "d": 5,
+        "rate": 0.4
+      },
+      "final_factual_accuracy": {
+        "n": 5,
+        "d": 9,
+        "rate": 0.5555555555555556
+      },
+      "fully_correct_final_answers": {
+        "n": 2,
+        "d": 5,
+        "rate": 0.4
+      },
+      "correction_rate": {
+        "n": 2,
+        "d": 5,
+        "rate": 0.4
+      },
+      "evidence_supported_corrections": {
+        "n": 2,
+        "d": 2,
+        "rate": 1.0
+      },
+      "correct_to_wrong_transition": {
+        "n": 1,
+        "d": 4,
+        "rate": 0.25
+      },
+      "feedback_misleading_transition": {
+        "n": 1,
+        "d": 4,
+        "rate": 0.25
+      },
+      "feedback_wrong_trials": {
+        "n": 3,
+        "d": 5,
+        "rate": 0.6
+      },
+      "wrong_feedback_acceptance": {
+        "n": 3,
+        "d": 3,
+        "rate": 1.0
+      },
+      "feedback_missed_errors": {
+        "n": 3,
+        "d": 5,
+        "rate": 0.6
+      },
+      "retained_missed_errors": {
+        "n": 3,
+        "d": 3,
+        "rate": 1.0
+      },
+      "false_refusal": {
+        "n": 1,
+        "d": 4,
+        "rate": 0.25
+      },
+      "honest_insufficiency": {
+        "n": 1,
+        "d": 1,
+        "rate": 1.0
+      },
+      "cases": [
+        {
+          "trial_id": "feedback-correct",
+          "initial_errors": [
+            "d1-f2"
+          ],
+          "corrected": [
+            "d1-f2"
+          ],
+          "degraded": [],
+          "rating": {
+            "trial_id": "feedback-correct",
+            "item_id": "d1",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d1-f1": "correct",
+              "d1-f2": "incorrect"
+            },
+            "final": {
+              "d1-f1": "correct",
+              "d1-f2": "correct"
+            },
+            "detected": [
+              "d1-f2"
+            ],
+            "supported": [
+              "d1-f1",
+              "d1-f2"
+            ],
+            "feedback_flagged": [
+              "d1-f2"
+            ],
+            "feedback_wrong": false,
+            "accepted_wrong_feedback": false,
+            "false_refusal": false,
+            "honest_insufficiency": null,
+            "rationale": "脚本评分示例：反馈指出1应为n；核对与学生发现记录对应d-e2，v2正确。非真人评分。"
+          }
+        },
+        {
+          "trial_id": "feedback-misled",
+          "initial_errors": [],
+          "corrected": [],
+          "degraded": [
+            "d1-f2"
+          ],
+          "rating": {
+            "trial_id": "feedback-misled",
+            "item_id": "d1",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d1-f1": "correct",
+              "d1-f2": "correct"
+            },
+            "final": {
+              "d1-f1": "correct",
+              "d1-f2": "incorrect"
+            },
+            "detected": [],
+            "supported": [
+              "d1-f1"
+            ],
+            "feedback_flagged": [],
+            "feedback_wrong": true,
+            "accepted_wrong_feedback": true,
+            "false_refusal": false,
+            "honest_insufficiency": null,
+            "rationale": "故意错误反馈把n说成1；学生脚本明确接受并改错。d-e2足以反驳该建议，不能因为核对acknowledged算成功。"
+          }
+        },
+        {
+          "trial_id": "feedback-honest",
+          "initial_errors": [
+            "d3-f1"
+          ],
+          "corrected": [
+            "d3-f1"
+          ],
+          "degraded": [],
+          "rating": {
+            "trial_id": "feedback-honest",
+            "item_id": "d3",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d3-f1": "unsupported"
+            },
+            "final": {
+              "d3-f1": "correct"
+            },
+            "detected": [
+              "d3-f1"
+            ],
+            "supported": [
+              "d3-f1"
+            ],
+            "feedback_flagged": [
+              "d3-f1"
+            ],
+            "feedback_wrong": false,
+            "accepted_wrong_feedback": false,
+            "false_refusal": false,
+            "honest_insufficiency": true,
+            "rationale": "d-e4明确缺耗时；反馈诚实拒答，学生脚本撤回3秒并说明缺何依据。不足证据题正确率表示边界诚实，不表示领域求解正确。"
+          }
+        },
+        {
+          "trial_id": "feedback-refusal",
+          "initial_errors": [
+            "d4-f1",
+            "d4-f2"
+          ],
+          "corrected": [],
+          "degraded": [],
+          "rating": {
+            "trial_id": "feedback-refusal",
+            "item_id": "d4",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d4-f1": "incorrect",
+              "d4-f2": "incorrect"
+            },
+            "final": {
+              "d4-f1": "incorrect",
+              "d4-f2": "incorrect"
+            },
+            "detected": [],
+            "supported": [],
+            "feedback_flagged": [],
+            "feedback_wrong": true,
+            "accepted_wrong_feedback": true,
+            "false_refusal": true,
+            "honest_insufficiency": null,
+            "rationale": "d-e1/e2足以区分规则和上界；脚本反馈却拒答，学生接受并保留混淆。accepted_wrong_feedback表示接受实质错误的证据不足声明，和事实改错另报。"
+          }
+        },
+        {
+          "trial_id": "feedback-missed",
+          "initial_errors": [
+            "d2-f1"
+          ],
+          "corrected": [],
+          "degraded": [],
+          "rating": {
+            "trial_id": "feedback-missed",
+            "item_id": "d2",
+            "rater_id": "SCRIPTED_EXAMPLE",
+            "initial": {
+              "d2-f1": "incorrect",
+              "d2-f2": "correct"
+            },
+            "final": {
+              "d2-f1": "incorrect",
+              "d2-f2": "correct"
+            },
+            "detected": [],
+            "supported": [
+              "d2-f2"
+            ],
+            "feedback_flagged": [],
+            "feedback_wrong": true,
+            "accepted_wrong_feedback": true,
+            "false_refusal": false,
+            "honest_insufficiency": null,
+            "rationale": "d-e3说查4仅1次，脚本反馈称3次正确；学生保留错误。漏检与接受错误评价同时保留，指标不可相加当人数。"
+          }
+        }
+      ]
+    }
+  }
+}

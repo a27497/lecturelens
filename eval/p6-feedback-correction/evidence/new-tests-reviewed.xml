@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="4" failures="0" skipped="0" tests="34" time="3.438" timestamp="2026-10-26T18:51:46.835561+00:00" hostname="samescale-dev-tw-01"><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_expected_metrics_detect_benefits_and_harm_separately" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'&quot;">@pytest.fixture
+    def data():
+        return (
+&gt;           m.load(ROOT / "evidence/trial-05/export.json"),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            m.load(ROOT / "example-ratings.json"),
+            m.load(ROOT / "development/standard.json"),
+        )
+
+eval/p6-feedback-correction/tests/test_measure.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+eval/p6-feedback-correction/measure.py:27: in load
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:546: in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py:632: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'
+
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</error></testcase><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_empty_denominator_is_not_success" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'&quot;">@pytest.fixture
+    def data():
+        return (
+&gt;           m.load(ROOT / "evidence/trial-05/export.json"),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            m.load(ROOT / "example-ratings.json"),
+            m.load(ROOT / "development/standard.json"),
+        )
+
+eval/p6-feedback-correction/tests/test_measure.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+eval/p6-feedback-correction/measure.py:27: in load
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:546: in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py:632: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'
+
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</error></testcase><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[duplicate_trial]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'&quot;">@pytest.fixture
+    def data():
+        return (
+&gt;           m.load(ROOT / "evidence/trial-05/export.json"),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            m.load(ROOT / "example-ratings.json"),
+            m.load(ROOT / "development/standard.json"),
+        )
+
+eval/p6-feedback-correction/tests/test_measure.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+eval/p6-feedback-correction/measure.py:27: in load
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:546: in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py:632: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'
+
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</error></testcase><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[missing_rating]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'&quot;">@pytest.fixture
+    def data():
+        return (
+&gt;           m.load(ROOT / "evidence/trial-05/export.json"),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            m.load(ROOT / "example-ratings.json"),
+            m.load(ROOT / "development/standard.json"),
+        )
+
+eval/p6-feedback-correction/tests/test_measure.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+eval/p6-feedback-correction/measure.py:27: in load
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:546: in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py:632: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/dev/projects/lecturelens-p6-validation/eval/p6-feedback-correction/evidence/trial-05/export.json'
+
+../../.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</error></testcase><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[mixed_data]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[wrong_task]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[bad_label]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[unsupported_claim]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[discovery_without_statement]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[freeze]" time="0.002" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[control_feedback]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_scoring_rejects_silent_bias[missing_honesty]" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_kappa_is_keyed_by_fact_and_preserves_disagreement" time="0.004" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_freeze_tamper_and_evidence_overwrite_are_rejected" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_export_refuses_nonlab_database[postgresql://p6@remote:25486/lecturelens_p6_test]" time="0.070" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_export_refuses_nonlab_database[postgresql://p6@127.0.0.1:25486/production]" time="0.001" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_export_refuses_nonlab_database[postgresql://p6@127.0.0.1:25486/lecturelens_p6_live]" time="0.001" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_reads_persisted_history_and_notes_without_writes" time="0.867" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[owner]" time="0.007" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[revision]" time="0.001" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[artifact]" time="0.025" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[stale_exposure]" time="0.040" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[feedback_id]" time="0.044" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[wrong_final]" time="0.029" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[time]" time="0.029" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[source]" time="0.031" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[evidence_binding]" time="0.028" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_export_rejects_cross_binding_and_contamination[condition]" time="0.049" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_rejects_relaxed_standard_and_unknown_condition" time="0.004" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_hostaddr_cannot_bypass_loopback_guard" time="0.000" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_live_pagination_export_does_not_truncate_history_or_notes" time="1.792" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_pilot_source_ids_bind_to_frozen_text_and_scope" time="0.001" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_pilot_rating_support_uses_bound_source_ids" time="0.003" /><testcase classname="eval.p6-feedback-correction.tests.test_measure" name="test_missing_trials_are_counted_without_inventing_fact_labels" time="0.004" /></testsuite></testsuites>

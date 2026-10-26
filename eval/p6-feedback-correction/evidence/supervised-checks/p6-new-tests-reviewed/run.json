@@ -1,0 +1,40 @@
+{
+  "status": "FAILED",
+  "started_at_utc": "2026-10-26T18:51:46.040566+00:00",
+  "runner_pid": 3305087,
+  "runner_start_ticks": 4689108,
+  "cwd": "/home/dev/projects/lecturelens-p6-validation",
+  "executable": "python",
+  "argv_sha256": "381199f40d880299d05e99239c10e7722cdbb8490317480bf8e75dc8f448788e",
+  "timeout_seconds": 180.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": 1,
+  "exit_code": 1,
+  "log_path": "/home/dev/projects/lecturelens-p6-validation/.data/dev-checks/p6-new-tests-reviewed/output.log",
+  "disk_before": {
+    "used_bytes": 149604016128,
+    "available_bytes": 109285580800,
+    "allowed": true
+  },
+  "child_pid": 3305105,
+  "pgid": 3305105,
+  "child_start_ticks": 4689118,
+  "cleanup": {
+    "pgid": 3305105,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  },
+  "finished_at_utc": "2026-10-26T18:51:50.726997+00:00",
+  "elapsed_seconds": 4.686457238000003,
+  "disk_after": {
+    "used_bytes": 149605036032,
+    "available_bytes": 109284560896,
+    "allowed": true
+  },
+  "log_sha256": "1efe43707e9544d6d76f85e6fe37e55ece7a3d0e84a602f0abc41912487d0b60"
+}
