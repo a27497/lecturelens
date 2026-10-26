@@ -65,4 +65,10 @@ class CourseQaHistoryTest {
         when(jdbc.queryForList(OWN,Long.class,"course",7L)).thenReturn(List.of(2L),List.of(3L));
         assertThatThrownBy(() -> service.read("course","auth",null,20)).isInstanceOf(BusinessException.class);
     }
+    @Test void utcRecordTimeHasAnExplicitInstantForBrowserTimezones() {
+        owner(); var r=row(1,"[]"); r.setCreatedAt(java.time.LocalDateTime.of(2026,10,26,6,0));
+        when(records.selectHistory("course",7L,null,21)).thenReturn(List.of(r));
+        assertThat(service.read("course","auth",null,20).items().getFirst().createdAt())
+            .isEqualTo(java.time.Instant.parse("2026-10-26T06:00:00Z"));
+    }
 }

@@ -58,7 +58,7 @@ public class CourseQaHistoryService {
             }
             String status = "SUCCEEDED".equals(row.getStatus()) ? "SUCCEEDED" : "FAILED";
             items.add(new CourseQaHistoryPage.Item(String.valueOf(row.getId()), row.getQuestion(),
-                "SUCCEEDED".equals(status) ? row.getAnswer() : "", status, row.getCreatedAt(), List.copyOf(valid),
+                "SUCCEEDED".equals(status) ? row.getAnswer() : "", status, row.getCreatedAt() == null ? null : row.getCreatedAt().toInstant(java.time.ZoneOffset.UTC), List.copyOf(valid),
                 valid.isEmpty() ? (saved.isEmpty() ? "none" : "unavailable") : valid.size() == saved.size() ? "current" : "partial"));
         }
         // READ_COMMITTED makes this a fresh ownership/revision check after the bounded read, including concurrent deletion.
