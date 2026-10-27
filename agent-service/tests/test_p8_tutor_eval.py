@@ -807,10 +807,18 @@ def test_over_abstain_cascade_split_preserves_total_and_denominator():
 
 def test_union_bound_correction_preserves_every_other_byte_and_expectation():
     import hashlib
-    import subprocess
 
-    root = DATA.parents[1]
-    original = subprocess.check_output(["git", "show", "970bd00:eval/p8-tutor/dialogues.json"], cwd=root)
+    # Byte-for-byte eval/p8-tutor files from 970bd00b84a18e8ea04584e65a36e887061db666.
+    # Pin the historical baseline independently of checkout depth and current inputs.
+    fixtures = Path(__file__).parent / "fixtures/p8_tutor"
+    original = (fixtures / "dialogues-970bd00.json").read_bytes()
+    assert hashlib.sha256(original).hexdigest() == (
+        "8d8ca2b8f9ca0c04f433cc733eb3a663456fbdb956532cb0d23c79593b670fea"
+    )
+    thresholds = (fixtures / "thresholds-970bd00.json").read_bytes()
+    assert hashlib.sha256(thresholds).hexdigest() == (
+        "21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da"
+    )
     current = (DATA / "dialogues.json").read_bytes()
     before, after = json.loads(original), json.loads(current)
     target = next(d for d in after["dialogues"] if d["dialogue_id"] == "probability-l1-3")
@@ -835,9 +843,7 @@ def test_union_bound_correction_preserves_every_other_byte_and_expectation():
         b'"expected_insufficient": false,\n          "socratic": false',
     )
     assert reverted == original
-    assert (DATA / "thresholds.json").read_bytes() == subprocess.check_output(
-        ["git", "show", "970bd00:eval/p8-tutor/thresholds.json"], cwd=root
-    )
+    assert (DATA / "thresholds.json").read_bytes() == thresholds
 
 
 @pytest.mark.parametrize("declaration", ["wrong", "superset"])

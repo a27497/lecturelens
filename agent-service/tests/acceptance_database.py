@@ -1,7 +1,7 @@
 """Expose only the explicitly supplied test PG on a ledger-compatible loopback port.
 
-CI's existing PG listens on 5432. This test-only forwarder preserves the ledger's
-20000..32767 rule without changing production validation or the CI workflow.
+CI uses a ledger-compatible port directly. This test-only forwarder also supports
+test PG on 5432 while preserving the ledger's 20000..32767 rule.
 """
 
 import os

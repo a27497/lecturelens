@@ -1,0 +1,11 @@
+{
+  "citation_verifiable_rate": 1.0,
+  "no_evidence_abstain_rate": 1.0,
+  "answer_supported_rate": 0.85,
+  "context_retention_rate": 0.9,
+  "socratic_compliance_rate": 0.75,
+  "protocol_failure_rate": 0.05,
+  "p95_turn_latency_s": 20,
+  "max_calls": 400,
+  "max_usd": 0.7
+}
