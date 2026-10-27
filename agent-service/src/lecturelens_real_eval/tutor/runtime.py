@@ -10,7 +10,7 @@ from psycopg.types.json import Jsonb
 from lecturelens_agent.study.store import StudyError
 
 from .citations import inline_citation_ids
-from .contracts import ABSTENTION, TOOLS
+from .contracts import ABSTENTION, TOOLS, Finish, validate_proposal
 
 MAX_SEARCH_CALLS = 2
 
@@ -25,7 +25,9 @@ Reserve square brackets for citations; use parentheses for math/indexing.
 If evidence is insufficient, finish with insufficient_evidence, no citations and no substantive claims.
 In Socratic mode ask a grounded guiding question/hint, not the full answer; use socratic_prompt.
 When the previous turn was socratic_prompt, a non-empty evaluation of the learner's reply is REQUIRED on the next supported finish, grounded in cited evidence.
-Do not claim automatic grading or mastery. Keep answers under 1600 characters. Tools and budgets are bounded.
+Finish limits: evidence_ids at most 4 unique ids, each cited inline; evaluation at most 500 characters; text at most 1600 characters.
+One size-limit repair is allowed per turn: resubmit finish_tutor_turn within the remaining budget; a second size violation fails the turn.
+Do not claim automatic grading or mastery. Tools and budgets are bounded.
 For insufficient_evidence use exactly: """
     + ABSTENTION
     + " with empty evaluation and evidence_ids."
@@ -282,7 +284,7 @@ class TutorRuntime:
         if not isinstance(response, dict) or response.get("name") not in names:
             raise StudyError("TUTOR_PROTOCOL_FAILURE")
         name = response["name"]
-        args = TOOLS[name].model_validate(response.get("arguments")).model_dump()
+        args = validate_proposal(name, response.get("arguments")).model_dump()
         with self.store.connect() as conn:
             session, turn = self.store.rows(conn, turn_id)
             self.guard(session, turn)
@@ -321,6 +323,21 @@ class TutorRuntime:
             # Unobserved ids remain an authority failure; only format mistakes are repairable.
             if not (set(ids) | set(inline)) <= set(state["selected"]):
                 raise StudyError("TUTOR_CITATION_MISMATCH")
+            # Authority checks precede repair even for oversized, unpublished proposals.
+            citations = self.read_evidence(session, ids)
+            if len(ids) > 4 or len(args["evaluation"]) > 500 or len(args["text"]) > 1600:
+                # Count the committed journal, so restart or another search cannot reset it.
+                if any(o.get("error") == "TUTOR_FINISH_LIMIT_EXCEEDED" for o in state["observations"]):
+                    raise StudyError("TUTOR_FINISH_LIMIT_EXCEEDED")
+                next_state = self.reject(
+                    state,
+                    name,
+                    "TUTOR_FINISH_LIMIT_EXCEEDED",
+                    "evidence_ids at most 4 unique ids, each cited inline; evaluation at most 500 characters; text at most 1600 characters. Resubmit finish_tutor_turn within the remaining budget. Only one limit repair is allowed per turn.",
+                )
+                return self.record_observation(turn_id, next_state)
+            # Publish only an unchanged proposal accepted by the original strict schema.
+            args = Finish.model_validate(args).model_dump()
             if set(inline) != set(ids) or len(ids) != len(set(ids)):
                 next_state = self.reject(
                     state,
@@ -329,7 +346,6 @@ class TutorRuntime:
                     "Every declared evidence_id must appear inline as [evidence_id] in text/evaluation. Inline ids must equal the unique declared set and come from observed search results. Correct the finish within the remaining budget.",
                 )
                 return self.record_observation(turn_id, next_state)
-            citations = self.read_evidence(session, ids)
             if args["outcome"] == "insufficient_evidence":
                 if ids:
                     raise StudyError("TUTOR_CITATION_MISMATCH")

@@ -251,7 +251,7 @@ def test_dialogue_filter_rejects_empty_unknown_or_duplicate_ids(ids):
         select_dialogues(scripts, ids)
 
 
-@pytest.mark.parametrize("fault", ["citation", "evaluation"])
+@pytest.mark.parametrize("fault", ["citation", "evaluation", "limit_ids", "limit_evaluation", "limit_text"])
 def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(isolated, fault):
     dsn, directory = isolated
     fake = fake_transport()
@@ -272,6 +272,16 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
                 for eid in args["evidence_ids"]:
                     args["text"] = args["text"].replace(f"[{eid}]", "")
                     args["evaluation"] = args.get("evaluation", "").replace(f"[{eid}]", "")
+            elif fault == "limit_ids":
+                args["evidence_ids"] = [e["evidence_id"] for e in body["evidence"]]
+                assert len(args["evidence_ids"]) > 4
+                args["text"] = "Which statement applies? " + " ".join(
+                    f"[{eid}]" for eid in args["evidence_ids"]
+                )
+            elif fault == "limit_evaluation":
+                args["evaluation"] = "E" * 501
+            elif fault == "limit_text":
+                args["text"] += "T" * 1601
             elif body["evaluation_required"]:
                 args["evaluation"] = ""
             function["arguments"] = json.dumps(args)
@@ -292,11 +302,21 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
     assert result["dialogues"] == 1 and result["turns"] == result["reviewed_turns"] == 3
     assert result["metrics"]["protocol_failure_rate"] == 0
     assert result["metrics"]["socratic_compliance_rate"] == 1
-    expected = "TUTOR_CITATION_MISMATCH" if fault == "citation" else "TUTOR_EVALUATION_REQUIRED"
+    expected = (
+        "TUTOR_FINISH_LIMIT_EXCEEDED"
+        if fault.startswith("limit_")
+        else "TUTOR_CITATION_MISMATCH"
+        if fault == "citation"
+        else "TUTOR_EVALUATION_REQUIRED"
+    )
     assert observations and all(o["error"] == expected for o in observations)
     dialogue = json.loads((directory / "focus/dialogues.jsonl").read_text())
     assert all(t["status"] == "completed" for t in dialogue["turns"])
     assert len(dialogue["turns"][-1]["proposals"]) == 3  # search, rejected finish, repair
+    for turn in dialogue["turns"]:
+        repaired = turn["proposals"][-1]["arguments"]
+        assert turn["answer"] == repaired["text"]
+        assert {c["evidence_id"] for c in turn["citations"]} == set(repaired["evidence_ids"])
 
 
 def test_filter_preserves_frozen_order():
@@ -469,3 +489,93 @@ def test_pending_or_unknown_accounting_can_never_pass():
     for accounting in ({"calls": 1, "nano_usd": 1, "pending": 1}, {"calls": None, "nano_usd": None}):
         result = summarize([], [], accounting, thresholds, None, False)
         assert result["verdict"] == "FAIL" and result["fatal"] == "REAL_EVAL_UNKNOWN_ACCOUNTING"
+
+
+@pytest.mark.parametrize("location", ["declared", "inline", "dropped_after_bad_schema"])
+@pytest.mark.parametrize("invented", ["v2-algorithms-l1-p99-e00", "v2-algorithms-l2-p01-e00"])
+def test_oversized_finish_checks_every_id_even_in_dropped_calls(isolated, location, invented):
+    from lecturelens_real_eval.runner import SnapshotAuthority
+    from lecturelens_real_eval.tutor.contracts import Finish
+
+    authority = SnapshotAuthority(json.loads((DATA.parent / "p7-real/snapshot.json").read_text()))
+    scope = dict(owner_id=1, course_id="oversized-citations", revision=1)
+    authority.register(scope, "algorithms-l1")
+    ids = [e["evidence_id"] for e in authority.rows(scope)][:8]
+    args = dict(outcome="answered", text=" ".join(f"[{eid}]" for eid in ids), evidence_ids=ids)
+    if location == "inline":
+        args["evaluation"] = f"Wrong [{invented}]"
+    else:
+        args["evidence_ids"] = ids + [invented]
+    wire = json.loads(response("finish_tutor_turn", args).content)
+    if location == "dropped_after_bad_schema":
+        wire["choices"][0]["message"]["tool_calls"].insert(
+            0,
+            {
+                "type": "function",
+                "function": {
+                    "name": "finish_tutor_turn",
+                    "arguments": json.dumps(
+                        {
+                            "outcome": "bad",
+                            "text": "T" * 1601,
+                            "evidence_ids": ids,
+                        }
+                    ),
+                },
+            },
+        )
+    ledger = account(isolated)
+    channel = Channel(ledger, transport=httpx.MockTransport(lambda _: httpx.Response(200, json=wire)))
+    provider = TutorProvider(channel, authority)
+    provider.scope = scope
+    schemas = [
+        {
+            "type": "function",
+            "function": {"name": "finish_tutor_turn", "parameters": Finish.model_json_schema()},
+        }
+    ]
+    with pytest.raises(EvalError, match="REAL_EVAL_PROTOCOL_FAILURE"):
+        provider.decide(MESSAGES, schemas, 20)
+    assert ledger.check()["blocked"] == "REAL_EVAL_CITATION_FABRICATED"
+    assert ledger.check()["calls"] == 1 and ledger.check()["pending"] == 0
+    assert len(provider.proposals) == (2 if location == "dropped_after_bad_schema" else 1)
+
+
+@pytest.mark.parametrize("fault", ["second_limit", "non_limit_schema"])
+def test_focused_schema_failure_remains_failed_turn_and_protocol_metric(isolated, fault):
+    dsn, directory = isolated
+    fake = fake_transport()
+
+    def invalid(request):
+        payload = json.loads(request.content)
+        result = fake.handle_request(request)
+        if payload["model"] != "deepseek-flash":
+            return result
+        wire = json.loads(result.content)
+        function = wire["choices"][0]["message"]["tool_calls"][0]["function"]
+        if function["name"] == "finish_tutor_turn":
+            args = json.loads(function["arguments"])
+            args["evaluation"] = "E" * 501
+            if fault == "non_limit_schema":
+                args["outcome"] = "bad"
+            function["arguments"] = json.dumps(args)
+            return httpx.Response(200, json=wire)
+        return result
+
+    result = run_evaluation(
+        dsn,
+        directory / "failed-schema.jsonl",
+        "failed-schema",
+        TutorPolicy(),
+        transport=httpx.MockTransport(invalid),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1"],
+    )
+    assert result["verdict"] == "PARTIAL" and result["fatal"] is None
+    assert result["metrics"]["protocol_failure_rate"] == 1
+    dialogue = json.loads((directory / "failed-schema/dialogues.jsonl").read_text())
+    code = "TUTOR_FINISH_LIMIT_EXCEEDED" if fault == "second_limit" else "REAL_EVAL_PROTOCOL_FAILURE"
+    assert len(dialogue["turns"]) == 3
+    for turn in dialogue["turns"]:
+        assert turn["error_code"] == code and turn["answer"] is None and not turn["citations"]
+        assert turn["model_calls"] == (3 if fault == "second_limit" else 2)

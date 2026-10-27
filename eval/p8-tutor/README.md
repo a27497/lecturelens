@@ -4,9 +4,9 @@ Offline mechanism implementation only; **zero real provider calls** in this task
 
 The first authorized live trial, `p8-real-review-20261027`, remains **FAIL** after **2 real calls / $0.0039189**, with `REAL_EVAL_CITATION_FABRICATED`. Its Flash answer used `Adj[u]`; the old bracket parser misclassified `u` as an evidence id. All 11 actual declared/inline ID references were authoritative. This was an evaluator/contract false positive; the failed run and its original ledger are retained as evidence, without rescoring it as a pass. See [the fix report](REPORT.md#offline-fix-round-1).
 
-Candidate **`p8-tutor-20261027-v3`** preserves the shared citation grammar and authority checks. Observed citation-format mistakes (including missing inline references or duplicate declarations) and missing evaluation after a Socratic prompt produce error observations, consume a tool slot and allow a corrected finish within the existing four-model/four-tool turn budget. Unobserved/fabricated IDs and authority failures remain fatal. Two authoritative searches are allowed per turn; after that only finish is offered. Exact abstention and guiding-question requirements remain enforced. Dialogues and thresholds are byte-identical to v2; all pinned inputs were rehashed, including the isolated compose file.
+Candidate **`p8-tutor-20261027-v4`** preserves the shared citation grammar and authority checks. Observed citation-format mistakes (including missing inline references or duplicate declarations) and missing evaluation after a Socratic prompt produce error observations, consume a tool slot and allow a corrected finish within the existing four-model/four-tool turn budget. Unobserved/fabricated IDs and authority failures remain fatal. Two authoritative searches are allowed per turn; after that only finish is offered. Exact abstention and guiding-question requirements remain enforced. Finish size limits remain four evidence IDs, 500 evaluation characters and 1,600 text characters. Exactly one size-only repair observation (`TUTOR_FINISH_LIMIT_EXCEEDED`) is allowed per turn; it consumes a tool slot and survives restart through the committed journal. A second size violation is a failed turn/protocol miss. No proposal is truncated. The eval adapter defers only these three upper bounds to the runtime; all other strict schema constraints and every declared/inline authority check, including dropped parallel calls, remain enforced. Dialogues and thresholds are byte-identical to `970bd00`; all pinned inputs were rehashed, including the isolated compose file.
 
-The separately executed r2 trial remains **PARTIAL**. Its citation, search-budget and missing-evaluation failures motivated this offline protocol change; they are not rescored as successes. The next proposed live trial is **`p8-protocol-focus-20261027`**, documented below and **not executed** here. See [protocol verification](REPORT.md#offline-protocol-hardening-v3).
+The separately executed r2 trial remains **PARTIAL**. Its citation, search-budget and missing-evaluation failures motivated this offline protocol change; they are not rescored as successes. The separately authorized focused trial `p8-protocol-focus-20261027` remains **PARTIAL**, with four Finish-size protocol failures reported by the operator. Its artifacts remain unchanged. This offline size-repair round does not rescore those failures. See [schema verification](REPORT.md#offline-finish-schema-repair-v4). The proposed full live run below is **not executed** here.
 
 ## Scripts and negative evidence
 
@@ -79,47 +79,42 @@ CREATE DATABASE is first-start only. Tests use `lecturelens_agent_test`; isolate
 ```bash
 AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
 uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
-  --database-port 25741 --network-records .data/p8-tutor/checks/protocol-full-safe-network \
+  --database-port 25741 --network-records .data/p8-tutor/checks/schema-full-safe-network \
   -- -q \
   -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
-  --junitxml=../.data/p8-tutor/checks/protocol-full-safe.xml
+  --junitxml=../.data/p8-tutor/checks/schema-full-safe.xml
 ```
 
 Standalone default mock run; never use the external ledger path for mocks:
 
 ```bash
-uv run --project agent-service --offline python eval/p8-tutor/run.py \
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/schema-mock-network \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger .data/p8-tutor/protocol-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
-  --run-id p8-protocol-mock-20261027
-python3 .data/p8-tutor/p8-protocol-mock-20261027/sample.py -n 5
+  --ledger .data/p8-tutor/schema-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-schema-mock-20261027
+python3 .data/p8-tutor/p8-schema-mock-20261027/sample.py -n 5
 ```
 
 Outputs: `dialogues.jsonl`, `reviews.jsonl`, `summary.json`, and standalone `sample.py`. Sampling prints N seeded dialogues with turns, outcomes, inline citations and full cited source text. Summary explicitly labels fake runs `NOT_RUN_MOCK_MECHANICS_ONLY`. Fake transport does not read credentials; its fixed reviewer judgments and negative responses only verify mechanics.
 
 ## Exact live command for a later reviewer — DO NOT run in this task
 
-The human operator must separately configure credentials and the required live opt-in in their shell. The application never loads private env files or sets the opt-in. This exact command is **documentation only**, with a fresh run ID/ledger and tighter $0.50/200-call caps:
+The human operator must separately configure credentials and the required live opt-in in their shell. The application never loads private env files or sets the opt-in. This requested full-suite command is **documentation only**, with a fresh run ID/ledger and no dialogue filter:
 
 ```bash
 cd /home/dev/projects/lecturelens-p8-tutor-protocol
 uv run --project agent-service --offline python eval/p8-tutor/run.py \
   --live \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-protocol-focus-20261027.jsonl \
-  --max-usd 0.50 --max-calls 200 --run-id p8-protocol-focus-20261027 \
-  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
-    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
-    algorithms-l1-1 probability-l2-1 probability-l3-3
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-schema-full-20261027.jsonl \
+  --max-usd 0.80 --max-calls 400 --run-id p8-schema-full-20261027
 ```
 
-This selects eight r2 failing dialogues covering citation/evaluation/search-budget errors (including an absent-topic turn) and three passing controls, preserving frozen script order. `--dialogue-ids` accepts space-separated unique frozen IDs; empty, unknown or duplicate IDs fail before ledger/provider entry. Focused summaries record `scope=focused` and selected IDs and return **PARTIAL** at best, even with perfect metrics; they cannot establish full-suite acceptance. Omitting the filter retains the 24-dialogue/80-turn gates and full mock command above. These are public development scripts, not fresh holdout data.
+The requested `$0.80` argument exceeds the unchanged frozen `$0.70` policy ceiling; current preflight rejects it before dispatch. No cap was raised to accommodate this documentation-only command. An operator needs a separately resolved budget configuration before using it. The 24-dialogue/80-turn gates and all quality thresholds remain unchanged.
+
+`--dialogue-ids` remains available for focused diagnostics. It accepts space-separated unique frozen IDs; empty, unknown or duplicate IDs fail before ledger/provider entry. Focused summaries record `scope=focused` and selected IDs and return **PARTIAL** at best, even with perfect metrics. These are public development scripts, not fresh holdout data.
 
 `AGENT_LLM_API_KEY` is read only inside the live sender; raw errors, body text and keys never enter the accounting ledger/logs. Key echoes in parsed or raw provider responses are rejected. All requests use the fixed HTTPS DeepSeek route, no redirects, no environment proxy, no retries. To check consistency without sending/reading the key, add `--check-ledger` with the same run ID, caps and candidate. Each run ID is single-use; restart cannot reset its budget or resend an unknown call.
 
-Stop only this project's PG when finished; retain its volume:
-
-```bash
-COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-protocol-20261027 \
-  -f eval/p8-tutor/compose.yaml stop postgres
-```
+This round leaves the isolated PostgreSQL project running for reviewer inspection; the reviewer stops it and retains its volume.

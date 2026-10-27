@@ -410,13 +410,13 @@ class Channel:
                 "dropped_tool_calls": len(parsed) - 1,
             }
             if validate:
-                try:
-                    # Ignored parallel calls are still proposals: an invented ID in
-                    # one must stop the round even though only the first is executed.
-                    for name, arguments in parsed:
+                # Inspect all proposals even after a schema failure: a fabricated ID
+                # in a later dropped call must still durably block the entire round.
+                for name, arguments in parsed:
+                    try:
                         validate({**result, "name": name, "arguments": arguments})
-                except Exception:  # noqa: BLE001 -- validation details may contain provider output
-                    code = "REAL_EVAL_PROTOCOL_FAILURE"
+                    except Exception:  # noqa: BLE001 -- validation details may contain provider output
+                        code = "REAL_EVAL_PROTOCOL_FAILURE"
         except Exception:  # noqa: BLE001 -- constant redacted boundary, no raw exception escapes
             code = "REAL_EVAL_REQUEST_FAILED"
         # Raised outside the except block: no raw exception context/key survives.

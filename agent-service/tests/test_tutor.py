@@ -610,3 +610,173 @@ def test_stale_session_fails_queued_turn_and_hides_summary_in_list(lab):
     with lab[0].connect() as conn:
         row = conn.execute("SELECT * FROM tutor_turn").fetchone()
         assert row["status"] == "failed" and row["error_code"] == "TUTOR_SESSION_STALE"
+
+
+def install_finish_limit_provider(lab, monkeypatch, fault, *, repeat=False):
+    """Expose eight authoritative observations and keep every oversized id visible."""
+    read = lab[1].read
+
+    def many(scope, action="CHECK", **args):
+        result = read(scope, action, **args)
+        if result["evidence"]:
+            rows = [{**result["evidence"][0], "evidence_id": f"e{i}"} for i in range(1, 9)]
+            result["evidence"] = (
+                [r for r in rows if r["evidence_id"] in args["evidence_ids"]] if action == "READ" else rows
+            )
+        return result
+
+    monkeypatch.setattr(lab[1], "read", many)
+    decide = lab[2].provider.decide
+    repaired = []
+
+    def oversized(messages, *args):
+        response = decide(messages, *args)
+        observations = json.loads(messages[-1]["content"])["observations"]
+        if response["name"] == "finish_tutor_turn":
+            if len(observations) == 1 or repeat:
+                args = response["arguments"]
+                if fault in {"ids", "combined"}:
+                    args.update(evidence_ids=[f"e{i}" for i in range(1, 9)])
+                    args["text"] = "Original " + " ".join(f"[{eid}]" for eid in args["evidence_ids"])
+                if fault in {"evaluation", "combined"}:
+                    args["evaluation"] = "E" * 501
+                if fault in {"text", "combined"}:
+                    args["text"] += "T" * 1601
+            else:
+                observation = observations[-1]
+                assert observation["error"] == "TUTOR_FINISH_LIMIT_EXCEEDED"
+                assert all(
+                    s in observation["message"] for s in ("4 unique", "500", "1600", "remaining budget")
+                )
+                # Deliberately choose the LAST observed ids: truncating the first proposal
+                # cannot accidentally satisfy the publication assertion.
+                response["arguments"].update(
+                    evidence_ids=["e8", "e6"],
+                    text="Repaired claim [e8] [e6]",
+                    evaluation="Repaired evaluation [e6]",
+                )
+                repaired.append(response["arguments"].copy())
+        return response
+
+    lab[2].provider.decide = oversized
+    return oversized, repaired
+
+
+@pytest.mark.parametrize("fault", ["ids", "evaluation", "text", "combined"])
+def test_finish_limit_observation_then_unchanged_repair_publishes(lab, monkeypatch, fault):
+    if fault == "evaluation":
+        run(lab, socratic=True)
+    _, repaired = install_finish_limit_provider(lab, monkeypatch, fault)
+    result = run(lab, "limits")
+    assert result["status"] == "completed" and result["model_calls"] == result["tool_calls"] == 3
+    assert result["answer"] == repaired[0]["text"]
+    assert result["evaluation"] == repaired[0]["evaluation"]
+    assert {c["evidence_id"] for c in result["citations"]} == set(repaired[0]["evidence_ids"])
+    with lab[0].connect() as conn:
+        row = conn.execute("SELECT checkpoint FROM tutor_turn ORDER BY ordinal DESC LIMIT 1").fetchone()
+    errors = [o["error"] for o in row["checkpoint"]["observations"] if "error" in o]
+    assert errors == ["TUTOR_FINISH_LIMIT_EXCEEDED"]
+
+
+@pytest.mark.parametrize("restart", [False, True])
+def test_second_finish_limit_violation_is_fatal_even_after_restart(lab, monkeypatch, restart):
+    provider, _ = install_finish_limit_provider(lab, monkeypatch, "ids", repeat=True)
+    submit(lab)
+    if restart:
+        act = lab[2].act
+
+        def pause(*args):
+            done = act(*args)
+            if args[1]["response"]["name"] == "finish_tutor_turn":
+                assert done is False
+                raise KeyboardInterrupt()
+            return done
+
+        monkeypatch.setattr(lab[2], "act", pause)
+        with pytest.raises(KeyboardInterrupt):
+            lab[2].execute(lab[0].candidates()[0])
+        with lab[0].connect() as conn:
+            row = conn.execute("SELECT * FROM tutor_turn").fetchone()
+        assert row["tool_calls"] == row["model_calls"] == 2
+        assert row["checkpoint"]["phase"] == "ready" and row["answer"] is None
+        assert row["checkpoint"]["observations"][-1]["error"] == "TUTOR_FINISH_LIMIT_EXCEEDED"
+        restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
+        restored.provider.decide = provider
+        restored.execute(lab[0].candidates()[0])
+    else:
+        lab[2].execute(lab[0].candidates()[0])
+    result = command(lab, "GET")["turns"][-1]
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_FINISH_LIMIT_EXCEEDED"
+    assert result["answer"] is None and not result["citations"]
+    assert result["model_calls"] == 3 and result["tool_calls"] == 2
+
+
+def test_finish_limit_repair_after_restart_does_not_replay_rejected_tool(lab, monkeypatch):
+    provider, repaired = install_finish_limit_provider(lab, monkeypatch, "ids")
+    record = lab[2].record_observation
+
+    def pause(turn_id, state):
+        result = record(turn_id, state)
+        if state["observations"][-1].get("error") == "TUTOR_FINISH_LIMIT_EXCEEDED":
+            assert result is False
+            raise KeyboardInterrupt()
+        return result
+
+    monkeypatch.setattr(lab[2], "record_observation", pause)
+    submit(lab)
+    with pytest.raises(KeyboardInterrupt):
+        lab[2].execute(lab[0].candidates()[0])
+    restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
+    restored.provider.decide = provider
+    restored.execute(lab[0].candidates()[0])
+    result = command(lab, "GET")["turns"][-1]
+    assert result["status"] == "completed" and result["answer"] == repaired[0]["text"]
+    assert result["model_calls"] == result["tool_calls"] == 3 and len(lab[1].searches) == 1
+
+
+@pytest.mark.parametrize("fault", ["unobserved", "authority_missing", "non_limit_schema"])
+def test_finish_limit_does_not_hide_authority_or_other_schema_failure(lab, monkeypatch, fault):
+    provider, _ = install_finish_limit_provider(lab, monkeypatch, "ids")
+
+    def invalid(*args):
+        response = provider(*args)
+        if response["name"] == "finish_tutor_turn":
+            if fault == "unobserved":
+                response["arguments"]["text"] += " [e9]"
+            elif fault == "authority_missing":
+                lab[1].missing = True
+            else:
+                response["arguments"]["evaluation"] = 524
+        return response
+
+    lab[2].provider.decide = invalid
+    result = run(lab)
+    expected = "TUTOR_PROTOCOL_FAILURE" if fault == "non_limit_schema" else "TUTOR_CITATION_MISMATCH"
+    assert result["error_code"] == expected and result["answer"] is None
+    assert result["model_calls"] == 2 and result["tool_calls"] == 1
+
+
+@pytest.mark.parametrize("budget", ["model", "tool", "deadline"])
+def test_finish_limit_repair_never_adds_budget(lab, monkeypatch, budget):
+    install_finish_limit_provider(lab, monkeypatch, "ids")
+    record = lab[2].record_observation
+
+    def exhaust(turn_id, state):
+        result = record(turn_id, state)
+        if state["observations"][-1].get("error") == "TUTOR_FINISH_LIMIT_EXCEEDED":
+            with lab[0].connect() as conn:
+                if budget == "model":
+                    conn.execute("UPDATE tutor_turn SET model_calls=4 WHERE turn_id=%s", (turn_id,))
+                elif budget == "tool":
+                    conn.execute("UPDATE tutor_turn SET tool_calls=4 WHERE turn_id=%s", (turn_id,))
+                else:
+                    conn.execute(
+                        "UPDATE tutor_turn SET deadline=now()-interval '1 second' WHERE turn_id=%s",
+                        (turn_id,),
+                    )
+        return result
+
+    monkeypatch.setattr(lab[2], "record_observation", exhaust)
+    result = run(lab)
+    assert result["error_code"] == ("TUTOR_DEADLINE" if budget == "deadline" else "TUTOR_BUDGET_EXHAUSTED")
+    assert result["answer"] is None and not result["citations"]

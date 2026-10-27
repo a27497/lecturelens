@@ -236,3 +236,126 @@ uv run --project agent-service --offline python eval/p8-tutor/run.py \
 Eight r2 failing dialogues span citation/evaluation/search-budget failures, including the absent-topic budget case; three r2 passing dialogues are controls. This focused run can return PARTIAL at best. The full-suite frozen numeric gates remain unchanged.
 
 Remaining risks: two searches may reduce recall; the existing four-call/deadline limits may still prevent repair when multiple independent mistakes occur. Unobserved IDs, authority changes and invalid abstention/Socratic outcomes remain fatal. Grounded evaluation, pedagogical quality and semantic support still need real-model measurement; deterministic reviewers establish no such quality. No unseen-course generalization, automatic grading, learner memory or scheduling is claimed. Conservative reservations may exhaust even the focused $0.50 budget before all turns complete. All historical failures and the initial interrupted broad check remain available.
+
+## Offline Finish-schema repair v4
+
+This round adds one local commit above `585c98d` on `codex/p8-tutor-protocol`. It uses only the authorized compose project `lecturelens-p8-tutor-protocol-20261027`, PostgreSQL `127.0.0.1:25741`, the separate `lecturelens_agent_test` database and isolated acceptance schemas/ledgers. PostgreSQL is left running for the reviewer. No Java/MySQL, frozen P7, sibling worktree, deployment or online configuration changes were made. No push, PR or merge was performed.
+
+The operator reports that `p8-protocol-focus-20261027` remains **PARTIAL**, with protocol_failure_rate **0.108** and four Finish-size failures: three proposals declaring 6–8 valid observed IDs and one 524-character evaluation after a Socratic prompt. Those historical artifacts and all earlier failures remain untouched; they were not rescored. This round made **zero real provider calls**, enabled no live switch, read no credentials or files under `/home/dev/lecturelens-eval/`, and used deterministic/fake transports only.
+
+The learner goal remains a supported course explanation or feedback after a guiding question. The model chooses search and finish, sees an explicit size-error observation and chooses a corrected finish. Only that accepted proposal becomes the stored answer/evaluation/citations. Search, cancellation, version/ownership fences, idempotency, deadlines and persistent budgets retain their existing behavior.
+
+Implementation:
+
+- `tutor/contracts.py` defines a private `FinishProposal` that defers exactly three upper bounds while preserving strict types, required fields, identifier constraints, minimum text length and rejection of extra fields. The original `Finish` remains the advertised JSON schema and publication validator: **4 evidence IDs / 500 evaluation characters / 1,600 text characters**. Neither schema limits nor thresholds were relaxed.
+- `tutor/runtime.py` checks every declared/inline ID against observed evidence and re-READs declared evidence before offering size repair. A size-only schema violation records `TUTOR_FINISH_LIMIT_EXCEEDED`, the exact limits and a resubmission instruction through `reject()` / `record_observation`. The observation and charged tool slot commit atomically at `ready`. The committed journal is the durable repair counter; restart or another search cannot reset it. A second size violation fails the turn with terminal `TUTOR_FINISH_LIMIT_EXCEEDED`. No extra call/tool slots or time are granted; exhausted budgets/deadlines retain their existing codes. Publication revalidates the original unchanged proposal against strict `Finish`. Nothing is truncated.
+- `tutor_runner.py` validates against the private proposal schema only after its existing complete canonical citation scan. Other schema failures remain `REAL_EVAL_PROTOCOL_FAILURE`. `tutor_channel.py` continues validating all parsed parallel proposals after an earlier schema failure, so a fabricated citation in a later dropped call still durably blocks the round. Unobserved runtime IDs remain hard `TUTOR_CITATION_MISMATCH`.
+- System instructions state all limits and the one-repair rule. Generic rules contain no dialogue, lecture or task IDs. The normal mock provider/transport is unchanged; tests inject malformed proposals around it.
+
+Frozen candidate: **`p8-tutor-20261027-v4`**, manifest SHA-256 **`3a89e7a62e598a9e7ab82cb894865af8acb7ba3ce020478267ddb8da59952e8a`**. All **17** pinned hashes match final bytes. Direct comparisons with `git show 970bd00:<path>` confirm byte-identical `dialogues.json` (SHA-256 `8d8ca2b8f9ca0c04f433cc733eb3a663456fbdb956532cb0d23c79593b670fea`) and `thresholds.json` (`21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da`). No caps changed, including the frozen **400 calls / $0.70** ceiling.
+
+### Guarded verification
+
+Targeted command actually run:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/schema-targeted-network \
+  -- -q tests/test_tutor.py tests/test_tutor_citations.py tests/test_p8_tutor_eval.py \
+  --junitxml=../.data/p8-tutor/checks/schema-targeted.xml
+```
+
+**124 passed / 0 failed/errors/skipped**, **70.90 s**, with one existing upstream Starlette/AnyIO deprecation warning. Coverage includes each individual limit and simultaneous limits; oversized evaluation after a Socratic prompt; a valid repaired finish published without changes; a second violation with and without restart; successful repair after restart without replay; model/tool/deadline exhaustion; authority failures preceding repair; strict non-limit schema/type failures, including invalid items beyond the fourth ID; and fabricated/foreign IDs in oversized declarations, inline evaluation and dropped parallel calls after an earlier schema failure. Focused fake-transport runs through `tutor_runner` repair each limit and remain **PARTIAL** by scope. Repeated size and non-limit schema failures remain failed turns and yield protocol_failure_rate **1.0**, rather than being relabeled successful.
+
+Mutation command actually run:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-schema-mutations.py
+```
+
+| Mutant | Targeted regression | Result |
+| --- | --- | --- |
+| Fail immediately on the first size violation | `test_finish_limit_observation_then_unchanged_repair_publishes[ids]` | **Killed**, exactly 1 failed / 0 errors/skips |
+| Allow unlimited size repairs after restart | `test_second_finish_limit_violation_is_fatal_even_after_restart[True]` | **Killed**, exactly 1 failed / 0 errors/skips |
+
+Each mutant ran under `scripts/eval/check-study-offline.py` with the same isolated PG and network guard. The script restores source bytes in `finally`, checks their SHA-256, and records mutant/patch digests, exact commands and counts in `.data/p8-tutor/checks/schema-mutations.json`. Patches, logs, JUnit and network records are retained as `schema-mutation-*`; source was restored before broad verification and standalone mocks. Mutation stdout: `schema-mutations.log`. All paths are under `.data/p8-tutor/checks/`.
+
+Broad selected-suite command actually run, after source restoration:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/schema-full-safe-network \
+  -- -q \
+  -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
+  --junitxml=../.data/p8-tutor/checks/schema-full-safe.xml
+```
+
+**1,057 passed / 0 failures/errors/skips / 7 deselected**, **347.26 s**. The exclusions are the same seven P7 live-opt-in fake cases documented for v3; none was edited or executed in this round. All **124 Tutor cases** ran (55 runtime/app, 24 citation/schema, 45 eval/channel), adding 32 cases over v3. This is a broad selected-suite pass, not an unrestricted full-suite result. Two existing upstream Starlette/AnyIO and certificate deprecation warnings remain. Complete output/JUnit and network records: `.data/p8-tutor/checks/schema-full-safe.{log,xml}` and `schema-full-safe-network/`. No initial interrupted or failed verification run occurred in this round; mutant failures are intentional and separately recorded.
+
+Lint, changed-file format and whitespace checks passed:
+
+```bash
+uv run --project agent-service --offline ruff check agent-service eval/p8-tutor
+uv run --project agent-service --offline ruff format --check \
+  agent-service/src/lecturelens_real_eval/tutor/contracts.py \
+  agent-service/src/lecturelens_real_eval/tutor/runtime.py \
+  agent-service/src/lecturelens_real_eval/tutor_channel.py \
+  agent-service/src/lecturelens_real_eval/tutor_runner.py \
+  agent-service/tests/test_tutor.py agent-service/tests/test_tutor_citations.py \
+  agent-service/tests/test_p8_tutor_eval.py
+git diff --check
+```
+
+Java/frontend/browser checks were not rerun; those layers are unchanged. These checks establish execution/protocol behavior, not real-model task quality.
+
+### Standalone offline mocks
+
+The existing `run-guarded-tutor.py` launcher clears provider configuration, installs the inherited external-network fence, and asserts guard startup before running the CLI. Full mock command actually run:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/schema-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/schema-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-schema-mock-20261027
+```
+
+Full mock result: **PASS — NOT_RUN_MOCK_MECHANICS_ONLY**, **24 dialogues / 80 turns / 80 fixed reviews / 240 fake requests**, 0 protocol failures, 0 pending and no blocked state. All fixed mock citation/support/context/Socratic/abstention rates are 1.0. p95 Tutor latency **0.413 s**; simulated accounting **$0.063168**, real spend **$0**. Outputs remain in `.data/p8-tutor/p8-schema-mock-20261027/`; stdout is `checks/schema-mock.log`.
+
+A separate guarded `--check-ledger` with the same run ID, policy and local ledger returned exactly **240 calls / 63,168,000 nano-USD / 0 pending / no blocked state**, verifying PG/JSONL agreement without dispatch. Stdout: `.data/p8-tutor/checks/schema-ledger.log`; network records: `schema-ledger-network/`.
+
+Focused mock command actually run:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/schema-focus-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/schema-focus-mock-ledger.jsonl \
+  --max-usd 0.50 --max-calls 200 --run-id p8-schema-focus-mock-20261027 \
+  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
+    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
+    algorithms-l1-1 probability-l2-1 probability-l3-3
+```
+
+Focused mock result: **PARTIAL by scope — NOT_RUN_MOCK_MECHANICS_ONLY**, **11 dialogues / 37 turns / 37 fixed reviews / 111 fake requests**, 0 protocol failures, no fatal error, 0 pending and no blocked state. All fixed mock rates are 1.0; p95 Tutor latency **0.402 s**; simulated accounting **$0.0292152**, real spend **$0**. Outputs: `.data/p8-tutor/p8-schema-focus-mock-20261027/`; stdout: `checks/schema-focus-mock.log`. The focused result is not full acceptance. The injected size-repair end-to-end tests above also remain focused PARTIAL; ordinary standalone mocks exercise the unchanged baseline transport.
+
+All targeted, mutation, broad, full-mock, focused-mock and ledger launchers recorded **zero denied external connections**. They cleared provider configuration and enforced the startup socket fence. The complete final verification index is `.data/p8-tutor/checks/schema-verification.json`.
+
+### Exact full-suite live command — NOT EXECUTED
+
+For a separately authorized operator, with credentials and opt-in configured independently. This is the requested documentation-only command, with **no `--dialogue-ids`**:
+
+```bash
+cd /home/dev/projects/lecturelens-p8-tutor-protocol
+uv run --project agent-service --offline python eval/p8-tutor/run.py \
+  --live \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-schema-full-20261027.jsonl \
+  --max-usd 0.80 --max-calls 400 --run-id p8-schema-full-20261027
+```
+
+Constraint conflict: the requested `$0.80` exceeds the unchanged frozen `$0.70` policy ceiling. Current preflight rejects that argument before dispatch. The exact command is documented, but no cap was relaxed to make it executable; an operator must separately resolve that budget mismatch. This is the only task deviation/qualification. No live command was executed and no private ledger/env file was accessed.
+
+Remaining risks: a real model may fail its single size repair or combine it with citation/evaluation mistakes; four calls/tools and the existing deadline may leave no recovery budget. A second violation still counts as a failed turn/protocol miss. Two searches can limit recall, and conservative reservations can exhaust the frozen spend cap. Fake transports and fixed reviewers prove mechanics only; grounded support, context retention, Socratic pedagogy and real-model protocol improvement remain unverified. No unseen-course generalization, automatic grading, long-term memory or scheduling is claimed. Historical failed/live records remain unchanged. The reviewer is responsible for stopping this round's still-running PG project.

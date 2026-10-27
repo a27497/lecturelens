@@ -16,7 +16,7 @@ import httpx
 from lecturelens_agent.contracts import Contract
 from lecturelens_agent.study.acceptance_cost import verify_development_agent
 from lecturelens_real_eval.tutor.citations import inline_citation_ids
-from lecturelens_real_eval.tutor.contracts import ABSTENTION, TOOLS, Command
+from lecturelens_real_eval.tutor.contracts import ABSTENTION, Command, validate_proposal
 from lecturelens_real_eval.tutor.runtime import MockTutor, TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
 
@@ -87,7 +87,7 @@ class TutorProvider:
             if any(not isinstance(e, str) or e not in canonical for e in ids):
                 self.channel.ledger.block("REAL_EVAL_CITATION_FABRICATED")
                 raise EvalError("REAL_EVAL_CITATION_FABRICATED")
-        TOOLS[result["name"]].model_validate(result["arguments"])
+        validate_proposal(result["name"], result["arguments"])
 
 
 def fake_transport():
