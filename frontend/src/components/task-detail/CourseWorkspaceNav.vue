@@ -6,6 +6,7 @@ defineEmits<{ change: [workspace: CourseWorkspace] }>();
 
 const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "agent", label: "学习助手" },
+  { value: "tutor", label: "Tutor 对话" },
   { value: "flashcards", label: "闪卡复习" },
   { value: "overview", label: "概览" },
   { value: "content", label: "课程内容" },
@@ -14,11 +15,11 @@ const items: Array<{ value: CourseWorkspace; label: string }> = [
   { value: "files", label: "下载" },
   { value: "technical", label: "处理详情" },
 ];
-const primary = ["agent", "qa", "flashcards"];
+const primary = ["agent", "tutor", "qa", "flashcards"];
 const isPrimary = (value: string, materials?: boolean) => primary.includes(value) || (!materials && value === "study");
 function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
   if (!compact) return fallback;
-  return value === "content" ? "课程材料" : value === "agent" ? "解释与练习" : value === "qa" ? "Tutor 问答" : fallback;
+  return value === "content" ? "课程材料" : value === "agent" ? "解释与练习" : value === "qa" ? "课程问答" : fallback;
 }
 </script>
 

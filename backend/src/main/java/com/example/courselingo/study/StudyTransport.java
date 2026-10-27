@@ -47,6 +47,10 @@ public class StudyTransport implements AutoCloseable {
         return invoke("/internal/v1/study/command",payload,true);
     }
 
+    public JsonNode tutor(Map<String,Object> payload) {
+        return invoke("/internal/v1/tutor/command",payload,true);
+    }
+
     public JsonNode models(Map<String,Object> payload) {
         return invoke("/internal/v1/models/command",payload,false);
     }
@@ -66,7 +70,8 @@ public class StudyTransport implements AutoCloseable {
                 catch(Exception ignored) { /* Never reflect an unstructured provider error body. */ }
                 boolean studyDiagnostic=java.util.Set.of("ATTEMPT_VERSION_CONFLICT","REQUEST_KEY_CONFLICT",
                     "ARTIFACT_NOT_FOUND_OR_STALE","QUESTION_NOT_FOUND","FEEDBACK_DISABLED","ATTEMPT_NOT_FOUND",
-                    "FEEDBACK_NOT_FOUND","FEEDBACK_VERSION_CONFLICT","SESSION_BUSY").contains(code);
+                    "FEEDBACK_NOT_FOUND","FEEDBACK_VERSION_CONFLICT","SESSION_BUSY",
+                    "TUTOR_SESSION_STALE","TUTOR_SESSION_NOT_FOUND","TUTOR_SESSION_BUDGET","TUTOR_TURN_NOT_FOUND").contains(code);
                 if (!courseScope || code.matches("MODEL_[A-Z_]{1,70}") || studyDiagnostic) {
                     if (!code.matches("MODEL_[A-Z_]{1,70}") && !studyDiagnostic) code="MODEL_MANAGEMENT_UNAVAILABLE";
                     throw new BusinessException(response.statusCode()==404 ? ErrorCode.STUDY_NOT_FOUND

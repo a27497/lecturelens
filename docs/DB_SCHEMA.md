@@ -642,3 +642,9 @@ card/request_key 与 card/expected_version 分别唯一。三表沿 Run 删除�
 `study_run.task_kind` 增加 flashcards，旧候选约束被有意扩展；独立队列状态与活动唯一索引阻止旧 worker 消费。
 迁移在 `study/flashcards.py:SCHEMA`，由 `StudyStore.initialize()` 的原 advisory lock 保护，无 MySQL/Flyway 变更。
 具体幂等、并发和删除语义见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+### P8 Tutor PostgreSQL additions (experimental)
+
+`lecturelens_real_eval.tutor.store.TutorStore.initialize()` applies additive idempotent DDL using the Agent migration advisory lock. `tutor_session` owns scoped conversation identity/revision, status, budgets and bounded summary; `tutor_turn` owns ordered idempotent submissions, outcomes, canonical citations, usage, cancellation/deadline and response/observation checkpoints. Turns cascade on session deletion. Indexes enforce one active turn and unique session/client ID and ordinal. See [P8 state and failure semantics](P8_TUTOR.md).
+
+The isolated evaluation ledger separately creates `p8_tutor_real_run` and `p8_tutor_real_event`; these are not course/business tables. There are no Tutor MySQL tables or Flyway migrations.

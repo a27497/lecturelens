@@ -77,3 +77,7 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
 
 可选发布审批默认关闭：浏览器勾选或 START/START_FEEDBACK 使用 `approval_required=true`。审批与调用日志恢复语义见 [审批与崩溃恢复](../docs/STUDY_APPROVAL_RECOVERY.md)，逐点强制终止实测见 [报告](../eval/approval-recovery-20261014/README.md)。
+
+### Experimental P8 Tutor
+
+`lecturelens_real_eval.tutor.app:create_app --factory` is an optional ASGI entry point retaining the original service routes. Set `TUTOR_ENABLED=true` with `AGENT_LLM_MODE=mock` to initialize `tutor_session/tutor_turn` and its bounded worker; real product mode is rejected. Java's Study gateway must also be enabled. See [P8 integration and rollback](../docs/P8_TUTOR.md) and [isolated offline tests/eval](../eval/p8-tutor/README.md). The original `lecturelens_agent` package and frozen manifests are unchanged.

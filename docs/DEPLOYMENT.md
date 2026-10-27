@@ -333,3 +333,7 @@ docker compose --env-file .env down
 由 Python 初始化，Java 不执行迁移。读/评分可消费已有有效卡片，生成在 real 模式被明确拒绝。
 不要将 P7 新状态改成旧 worker 能消费的状态。后续发布与真实 Provider 适配需独立审查和授权；
 隔离启动与检查命令见 [P7 报告](../eval/p7-flashcards/REPORT.md) 和 [设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+### P8 Tutor（可选实验，未部署）
+
+原默认启动命令不自动启用 Tutor。离线 Mock 调试使用 `lecturelens_real_eval.tutor.app:create_app --factory` 作为 ASGI 入口，并设置 `TUTOR_ENABLED=true`、`AGENT_LLM_MODE=mock`；网关沿用 Java `STUDY_AGENT_ENABLED` 与既有签名/课程权限配置。不得将独立真实评测 adapter 安装到产品工厂。新增 PG 表通过初始化幂等 DDL 创建，Java/MySQL 无迁移。完整配置、预算、停止与回滚见 [P8 Tutor](P8_TUTOR.md)。
