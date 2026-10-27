@@ -179,10 +179,28 @@ def review_turn(channel, history, script, turn):
             },
         }
     ]
-    response = channel.request(
-        messages, schemas, purpose="review", validate=lambda r: Review.model_validate(r["arguments"])
-    )
-    judged = Review.model_validate(response["arguments"]).model_dump()
+    # Reviewer transport/schema retries each reserve and settle through Channel.
+    # Tutor proposals never use this retry path; the same run budget bounds all attempts.
+    for attempt in range(1, 4):
+        try:
+            response = channel.request(
+                messages, schemas, purpose="review", validate=lambda r: Review.model_validate(r["arguments"])
+            )
+            break
+        except Exception as error:  # noqa: BLE001 -- retain attempt count without exposing provider details
+            if isinstance(error, EvalError) and error.code in {
+                "REAL_EVAL_PROTOCOL_FAILURE",
+                "REAL_EVAL_REQUEST_FAILED",
+            }:
+                if channel.ledger.check()["blocked"]:
+                    error.review_attempts = attempt
+                    raise
+                if attempt < 3:
+                    continue
+                return {"error": "REAL_EVAL_REVIEW_FAILED", "review_attempts": attempt}
+            error.review_attempts = attempt
+            raise
+    judged = {**Review.model_validate(response["arguments"]).model_dump(), "review_attempts": attempt}
     # A failed/unpublished answer cannot supply an antecedent, even
     # if an otherwise supported response guesses one from the lecture or task label.
     previous = history[-1] if history else None
@@ -388,13 +406,25 @@ def run_evaluation(
                     try:
                         judged = review_turn(channel, history, task, turn)
                         record = {"dialogue_id": script["dialogue_id"], "ordinal": ordinal, **judged}
-                    except Exception:  # noqa: BLE001 -- retain failed review without raw channel exceptions
+                    except Exception as error:  # noqa: BLE001 -- retain failed review without raw channel exceptions
                         record = {
                             "dialogue_id": script["dialogue_id"],
                             "ordinal": ordinal,
                             "error": "REAL_EVAL_REVIEW_FAILED",
+                            "review_attempts": getattr(error, "review_attempts", 1),
                         }
-                        fatal = ledger.check()["blocked"] or "REAL_EVAL_REVIEW_FAILED"
+                        if (
+                            isinstance(error, EvalError)
+                            and error.code.startswith("REAL_EVAL_")
+                            and error.code
+                            not in {
+                                "REAL_EVAL_REVIEW_FAILED",
+                                "REAL_EVAL_PROTOCOL_FAILURE",
+                                "REAL_EVAL_REQUEST_FAILED",
+                            }
+                        ):
+                            fatal = error.code
+                    fatal = ledger.check()["blocked"] or fatal
                     reviews.append(record)
                     append(directory / "reviews.jsonl", record)
                     if fatal:

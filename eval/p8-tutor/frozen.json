@@ -11,7 +11,7 @@
     "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "4ebd857bdaee92c104a71f4231e03d9933ade996e42d74f0f0b4a3398c7262be",
     "agent-service/src/lecturelens_real_eval/tutor/store.py": "0851a265833fd3d3c0ee16a8096caa4aa96b7af7c8b82c60ebb81e05dc87a19e",
     "agent-service/src/lecturelens_real_eval/tutor_channel.py": "6620a4a3fee710827bd4dc51b109d07654968c000a610db8acaee2ccac46b193",
-    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "c4d29cce8e80937c14264d2080dd09d6f481c1fb8159ba000ace9638216157e8",
+    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "d936ef4e99f203f697c56988d54e22f21625c80297611b9e0c9a067ee8dfd582",
     "eval/p7-real/snapshot.json": "a3334f992261fbd8f144e783b25fcf3cfde37201fb5f28e8403564a931d44ef5",
     "eval/p8-tutor/compose.yaml": "6b548a72f6c08eed46ca3bf2f9268cb74ecbd47dc66dbfa5a9f63f5c22da7b5f",
     "eval/p8-tutor/dialogues.json": "7a4965570a55720917b462640dd17b00eac99e890191c4ccdc3d05bfa840b512",
@@ -19,6 +19,6 @@
     "eval/p8-tutor/sample.py": "04cc28ceb3958410f3bf51d83a5878c6896e554bfbc176f8ade69de505ce736e",
     "eval/p8-tutor/thresholds.json": "21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da",
     "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b",
-    "eval/p8-tutor/run-repair-mutations.py": "91bdeafe930b2b67ade2f752406e261b9c76e79d4fb237435c804027046c42ca"
+    "eval/p8-tutor/run-repair-mutations.py": "911032f277f0f486a1637c15cb258cf3303880eefb79d61978635fcc45f588b6"
   }
 }

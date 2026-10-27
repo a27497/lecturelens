@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNTIME = ROOT / "agent-service/src/lecturelens_real_eval/tutor/runtime.py"
 RUNNER = ROOT / "agent-service/src/lecturelens_real_eval/tutor_runner.py"
+FROZEN = ROOT / "eval/p8-tutor/frozen.json"
 CHECKS = ROOT / ".data/p8-tutor/checks"
 
 
@@ -29,7 +30,7 @@ def main():
         parser.error("Invalid artifact label")
     manifest = CHECKS / f"{args.label}-mutations.json"
     assert not manifest.exists()
-    originals = {path: path.read_bytes() for path in (RUNTIME, RUNNER)}
+    originals = {path: path.read_bytes() for path in (RUNTIME, RUNNER, FROZEN)}
     environment = {
         k: os.environ[k]
         for k in ("PATH", "HOME", "USER", "LANG", "LC_ALL")
@@ -39,6 +40,20 @@ def main():
         "postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test"
     )
     cases = [
+        (
+            "review-retry-removed",
+            RUNNER,
+            "                if attempt < 3:\n",
+            "                if False:\n",
+            "tests/test_p8_tutor_eval.py::test_reviewer_retry_is_bounded_audited_and_continues_suite[schema-2]",
+        ),
+        (
+            "review-failure-kills-suite",
+            RUNNER,
+            '                    fatal = ledger.check()["blocked"] or fatal\n',
+            '                    fatal = ledger.check()["blocked"] or ("REAL_EVAL_REVIEW_FAILED" if record.get("error") else fatal)\n',
+            "tests/test_p8_tutor_eval.py::test_reviewer_retry_is_bounded_audited_and_continues_suite[schema-3]",
+        ),
         (
             "silent-unobserved-dropping",
             RUNTIME,
@@ -143,6 +158,13 @@ def main():
         )
         try:
             source.write_text(mutant)
+            # Exercise the mutant behavior past verify_inputs; otherwise integration
+            # tests could kill it merely because its source digest changed.
+            frozen = json.loads(originals[FROZEN])
+            frozen["files"][str(source.relative_to(ROOT))] = hashlib.sha256(
+                mutant.encode()
+            ).hexdigest()
+            FROZEN.write_text(json.dumps(frozen, indent=2) + "\n")
             command = [
                 sys.executable,
                 "scripts/eval/check-study-offline.py",
@@ -207,6 +229,7 @@ def main():
             )
         finally:
             source.write_bytes(original)
+            FROZEN.write_bytes(originals[FROZEN])
             assert all(p.read_bytes() == data for p, data in originals.items())
     manifest.write_text(
         json.dumps(

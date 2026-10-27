@@ -722,7 +722,7 @@ def test_context_followup_non_penalty_preserves_other_judgments_and_failed_turns
     elif kind == "nonexact_abstain":
         turn["answer"] += " The bound is always tight."
     result = review_turn(FixedReview(), history, script, turn)
-    assert result == {**judgments, "context_retained": kind == "clean_abstain"}
+    assert result == {**judgments, "context_retained": kind == "clean_abstain", "review_attempts": 1}
 
     # Expected-abstain follow-ups stay in the denominator; failed turns stay misses
     # even if a stale review says context was retained.
@@ -881,3 +881,128 @@ def test_fake_runner_downgrades_context_after_unpublished_turn(isolated):
     reviews = [json.loads(line) for line in (directory / "cascade/reviews.jsonl").read_text().splitlines()]
     assert reviews[0]["ordinal"] == 2 and reviews[0]["context_retained"] is False
     assert reviews[1]["context_retained"] is True
+
+
+@pytest.mark.parametrize("failures", [2, 3])
+@pytest.mark.parametrize("fault", ["schema", "request"])
+def test_reviewer_retry_is_bounded_audited_and_continues_suite(isolated, failures, fault):
+    dsn, directory = isolated
+    fake = fake_transport()
+    review_calls = 0
+
+    def flaky_review(request):
+        nonlocal review_calls
+        payload = json.loads(request.content)
+        if payload["model"] == "deepseek-v4-pro":
+            review_calls += 1
+            if review_calls <= failures:
+                if fault == "request":
+                    return httpx.Response(503, text="private provider body")
+                # A parsed tool call with incomplete Review fields reproduces the live failure.
+                return response("review_tutor_turn", {"answer_supported": True})
+        return fake.handle_request(request)
+
+    result = run_evaluation(
+        dsn,
+        directory / "review-retry.jsonl",
+        "review-retry",
+        TutorPolicy(),
+        transport=httpx.MockTransport(flaky_review),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1", "algorithms-l1-2"],
+    )
+    assert result["verdict"] == "PARTIAL" and result["fatal"] is None
+    assert result["dialogues"] == 2 and result["turns"] == result["reviewed_turns"] == 6
+    assert result["accounting"]["calls"] == 20 and review_calls == 8
+    assert result["accounting"]["blocked"] is None and result["accounting"]["pending"] == 0
+    output = directory / "review-retry"
+    reviews = [json.loads(line) for line in (output / "reviews.jsonl").read_text().splitlines()]
+    assert len(reviews) == 6 and len({(r["dialogue_id"], r["ordinal"]) for r in reviews}) == 6
+    assert reviews[0]["review_attempts"] == 3
+    assert all(r["review_attempts"] == 1 and "error" not in r for r in reviews[1:])
+    if failures == 3:
+        assert reviews[0] == dict(
+            dialogue_id="algorithms-l1-1",
+            ordinal=1,
+            error="REAL_EVAL_REVIEW_FAILED",
+            review_attempts=3,
+        )
+        assert result["metrics"]["answer_supported_rate"] < 1
+    else:
+        assert reviews[0]["answer_supported"] and "error" not in reviews[0]
+    rows = [json.loads(line) for line in (output / "dialogues.jsonl").read_text().splitlines()]
+    assert all(t["status"] == "completed" and t["model_calls"] == 2 for d in rows for t in d["turns"])
+    # Every review attempt has its own durable reservation and settlement, mirrored in PG.
+    ledger = Ledger(
+        dsn,
+        directory / "review-retry.jsonl",
+        "review-retry",
+        replace(TutorPolicy(), candidate_sha256=result["candidate_sha256"]),
+    )
+    assert ledger.check() == result["accounting"]
+    records = [json.loads(line) for line in ledger.path.read_text().splitlines()]
+    review_records = [r for r in records if r["model"] == "deepseek-v4-pro"]
+    assert len(review_records) == 16
+    assert sum(r["state"] == "reserved" for r in review_records) == 8
+    failed = [r for r in review_records if r["state"] == "failed"]
+    assert len(failed) == failures
+    code = "REAL_EVAL_PROTOCOL_FAILURE" if fault == "schema" else "REAL_EVAL_REQUEST_FAILED"
+    assert all(r["error"] == code and r["charged_nano_usd"] == r["reserved_nano_usd"] for r in failed)
+    assert "private provider body" not in json.dumps(records) + (output / "reviews.jsonl").read_text()
+
+
+@pytest.mark.parametrize("code", ["REAL_EVAL_REVIEW_FAILED", "REAL_EVAL_DURABILITY_REQUIRED", "unexpected"])
+def test_reviewer_does_not_retry_other_errors_and_preserves_hard_stops(isolated, monkeypatch, code):
+    original = Channel.request
+    review_calls = 0
+
+    def fail_review(self, *args, **kwargs):
+        nonlocal review_calls
+        if kwargs.get("purpose") == "review":
+            review_calls += 1
+            raise ValueError("private details") if code == "unexpected" else EvalError(code)
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(Channel, "request", fail_review)
+    dsn, directory = isolated
+    result = run_evaluation(
+        dsn,
+        directory / "other-error.jsonl",
+        "other-error",
+        TutorPolicy(),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1"],
+    )
+    hard = code == "REAL_EVAL_DURABILITY_REQUIRED"
+    assert result["fatal"] == (code if hard else None)
+    assert result["turns"] == review_calls == (1 if hard else 3)
+    reviews = [
+        json.loads(line) for line in (directory / "other-error/reviews.jsonl").read_text().splitlines()
+    ]
+    assert all(r["error"] == "REAL_EVAL_REVIEW_FAILED" and r["review_attempts"] == 1 for r in reviews)
+    assert "private details" not in json.dumps(result) + json.dumps(reviews)
+
+
+def test_reviewer_retry_stops_on_run_budget_block(isolated):
+    dsn, directory = isolated
+    fake = fake_transport()
+
+    def invalid_review(request):
+        if json.loads(request.content)["model"] == "deepseek-v4-pro":
+            return response("review_tutor_turn", {"answer_supported": True})
+        return fake.handle_request(request)
+
+    result = run_evaluation(
+        dsn,
+        directory / "review-budget.jsonl",
+        "review-budget",
+        TutorPolicy(max_calls=3),
+        transport=httpx.MockTransport(invalid_review),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1", "algorithms-l1-2"],
+    )
+    assert result["fatal"] == result["accounting"]["blocked"] == "REAL_EVAL_BUDGET_EXHAUSTED"
+    assert result["verdict"] == "FAIL" and result["turns"] == 1
+    assert result["accounting"]["calls"] == 3 and result["accounting"]["pending"] == 0
+    record = json.loads((directory / "review-budget/reviews.jsonl").read_text())
+    assert record["error"] == "REAL_EVAL_REVIEW_FAILED" and record["review_attempts"] == 2

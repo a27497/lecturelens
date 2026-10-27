@@ -1,6 +1,6 @@
 # P8 offline implementation report — 2026-10-27
 
-Current round: [`p8-tutor-20261027-v6` controller-assembled citations](#offline-controller-assembled-citations-v6) on `codex/p8-tutor-protocol`, using only port **25741**. Earlier sections preserve historical candidates and their own worktree/port commands.
+Current round: [`p8-tutor-20261027-v7` reviewer retry and suite continuation](#offline-reviewer-retry-and-suite-continuation-v7) on `codex/p8-tutor-protocol`, using only port **25741**. Earlier sections preserve historical candidates and their own worktree/port commands.
 
 Implemented on `codex/p8-tutor` in its isolated worktree, based on P7 real-eval `e1e7af2`. The original implementation work made no real provider calls, push, PR, merge, deployment, private env-file access or online configuration changes. The later authorized live failure and offline fix are recorded below. Deterministic checks do not establish teaching quality.
 
@@ -700,3 +700,33 @@ Both are **NOT_RUN_MOCK_MECHANICS_ONLY**: all fixed citation/support/context/Soc
 A guarded `--check-ledger` with the full mock's same run ID/local ledger/caps returned **240 calls / 63,168,000 nano-USD / 0 pending / no block**, matching its summary without dispatch (`checks/ctx-v7-ledger.log`, `ctx-v7-ledger-network`). All **15** targeted/mutation/mock/ledger network-record groups have **zero denied external connections**. Consolidated evidence is `.data/p8-tutor/checks/ctx-v7-verification.json`, including JUnit counts, every mutant result/restored hash, unchanged-threshold byte comparisons against v6 and `970bd00`, unchanged dialogue bytes, the historical report-prefix check, all frozen hashes, both summaries and ledger equality.
 
 `ruff check agent-service eval/p8-tutor`, changed-Python-file `ruff format --check`, and `git diff --check` pass. The v7 scope ran the targeted suite above; v6's historical broad-suite counts are not claimed as new v7 execution. Deterministic providers verify execution/protocol behavior only. **Live rerun NOT_RUN (left for operator)**; no real-model task-quality improvement is established. Conservative clarification recognition remains limited to the existing regex. The isolated PostgreSQL project is left running. No push, PR, merge, deployment, MEA/production/other-worktree changes, private record access or historical result rewrites were performed.
+
+## Offline reviewer retry and suite continuation (v7)
+
+The reported full live trials stopped when a short `deepseek-v4-pro` review tool call parsed but failed the `Review` schema. `Channel` correctly settled it as `failed` / `REAL_EVAL_PROTOCOL_FAILURE`; the runner then promoted any review exception to suite-fatal `REAL_EVAL_REVIEW_FAILED` and skipped remaining dialogues. Historical trials remain unchanged.
+
+`review_turn` now retries only `EvalError` codes `REAL_EVAL_PROTOCOL_FAILURE` and `REAL_EVAL_REQUEST_FAILED`, with at most two extra requests (three total) for the same turn. Every request uses the existing ledger reservation/settlement and the same 400-call / $0.70 run caps. All success/failure review records contain integer `review_attempts`. Exhaustion writes one fail-closed record with `error=REAL_EVAL_REVIEW_FAILED`; missing quality judgments remain false and later turns/dialogues continue. Other review errors receive no retries. Blocked ledgers and hard `REAL_EVAL_` errors still stop the run, including budget/durability/citation failures. Tutor protocol failures receive no new retries, and citation extraction, fabrication rejection and one-shot excess-ID repair are unchanged.
+
+Candidate identity remains `p8-tutor-20261027-v7`. Current manifest SHA-256: `a22f2b9e6af8d83c464e2200e14448de410d332a44b5f9eddb3b1ff40e433203`. Only runner and mutation-harness pins changed; all 18 pinned paths remain. `thresholds.json` is byte-identical to task-start tip `1768e85`.
+
+Offline verification uses only the existing isolated PostgreSQL on `127.0.0.1:25741`, fresh acceptance schemas and the credential-clearing socket fence:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/review-retry-final-targeted-network \
+  -- -q tests/test_p8_tutor_eval.py tests/test_tutor.py tests/test_tutor_citations.py \
+  --junitxml=../.data/p8-tutor/checks/review-retry-final-targeted.xml
+
+uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label review-retry
+```
+
+New integration cases cover two schema/request failures then third-attempt success, three failures followed by later turns and a second dialogue, unique review records, failed-call charges and mirrored ledger accounting, redaction, no retries for other errors, and a budget block during retry. Existing Tutor protocol/fabricated-citation tests are included. The mutation harness adds `review-retry-removed` and `review-failure-kills-suite`; it temporarily pins each mutant so integration tests reach its behavior, then restores and verifies source and manifest bytes.
+
+An initial invocation was interrupted after 46 passes / 25 failures because the preceding manifest refresh used an unavailable `python` executable and left stale pins. Those failures were `REAL_EVAL_FROZEN_INPUT_CHANGED`; the corrected invocation above uses refreshed pins and separate artifacts. The interrupted run is not counted as completed verification.
+
+**Live evidence pending / NOT_RUN; real provider calls 0, real spend $0.** The broad repository suite and standalone `run.py` smoke are NOT_RUN in this round; the targeted suite includes the full 24-dialogue / 80-turn mock integration. Deterministic tests establish mechanics, not model teaching quality. No push, merge, deployment, MEA, other-worktree or production-DB changes.
+
+Corrected targeted result: **180 passed / 0 failed / 0 errors / 0 skipped** in **110.35 s** (80 eval/channel, 78 runtime/app, 22 citation/schema), with one existing Starlette/AnyIO deprecation warning. JUnit and log: `checks/review-retry-final-targeted.{xml,log}` under `.data/p8-tutor/`. The full mock integration completed 24 dialogues / 80 turns with 240 fake requests; retry cases completed both dialogues / all six turns with 20 fake requests, including exactly eight review requests and one review record per turn. Ruff check, changed-Python format check and whitespace checks pass.
+
+Mutation result: **13/13 killed**, each with exactly one expected test failure, zero errors/skips. `review-retry-removed` fails the request-count assertion (18 vs 20); `review-failure-kills-suite` fails the PARTIAL/no-fatal assertion (FAIL instead). These reach the intended behavior rather than failing frozen-input validation. Results and restoration hashes: `.data/p8-tutor/checks/review-retry-mutations.json`; patches, logs, JUnit and network records: `review-retry-mutation-*`. Source and manifest bytes were restored and all 18 pins rechecked afterward. The 15 targeted/mutation network-record groups (including the interrupted launch) record **zero denied external connections**.
