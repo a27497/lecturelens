@@ -1,6 +1,6 @@
 # P8 offline implementation report — 2026-10-27
 
-Implemented on `codex/p8-tutor` in its isolated worktree, based on P7 real-eval `e1e7af2`. No real provider calls, push, PR, merge, deployment, private env-file access or online configuration changes. Deterministic checks do not establish teaching quality.
+Implemented on `codex/p8-tutor` in its isolated worktree, based on P7 real-eval `e1e7af2`. The original implementation work made no real provider calls, push, PR, merge, deployment, private env-file access or online configuration changes. The later authorized live failure and offline fix are recorded below. Deterministic checks do not establish teaching quality.
 
 ## Delivered areas
 
@@ -65,6 +65,38 @@ Development failures remain failures. The initial eval initialization defect and
 
 ## Remaining limits
 
-Live Flash/Pro evaluation is **NOT_RUN**. Product provider remains Mock only and opt-in; source relevance, semantic support, context interpretation and Socratic teaching effectiveness remain unverified with real models. Fixed abstention text is a deliberately strict output protocol. The extractive summary is lossy; persistent budgets/deadlines can terminate long conversations/turns. Snapshot page slots are not media timestamps. No deployed stack/browser E2E, automatic grading, long-term learner memory or review scheduling was claimed. The live command is documented only, with dual opt-in, isolated DSN, frozen inputs, no retries and $0.70/400-call hard caps.
+The first live Flash/Pro trial aborted with the false positive recorded below; real-model teaching quality remains unverified. Product provider remains Mock only and opt-in; source relevance, semantic support, context interpretation and Socratic teaching effectiveness remain unverified with real models. Fixed abstention text is a deliberately strict output protocol. The extractive summary is lossy; persistent budgets/deadlines can terminate long conversations/turns. Snapshot page slots are not media timestamps. No deployed stack/browser E2E, automatic grading, long-term learner memory or review scheduling was claimed. The next live command is documentation only, with dual opt-in, isolated DSN, frozen inputs, no retries and $0.70/400-call hard caps.
 
 After all verification, only this task's PostgreSQL container was stopped; its volume, ledgers and all ignored outputs were retained for review.
+
+## Offline fix round 1
+
+The separately authorized first live run `p8-real-review-20261027` ended **FAIL**, `REAL_EVAL_CITATION_FABRICATED`, after **2 real calls / $0.0039189**. The original `.data/p8-tutor/p8-real-review-20261027/dialogues.jsonl` records `Adj[u]` in the Flash answer: the old runtime/runner regex treated `u` as a source id. All 11 declared/inline ID references were valid for the lecture. This is an evaluator/contract false positive, not a fabricated source. The run directory and original accounting ledger remain untouched, and the historical FAIL is not relabeled.
+
+Refrozen candidate **`p8-tutor-20261027-v2`** adds `tutor/citations.py` and changes only the runtime and runner citation parsing inputs. The grammar follows `eval/retrieval-v2/extract_corpus.py` and `build_cases.py` (snapshot ids and `-zh` translations), `CourseEvidenceService.java` (lowercase SHA-256 ids) and `study/context.py` (`eN` aliases). Both runtime inline matching and runner pre-schema inspection use it. The runner also checks every declared id regardless of syntax. Unknown or cross-lecture ID-shaped citations still block the ledger and fail the entire round, including malformed proposals. Runtime inline/declared equality, observed-selection membership, unique declared ids, authority re-READ and the exact abstention contract are preserved. Prompts, tools, dialogues and thresholds are unchanged; the latter two retain their original SHA-256 hashes in the manifest.
+
+The public answer text is preserved exactly in `agent-service/tests/fixtures/p8_adjacency_answer.json` for offline regression. Tests exercise runtime acceptance with authority re-READ, all 11 valid references, unknown/cross-lecture citations in inline and declared fields before schema validation, mismatches in answer/evaluation, duplicate declarations and ordinary math brackets.
+
+This fix round makes **zero real provider calls** and does not read private env files or enable live evaluation. Next live run: **`p8-real-review-20261027-r2`**, with new ledger **`ledger-p8-tutor-r2-20261027.jsonl`**. The [README command](README.md#exact-live-command-for-a-later-reviewer--do-not-run-in-this-task) is documentation only; r2 has not been executed in this fix round.
+
+Candidate manifest SHA-256: `f0317d96b775a4d3d000ab8e072fd152de950cfa366d47c65bd161127ad8e9cf`. Only the new citation module and the changed runtime/runner input hashes differ from the previous manifest. Direct byte comparisons against the parent commit confirm unchanged `dialogues.json` and `thresholds.json`.
+
+The first targeted fix run recorded **75 passed / 1 failed**: the new corpus-wide grammar check exposed the existing `-zh` translation suffix. That failure is retained under `.data/p8-tutor/checks/fix-r1-targeted.xml`; after including the source-defined suffix, the grammar checks passed **16/16** (`fix-r1-grammar.xml`).
+
+Final offline verification uses the existing PG on `127.0.0.1:25731`, a fresh network-records directory, and the credential-clearing socket fence:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25731/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25731 --network-records .data/p8-tutor/checks/fix-r1-full-network \
+  -- -q --junitxml=../.data/p8-tutor/checks/fix-r1-full.xml
+
+uv run --project agent-service --offline ruff check agent-service eval/p8-tutor
+git diff --check
+```
+
+Final full suite: **1,017 passed, 0 failures/errors, 0 skipped** in **352.27 s**, including **77 P8 tests** (33 runtime/app, 28 eval/channel, 16 citation grammar). This adds 24 cases to the original 993-test suite. PostgreSQL tests executed on the isolated project. Ruff and whitespace checks pass. The two warnings are the existing upstream Starlette/AnyIO and cryptography certificate deprecations. JUnit and network records are retained at the paths above.
+
+The separate mock trial uses the same socket fence and a clean environment, run id `p8-mock-fix-r1-20261027`, local ledger `.data/p8-tutor/fix-r1-mock-ledger.jsonl` and output directory `.data/p8-tutor/p8-mock-fix-r1-20261027/`. No containers were started, stopped or removed during this fix round.
+
+Mock result: **PASS — NOT_RUN_MOCK_MECHANICS_ONLY**, **24 dialogues / 80 turns / 80 fixed reviews / 240 fake requests**, 0 pending, 0 blocked, 0 protocol failures. All citation checks are valid; fixed mock support/context/Socratic/abstention metrics are 1.0. p95 Tutor latency: **0.623 s**; simulated accounting: **$0.063168**, real spend for this fix round: **$0**. A guarded `--check-ledger` returned identical 240-call accounting with matching PG/JSONL events; `sample.py -n 1` exported successfully. These results establish execution/protocol behavior, not real-model task quality.

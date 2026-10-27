@@ -4,6 +4,7 @@ import json
 import os
 import uuid
 from dataclasses import replace
+from pathlib import Path
 
 import httpx
 import psycopg
@@ -15,6 +16,8 @@ from lecturelens_real_eval.tutor_channel import Channel, EvalError, Ledger, Tuto
 from lecturelens_real_eval.tutor_runner import (
     DATA,
     Review,
+    TutorProvider,
+    citation_ids,
     fake_transport,
     run_evaluation,
     summarize,
@@ -262,6 +265,54 @@ def test_fabricated_citation_stops_round_and_fails_even_if_other_fields_invalid(
     row = json.loads((directory / "fabricated/dialogues.jsonl").read_text())["turns"][0]
     assert row["status"] == "failed" and row["answer"] is None
     assert row["proposals"][-1]["arguments"]["outcome"] == "bad"
+
+
+def test_exact_failed_live_answer_has_all_eleven_citations_valid(isolated):
+    from lecturelens_real_eval.runner import SnapshotAuthority
+
+    proposal = json.loads((Path(__file__).parent / "fixtures/p8_adjacency_answer.json").read_text())
+    authority = SnapshotAuthority(json.loads((DATA.parent / "p7-real/snapshot.json").read_text()))
+    scope = dict(owner_id=1, course_id="citation-regression", revision=1)
+    authority.register(scope, "algorithms-l1")
+    provider = TutorProvider(Channel(account(isolated), transport=fake_transport()), authority)
+    provider.scope = scope
+    provider.validate({"name": "finish_tutor_turn", "arguments": proposal})
+    canonical = {e["evidence_id"] for e in authority.rows(scope)}
+    ids = citation_ids(proposal)
+    assert len(ids) == 11 and all(i in canonical for i in ids)
+    assert provider.channel.ledger.check()["blocked"] is None
+
+
+@pytest.mark.parametrize("evidence_id", ["v2-algorithms-l1-p99-e00", "v2-algorithms-l2-p01-e00"])
+@pytest.mark.parametrize("location", ["inline", "declared"])
+def test_id_shaped_unknown_or_other_lecture_citation_is_fatal_before_schema(isolated, evidence_id, location):
+    dsn, directory = isolated
+    fake = fake_transport()
+
+    def fabricated(request):
+        if len(json.loads(request.content)["tools"]) > 1:
+            return response(
+                "finish_tutor_turn",
+                {
+                    "outcome": "bad",
+                    "text": f"Wrong [{evidence_id}]" if location == "inline" else "Wrong",
+                    "evidence_ids": [evidence_id] if location == "declared" else [],
+                },
+            )
+        return fake.handle_request(request)
+
+    result = run_evaluation(
+        dsn,
+        directory / "id-shaped.jsonl",
+        "id-shaped",
+        TutorPolicy(),
+        transport=httpx.MockTransport(fabricated),
+        output_root=directory,
+    )
+    assert result["verdict"] == "FAIL" and result["fatal"] == "REAL_EVAL_CITATION_FABRICATED"
+    assert result["accounting"]["calls"] == 2
+    turn = json.loads((directory / "id-shaped/dialogues.jsonl").read_text())["turns"][0]
+    assert turn["citation_validity"] == [False] and turn["answer"] is None
 
 
 def test_channel_error_fails_round_and_preserves_partial_trial(isolated):

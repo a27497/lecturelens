@@ -2,6 +2,10 @@
 
 Offline mechanism implementation only; **zero real provider calls** in this task. Mock PASS is not teaching quality. This directory freezes 24 dialogues/80 learner turns over the same eight public snapshots as [P7](../p7-real/README.md). Neither frozen P7 assets nor AU/CostPolicy behavior changes. All local outputs belong in ignored `.data/p8-tutor/<run_id>/`.
 
+The first authorized live trial, `p8-real-review-20261027`, remains **FAIL** after **2 real calls / $0.0039189**, with `REAL_EVAL_CITATION_FABRICATED`. Its Flash answer used `Adj[u]`; the old bracket parser misclassified `u` as an evidence id. All 11 actual declared/inline ID references were authoritative. This was an evaluator/contract false positive; the failed run and its original ledger are retained as evidence, without rescoring it as a pass. See [the fix report](REPORT.md#offline-fix-round-1).
+
+Candidate `p8-tutor-20261027-v2` shares one citation grammar between runtime and runner: snapshot `v2-{course}-l{lecture}-p{page:02d}-e{ordinal:02d}` (optional `-zh` translation suffix), production lowercase SHA-256 ids, and study-context `eN` aliases. Other bracket contents are ordinary text. Every declared id is still checked, including malformed proposals; any ID-shaped citation outside the lecture/revision authority remains fatal. Runtime inline/declared equality, observed selection, duplicate rejection, authority re-READ and exact abstention remain enforced. Prompts, dialogues and thresholds are unchanged. The next live trial must use **`p8-real-review-20261027-r2`** and **`ledger-p8-tutor-r2-20261027.jsonl`**; it has not been run by this offline fix.
+
 ## Scripts and negative evidence
 
 Each lecture has dialogues `-1` (definition/explanation, 3 turns), `-2` (Socratic prompts and a learner reply, 3 turns), and `-3` (comparison, 3 supported turns and one related absent-topic follow-up). Every dialogue contains “Why is that?” and another elliptical/reply follow-up. Expected prior topics are passed only to the independent reviewer. They are never supplied to the Tutor. The scripts have 56 context-dependent follow-ups, eight insufficient-evidence turns and 24 Socratic turns in eight dialogues.
@@ -104,8 +108,8 @@ cd /home/dev/projects/lecturelens-p8-tutor
   uv run --project agent-service --offline python eval/p8-tutor/run.py \
     --live \
     --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25731/lecturelens_agent_acceptance' \
-    --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-tutor-20261027.jsonl \
-    --max-calls 400 --max-usd 0.70 --run-id p8-real-review-20261027
+    --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-tutor-r2-20261027.jsonl \
+    --max-calls 400 --max-usd 0.70 --run-id p8-real-review-20261027-r2
 )
 ```
 

@@ -7,6 +7,7 @@ import threading
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import psycopg
 import pytest
@@ -170,7 +171,7 @@ def test_revision_change_during_model_never_publishes(lab):
         assert conn.execute("SELECT status FROM tutor_session").fetchone()["status"] == "stale"
 
 
-@pytest.mark.parametrize("bad", ["invented", "wrong_inline", "missing", "unobserved"])
+@pytest.mark.parametrize("bad", ["invented", "wrong_inline", "missing", "unobserved", "duplicate", "evaluation"])
 def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
     original = lab[2].provider.decide
 
@@ -180,7 +181,13 @@ def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
             if bad == "missing":
                 lab[1].missing = True
             elif bad == "wrong_inline":
-                response["arguments"]["text"] = "A claim [fake]"
+                response["arguments"]["text"] = "A claim [e2]"
+            elif bad == "unobserved":
+                response["arguments"].update(evidence_ids=["e2"], text="A claim [e2]")
+            elif bad == "duplicate":
+                response["arguments"]["evidence_ids"] = ["e1", "e1"]
+            elif bad == "evaluation":
+                response["arguments"]["evaluation"] = "A claim [e2]"
             else:
                 response["arguments"]["evidence_ids"] = ["fake"]
                 response["arguments"]["text"] = "A claim [fake]"
@@ -194,6 +201,37 @@ def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
         assert (
             conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()["checkpoint"]["phase"] == "received"
         )
+
+
+def test_exact_failed_live_answer_accepts_math_brackets_and_rereads_authority(lab):
+    from lecturelens_real_eval.runner import SnapshotAuthority
+
+    root = Path(__file__).resolve().parents[2]
+    proposal = json.loads((Path(__file__).parent / "fixtures/p8_adjacency_answer.json").read_text())
+    authority = SnapshotAuthority(json.loads((root / "eval/p7-real/snapshot.json").read_text()))
+    authority.register(lab[3], "algorithms-l1")
+    lab[2].authority = authority
+    reads = []
+    original = authority.read
+
+    def capture(scope, action="CHECK", **args):
+        if action == "READ":
+            reads.append(args["evidence_ids"])
+        return original(scope, action, **args)
+
+    authority.read = capture
+
+    def decide(messages, schemas, timeout):
+        if not json.loads(messages[-1]["content"])["observations"]:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "graph adjacency list representation"}}
+        return {"name": "finish_tutor_turn", "arguments": proposal}
+
+    lab[2].provider.decide = decide
+    result = run(lab)
+    assert result["status"] == "completed" and result["outcome"] == "answered"
+    assert result["answer"] == proposal["text"] and "Adj[u]" in result["answer"]
+    assert {c["evidence_id"] for c in result["citations"]} == set(proposal["evidence_ids"])
+    assert reads[-1] == proposal["evidence_ids"]
 
 
 def test_insufficient_outcome_cannot_smuggle_uncited_substantive_claims(lab):

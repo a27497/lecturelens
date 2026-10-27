@@ -15,6 +15,7 @@ import httpx
 
 from lecturelens_agent.contracts import Contract
 from lecturelens_agent.study.acceptance_cost import verify_development_agent
+from lecturelens_real_eval.tutor.citations import inline_citation_ids
 from lecturelens_real_eval.tutor.contracts import ABSTENTION, TOOLS, Command
 from lecturelens_real_eval.tutor.runtime import MockTutor, TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
@@ -60,6 +61,14 @@ def verify_inputs():
     return scripts, json.loads((DATA / "thresholds.json").read_bytes())
 
 
+def citation_ids(arguments):
+    """Keep every declared ID, including malformed values, for pre-schema authority checks."""
+    declared = arguments.get("evidence_ids", [])
+    return (list(declared) if isinstance(declared, list) else [declared]) + inline_citation_ids(
+        str(arguments.get("text", "")) + " " + str(arguments.get("evaluation", ""))
+    )
+
+
 class TutorProvider:
     def __init__(self, channel, authority):
         self.channel, self.authority = channel, authority
@@ -72,14 +81,7 @@ class TutorProvider:
     def validate(self, result):
         self.proposals.append(result)
         if result["name"] == "finish_tutor_turn":
-            a = result["arguments"]
-            ids = a.get("evidence_ids", [])
-            ids = list(ids) if isinstance(ids, list) else ids
-            if not isinstance(ids, list):
-                ids = [ids]
-            ids += re.findall(
-                r"\[([^\[\]\n]+)\]", str(a.get("text", "")) + " " + str(a.get("evaluation", ""))
-            )
+            ids = citation_ids(result["arguments"])
             canonical = {e["evidence_id"] for e in self.authority.rows(self.scope)}
             # Inspect even malformed proposals: validation cannot hide fabricated citations.
             if any(not isinstance(e, str) or e not in canonical for e in ids):
@@ -305,15 +307,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 ids = []
                 for p in provider.proposals:
                     if p["name"] == "finish_tutor_turn":
-                        a = p["arguments"]
-                        candidate_ids = a.get("evidence_ids", [])
-                        ids.extend(candidate_ids if isinstance(candidate_ids, list) else [candidate_ids])
-                        ids.extend(
-                            re.findall(
-                                r"\[([^\[\]\n]+)\]",
-                                str(a.get("text", "")) + " " + str(a.get("evaluation", "")),
-                            )
-                        )
+                        ids.extend(citation_ids(p["arguments"]))
                 turn.update(
                     script=task,
                     latency_s=latency,

@@ -9,6 +9,7 @@ from psycopg.types.json import Jsonb
 
 from lecturelens_agent.study.store import StudyError
 
+from .citations import inline_citation_ids
 from .contracts import ABSTENTION, TOOLS
 
 SYSTEM = (
@@ -280,7 +281,7 @@ class TutorRuntime:
             }
         else:
             ids = args["evidence_ids"]
-            inline = re.findall(r"\[([^\[\]\n]+)\]", args["text"] + " " + args["evaluation"])
+            inline = inline_citation_ids(args["text"] + " " + args["evaluation"])
             if set(inline) != set(ids) or not set(ids) <= set(state["selected"]) or len(ids) != len(set(ids)):
                 raise StudyError("TUTOR_CITATION_MISMATCH")
             citations = self.read_evidence(session, ids)
