@@ -676,7 +676,71 @@ def test_reviewer_cascade_only_downgrades_invented_antecedent(reviewed, kind):
         context_followup=kind != "not_followup",
     )
     result = review_turn(FixedReview(), history, script, turn)
-    assert result["context_retained"] is (reviewed and kind != "invented")
+    expected = True if kind in {"abstain", "clarify", "socratic_clarify"} else reviewed and kind != "invented"
+    assert result["context_retained"] is expected
+
+
+@pytest.mark.parametrize("prior", ["published_abstention", "failed", "unpublished"])
+@pytest.mark.parametrize("kind", ["clean_abstain", "invented", "nonexact_abstain"])
+def test_context_followup_non_penalty_preserves_other_judgments_and_failed_turns(prior, kind):
+    from lecturelens_real_eval.tutor.contracts import ABSTENTION
+
+    # Use the inherited union-bound follow-up: a published abstention is also
+    # insufficient context for a substantive answer, but a clean stop is valid.
+    scripts = json.loads((DATA / "dialogues.json").read_bytes())["dialogues"]
+    script = next(d for d in scripts if d["dialogue_id"] == "probability-l1-3")["turns"][1]
+    assert script["expected_insufficient"] and script["context_followup"]
+    assert script["zero_hit_terms"] == ["union"]
+    judgments = dict(
+        answer_supported=False, context_retained=False, socratic_compliant=False, abstention_clean=False
+    )
+
+    class FixedReview:
+        def request(self, messages, schemas, **kwargs):
+            return {"arguments": judgments}
+
+    history = [
+        dict(
+            status="failed" if prior == "failed" else "completed",
+            tutor=ABSTENTION if prior == "published_abstention" else None,
+            outcome="insufficient_evidence" if prior == "published_abstention" else "failed",
+        )
+    ]
+    turn = dict(
+        ordinal=2,
+        status="completed",
+        outcome="insufficient_evidence",
+        answer=ABSTENTION,
+        evaluation="",
+        citations=[],
+        citation_validity=[],
+        latency_s=0.1,
+        script=script,
+    )
+    if kind == "invented":
+        turn.update(outcome="answered", answer="That follows from the union bound [e1].")
+    elif kind == "nonexact_abstain":
+        turn["answer"] += " The bound is always tight."
+    result = review_turn(FixedReview(), history, script, turn)
+    assert result == {**judgments, "context_retained": kind == "clean_abstain"}
+
+    # Expected-abstain follow-ups stay in the denominator; failed turns stay misses
+    # even if a stale review says context was retained.
+    failed = {**turn, "ordinal": 3, "status": "failed", "answer": None}
+    summary = summarize(
+        [dict(dialogue_id="probability-l1-3", turns=[turn, failed])],
+        [
+            dict(dialogue_id="probability-l1-3", ordinal=2, **result),
+            dict(dialogue_id="probability-l1-3", ordinal=3, context_retained=True),
+        ],
+        dict(calls=1, nano_usd=1, pending=0, blocked=None),
+        {"max_calls": 400},
+        None,
+        False,
+    )
+    assert summary["metrics"]["context_retention_rate"] == (0.5 if kind == "clean_abstain" else 0)
+    assert summary["metrics"]["protocol_failure_rate"] == 0.5
+    assert summary["metrics"]["no_evidence_abstain_rate"] == 0
 
 
 def test_over_abstain_cascade_split_preserves_total_and_denominator():

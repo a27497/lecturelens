@@ -183,7 +183,7 @@ def review_turn(channel, history, script, turn):
         messages, schemas, purpose="review", validate=lambda r: Review.model_validate(r["arguments"])
     )
     judged = Review.model_validate(response["arguments"]).model_dump()
-    # Only downgrade. A failed/unpublished answer cannot supply an antecedent, even
+    # A failed/unpublished answer cannot supply an antecedent, even
     # if an otherwise supported response guesses one from the lecture or task label.
     previous = history[-1] if history else None
     clarification = re.fullmatch(
@@ -200,6 +200,11 @@ def review_turn(channel, history, script, turn):
         and not clarification
     ):
         judged["context_retained"] = False
+    # Stopping or explicitly asking for the antecedent does not invent context,
+    # including a chain of published abstentions. Correct reviewer mis-penalties
+    # without changing support, Socratic or clean-abstention judgments.
+    if (turn["outcome"] == "insufficient_evidence" and turn["answer"] == ABSTENTION) or clarification:
+        judged["context_retained"] = True
     return judged
 
 

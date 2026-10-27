@@ -632,3 +632,71 @@ uv run --project agent-service --offline python eval/p8-tutor/run.py \
 ```
 
 Risks: a model can still exceed four inline IDs or fail its single repair, invent an unobserved ID, omit evaluation, or exhaust the unchanged deadline and independent budgets. Controller assembly removes duplicate metadata generation; it does not establish semantic citation support. Conservative deterministic clarification recognition cannot cover every wording/language; the reviewer prompt must enforce the broader antecedent rule. Mocks/fixed reviewers prove execution/protocol behavior, **not real-model quality, pedagogy or generalization**. No unseen-course generalization, automatic grading, long-term memory or scheduling is claimed. Java/frontend, frozen P7, deployment and historical records remain unchanged. No implementation deviation; the focused mock adds the corrected union-bound dialogue to exercise its new expectations.
+
+## Offline context-retention rule v7
+
+Candidate and evaluation protocol **`p8-tutor-20261027-v7`** supersede v6 for future runs. This is an offline scoring-rule correction: **zero real provider calls / $0 real spend**. V7 live quality is **NOT_RUN**, left for a later separately authorized operator run. Historical v6 trial files, reviews, summaries and the earlier sections of this report are unchanged; no historical result is relabeled or promoted to a pass.
+
+### Rule and motivation
+
+The operator-provided v6 audit reference, `p8-cite-full-20261027` / `human-audit.grokbot.json`, identifies false context penalties on clean insufficient-evidence follow-ups: `probability-l1-3` turns 2–4, `quantum-l1-1` turn 2 and `quantum-l1-3` turn 2. The reviewer prompt already exempted abstention/clarification after failed or unpublished turns, but v6 code only downgraded invented answers; it could not correct a false reviewer judgment. This task uses that audit description as motivation, without opening private evaluation records or rescoring the live trial.
+
+`review_turn()` retains the existing deterministic downgrade: an answered context follow-up after an immediately preceding failed/unpublished turn is `context_retained=false`, except an explicitly recognized clarification question. It now also sets **only** `context_retained=true` for either an exact `ABSTENTION` answer with `outcome=insufficient_evidence`, or a clarification question matching the unchanged regex. This correction applies regardless of the previous turn's publication status, including chains of published abstentions. It does not upgrade invented answered follow-ups, accept nonexact abstentions, or change support, Socratic or `abstention_clean` judgments. The legitimate invented-antecedent failures identified in the audit (`quantum-l1-3` turn 3, `quantum-l2-1` turn 2, `quantum-l2-3` turn 3) remain subject to the downgrade.
+
+`summarize()` is unchanged. All attempted `context_followup` turns remain in its denominator, including expected-insufficient turns. Failed/non-completed turns and missing/failed reviews remain misses. No diagnostic rescore is presented as an official result; new official quality scores require this freeze and a later live rerun.
+
+V7 **inherits** v6/t44s14 should-abstain labeling: `probability-l1-3` turns 1–3 already have `expected_insufficient: true` and `zero_hit_terms: ["union"]`; turn 4 already expects abstention for Dirichlet. The entire dialogue file is byte-identical to v6. The existing regression still reconstructs the `970bd00` dialogue bytes by reversing only v6's approved three-turn correction; frozen input verification independently confirms the zero-hit terms.
+
+Controller-assembled citations remain authoritative; provider `evidence_ids` remain ignored. Fabricated/unknown/cross-lecture inline IDs are fatal, including malformed/dropped proposals. More than four distinct inline IDs still requires the single durable format repair; no silent truncation or second repair is introduced. The citation parser, Tutor runtime, strict Finish schema, budgets, cancellation/recovery and authority fences are byte-identical to v6.
+
+### Freeze
+
+Full `frozen.json` manifest SHA-256: **`703a42e5a3b27f024e51ddf85eb526d79f1f208d5a84ad58df346e1bfb0e2c6b`**. The same **18** file paths are pinned as v6, with no additions; only `tutor_runner.py` and `run-repair-mutations.py` have new file digests. Thresholds are byte-identical to both v6/`ffe0cf7` and `970bd00`, SHA-256 **`21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da`**. Dialogue SHA-256 remains **`7a4965570a55720917b462640dd17b00eac99e890191c4ccdc3d05bfa840b512`**. The manifest records candidate v7 and its byte digest is stored in every new mock policy/summary.
+
+### Offline verification
+
+All commands use the existing credential-clearing Python startup socket fence and only isolated PostgreSQL on **127.0.0.1:25741**, compose project `lecturelens-p8-tutor-protocol-20261027`, already running at task start. The separate test database is `lecturelens_agent_test`; mocks use `lecturelens_agent_acceptance`. No live opt-in was set.
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/ctx-v7-targeted-network \
+  -- -q tests/test_tutor.py tests/test_tutor_citations.py tests/test_p8_tutor_eval.py \
+  --junitxml=../.data/p8-tutor/checks/ctx-v7-targeted.xml
+
+uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label ctx-v7
+```
+
+**172 passed / 0 failures/errors/skips**, **83.02 s**: 78 runtime/app, 22 citation/schema and 72 eval/channel cases. One existing Starlette/AnyIO deprecation warning remains. The nine new cases cross published-abstention/failed/unpublished priors with exact abstention/invented answer/nonexact abstention. They verify union-bound should-abstain context correction despite a false reviewer judgment, preservation of other judgment fields, denominator inclusion and failed-turn misses. The existing reviewer matrix now requires abstention/clarification/Socratic clarification to retain context regardless of reviewer bool; invented answers are still forced false and published/non-follow-up answers preserve reviewer values.
+
+Existing citation tests are reused unchanged: fabricated/unknown/cross-lecture IDs in either field and dropped proposals remain fatal, provider declarations remain ignored, excess inline IDs require exactly one repair, and truncation/dropping cannot publish. All **11/11 mutants were killed**, each with exactly one failed test and zero errors/skips. This retains all ten v6 mutants and adds `context-non-penalty-removed`, which removes the new true assignment for abstention/clarification and is killed by the published-abstention follow-up regression. The pre-existing cascade-rule mutant is also killed by an invented-answer/reviewer-true case. Mutant failures are intentional negative evidence, separate from the passing test suite. The harness restored source bytes after every case; restored hashes and all 18 frozen hashes match. Fresh artifacts are `.data/p8-tutor/checks/ctx-v7-mutations.json` and `ctx-v7-mutation-*`; prior labels remain immutable.
+
+Standalone mock commands (local ledgers only):
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/ctx-v7-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/ctx-v7-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-ctx-v7-mock-20261027
+
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/ctx-v7-focus-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/ctx-v7-focus-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-ctx-v7-focus-mock-20261027 \
+  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
+    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
+    algorithms-l1-1 probability-l2-1 probability-l3-3 probability-l1-3
+```
+
+| Standalone mock | Scope and result | Fake requests | Simulated accounting | p95 Tutor latency |
+| --- | --- | --- | --- | --- |
+| `p8-ctx-v7-mock-20261027` | **PASS**, 24 dialogues / 80 turns / 80 fixed reviews | 240 | $0.063168 | 0.389 s |
+| `p8-ctx-v7-focus-mock-20261027` | **PARTIAL by scope**, 12 dialogues / 41 turns / 41 fixed reviews | 123 | $0.0323736 | 0.373 s |
+
+Both are **NOT_RUN_MOCK_MECHANICS_ONLY**: all fixed citation/support/context/Socratic/expected-abstention rates are 1.0, protocol failure rate is 0, total/cascade/non-cascade over-abstention counts are 0, and fatal/blocked/pending state is absent. Both include `probability-l1-3`, with four completed abstentions and inherited expected-insufficient labels. Both record the exact v7 manifest hash. Outputs are under their fresh `.data/p8-tutor/<run_id>/` directories and `checks/ctx-v7-{mock,focus-mock}.log`. Mock accounting is simulated; real spend is **$0**.
+
+A guarded `--check-ledger` with the full mock's same run ID/local ledger/caps returned **240 calls / 63,168,000 nano-USD / 0 pending / no block**, matching its summary without dispatch (`checks/ctx-v7-ledger.log`, `ctx-v7-ledger-network`). All **15** targeted/mutation/mock/ledger network-record groups have **zero denied external connections**. Consolidated evidence is `.data/p8-tutor/checks/ctx-v7-verification.json`, including JUnit counts, every mutant result/restored hash, unchanged-threshold byte comparisons against v6 and `970bd00`, unchanged dialogue bytes, the historical report-prefix check, all frozen hashes, both summaries and ledger equality.
+
+`ruff check agent-service eval/p8-tutor`, changed-Python-file `ruff format --check`, and `git diff --check` pass. The v7 scope ran the targeted suite above; v6's historical broad-suite counts are not claimed as new v7 execution. Deterministic providers verify execution/protocol behavior only. **Live rerun NOT_RUN (left for operator)**; no real-model task-quality improvement is established. Conservative clarification recognition remains limited to the existing regex. The isolated PostgreSQL project is left running. No push, PR, merge, deployment, MEA/production/other-worktree changes, private record access or historical result rewrites were performed.

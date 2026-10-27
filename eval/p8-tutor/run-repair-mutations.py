@@ -75,6 +75,13 @@ def main():
             "tests/test_p8_tutor_eval.py::test_reviewer_cascade_only_downgrades_invented_antecedent[invented-True]",
         ),
         (
+            "context-non-penalty-removed",
+            RUNNER,
+            '        judged["context_retained"] = True\n',
+            "        pass\n",
+            "tests/test_p8_tutor_eval.py::test_context_followup_non_penalty_preserves_other_judgments_and_failed_turns[clean_abstain-published_abstention]",
+        ),
+        (
             "cascade-split-always-zero",
             RUNNER,
             '        "over_abstain_cascade_count": len(cascade),\n',
