@@ -870,3 +870,25 @@ Final **FULL agent-service suite** (`v9-full-complete`): **1171 passed / 0 failu
 Final `ruff check agent-service eval/p8-tutor`, `ruff format --check agent-service/src agent-service/tests eval/p8-tutor` (**125 files formatted**) and `git diff --check` pass. Final lint/format logs: `v9-final-{lint,format}.log`. All **43** v9 network-record groups (including initial, interrupted, mutation and final checks) have **zero denied external connections**. Consolidated verification: `.data/p8-tutor/checks/v9-verification.json` with exact suite counts, all final mutant/restoration digests, final mock summary, byte comparisons, frozen pins and network counts; reproducible assertions are in `v9-verify.py`.
 
 **NOT_RUN:** v9 real-provider task quality, fresh holdout evaluation, Java/frontend tests (unchanged layers). Real provider calls **0**; real spend **$0**. Larger unions and long contexts can still exhaust the unchanged request/reservation/deadline caps; mocks and mutation kills establish protocol mechanics, not teaching quality or unseen-course generalization. Existing live trials, failed/interrupted checks and interim freezes remain preserved. Work is confined to this branch/worktree and the isolated local P8 PostgreSQL instance. No MEA, other-worktree, production-database, Java, deployment or online-configuration changes; no push. The isolated PostgreSQL instance remains running.
+
+## v9 live result — `p8-ctx-v9-full-20261027`
+
+Candidate `p8-tutor-20261027-v9`, manifest `370d61d64abf1921927ae7e5ba6e5cc6c1e887aeaa9f4ef792aef723e1117426`; thresholds unchanged. Tutor `deepseek-flash`, reviewer `deepseek-v4-pro`, cap US$0.70, no paid Tutor retry.
+
+Verdict **PASS**, fatal null; 24/24 dialogues, 80/80 turns, 80 reviews; 313 calls, **US$0.580305**.
+
+| Metric | v8 full | v8 confirm | v9 |
+|---|---:|---:|---:|
+| citation_verifiable | 1.0 | 1.0 | 1.0 |
+| no_evidence_abstain | 1.0 | 1.0 | 1.0 |
+| answer_supported | 0.978 | 1.0 | 0.978 |
+| context_retention | 1.0 | 0.946 | 1.0 |
+| socratic_compliance | 1.0 | 0.958 | 1.0 |
+| protocol_failure | 0.0 | 0.025 | 0.0 |
+| over_abstain | 0 | 0 | 0 |
+| p95 latency (s) | 6.9 | 5.5 | 6.8 |
+| CITATION_MISMATCH | 0 | 2 | 0 |
+| format repairs | 9 | 3 | 8 |
+| reviewer retries | 2 | 0 | 1 |
+
+In 2 published v9 turns, the citations included ids observed only in an earlier search of the same turn; under v8 they would have been rejected. Mechanical audit: 0 violations. One answer was judged unsupported: probability-l2-1 #3.
