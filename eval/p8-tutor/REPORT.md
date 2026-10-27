@@ -787,3 +787,22 @@ Standalone `eval/p8-tutor/run.py`, through the guarded wrapper and **without `--
 Manifest SHA-256: **`4e0cce141a6c6393e894b86b843ef3965fabd0ec71c92cb21e3f7a5812b9baa2`**. All **18** pins verify; only runtime and mutation-harness pins differ from v7. `thresholds.json` SHA-256 remains **`21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da`**, byte-identical to task-start `d3e3253`. Dialogue scripts, strict extractor, contracts and eval runner are also byte-identical. All **19** targeted/mutation/mock network-record groups have **zero denied external connections**. Consolidated checks, fixture/source comparison, restoration hashes, JUnit counts and mock summary: `.data/p8-tutor/checks/finish-v8-verification.json`.
 
 `ruff check agent-service eval/p8-tutor`, changed-Python `ruff format --check`, and `git diff --check` pass. **NOT_RUN:** real-provider/live v8 task quality; broad repository suite; Java/frontend checks (unchanged layers). Real provider calls **0**, real spend **$0**. The original failed trials retain their results; no new holdout was consumed. No push, deployment, MEA, other-worktree or production-database changes. The existing isolated PostgreSQL project remains running.
+
+## v8 live result — `p8-finish-v8-full-20261027`
+
+Candidate `p8-tutor-20261027-v8`, manifest `4e0cce141a6c6393e894b86b843ef3965fabd0ec71c92cb21e3f7a5812b9baa2`; thresholds unchanged (`21d48ea5…5b5da`). Tutor `deepseek-flash`, reviewer `deepseek-v4-pro`, cap US$0.70, no paid Tutor retry.
+
+Verdict **PASS**, fatal null; 24/24 dialogues, 80/80 turns completed, 80 reviews; 312 calls, **US$0.574557**.
+
+| Metric | v6 `p8-cite-full` | v7 retry-full | v8 |
+|---|---:|---:|---:|
+| citation_verifiable | 1.0 | 1.0 | 1.0 |
+| no_evidence_abstain | 1.0 | 1.0 | 1.0 |
+| answer_supported | ≈0.974 | 0.917 | 0.978 |
+| context_retention | 0.839 | 0.839 | 1.0 |
+| socratic_compliance | 1.0 | 1.0 | 1.0 |
+| protocol_failure | 0.05 | 0.10 | 0.0 |
+| over_abstain | 2 | 1 (cascade) | 0 |
+| p95 latency (s) | — | 8.2 | 6.9 |
+
+The single finish-format repair was used in 9 turns, and all 9 published after one repair. The reviewer's limited retry fired twice: probability-l2-2 #3 and probability-l3-2 #3 each succeeded on attempt 2. The mechanical audit found 0 violations: at most 4 ids, text ≤1600, citations equal to the inline ids, and exact abstentions. Published answers still contain 62 non-id square brackets (math notation). They are not counted as citations, as designed. One answer was judged unsupported: algorithms-l3-1 #3.
