@@ -26,7 +26,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/lecturelens_agent"]
+packages = ["src/lecturelens_agent", "src/lecturelens_real_eval"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -71,3 +71,5 @@ Java 对生成检查 readiness，对读/评分不要求检索索引已就绪；�
 
 机制结果与失败记录见 [P7 报告](../eval/p7-flashcards/REPORT.md)，
 出处核验见 [通用离线入口](../eval/source-support/README.md)。真实生成的出处支持 ≥0.90、未见课程泛化、长期复习效果均为 **NOT_RUN**，不继承 AU/P6 质量结论。
+
+独立的[真实评测通道](../eval/p7-real/README.md)已实现双开关、隔离双账本与 24 任务本地快照运行器；本轮仅离线验证，真实 Provider 请求为 0。产品仍为 Mock only，原冻结身份与上述质量边界不变。
