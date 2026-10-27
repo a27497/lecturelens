@@ -50,9 +50,6 @@ SNAPSHOT = ROOT / "eval/p7-real/snapshot.json"
 
 
 def verify_inputs():
-    # Check the prior round in full, including its evaluator code and candidate.
-    verify_historical_inputs()
-    verify_development_agent()
     frozen = json.loads((DATA / "frozen.json").read_bytes())
     for path, digest in frozen["files"].items():
         if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != digest:
@@ -60,6 +57,10 @@ def verify_inputs():
     identity = hashlib.sha256(json.dumps(frozen["files"], sort_keys=True).encode()).hexdigest()
     if identity != frozen["candidate_sha256"]:
         raise EvalError("REAL_EVAL_FROZEN_INPUT_CHANGED")
+    # Historical data and product identity remain immutable. Only the two shared
+    # evaluator modules are repinned by this independently verified successor.
+    verify_historical_inputs(refrozen_files=frozen["files"])
+    verify_development_agent()
     tasks = json.loads((DATA / "tasks.json").read_bytes())["tasks"]
     snapshot = json.loads(SNAPSHOT.read_bytes())
     thresholds = json.loads((DATA / "thresholds.json").read_bytes())
@@ -93,6 +94,16 @@ def verify_inputs():
 
 def candidate_identity():
     return json.loads((DATA / "frozen.json").read_bytes())["candidate_sha256"]
+
+
+def select_tasks(tasks, task_ids):
+    if task_ids is None:
+        return tasks
+    ids = [item.strip() for item in task_ids.split(",")]
+    if not all(ids) or len(set(ids)) != len(ids) or not set(ids) <= {task["task_id"] for task in tasks}:
+        raise EvalError("REAL_EVAL_TASK_SELECTION_INVALID")
+    # Keep frozen ordering, independent of CLI ordering; never rewrite tasks.json.
+    return [task for task in tasks if task["task_id"] in ids]
 
 
 def fake_transport():
@@ -197,7 +208,7 @@ def append(path, value):
         os.fsync(file.fileno())
 
 
-def summarize(generations, reviews, accounting, thresholds, fatal, live):
+def summarize(generations, reviews, accounting, thresholds, fatal, live, *, selected_tasks=None):
     cards = [c for g in generations for c in g["cards"]]
     by_task = {r["task_id"]: r for r in reviews}
     verdicts, agreements = [], []
@@ -219,6 +230,18 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
     offtopic = [g for g in generations if g["task"]["expected_stop"] and g["task"]["kind"] != "confusable"]
     confusable = [g for g in generations if g["task"]["kind"] == "confusable"]
     positives = [g for g in generations if not g["task"]["expected_stop"]]
+    task_count = len(selected_tasks) if selected_tasks is not None else thresholds["task_count"]
+    offtopic_count = (
+        sum(t["expected_stop"] and t["kind"] != "confusable" for t in selected_tasks)
+        if selected_tasks is not None
+        else thresholds["offtopic_count"]
+    )
+    confusable_count = (
+        sum(t["kind"] == "confusable" for t in selected_tasks)
+        if selected_tasks is not None
+        else thresholds["confusable_count"]
+    )
+    positive_count = task_count - offtopic_count - confusable_count
 
     def correct(rows):
         return sum(g["stopped"] and not g["cards"] and not g["protocol_failure"] for g in rows)
@@ -233,10 +256,11 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
     values = {
         "citation_valid_rate": valid_count / citation_count if citation_count else 1.0,
         "source_supported_rate": sum(v == "supported" for v in verdicts) / len(cards) if cards else 0.0,
-        "offtopic_correct_stop_rate": correct(offtopic) / thresholds["offtopic_count"],
-        "confusable_correct_stop_rate": correct(confusable) / thresholds["confusable_count"],
-        "false_stop_rate": sum(g["stopped"] and not g["cards"] for g in positives)
-        / (thresholds["task_count"] - thresholds["offtopic_count"] - thresholds["confusable_count"]),
+        "offtopic_correct_stop_rate": correct(offtopic) / offtopic_count if offtopic_count else None,
+        "confusable_correct_stop_rate": correct(confusable) / confusable_count if confusable_count else None,
+        "false_stop_rate": sum(g["stopped"] and not g["cards"] for g in positives) / positive_count
+        if positive_count
+        else None,
         "review_self_agreement": sum(agreements) / len(cards) if cards else 0.0,
         "near_duplicate_pairs": len(pairs),
         "near_duplicate_agreement": pair_agreement,
@@ -244,7 +268,7 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
             g["protocol_failure"] or bool(by_task.get(g["task"]["task_id"], {}).get("error"))
             for g in generations
         )
-        / thresholds["task_count"],
+        / task_count,
         "p95_generation_latency_s": latencies[math.ceil(len(latencies) * 0.95) - 1] if latencies else None,
         "max_calls": accounting["calls"],
         "max_usd": accounting["nano_usd"] / 1e9 if accounting["nano_usd"] is not None else None,
@@ -261,10 +285,14 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
             if key in minimum_gates
             else value <= thresholds[key]
         )
-    required_confusable = math.floor(
-        thresholds["confusable_correct_stop_rate"] * thresholds["confusable_count"]
+    # Missing categories in a focused diagnostic are explicit, never scored as passes.
+    for key in ("offtopic_correct_stop_rate", "false_stop_rate"):
+        if values[key] is None:
+            gates[key] = "insufficient_n"
+    required_confusable = math.ceil(thresholds["confusable_correct_stop_rate"] * confusable_count)
+    gates["confusable_correct_stop_rate"] = (
+        correct(confusable) >= required_confusable if confusable_count else "insufficient_n"
     )
-    gates["confusable_correct_stop_rate"] = correct(confusable) >= required_confusable
     gates["near_duplicate_agreement"] = (
         "insufficient_n"
         if len(pairs) < thresholds["near_duplicate_min_pairs"]
@@ -298,11 +326,15 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
         "confusable_required_correct": required_confusable,
         "dropped_tool_calls": sum(g.get("dropped_tool_calls", 0) for g in generations)
         + sum(r.get("dropped_tool_calls", 0) for r in reviews),
+        "dropped_tool_call_names": [
+            name for row in [*generations, *reviews] for name in row.get("dropped_tool_call_names", [])
+        ],
     }
 
 
-def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_root=None):
+def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_root=None, task_ids=None):
     tasks, snapshot, thresholds = verify_inputs()
+    tasks = select_tasks(tasks, task_ids)
     policy = replace(policy, candidate_sha256=candidate_identity())
     ledger = Ledger(dsn, ledger_path, run_id, policy)
     directory = (Path(output_root) if output_root else ROOT / ".data/p7-hardening") / run_id
@@ -389,6 +421,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 "proposals": adapter.proposals,
                 "study_run_id": command["run"]["run_id"],
                 "dropped_tool_calls": channel.dropped_tool_calls - dropped_before,
+                "dropped_tool_call_names": channel.dropped_tool_call_names[dropped_before:],
             }
             # Usage is read from the independent ledger, not private model traces.
             with ledger.connect() as conn:
@@ -420,6 +453,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 **review_cards(channel, cards, thresholds["review_shuffle_seed"]),
             }
             review["dropped_tool_calls"] = channel.dropped_tool_calls - dropped_before
+            review["dropped_tool_call_names"] = channel.dropped_tool_call_names[dropped_before:]
             reviews.append(review)
             append(directory / "reviews.jsonl", review)
             if review.get("error") and review["error"] != "REAL_EVAL_PROTOCOL_FAILURE":
@@ -440,7 +474,12 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
             runtime.close()
     for name in ("generations.jsonl", "reviews.jsonl"):
         (directory / name).touch(exist_ok=True)
-    summary = summarize(generations, reviews, accounting, thresholds, fatal, policy.live)
+    summary = summarize(
+        generations, reviews, accounting, thresholds, fatal, policy.live, selected_tasks=tasks
+    )
+    summary["evaluation_scope"] = "full" if len(tasks) == thresholds["task_count"] else "focused"
+    summary["selected_task_ids"] = [task["task_id"] for task in tasks]
+    summary["selected_tasks_completed"] = len(generations) == len(tasks)
     summary["run_id"] = run_id
     summary["candidate_sha256"] = policy.candidate_sha256
     summary["frozen_sha256"] = hashlib.sha256((DATA / "frozen.json").read_bytes()).hexdigest()
@@ -461,16 +500,18 @@ def main():
     parser.add_argument("--max-usd", default="0.60")
     parser.add_argument("--run-id", default="p7-" + uuid.uuid4().hex)
     parser.add_argument("--check-ledger", action="store_true")
+    parser.add_argument("--task-ids", help="Comma-separated frozen task IDs; default: all tasks")
     args = parser.parse_args()
     try:
         policy = RealPolicy(live=args.live, max_calls=args.max_calls, max_nano_usd=usd_to_nano(args.max_usd))
         policy.validate()
-        verify_inputs()
+        tasks, _, _ = verify_inputs()
+        select_tasks(tasks, args.task_ids)
         policy = replace(policy, candidate_sha256=candidate_identity())
         if args.check_ledger:
             result = Ledger(args.dsn, args.ledger, args.run_id, policy).check()
         else:
-            result = run_evaluation(args.dsn, args.ledger, args.run_id, policy)
+            result = run_evaluation(args.dsn, args.ledger, args.run_id, policy, task_ids=args.task_ids)
         print(json.dumps(result, ensure_ascii=False))
         return 1 if result.get("verdict") == "FAIL" else 0
     except Exception:  # noqa: BLE001 -- preserve failed trial without logging provider details

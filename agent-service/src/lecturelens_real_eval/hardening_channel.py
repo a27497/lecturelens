@@ -1,4 +1,4 @@
-"""P7 hardening channel; reuse historical dispatch/durability without changing its freeze.
+"""P7 hardening channel; shared dispatch/durability repinned by the successor freeze.
 
 Prices are conservative integer nano-USD per token, ignoring cache discounts.
 The new ledger keeps the original lock/fsync/PG consistency and unknown-outcome rules.
@@ -188,3 +188,4 @@ class Channel(HistoricalChannel):
             return dispatch.request(messages, schemas, timeout, max_tokens, validate=validate)
         finally:
             self.dropped_tool_calls += dispatch.dropped_tool_calls
+            self.dropped_tool_call_names.extend(dispatch.dropped_tool_call_names)

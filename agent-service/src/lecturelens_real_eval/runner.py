@@ -47,10 +47,17 @@ class Review(Contract):
     checks: Annotated[list[CardReview], Field(max_length=6)]
 
 
-def verify_inputs():
+def verify_inputs(*, refrozen_files=None):
     verify_development_agent()
     frozen = json.loads((DATA / "frozen.json").read_bytes())
     for path, digest in {**frozen["files"], frozen["source"]["path"]: frozen["source"]["sha256"]}.items():
+        # A successor verifies its own manifest first and explicitly repins shared code.
+        # Historical dispatch supplies no overrides and must reject the changed candidate.
+        if refrozen_files and path in {
+            "agent-service/src/lecturelens_real_eval/channel.py",
+            "agent-service/src/lecturelens_real_eval/runner.py",
+        }:
+            digest = refrozen_files[path]
         if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != digest:
             raise EvalError("REAL_EVAL_FROZEN_INPUT_CHANGED")
     tasks = json.loads((DATA / "tasks.json").read_bytes())["tasks"]
@@ -139,6 +146,16 @@ class GraphAdapter(MockProvider):
     def flashcards(self, messages, schemas, timeout):
         if self.task_calls >= 3:
             raise EvalError("REAL_EVAL_GENERATION_CALL_LIMIT")
+        if self.task_calls == 2:
+            # Reserve the last paid decision for a terminal action; never add tools
+            # the caller did not authorize, nor silently dispatch an empty offering.
+            schemas = [
+                schema
+                for schema in schemas
+                if schema["function"]["name"] in {"create_evidence_cards", "stop_cards"}
+            ]
+            if not schemas:
+                raise EvalError("REAL_EVAL_GENERATION_WRAP_UP_TOOLS_REQUIRED")
         self.task_calls += 1
         self.observed_ids = {e["evidence_id"] for e in json.loads(messages[-1]["content"])["evidence"]}
         result = self.chat.flashcards(messages, schemas, timeout)
@@ -323,6 +340,9 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
         "accounting": accounting,
         "fatal": fatal,
         "dropped_tool_calls": sum(g.get("dropped_tool_calls", 0) for g in generations),
+        "dropped_tool_call_names": [
+            name for g in generations for name in g.get("dropped_tool_call_names", [])
+        ],
     }
 
 
@@ -412,6 +432,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 "proposals": adapter.proposals,
                 "study_run_id": command["run"]["run_id"],
                 "dropped_tool_calls": channel.dropped_tool_calls - dropped_before,
+                "dropped_tool_call_names": channel.dropped_tool_call_names[dropped_before:],
             }
             # Usage is read from the independent ledger, not private model traces.
             with ledger.connect() as conn:

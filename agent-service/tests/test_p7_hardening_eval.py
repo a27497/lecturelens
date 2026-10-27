@@ -30,9 +30,11 @@ from lecturelens_real_eval.hardening_runner import (
     near_duplicate_pairs,
     review_cards,
     run_evaluation,
+    select_tasks,
     summarize,
     verify_inputs,
 )
+from lecturelens_real_eval.runner import GraphAdapter
 
 GEN = [{"type": "function", "function": {"name": "search_card_evidence", "parameters": {}}}]
 REVIEW = [{"type": "function", "function": {"name": "review_card_sources", "parameters": {}}}]
@@ -572,12 +574,227 @@ def test_fake_never_reads_key_and_errors_never_leak_payload(isolated, monkeypatc
     )
 
 
-def test_parallel_calls_still_execute_only_first_and_count_dropped(isolated):
+def test_parallel_calls_still_execute_only_first_and_record_dropped_names(isolated):
+    """Mutation: omitting result or cumulative name recording must fail this test."""
     account = ledger(isolated)
-    data = json.loads(response().content)
+    data = json.loads(response(arguments={"query": "course evidence"}).content)
     calls = data["choices"][0]["message"]["tool_calls"]
-    calls.append(json.loads(json.dumps(calls[0])))
+    for name in ("stop_cards", "create_evidence_cards", "stop_cards"):
+        calls.append(json.loads(response(name).content)["choices"][0]["message"]["tool_calls"][0])
     channel = Channel(account, transport=httpx.MockTransport(lambda _: httpx.Response(200, json=data)))
-    result = channel.request(MESSAGES, GEN)
-    assert result["dropped_tool_calls"] == channel.dropped_tool_calls == 1
+    executed = []
+    schemas = [
+        {"type": "function", "function": {"name": name, "parameters": {}}}
+        for name in ("search_card_evidence", "stop_cards", "create_evidence_cards")
+    ]
+    result = channel.request(MESSAGES, schemas, validate=executed.append)
+    expected = ["stop_cards", "create_evidence_cards", "stop_cards"]
+    assert result["name"] == "search_card_evidence"
+    assert result["arguments"] == {"query": "course evidence"}
+    assert executed == [result]
+    assert result["dropped_tool_calls"] == channel.dropped_tool_calls == len(expected)
+    assert result["dropped_tool_call_names"] == channel.dropped_tool_call_names == expected
     assert account.check()["calls"] == 1
+
+
+def test_third_generation_call_offers_only_wrap_up_tools(isolated):
+    """Mutation: removing the last-call filter must expose search and fail assertions."""
+    account, seen = ledger(isolated), []
+
+    def send(request):
+        payload = json.loads(request.content)
+        names = [schema["function"]["name"] for schema in payload["tools"]]
+        seen.append(names)
+        # This model always searches if offered the tool, regardless of call number.
+        return (
+            response(arguments={"query": "more evidence"})
+            if "search_card_evidence" in names
+            else response("stop_cards", {"reason": "Evidence does not support the goal."})
+        )
+
+    adapter = GraphAdapter(Channel(account, transport=httpx.MockTransport(send)), None)
+    schemas = [
+        {"type": "function", "function": {"name": name, "parameters": {"sentinel": name}}}
+        for name in ("search_card_evidence", "create_evidence_cards", "stop_cards")
+    ]
+    messages = [{"role": "user", "content": json.dumps({"evidence": []})}]
+    for _ in range(3):
+        result = adapter.flashcards(messages, schemas, 20)
+    assert seen == [
+        ["search_card_evidence", "create_evidence_cards", "stop_cards"],
+        ["search_card_evidence", "create_evidence_cards", "stop_cards"],
+        ["create_evidence_cards", "stop_cards"],
+    ]
+    assert len(schemas) == 3  # Filtering must not mutate the caller's offering.
+    assert result["name"] == adapter.last_action == "stop_cards"
+    assert adapter.task_calls == account.check()["calls"] == 3
+    with pytest.raises(EvalError, match="GENERATION_CALL_LIMIT"):
+        adapter.flashcards(messages, schemas, 20)
+    assert len(seen) == 3
+
+
+def test_last_call_empty_wrap_up_offering_fails_closed(isolated):
+    account = ledger(isolated)
+    adapter = GraphAdapter(
+        Channel(account, transport=httpx.MockTransport(lambda _: pytest.fail("must not dispatch"))), None
+    )
+    adapter.task_calls = 2
+    with pytest.raises(EvalError, match="WRAP_UP_TOOLS_REQUIRED"):
+        adapter.flashcards([], GEN, 20)
+    assert adapter.task_calls == 2
+    assert account.check()["calls"] == 0
+
+
+def test_confusable_searching_model_stops_on_third_call_and_keeps_dropped_names(isolated, tmp_path):
+    tasks, _, _ = verify_inputs()
+    task = next(t for t in tasks if t["kind"] == "confusable")
+    seen = []
+
+    def send(request):
+        payload = json.loads(request.content)
+        names = [schema["function"]["name"] for schema in payload["tools"]]
+        seen.append(names)
+        if names == ["review_card_sources"]:
+            data = json.loads(response("review_card_sources", {"checks": []}).content)
+            # Review names must also survive the short-lived dispatch wrapper.
+            calls = data["choices"][0]["message"]["tool_calls"]
+            calls.append(calls[0].copy())
+            return httpx.Response(200, json=data)
+        if "search_card_evidence" not in names:
+            return response("stop_cards", {"reason": "Evidence does not support the goal."})
+        data = json.loads(response(arguments={"query": "course evidence"}).content)
+        if len(seen) == 2:
+            data["choices"][0]["message"]["tool_calls"].append(
+                json.loads(response("stop_cards").content)["choices"][0]["message"]["tool_calls"][0]
+            )
+        return httpx.Response(200, json=data)
+
+    dsn, path = isolated
+    result = run_evaluation(
+        dsn,
+        path,
+        "third-call-stop",
+        RealPolicy(),
+        transport=httpx.MockTransport(send),
+        output_root=tmp_path,
+        task_ids=task["task_id"],
+    )
+    generation = json.loads((tmp_path / "third-call-stop/generations.jsonl").read_text())
+    review = json.loads((tmp_path / "third-call-stop/reviews.jsonl").read_text())
+    assert generation["stopped"] is True and generation["cards"] == []
+    assert generation["error"] is None and generation["protocol_failure"] is False
+    assert generation["model_calls"] == 3
+    assert generation["dropped_tool_calls"] == 1
+    assert generation["dropped_tool_call_names"] == ["stop_cards"]
+    assert [p["name"] for p in generation["proposals"]] == [
+        "search_card_evidence",
+        "search_card_evidence",
+        "stop_cards",
+    ]
+    assert seen[2] == ["create_evidence_cards", "stop_cards"]
+    assert len(review["passes"]) == 2 and review["dropped_tool_calls"] == 2
+    assert review["dropped_tool_call_names"] == ["review_card_sources"] * 2
+    assert result["dropped_tool_calls"] == 3
+    assert result["dropped_tool_call_names"] == ["stop_cards"] + ["review_card_sources"] * 2
+    assert result["values"]["confusable_correct_stop_rate"] == 1
+    assert result["confusable_required_correct"] == 1
+    assert result["values"]["protocol_failure_rate"] == 0
+    assert result["calls"] == len(seen) == 5
+    assert result["fatal"] is None
+
+
+@pytest.mark.parametrize("ids", ["", "unknown", "algorithms-l1-1,", "algorithms-l1-1,algorithms-l1-1"])
+def test_invalid_task_selection_fails_before_pg_or_ledger(ids, tmp_path):
+    with pytest.raises(EvalError, match="TASK_SELECTION_INVALID"):
+        run_evaluation(
+            "invalid",
+            tmp_path / "ledger",
+            "invalid-selection",
+            RealPolicy(),
+            output_root=tmp_path / "results",
+            task_ids=ids,
+        )
+    assert not (tmp_path / "results").exists() and not (tmp_path / "ledger").exists()
+
+
+def test_focused_selection_preserves_frozen_order_and_does_not_claim_full_acceptance(isolated, tmp_path):
+    tasks, _, thresholds = verify_inputs()
+    ids = ",".join(
+        [t["task_id"] for t in tasks if t["kind"] == "confusable"]
+        + ["quantum-l1-1", "probability-l1-1", "algorithms-l2-1", "algorithms-l1-1"]
+    )
+    selected = select_tasks(tasks, ids)
+    assert select_tasks(tasks, None) == tasks
+    assert len(selected) == 12 and selected == [t for t in tasks if t["task_id"] in ids.split(",")]
+    dsn, path = isolated
+    result = run_evaluation(dsn, path, "focused-mock", RealPolicy(), output_root=tmp_path, task_ids=ids)
+    assert result["evaluation_scope"] == "focused" and result["selected_tasks_completed"] is True
+    assert result["thresholds"] == thresholds
+    assert result["completed_tasks"] == 12 and result["card_count"] == 4 and result["calls"] == 48
+    assert result["verdict"] == "PARTIAL" and result["gates"]["completed_tasks"] is False
+    assert result["values"]["offtopic_correct_stop_rate"] is None
+    assert result["gates"]["offtopic_correct_stop_rate"] == "insufficient_n"
+    assert result["values"]["confusable_correct_stop_rate"] == 1
+    assert result["confusable_required_correct"] == 7
+    assert result["values"]["false_stop_rate"] == result["values"]["protocol_failure_rate"] == 0
+
+
+def test_focused_run_still_verifies_unselected_frozen_tasks(monkeypatch, tmp_path):
+    from lecturelens_real_eval import hardening_runner
+
+    tasks = json.loads((DATA / "tasks.json").read_text())
+    tasks["tasks"][-1]["goal"] = "Changed unselected goal"
+    changed = tmp_path / "tasks.json"
+    changed.write_text(json.dumps(tasks))
+    original = hardening_runner.ROOT
+
+    class Root:
+        def __truediv__(self, path):
+            return changed if path == "eval/p7-hardening/tasks.json" else original / path
+
+    monkeypatch.setattr(hardening_runner, "ROOT", Root())
+    with pytest.raises(EvalError, match="FROZEN_INPUT_CHANGED"):
+        run_evaluation(
+            "invalid",
+            tmp_path / "ledger",
+            "changed-unselected",
+            RealPolicy(),
+            output_root=tmp_path / "results",
+            task_ids="algorithms-l1-1",
+        )
+    assert not (tmp_path / "results").exists() and not (tmp_path / "ledger").exists()
+
+
+def test_cli_forwards_task_ids_and_keeps_live_disabled(monkeypatch, capsys):
+    from lecturelens_real_eval import hardening_runner
+
+    received = []
+
+    def run(dsn, path, run_id, policy, *, task_ids):
+        received.append((dsn, path, run_id, policy, task_ids))
+        return {"verdict": "PARTIAL"}
+
+    monkeypatch.setattr(hardening_runner, "run_evaluation", run)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "run.py",
+            "--dsn",
+            "unused",
+            "--ledger",
+            "unused-ledger",
+            "--run-id",
+            "offline-cli",
+            "--max-usd",
+            "0.40",
+            "--max-calls",
+            "160",
+            "--task-ids",
+            "algorithms-l1-1,quantum-l1-1",
+        ],
+    )
+    assert hardening_runner.main() == 0
+    assert len(received) == 1 and received[0][-1] == "algorithms-l1-1,quantum-l1-1"
+    policy = received[0][3]
+    assert policy.live is False and policy.max_calls == 160 and policy.max_nano_usd == 400_000_000
+    assert json.loads(capsys.readouterr().out)["verdict"] == "PARTIAL"

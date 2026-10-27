@@ -1,16 +1,18 @@
 {
-  "version": "p7-hardening-20261027-v1",
+  "version": "p7-hardening-20261027-v2",
   "files": {
-    "agent-service/src/lecturelens_real_eval/hardening_channel.py": "46f27a35f4f41b59fe85ce71f1c62e641a711bc9af0e754440bf8ee72b2e108c",
-    "agent-service/src/lecturelens_real_eval/hardening_runner.py": "f7105a806c0cb67e5e65c99eba67c2106bce3b8d435c4fc4827517c9a6680e5e",
+    "agent-service/src/lecturelens_real_eval/hardening_channel.py": "5263b7956737348115b847e540e4ffdc02c763bc9c41b1ebf6c3fffe1d5fb0d4",
+    "agent-service/src/lecturelens_real_eval/hardening_runner.py": "4245a4c4da1344d380bda8c4aa73743003cb6a41dedb3b26b26984a4c19c4f67",
     "eval/p7-real/frozen.json": "c541486c2a5bd758eb659c7a59881ed7ad71e2c3c75fa374f73c562d2c768fc7",
     "eval/p7-hardening/tasks.json": "823c2506a1f32d1c9c52686a1f623090f220cd81f662e389bcf2949c00779394",
     "eval/p7-hardening/thresholds.json": "6780d28c70f2112d86a836b867209a7f8d4de7feb8853f641516a0b31e08d4c6",
     "eval/p7-hardening/run.py": "325775d4866e33c2c41564333d7e2fab6651ba218adafe32914fad5f948396a4",
     "eval/p7-hardening/sample.py": "dc3ae4ba7754580911e285c38e10dbdfe90ad5ddc0a3864abf2064de8411b4af",
     "eval/p7-hardening/agreement.py": "c2664e979c65c940c447a1d87611d909b75a9aa3f1885917168ff0123f225a47",
-    "eval/p7-hardening/compose.yaml": "7246343729d1715f68ce59b265e6736f6a14a9a725d7102d69700154423c37da"
+    "eval/p7-hardening/compose.yaml": "304c7b6c3bbded385f71c22c80e2ab1f2a2a37783b475d0f3128e7215d9f1c61",
+    "agent-service/src/lecturelens_real_eval/channel.py": "0118dcf4fc6712cfafae792c0b59d0c01ca220897f73983437a28bc771f9d539",
+    "agent-service/src/lecturelens_real_eval/runner.py": "21cff629adfa69a74496f570c2e433aad0098f62b5661a8de9ba75ad9344cf72"
   },
-  "candidate_sha256": "3f5695acaae6818658d54c724b7982fe699fd73b6297cd55cc7c98a500f37fdf",
-  "boundary": "Offline mechanisms only; public known courses, no fresh holdout or unseen-course quality claim. Historical P7 freeze is independently verified."
+  "candidate_sha256": "a7772a2204d7231693e5178570059b6323f8dbaa22bd2c1a69f30cdcced54837",
+  "boundary": "Offline mechanisms only; public known courses, no fresh holdout or unseen-course quality claim. Historical P7 inputs and product identity remain verified; shared channel/runner are repinned by this successor. Prior live PARTIAL retained; focused retry not executed."
 }

@@ -6,8 +6,8 @@ services:
       POSTGRES_PASSWORD: p7-local-only
       POSTGRES_DB: lecturelens_agent_acceptance
     ports:
-      - "127.0.0.1:25721:5432"
+      - "127.0.0.1:25722:5432"
     volumes:
-      - p7-hardening-postgres:/var/lib/postgresql/data
+      - p7-hardening-b-postgres:/var/lib/postgresql/data
 volumes:
-  p7-hardening-postgres:
+  p7-hardening-b-postgres:

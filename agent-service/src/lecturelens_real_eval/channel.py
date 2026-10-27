@@ -286,6 +286,7 @@ class Channel:
             raise EvalError("REAL_EVAL_FAKE_TRANSPORT_REQUIRED")
         self.transport = transport
         self.dropped_tool_calls = 0
+        self.dropped_tool_call_names = []
 
     def request(self, messages, schemas, timeout=20, max_tokens=1200, *, validate=None):
         self.policy.validate()
@@ -355,7 +356,7 @@ class Channel:
             choice = data["choices"][0]
             calls = choice["message"]["tool_calls"]
             # DeepSeek may ignore parallel_tool_calls=False. Every returned call must be
-            # well-formed; only the first is executed and the rest are counted, never
+            # well-formed; only the first is executed and the rest are recorded, never
             # re-requested (no retry, no extra paid call).
             if (
                 choice.get("finish_reason") != "tool_calls"
@@ -377,11 +378,14 @@ class Channel:
                     raise ValueError()
                 parsed.append((c["function"]["name"], a))
             self.dropped_tool_calls += len(parsed) - 1
+            dropped_names = [name for name, _ in parsed[1:]]
+            self.dropped_tool_call_names.extend(dropped_names)
             result = {
                 "name": parsed[0][0],
                 "arguments": parsed[0][1],
                 "usage": usage,
                 "dropped_tool_calls": len(parsed) - 1,
+                "dropped_tool_call_names": dropped_names,
             }
             if validate:
                 try:

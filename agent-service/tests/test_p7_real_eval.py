@@ -16,6 +16,8 @@ from psycopg.conninfo import make_conninfo
 
 from lecturelens_agent.study.acceptance_cost import CostDenied, CostPolicy, verify_development_agent
 from lecturelens_real_eval.channel import Channel, EvalChatProvider, EvalError, Ledger, RealPolicy, encode
+from lecturelens_real_eval.hardening_runner import DATA as SUCCESSOR_DATA
+from lecturelens_real_eval.hardening_runner import verify_inputs as verify_successor
 from lecturelens_real_eval.runner import (
     DATA,
     GraphAdapter,
@@ -24,15 +26,26 @@ from lecturelens_real_eval.runner import (
     review_cards,
     run_evaluation,
     summarize,
-    verify_inputs,
+)
+from lecturelens_real_eval.runner import (
+    verify_inputs as verify_historical_inputs,
 )
 
 SCHEMAS = [{"type": "function", "function": {"name": "search_card_evidence", "parameters": {}}}]
 MESSAGES = [{"role": "user", "content": "test"}]
 
 
+def verify_inputs():
+    # Exercise historical mechanics under the successor freeze, never the old
+    # live candidate identity. The unmodified historical preflight must still fail.
+    verify_successor()
+    files = json.loads((SUCCESSOR_DATA / "frozen.json").read_bytes())["files"]
+    return verify_historical_inputs(refrozen_files=files)
+
+
 @pytest.fixture(autouse=True)
 def offline(monkeypatch):
+    monkeypatch.setattr("lecturelens_real_eval.runner.verify_inputs", verify_inputs)
     original = socket.socket.connect
 
     def local(sock, address):
@@ -43,6 +56,11 @@ def offline(monkeypatch):
     monkeypatch.setattr(socket.socket, "connect", local)
     monkeypatch.delenv("LECTURELENS_REAL_EVAL", raising=False)
     monkeypatch.delenv("AGENT_LLM_API_KEY", raising=False)
+
+
+def test_historical_candidate_rejects_changed_shared_code():
+    with pytest.raises(EvalError, match="FROZEN_INPUT_CHANGED"):
+        verify_historical_inputs()
 
 
 @pytest.fixture
