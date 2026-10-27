@@ -322,6 +322,7 @@ def summarize(generations, reviews, accounting, thresholds, fatal, live):
         "cost_usd": values["max_usd"],
         "accounting": accounting,
         "fatal": fatal,
+        "dropped_tool_calls": sum(g.get("dropped_tool_calls", 0) for g in generations),
     }
 
 
@@ -379,6 +380,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 first_sequence = conn.execute(
                     "SELECT COALESCE(max(sequence),0) AS n FROM p7_real_event WHERE run_id=%s", (run_id,)
                 ).fetchone()["n"]
+            dropped_before = channel.dropped_tool_calls
             started = time.monotonic()
             runtime.execute(next(r for r in store.candidates() if r["run_id"] == command["run"]["run_id"]))
             latency = time.monotonic() - started
@@ -409,6 +411,7 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
                 "model_calls": adapter.task_calls,
                 "proposals": adapter.proposals,
                 "study_run_id": command["run"]["run_id"],
+                "dropped_tool_calls": channel.dropped_tool_calls - dropped_before,
             }
             # Usage is read from the independent ledger, not private model traces.
             with ledger.connect() as conn:

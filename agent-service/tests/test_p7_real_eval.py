@@ -574,3 +574,41 @@ def test_card_admission_failures_charge_full_reservation(isolated, failure):
     rows = [json.loads(line) for line in account.path.read_text().splitlines()]
     assert rows[-1]["charged_nano_usd"] == rows[0]["reserved_nano_usd"]
     assert not account.check()["blocked"]
+
+
+def _parallel(second_name):
+    data = json.loads(response().content)
+    calls = data["choices"][0]["message"]["tool_calls"]
+    extra = json.loads(json.dumps(calls[0]))
+    extra["id"] = "call-parallel-2"
+    extra["function"]["name"] = second_name
+    calls.append(extra)
+    return httpx.Response(200, json=data)
+
+
+def test_parallel_tool_calls_execute_first_only_without_extra_request(isolated, monkeypatch):
+    monkeypatch.setenv("LECTURELENS_REAL_EVAL", "1")
+    monkeypatch.setenv("AGENT_LLM_API_KEY", "synthetic-p7-key-do-not-log")
+    account, sent = ledger(isolated, RealPolicy(live=True)), []
+    first = json.loads(response().content)["choices"][0]["message"]["tool_calls"][0]["function"]
+    channel = Channel(
+        account,
+        transport=httpx.MockTransport(lambda _: sent.append(1) or _parallel(first["name"])),
+    )
+    result = channel.request(MESSAGES, SCHEMAS)
+    assert result["name"] == first["name"]
+    assert result["arguments"] == json.loads(first["arguments"])
+    assert result["dropped_tool_calls"] == 1 and channel.dropped_tool_calls == 1
+    assert len(sent) == account.check()["calls"] == 1
+
+
+def test_parallel_tool_calls_with_unknown_tool_fail_closed(isolated, monkeypatch):
+    monkeypatch.setenv("LECTURELENS_REAL_EVAL", "1")
+    monkeypatch.setenv("AGENT_LLM_API_KEY", "synthetic-p7-key-do-not-log")
+    account, sent = ledger(isolated, RealPolicy(live=True)), []
+    channel = Channel(account, transport=httpx.MockTransport(lambda _: sent.append(1) or _parallel("evil")))
+    with pytest.raises(EvalError, match="REQUEST_FAILED"):
+        channel.request(MESSAGES, SCHEMAS)
+    rows = [json.loads(line) for line in account.path.read_text().splitlines()]
+    assert len(sent) == 1 and rows[-1]["state"] == "failed"
+    assert rows[-1]["charged_nano_usd"] == rows[0]["reserved_nano_usd"]

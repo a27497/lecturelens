@@ -285,6 +285,7 @@ class Channel:
         if not self.policy.live and transport is None:
             raise EvalError("REAL_EVAL_FAKE_TRANSPORT_REQUIRED")
         self.transport = transport
+        self.dropped_tool_calls = 0
 
     def request(self, messages, schemas, timeout=20, max_tokens=1200, *, validate=None):
         self.policy.validate()
@@ -353,22 +354,35 @@ class Channel:
             usage = {k: u[k] for k in ("prompt_tokens", "completion_tokens")}
             choice = data["choices"][0]
             calls = choice["message"]["tool_calls"]
+            # DeepSeek may ignore parallel_tool_calls=False. Every returned call must be
+            # well-formed; only the first is executed and the rest are counted, never
+            # re-requested (no retry, no extra paid call).
             if (
                 choice.get("finish_reason") != "tool_calls"
-                or len(calls) != 1
-                or calls[0]["type"] != "function"
+                or not isinstance(calls, list)
+                or not 1 <= len(calls) <= 8
+                or any(c["type"] != "function" for c in calls)
             ):
                 raise ValueError()
-            function = calls[0]["function"]
-            if function["name"] not in {s["function"]["name"] for s in schemas}:
-                raise ValueError()
-            # Strict JSON only. No ChatProvider.decide repair/re-ask path is reachable.
-            args = json.loads(function["arguments"])
-            if key and key in json.dumps(args, ensure_ascii=False):
-                raise ValueError()
-            if not isinstance(args, dict):
-                raise ValueError()
-            result = {"name": function["name"], "arguments": args, "usage": usage}
+            names = {s["function"]["name"] for s in schemas}
+            parsed = []
+            for c in calls:
+                if c["function"]["name"] not in names:
+                    raise ValueError()
+                # Strict JSON only. No ChatProvider.decide repair/re-ask path is reachable.
+                a = json.loads(c["function"]["arguments"])
+                if key and key in json.dumps(a, ensure_ascii=False):
+                    raise ValueError()
+                if not isinstance(a, dict):
+                    raise ValueError()
+                parsed.append((c["function"]["name"], a))
+            self.dropped_tool_calls += len(parsed) - 1
+            result = {
+                "name": parsed[0][0],
+                "arguments": parsed[0][1],
+                "usage": usage,
+                "dropped_tool_calls": len(parsed) - 1,
+            }
             if validate:
                 try:
                     validate(result)

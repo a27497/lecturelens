@@ -5,8 +5,8 @@
     "eval/p7-real/tasks.json": "5fff07b9adb4e13e808d9101ff98fb48f7bd7d3ad353e732c4d898d14d053ab3",
     "eval/p7-real/thresholds.json": "6b1b475dd5ce747dd569f936ced4f9f1530d97e57525ae394215e225ed7ac8f0",
     "agent-service/src/lecturelens_real_eval/__init__.py": "ba4bac68173453fd08cf8d7c82511894fac6e3ae36cf0dbbdb53c71874c3aa5c",
-    "agent-service/src/lecturelens_real_eval/channel.py": "e7fc1dff1de054fb225ce531a5bda83555cb53ad06bbcf098d918f35abbecddf",
-    "agent-service/src/lecturelens_real_eval/runner.py": "ab6afbee52b48da29737c66036f075589a5bfacce82d3999d9e06e438b011daf",
+    "agent-service/src/lecturelens_real_eval/channel.py": "e80766bb315a899aa77fb4d4c7e198e0d62874e4bb117adf2fafa936eb09cc91",
+    "agent-service/src/lecturelens_real_eval/runner.py": "e3d5aeddbd94a3840edf089476201b66547d2fd79f1fa6b52f8907abc5b65e37",
     "eval/p7-real/run.py": "62c4ea891a451e152f1a08aee5d5ce574f9173fbe010bd3b15e9f7e06dbbe0c7",
     "eval/p7-real/sample.py": "c409211b92f8b92058e4aa9de29d0151c19b81f2ce05305203a97756049ee3e6",
     "agent-service/pyproject.toml": "954ebe83f86f5a3ba6ce0d0129737aee2f42d3ea4766b68825d5b6c92787b26a"
