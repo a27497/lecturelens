@@ -20,6 +20,7 @@ from lecturelens_real_eval.tutor_runner import (
     citation_ids,
     fake_transport,
     run_evaluation,
+    select_dialogues,
     summarize,
     verify_inputs,
 )
@@ -230,6 +231,10 @@ def test_mock_eval_e2e_writes_summary_dialogues_sources_reviews_and_mirrored_usa
     assert all(len(d["turns"]) in {3, 4} for d in rows)
     assert all(c["text"] and c["page"] for d in rows for t in d["turns"] for c in t["citations"])
     assert (output / "sample.py").exists() and (output / "summary.json").exists()
+    reviews = [json.loads(line) for line in (output / "reviews.jsonl").read_text().splitlines()]
+    _, thresholds = verify_inputs()
+    focused = summarize(rows, reviews, result["accounting"], thresholds, None, False, focused=True)
+    assert focused["verdict"] == "PARTIAL" and focused["metrics"] == result["metrics"]
     ledger = Ledger(
         dsn,
         directory / "eval-ledger.jsonl",
@@ -237,6 +242,66 @@ def test_mock_eval_e2e_writes_summary_dialogues_sources_reviews_and_mirrored_usa
         replace(TutorPolicy(), candidate_sha256=result["candidate_sha256"]),
     )
     assert ledger.check() == result["accounting"]
+
+
+@pytest.mark.parametrize("ids", [[], ["unknown"], ["algorithms-l1-1", "algorithms-l1-1"]])
+def test_dialogue_filter_rejects_empty_unknown_or_duplicate_ids(ids):
+    scripts, _ = verify_inputs()
+    with pytest.raises(EvalError, match="DIALOGUE_FILTER_INVALID"):
+        select_dialogues(scripts, ids)
+
+
+@pytest.mark.parametrize("fault", ["citation", "evaluation"])
+def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(isolated, fault):
+    dsn, directory = isolated
+    fake = fake_transport()
+    observations = []
+
+    def repairable(request):
+        payload = json.loads(request.content)
+        body = json.loads(payload["messages"][-1]["content"])
+        result = fake.handle_request(request)
+        if payload["model"] != "deepseek-flash":
+            return result
+        observations.extend(o for o in body["observations"] if "error" in o)
+        response_body = json.loads(result.content)
+        function = response_body["choices"][0]["message"]["tool_calls"][0]["function"]
+        if function["name"] == "finish_tutor_turn" and len(body["observations"]) == 1:
+            args = json.loads(function["arguments"])
+            if fault == "citation":
+                for eid in args["evidence_ids"]:
+                    args["text"] = args["text"].replace(f"[{eid}]", "")
+                    args["evaluation"] = args.get("evaluation", "").replace(f"[{eid}]", "")
+            elif body["evaluation_required"]:
+                args["evaluation"] = ""
+            function["arguments"] = json.dumps(args)
+            return httpx.Response(200, json=response_body)
+        return result
+
+    result = run_evaluation(
+        dsn,
+        directory / "focus-ledger.jsonl",
+        "focus",
+        TutorPolicy(),
+        transport=httpx.MockTransport(repairable),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-2"],
+    )
+    assert result["verdict"] == "PARTIAL" and result["fatal"] is None
+    assert result["scope"] == "focused" and result["selected_dialogue_ids"] == ["algorithms-l1-2"]
+    assert result["dialogues"] == 1 and result["turns"] == result["reviewed_turns"] == 3
+    assert result["metrics"]["protocol_failure_rate"] == 0
+    assert result["metrics"]["socratic_compliance_rate"] == 1
+    expected = "TUTOR_CITATION_MISMATCH" if fault == "citation" else "TUTOR_EVALUATION_REQUIRED"
+    assert observations and all(o["error"] == expected for o in observations)
+    dialogue = json.loads((directory / "focus/dialogues.jsonl").read_text())
+    assert all(t["status"] == "completed" for t in dialogue["turns"])
+    assert len(dialogue["turns"][-1]["proposals"]) == 3  # search, rejected finish, repair
+
+
+def test_filter_preserves_frozen_order():
+    scripts, _ = verify_inputs()
+    assert select_dialogues(scripts, [d["dialogue_id"] for d in reversed(scripts)]) == scripts
 
 
 def test_fabricated_citation_stops_round_and_fails_even_if_other_fields_invalid(isolated):

@@ -1,5 +1,7 @@
 # P8 offline implementation report — 2026-10-27
 
+Current round: [`p8-tutor-20261027-v3` protocol hardening](#offline-protocol-hardening-v3) on `codex/p8-tutor-protocol`, using only port **25741**. The earlier sections below are historical records from the prior worktree/port, not commands rerun in this round.
+
 Implemented on `codex/p8-tutor` in its isolated worktree, based on P7 real-eval `e1e7af2`. The original implementation work made no real provider calls, push, PR, merge, deployment, private env-file access or online configuration changes. The later authorized live failure and offline fix are recorded below. Deterministic checks do not establish teaching quality.
 
 ## Delivered areas
@@ -100,3 +102,137 @@ Final full suite: **1,017 passed, 0 failures/errors, 0 skipped** in **352.27 s**
 The separate mock trial uses the same socket fence and a clean environment, run id `p8-mock-fix-r1-20261027`, local ledger `.data/p8-tutor/fix-r1-mock-ledger.jsonl` and output directory `.data/p8-tutor/p8-mock-fix-r1-20261027/`. No containers were started, stopped or removed during this fix round.
 
 Mock result: **PASS — NOT_RUN_MOCK_MECHANICS_ONLY**, **24 dialogues / 80 turns / 80 fixed reviews / 240 fake requests**, 0 pending, 0 blocked, 0 protocol failures. All citation checks are valid; fixed mock support/context/Socratic/abstention metrics are 1.0. p95 Tutor latency: **0.623 s**; simulated accounting: **$0.063168**, real spend for this fix round: **$0**. A guarded `--check-ledger` returned identical 240-call accounting with matching PG/JSONL events; `sample.py -n 1` exported successfully. These results establish execution/protocol behavior, not real-model task quality.
+
+## Offline protocol hardening v3
+
+This round is on `codex/p8-tutor-protocol`, based on `970bd00`, in `/home/dev/projects/lecturelens-p8-tutor-protocol`. Only compose project `lecturelens-p8-tutor-protocol-20261027` and PostgreSQL **127.0.0.1:25741** were used. The supplied compose port/volume patch is preserved and pinned: volume key `p8-tutor-protocol-postgres`. `lecturelens_agent_test` was created on this instance; acceptance runs use its separate `lecturelens_agent_acceptance` DB. No original/sibling repository writes, frozen P7 changes, Java/MySQL changes, push, PR, merge or deployment.
+
+The read-only r2 dialogue artifacts confirm citation formatting, repeated searches and missing follow-up evaluation failures. The historical `p8-real-review-20261027-r2` remains **PARTIAL**. Nothing in its proposals, scores, ledger or human audit was changed. This round makes **zero real provider calls**, reads nothing under `/home/dev/lecturelens-eval/` and reads no credentials, and does not execute a live command.
+
+Changes:
+
+- `tutor/runtime.py`: an observed citation-format mismatch or duplicate declaration becomes a structured error observation, atomically consumes a tool slot and checkpoints `ready`. A subsequent corrected finish can publish after authority checks. Unobserved IDs and authority re-READ failures remain fatal. Failed text is private and never published.
+- At most two authoritative searches per turn, including empty searches. The committed observation journal supplies the persistent count. After two searches only finish is offered; a mock provider ignoring that restriction gets a search-limit observation and no additional authority SEARCH. Query results still receive authority re-READ, and publication keeps its CHECK/READ/fences. Four model/four tool limits, deadline, session budgets and exact abstention remain unchanged.
+- The prompt and user payload flag required follow-up evaluation after a Socratic prompt. Missing/whitespace-only evaluation yields a repair observation; perpetual violations exhaust the existing budget without an answer. A supported Socratic finish must still ask a guiding question. Exact insufficient-evidence abstention still requires empty evaluation.
+- `tutor_runner.py`: the eval adapter uses that same runtime. New `--dialogue-ids` validates unique known IDs before ledger/provider entry, preserves frozen script order and records scope/selected IDs. Focused runs cannot earn full-suite PASS, including when all 24 dialogues are selected.
+- Tests cover failed-slot accounting, durable ready checkpoint/restart, corrected citations/evaluation, undeclared inline observed IDs, duplicate declarations, unrepaired budget exhaustion, fatal authority/Socratic violations, empty/nonempty search caps, and repairs through fake HTTP transport. Full-suite mock metrics are also checked against focused-scope denial.
+- Current behavior/quality status updated in root README, product contract, architecture, P8 guide and eval README. Product remains opt-in Mock only; no real quality acceptance is claimed.
+
+Freeze: **`p8-tutor-20261027-v3`**, manifest SHA-256 **`3e77cc62190a9830fc32c436f68be7549108795cd4b8c04a08720c5969089944`**. All 17 pinned files were hashed from final bytes. `dialogues.json` and `thresholds.json` are byte-identical to `970bd00`: citation/abstention 1.0, support ≥0.85, context ≥0.90, Socratic ≥0.75, protocol failure ≤0.05, latency ≤20 s, 400 calls / $0.70. No rate or cap was loosened. No dialogue/topic/lecture identity was added to runtime rules, and no held-out data was consumed.
+
+### Commands actually run
+
+Targeted Python/PostgreSQL check:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/protocol-targeted-network \
+  -- -q tests/test_tutor.py tests/test_tutor_citations.py tests/test_p8_tutor_eval.py \
+  --junitxml=../.data/p8-tutor/checks/protocol-targeted.xml
+```
+
+**92 passed, 0 failed/errors/skipped**, 60.17 s. After this run, the existing full-mock test was strengthened to assert that the same 24-dialogue/80-turn passing records cannot earn focused PASS; the final broad run below includes that assertion.
+
+Broad guarded regression, excluding the seven legacy switch-setting cases:
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/protocol-full-safe-network \
+  -- -q \
+  -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
+  --junitxml=../.data/p8-tutor/checks/protocol-full-safe.xml
+```
+
+**1,025 passed, 0 failures/errors/skips, 7 deselected**, 335.96 s. All **92 Tutor tests** ran, including PostgreSQL runtime/app, citation grammar and real-eval Tutor fake-transport tests. Two existing upstream Starlette/AnyIO and certificate deprecation warnings remain. Complete selected-suite JUnit, stdout and network records are retained as `.data/p8-tutor/checks/protocol-full-safe.{xml,log}` and `protocol-full-safe-network/`. This is a broad selected-suite pass; the seven exclusions mean it is not an unrestricted full-suite result.
+
+An initial unrestricted guarded run was interrupted after **304 passed** in 188.40 s: I discovered that five existing P7 test functions (seven parameterized cases) temporarily set the live opt-in and synthetic keys for fake-transport security checks. Those cases had already run; this test-local opt-in violates the stricter no-switch requirement despite using fake transport. The credential-clearing launcher and external-network fence were active, and **no real provider request occurred**. This interrupted run is not counted as a complete pass; its log/XML/network records are retained at `.data/p8-tutor/checks/protocol-full*`. The final broad command excludes these seven cases rather than modifying frozen/legacy tests. No live switches were set by the final command, its selected tests, targeted checks, mutations or standalone mock runs.
+
+Mutation checks, with source restoration in `finally` after each:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-protocol-mutations.py
+```
+
+| Mutation | Selected regression | Result |
+| --- | --- | --- |
+| Raise immediately for observed citation mismatch | `test_citation_soft_rejection_checkpoints_slot_and_repairs_after_restart` | Exactly **1 failed, 0 errors/skips**, 0.45 s; missing repair checkpoint stops recovery |
+| Disable cap (`MAX_SEARCH_CALLS = 99`) | `test_search_limit_forces_finish_and_rejects_ignored_limit[False]` | Exactly **1 failed, 0 errors/skips**, 0.48 s; third decision no longer offers only finish |
+
+Evidence: `.data/p8-tutor/checks/protocol-mutation-{citation,search}.{patch,log,xml}`, corresponding `-network/` directories, and `protocol-mutations.json` (commands, counts, restored source digest). Both mutations were removed before the broad check and standalone eval. No mutant candidate was accepted or frozen.
+
+Lint/format/whitespace commands passed:
+
+```bash
+uv run --project agent-service --offline ruff check agent-service eval/p8-tutor
+uv run --project agent-service --offline ruff format --check \
+  agent-service/src/lecturelens_real_eval/tutor/runtime.py \
+  agent-service/src/lecturelens_real_eval/tutor_runner.py \
+  agent-service/tests/test_tutor.py agent-service/tests/test_p8_tutor_eval.py
+git diff --check
+```
+
+Java/frontend/browser checks were **not rerun** in this Python protocol round; those layers are unchanged. This is not real-model task-quality testing.
+
+### Offline mock evaluation actually run
+
+The retained `.data/p8-tutor/checks/run-guarded-tutor.py` launcher clears provider configuration and installs the same Python external-network fence before loading the CLI. It asserts that the startup guard loaded and writes network records to the supplied first argument. Actual full mock command:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/protocol-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/protocol-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-protocol-mock-20261027
+```
+
+**PASS — NOT_RUN_MOCK_MECHANICS_ONLY**: 24 dialogues / 80 turns / 80 fixed reviews / **240 fake requests**, 0 protocol failures, 0 pending/blocked. Citation/abstention and fixed-review support/context/Socratic metrics are 1.0. p95 turn latency **0.492 s**; simulated accounting **$0.063168**; real spend **$0**. Outputs: `.data/p8-tutor/p8-protocol-mock-20261027/{dialogues.jsonl,reviews.jsonl,summary.json,sample.py}`; captured stdout `.data/p8-tutor/checks/protocol-mock.log`.
+
+The same guarded CLI with `--check-ledger` and a fresh `protocol-ledger-network/` directory returned exactly **240 calls / 63,168,000 nano-USD / 0 pending / no blocked state**, proving PG/JSONL agreement without provider dispatch. Command:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/protocol-ledger-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/protocol-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-protocol-mock-20261027 --check-ledger
+python3 .data/p8-tutor/p8-protocol-mock-20261027/sample.py -n 1
+```
+
+Accounting stdout: `checks/protocol-ledger.log`; sampled source output: `checks/protocol-sample.txt` (both under `.data/p8-tutor/`).
+
+A second **offline** CLI run exercised the exact focused selection proposed below, with a local ledger, no live flag and cleared provider environment:
+
+```bash
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/protocol-focus-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/protocol-focus-mock-ledger.jsonl \
+  --max-usd 0.50 --max-calls 200 --run-id p8-protocol-focus-mock-20261027 \
+  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
+    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
+    algorithms-l1-1 probability-l2-1 probability-l3-3
+```
+
+Result: **PARTIAL by scope**, no fatal error, **11 dialogues / 37 turns / 37 fixed reviews / 111 fake requests**, 0 protocol failures, all mock rates 1.0, p95 **0.467 s**, simulated **$0.0292152**. This confirms filter parsing and focused/full-suite separation, not acceptance or teaching quality. Outputs: `.data/p8-tutor/p8-protocol-focus-mock-20261027/` and `checks/protocol-focus-mock.log`.
+
+### Exact next live command — NOT EXECUTED
+
+For a separately authorized human operator with credentials and the required opt-in already configured in their shell. No private files were loaded by this round, and this block was not executed:
+
+```bash
+cd /home/dev/projects/lecturelens-p8-tutor-protocol
+uv run --project agent-service --offline python eval/p8-tutor/run.py \
+  --live \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-protocol-focus-20261027.jsonl \
+  --max-usd 0.50 --max-calls 200 --run-id p8-protocol-focus-20261027 \
+  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
+    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
+    algorithms-l1-1 probability-l2-1 probability-l3-3
+```
+
+Eight r2 failing dialogues span citation/evaluation/search-budget failures, including the absent-topic budget case; three r2 passing dialogues are controls. This focused run can return PARTIAL at best. The full-suite frozen numeric gates remain unchanged.
+
+Remaining risks: two searches may reduce recall; the existing four-call/deadline limits may still prevent repair when multiple independent mistakes occur. Unobserved IDs, authority changes and invalid abstention/Socratic outcomes remain fatal. Grounded evaluation, pedagogical quality and semantic support still need real-model measurement; deterministic reviewers establish no such quality. No unseen-course generalization, automatic grading, learner memory or scheduling is claimed. Conservative reservations may exhaust even the focused $0.50 budget before all turns complete. All historical failures and the initial interrupted broad check remain available.

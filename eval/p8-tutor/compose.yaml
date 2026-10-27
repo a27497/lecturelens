@@ -6,8 +6,8 @@ services:
       POSTGRES_PASSWORD: p8-local-only
       POSTGRES_DB: lecturelens_agent_acceptance
     ports:
-      - "127.0.0.1:25731:5432"
+      - "127.0.0.1:25741:5432"
     volumes:
-      - p8-tutor-postgres:/var/lib/postgresql/data
+      - p8-tutor-protocol-postgres:/var/lib/postgresql/data
 volumes:
-  p8-tutor-postgres:
+  p8-tutor-protocol-postgres:

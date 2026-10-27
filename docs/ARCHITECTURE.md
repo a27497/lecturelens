@@ -217,4 +217,4 @@ Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Jav
 
 独立 `lecturelens_real_eval.tutor` 包通过可选 ASGI 入口包装原服务；冻结 `lecturelens_agent` 源码与 AU/P7 gate 保持原字节。Java `TutorController` 仅负责认证、课程权限/版本和签名转发，Vue `CourseTutorPanel` 消费会话、轮次及 canonical 引用。模型选择检索并观察证据后决定回答、Socratic 引导或证据不足；Python/PG 的 `tutor_session/tutor_turn` 保存有界上下文、预算、取消、响应 journal 和原子发布 checkpoint。无 Java/MySQL 新表或跨服务写入。
 
-这是多轮 Tutor 实验路径，普通单轮 QA 保留独立入口；Mock 仅验证协议。产品真实模型、语义质量、长期记忆和自动评分未验收。版本变化使 Session stale，Evidence tombstone 触发独立级联清理；原 Study worker 不消费 Tutor 状态。实现/运行边界见 [P8](P8_TUTOR.md)，未执行的双模型通道与离线记录见 [P8 Eval](../eval/p8-tutor/README.md)。
+这是多轮 Tutor 实验路径，普通单轮 QA 保留独立入口；Mock 仅验证协议。产品真实模型、语义质量、长期记忆和自动评分未验收。版本变化使 Session stale，Evidence tombstone 触发独立级联清理；原 Study worker 不消费 Tutor 状态。实现/运行边界见 [P8](P8_TUTOR.md)，独立双模型评测通道与离线记录见 [P8 Eval](../eval/p8-tutor/README.md)。

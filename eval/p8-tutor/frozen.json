@@ -1,5 +1,5 @@
 {
-  "candidate": "p8-tutor-20261027-v2",
+  "candidate": "p8-tutor-20261027-v3",
   "source": "eval/retrieval-v2/corpus.json",
   "files": {
     "agent-service/src/lecturelens_real_eval/channel.py": "e80766bb315a899aa77fb4d4c7e198e0d62874e4bb117adf2fafa936eb09cc91",
@@ -8,11 +8,12 @@
     "agent-service/src/lecturelens_real_eval/tutor/app.py": "d4ff5f96cfe9e676828418f54a8a7836da8af9f487f6ff978718517f5aae85e9",
     "agent-service/src/lecturelens_real_eval/tutor/citations.py": "5ea196de5659b62760493fa4a37f8ab67be2a6bdbc606fdd0e424a987f01b6d0",
     "agent-service/src/lecturelens_real_eval/tutor/contracts.py": "facd8ad5141b80d03e516e9d4d91e860425f5a756ed16879a02702374eb0c433",
-    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "eaca58a0d1d8e8fab44fd6cb1b0ba55bd114146279d013cfff74be95d2cf4f9e",
+    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "e4065489e442747be139943a73c26a07eccb8504c2cbf449877b9a3d866c47d2",
     "agent-service/src/lecturelens_real_eval/tutor/store.py": "0851a265833fd3d3c0ee16a8096caa4aa96b7af7c8b82c60ebb81e05dc87a19e",
     "agent-service/src/lecturelens_real_eval/tutor_channel.py": "c58fb5a5af2f2e53b9c466963dd2cc30d21155d2a0fa11b02b60ffe2d685a061",
-    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "18412c1f999625094694310e70c93dbfc90c867315f06d81e912b57a4e200708",
+    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "3d0db02c3c1b406cee398d50feda0a383cb26500320e67cfe2158580c1e760fa",
     "eval/p7-real/snapshot.json": "a3334f992261fbd8f144e783b25fcf3cfde37201fb5f28e8403564a931d44ef5",
+    "eval/p8-tutor/compose.yaml": "6b548a72f6c08eed46ca3bf2f9268cb74ecbd47dc66dbfa5a9f63f5c22da7b5f",
     "eval/p8-tutor/dialogues.json": "8d8ca2b8f9ca0c04f433cc733eb3a663456fbdb956532cb0d23c79593b670fea",
     "eval/p8-tutor/run.py": "c51dd8cffb581dba3c333906b75ec70457194401b57a601337a7d17f65521f98",
     "eval/p8-tutor/sample.py": "04cc28ceb3958410f3bf51d83a5878c6896e554bfbc176f8ade69de505ce736e",

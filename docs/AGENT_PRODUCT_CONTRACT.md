@@ -90,4 +90,4 @@ Java 的新增工作围绕这些能力所需的课程、Evidence、权限或可�
 
 P7 工作区补充：证据闪卡与 FSRS 自评调度实验性已实现，仅离线 Mock，未部署；这不改变 AU 的冻结身份或质量边界。选择题程序判分与薄弱点方向已获产品层面开放，尚未在本轮实现；开放题继续只给反馈。见 [P7 说明](P7_EVIDENCE_FLASHCARDS.md)。
 
-P8 工作区补充：独立课程多轮 Tutor 已实现离线 Mock 机制，模型协议选择检索、观察权威 Evidence 后回答／Socratic 引导／证据不足；会话上下文、轮次、预算和可恢复 journal 归 Python/PG，Java 仅做认证与课程版本网关。真实教学质量尚未执行评测，长期记忆与自动评分未交付；不继承或修改冻结 AU/P7 结论。见 [P8 Tutor](P8_TUTOR.md) 与[独立评测入口](../eval/p8-tutor/README.md)。
+P8 工作区补充：独立课程多轮 Tutor 已实现离线 Mock 机制，模型协议选择检索、观察权威 Evidence 后回答／Socratic 引导／证据不足；会话上下文、轮次、预算和可恢复 journal 归 Python/PG，Java 仅做认证与课程版本网关。真实教学质量评测尚未通过，长期记忆与自动评分未交付；不继承或修改冻结 AU/P7 结论。见 [P8 Tutor](P8_TUTOR.md) 与[独立评测入口](../eval/p8-tutor/README.md)。

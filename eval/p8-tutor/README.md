@@ -4,7 +4,9 @@ Offline mechanism implementation only; **zero real provider calls** in this task
 
 The first authorized live trial, `p8-real-review-20261027`, remains **FAIL** after **2 real calls / $0.0039189**, with `REAL_EVAL_CITATION_FABRICATED`. Its Flash answer used `Adj[u]`; the old bracket parser misclassified `u` as an evidence id. All 11 actual declared/inline ID references were authoritative. This was an evaluator/contract false positive; the failed run and its original ledger are retained as evidence, without rescoring it as a pass. See [the fix report](REPORT.md#offline-fix-round-1).
 
-Candidate `p8-tutor-20261027-v2` shares one citation grammar between runtime and runner: snapshot `v2-{course}-l{lecture}-p{page:02d}-e{ordinal:02d}` (optional `-zh` translation suffix), production lowercase SHA-256 ids, and study-context `eN` aliases. Other bracket contents are ordinary text. Every declared id is still checked, including malformed proposals; any ID-shaped citation outside the lecture/revision authority remains fatal. Runtime inline/declared equality, observed selection, duplicate rejection, authority re-READ and exact abstention remain enforced. Prompts, dialogues and thresholds are unchanged. The next live trial must use **`p8-real-review-20261027-r2`** and **`ledger-p8-tutor-r2-20261027.jsonl`**; it has not been run by this offline fix.
+Candidate **`p8-tutor-20261027-v3`** preserves the shared citation grammar and authority checks. Observed citation-format mistakes (including missing inline references or duplicate declarations) and missing evaluation after a Socratic prompt produce error observations, consume a tool slot and allow a corrected finish within the existing four-model/four-tool turn budget. Unobserved/fabricated IDs and authority failures remain fatal. Two authoritative searches are allowed per turn; after that only finish is offered. Exact abstention and guiding-question requirements remain enforced. Dialogues and thresholds are byte-identical to v2; all pinned inputs were rehashed, including the isolated compose file.
+
+The separately executed r2 trial remains **PARTIAL**. Its citation, search-budget and missing-evaluation failures motivated this offline protocol change; they are not rescored as successes. The next proposed live trial is **`p8-protocol-focus-20261027`**, documented below and **not executed** here. See [protocol verification](REPORT.md#offline-protocol-hardening-v3).
 
 ## Scripts and negative evidence
 
@@ -56,68 +58,68 @@ The eval adapter drives the production Tutor store/runtime with a read-only snap
 
 All 24 dialogues/80 turns and all gates are required for PASS. Nonfatal quality/protocol misses are PARTIAL. Fabricated citations, channel/ledger errors or unknown outcomes are FAIL. Missing/failed reviews count as unsupported, not successful. Citations in malformed proposals are inspected before schema validation so malformed output cannot hide invented IDs. An insufficient-evidence candidate containing substantive text is rejected by the runtime, never rewritten into a passing answer.
 
-The P8 channel derives from P7's reserve-before-send pattern with separate `p8_tutor_real_run/p8_tutor_real_event` PG tables. It preserves an append-only fsynced JSONL mirror, exclusive locking, durable PG commit and exact record comparison before dispatch. No retry, no paid schema repair, no automatic ledger repair. Unknown/failed outcomes consume the full reservation and cannot be replayed. Actual usage exceeding reservation blocks the run. There is no product adapter importing this channel.
+The P8 channel derives from P7's reserve-before-send pattern with separate `p8_tutor_real_run/p8_tutor_real_event` PG tables. It preserves an append-only fsynced JSONL mirror, exclusive locking, durable PG commit and exact record comparison before dispatch. No transport/schema retry and no automatic ledger repair. Runtime tool-error observations permit another model-selected attempt within the original persistent turn budget; each decision is separately accounted. Unknown/failed outcomes consume the full reservation and cannot be replayed. Actual usage exceeding reservation blocks the run. There is no product adapter importing this channel.
 
 Conservative fixed ceilings per million tokens: Flash **$0.30 input / $1.20 output**; Pro **$1.74 input / $3.96 output**, cache discounts ignored. Input reserves the complete wire-body byte count as a token upper bound; output ≤1,200 tokens; body ≤65,536 bytes; response ≤128 KiB; timeout ≤20 seconds. Largest reservations are $0.0211008 Flash / $0.11878464 Pro. These conservative reservations can exhaust $0.70 before 400 requests; completion within the cap is not guaranteed. Normal mock flow has 160 Tutor requests + 80 review requests = 240 fake requests.
 
 ## Own isolated database and offline checks
 
-Only compose project `lecturelens-p8-tutor-20261027`, PostgreSQL `127.0.0.1:25731`:
+Only compose project `lecturelens-p8-tutor-protocol-20261027`, PostgreSQL `127.0.0.1:25741`:
 
 ```bash
-COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-20261027 \
+COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-protocol-20261027 \
   -f eval/p8-tutor/compose.yaml up -d
-COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-20261027 \
+COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-protocol-20261027 \
   -f eval/p8-tutor/compose.yaml exec -T postgres \
   psql -U p8 -d lecturelens_agent_acceptance -c 'CREATE DATABASE lecturelens_agent_test'
 ```
 
-CREATE DATABASE is first-start only. Tests use `lecturelens_agent_test`; isolated ledger tests use temporary schemas in `lecturelens_agent_acceptance` on the same port. No MySQL tables or other compose projects are used. Full guarded suite (use a fresh network-records directory for each invocation):
+CREATE DATABASE is first-start only. Tests use `lecturelens_agent_test`; isolated ledger tests use temporary schemas in `lecturelens_agent_acceptance` on the same port. No MySQL tables or other compose projects are used. Guarded broad suite (use a fresh network-records directory for each invocation). Seven legacy P7 fake-transport security cases set the live opt-in internally; exclude them to keep the final run free of that switch. All Tutor/real-eval Tutor cases and database fixtures run normally:
 
 ```bash
-AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25731/lecturelens_agent_test' \
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
 uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
-  --database-port 25731 --network-records .data/p8-tutor/checks/packaged-full-network \
-  -- -q --junitxml=../.data/p8-tutor/checks/packaged-full.xml
+  --database-port 25741 --network-records .data/p8-tutor/checks/protocol-full-safe-network \
+  -- -q \
+  -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
+  --junitxml=../.data/p8-tutor/checks/protocol-full-safe.xml
 ```
 
 Standalone default mock run; never use the external ledger path for mocks:
 
 ```bash
 uv run --project agent-service --offline python eval/p8-tutor/run.py \
-  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25731/lecturelens_agent_acceptance' \
-  --ledger .data/p8-tutor/packaged-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
-  --run-id p8-mock-packaged-20261027
-python3 .data/p8-tutor/p8-mock-packaged-20261027/sample.py -n 5
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/protocol-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-protocol-mock-20261027
+python3 .data/p8-tutor/p8-protocol-mock-20261027/sample.py -n 5
 ```
 
 Outputs: `dialogues.jsonl`, `reviews.jsonl`, `summary.json`, and standalone `sample.py`. Sampling prints N seeded dialogues with turns, outcomes, inline citations and full cited source text. Summary explicitly labels fake runs `NOT_RUN_MOCK_MECHANICS_ONLY`. Fake transport does not read credentials; its fixed reviewer judgments and negative responses only verify mechanics.
 
 ## Exact live command for a later reviewer — DO NOT run in this task
 
-Both CLI `--live` and `LECTURELENS_REAL_EVAL=1` from the reviewer's env file are mandatory. The application never sources files or sets the switch. The following is documentation only; none of these private files was read in this task. Run only after separate authorization, with shell tracing off:
+The human operator must separately configure credentials and the required live opt-in in their shell. The application never loads private env files or sets the opt-in. This exact command is **documentation only**, with a fresh run ID/ledger and tighter $0.50/200-call caps:
 
 ```bash
-cd /home/dev/projects/lecturelens-p8-tutor
-(
-  set +x
-  set -a
-  . /home/dev/lecturelens-eval/deepseek-20261027/eval.env
-  . /home/dev/lecturelens-eval/deepseek-20261027/secrets.env
-  set +a
-  uv run --project agent-service --offline python eval/p8-tutor/run.py \
-    --live \
-    --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25731/lecturelens_agent_acceptance' \
-    --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-tutor-r2-20261027.jsonl \
-    --max-calls 400 --max-usd 0.70 --run-id p8-real-review-20261027-r2
-)
+cd /home/dev/projects/lecturelens-p8-tutor-protocol
+uv run --project agent-service --offline python eval/p8-tutor/run.py \
+  --live \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-protocol-focus-20261027.jsonl \
+  --max-usd 0.50 --max-calls 200 --run-id p8-protocol-focus-20261027 \
+  --dialogue-ids algorithms-l1-2 algorithms-l2-3 algorithms-l3-1 \
+    probability-l1-2 probability-l2-2 probability-l3-2 quantum-l1-3 quantum-l2-3 \
+    algorithms-l1-1 probability-l2-1 probability-l3-3
 ```
+
+This selects eight r2 failing dialogues covering citation/evaluation/search-budget errors (including an absent-topic turn) and three passing controls, preserving frozen script order. `--dialogue-ids` accepts space-separated unique frozen IDs; empty, unknown or duplicate IDs fail before ledger/provider entry. Focused summaries record `scope=focused` and selected IDs and return **PARTIAL** at best, even with perfect metrics; they cannot establish full-suite acceptance. Omitting the filter retains the 24-dialogue/80-turn gates and full mock command above. These are public development scripts, not fresh holdout data.
 
 `AGENT_LLM_API_KEY` is read only inside the live sender; raw errors, body text and keys never enter the accounting ledger/logs. Key echoes in parsed or raw provider responses are rejected. All requests use the fixed HTTPS DeepSeek route, no redirects, no environment proxy, no retries. To check consistency without sending/reading the key, add `--check-ledger` with the same run ID, caps and candidate. Each run ID is single-use; restart cannot reset its budget or resend an unknown call.
 
 Stop only this project's PG when finished; retain its volume:
 
 ```bash
-COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-20261027 \
+COMPOSE_DISABLE_ENV_FILE=1 docker compose -p lecturelens-p8-tutor-protocol-20261027 \
   -f eval/p8-tutor/compose.yaml stop postgres
 ```

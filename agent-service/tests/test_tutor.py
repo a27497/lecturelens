@@ -171,7 +171,7 @@ def test_revision_change_during_model_never_publishes(lab):
         assert conn.execute("SELECT status FROM tutor_session").fetchone()["status"] == "stale"
 
 
-@pytest.mark.parametrize("bad", ["invented", "wrong_inline", "missing", "unobserved", "duplicate", "evaluation"])
+@pytest.mark.parametrize("bad", ["invented", "wrong_inline", "missing", "unobserved", "evaluation"])
 def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
     original = lab[2].provider.decide
 
@@ -184,8 +184,6 @@ def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
                 response["arguments"]["text"] = "A claim [e2]"
             elif bad == "unobserved":
                 response["arguments"].update(evidence_ids=["e2"], text="A claim [e2]")
-            elif bad == "duplicate":
-                response["arguments"]["evidence_ids"] = ["e1", "e1"]
             elif bad == "evaluation":
                 response["arguments"]["evaluation"] = "A claim [e2]"
             else:
@@ -201,6 +199,166 @@ def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
         assert (
             conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()["checkpoint"]["phase"] == "received"
         )
+
+
+def test_citation_soft_rejection_checkpoints_slot_and_repairs_after_restart(lab, monkeypatch):
+    original = lab[2].provider.decide
+
+    def missing_inline(messages, *args):
+        response = original(messages, *args)
+        observations = json.loads(messages[-1]["content"])["observations"]
+        if response["name"] == "finish_tutor_turn" and len(observations) == 1:
+            response["arguments"]["text"] = "BFS levels give shortest path distances in edges."
+        return response
+
+    lab[2].provider.decide = missing_inline
+    act = lab[2].act
+
+    def pause_after_rejection(*args):
+        done = act(*args)
+        if args[1]["response"]["name"] == "finish_tutor_turn":
+            assert done is False
+            raise KeyboardInterrupt()
+        return done
+
+    monkeypatch.setattr(lab[2], "act", pause_after_rejection)
+    submit(lab)
+    with pytest.raises(KeyboardInterrupt):
+        lab[2].execute(lab[0].candidates()[0])
+    with lab[0].connect() as conn:
+        row = conn.execute("SELECT * FROM tutor_turn").fetchone()
+    assert row["status"] == "running" and row["answer"] is None and not row["citations"]
+    assert row["tool_calls"] == row["model_calls"] == 2
+    assert row["checkpoint"]["phase"] == "ready"
+    observation = row["checkpoint"]["observations"][-1]
+    assert observation["tool"] == "finish_tutor_turn"
+    assert observation["error"] == "TUTOR_CITATION_MISMATCH"
+    assert "[evidence_id]" in observation["message"] and "observed search results" in observation["message"]
+    # Recovery consumes the saved error observation without replaying search or the bad finish.
+    restarted = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
+    restarted.execute(lab[0].candidates()[0])
+    result = command(lab, "GET")["turns"][0]
+    assert result["status"] == "completed" and "[e1]" in result["answer"]
+    assert result["tool_calls"] == result["model_calls"] == 3
+    assert len(lab[1].searches) == 1
+
+
+@pytest.mark.parametrize("bad", ["undeclared_inline", "duplicate", "evaluation_inline"])
+def test_observed_citation_format_errors_can_be_repaired(lab, bad):
+    original = lab[2].provider.decide
+
+    def invalid_once(messages, *args):
+        response = original(messages, *args)
+        observations = json.loads(messages[-1]["content"])["observations"]
+        if response["name"] == "finish_tutor_turn" and len(observations) == 1:
+            if bad == "duplicate":
+                response["arguments"]["evidence_ids"] *= 2
+            else:
+                response["arguments"]["evidence_ids"] = []
+                if bad == "evaluation_inline":
+                    response["arguments"].update(
+                        text="Compare with the course.", evaluation="BFS levels [e1]."
+                    )
+        return response
+
+    lab[2].provider.decide = invalid_once
+    result = run(lab)
+    assert result["status"] == "completed" and result["tool_calls"] == result["model_calls"] == 3
+
+
+@pytest.mark.parametrize("bad", ["citation", "evaluation"])
+def test_unrepaired_finish_exhausts_budget_without_publication(lab, bad):
+    if bad == "evaluation":
+        run(lab, socratic=True)
+    original = lab[2].provider.decide
+
+    def invalid(messages, *args):
+        response = original(messages, *args)
+        if response["name"] == "finish_tutor_turn":
+            if bad == "citation":
+                response["arguments"]["text"] = "Missing inline citation."
+            else:
+                response["arguments"]["evaluation"] = " "
+        return response
+
+    lab[2].provider.decide = invalid
+    result = run(lab, "unrepaired")
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_BUDGET_EXHAUSTED"
+    assert result["answer"] is None and not result["citations"]
+    assert result["model_calls"] == result["tool_calls"] == 4
+    with lab[0].connect() as conn:
+        state = conn.execute("SELECT checkpoint FROM tutor_turn ORDER BY ordinal DESC LIMIT 1").fetchone()[
+            "checkpoint"
+        ]
+    assert len([o for o in state["observations"] if "error" in o]) == 3
+
+
+@pytest.mark.parametrize("empty", [False, True])
+def test_search_limit_forces_finish_and_rejects_ignored_limit(lab, empty):
+    lab[1].empty = empty
+    original = lab[2].provider.decide
+    calls = []
+
+    def repeat(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        calls.append([s["function"]["name"] for s in schemas])
+        if len(calls) <= 3:
+            if len(calls) == 3:
+                assert calls[-1] == ["finish_tutor_turn"]
+                assert data["search_calls_remaining"] == 0
+            return {"name": "search_tutor_evidence", "arguments": {"query": "BFS"}}
+        assert data["observations"][-1]["error"] == "TUTOR_SEARCH_LIMIT_REACHED"
+        assert data["evidence"] == ([] if empty else lab[1].read(lab[3], "READ")["evidence"])
+        return original(messages, schemas, timeout)
+
+    lab[2].provider.decide = repeat
+    result = run(lab)
+    assert result["status"] == "completed" and result["tool_calls"] == result["model_calls"] == 4
+    assert len(lab[1].searches) == 2
+    assert result["outcome"] == ("insufficient_evidence" if empty else "answered")
+
+
+def test_missing_socratic_evaluation_observation_and_repair(lab):
+    run(lab, socratic=True)
+    original = lab[2].provider.decide
+    repairs = []
+
+    def omit_once(messages, *args):
+        data = json.loads(messages[-1]["content"])
+        assert data["evaluation_required"] is True
+        response = original(messages, *args)
+        if response["name"] == "finish_tutor_turn":
+            if len(data["observations"]) == 1:
+                response["arguments"]["evaluation"] = " "
+            else:
+                observation = data["observations"][-1]
+                assert observation["error"] == "TUTOR_EVALUATION_REQUIRED"
+                assert "non-empty evaluation" in observation["message"]
+                repairs.append(observation)
+        return response
+
+    lab[2].provider.decide = omit_once
+    result = run(lab, "reply", "One BFS level per step", socratic=True)
+    assert result["status"] == "completed" and result["tool_calls"] == result["model_calls"] == 3
+    assert result["evaluation"].strip() and "[e1]" in result["evaluation"] and repairs
+    assert "?" in result["answer"]
+
+
+def test_socratic_without_guiding_question_remains_fatal_after_repair(lab):
+    original = lab[2].provider.decide
+
+    def invalid(messages, *args):
+        response = original(messages, *args)
+        data = json.loads(messages[-1]["content"])
+        if response["name"] == "finish_tutor_turn":
+            response["arguments"]["text"] = (
+                "BFS levels." if len(data["observations"]) == 1 else "BFS levels [e1]."
+            )
+        return response
+
+    lab[2].provider.decide = invalid
+    result = run(lab, socratic=True)
+    assert result["error_code"] == "TUTOR_SOCRATIC_CONTRACT" and result["answer"] is None
 
 
 def test_exact_failed_live_answer_accepts_math_brackets_and_rereads_authority(lab):
@@ -223,7 +381,10 @@ def test_exact_failed_live_answer_accepts_math_brackets_and_rereads_authority(la
 
     def decide(messages, schemas, timeout):
         if not json.loads(messages[-1]["content"])["observations"]:
-            return {"name": "search_tutor_evidence", "arguments": {"query": "graph adjacency list representation"}}
+            return {
+                "name": "search_tutor_evidence",
+                "arguments": {"query": "graph adjacency list representation"},
+            }
         return {"name": "finish_tutor_turn", "arguments": proposal}
 
     lab[2].provider.decide = decide

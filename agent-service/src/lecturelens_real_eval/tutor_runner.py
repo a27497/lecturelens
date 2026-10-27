@@ -182,7 +182,7 @@ def ratio(rows):
     return sum(rows) / len(rows) if rows else 0
 
 
-def summarize(dialogues, reviews, accounting, thresholds, fatal, live):
+def summarize(dialogues, reviews, accounting, thresholds, fatal, live, *, focused=False):
     turns = [(d, t) for d in dialogues for t in d["turns"]]
     by_id = {(r["dialogue_id"], r["ordinal"]): r for r in reviews}
     answered, abstain, context, socratic, valid = [], [], [], [], []
@@ -220,7 +220,7 @@ def summarize(dialogues, reviews, accounting, thresholds, fatal, live):
         "protocol_failure_rate": ratio([t["status"] != "completed" for _, t in turns]),
         "p95_turn_latency_s": latencies[math.ceil(len(latencies) * 0.95) - 1] if latencies else None,
     }
-    complete = len(dialogues) == 24 and len(turns) == 80
+    complete = not focused and len(dialogues) == 24 and len(turns) == 80
     passed = complete and all(
         metrics[k] is not None
         and (metrics[k] <= v if k in {"protocol_failure_rate", "p95_turn_latency_s"} else metrics[k] >= v)
@@ -251,8 +251,20 @@ def append(path, row):
         file.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
 
 
-def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_root=None, review=True):
+def select_dialogues(scripts, dialogue_ids):
+    if dialogue_ids is None:
+        return scripts
+    known = {d["dialogue_id"] for d in scripts}
+    if not dialogue_ids or len(set(dialogue_ids)) != len(dialogue_ids) or not set(dialogue_ids) <= known:
+        raise EvalError("REAL_EVAL_DIALOGUE_FILTER_INVALID")
+    return [d for d in scripts if d["dialogue_id"] in dialogue_ids]
+
+
+def run_evaluation(
+    dsn, ledger_path, run_id, policy, *, transport=None, output_root=None, review=True, dialogue_ids=None
+):
     scripts, thresholds = verify_inputs()
+    scripts = select_dialogues(scripts, dialogue_ids)
     identity = hashlib.sha256((DATA / "frozen.json").read_bytes()).hexdigest()
     policy = replace(policy, candidate_sha256=identity)
     policy.validate()
@@ -358,8 +370,14 @@ def run_evaluation(dsn, ledger_path, run_id, policy, *, transport=None, output_r
             runtime.close()
     for name in ("dialogues.jsonl", "reviews.jsonl"):
         (directory / name).touch(exist_ok=True)
-    summary = summarize(dialogues, reviews, accounting, thresholds, fatal, policy.live)
+    summary = summarize(
+        dialogues, reviews, accounting, thresholds, fatal, policy.live, focused=dialogue_ids is not None
+    )
     summary.update(run_id=run_id, candidate_sha256=identity, live=policy.live, reviewer=review)
+    summary.update(
+        scope="focused" if dialogue_ids is not None else "full_suite",
+        selected_dialogue_ids=[d["dialogue_id"] for d in scripts],
+    )
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     shutil.copyfile(DATA / "sample.py", directory / "sample.py")
     return summary
@@ -375,6 +393,9 @@ def main():
     parser.add_argument("--max-usd", default="0.70")
     parser.add_argument("--no-review", action="store_true")
     parser.add_argument("--check-ledger", action="store_true")
+    parser.add_argument(
+        "--dialogue-ids", nargs="+", help="Frozen dialogue IDs; focused runs cannot claim full-suite PASS"
+    )
     args = parser.parse_args()
     try:
         verify_inputs()
@@ -388,7 +409,14 @@ def main():
         result = (
             Ledger(args.dsn, args.ledger, args.run_id, policy).check()
             if args.check_ledger
-            else run_evaluation(args.dsn, args.ledger, args.run_id, policy, review=not args.no_review)
+            else run_evaluation(
+                args.dsn,
+                args.ledger,
+                args.run_id,
+                policy,
+                review=not args.no_review,
+                dialogue_ids=args.dialogue_ids,
+            )
         )
         print(json.dumps(result))
         return 1 if result.get("verdict") == "FAIL" else 0
