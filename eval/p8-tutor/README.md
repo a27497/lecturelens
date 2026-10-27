@@ -4,17 +4,19 @@ Offline mechanism implementation only; **zero real provider calls** in this task
 
 The first authorized live trial, `p8-real-review-20261027`, remains **FAIL** after **2 real calls / $0.0039189**, with `REAL_EVAL_CITATION_FABRICATED`. Its Flash answer used `Adj[u]`; the old bracket parser misclassified `u` as an evidence id. All 11 actual declared/inline ID references were authoritative. This was an evaluator/contract false positive; the failed run and its original ledger are retained as evidence, without rescoring it as a pass. See [the fix report](REPORT.md#offline-fix-round-1).
 
-Candidate **`p8-tutor-20261027-v5`** unifies observed citation mismatch, duplicate declarations and Finish size violations into one durable `TUTOR_FINISH_REPAIR_REQUIRED` chance per turn. The observation lists `inline_not_declared`, `declared_not_inline`, duplicates and actual sizes/exact limits. A second format violation fails with `TUTOR_FINISH_FORMAT_INVALID`. A separate one-shot `TUTOR_SOCRATIC_REPAIR_REQUIRED` corrects the supported outcome/question contract; repetition fails with `TUTOR_SOCRATIC_CONTRACT`. Both counters survive restart, and the format counter recognizes legacy mismatch/size observations. The system prompt states the citation, size, mode and repair rules. Unobserved/fabricated IDs and authority failures remain fatal, including every declared/inline ID in dropped parallel proposals. Strict publication limits remain **4 IDs / 500 evaluation characters / 1,600 text characters**; no text is truncated, no IDs are dropped and no outcome is rewritten.
+Candidate **`p8-tutor-20261027-v6`** uses controller-assembled citations. The model writes inline `[id]` citations in text/evaluation, with at most four distinct evidence IDs and no separate `evidence_ids` tool field. The controller extracts with the existing source-ID grammar, de-duplicates and preserves first appearance (text then evaluation); any legacy provider declaration is ignored, even if wrong or malformed. Every extracted candidate must be observed and authoritatively re-READ before repair; unknown/cross-lecture IDs still durably block the eval ledger, including rejected and dropped parallel proposals.
+
+Excess distinct inline IDs and Finish size violations share the durable `TUTOR_FINISH_REPAIR_REQUIRED` chance. The observation includes `distinct_ids`, the full `evidence_ids` list, `excess_ids` beyond the first four, and all actual sizes/exact limits. A second violation fails with `TUTOR_FINISH_FORMAT_INVALID`. A separate one-shot `TUTOR_SOCRATIC_REPAIR_REQUIRED` and the legacy journal counters remain. Publication passes controller metadata and unchanged content through the original strict `Finish`: **4 IDs / 500 evaluation characters / 1,600 text characters**. No silent truncation, dropping or content/outcome rewriting is allowed. Zero-ID supported finishes and exact abstention retain their authority/contract checks.
 
 Each repair atomically prepays the exact next finish-only request in the committed observation journal, under unchanged session/token caps. The ordinary four-model/four-tool limit has at most **one extra repair-only slot**, five total; two searches plus finish plus the two distinct repairs fit in five. Repair requests offer and accept only `finish_tutor_turn`. If capacity is unavailable, the turn fails with `TUTOR_REPAIR_BUDGET_UNAVAILABLE` before issuing a repair observation. An issued observation has its next runtime call/tool budget reserved. The persisted 20-second deadline, authorization, cancellation and fail-closed unknown-call recovery still apply. `TUTOR_EVALUATION_REQUIRED` keeps its previous ordinary-budget behavior.
 
-The v5 manifest SHA-256 is `dc63edaa83db4bff19c5a29426b144ff893e06bb5c45c1a5e28dc8e22ece1b9f`. Final offline verification: **148 targeted tests**, **1,081 selected broad tests** (7 documented deselections), **7/7 mutants killed**, full mock **24/80 PASS**, focused mock **11/37 PARTIAL by scope**. These are mechanism results.
+The separately executed v4 and v5 full live trials remain **PARTIAL**. V5 `p8-repair-full-20261027` had 8/80 protocol failures, all repeated declaration/inline mismatches, and used **306 calls / $0.499732920**. This offline change does not establish real-model improvement. See [v6 verification, freeze and budget math](REPORT.md#offline-controller-assembled-citations-v6). Thresholds remain byte-identical to `970bd00`; only the approved union-bound expectations change in dialogues. Caps remain **400 calls / $0.70**. Historical outputs are untouched; the live command below is documentation only.
 
-The separately executed v4 full trial `p8-schema-full-20261027` remains **PARTIAL** (7/80 protocol failures, 316 calls, $0.5276799); no live result or private ledger was changed. This offline round does not establish real-model improvement. See [v5 verification and budget projection](REPORT.md#offline-unified-finish-and-socratic-repair-v5). Dialogues and thresholds remain byte-identical to `970bd00`; the run caps remain **400 calls / $0.70**. The live command below is documentation only.
+The v6 manifest SHA-256 is `6ad47af20b71f0f6e5eb98da3f84d33dd0b0954876590d6f095b7973331072d6`. Offline verification: **163 targeted tests**, **1,096 selected broad tests** (7 documented deselections), **10/10 mutants killed**. **24/80 full mock PASS**, **12/41 focused mock PARTIAL by scope**. These are execution/protocol checks; details are in the [report](REPORT.md#offline-controller-assembled-citations-v6).
 
 ## Scripts and negative evidence
 
-Each lecture has dialogues `-1` (definition/explanation, 3 turns), `-2` (Socratic prompts and a learner reply, 3 turns), and `-3` (comparison, 3 supported turns and one related absent-topic follow-up). Every dialogue contains “Why is that?” and another elliptical/reply follow-up. Expected prior topics are passed only to the independent reviewer. They are never supplied to the Tutor. The scripts have 56 context-dependent follow-ups, eight insufficient-evidence turns and 24 Socratic turns in eight dialogues.
+Each lecture has dialogues `-1` (definition/explanation, 3 turns), `-2` (Socratic prompts and a learner reply, 3 turns), and `-3` (comparison and a related absent-topic follow-up; the union-bound dialogue is entirely expected-abstain). Every dialogue contains “Why is that?” and another elliptical/reply follow-up. Expected prior topics are passed only to the independent reviewer. They are never supplied to the Tutor. The scripts have 56 context-dependent follow-ups, 11 insufficient-evidence turns and 24 Socratic turns in eight dialogues.
 
 | Lecture | Topics across dialogues 1 / 2 / 3 | Absent extension in dialogue 3 | Zero-hit grep term |
 | --- | --- | --- | --- |
@@ -27,7 +29,7 @@ Each lecture has dialogues `-1` (definition/explanation, 3 turns), `-2` (Socrati
 | quantum-l1 | superposition / measurement / classical vs quantum | open-system dynamics | `Lindblad` |
 | quantum-l2 | interference / polarization / single photons | two-photon coincidence | `Hong` |
 
-**Script/corpus mismatch:** `probability-l1-3` turns 1–3 ask about the union bound (including follow-ups) and have `expected_insufficient=false`, while the probability-l1 corpus/snapshot contains no union-bound evidence (zero literal “union” hits). The v4 model abstained on all three. The frozen scripts are unchanged for the user to decide; these diagnostic “over-abstain” flags do not establish incorrect learner-facing behavior.
+**User-approved correction (t44s14):** the probability-l1 corpus/snapshot contains no union-bound evidence (zero literal “union” hits), so abstaining is correct. Only `probability-l1-3` turns **1–3** change: `expected_insufficient` becomes `true` and `zero_hit_terms: ["union"]` mirrors existing should-abstain entries. They now contribute to `no_evidence_abstain_rate` and cannot count as over-abstention. Turn **4** already expects abstention for its absent Dirichlet extension and remains byte-identical. Learner text, every other dialogue/turn and all thresholds are unchanged; tests compare parsed JSON and raw bytes against `970bd00`. The former “left for the user to decide” issue is resolved in v6; historical trials remain unchanged.
 
 These terms have zero case-insensitive literal hits in the corresponding lecture's complete evidence text. Absence is reverified in `verify_inputs()` and `test_frozen_scripts_absence_and_threshold_hashes`. To independently grep a lecture, extract its text to a local file and run, for example:
 
@@ -62,7 +64,9 @@ The eval adapter drives the production Tutor store/runtime with a read-only snap
 | p95_turn_latency_s | ≤20; nearest rank, Tutor execution only |
 | max_calls / max_usd | 400 / $0.70, reviewer included |
 
-Summary also reports `metrics.over_abstain_count`, `metrics.over_abstain_rate` and `over_abstain_turns` as `(dialogue_id, ordinal)` pairs. The numerator counts completed `insufficient_evidence` outcomes where `expected_insufficient=false`; the denominator is all attempted turns with that script label, including failures. Empty denominator yields zero. This is **report-only**: it adds no threshold and changes no verdict gate.
+Summary also reports `metrics.over_abstain_count`, `metrics.over_abstain_rate` and `over_abstain_turns` as `(dialogue_id, ordinal)` pairs. The numerator counts completed `insufficient_evidence` outcomes where `expected_insufficient=false`; the denominator is all attempted turns with that script label, including failures. Empty denominator yields zero. Additional `metrics.over_abstain_cascade_count` / `over_abstain_cascade_turns` report the subset immediately preceded by a failed/unpublished turn; `metrics.over_abstain_non_cascade_count` / `over_abstain_non_cascade_turns` report the remainder. This is **report-only**: it adds no threshold and changes no verdict gate.
+
+The reviewer prompt explicitly rejects invented antecedents after failed/unpublished prior turns, even for source-supported claims. Conversation history includes status/outcome. The runner deterministically downgrades answered context follow-ups in that situation, except explicit clarification questions; abstentions are exempt. It never changes false to true or overrides other judgments. Conservative clarification recognition and model review still need real-model evaluation.
 
 All 24 dialogues/80 turns and all gates are required for PASS. Nonfatal quality/protocol misses are PARTIAL. Fabricated citations, channel/ledger errors or unknown outcomes are FAIL. Missing/failed reviews count as unsupported, not successful. Citations in malformed proposals are inspected before schema validation so malformed output cannot hide invented IDs. An insufficient-evidence candidate containing substantive text is rejected by the runtime, never rewritten into a passing answer.
 
@@ -87,30 +91,30 @@ CREATE DATABASE is first-start only. Tests use `lecturelens_agent_test`; isolate
 ```bash
 AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
 uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
-  --database-port 25741 --network-records .data/p8-tutor/checks/repair-final-full-safe-network \
+  --database-port 25741 --network-records .data/p8-tutor/checks/cite-final-full-safe-network \
   -- -q \
   -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
-  --junitxml=../.data/p8-tutor/checks/repair-final-full-safe.xml
+  --junitxml=../.data/p8-tutor/checks/cite-final-full-safe.xml
 ```
 
 Standalone default mock run; never use the external ledger path for mocks:
 
 ```bash
 uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
-  .data/p8-tutor/checks/repair-mock-network \
+  .data/p8-tutor/checks/cite-mock-network \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger .data/p8-tutor/repair-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
-  --run-id p8-repair-mock-20261027
-python3 .data/p8-tutor/p8-repair-mock-20261027/sample.py -n 5
+  --ledger .data/p8-tutor/cite-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-cite-mock-20261027
+python3 .data/p8-tutor/p8-cite-mock-20261027/sample.py -n 5
 ```
 
 Mutation verification (all fake, separate PG, inherited network guard; outputs under `.data/p8-tutor/checks/`):
 
 ```bash
-uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label repair-final
+uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label cite-final
 ```
 
-This replaces the two v4 schema mutants with equivalent immediate-size-failure and unlimited-after-restart mutants, and adds silent ID truncation, silent inline dropping, immediate Socratic failure, missing repair reservation and always-zero over-abstention. Each must produce exactly one failed test, zero errors/skips, followed by byte/digest restoration. Prior output paths are refused.
+The v6 mutants cover silently dropping unobserved IDs, silent truncation to four, trusting provider declarations, unlimited format repair, removal of the deterministic reviewer cascade downgrade, always-zero cascade reporting, immediate size/Socratic failure, missing repair reservation and always-zero total over-abstention. Each must yield exactly one failed test and zero errors/skips, followed by byte/digest restoration. Prior output paths are refused.
 
 Outputs: `dialogues.jsonl`, `reviews.jsonl`, `summary.json`, and standalone `sample.py`. Sampling prints N seeded dialogues with turns, outcomes, inline citations and full cited source text. Summary explicitly labels fake runs `NOT_RUN_MOCK_MECHANICS_ONLY`. Fake transport does not read credentials; its fixed reviewer judgments and negative responses only verify mechanics.
 
@@ -123,11 +127,11 @@ cd /home/dev/projects/lecturelens-p8-tutor-protocol
 uv run --project agent-service --offline python eval/p8-tutor/run.py \
   --live \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-repair-full-20261027.jsonl \
-  --max-usd 0.70 --max-calls 400 --run-id p8-repair-full-20261027
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-cite-full-20261027.jsonl \
+  --max-usd 0.70 --max-calls 400 --run-id p8-cite-full-20261027
 ```
 
-The command uses the unchanged $0.70/400-call policy. Worst-case five Tutor calls plus one review per turn would require 480 requests, so the ledger can stop the round before completion. Projecting only the seven v4 failures being repaired gives about 325 total calls / $0.543 at the v4 average cost; this is an estimate, not a completion guarantee. See the report for assumptions.
+The command uses the unchanged $0.70/400-call policy. Worst-case five Tutor calls plus one review per turn would require 480 requests, so the ledger can stop the round before completion. Within four distinct inline IDs, declaration differences need no repair call; excess IDs still require repair. If v5's eight failed turns complete in their existing call counts, eight added reviews project 314 requests / about $0.513 at the v5 mean cost. Five Tutor calls plus review on every turn project about $0.784 and exceed both caps. These are estimates, not completion guarantees; conservative reservations and prompt length can stop the run earlier. See the report for assumptions.
 
 `--dialogue-ids` remains available for focused diagnostics. It accepts space-separated unique frozen IDs; empty, unknown or duplicate IDs fail before ledger/provider entry. Focused summaries record `scope=focused` and selected IDs and return **PARTIAL** at best, even with perfect metrics. These are public development scripts, not fresh holdout data.
 

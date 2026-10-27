@@ -13,3 +13,8 @@ EVIDENCE_ID = re.compile(
 
 def inline_citation_ids(text):
     return [token for token in re.findall(r"\[([^\[\]\n]+)\]", text) if EVIDENCE_ID.fullmatch(token)]
+
+
+def assembled_citation_ids(text, evaluation=""):
+    """Retain every candidate, once, in text then evaluation appearance order."""
+    return list(dict.fromkeys(inline_citation_ids(text) + inline_citation_ids(evaluation)))

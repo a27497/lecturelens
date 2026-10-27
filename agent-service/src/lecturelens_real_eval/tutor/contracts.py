@@ -38,22 +38,30 @@ class Finish(Contract):
     evaluation: Annotated[str, Field(max_length=500)] = ""
 
 
-class FinishProposal(Finish):
-    """Private validation only: defer exactly the three publication size limits.
+class FinishInput(Contract):
+    """Model-facing schema; citation metadata belongs to the controller."""
 
-    Retain strict types, required fields, identifier constraints and extra-field
-    rejection, including invalid items beyond the first four declared citations.
-    Never use this schema for model tools or publication.
-    """
+    outcome: Literal["answered", "socratic_prompt", "insufficient_evidence"]
+    text: Annotated[str, Field(min_length=1, max_length=1600)]
+    evaluation: Annotated[str, Field(max_length=500)] = ""
+
+
+class FinishProposal(FinishInput):
+    """Defer publication size limits so the durable format repair can run."""
 
     text: Annotated[str, Field(min_length=1)]
-    evidence_ids: list[Identifier]
     evaluation: str = ""
 
 
 def validate_proposal(name, arguments):
-    return (FinishProposal if name == "finish_tutor_turn" else TOOLS[name]).model_validate(arguments)
+    if name == "finish_tutor_turn":
+        # Legacy providers may send any declaration. It has no validation or authority role.
+        if isinstance(arguments, dict):
+            arguments = {k: v for k, v in arguments.items() if k != "evidence_ids"}
+        return FinishProposal.model_validate(arguments)
+    return TOOLS[name].model_validate(arguments)
 
 
-TOOLS = {"search_tutor_evidence": Search, "finish_tutor_turn": Finish}
+TOOLS = {"search_tutor_evidence": Search, "finish_tutor_turn": FinishInput}
+
 ABSTENTION = "I don't know from this course. Try asking about a topic covered in this lecture."

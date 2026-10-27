@@ -337,22 +337,31 @@
           "text": "Explain the union bound briefly using this lecture.",
           "expected_topic": "the union bound",
           "context_followup": false,
-          "expected_insufficient": false,
-          "socratic": false
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
         },
         {
           "text": "Why is that?",
           "expected_topic": "the union bound",
           "context_followup": true,
-          "expected_insufficient": false,
-          "socratic": false
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
         },
         {
           "text": "Give an example of it from the lecture.",
           "expected_topic": "the union bound",
           "context_followup": true,
-          "expected_insufficient": false,
-          "socratic": false
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
         },
         {
           "text": "How does that define a Dirichlet posterior over its probabilities?",

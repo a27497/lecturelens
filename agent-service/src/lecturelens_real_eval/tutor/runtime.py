@@ -9,7 +9,7 @@ from psycopg.types.json import Jsonb
 
 from lecturelens_agent.study.store import StudyError
 
-from .citations import inline_citation_ids
+from .citations import assembled_citation_ids
 from .contracts import ABSTENTION, TOOLS, Finish, validate_proposal
 
 MAX_SEARCH_CALLS = 2
@@ -26,18 +26,18 @@ SYSTEM = (
 Use conversation history to resolve pronouns/ellipsis and evaluate a reply to your previous guiding question.
 First select search_tutor_evidence with a contextual query; observe results before deciding to search again or finish.
 Only make course-supported claims. Cite each claim inline as [evidence_id] using observed Evidence ids.
-The text/evaluation may cite inline only declared evidence_ids, at most 4 unique ids. Every declared id must appear inline as [evidence_id].
+The text/evaluation may cite at most 4 distinct evidence ids inline as [id]; no separate evidence_ids field.
 At most two searches per turn; then finish with answered, socratic_prompt or insufficient_evidence.
 Reserve square brackets for citations; use parentheses for math/indexing.
 If evidence is insufficient, finish with insufficient_evidence, no citations and no substantive claims.
 In Socratic mode use outcome=socratic_prompt with a grounded guiding question containing ? or ？, not the full answer. Outside Socratic mode use answered. Abstention rules are unchanged.
 When the previous turn was socratic_prompt, a non-empty evaluation of the learner's reply is REQUIRED on the next supported finish, grounded in cited evidence.
-Finish limits: evidence_ids at most 4 unique ids, each cited inline; evaluation at most 500 characters; text at most 1600 characters.
-One finish-format repair chance (citation mismatch, duplicates or size limits together) and one separate Socratic outcome/question repair chance are allowed per turn. After a repair observation, resubmit finish_tutor_turn only; a second violation of the same kind fails the turn.
+Finish limits: at most 4 distinct evidence ids inline; evaluation at most 500 characters; text at most 1600 characters.
+One finish-format repair chance (excess distinct inline ids or size limits together) and one separate Socratic outcome/question repair chance are allowed per turn. After a repair observation, resubmit finish_tutor_turn only; a second violation of the same kind fails the turn.
 Do not claim automatic grading or mastery. Tools and budgets are bounded.
 For insufficient_evidence use exactly: """
     + ABSTENTION
-    + " with empty evaluation and evidence_ids."
+    + " with empty evaluation and no inline citations."
 )
 
 
@@ -62,7 +62,7 @@ class MockTutor:
             }
         evidence = data["evidence"]
         if not evidence:
-            args = {"outcome": "insufficient_evidence", "text": ABSTENTION, "evidence_ids": []}
+            args = {"outcome": "insufficient_evidence", "text": ABSTENTION}
         else:
             e = evidence[0]
             hint = data["socratic"]
@@ -76,7 +76,6 @@ class MockTutor:
             args = {
                 "outcome": "socratic_prompt" if hint else "answered",
                 "text": f"{text} [{e['evidence_id']}]",
-                "evidence_ids": [e["evidence_id"]],
                 "evaluation": (
                     f"Compare your reply with the course statement [{e['evidence_id']}]."
                     if previous and previous["outcome"] == "socratic_prompt"
@@ -359,28 +358,26 @@ class TutorRuntime:
                     "observations": [*state["observations"], observation],
                 }
         else:
-            ids = args["evidence_ids"]
-            inline = inline_citation_ids(args["text"] + " " + args["evaluation"])
-            # Unobserved ids remain an authority failure; only format mistakes are repairable.
-            if not (set(ids) | set(inline)) <= set(state["selected"]):
+            ids = assembled_citation_ids(args["text"], args["evaluation"])
+            args["evidence_ids"] = ids
+            # Authority precedes every repair, including candidates beyond the first four.
+            if not set(ids) <= set(state["selected"]):
                 raise StudyError("TUTOR_CITATION_MISMATCH")
-            # Authority checks precede repair even for oversized, unpublished proposals.
-            citations = self.read_evidence(session, list(dict.fromkeys([*ids, *inline])))
-            inline_not_declared = sorted(set(inline) - set(ids))
-            declared_not_inline = sorted(set(ids) - set(inline))
-            duplicates = sorted({eid for eid in ids if ids.count(eid) > 1})
+            rows = self.read_evidence(session, ids)
+            by_id = {row["evidence_id"]: row for row in rows}
+            citations = [by_id[eid] for eid in ids]
             size_violations = {
                 key: {"actual": len(args[key]), "limit": limit}
                 for key, limit in (("evidence_ids", 4), ("evaluation", 500), ("text", 1600))
                 if len(args[key]) > limit
             }
-            if inline_not_declared or declared_not_inline or duplicates or size_violations:
+            if size_violations:
                 if self.repaired(state, FORMAT_REPAIRS):
                     raise StudyError("TUTOR_FINISH_FORMAT_INVALID")
                 details = dict(
-                    inline_not_declared=inline_not_declared,
-                    declared_not_inline=declared_not_inline,
-                    duplicates=duplicates,
+                    distinct_ids=len(ids),
+                    evidence_ids=ids,
+                    excess_ids=ids[4:],
                     size_violations=size_violations,
                 )
                 next_state = self.reject(
@@ -388,11 +385,11 @@ class TutorRuntime:
                     name,
                     "TUTOR_FINISH_REPAIR_REQUIRED",
                     json.dumps(details, sort_keys=True)
-                    + "; the text/evaluation may cite only the declared evidence_ids, at most 4 unique ids; evaluation ≤ 500 characters; text ≤ 1600 characters; resubmit finish_tutor_turn. One format repair chance per turn.",
+                    + "; the text/evaluation may cite at most 4 distinct evidence ids; evaluation ≤ 500 characters; text ≤ 1600 characters; resubmit finish_tutor_turn. One format repair chance per turn.",
                 )
                 next_state["observations"][-1].update(details)
                 return self.record_observation(turn_id, next_state)
-            # Publish only an unchanged proposal accepted by the original strict schema.
+            # Only controller-assembled metadata plus unchanged model content may pass publication.
             args = Finish.model_validate(args).model_dump()
             if args["outcome"] == "insufficient_evidence":
                 if ids:

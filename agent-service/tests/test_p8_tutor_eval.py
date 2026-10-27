@@ -19,6 +19,7 @@ from lecturelens_real_eval.tutor_runner import (
     TutorProvider,
     citation_ids,
     fake_transport,
+    review_turn,
     run_evaluation,
     select_dialogues,
     summarize,
@@ -251,9 +252,7 @@ def test_dialogue_filter_rejects_empty_unknown_or_duplicate_ids(ids):
         select_dialogues(scripts, ids)
 
 
-@pytest.mark.parametrize(
-    "fault", ["citation", "evaluation", "limit_ids", "limit_evaluation", "limit_text", "socratic"]
-)
+@pytest.mark.parametrize("fault", ["evaluation", "limit_ids", "limit_evaluation", "limit_text", "socratic"])
 def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(isolated, fault):
     dsn, directory = isolated
     fake = fake_transport()
@@ -270,11 +269,7 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
         function = response_body["choices"][0]["message"]["tool_calls"][0]["function"]
         if function["name"] == "finish_tutor_turn" and len(body["observations"]) == 1:
             args = json.loads(function["arguments"])
-            if fault == "citation":
-                for eid in args["evidence_ids"]:
-                    args["text"] = args["text"].replace(f"[{eid}]", "")
-                    args["evaluation"] = args.get("evaluation", "").replace(f"[{eid}]", "")
-            elif fault == "limit_ids":
+            if fault == "limit_ids":
                 args["evidence_ids"] = [e["evidence_id"] for e in body["evidence"]]
                 assert len(args["evidence_ids"]) > 4
                 args["text"] = "Which statement applies? " + " ".join(
@@ -320,7 +315,7 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
     for turn in dialogue["turns"]:
         repaired = turn["proposals"][-1]["arguments"]
         assert turn["answer"] == repaired["text"]
-        assert {c["evidence_id"] for c in turn["citations"]} == set(repaired["evidence_ids"])
+        assert {c["evidence_id"] for c in turn["citations"]} == set(citation_ids(repaired))
 
 
 def test_filter_preserves_frozen_order():
@@ -337,7 +332,7 @@ def test_fabricated_citation_stops_round_and_fails_even_if_other_fields_invalid(
         if payload["tools"][0]["function"]["name"] == "search_tutor_evidence" and len(payload["tools"]) > 1:
             return response(
                 "finish_tutor_turn",
-                {"text": "Wrong [fake-id]", "evidence_ids": ["fake-id"], "outcome": "bad"},
+                {"text": "Wrong [e999]", "evidence_ids": ["fake-id"], "outcome": "bad"},
             )
         return fake.handle_request(request)
 
@@ -368,12 +363,12 @@ def test_exact_failed_live_answer_has_all_eleven_citations_valid(isolated):
     provider.validate({"name": "finish_tutor_turn", "arguments": proposal})
     canonical = {e["evidence_id"] for e in authority.rows(scope)}
     ids = citation_ids(proposal)
-    assert len(ids) == 11 and all(i in canonical for i in ids)
+    assert len(ids) == 3 and all(i in canonical for i in ids)
     assert provider.channel.ledger.check()["blocked"] is None
 
 
 @pytest.mark.parametrize("evidence_id", ["v2-algorithms-l1-p99-e00", "v2-algorithms-l2-p01-e00"])
-@pytest.mark.parametrize("location", ["inline", "declared"])
+@pytest.mark.parametrize("location", ["inline", "evaluation"])
 def test_id_shaped_unknown_or_other_lecture_citation_is_fatal_before_schema(isolated, evidence_id, location):
     dsn, directory = isolated
     fake = fake_transport()
@@ -385,7 +380,7 @@ def test_id_shaped_unknown_or_other_lecture_citation_is_fatal_before_schema(isol
                 {
                     "outcome": "bad",
                     "text": f"Wrong [{evidence_id}]" if location == "inline" else "Wrong",
-                    "evidence_ids": [evidence_id] if location == "declared" else [],
+                    "evaluation": f"Wrong [{evidence_id}]" if location == "evaluation" else "",
                 },
             )
         return fake.handle_request(request)
@@ -441,7 +436,7 @@ def test_fabricated_citation_in_dropped_parallel_call_also_stops_round(isolated)
                     "function": {
                         "name": "finish_tutor_turn",
                         "arguments": json.dumps(
-                            {"outcome": "answered", "text": "invented [bad-id]", "evidence_ids": ["bad-id"]}
+                            {"outcome": "answered", "text": "invented [e999]", "evidence_ids": ["bad-id"]}
                         ),
                     },
                 }
@@ -495,7 +490,7 @@ def test_pending_or_unknown_accounting_can_never_pass():
         assert result["verdict"] == "FAIL" and result["fatal"] == "REAL_EVAL_UNKNOWN_ACCOUNTING"
 
 
-@pytest.mark.parametrize("location", ["declared", "inline", "dropped_after_bad_schema"])
+@pytest.mark.parametrize("location", ["text", "inline", "dropped_after_bad_schema"])
 @pytest.mark.parametrize("invented", ["v2-algorithms-l1-p99-e00", "v2-algorithms-l2-p01-e00"])
 def test_oversized_finish_checks_every_id_even_in_dropped_calls(isolated, location, invented):
     from lecturelens_real_eval.runner import SnapshotAuthority
@@ -509,7 +504,7 @@ def test_oversized_finish_checks_every_id_even_in_dropped_calls(isolated, locati
     if location == "inline":
         args["evaluation"] = f"Wrong [{invented}]"
     else:
-        args["evidence_ids"] = ids + [invented]
+        args["text"] += f" [{invented}]"
     wire = json.loads(response("finish_tutor_turn", args).content)
     if location == "dropped_after_bad_schema":
         wire["choices"][0]["message"]["tool_calls"].insert(
@@ -633,3 +628,192 @@ def test_over_abstain_metric_counts_only_completed_unexpected_abstentions_and_is
     empty = summarize([], [], accounting, thresholds, None, False)
     assert empty["metrics"]["over_abstain_count"] == empty["metrics"]["over_abstain_rate"] == 0
     assert empty["over_abstain_turns"] == []
+
+
+@pytest.mark.parametrize("reviewed", [True, False])
+@pytest.mark.parametrize(
+    "kind", ["invented", "abstain", "clarify", "socratic_clarify", "published", "not_followup"]
+)
+def test_reviewer_cascade_only_downgrades_invented_antecedent(reviewed, kind):
+    from lecturelens_real_eval.tutor.contracts import ABSTENTION
+
+    class FixedReview:
+        def request(self, messages, schemas, **kwargs):
+            prompt = messages[0]["content"]
+            assert "failed/unpublished" in prompt and "context_retained=false" in prompt
+            data = json.loads(messages[1]["content"])
+            assert data["conversation"][-1]["status"] == ("completed" if kind == "published" else "failed")
+            return {
+                "arguments": dict(
+                    answer_supported=True,
+                    context_retained=reviewed,
+                    socratic_compliant=True,
+                    abstention_clean=True,
+                )
+            }
+
+    turn = dict(
+        answer="The reflection phase explains that [e1].", evaluation="", outcome="answered", citations=[]
+    )
+    if kind == "abstain":
+        turn.update(answer=ABSTENTION, outcome="insufficient_evidence")
+    elif kind in {"clarify", "socratic_clarify"}:
+        turn.update(
+            answer="Could you clarify which statement you mean? [e1]",
+            outcome="socratic_prompt" if kind == "socratic_clarify" else "answered",
+        )
+    history = [
+        dict(
+            learner="Explain the concept",
+            tutor="Published [e1]" if kind == "published" else None,
+            status="completed" if kind == "published" else "failed",
+        )
+    ]
+    script = dict(
+        text="Why is that?",
+        expected_topic="the concept",
+        socratic=False,
+        context_followup=kind != "not_followup",
+    )
+    result = review_turn(FixedReview(), history, script, turn)
+    assert result["context_retained"] is (reviewed and kind != "invented")
+
+
+def test_over_abstain_cascade_split_preserves_total_and_denominator():
+    from lecturelens_real_eval.tutor.contracts import ABSTENTION
+
+    script = dict(expected_insufficient=False, context_followup=True, socratic=False)
+    base = dict(
+        status="completed",
+        outcome="insufficient_evidence",
+        answer=ABSTENTION,
+        citations=[],
+        citation_validity=[],
+        latency_s=0.1,
+        script=script,
+    )
+    turns = [dict(base, ordinal=i) for i in range(1, 7)]
+    turns[0].update(status="failed", outcome="failed", answer=None)
+    turns[2].update(script={**script, "expected_insufficient": True})
+    turns[3].update(status="cancelled", outcome="cancelled", answer=None)
+    result = summarize(
+        [dict(dialogue_id="cascade", turns=turns)],
+        [],
+        dict(calls=1, nano_usd=1, pending=0, blocked=None),
+        {"max_calls": 400},
+        None,
+        False,
+    )
+    assert result["metrics"]["over_abstain_count"] == 3
+    assert result["metrics"]["over_abstain_rate"] == 3 / 5
+    assert result["metrics"]["over_abstain_cascade_count"] == 2
+    assert result["metrics"]["over_abstain_non_cascade_count"] == 1
+    assert result["over_abstain_cascade_turns"] == [("cascade", 2), ("cascade", 5)]
+    assert result["over_abstain_non_cascade_turns"] == [("cascade", 6)]
+    assert result["over_abstain_turns"] == [("cascade", 2), ("cascade", 5), ("cascade", 6)]
+
+
+def test_union_bound_correction_preserves_every_other_byte_and_expectation():
+    import hashlib
+    import subprocess
+
+    root = DATA.parents[1]
+    original = subprocess.check_output(["git", "show", "970bd00:eval/p8-tutor/dialogues.json"], cwd=root)
+    current = (DATA / "dialogues.json").read_bytes()
+    before, after = json.loads(original), json.loads(current)
+    target = next(d for d in after["dialogues"] if d["dialogue_id"] == "probability-l1-3")
+    assert all(t["expected_insufficient"] for t in target["turns"])
+    for t in target["turns"][:3]:
+        assert t["zero_hit_terms"] == ["union"]
+    for d in before["dialogues"]:
+        if d["dialogue_id"] == "probability-l1-3":
+            for t in d["turns"][:3]:
+                t.update(expected_insufficient=True, zero_hit_terms=["union"])
+    assert after == before
+
+    def outside(data):
+        start = data.index(b'    {\n      "dialogue_id": "probability-l1-3"')
+        end = data.index(b'    {\n      "dialogue_id":', start + 1)
+        return data[:start] + data[end:]
+
+    assert hashlib.sha256(outside(current)).digest() == hashlib.sha256(outside(original)).digest()
+    # Reversing exactly the approved fields must reconstruct the entire original file.
+    reverted = current.replace(
+        b'"expected_insufficient": true,\n          "socratic": false,\n          "zero_hit_terms": [\n            "union"\n          ]',
+        b'"expected_insufficient": false,\n          "socratic": false',
+    )
+    assert reverted == original
+    assert (DATA / "thresholds.json").read_bytes() == subprocess.check_output(
+        ["git", "show", "970bd00:eval/p8-tutor/thresholds.json"], cwd=root
+    )
+
+
+@pytest.mark.parametrize("declaration", ["wrong", "superset"])
+def test_fake_runner_ignores_provider_declaration_and_publishes_inline_ids(isolated, declaration):
+    dsn, directory = isolated
+    fake = fake_transport()
+
+    def legacy(request):
+        result = fake.handle_request(request)
+        wire = json.loads(result.content)
+        function = wire["choices"][0]["message"]["tool_calls"][0]["function"]
+        if function["name"] == "finish_tutor_turn":
+            args = json.loads(function["arguments"])
+            ids = citation_ids(args)
+            args["evidence_ids"] = (
+                ["v2-unknown-l1-p99-e99"] if declaration == "wrong" else ids + ["v2-unknown-l1-p99-e99"]
+            )
+            function["arguments"] = json.dumps(args)
+        return httpx.Response(200, json=wire)
+
+    result = run_evaluation(
+        dsn,
+        directory / "legacy.jsonl",
+        "legacy",
+        TutorPolicy(),
+        transport=httpx.MockTransport(legacy),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1"],
+    )
+    assert result["fatal"] is None and result["metrics"]["protocol_failure_rate"] == 0
+    assert result["accounting"]["calls"] == 9 and result["accounting"]["blocked"] is None
+    dialogue = json.loads((directory / "legacy/dialogues.jsonl").read_text())
+    for turn in dialogue["turns"]:
+        proposal = turn["proposals"][-1]["arguments"]
+        assert [c["evidence_id"] for c in turn["citations"]] == citation_ids(proposal)
+        assert turn["answer"] == proposal["text"]
+
+
+def test_fake_runner_downgrades_context_after_unpublished_turn(isolated):
+    dsn, directory = isolated
+    fake = fake_transport()
+    rejected = False
+
+    def unpublished(request):
+        nonlocal rejected
+        result = fake.handle_request(request)
+        wire = json.loads(result.content)
+        function = wire["choices"][0]["message"]["tool_calls"][0]["function"]
+        if function["name"] == "finish_tutor_turn" and not rejected:
+            rejected = True
+            args = json.loads(function["arguments"])
+            args["text"] = "No citations"
+            function["arguments"] = json.dumps(args)
+        return httpx.Response(200, json=wire)
+
+    result = run_evaluation(
+        dsn,
+        directory / "cascade.jsonl",
+        "cascade",
+        TutorPolicy(),
+        transport=httpx.MockTransport(unpublished),
+        output_root=directory,
+        dialogue_ids=["algorithms-l1-1"],
+    )
+    assert result["fatal"] is None and result["metrics"]["protocol_failure_rate"] == 1 / 3
+    dialogue = json.loads((directory / "cascade/dialogues.jsonl").read_text())
+    assert dialogue["turns"][0]["status"] == "failed" and dialogue["turns"][0]["answer"] is None
+    assert dialogue["turns"][1]["status"] == "completed" and dialogue["turns"][1]["outcome"] == "answered"
+    reviews = [json.loads(line) for line in (directory / "cascade/reviews.jsonl").read_text().splitlines()]
+    assert reviews[0]["ordinal"] == 2 and reviews[0]["context_retained"] is False
+    assert reviews[1]["context_retained"] is True

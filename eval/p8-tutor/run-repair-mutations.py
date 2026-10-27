@@ -40,41 +40,25 @@ def main():
     )
     cases = [
         (
-            "schema-immediate-hard-failure",
+            "silent-unobserved-dropping",
             RUNTIME,
-            "            if inline_not_declared or declared_not_inline or duplicates or size_violations:\n",
-            (
-                '            if size_violations:\n                raise StudyError("TUTOR_FINISH_LIMIT_EXCEEDED")\n'
-                "            if inline_not_declared or declared_not_inline or duplicates or size_violations:\n"
-            ),
-            "tests/test_tutor.py::test_finish_limit_observation_then_unchanged_repair_publishes[ids]",
+            '            ids = assembled_citation_ids(args["text"], args["evaluation"])\n',
+            '            ids = [i for i in assembled_citation_ids(args["text"], args["evaluation"]) if i in state["selected"]]\n',
+            "tests/test_tutor.py::test_finish_limit_does_not_hide_authority_or_other_schema_failure[unobserved]",
         ),
         (
             "silent-id-truncation",
             RUNTIME,
-            '            ids = args["evidence_ids"]\n',
-            (
-                '            ids = args["evidence_ids"][:4]\n'
-                '            args["evidence_ids"] = ids\n'
-                '            for field in ("text", "evaluation"):\n'
-                "                for eid in inline_citation_ids(args[field]):\n"
-                "                    if eid not in ids:\n"
-                '                        args[field] = args[field].replace(f"[{eid}]", "")\n'
-            ),
-            "tests/test_tutor.py::test_finish_limit_observation_then_unchanged_repair_publishes[ids]",
+            '            ids = assembled_citation_ids(args["text"], args["evaluation"])\n',
+            '            ids = assembled_citation_ids(args["text"], args["evaluation"])[:4]\n',
+            "tests/test_tutor.py::test_excess_citations_repair_lists_order_and_every_excess_id[False]",
         ),
         (
-            "silent-inline-dropping",
+            "provider-declaration-authority",
             RUNTIME,
-            '            inline = inline_citation_ids(args["text"] + " " + args["evaluation"])\n',
-            (
-                '            for field in ("text", "evaluation"):\n'
-                "                for eid in inline_citation_ids(args[field]):\n"
-                "                    if eid not in ids:\n"
-                '                        args[field] = args[field].replace(f"[{eid}]", "")\n'
-                '            inline = inline_citation_ids(args["text"] + " " + args["evaluation"])\n'
-            ),
-            "tests/test_tutor.py::test_unified_format_repair_reports_exact_faults_and_never_truncates[inline_extra]",
+            '            ids = assembled_citation_ids(args["text"], args["evaluation"])\n',
+            '            ids = response["arguments"].get("evidence_ids", [])\n',
+            "tests/test_tutor.py::test_controller_publishes_extracted_order_dedupes_and_ignores_declarations[declared0]",
         ),
         (
             "unlimited-format-repairs-after-restart",
@@ -82,6 +66,27 @@ def main():
             "                if self.repaired(state, FORMAT_REPAIRS):\n",
             "                if False:\n",
             "tests/test_tutor.py::test_second_finish_limit_violation_is_fatal_even_after_restart[True]",
+        ),
+        (
+            "reviewer-cascade-rule-removed",
+            RUNNER,
+            '        judged["context_retained"] = False\n',
+            "        pass\n",
+            "tests/test_p8_tutor_eval.py::test_reviewer_cascade_only_downgrades_invented_antecedent[invented-True]",
+        ),
+        (
+            "cascade-split-always-zero",
+            RUNNER,
+            '        "over_abstain_cascade_count": len(cascade),\n',
+            '        "over_abstain_cascade_count": 0,\n',
+            "tests/test_p8_tutor_eval.py::test_over_abstain_cascade_split_preserves_total_and_denominator",
+        ),
+        (
+            "schema-immediate-hard-failure",
+            RUNTIME,
+            "            if size_violations:\n",
+            '            if size_violations:\n                raise StudyError("TUTOR_FINISH_LIMIT_EXCEEDED")\n',
+            "tests/test_tutor.py::test_finish_limit_observation_then_unchanged_repair_publishes[ids]",
         ),
         (
             "socratic-immediate-hard-failure",

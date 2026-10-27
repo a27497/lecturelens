@@ -201,51 +201,8 @@ def test_invalid_citations_reject_answer_and_preserve_failed_proposal(lab, bad):
         )
 
 
-def test_citation_soft_rejection_checkpoints_slot_and_repairs_after_restart(lab, monkeypatch):
-    original = lab[2].provider.decide
-
-    def missing_inline(messages, *args):
-        response = original(messages, *args)
-        observations = json.loads(messages[-1]["content"])["observations"]
-        if response["name"] == "finish_tutor_turn" and len(observations) == 1:
-            response["arguments"]["text"] = "BFS levels give shortest path distances in edges."
-        return response
-
-    lab[2].provider.decide = missing_inline
-    act = lab[2].act
-
-    def pause_after_rejection(*args):
-        done = act(*args)
-        if args[1]["response"]["name"] == "finish_tutor_turn":
-            assert done is False
-            raise KeyboardInterrupt()
-        return done
-
-    monkeypatch.setattr(lab[2], "act", pause_after_rejection)
-    submit(lab)
-    with pytest.raises(KeyboardInterrupt):
-        lab[2].execute(lab[0].candidates()[0])
-    with lab[0].connect() as conn:
-        row = conn.execute("SELECT * FROM tutor_turn").fetchone()
-    assert row["status"] == "running" and row["answer"] is None and not row["citations"]
-    assert row["tool_calls"] == 2 and row["model_calls"] == 3
-    assert row["checkpoint"]["phase"] == "ready"
-    observation = row["checkpoint"]["observations"][-1]
-    assert observation["tool"] == "finish_tutor_turn"
-    assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-    assert observation["declared_not_inline"] == ["e1"]
-    assert "resubmit finish_tutor_turn" in observation["message"]
-    # Recovery consumes the saved error observation without replaying search or the bad finish.
-    restarted = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
-    restarted.execute(lab[0].candidates()[0])
-    result = command(lab, "GET")["turns"][0]
-    assert result["status"] == "completed" and "[e1]" in result["answer"]
-    assert result["tool_calls"] == result["model_calls"] == 3
-    assert len(lab[1].searches) == 1
-
-
 @pytest.mark.parametrize("bad", ["undeclared_inline", "duplicate", "evaluation_inline"])
-def test_observed_citation_format_errors_can_be_repaired(lab, bad):
+def test_legacy_declarations_are_ignored_without_repair(lab, bad):
     original = lab[2].provider.decide
 
     def invalid_once(messages, *args):
@@ -253,7 +210,7 @@ def test_observed_citation_format_errors_can_be_repaired(lab, bad):
         observations = json.loads(messages[-1]["content"])["observations"]
         if response["name"] == "finish_tutor_turn" and len(observations) == 1:
             if bad == "duplicate":
-                response["arguments"]["evidence_ids"] *= 2
+                response["arguments"]["evidence_ids"] = ["e1", "e1"]
             else:
                 response["arguments"]["evidence_ids"] = []
                 if bad == "evaluation_inline":
@@ -264,7 +221,7 @@ def test_observed_citation_format_errors_can_be_repaired(lab, bad):
 
     lab[2].provider.decide = invalid_once
     result = run(lab)
-    assert result["status"] == "completed" and result["tool_calls"] == result["model_calls"] == 3
+    assert result["status"] == "completed" and result["tool_calls"] == result["model_calls"] == 2
 
 
 @pytest.mark.parametrize("bad", ["citation", "evaluation"])
@@ -286,16 +243,16 @@ def test_unrepaired_finish_exhausts_budget_without_publication(lab, bad):
     result = run(lab, "unrepaired")
     assert result["status"] == "failed"
     assert result["error_code"] == (
-        "TUTOR_FINISH_FORMAT_INVALID" if bad == "citation" else "TUTOR_BUDGET_EXHAUSTED"
+        "TUTOR_CITATION_MISMATCH" if bad == "citation" else "TUTOR_BUDGET_EXHAUSTED"
     )
     assert result["answer"] is None and not result["citations"]
-    assert result["model_calls"] == (3 if bad == "citation" else 4)
-    assert result["tool_calls"] == (2 if bad == "citation" else 4)
+    assert result["model_calls"] == (2 if bad == "citation" else 4)
+    assert result["tool_calls"] == (1 if bad == "citation" else 4)
     with lab[0].connect() as conn:
         state = conn.execute("SELECT checkpoint FROM tutor_turn ORDER BY ordinal DESC LIMIT 1").fetchone()[
             "checkpoint"
         ]
-    assert len([o for o in state["observations"] if "error" in o]) == (1 if bad == "citation" else 3)
+    assert len([o for o in state["observations"] if "error" in o]) == (0 if bad == "citation" else 3)
 
 
 @pytest.mark.parametrize("empty", [False, True])
@@ -354,11 +311,8 @@ def test_socratic_without_guiding_question_remains_fatal_after_repair(lab):
 
     def invalid(messages, *args):
         response = original(messages, *args)
-        data = json.loads(messages[-1]["content"])
         if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = (
-                "BFS levels." if len(data["observations"]) == 1 else "BFS levels [e1]."
-            )
+            response["arguments"]["text"] = "BFS levels [e1]."
         return response
 
     lab[2].provider.decide = invalid
@@ -652,7 +606,7 @@ def install_finish_limit_provider(lab, monkeypatch, fault, *, repeat=False):
                 assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
                 assert all(
                     s in observation["message"]
-                    for s in ("4 unique", "500", "1600", "resubmit finish_tutor_turn")
+                    for s in ("4 distinct", "500", "1600", "resubmit finish_tutor_turn")
                 )
                 # Deliberately choose the LAST observed ids: truncating the first proposal
                 # cannot accidentally satisfy the publication assertion.
@@ -782,11 +736,12 @@ def test_finish_limit_repair_preserves_deadline(lab, monkeypatch):
     assert result["answer"] is None and not result["citations"]
 
 
-@pytest.mark.parametrize("fault", ["inline_extra", "declared_extra", "duplicates", "combined"])
-def test_unified_format_repair_reports_exact_faults_and_never_truncates(lab, monkeypatch, fault):
+@pytest.mark.parametrize("combined", [False, True])
+def test_excess_citations_repair_lists_order_and_every_excess_id(lab, monkeypatch, combined):
     install_finish_limit_provider(lab, monkeypatch, "ids")
     decide = MockTutor().decide
     repairs = []
+    ids = ["e8", "e2", "e7", "e4", "e1", "e6"]
 
     def proposal(messages, schemas, timeout):
         data = json.loads(messages[-1]["content"])
@@ -795,50 +750,29 @@ def test_unified_format_repair_reports_exact_faults_and_never_truncates(lab, mon
             return response
         args = response["arguments"]
         if len(data["observations"]) == 1:
-            if fault == "inline_extra":
-                args.update(text="Claim [e1] [e8]", evidence_ids=["e1"])
-            elif fault == "declared_extra":
-                args.update(text="Claim [e1]", evidence_ids=["e1", "e8"])
-            elif fault == "duplicates":
-                args.update(text="Claim [e1]", evidence_ids=["e1", "e1"])
-            else:
-                args.update(
-                    text="[e1] [e8] " + "T" * 1601,
-                    evidence_ids=["e1", "e2", "e3", "e4", "e5", "e5"],
-                    evaluation="E" * 501,
-                )
+            args.update(
+                text="Claim " + " ".join(f"[{i}]" for i in ids[:5]),
+                evaluation="Again [e8] then [e6]",
+                evidence_ids=["ignored"],
+            )
+            if combined:
+                args["text"] += "T" * 1601
+                args["evaluation"] += "E" * 501
         else:
             assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
             observation = data["observations"][-1]
             assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-            assert observation["inline_not_declared"] == (
-                ["e8"] if fault in {"inline_extra", "combined"} else []
+            assert observation["distinct_ids"] == 6
+            assert observation["evidence_ids"] == ids
+            assert observation["excess_ids"] == ids[4:]
+            assert observation["size_violations"]["evidence_ids"] == {"actual": 6, "limit": 4}
+            assert set(observation["size_violations"]) == (
+                {"evidence_ids", "text", "evaluation"} if combined else {"evidence_ids"}
             )
-            assert observation["declared_not_inline"] == (
-                ["e8"]
-                if fault == "declared_extra"
-                else ["e2", "e3", "e4", "e5"]
-                if fault == "combined"
-                else []
-            )
-            assert observation["duplicates"] == (
-                ["e1"] if fault == "duplicates" else ["e5"] if fault == "combined" else []
-            )
-            assert observation["size_violations"] == (
-                {
-                    "evidence_ids": {"actual": 6, "limit": 4},
-                    "evaluation": {"actual": 501, "limit": 500},
-                    "text": {"actual": 1611, "limit": 1600},
-                }
-                if fault == "combined"
-                else {}
-            )
-            assert (
-                "the text/evaluation may cite only the declared evidence_ids, at most 4 unique ids; evaluation ≤ 500 characters; text ≤ 1600 characters; resubmit finish_tutor_turn"
-                in observation["message"]
-            )
+            assert all(i in observation["message"] for i in ids)
+            assert "at most 4 distinct evidence ids" in observation["message"]
             repairs.append(observation)
-            args.update(text="New claim [e7]", evidence_ids=["e7"], evaluation="")
+            args.update(text="New claim [e7]", evidence_ids=["ignored"], evaluation="")
         return response
 
     lab[2].provider.decide = proposal
@@ -846,6 +780,25 @@ def test_unified_format_repair_reports_exact_faults_and_never_truncates(lab, mon
     assert result["status"] == "completed" and result["answer"] == "New claim [e7]"
     assert [c["evidence_id"] for c in result["citations"]] == ["e7"]
     assert result["model_calls"] == result["tool_calls"] == 3 and len(repairs) == 1
+
+
+@pytest.mark.parametrize("declared", [["wrong"], ["e1", "e2", "e3", "e7", "e8"], None, 42])
+def test_controller_publishes_extracted_order_dedupes_and_ignores_declarations(lab, monkeypatch, declared):
+    install_finish_limit_provider(lab, monkeypatch, "ids")
+    decide = MockTutor().decide
+
+    def proposal(*args):
+        response = decide(*args)
+        if response["name"] == "finish_tutor_turn":
+            response["arguments"].update(text="[e8] [e2] [e8]", evaluation="[e7] [e2]", evidence_ids=declared)
+        return response
+
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    assert result["status"] == "completed"
+    assert [c["evidence_id"] for c in result["citations"]] == ["e8", "e2", "e7"]
+    assert result["answer"] == "[e8] [e2] [e8]" and result["evaluation"] == "[e7] [e2]"
+    assert result["model_calls"] == result["tool_calls"] == 2
 
 
 @pytest.mark.parametrize(
@@ -859,7 +812,7 @@ def test_unified_format_counter_counts_legacy_journal_after_restart(lab, monkeyp
     def invalid(messages, *args):
         response = decide(messages, *args)
         if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "Missing citation"
+            response["arguments"]["text"] = "[e1] " + "T" * 1601
         return response
 
     lab[2].provider.decide = invalid
@@ -963,7 +916,7 @@ def test_two_searches_then_repairs_have_prepaid_finish_only_budget(lab, repairs)
         index = len(calls) - 3
         if index < len(repairs):
             if repairs[index] == "format":
-                response["arguments"]["text"] = "Missing citation?"
+                response["arguments"]["text"] = "[e1]? " + "T" * 1601
             else:
                 response["arguments"]["outcome"] = "answered"
         return response
@@ -992,7 +945,7 @@ def test_repair_call_rejects_search_without_authority_search(lab):
             return {"name": "search_tutor_evidence", "arguments": {"query": "ignored"}}
         response = decide(messages, schemas, timeout)
         if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "Missing citation"
+            response["arguments"]["text"] = "[e1] " + "T" * 1601
         return response
 
     lab[2].provider.decide = proposal
@@ -1015,7 +968,7 @@ def test_unavailable_repair_capacity_fails_before_issuing_observation(lab, cap):
                     conn.execute("UPDATE tutor_session SET max_tokens=reserved_tokens")
                 else:
                     conn.execute("UPDATE tutor_turn SET reserved_tokens=64000")
-            response["arguments"]["text"] = "Missing citation"
+            response["arguments"]["text"] = "[e1] " + "T" * 1601
         return response
 
     lab[2].provider.decide = proposal
@@ -1038,7 +991,7 @@ def test_prepaid_repair_keeps_unknown_cancellation_and_authority_fences(lab, mon
             raise KeyboardInterrupt()
         response = decide(messages, schemas, timeout)
         if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "Missing inline citation"
+            response["arguments"]["text"] = "[e1] " + "T" * 1601
         return response
 
     lab[2].provider.decide = proposal

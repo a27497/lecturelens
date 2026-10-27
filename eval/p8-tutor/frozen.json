@@ -1,24 +1,24 @@
 {
-  "candidate": "p8-tutor-20261027-v5",
+  "candidate": "p8-tutor-20261027-v6",
   "source": "eval/retrieval-v2/corpus.json",
   "files": {
     "agent-service/src/lecturelens_real_eval/channel.py": "e80766bb315a899aa77fb4d4c7e198e0d62874e4bb117adf2fafa936eb09cc91",
     "agent-service/src/lecturelens_real_eval/runner.py": "e3d5aeddbd94a3840edf089476201b66547d2fd79f1fa6b52f8907abc5b65e37",
     "agent-service/src/lecturelens_real_eval/tutor/__init__.py": "abdef7a0e3567f340882e4a6fa14fb6d57a153a8ccd582c7d63a1a3b6644b149",
     "agent-service/src/lecturelens_real_eval/tutor/app.py": "d4ff5f96cfe9e676828418f54a8a7836da8af9f487f6ff978718517f5aae85e9",
-    "agent-service/src/lecturelens_real_eval/tutor/citations.py": "5ea196de5659b62760493fa4a37f8ab67be2a6bdbc606fdd0e424a987f01b6d0",
-    "agent-service/src/lecturelens_real_eval/tutor/contracts.py": "25c3f5198b50d1f27043e1e97b1baadb4e78871b7fead2fba4269e33029518cc",
-    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "e53cc773ec2b26b36b3edc3e0c7e56f679d87a795e8694cfedfc235ddcf7f8f6",
+    "agent-service/src/lecturelens_real_eval/tutor/citations.py": "67bca55155794b9b1beb0d105d22df77f48078bdca89a3848f74e9b38adf52cc",
+    "agent-service/src/lecturelens_real_eval/tutor/contracts.py": "f3e7c3c5369cf3fde1306ef609021d0e0a664a38792fde84d756ea3c10b654fb",
+    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "4ebd857bdaee92c104a71f4231e03d9933ade996e42d74f0f0b4a3398c7262be",
     "agent-service/src/lecturelens_real_eval/tutor/store.py": "0851a265833fd3d3c0ee16a8096caa4aa96b7af7c8b82c60ebb81e05dc87a19e",
     "agent-service/src/lecturelens_real_eval/tutor_channel.py": "6620a4a3fee710827bd4dc51b109d07654968c000a610db8acaee2ccac46b193",
-    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "738d2dd76e9149fcbd9a9a44afd6dd76f8f0b8202cc14e8279b13bf64c45109d",
+    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "295d25c87fe7ac90ce345dd278ddd096724ff50e4a2a4e27146baedae4cd4743",
     "eval/p7-real/snapshot.json": "a3334f992261fbd8f144e783b25fcf3cfde37201fb5f28e8403564a931d44ef5",
     "eval/p8-tutor/compose.yaml": "6b548a72f6c08eed46ca3bf2f9268cb74ecbd47dc66dbfa5a9f63f5c22da7b5f",
-    "eval/p8-tutor/dialogues.json": "8d8ca2b8f9ca0c04f433cc733eb3a663456fbdb956532cb0d23c79593b670fea",
+    "eval/p8-tutor/dialogues.json": "7a4965570a55720917b462640dd17b00eac99e890191c4ccdc3d05bfa840b512",
     "eval/p8-tutor/run.py": "c51dd8cffb581dba3c333906b75ec70457194401b57a601337a7d17f65521f98",
     "eval/p8-tutor/sample.py": "04cc28ceb3958410f3bf51d83a5878c6896e554bfbc176f8ade69de505ce736e",
     "eval/p8-tutor/thresholds.json": "21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da",
     "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b",
-    "eval/p8-tutor/run-repair-mutations.py": "74ac63fc300347a20b0d7d183e88f5ea5e9f1c1e3b8542884d801d65d01a677d"
+    "eval/p8-tutor/run-repair-mutations.py": "973e3583a705dcb13800fe410a7511e5db072aec5c0c4451ae5d28302e69a861"
   }
 }

@@ -15,7 +15,7 @@ import httpx
 
 from lecturelens_agent.contracts import Contract
 from lecturelens_agent.study.acceptance_cost import verify_development_agent
-from lecturelens_real_eval.tutor.citations import inline_citation_ids
+from lecturelens_real_eval.tutor.citations import assembled_citation_ids
 from lecturelens_real_eval.tutor.contracts import ABSTENTION, Command, validate_proposal
 from lecturelens_real_eval.tutor.runtime import MockTutor, TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
@@ -62,11 +62,8 @@ def verify_inputs():
 
 
 def citation_ids(arguments):
-    """Keep every declared ID, including malformed values, for pre-schema authority checks."""
-    declared = arguments.get("evidence_ids", [])
-    return (list(declared) if isinstance(declared, list) else [declared]) + inline_citation_ids(
-        str(arguments.get("text", "")) + " " + str(arguments.get("evaluation", ""))
-    )
+    """Provider declarations have no authority, even in rejected/parallel proposals."""
+    return assembled_citation_ids(str(arguments.get("text", "")), str(arguments.get("evaluation", "")))
 
 
 class TutorProvider:
@@ -110,10 +107,17 @@ def fake_transport():
             )
         else:
             response = model.decide(data["messages"], data["tools"], 20)
-            if body["observations"] and any(term in body["learner_text"].casefold() for term in absent):
+            if body["observations"] and (
+                any(term in body["learner_text"].casefold() for term in absent)
+                or (
+                    body["history"]
+                    and body["history"][-1]["outcome"] == "insufficient_evidence"
+                    and re.search(r"\b(that|it)\b", body["learner_text"], re.I)
+                )
+            ):
                 response = {
                     "name": "finish_tutor_turn",
-                    "arguments": {"outcome": "insufficient_evidence", "text": ABSTENTION, "evidence_ids": []},
+                    "arguments": {"outcome": "insufficient_evidence", "text": ABSTENTION},
                 }
             name, args = response["name"], response["arguments"]
         return httpx.Response(
@@ -158,7 +162,10 @@ def review_turn(channel, history, script, turn):
             "Check every substantive answer/evaluation claim against cited source text. Unsupported or unclear means false. "
             "Check whether an elliptical follow-up resolves the scripted prior topic; whether Socratic mode asks a guiding question "
             "without dumping the full answer; and whether an abstention contains no substantive claims. "
-            "A citation alone does not establish support.",
+            "When the previous learner turn has no published tutor answer (failed/unpublished), "
+            "a reply that invents or assumes an antecedent for an elliptical follow-up such as Why is that? "
+            "must have context_retained=false. Abstaining or asking for clarification in that situation "
+            "must not be penalized for missing context. A citation alone does not establish support.",
         },
         {"role": "user", "content": json.dumps(data, ensure_ascii=False, default=str)},
     ]
@@ -175,7 +182,25 @@ def review_turn(channel, history, script, turn):
     response = channel.request(
         messages, schemas, purpose="review", validate=lambda r: Review.model_validate(r["arguments"])
     )
-    return Review.model_validate(response["arguments"]).model_dump()
+    judged = Review.model_validate(response["arguments"]).model_dump()
+    # Only downgrade. A failed/unpublished answer cannot supply an antecedent, even
+    # if an otherwise supported response guesses one from the lecture or task label.
+    previous = history[-1] if history else None
+    clarification = re.fullmatch(
+        r"(?:could you clarify|can you clarify|what (?:do you mean|would you like me to explain)|"
+        r"which (?:claim|statement|part|topic) (?:do you mean|are you referring to))[^.!?]*[?]",
+        re.sub(r"\[[^\[\]\n]+\]", "", turn["answer"] or "").strip(),
+        re.I,
+    )
+    if (
+        previous
+        and (previous.get("status", "completed") != "completed" or not previous.get("tutor"))
+        and script["context_followup"]
+        and turn["outcome"] == "answered"
+        and not clarification
+    ):
+        judged["context_retained"] = False
+    return judged
 
 
 def ratio(rows):
@@ -216,9 +241,18 @@ def summarize(dialogues, reviews, accounting, thresholds, fatal, live, *, focuse
         for d, t in supported_script_turns
         if t["status"] == "completed" and t["outcome"] == "insufficient_evidence"
     ]
+    unpublished = {
+        (d["dialogue_id"], t["ordinal"])
+        for d, t in turns
+        if t["status"] != "completed" or not t.get("answer")
+    }
+    cascade = [pair for pair in over_abstain if (pair[0], pair[1] - 1) in unpublished]
+    non_cascade = [pair for pair in over_abstain if pair not in cascade]
     latencies = sorted(t["latency_s"] for _, t in turns)
     metrics = {
         "over_abstain_count": len(over_abstain),
+        "over_abstain_cascade_count": len(cascade),
+        "over_abstain_non_cascade_count": len(non_cascade),
         "over_abstain_rate": len(over_abstain) / len(supported_script_turns) if supported_script_turns else 0,
         "citation_verifiable_rate": ratio(valid),
         "no_evidence_abstain_rate": ratio(abstain),
@@ -247,6 +281,8 @@ def summarize(dialogues, reviews, accounting, thresholds, fatal, live, *, focuse
         "quality_status": "LIVE_REVIEW" if live else "NOT_RUN_MOCK_MECHANICS_ONLY",
         "metrics": metrics,
         "over_abstain_turns": over_abstain,
+        "over_abstain_cascade_turns": cascade,
+        "over_abstain_non_cascade_turns": non_cascade,
         "dialogues": len(dialogues),
         "turns": len(turns),
         "reviewed_turns": len(reviews),
@@ -358,7 +394,15 @@ def run_evaluation(
                     append(directory / "reviews.jsonl", record)
                     if fatal:
                         break
-                history = [*history, {"learner": task["text"], "tutor": turn["answer"]}][-6:]
+                history = [
+                    *history,
+                    {
+                        "learner": task["text"],
+                        "tutor": turn["answer"],
+                        "status": turn["status"],
+                        "outcome": turn["outcome"],
+                    },
+                ][-6:]
             dialogues.append(dialogue)
             append(directory / "dialogues.jsonl", dialogue)
             if fatal:
