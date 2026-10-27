@@ -765,12 +765,32 @@ def test_excess_citations_repair_lists_order_and_every_excess_id(lab, monkeypatc
             assert observation["distinct_ids"] == 6
             assert observation["evidence_ids"] == ids
             assert observation["excess_ids"] == ids[4:]
+            assert observation["keep_ids"] == ids[:4]
+            assert observation["remove_ids"] == ids[4:]
             assert observation["size_violations"]["evidence_ids"] == {"actual": 6, "limit": 4}
             assert set(observation["size_violations"]) == (
                 {"evidence_ids", "text", "evaluation"} if combined else {"evidence_ids"}
             )
             assert all(i in observation["message"] for i in ids)
             assert "at most 4 distinct evidence ids" in observation["message"]
+            assert all(
+                s in observation["message"]
+                for s in (
+                    "Delete every inline [id] for remove_ids from both text and evaluation",
+                    "Delete claims relying only on remove_ids",
+                    "only if that evidence supports them",
+                    "Do not introduce new ids",
+                    "≤1200",
+                    "500 characters",
+                    "TUTOR_FINISH_FORMAT_INVALID",
+                )
+            )
+            if combined:
+                for key, target in (("text", 1200), ("evaluation", 500)):
+                    violation = observation["size_violations"][key]
+                    assert f"{key} has {violation['actual']} characters" in observation["message"]
+                    assert f"required maximum {violation['limit']} characters" in observation["message"]
+                    assert f"Rewrite {key} to ≤{target} characters" in observation["message"]
             repairs.append(observation)
             args.update(text="New claim [e7]", evidence_ids=["ignored"], evaluation="")
         return response
@@ -1027,3 +1047,120 @@ def test_prepaid_repair_keeps_unknown_cancellation_and_authority_fences(lab, mon
             "TUTOR_UNKNOWN_MODEL_OUTCOME" if stop == "unknown" else "TUTOR_CITATION_MISMATCH"
         )
         assert len(calls) == (3 if stop == "unknown" else 2)
+
+
+@pytest.mark.parametrize("foreign", [None, "e999", "v2-algorithms-l2-p01-e00", "a" * 64])
+def test_math_brackets_publish_unchanged_but_strict_foreign_id_fails(lab, foreign):
+    decide = MockTutor().decide
+    text = "Math [u] [v] [A] [x_1], course claim [e1]."
+    evaluation = "Check [A] [x_1] [e1]." + (f" [{foreign}]" if foreign else "")
+
+    def proposal(*args):
+        response = decide(*args)
+        if response["name"] == "finish_tutor_turn":
+            response["arguments"].update(text=text, evaluation=evaluation)
+        return response
+
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    assert result["model_calls"] == 2
+    if foreign:
+        assert result["error_code"] == "TUTOR_CITATION_MISMATCH"
+        assert result["answer"] is None and not result["citations"]
+    else:
+        assert result["status"] == "completed"
+        assert result["answer"] == text and result["evaluation"] == evaluation
+        assert [c["evidence_id"] for c in result["citations"]] == ["e1"]
+
+
+FINISH_V8_CASES = json.loads((Path(__file__).parent / "fixtures/p8_finish_v8.json").read_text())["cases"]
+
+
+@pytest.mark.parametrize("case", FINISH_V8_CASES, ids=lambda c: c["case"])
+@pytest.mark.parametrize("repair_fault", ["valid", "ids", "text", "evaluation"])
+def test_v8_failed_first_finish_replay(lab, monkeypatch, case, repair_fault):
+    """Replay observed ID order/lengths through durable validation, not task quality."""
+    from lecturelens_real_eval.tutor.citations import assembled_citation_ids
+    from lecturelens_real_eval.tutor.runtime import FINISH_LIMITS
+
+    ids = list(dict.fromkeys(case["text_ids"] + case["evaluation_ids"]))
+    read = lab[1].read
+
+    def evidence(scope, action="CHECK", **args):
+        result = read(scope, action, **args)
+        if result["evidence"]:
+            rows = [{**result["evidence"][0], "evidence_id": eid} for eid in ids]
+            result["evidence"] = (
+                [r for r in rows if r["evidence_id"] in args["evidence_ids"]] if action == "READ" else rows
+            )
+        return result
+
+    monkeypatch.setattr(lab[1], "read", evidence)
+    first = {"outcome": case["outcome"]}
+    for key in ("text", "evaluation"):
+        content = " ".join(f"[{eid}]" for eid in case[key + "_ids"])
+        if key == "text":
+            content += " " + " ".join(case["math_tokens"])
+        assert len(content) <= case[key + "_chars"]
+        first[key] = content + "T" * (case[key + "_chars"] - len(content))
+    assert assembled_citation_ids(first["text"], first["evaluation"]) == ids
+    decide = MockTutor().decide
+    repairs = []
+    submitted = []
+
+    def proposal(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        for schema in schemas:
+            if schema["function"]["name"] == "finish_tutor_turn":
+                assert schema["function"]["description"] == FINISH_LIMITS
+        if not data["observations"]:
+            return decide(messages, schemas, timeout)
+        if len(data["observations"]) == 1:
+            return {"name": "finish_tutor_turn", "arguments": first.copy()}
+        assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
+        observation = data["observations"][-1]
+        assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
+        assert observation["keep_ids"] == ids[:4]
+        assert observation["remove_ids"] == ids[4:]
+        assert "≤1200" in observation["message"]
+        if case["text_chars"] > 1600:
+            assert f"text has {case['text_chars']} characters" in observation["message"]
+            assert "required maximum 1600 characters" in observation["message"]
+        repairs.append(observation)
+        # Reorder kept citations and rewrite the claim: publication must match this
+        # resubmission exactly, rather than a controller edit of the first proposal.
+        kept = list(reversed(observation["keep_ids"]))
+        repaired = {
+            "outcome": "answered",
+            "text": "BFS levels give shortest path distances in edges. " + " ".join(f"[{i}]" for i in kept),
+            "evaluation": f"Compare with the course statement [{kept[0]}].",
+        }
+        if repair_fault == "ids":
+            repaired["text"] += f" [{observation['remove_ids'][0]}]"
+        elif repair_fault == "text":
+            repaired["text"] += "T" * (1601 - len(repaired["text"]))
+        elif repair_fault == "evaluation":
+            repaired["evaluation"] += "E" * (501 - len(repaired["evaluation"]))
+        submitted.append(repaired.copy())
+        return {"name": "finish_tutor_turn", "arguments": repaired}
+
+    lab[2].provider.decide = proposal
+    result = run(lab, socratic=case["socratic"])
+    assert len(repairs) == len(submitted) == 1
+    assert result["model_calls"] == 3
+    with lab[0].connect() as conn:
+        journal = conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()["checkpoint"]
+    assert [o["error"] for o in journal["observations"] if "error" in o] == ["TUTOR_FINISH_REPAIR_REQUIRED"]
+    if repair_fault == "valid":
+        assert result["status"] == "completed" and result["error_code"] is None
+        assert result["answer"] == submitted[0]["text"]
+        assert result["evaluation"] == submitted[0]["evaluation"]
+        assert (
+            result["citations"]
+            == lab[2].read_evidence(
+                lab[3], assembled_citation_ids(submitted[0]["text"], submitted[0]["evaluation"])
+            )[::-1]
+        )  # Authority rows are in original order; publication uses inline order.
+    else:
+        assert result["status"] == "failed" and result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID"
+        assert result["answer"] is None and not result["citations"]

@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNTIME = ROOT / "agent-service/src/lecturelens_real_eval/tutor/runtime.py"
 RUNNER = ROOT / "agent-service/src/lecturelens_real_eval/tutor_runner.py"
+CITATIONS = ROOT / "agent-service/src/lecturelens_real_eval/tutor/citations.py"
 FROZEN = ROOT / "eval/p8-tutor/frozen.json"
 CHECKS = ROOT / ".data/p8-tutor/checks"
 
@@ -30,7 +31,9 @@ def main():
         parser.error("Invalid artifact label")
     manifest = CHECKS / f"{args.label}-mutations.json"
     assert not manifest.exists()
-    originals = {path: path.read_bytes() for path in (RUNTIME, RUNNER, FROZEN)}
+    originals = {
+        path: path.read_bytes() for path in (RUNTIME, RUNNER, CITATIONS, FROZEN)
+    }
     environment = {
         k: os.environ[k]
         for k in ("PATH", "HOME", "USER", "LANG", "LC_ALL")
@@ -40,6 +43,33 @@ def main():
         "postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test"
     )
     cases = [
+        (
+            "repair-keep-remove-missing",
+            RUNTIME,
+            "                    keep_ids=ids[:4],\n                    remove_ids=ids[4:],\n",
+            "",
+            "tests/test_tutor.py::test_excess_citations_repair_lists_order_and_every_excess_id[True]",
+        ),
+        (
+            "silent-truncate-excess-ids",
+            RUNTIME,
+            '            ids = assembled_citation_ids(args["text"], args["evaluation"])\n',
+            (
+                '            ids = assembled_citation_ids(args["text"], args["evaluation"])\n'
+                '            for key in ("text", "evaluation"):\n'
+                "                for eid in ids[4:]:\n"
+                '                    args[key] = args[key].replace("[" + eid + "]", "")\n'
+                "            ids = ids[:4]\n"
+            ),
+            "tests/test_tutor.py::test_v8_failed_first_finish_replay[valid-algorithms-l1-3-turn-3]",
+        ),
+        (
+            "math-bracket-counted",
+            CITATIONS,
+            " if EVIDENCE_ID.fullmatch(token)",
+            "",
+            "tests/test_tutor.py::test_math_brackets_publish_unchanged_but_strict_foreign_id_fails[None]",
+        ),
         (
             "review-retry-removed",
             RUNNER,

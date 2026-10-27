@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from lecturelens_real_eval.tutor.citations import EVIDENCE_ID, inline_citation_ids
+from lecturelens_real_eval.tutor.citations import EVIDENCE_ID, assembled_citation_ids, inline_citation_ids
 from lecturelens_real_eval.tutor_runner import citation_ids
 
 
@@ -24,9 +24,12 @@ def test_production_hash_short_alias_and_snapshot_candidates(evidence_id):
     assert inline_citation_ids(f"Claim [{evidence_id}]") == [evidence_id]
 
 
-@pytest.mark.parametrize("text", ["Adj[u]", "A[i]", "[0, n)", "[0, n]", "[u]", "[fake-id]"])
+@pytest.mark.parametrize(
+    "text", ["Adj[u]", "A[i]", "[0, n)", "[0, n]", "[u]", "[v]", "[A]", "[x_1]", "[fake-id]"]
+)
 def test_non_id_brackets_are_ordinary_text(text):
     assert inline_citation_ids(text) == []
+    assert assembled_citation_ids(f"{text} [e2]", f"{text} [e1]") == ["e2", "e1"]
 
 
 @pytest.mark.parametrize("declared", ["v2-algorithms-l1-p99-e00", None, 42, {"id": "unknown"}])
@@ -36,13 +39,15 @@ def test_declarations_are_ignored_by_authority_check(declared):
 
 def test_finish_model_schema_retains_all_publication_limits():
     from lecturelens_real_eval.tutor.contracts import Finish
-    from lecturelens_real_eval.tutor.runtime import SYSTEM
+    from lecturelens_real_eval.tutor.runtime import FINISH_LIMITS, SYSTEM
 
     properties = Finish.model_json_schema()["properties"]
     assert properties["evidence_ids"]["maxItems"] == 4
     assert properties["evaluation"]["maxLength"] == 500
     assert properties["text"]["maxLength"] == 1600
     assert all(s in SYSTEM for s in ("4 distinct evidence ids", "500 characters", "1600 characters"))
+    assert FINISH_LIMITS in SYSTEM
+    assert all(s in FINISH_LIMITS for s in ("prefer 2–3", "≤1200", "Only cite ids from observations", "math"))
 
 
 @pytest.mark.parametrize(

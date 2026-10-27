@@ -367,6 +367,34 @@ def test_exact_failed_live_answer_has_all_eleven_citations_valid(isolated):
     assert provider.channel.ledger.check()["blocked"] is None
 
 
+@pytest.mark.parametrize("foreign", [None, "e999", "v2-algorithms-l2-p01-e00", "a" * 64])
+def test_math_brackets_never_block_eval_but_strict_fabrication_does(isolated, foreign):
+    from lecturelens_real_eval.runner import SnapshotAuthority
+
+    authority = SnapshotAuthority(json.loads((DATA.parent / "p7-real/snapshot.json").read_text()))
+    scope = dict(owner_id=1, course_id="math-brackets", revision=1)
+    authority.register(scope, "algorithms-l1")
+    provider = TutorProvider(Channel(account(isolated), transport=fake_transport()), authority)
+    provider.scope = scope
+    eid = authority.rows(scope)[0]["evidence_id"]
+    proposal = {
+        "name": "finish_tutor_turn",
+        "arguments": {
+            "outcome": "answered",
+            "text": f"Math [u] [v] [A] [x_1], claim [{eid}].",
+            "evaluation": "Check [A] [x_1]." + (f" [{foreign}]" if foreign else ""),
+        },
+    }
+    if foreign:
+        with pytest.raises(EvalError, match="REAL_EVAL_CITATION_FABRICATED"):
+            provider.validate(proposal)
+        assert provider.channel.ledger.check()["blocked"] == "REAL_EVAL_CITATION_FABRICATED"
+    else:
+        provider.validate(proposal)
+        assert citation_ids(proposal["arguments"]) == [eid]
+        assert provider.channel.ledger.check()["blocked"] is None
+
+
 @pytest.mark.parametrize("evidence_id", ["v2-algorithms-l1-p99-e00", "v2-algorithms-l2-p01-e00"])
 @pytest.mark.parametrize("location", ["inline", "evaluation"])
 def test_id_shaped_unknown_or_other_lecture_citation_is_fatal_before_schema(isolated, evidence_id, location):

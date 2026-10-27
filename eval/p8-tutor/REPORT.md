@@ -1,6 +1,6 @@
 # P8 offline implementation report — 2026-10-27
 
-Current round: [`p8-tutor-20261027-v7` reviewer retry and suite continuation](#offline-reviewer-retry-and-suite-continuation-v7) on `codex/p8-tutor-protocol`, using only port **25741**. Earlier sections preserve historical candidates and their own worktree/port commands.
+Current round: [`p8-tutor-20261027-v8` actionable finish-format repair](#offline-actionable-finish-format-repair-v8) on `codex/p8-tutor-protocol`, using only port **25741**. Earlier sections preserve historical candidates and their own worktree/port commands.
 
 Implemented on `codex/p8-tutor` in its isolated worktree, based on P7 real-eval `e1e7af2`. The original implementation work made no real provider calls, push, PR, merge, deployment, private env-file access or online configuration changes. The later authorized live failure and offline fix are recorded below. Deterministic checks do not establish teaching quality.
 
@@ -730,3 +730,60 @@ An initial invocation was interrupted after 46 passes / 25 failures because the 
 Corrected targeted result: **180 passed / 0 failed / 0 errors / 0 skipped** in **110.35 s** (80 eval/channel, 78 runtime/app, 22 citation/schema), with one existing Starlette/AnyIO deprecation warning. JUnit and log: `checks/review-retry-final-targeted.{xml,log}` under `.data/p8-tutor/`. The full mock integration completed 24 dialogues / 80 turns with 240 fake requests; retry cases completed both dialogues / all six turns with 20 fake requests, including exactly eight review requests and one review record per turn. Ruff check, changed-Python format check and whitespace checks pass.
 
 Mutation result: **13/13 killed**, each with exactly one expected test failure, zero errors/skips. `review-retry-removed` fails the request-count assertion (18 vs 20); `review-failure-kills-suite` fails the PARTIAL/no-fatal assertion (FAIL instead). These reach the intended behavior rather than failing frozen-input validation. Results and restoration hashes: `.data/p8-tutor/checks/review-retry-mutations.json`; patches, logs, JUnit and network records: `review-retry-mutation-*`. Source and manifest bytes were restored and all 18 pins rechecked afterward. The 15 targeted/mutation network-record groups (including the interrupted launch) record **zero denied external connections**.
+
+## Offline actionable finish-format repair (v8)
+
+Candidate `p8-tutor-20261027-v8` addresses the eight `TUTOR_FINISH_FORMAT_INVALID` turns in the supplied v7 live trial `p8-ctx-v7-retry-full-20261027`. That trial's protocol failure rate was 0.10; all nine context misses arose directly or by cascade from these failures. Its results and original artifacts remain unchanged.
+
+The earlier hypothesis that `[u]`/`[v]` were counted in this trial was wrong. The existing strict `assembled_citation_ids` regex already excluded `[u]`, `[v]`, `[A]` and `[x_1]`; its source bytes are unchanged in v8. Re-extraction from the supplied `dialogues.jsonl` gives:
+
+| Failed turn | First strict IDs / text chars | Repaired strict IDs / text chars |
+| --- | --- | --- |
+| algorithms-l1-3 / 3 | 5 / 1318 | 5 / 1282 |
+| algorithms-l3-1 / 3 | 6 / 1278 | 5 / 1268 |
+| algorithms-l3-3 / 2 | 5 / 1557 | 4 / 1641 |
+| quantum-l1-1 / 2 | 6 / 1358 | 5 / 1222 |
+| quantum-l1-1 / 3 | 6 / 1404 | 5 / 1159 |
+| quantum-l1-3 / 2 | 5 / 1744 | 4 / 1762 |
+| quantum-l2-1 / 1 | 7 / 1348 | 6 / 1291 |
+| quantum-l2-3 / 1 | 6 / 1273 | 5 / 1106 |
+
+All these finishes had empty evaluation fields. Six repairs still contained 5–6 IDs; two reached four IDs but exceeded 1600 text characters. The model usually removed only one ID or failed to shorten enough. V7's count/limit reminder did not reliably elicit a valid resubmission.
+
+The runtime system prompt and finish tool description now share actionable limits: prefer 2–3 distinct observed IDs, at most four across both fields, target text ≤1200 characters with the hard 1600 limit, evaluation ≤500, and parentheses for math. `TUTOR_FINISH_REPAIR_REQUIRED` adds ordered `keep_ids` (first four) and `remove_ids` (excess), retaining existing diagnostic fields. It tells the model to delete every removed inline citation in both fields and claims relying only on those sources, or re-attribute only when kept evidence supports them; introduce no new IDs; and resubmit only `finish_tutor_turn`. Overlength fields get actual character counts, required maxima and explicit rewrite targets. This is model guidance, not controller editing or an additional retry.
+
+The learner goal and tools are unchanged: read course evidence, then produce a supported answer or guiding question, or stop with insufficient evidence. The repair observation can change the model's final selection and wording; the resubmitted answer/evaluation and controller-extracted ordered citations are stored transactionally only after validation. A second format violation still fails `TUTOR_FINISH_FORMAT_INVALID`; unauthorized/foreign IDs fail before repair, and the eval fabricated-citation ledger block remains fatal. Cancellation, authority/version/deletion fences, replay/recovery, prepaid repair budgets, context rules and reviewer retry are unchanged. Strict 4-ID / 500-evaluation / 1600-text limits remain intact; 1200 is only a generation target.
+
+Changed files: `tutor/runtime.py`; `tests/test_tutor.py`, `test_tutor_citations.py`, `test_p8_tutor_eval.py`; minimal `tests/fixtures/p8_finish_v8.json`; mutation harness and frozen manifest; root README and this directory's README/REPORT. No other protocol version marker required updating: the `v7` source/config search found only the frozen candidate; historical v7 evidence and context-rule references retain their names.
+
+The fixture stores only original strict ID order by field, character lengths, outcome/mode and math tokens from all eight failed first finishes. Synthetic padding replays format validation through the real runtime and isolated PostgreSQL checkpoints. Each valid fake repair uses only the kept IDs, changes their order and rewrites the text/evaluation; publication must equal that resubmission exactly, including ordered authoritative citation rows. Each fixture also runs with a second proposal exceeding IDs, text or evaluation, for 24 fail-closed cases. This is protocol/mechanism evidence, not semantic task-quality replay.
+
+Verification commands (credential-clearing socket fence; only isolated PostgreSQL port **25741**):
+
+```bash
+AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
+uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
+  --database-port 25741 --network-records .data/p8-tutor/checks/finish-v8-targeted-network \
+  -- -q tests/test_p8_tutor_eval.py tests/test_tutor.py tests/test_tutor_citations.py \
+  --junitxml=../.data/p8-tutor/checks/finish-v8-targeted.xml
+
+uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label finish-v8
+
+# Repeat the targeted command with fresh finish-v8-final-targeted artifact names.
+
+uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
+  .data/p8-tutor/checks/finish-v8-mock-network \
+  --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
+  --ledger .data/p8-tutor/finish-v8-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-finish-v8-mock-20261027
+```
+
+Both targeted executions passed **223 / 223 tests, 0 failures/errors/skips**: initial **111.94 s**, post-mutation rerun **123.58 s**. Each includes **84** eval/channel, **114** runtime/app and **25** citation/schema cases. One existing Starlette/AnyIO deprecation warning remains. Coverage includes math tokens in both fields without mismatch/fatal, strict foreign aliases/corpus IDs/hashes causing runtime mismatch and eval fatal blocks, exact repair diagnostics, no silent publication edits, all eight valid fixture repairs, 24 repeated-limit rejections, and existing restart/budget/cancellation/authority/context/reviewer-retry cases. JUnit/logs: `.data/p8-tutor/checks/finish-v8-{targeted,final-targeted}.{xml,log}`.
+
+The full mutation set killed **16 / 16**, each with exactly one expected test failure and zero errors/skips. All 13 previous mutants remain; v8 adds `repair-keep-remove-missing`, `silent-truncate-excess-ids` (removes inline tokens and metadata before validation), and `math-bracket-counted` (disables strict candidate filtering). They fail respectively on missing repair data preventing completion, absence of the required model resubmission, and math text incorrectly failing publication. The harness temporarily refreshes each mutant's pin, then restores and verifies original source/manifest bytes. Evidence: `.data/p8-tutor/checks/finish-v8-mutations.json`, `finish-v8-mutations.log` and `finish-v8-mutation-*` patches/logs/JUnit/network records. These expected negative-test failures are separate from the passing targeted suite.
+
+Standalone `eval/p8-tutor/run.py`, through the guarded wrapper and **without `--live`**, completed `p8-finish-v8-mock-20261027`: **PASS**, 24 dialogues / 80 turns / 80 reviews / 240 fake requests, protocol failures 0, all fixed quality rates 1.0, no fatal/blocked/pending state. Its quality status is **NOT_RUN_MOCK_MECHANICS_ONLY**. Accounting is simulated **$0.063168**, with **$0 real spend**; p95 turn latency **0.503 s**. Summary/dialogues/reviews are under `.data/p8-tutor/p8-finish-v8-mock-20261027/`; standalone log is `checks/finish-v8-mock.log`.
+
+Manifest SHA-256: **`4e0cce141a6c6393e894b86b843ef3965fabd0ec71c92cb21e3f7a5812b9baa2`**. All **18** pins verify; only runtime and mutation-harness pins differ from v7. `thresholds.json` SHA-256 remains **`21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da`**, byte-identical to task-start `d3e3253`. Dialogue scripts, strict extractor, contracts and eval runner are also byte-identical. All **19** targeted/mutation/mock network-record groups have **zero denied external connections**. Consolidated checks, fixture/source comparison, restoration hashes, JUnit counts and mock summary: `.data/p8-tutor/checks/finish-v8-verification.json`.
+
+`ruff check agent-service eval/p8-tutor`, changed-Python `ruff format --check`, and `git diff --check` pass. **NOT_RUN:** real-provider/live v8 task quality; broad repository suite; Java/frontend checks (unchanged layers). Real provider calls **0**, real spend **$0**. The original failed trials retain their results; no new holdout was consumed. No push, deployment, MEA, other-worktree or production-database changes. The existing isolated PostgreSQL project remains running.
