@@ -1,0 +1,22 @@
+{
+  "citation_valid_rate": 1.0,
+  "source_supported_rate": 0.85,
+  "offtopic_correct_stop_rate": 1.0,
+  "confusable_correct_stop_rate": 0.875,
+  "false_stop_rate": 0.1,
+  "review_self_agreement": 0.9,
+  "near_duplicate_agreement": 0.9,
+  "near_duplicate_min_pairs": 3,
+  "protocol_failure_rate": 0.05,
+  "p95_generation_latency_s": 20,
+  "max_calls": 220,
+  "max_usd": 0.6,
+  "task_count": 32,
+  "offtopic_count": 2,
+  "confusable_count": 8,
+  "sample_seed": 20261028,
+  "review_shuffle_seed": 20261028,
+  "unclear_is_failure": true,
+  "missing_citation": "stop_entire_round_FAIL",
+  "conclusion": "PASS if all enforced gates pass; PARTIAL for other gate misses; FAIL on fabricated citation or channel/ledger error. Confusable minimum correct count is floor(rate * n)."
+}

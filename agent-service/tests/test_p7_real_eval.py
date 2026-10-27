@@ -51,7 +51,8 @@ def isolated(tmp_path):
     schema = "p7_real_" + uuid.uuid4().hex
     with psycopg.connect(dsn) as conn:
         conn.execute(sql.SQL("CREATE SCHEMA {}").format(sql.Identifier(schema)))
-    scoped = make_conninfo(dsn, options=f"-csearch_path={schema},public")
+    # A retained standalone run may own public tables; never replay its artifacts.
+    scoped = make_conninfo(dsn, options=f"-csearch_path={schema}")
     yield scoped, tmp_path / "ledger.jsonl"
     with psycopg.connect(dsn) as conn:
         conn.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema)))
