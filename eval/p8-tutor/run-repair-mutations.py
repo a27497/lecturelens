@@ -44,6 +44,23 @@ def main():
     )
     cases = [
         (
+            "citable-last-search-only",
+            RUNTIME,
+            '                citable = list(dict.fromkeys([*state["selected"], *selected]))\n',
+            "                citable = list(dict.fromkeys(selected))\n",
+            "tests/test_tutor.py::test_citable_union_publishes_first_search_id_after_second_and_restart[None]",
+        ),
+        (
+            "citable-includes-prior-turn-citations",
+            RUNTIME,
+            '                citable = list(dict.fromkeys([*state["selected"], *selected]))\n',
+            (
+                '                citable = list(dict.fromkeys([*state["selected"], *selected,\n'
+                '                    *(eid for t in history for eid in assembled_citation_ids(t["answer"] or "", t["evaluation"] or ""))]))\n'
+            ),
+            "tests/test_tutor.py::test_citable_union_excludes_prior_turn_citations_and_fabricated_ids[v2-quantum-l2-p04-e00]",
+        ),
+        (
             "repair-keep-remove-missing",
             RUNTIME,
             "                    keep_ids=ids[:4],\n                    remove_ids=ids[4:],\n",

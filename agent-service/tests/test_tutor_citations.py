@@ -47,7 +47,10 @@ def test_finish_model_schema_retains_all_publication_limits():
     assert properties["text"]["maxLength"] == 1600
     assert all(s in SYSTEM for s in ("4 distinct evidence ids", "500 characters", "1600 characters"))
     assert FINISH_LIMITS in SYSTEM
-    assert all(s in FINISH_LIMITS for s in ("prefer 2–3", "≤1200", "Only cite ids from observations", "math"))
+    assert all(
+        s in FINISH_LIMITS
+        for s in ("prefer 2–3", "≤1200", "Only cite ids observed in any search this turn", "math")
+    )
 
 
 @pytest.mark.parametrize(

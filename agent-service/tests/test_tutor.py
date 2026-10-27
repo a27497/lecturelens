@@ -16,7 +16,7 @@ from psycopg.conninfo import make_conninfo
 
 from lecturelens_agent.study.store import StudyError
 from lecturelens_real_eval.tutor.contracts import ABSTENTION, Command
-from lecturelens_real_eval.tutor.runtime import MockTutor, TutorRuntime
+from lecturelens_real_eval.tutor.runtime import MAX_SEARCH_CALLS, MockTutor, TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
 
 
@@ -1155,12 +1155,176 @@ def test_v8_failed_first_finish_replay(lab, monkeypatch, case, repair_fault):
         assert result["status"] == "completed" and result["error_code"] is None
         assert result["answer"] == submitted[0]["text"]
         assert result["evaluation"] == submitted[0]["evaluation"]
-        assert (
-            result["citations"]
-            == lab[2].read_evidence(
-                lab[3], assembled_citation_ids(submitted[0]["text"], submitted[0]["evaluation"])
-            )[::-1]
-        )  # Authority rows are in original order; publication uses inline order.
+        assert result["citations"] == lab[2].read_evidence(
+            lab[3], assembled_citation_ids(submitted[0]["text"], submitted[0]["evaluation"])
+        )  # Authoritative READ and publication both follow requested inline order.
     else:
         assert result["status"] == "failed" and result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID"
         assert result["answer"] is None and not result["citations"]
+
+
+def install_search_batches(lab, monkeypatch, batches, *, text_size=50):
+    """Authority READ deliberately returns reverse order, independent of search ranking."""
+    read = lab[1].read
+    reads = []
+    rows = {
+        eid: {**read(lab[3], "READ")["evidence"][0], "evidence_id": eid, "text": "X" * text_size}
+        for batch in batches
+        for eid in batch
+    }
+
+    def authority(scope, action="CHECK", **args):
+        result = read(scope, action, **args)
+        if action == "SEARCH":
+            result["evidence"] = [rows[eid] for eid in batches[len(lab[1].searches) - 1]]
+        elif action == "READ":
+            assert len(args["evidence_ids"]) <= 8  # Preserve Java's authority request cap.
+            reads.append(list(args["evidence_ids"]))
+            result["evidence"] = [rows[eid] for eid in reversed(args["evidence_ids"])]
+        return result
+
+    monkeypatch.setattr(lab[1], "read", authority)
+    return reads
+
+
+@pytest.mark.parametrize("restart_after", [None, 1, 2])
+def test_citable_union_publishes_first_search_id_after_second_and_restart(lab, monkeypatch, restart_after):
+    first = "v2-quantum-l2-p05-e00"
+    batches = [[first, "e2", first], ["e3", "e2", "e4"]]
+    expected = [first, "e2", "e3", "e4"]
+    reads = install_search_batches(lab, monkeypatch, batches)
+    prompts = []
+
+    def proposal(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        prompts.append(data)
+        count = len(data["observations"])
+        visible = list(dict.fromkeys(eid for o in data["observations"] for eid in o["evidence_ids"]))
+        assert [e["evidence_id"] for e in data["evidence"]] == visible
+        if count < 2:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "quantum"}}
+        assert visible == expected
+        assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
+        return {"name": "finish_tutor_turn", "arguments": {"outcome": "answered", "text": f"Claim [{first}]"}}
+
+    lab[2].provider.decide = proposal
+    record = lab[2].record_observation
+
+    def pause(turn_id, state):
+        done = record(turn_id, state)
+        if len(state["observations"]) == restart_after:
+            raise KeyboardInterrupt()
+        return done
+
+    monkeypatch.setattr(lab[2], "record_observation", pause)
+    submit(lab)
+    if restart_after is not None:
+        with pytest.raises(KeyboardInterrupt):
+            lab[2].execute(lab[0].candidates()[0])
+        with lab[0].connect() as conn:
+            checkpoint = conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()["checkpoint"]
+        assert checkpoint["selected"] == (expected[:2] if restart_after == 1 else expected)
+        restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
+        restored.provider.decide = proposal
+        restored.execute(lab[0].candidates()[0])
+    else:
+        lab[2].execute(lab[0].candidates()[0])
+    result = command(lab, "GET")["turns"][-1]
+    assert result["status"] == "completed" and result["answer"] == f"Claim [{first}]"
+    assert [c["evidence_id"] for c in result["citations"]] == [first]
+    assert len(prompts) == result["model_calls"] == result["tool_calls"] == 3
+    assert len(lab[1].searches) == 2 and expected in reads and reads[-1] == [first]
+    with lab[0].connect() as conn:
+        row = conn.execute("SELECT * FROM tutor_turn").fetchone()
+    assert row["checkpoint"]["selected"] == expected
+    replay = submit(lab)
+    assert replay["replayed"] and replay["turns"][-1] == result
+    assert len(prompts) == 3
+
+
+@pytest.mark.parametrize("foreign", ["v2-quantum-l2-p04-e00", "e999"])
+def test_citable_union_excludes_prior_turn_citations_and_fabricated_ids(lab, monkeypatch, foreign):
+    install_search_batches(lab, monkeypatch, [["v2-quantum-l2-p04-e00"], ["e2"], ["e3"]])
+    assert run(lab)["status"] == "completed"
+    prompts = []
+
+    def proposal(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        prompts.append(data)
+        assert foreign not in [e["evidence_id"] for e in data["evidence"]]
+        assert "v2-quantum-l2-p04-e00" in data["history"][0]["answer"]
+        if len(data["observations"]) < 2:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "new topic"}}
+        return {
+            "name": "finish_tutor_turn",
+            "arguments": {"outcome": "answered", "text": f"Claim [{foreign}]"},
+        }
+
+    lab[2].provider.decide = proposal
+    result = run(lab, key="turn-2")
+    assert result["error_code"] == "TUTOR_CITATION_MISMATCH"
+    assert result["answer"] is None and result["citations"] == []
+    with lab[0].connect() as conn:
+        row = conn.execute("SELECT checkpoint FROM tutor_turn WHERE ordinal=2").fetchone()
+    assert row["checkpoint"]["selected"] == ["e2", "e3"]
+    assert len(prompts) == 3
+
+
+@pytest.mark.parametrize("text_size,completed", [(50, True), (3000, False)])
+def test_citable_union_natural_bound_and_unchanged_reservation_cap(lab, monkeypatch, text_size, completed):
+    batches = [[f"e{i}" for i in range(1, 9)], [f"e{i}" for i in range(9, 17)]]
+    reads = install_search_batches(lab, monkeypatch, batches, text_size=text_size)
+    visible_sizes = []
+
+    def proposal(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        visible_sizes.append(len(data["evidence"]))
+        if len(data["observations"]) < 2:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "bounded"}}
+        assert [e["evidence_id"] for e in data["evidence"]] == [f"e{i}" for i in range(1, 17)]
+        return {"name": "finish_tutor_turn", "arguments": {"outcome": "answered", "text": "Claim [e16]"}}
+
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    with lab[0].connect() as conn:
+        row = conn.execute("SELECT * FROM tutor_turn").fetchone()
+        session = conn.execute("SELECT * FROM tutor_session").fetchone()
+    assert row["checkpoint"]["selected"] == [f"e{i}" for i in range(1, MAX_SEARCH_CALLS * 8 + 1)]
+    assert row["reserved_tokens"] <= 64000
+    assert session["reserved_tokens"] == row["reserved_tokens"]
+    if completed:
+        assert result["status"] == "completed" and visible_sizes == [0, 8, 16]
+        assert reads[-3:-1] == batches and reads[-1] == ["e16"]
+    else:
+        assert result["error_code"] == "TUTOR_BUDGET_EXHAUSTED" and visible_sizes == [0, 8]
+        assert result["answer"] is None and result["citations"] == []
+        assert reads[-2:] == batches
+
+
+def test_citable_union_repair_keeps_first_search_ids_and_full_prompt(lab, monkeypatch):
+    batches = [["e5", "e1", "e2"], ["e3", "e4", "e6"]]
+    install_search_batches(lab, monkeypatch, batches)
+    union = ["e5", "e1", "e2", "e3", "e4", "e6"]
+    proposed = ["e5", "e2", "e3", "e1", "e6", "e4"]
+
+    def proposal(messages, schemas, timeout):
+        data = json.loads(messages[-1]["content"])
+        count = len(data["observations"])
+        if count < 2:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "repair"}}
+        assert [e["evidence_id"] for e in data["evidence"]] == union
+        if count == 2:
+            text = "Claim " + " ".join(f"[{eid}]" for eid in proposed)
+        else:
+            repair = data["observations"][-1]
+            assert repair["keep_ids"] == proposed[:4]
+            assert repair["remove_ids"] == proposed[4:]
+            assert "ids observed in any search this turn" in repair["message"]
+            text = "Repaired [e5] [e1]"
+        return {"name": "finish_tutor_turn", "arguments": {"outcome": "answered", "text": text}}
+
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    assert result["status"] == "completed" and result["answer"] == "Repaired [e5] [e1]"
+    assert result["model_calls"] == result["tool_calls"] == 4
+    assert [c["evidence_id"] for c in result["citations"]] == ["e5", "e1"]
