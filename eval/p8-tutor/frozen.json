@@ -1,5 +1,5 @@
 {
-  "candidate": "p8-tutor-20261027-v4",
+  "candidate": "p8-tutor-20261027-v5",
   "source": "eval/retrieval-v2/corpus.json",
   "files": {
     "agent-service/src/lecturelens_real_eval/channel.py": "e80766bb315a899aa77fb4d4c7e198e0d62874e4bb117adf2fafa936eb09cc91",
@@ -8,16 +8,17 @@
     "agent-service/src/lecturelens_real_eval/tutor/app.py": "d4ff5f96cfe9e676828418f54a8a7836da8af9f487f6ff978718517f5aae85e9",
     "agent-service/src/lecturelens_real_eval/tutor/citations.py": "5ea196de5659b62760493fa4a37f8ab67be2a6bdbc606fdd0e424a987f01b6d0",
     "agent-service/src/lecturelens_real_eval/tutor/contracts.py": "25c3f5198b50d1f27043e1e97b1baadb4e78871b7fead2fba4269e33029518cc",
-    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "afb923581e854fa291ce2bc4b0fae8dce56e65a63ad9ddb42eb855dcc27a923b",
+    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "e53cc773ec2b26b36b3edc3e0c7e56f679d87a795e8694cfedfc235ddcf7f8f6",
     "agent-service/src/lecturelens_real_eval/tutor/store.py": "0851a265833fd3d3c0ee16a8096caa4aa96b7af7c8b82c60ebb81e05dc87a19e",
     "agent-service/src/lecturelens_real_eval/tutor_channel.py": "6620a4a3fee710827bd4dc51b109d07654968c000a610db8acaee2ccac46b193",
-    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "4dc133b4d497884d4fd3b9dbe004b4e0d0ab57d3a8af767caa4413b27956d6c6",
+    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "738d2dd76e9149fcbd9a9a44afd6dd76f8f0b8202cc14e8279b13bf64c45109d",
     "eval/p7-real/snapshot.json": "a3334f992261fbd8f144e783b25fcf3cfde37201fb5f28e8403564a931d44ef5",
     "eval/p8-tutor/compose.yaml": "6b548a72f6c08eed46ca3bf2f9268cb74ecbd47dc66dbfa5a9f63f5c22da7b5f",
     "eval/p8-tutor/dialogues.json": "8d8ca2b8f9ca0c04f433cc733eb3a663456fbdb956532cb0d23c79593b670fea",
     "eval/p8-tutor/run.py": "c51dd8cffb581dba3c333906b75ec70457194401b57a601337a7d17f65521f98",
     "eval/p8-tutor/sample.py": "04cc28ceb3958410f3bf51d83a5878c6896e554bfbc176f8ade69de505ce736e",
     "eval/p8-tutor/thresholds.json": "21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da",
-    "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b"
+    "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b",
+    "eval/p8-tutor/run-repair-mutations.py": "74ac63fc300347a20b0d7d183e88f5ea5e9f1c1e3b8542884d801d65d01a677d"
   }
 }

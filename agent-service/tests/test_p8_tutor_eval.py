@@ -251,7 +251,9 @@ def test_dialogue_filter_rejects_empty_unknown_or_duplicate_ids(ids):
         select_dialogues(scripts, ids)
 
 
-@pytest.mark.parametrize("fault", ["citation", "evaluation", "limit_ids", "limit_evaluation", "limit_text"])
+@pytest.mark.parametrize(
+    "fault", ["citation", "evaluation", "limit_ids", "limit_evaluation", "limit_text", "socratic"]
+)
 def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(isolated, fault):
     dsn, directory = isolated
     fake = fake_transport()
@@ -282,6 +284,8 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
                 args["evaluation"] = "E" * 501
             elif fault == "limit_text":
                 args["text"] += "T" * 1601
+            elif fault == "socratic":
+                args["outcome"] = "answered"
             elif body["evaluation_required"]:
                 args["evaluation"] = ""
             function["arguments"] = json.dumps(args)
@@ -303,10 +307,10 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
     assert result["metrics"]["protocol_failure_rate"] == 0
     assert result["metrics"]["socratic_compliance_rate"] == 1
     expected = (
-        "TUTOR_FINISH_LIMIT_EXCEEDED"
-        if fault.startswith("limit_")
-        else "TUTOR_CITATION_MISMATCH"
-        if fault == "citation"
+        "TUTOR_FINISH_REPAIR_REQUIRED"
+        if fault.startswith("limit_") or fault == "citation"
+        else "TUTOR_SOCRATIC_REPAIR_REQUIRED"
+        if fault == "socratic"
         else "TUTOR_EVALUATION_REQUIRED"
     )
     assert observations and all(o["error"] == expected for o in observations)
@@ -574,8 +578,58 @@ def test_focused_schema_failure_remains_failed_turn_and_protocol_metric(isolated
     assert result["verdict"] == "PARTIAL" and result["fatal"] is None
     assert result["metrics"]["protocol_failure_rate"] == 1
     dialogue = json.loads((directory / "failed-schema/dialogues.jsonl").read_text())
-    code = "TUTOR_FINISH_LIMIT_EXCEEDED" if fault == "second_limit" else "REAL_EVAL_PROTOCOL_FAILURE"
+    code = "TUTOR_FINISH_FORMAT_INVALID" if fault == "second_limit" else "REAL_EVAL_PROTOCOL_FAILURE"
     assert len(dialogue["turns"]) == 3
     for turn in dialogue["turns"]:
         assert turn["error_code"] == code and turn["answer"] is None and not turn["citations"]
         assert turn["model_calls"] == (3 if fault == "second_limit" else 2)
+
+
+def test_over_abstain_metric_counts_only_completed_unexpected_abstentions_and_is_report_only():
+    from copy import deepcopy
+
+    from lecturelens_real_eval.tutor.contracts import ABSTENTION
+
+    script = dict(expected_insufficient=False, context_followup=False, socratic=False)
+    base = dict(
+        status="completed",
+        outcome="answered",
+        answer="answer",
+        citations=[],
+        citation_validity=[],
+        latency_s=0.1,
+        script=script,
+    )
+    turns = [dict(base, ordinal=i) for i in range(1, 6)]
+    turns[0].update(outcome="insufficient_evidence", answer=ABSTENTION)
+    turns[1].update(
+        outcome="insufficient_evidence", answer=ABSTENTION, script={**script, "expected_insufficient": True}
+    )
+    turns[2].update(status="failed", outcome="insufficient_evidence", answer=None)
+    turns[3].update(outcome="socratic_prompt")
+    dialogues = [{"dialogue_id": "test-dialogue", "turns": turns}]
+    accounting = dict(calls=10, nano_usd=1, pending=0, blocked=None)
+    thresholds = {"max_calls": 400, "max_usd": 0.70}
+    result = summarize(dialogues, [], accounting, thresholds, None, False)
+    assert result["metrics"]["over_abstain_count"] == 1
+    assert (
+        result["metrics"]["over_abstain_rate"] == 1 / 4
+    )  # Includes failed supported-script turns in denominator.
+    assert result["over_abstain_turns"] == [("test-dialogue", 1)]
+    assert result["verdict"] == "PARTIAL" and result["fatal"] is None
+    # Full-suite eligibility and all threshold metrics are identical; this diagnostic
+    # cannot alter PASS even when every supported-script turn abstains.
+    full = []
+    for i in range(24):
+        rows = [dict(deepcopy(base), ordinal=j) for j in range(1, (5 if i < 8 else 4))]
+        full.append({"dialogue_id": str(i), "turns": rows})
+    before = summarize(full, [], accounting, thresholds, None, False)
+    for d in full:
+        for turn in d["turns"]:
+            turn.update(outcome="insufficient_evidence", answer=ABSTENTION)
+    after = summarize(full, [], accounting, thresholds, None, False)
+    assert before["verdict"] == after["verdict"] == "PASS"
+    assert after["metrics"]["over_abstain_count"] == 80 and after["metrics"]["over_abstain_rate"] == 1
+    empty = summarize([], [], accounting, thresholds, None, False)
+    assert empty["metrics"]["over_abstain_count"] == empty["metrics"]["over_abstain_rate"] == 0
+    assert empty["over_abstain_turns"] == []

@@ -210,8 +210,16 @@ def summarize(dialogues, reviews, accounting, thresholds, fatal, live, *, focuse
                 and bool(re.search(r"[?？]", t["answer"] or ""))
                 and r.get("socratic_compliant", False)
             )
+    supported_script_turns = [(d, t) for d, t in turns if t["script"]["expected_insufficient"] is False]
+    over_abstain = [
+        (d["dialogue_id"], t["ordinal"])
+        for d, t in supported_script_turns
+        if t["status"] == "completed" and t["outcome"] == "insufficient_evidence"
+    ]
     latencies = sorted(t["latency_s"] for _, t in turns)
     metrics = {
+        "over_abstain_count": len(over_abstain),
+        "over_abstain_rate": len(over_abstain) / len(supported_script_turns) if supported_script_turns else 0,
         "citation_verifiable_rate": ratio(valid),
         "no_evidence_abstain_rate": ratio(abstain),
         "answer_supported_rate": ratio(answered),
@@ -238,6 +246,7 @@ def summarize(dialogues, reviews, accounting, thresholds, fatal, live, *, focuse
         "verdict": "FAIL" if fatal else "PASS" if passed else "PARTIAL",
         "quality_status": "LIVE_REVIEW" if live else "NOT_RUN_MOCK_MECHANICS_ONLY",
         "metrics": metrics,
+        "over_abstain_turns": over_abstain,
         "dialogues": len(dialogues),
         "turns": len(turns),
         "reviewed_turns": len(reviews),

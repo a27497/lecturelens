@@ -4,9 +4,13 @@ Offline mechanism implementation only; **zero real provider calls** in this task
 
 The first authorized live trial, `p8-real-review-20261027`, remains **FAIL** after **2 real calls / $0.0039189**, with `REAL_EVAL_CITATION_FABRICATED`. Its Flash answer used `Adj[u]`; the old bracket parser misclassified `u` as an evidence id. All 11 actual declared/inline ID references were authoritative. This was an evaluator/contract false positive; the failed run and its original ledger are retained as evidence, without rescoring it as a pass. See [the fix report](REPORT.md#offline-fix-round-1).
 
-Candidate **`p8-tutor-20261027-v4`** preserves the shared citation grammar and authority checks. Observed citation-format mistakes (including missing inline references or duplicate declarations) and missing evaluation after a Socratic prompt produce error observations, consume a tool slot and allow a corrected finish within the existing four-model/four-tool turn budget. Unobserved/fabricated IDs and authority failures remain fatal. Two authoritative searches are allowed per turn; after that only finish is offered. Exact abstention and guiding-question requirements remain enforced. Finish size limits remain four evidence IDs, 500 evaluation characters and 1,600 text characters. Exactly one size-only repair observation (`TUTOR_FINISH_LIMIT_EXCEEDED`) is allowed per turn; it consumes a tool slot and survives restart through the committed journal. A second size violation is a failed turn/protocol miss. No proposal is truncated. The eval adapter defers only these three upper bounds to the runtime; all other strict schema constraints and every declared/inline authority check, including dropped parallel calls, remain enforced. Dialogues and thresholds are byte-identical to `970bd00`; all pinned inputs were rehashed, including the isolated compose file.
+Candidate **`p8-tutor-20261027-v5`** unifies observed citation mismatch, duplicate declarations and Finish size violations into one durable `TUTOR_FINISH_REPAIR_REQUIRED` chance per turn. The observation lists `inline_not_declared`, `declared_not_inline`, duplicates and actual sizes/exact limits. A second format violation fails with `TUTOR_FINISH_FORMAT_INVALID`. A separate one-shot `TUTOR_SOCRATIC_REPAIR_REQUIRED` corrects the supported outcome/question contract; repetition fails with `TUTOR_SOCRATIC_CONTRACT`. Both counters survive restart, and the format counter recognizes legacy mismatch/size observations. The system prompt states the citation, size, mode and repair rules. Unobserved/fabricated IDs and authority failures remain fatal, including every declared/inline ID in dropped parallel proposals. Strict publication limits remain **4 IDs / 500 evaluation characters / 1,600 text characters**; no text is truncated, no IDs are dropped and no outcome is rewritten.
 
-The separately executed r2 trial remains **PARTIAL**. Its citation, search-budget and missing-evaluation failures motivated this offline protocol change; they are not rescored as successes. The separately authorized focused trial `p8-protocol-focus-20261027` remains **PARTIAL**, with four Finish-size protocol failures reported by the operator. Its artifacts remain unchanged. This offline size-repair round does not rescore those failures. See [schema verification](REPORT.md#offline-finish-schema-repair-v4). The proposed full live run below is **not executed** here.
+Each repair atomically prepays the exact next finish-only request in the committed observation journal, under unchanged session/token caps. The ordinary four-model/four-tool limit has at most **one extra repair-only slot**, five total; two searches plus finish plus the two distinct repairs fit in five. Repair requests offer and accept only `finish_tutor_turn`. If capacity is unavailable, the turn fails with `TUTOR_REPAIR_BUDGET_UNAVAILABLE` before issuing a repair observation. An issued observation has its next runtime call/tool budget reserved. The persisted 20-second deadline, authorization, cancellation and fail-closed unknown-call recovery still apply. `TUTOR_EVALUATION_REQUIRED` keeps its previous ordinary-budget behavior.
+
+The v5 manifest SHA-256 is `dc63edaa83db4bff19c5a29426b144ff893e06bb5c45c1a5e28dc8e22ece1b9f`. Final offline verification: **148 targeted tests**, **1,081 selected broad tests** (7 documented deselections), **7/7 mutants killed**, full mock **24/80 PASS**, focused mock **11/37 PARTIAL by scope**. These are mechanism results.
+
+The separately executed v4 full trial `p8-schema-full-20261027` remains **PARTIAL** (7/80 protocol failures, 316 calls, $0.5276799); no live result or private ledger was changed. This offline round does not establish real-model improvement. See [v5 verification and budget projection](REPORT.md#offline-unified-finish-and-socratic-repair-v5). Dialogues and thresholds remain byte-identical to `970bd00`; the run caps remain **400 calls / $0.70**. The live command below is documentation only.
 
 ## Scripts and negative evidence
 
@@ -22,6 +26,8 @@ Each lecture has dialogues `-1` (definition/explanation, 3 turns), `-2` (Socrati
 | probability-l3 | independence / conditional independence / pairwise vs mutual | exchangeable sequences | `de Finetti` |
 | quantum-l1 | superposition / measurement / classical vs quantum | open-system dynamics | `Lindblad` |
 | quantum-l2 | interference / polarization / single photons | two-photon coincidence | `Hong` |
+
+**Script/corpus mismatch:** `probability-l1-3` turns 1–3 ask about the union bound (including follow-ups) and have `expected_insufficient=false`, while the probability-l1 corpus/snapshot contains no union-bound evidence (zero literal “union” hits). The v4 model abstained on all three. The frozen scripts are unchanged for the user to decide; these diagnostic “over-abstain” flags do not establish incorrect learner-facing behavior.
 
 These terms have zero case-insensitive literal hits in the corresponding lecture's complete evidence text. Absence is reverified in `verify_inputs()` and `test_frozen_scripts_absence_and_threshold_hashes`. To independently grep a lecture, extract its text to a local file and run, for example:
 
@@ -56,9 +62,11 @@ The eval adapter drives the production Tutor store/runtime with a read-only snap
 | p95_turn_latency_s | ≤20; nearest rank, Tutor execution only |
 | max_calls / max_usd | 400 / $0.70, reviewer included |
 
+Summary also reports `metrics.over_abstain_count`, `metrics.over_abstain_rate` and `over_abstain_turns` as `(dialogue_id, ordinal)` pairs. The numerator counts completed `insufficient_evidence` outcomes where `expected_insufficient=false`; the denominator is all attempted turns with that script label, including failures. Empty denominator yields zero. This is **report-only**: it adds no threshold and changes no verdict gate.
+
 All 24 dialogues/80 turns and all gates are required for PASS. Nonfatal quality/protocol misses are PARTIAL. Fabricated citations, channel/ledger errors or unknown outcomes are FAIL. Missing/failed reviews count as unsupported, not successful. Citations in malformed proposals are inspected before schema validation so malformed output cannot hide invented IDs. An insufficient-evidence candidate containing substantive text is rejected by the runtime, never rewritten into a passing answer.
 
-The P8 channel derives from P7's reserve-before-send pattern with separate `p8_tutor_real_run/p8_tutor_real_event` PG tables. It preserves an append-only fsynced JSONL mirror, exclusive locking, durable PG commit and exact record comparison before dispatch. No transport/schema retry and no automatic ledger repair. Runtime tool-error observations permit another model-selected attempt within the original persistent turn budget; each decision is separately accounted. Unknown/failed outcomes consume the full reservation and cannot be replayed. Actual usage exceeding reservation blocks the run. There is no product adapter importing this channel.
+The P8 channel derives from P7's reserve-before-send pattern with separate `p8_tutor_real_run/p8_tutor_real_event` PG tables. It preserves an append-only fsynced JSONL mirror, exclusive locking, durable PG commit and exact record comparison before dispatch. No transport/schema retry and no automatic ledger repair. Runtime tool-error observations permit another model-selected attempt within the bounded persistent turn budget described above; each decision is separately accounted. Unknown/failed outcomes consume the full reservation and cannot be replayed. Actual usage exceeding reservation blocks the run. There is no product adapter importing this channel.
 
 Conservative fixed ceilings per million tokens: Flash **$0.30 input / $1.20 output**; Pro **$1.74 input / $3.96 output**, cache discounts ignored. Input reserves the complete wire-body byte count as a token upper bound; output ≤1,200 tokens; body ≤65,536 bytes; response ≤128 KiB; timeout ≤20 seconds. Largest reservations are $0.0211008 Flash / $0.11878464 Pro. These conservative reservations can exhaust $0.70 before 400 requests; completion within the cap is not guaranteed. Normal mock flow has 160 Tutor requests + 80 review requests = 240 fake requests.
 
@@ -79,22 +87,30 @@ CREATE DATABASE is first-start only. Tests use `lecturelens_agent_test`; isolate
 ```bash
 AGENT_TEST_DATABASE_URL='postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_test' \
 uv run --project agent-service --offline python scripts/eval/check-study-offline.py \
-  --database-port 25741 --network-records .data/p8-tutor/checks/schema-full-safe-network \
+  --database-port 25741 --network-records .data/p8-tutor/checks/repair-final-full-safe-network \
   -- -q \
   -k 'not (test_live_requires_both_switches or test_live_schema_failure_never_enters_chatprovider_repair or test_key_never_in_exception_logs_or_ledgers or test_parallel_tool_calls_execute_first_only_without_extra_request or test_parallel_tool_calls_with_unknown_tool_fail_closed)' \
-  --junitxml=../.data/p8-tutor/checks/schema-full-safe.xml
+  --junitxml=../.data/p8-tutor/checks/repair-final-full-safe.xml
 ```
 
 Standalone default mock run; never use the external ledger path for mocks:
 
 ```bash
 uv run --project agent-service --offline python .data/p8-tutor/checks/run-guarded-tutor.py \
-  .data/p8-tutor/checks/schema-mock-network \
+  .data/p8-tutor/checks/repair-mock-network \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger .data/p8-tutor/schema-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
-  --run-id p8-schema-mock-20261027
-python3 .data/p8-tutor/p8-schema-mock-20261027/sample.py -n 5
+  --ledger .data/p8-tutor/repair-mock-ledger.jsonl --max-calls 400 --max-usd 0.70 \
+  --run-id p8-repair-mock-20261027
+python3 .data/p8-tutor/p8-repair-mock-20261027/sample.py -n 5
 ```
+
+Mutation verification (all fake, separate PG, inherited network guard; outputs under `.data/p8-tutor/checks/`):
+
+```bash
+uv run --project agent-service --offline python eval/p8-tutor/run-repair-mutations.py --label repair-final
+```
+
+This replaces the two v4 schema mutants with equivalent immediate-size-failure and unlimited-after-restart mutants, and adds silent ID truncation, silent inline dropping, immediate Socratic failure, missing repair reservation and always-zero over-abstention. Each must produce exactly one failed test, zero errors/skips, followed by byte/digest restoration. Prior output paths are refused.
 
 Outputs: `dialogues.jsonl`, `reviews.jsonl`, `summary.json`, and standalone `sample.py`. Sampling prints N seeded dialogues with turns, outcomes, inline citations and full cited source text. Summary explicitly labels fake runs `NOT_RUN_MOCK_MECHANICS_ONLY`. Fake transport does not read credentials; its fixed reviewer judgments and negative responses only verify mechanics.
 
@@ -107,11 +123,11 @@ cd /home/dev/projects/lecturelens-p8-tutor-protocol
 uv run --project agent-service --offline python eval/p8-tutor/run.py \
   --live \
   --dsn 'postgresql://p8:p8-local-only@127.0.0.1:25741/lecturelens_agent_acceptance' \
-  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-schema-full-20261027.jsonl \
-  --max-usd 0.80 --max-calls 400 --run-id p8-schema-full-20261027
+  --ledger /home/dev/lecturelens-eval/deepseek-20261027/ledger-p8-repair-full-20261027.jsonl \
+  --max-usd 0.70 --max-calls 400 --run-id p8-repair-full-20261027
 ```
 
-The requested `$0.80` argument exceeds the unchanged frozen `$0.70` policy ceiling; current preflight rejects it before dispatch. No cap was raised to accommodate this documentation-only command. An operator needs a separately resolved budget configuration before using it. The 24-dialogue/80-turn gates and all quality thresholds remain unchanged.
+The command uses the unchanged $0.70/400-call policy. Worst-case five Tutor calls plus one review per turn would require 480 requests, so the ledger can stop the round before completion. Projecting only the seven v4 failures being repaired gives about 325 total calls / $0.543 at the v4 average cost; this is an estimate, not a completion guarantee. See the report for assumptions.
 
 `--dialogue-ids` remains available for focused diagnostics. It accepts space-separated unique frozen IDs; empty, unknown or duplicate IDs fail before ledger/provider entry. Focused summaries record `scope=focused` and selected IDs and return **PARTIAL** at best, even with perfect metrics. These are public development scripts, not fresh holdout data.
 
