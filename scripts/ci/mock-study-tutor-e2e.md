@@ -35,8 +35,11 @@ python3 scripts/ci/mock-study-tutor-e2e.py \
 
 Run again with a new output directory for stability. The cache is copied into each
 run's private directory and loaded offline. No external Agent socket connections
-are allowed by the interpreter audit hook; the original application factory,
-retriever, authority and mock providers run unchanged. Java real-provider switches
+are allowed by the interpreter audit hook. Uvicorn launches the test-only
+`scripts.ci.tutor_hold_app:create_app` factory, which calls the real application
+factory and wraps its default mock Tutor provider in process. Product source,
+retrieval and authority remain unchanged. The Agent working directory is
+`agent-service`; PYTHONPATH includes the network guard and repository root. Java real-provider switches
 are false and no caller provider credentials/proxies/JVM options are inherited.
 This does not provide OS-level Java packet attribution.
 
@@ -54,8 +57,9 @@ Stage results and durations are saved to `result.json`. The smoke requires:
 - Tutor create/list, a completed answer with current source citation or the exact
   documented abstention, immediate queued-cancel with submission status exactly
   `queued`, reaching `cancelled` with an empty/null answer, empty citations and
-  `model_calls == 0` / `tool_calls == 0` in both the API and PostgreSQL, then
-  `SIGKILL`/restart with identical persisted history and a new completed question.
+  `model_calls == 0` / `tool_calls == 0` in both the API and PostgreSQL; running-cancel
+  with a held decision and stable empty publication; a normal same-Session follow-up;
+  then `SIGKILL`/restart with identical persisted history and a new completed question.
 - Flashcards create Session, generate and poll Run to `succeeded`, due/read/review
   with Good, version increment, changed schedule and removal from the due queue.
 - A second authenticated account receives exactly HTTP 404 on all five Tutor
@@ -71,16 +75,23 @@ A failed assertion is retained as FAIL; dependent stages remain NOT_RUN. Do not
 change product behavior or assertions to bypass a failure. Vue/Playwright is
 FOLLOW_UP. Real-provider task quality is NOT_RUN.
 
-`Tutor-running-cancel` is explicitly NOT_RUN: the separate uvicorn process has no
-existing mock decision hold/latch hook. In-process provider injection in
-`agent-service/tests/test_tutor.py` does not configure that process. Immediate
-queued-cancel does not establish cancellation during execution. Its `result.json`
-entry records submission status (a different actual status fails without retry)
-and PostgreSQL status, answer, citations, deadline, checkpoint phase and call counts;
-status at the actual cancel boundary is unobserved.
-Running-cancel needs a separately authorized, off-by-default mock-only latch in
-`MockTutor.decide`, released after the harness observes `running`. No such product
-switch is added by this harness.
+`Tutor-running-cancel` arms the test-only factory’s `TUTOR_MOCK_TEST_HOLD_DIR`
+protocol in the private run directory. The Agent receives the directory at startup;
+only an `arm` file activates it. Mock `decide` writes `entered` and polls for
+`release` every 50ms for at most 10 seconds, then resumes its normal decision on timeout.
+The factory rejects startup outside `AGENT_LLM_MODE=mock`, before workers start.
+The bounded wait also bounds shutdown; no worker threading or cancellation logic changes.
+
+The harness requires `entered`, API/PG `running`, a persisted deadline and a
+`reserved` checkpoint before CANCEL. It disarms and releases the decision after
+CANCEL, checks API/PG `cancelled` with no answer/citations immediately and again
+after three seconds, then completes a new question in the same Session.
+`model_calls == 1` is the durable reservation before entering `decide`;
+`tool_calls == 0` proves cancellation fenced the returned decision before tool
+execution. These counters are required in both API and PG. Queued-cancel still
+requires both counters to be zero. Markers and observations remain in the run
+output. Any late publication fails the stage and is a product bug; the harness
+does not repair cancellation behavior.
 
 To verify the original script independently, the helper mode creates only fresh
 demo infrastructure and launches the original, unchanged `mock-e2e.py`; no Agent
@@ -89,5 +100,6 @@ or Agent PostgreSQL is started:
 ```bash
 python3 scripts/ci/mock-study-tutor-e2e.py \
   --output-dir /tmp/lecturelens-legacy-alone --legacy-only
-python3 -m unittest discover -s scripts/ci -p 'test_mock_study_tutor_e2e.py' -v
+python3 -m unittest scripts.ci.test_mock_study_tutor_e2e -v
+agent-service/.venv/bin/python -m unittest scripts.ci.test_tutor_hold_app -v
 ```

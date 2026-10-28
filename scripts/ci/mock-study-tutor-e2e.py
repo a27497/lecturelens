@@ -96,7 +96,6 @@ class Smoke:
             "stages": {},
             "cross_account": {},
             "not_run": [
-                "Tutor-running-cancel: no existing mock hold hook for the separate uvicorn process",
                 "Vue/Playwright FOLLOW_UP",
                 "real-model task quality",
                 "process-level database write attribution (heuristic + not proven)",
@@ -400,9 +399,12 @@ class Smoke:
         guard = self.out / "network-guard"
         guard.mkdir()
         (guard / "sitecustomize.py").write_text(NETWORK_GUARD)
-        self.env["PYTHONPATH"] = str(guard)
+        self.env["PYTHONPATH"] = os.pathsep.join((str(guard), str(ROOT)))
         self.env["SMOKE_DENIED_NETWORK_LOG"] = str(self.out / "denied-network.log")
         self.env["SMOKE_GUARD_ACTIVE_LOG"] = str(self.out / "guard-active.log")
+        self.hold = self.out / "tutor-mock-test-hold"
+        self.hold.mkdir(mode=0o700)
+        self.env["TUTOR_MOCK_TEST_HOLD_DIR"] = str(self.hold)
         self.base = java
         self.agent_base = agent
         self.jar = ROOT / "backend/target/courselingo-backend-0.0.1-SNAPSHOT.jar"
@@ -583,7 +585,7 @@ class Smoke:
                 "--offline",
                 "--no-sync",
                 "uvicorn",
-                "lecturelens_real_eval.tutor.app:create_app",
+                "scripts.ci.tutor_hold_app:create_app",
                 "--factory",
                 "--host",
                 "127.0.0.1",
@@ -702,13 +704,13 @@ class Smoke:
         self.result.setdefault("tutor_outcomes", []).append(turn["outcome"])
 
     @staticmethod
-    def cancelled(turn, boundary):
+    def cancelled(turn, boundary, *, model_calls=0):
         assert turn["status"] == "cancelled", f"{boundary}: Cancelled Tutor turn changed status"
         assert turn["answer"] in (None, ""), f"{boundary}: Cancelled Tutor turn published an answer"
         assert turn["citations"] == [], f"{boundary}: Cancelled Tutor turn published citations"
-        for counter in ("model_calls", "tool_calls"):
-            assert turn[counter] == 0, (
-                f"{boundary}: Cancelled Tutor turn {counter}={turn[counter]!r}, expected 0"
+        for counter, expected in (("model_calls", model_calls), ("tool_calls", 0)):
+            assert turn[counter] == expected, (
+                f"{boundary}: Cancelled Tutor turn {counter}={turn[counter]!r}, expected {expected}"
             )
 
     def queued_cancel(self):
@@ -741,6 +743,77 @@ class Smoke:
         self.cancelled(turn, "API")
         assert len(rows) == 1, "Expected one persisted queued-cancel turn"
         self.cancelled(rows[0], "PG")
+
+    def observe_running_cancel(self):
+        turns = self.api("GET", self.session_path)["turns"]
+        turn = next(t for t in turns if t["client_turn_id"] == "cancel-running")
+        rows = json.loads(self.sql(
+            "SELECT coalesce(json_agg(row_to_json(r)), '[]') FROM ("
+            "SELECT t.turn_id,t.status,t.answer,t.citations,t.deadline,"
+            "t.checkpoint->>'phase' AS checkpoint_phase,t.model_calls,t.tool_calls "
+            "FROM tutor_turn t JOIN tutor_session s USING(session_id) "
+            f"WHERE s.owner_id={self.owner} AND s.course_id='{self.task}' "
+            "AND t.client_turn_id='cancel-running') r", pg=True,
+        ))
+        assert len(rows) == 1, "Expected one persisted running-cancel turn"
+        return {"api": turn, "pg": rows[0]}
+
+    def wait_for_running(self):
+        self.wait(lambda: (self.hold / "entered").is_file(), bool, 5, "mock decide entered marker")
+        self.turn("cancel-running", "running")
+
+    @staticmethod
+    def assert_running_at_cancel(observation):
+        for boundary in ("api", "pg"):
+            assert observation[boundary]["status"] == "running", (
+                f"{boundary}: status_at_cancel_time={observation[boundary]['status']!r}, expected 'running'"
+            )
+        assert observation["pg"]["deadline"], "Running turn requires a persisted deadline"
+        assert observation["pg"]["checkpoint_phase"] == "reserved", "Mock decision must be in flight"
+        for boundary in ("api", "pg"):
+            assert observation[boundary]["model_calls"] == 1
+            assert observation[boundary]["tool_calls"] == 0
+
+    def assert_running_cancelled(self, observation):
+        # Reservation precedes decide; cancellation fences the returned decision
+        # before any tool executes. Cancellation does not refund the model slot.
+        for boundary in ("api", "pg"):
+            self.cancelled(observation[boundary], boundary.upper(), model_calls=1)
+
+    def running_cancel(self):
+        evidence = self.result["running_cancel"] = {}
+        for marker in ("arm", "entered", "release"):
+            (self.hold / marker).unlink(missing_ok=True)
+        (self.hold / "arm").touch()
+        try:
+            self.ask("cancel-running")
+            self.wait_for_running()
+            observation = self.observe_running_cancel()
+            evidence.update(
+                at_cancel=observation,
+                status_at_cancel_time=observation["api"]["status"],
+                pg_status_at_cancel_time=observation["pg"]["status"],
+                entered=(self.hold / "entered").read_text().strip() if (self.hold / "entered").is_file() else None,
+                cancel_requested_ns=time.time_ns(),
+            )
+            self.assert_running_at_cancel(observation)
+            assert evidence["entered"], "Missing mock decide entered marker at cancel"
+            self.api("POST", self.session_path + "/turns/cancel-running/cancel")
+        finally:
+            # Disarm before release so the next question never inherits the latch.
+            (self.hold / "arm").unlink(missing_ok=True)
+            evidence["released_ns"] = time.time_ns()
+            (self.hold / "release").write_text(str(evidence["released_ns"]) + "\n")
+        self.turn("cancel-running", "cancelled")
+        evidence["after_release"] = self.observe_running_cancel()
+        self.assert_running_cancelled(evidence["after_release"])
+        time.sleep(3)
+        evidence["stability_seconds"] = 3
+        evidence["stable"] = self.observe_running_cancel()
+        self.assert_running_cancelled(evidence["stable"])
+        self.ask("after-running-cancel")
+        evidence["followup"] = self.turn("after-running-cancel", "completed")
+        self.answer(evidence["followup"])
 
     def study_command(self, operation, **body):
         return self.api("POST", self.study, {"operation": operation, **body})
@@ -855,13 +928,13 @@ class Smoke:
                 pg=True,
             )
         )
-        assert counts["tutor_turn"] == 3
+        assert counts["tutor_turn"] == 5
         assert (
             self.sql(
                 "SELECT string_agg(status,',' ORDER BY ordinal) FROM tutor_turn",
                 pg=True,
             )
-            == "completed,cancelled,completed"
+            == "completed,cancelled,cancelled,completed,completed"
         )
         for table, join in [
             ("study_run", "JOIN study_session s USING(session_id)"),
@@ -1036,6 +1109,8 @@ class Smoke:
                     self.answer(self.turn("first", "completed"))
                 with self.stage("Tutor-queued-cancel"):
                     self.queued_cancel()
+                with self.stage("Tutor-running-cancel"):
+                    self.running_cancel()
                 with self.stage("Tutor-restart-recovery"):
                     before = self.api("GET", self.session_path)["turns"]
                     self.stop(agent, kill=True)
@@ -1044,9 +1119,9 @@ class Smoke:
                     assert after == before, "Persisted history changed across SIGKILL/restart"
                     self.ask("after-restart")
                     self.answer(self.turn("after-restart", "completed"))
-                    assert len(self.api("GET", self.session_path)["turns"]) == 3
+                    assert len(self.api("GET", self.session_path)["turns"]) == 5
                     self.result["restart_recovery"] = (
-                        "SIGKILL process group; identical two-turn history; new turn completed"
+                        "SIGKILL process group; identical four-turn history; new turn completed"
                     )
                 with self.stage("flashcards-full-flow"):
                     self.flashcards()

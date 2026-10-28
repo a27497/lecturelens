@@ -1,6 +1,7 @@
 """Harness safety/contract checks; the sibling integration script tests real services."""
 
 import argparse
+import copy
 import importlib.util
 import io
 import json
@@ -62,6 +63,7 @@ class HarnessSafety(unittest.TestCase):
             self.assertNotIn(secret, public)
         self.assertNotIn("AGENT_DATABASE_URL=", public)
         self.assertEqual(self.smoke.env["AGENT_LLM_MODE"], "mock")
+        self.assertIn(str(MODULE.ROOT), self.smoke.env["PYTHONPATH"].split(os.pathsep))
         self.assertEqual(self.smoke.env["SERVER_ADDRESS"], "127.0.0.1")
         self.assertNotIn("OPENAI_API_KEY", self.smoke.env)
         self.assertNotIn("JAVA_TOOL_OPTIONS", self.smoke.env)
@@ -74,6 +76,21 @@ class HarnessSafety(unittest.TestCase):
                 if line.strip().startswith("- ")
             )
         )
+
+    def test_agent_launch_uses_test_factory_from_agent_working_directory(self):
+        self.smoke.result["ports"] = {"AGENT_HTTP_PORT": 28092}
+        self.smoke.agent_base = "http://127.0.0.1:28092"
+        with (
+            patch.object(self.smoke, "free_port"),
+            patch.object(self.smoke, "spawn") as spawn,
+            patch.object(self.smoke, "health"),
+        ):
+            self.smoke.start_agent()
+        command, name, cwd = spawn.call_args.args
+        self.assertIn("scripts.ci.tutor_hold_app:create_app", command)
+        self.assertIn("--factory", command)
+        self.assertEqual(cwd, MODULE.ROOT / "agent-service")
+        self.assertEqual(name, "agent")
 
     def test_real_provider_template_is_rejected_before_startup(self):
         original = Path.read_text
@@ -259,10 +276,125 @@ class HarnessSafety(unittest.TestCase):
                 self.assertEqual(evidence["turn"], turn)
                 self.assertEqual(evidence["pg_rows"], [row])
 
-    def test_running_cancel_is_explicitly_not_run(self):
+    def test_running_cancel_is_a_required_stage(self):
         self.assertIn("Tutor-queued-cancel", MODULE.STAGES)
         self.assertIn("Tutor-running-cancel", MODULE.STAGES)
-        self.assertTrue(any("Tutor-running-cancel" in reason for reason in self.smoke.result["not_run"]))
+        self.assertFalse(any("Tutor-running-cancel" in reason for reason in self.smoke.result["not_run"]))
+
+    def running_setup(self):
+        self.smoke.session_path = "/synthetic/session"
+        self.smoke.hold = self.smoke.out / "hold"
+        self.smoke.hold.mkdir()
+        running = {
+            "status": "running", "answer": None, "citations": [],
+            "model_calls": 1, "tool_calls": 0,
+            "deadline": "2026-10-28T12:00:20Z", "checkpoint_phase": "reserved",
+        }
+        cancelled = {**running, "status": "cancelled"}
+        return {"api": dict(running), "pg": dict(running)}, {
+            "api": dict(cancelled), "pg": dict(cancelled),
+        }
+
+    def test_marker_wait_requires_entered_before_polling_running(self):
+        self.smoke.hold = self.smoke.out
+        with patch.object(self.smoke, "turn") as turn:
+            with self.assertRaisesRegex(AssertionError, "entered marker"):
+                self.smoke.wait(lambda: (self.smoke.hold / "entered").is_file(), bool, 0, "entered marker")
+            turn.assert_not_called()
+            (self.smoke.hold / "entered").touch()
+            self.smoke.wait_for_running()
+            turn.assert_called_once_with("cancel-running", "running")
+
+    def test_running_cancel_rejects_nonrunning_boundary_even_without_wait(self):
+        running, _ = self.running_setup()
+        for boundary in ("api", "pg"):
+            observation = copy.deepcopy(running)
+            observation[boundary]["status"] = "queued"
+            with (
+                self.subTest(boundary=boundary),
+                patch.object(self.smoke, "ask"),
+                patch.object(self.smoke, "wait_for_running", side_effect=lambda: (self.smoke.hold / "entered").write_text("123")),
+                patch.object(self.smoke, "observe_running_cancel", return_value=observation),
+                patch.object(self.smoke, "api") as cancel,
+            ):
+                (self.smoke.hold / "entered").touch()
+                with self.assertRaisesRegex(AssertionError, "status_at_cancel_time='queued'"):
+                    self.smoke.running_cancel()
+                cancel.assert_not_called()
+                self.assertEqual(self.smoke.result["running_cancel"]["at_cancel"], observation)
+                self.assertTrue((self.smoke.hold / "release").is_file())
+                self.assertFalse((self.smoke.hold / "arm").exists())
+
+    def test_running_requires_deadline_reserved_checkpoint_and_actual_counters(self):
+        running, _ = self.running_setup()
+        for boundary, field, value in (
+            ("pg", "deadline", None), ("pg", "checkpoint_phase", "ready"),
+            ("api", "model_calls", 0), ("pg", "model_calls", 0),
+            ("api", "tool_calls", 1), ("pg", "tool_calls", 1),
+        ):
+            observation = copy.deepcopy(running)
+            observation[boundary][field] = value
+            with self.subTest(boundary=boundary, field=field), self.assertRaises(AssertionError):
+                self.smoke.assert_running_at_cancel(observation)
+
+    def test_running_cancel_stability_and_followup(self):
+        running, cancelled = self.running_setup()
+        followup = {"status": "completed", "answer": "normal"}
+
+        def entered():
+            self.assertTrue((self.smoke.hold / "arm").is_file())
+            self.assertFalse((self.smoke.hold / "release").exists())
+            (self.smoke.hold / "entered").write_text("123")
+
+        def cancel(*args):
+            self.assertEqual(args, ("POST", "/synthetic/session/turns/cancel-running/cancel"))
+            self.assertFalse((self.smoke.hold / "release").exists())
+
+        with (
+            patch.object(self.smoke, "ask") as ask,
+            patch.object(self.smoke, "wait_for_running", side_effect=entered),
+            patch.object(self.smoke, "observe_running_cancel", side_effect=[running, cancelled, cancelled]),
+            patch.object(self.smoke, "api", side_effect=cancel),
+            patch.object(self.smoke, "turn", return_value=followup),
+            patch.object(self.smoke, "answer") as answer,
+            patch.object(MODULE.time, "sleep") as sleep,
+        ):
+            self.smoke.running_cancel()
+        sleep.assert_called_once_with(3)
+        self.assertEqual([c.args for c in ask.call_args_list], [("cancel-running",), ("after-running-cancel",)])
+        answer.assert_called_once_with(followup)
+        evidence = self.smoke.result["running_cancel"]
+        self.assertEqual(evidence["status_at_cancel_time"], "running")
+        self.assertEqual(evidence["pg_status_at_cancel_time"], "running")
+        self.assertEqual(evidence["stable"], cancelled)
+        self.assertEqual(evidence["entered"], "123")
+        self.assertFalse((self.smoke.hold / "arm").exists())
+
+    def test_running_cancel_rejects_late_publication_at_both_observations(self):
+        running, cancelled = self.running_setup()
+        for phase in ("after_release", "stable"):
+            for boundary in ("api", "pg"):
+                for field, value in (
+                    ("status", "completed"), ("answer", "late answer"),
+                    ("citations", [{"evidence_id": "e1"}]),
+                    ("model_calls", 0), ("tool_calls", 1),
+                ):
+                    bad = copy.deepcopy(cancelled)
+                    bad[boundary][field] = value
+                    observations = [running, bad] if phase == "after_release" else [running, cancelled, bad]
+                    with (
+                        self.subTest(phase=phase, boundary=boundary, field=field),
+                        patch.object(self.smoke, "ask") as ask,
+                        patch.object(self.smoke, "wait_for_running", side_effect=lambda: (self.smoke.hold / "entered").write_text("123")),
+                        patch.object(self.smoke, "observe_running_cancel", side_effect=observations),
+                        patch.object(self.smoke, "api"),
+                        patch.object(self.smoke, "turn"),
+                        patch.object(MODULE.time, "sleep"),
+                    ):
+                        with self.assertRaises(AssertionError):
+                            self.smoke.running_cancel()
+                        self.assertEqual(self.smoke.result["running_cancel"][phase], bad)
+                        ask.assert_called_once_with("cancel-running")
 
 
 if __name__ == "__main__":
