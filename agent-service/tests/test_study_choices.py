@@ -424,11 +424,12 @@ def test_choice_uses_persisted_budget_and_is_invisible_to_legacy_workers(setup):
 
 
 def test_new_choice_runtime_cannot_inherit_the_frozen_p7_evaluation_identity():
-    from lecturelens_agent.study.acceptance_cost import CostDenied, verify_development_agent
+    from lecturelens_agent.study.acceptance_cost import CostDenied, verify_development_agent, verify_p7_agent
 
     # The immutable P7 manifest is not repinned to present this new runtime as that candidate.
+    assert verify_development_agent() == 62
     with pytest.raises(CostDenied, match="IDENTITY_CHANGED"):
-        verify_development_agent()
+        verify_p7_agent()
 
 
 def test_failed_event_commit_rolls_back_choice_and_judgment_together(choice, monkeypatch):

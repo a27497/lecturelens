@@ -2,6 +2,8 @@
 
 This is a new Mock-only choice-practice candidate. It does not inherit a frozen AU/P7/Tutor identity or real-model quality result. Historical manifests and the Tutor/flashcard product modules remain unchanged. The shared practice contracts, persistence and dispatcher legitimately change for P9; the P7 identity verifier must reject this runtime rather than repin its manifest.
 
+The current offline development identity is `p9-choice-2b5fa77bab87da38`, registered in `p9_agent_manifest.json` (62 modules; SHA-256 `2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471`). `verify_development_agent` checks this identity; `verify_p7_agent` retains the original P7 manifest digest and exact module/hash checks. The P9 test fixture `p9-prior-source.tar.gz` contains only the five changed P7 source modules from `12761f4a008fe94c57789ba102b10832c3d527f3`. Tests restore those bytes and remove the two added choice modules to positively verify P7 without Git access, then reject tampering. Earlier frozen identity checks remain separate. Registering P9 grants no live-provider permission or inherited evaluation result.
+
 Prerequisites are the same as [`scripts/ci/mock-study-tutor-e2e.md`](../../scripts/ci/mock-study-tutor-e2e.md): cached Docker images/Maven/Python dependencies, Java 21, `uv`, FFmpeg, Chrome and Node at `/opt/node/bin`. No production `.env` files are read by the harness. Use an isolated worktree. All evidence below is generated under this worktree's ignored `.data/p9-acceptance/` directory, including failed trials.
 
 ```bash
