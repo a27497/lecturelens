@@ -51,7 +51,8 @@ STAGES = [
     "synthetic-course-and-index",
     "Tutor-create",
     "Tutor-complete",
-    "Tutor-cancel",
+    "Tutor-queued-cancel",
+    "Tutor-running-cancel",
     "Tutor-restart-recovery",
     "flashcards-full-flow",
     "cross-account",
@@ -95,6 +96,7 @@ class Smoke:
             "stages": {},
             "cross_account": {},
             "not_run": [
+                "Tutor-running-cancel: no existing mock hold hook for the separate uvicorn process",
                 "Vue/Playwright FOLLOW_UP",
                 "real-model task quality",
                 "process-level database write attribution (heuristic + not proven)",
@@ -699,6 +701,47 @@ class Smoke:
                 assert citation["text"] == source["normalizedText"][:1200]
         self.result.setdefault("tutor_outcomes", []).append(turn["outcome"])
 
+    @staticmethod
+    def cancelled(turn, boundary):
+        assert turn["status"] == "cancelled", f"{boundary}: Cancelled Tutor turn changed status"
+        assert turn["answer"] in (None, ""), f"{boundary}: Cancelled Tutor turn published an answer"
+        assert turn["citations"] == [], f"{boundary}: Cancelled Tutor turn published citations"
+        for counter in ("model_calls", "tool_calls"):
+            assert turn[counter] == 0, (
+                f"{boundary}: Cancelled Tutor turn {counter}={turn[counter]!r}, expected 0"
+            )
+
+    def queued_cancel(self):
+        submitted = self.ask("cancel-now")
+        submitted_turn = next(t for t in submitted["turns"] if t["client_turn_id"] == "cancel-now")
+        self.result["queued_cancel"] = {
+            "status_at_submission": submitted_turn["status"],
+            # Immediate cancel has no synchronized observation at the cancel boundary.
+            "status_at_cancel_time": None,
+            "status_at_cancel_time_note": "Unobserved; immediate queued-cancel is not running-cancel evidence",
+        }
+        assert submitted_turn["status"] == "queued", (
+            f"Queued-cancel status_at_submission={submitted_turn['status']!r}, expected 'queued'"
+        )
+        self.api("POST", self.session_path + "/turns/cancel-now/cancel")
+        turn = self.turn("cancel-now", "cancelled")
+        self.result["queued_cancel"]["turn"] = turn
+        rows = json.loads(
+            self.sql(
+                "SELECT coalesce(json_agg(row_to_json(r)), '[]') FROM ("
+                "SELECT t.turn_id,t.status,t.answer,t.citations,t.deadline,"
+                "t.checkpoint->>'phase' AS checkpoint_phase,t.model_calls,t.tool_calls "
+                "FROM tutor_turn t JOIN tutor_session s USING(session_id) "
+                f"WHERE s.owner_id={self.owner} AND s.course_id='{self.task}' "
+                "AND t.client_turn_id='cancel-now') r",
+                pg=True,
+            )
+        )
+        self.result["queued_cancel"]["pg_rows"] = rows
+        self.cancelled(turn, "API")
+        assert len(rows) == 1, "Expected one persisted queued-cancel turn"
+        self.cancelled(rows[0], "PG")
+
     def study_command(self, operation, **body):
         return self.api("POST", self.study, {"operation": operation, **body})
 
@@ -991,10 +1034,8 @@ class Smoke:
                 with self.stage("Tutor-complete"):
                     self.ask("first")
                     self.answer(self.turn("first", "completed"))
-                with self.stage("Tutor-cancel"):
-                    self.ask("cancel-now")
-                    self.api("POST", self.session_path + "/turns/cancel-now/cancel")
-                    self.turn("cancel-now", "cancelled")
+                with self.stage("Tutor-queued-cancel"):
+                    self.queued_cancel()
                 with self.stage("Tutor-restart-recovery"):
                     before = self.api("GET", self.session_path)["turns"]
                     self.stop(agent, kill=True)

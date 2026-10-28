@@ -52,7 +52,9 @@ is redacted before reaching logs; HTTP bodies and JWTs are not logged.
 Stage results and durations are saved to `result.json`. The smoke requires:
 
 - Tutor create/list, a completed answer with current source citation or the exact
-  documented abstention, immediate cancellation reaching `cancelled`, then
+  documented abstention, immediate queued-cancel with submission status exactly
+  `queued`, reaching `cancelled` with an empty/null answer, empty citations and
+  `model_calls == 0` / `tool_calls == 0` in both the API and PostgreSQL, then
   `SIGKILL`/restart with identical persisted history and a new completed question.
 - Flashcards create Session, generate and poll Run to `succeeded`, due/read/review
   with Good, version increment, changed schedule and removal from the due queue.
@@ -68,6 +70,17 @@ Stage results and durations are saved to `result.json`. The smoke requires:
 A failed assertion is retained as FAIL; dependent stages remain NOT_RUN. Do not
 change product behavior or assertions to bypass a failure. Vue/Playwright is
 FOLLOW_UP. Real-provider task quality is NOT_RUN.
+
+`Tutor-running-cancel` is explicitly NOT_RUN: the separate uvicorn process has no
+existing mock decision hold/latch hook. In-process provider injection in
+`agent-service/tests/test_tutor.py` does not configure that process. Immediate
+queued-cancel does not establish cancellation during execution. Its `result.json`
+entry records submission status (a different actual status fails without retry)
+and PostgreSQL status, answer, citations, deadline, checkpoint phase and call counts;
+status at the actual cancel boundary is unobserved.
+Running-cancel needs a separately authorized, off-by-default mock-only latch in
+`MockTutor.decide`, released after the harness observes `running`. No such product
+switch is added by this harness.
 
 To verify the original script independently, the helper mode creates only fresh
 demo infrastructure and launches the original, unchanged `mock-e2e.py`; no Agent

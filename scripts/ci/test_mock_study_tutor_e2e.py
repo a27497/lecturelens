@@ -175,6 +175,95 @@ class HarnessSafety(unittest.TestCase):
             self.smoke.api("GET", "/tutor", expected=404)
         self.assertEqual(self.smoke.result["cross_account"]["GET /tutor"], 403)
 
+    def test_cancelled_requires_terminal_status_and_empty_publication(self):
+        turn = {
+            "status": "cancelled", "answer": None, "citations": [],
+            "model_calls": 0, "tool_calls": 0,
+        }
+        for answer in (None, ""):
+            with self.subTest(answer=answer):
+                self.smoke.cancelled({**turn, "answer": answer}, "API")
+        for change, message in (
+            ({"status": "completed"}, "changed status"),
+            ({"answer": "late answer"}, "published an answer"),
+            ({"citations": [{"evidence_id": "synthetic"}]}, "published citations"),
+        ):
+            with self.subTest(change=change), self.assertRaisesRegex(AssertionError, message):
+                self.smoke.cancelled({**turn, **change}, "API")
+
+    def test_queued_cancel_rejects_nonqueued_submission_and_records_actual_status(self):
+        for status in ("running", "completed"):
+            with (
+                self.subTest(status=status),
+                patch.object(
+                    self.smoke, "ask",
+                    return_value={"turns": [{"client_turn_id": "cancel-now", "status": status}]},
+                ) as ask,
+                patch.object(self.smoke, "api") as cancel,
+                patch.object(self.smoke, "turn") as poll,
+                patch.object(self.smoke, "sql") as sql,
+            ):
+                with self.assertRaisesRegex(AssertionError, f"status_at_submission='{status}'"):
+                    self.smoke.queued_cancel()
+                ask.assert_called_once_with("cancel-now")
+                cancel.assert_not_called()
+                poll.assert_not_called()
+                sql.assert_not_called()
+                self.smoke.save()
+                evidence = json.loads((self.smoke.out / "result.json").read_text())
+                self.assertEqual(evidence["queued_cancel"]["status_at_submission"], status)
+
+    def test_queued_cancel_checks_api_and_pg_and_records_evidence(self):
+        self.smoke.session_path = "/synthetic/session"
+        self.smoke.owner = "123"
+        self.smoke.task = "task_" + "a" * 32
+        turn = {
+            "client_turn_id": "cancel-now", "status": "cancelled", "answer": None,
+            "citations": [], "model_calls": 0, "tool_calls": 0,
+        }
+        row = {**turn, "deadline": None, "checkpoint_phase": "ready"}
+        for boundary, field, value, message in (
+            (None, None, None, None),
+            ("api", "status", "completed", "API:.*changed status"),
+            ("api", "answer", "late answer", "published an answer"),
+            ("api", "citations", [{"evidence_id": "synthetic"}], "published citations"),
+            ("api", "model_calls", 1, "API:.*model_calls=1"),
+            ("api", "tool_calls", 1, "API:.*tool_calls=1"),
+            ("pg", "status", "completed", "PG:.*changed status"),
+            ("pg", "answer", "late answer", "published an answer"),
+            ("pg", "citations", [{"evidence_id": "synthetic"}], "published citations"),
+            ("pg", "model_calls", 1, "PG:.*model_calls=1"),
+            ("pg", "tool_calls", 1, "PG:.*tool_calls=1"),
+        ):
+            api_turn, pg_turn = dict(turn), dict(row)
+            if boundary:
+                (api_turn if boundary == "api" else pg_turn)[field] = value
+            with (
+                self.subTest(boundary=boundary, field=field),
+                patch.object(self.smoke, "ask", return_value={"turns": [{**turn, "status": "queued"}]}),
+                patch.object(self.smoke, "api") as cancel,
+                patch.object(self.smoke, "turn", return_value=api_turn) as poll,
+                patch.object(self.smoke, "sql", return_value=json.dumps([pg_turn])) as sql,
+            ):
+                if message:
+                    with self.assertRaisesRegex(AssertionError, message):
+                        self.smoke.queued_cancel()
+                    continue
+                self.smoke.queued_cancel()
+                cancel.assert_called_once_with("POST", "/synthetic/session/turns/cancel-now/cancel")
+                poll.assert_called_once_with("cancel-now", "cancelled")
+                self.assertTrue(sql.call_args.kwargs["pg"])
+                evidence = self.smoke.result["queued_cancel"]
+                self.assertEqual(evidence["status_at_submission"], "queued")
+                self.assertIsNone(evidence["status_at_cancel_time"])
+                self.assertEqual(evidence["turn"], turn)
+                self.assertEqual(evidence["pg_rows"], [row])
+
+    def test_running_cancel_is_explicitly_not_run(self):
+        self.assertIn("Tutor-queued-cancel", MODULE.STAGES)
+        self.assertIn("Tutor-running-cancel", MODULE.STAGES)
+        self.assertTrue(any("Tutor-running-cancel" in reason for reason in self.smoke.result["not_run"]))
+
 
 if __name__ == "__main__":
     unittest.main()
