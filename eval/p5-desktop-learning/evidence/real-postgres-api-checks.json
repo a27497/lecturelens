@@ -1,0 +1,291 @@
+{
+  "checks": [
+    {
+      "run_id": "915334c5-1936-426c-8002-c392f4ce31ac",
+      "goal": "Retrieval practice: independently verify group means, desktop 1280",
+      "latest_version": 4,
+      "latest_answer": "均值差18分，不能推出每个人提高18分，也不能推断因果。独立标签页订正第 4 版。",
+      "feedback_answer_version": 1,
+      "immutable_v1": "82减64等于18，所以每个人提高了18分。",
+      "versions": [
+        {
+          "version": 1,
+          "answer_text": "82减64等于18，所以每个人提高了18分。"
+        },
+        {
+          "version": 2,
+          "answer_text": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。"
+        },
+        {
+          "version": 3,
+          "answer_text": "均值差18分，不能推出每个人提高18分，也不能推断因果。独立标签页订正。"
+        },
+        {
+          "version": 4,
+          "answer_text": "均值差18分，不能推出每个人提高18分，也不能推断因果。独立标签页订正第 4 版。"
+        }
+      ],
+      "standard_check": "Arithmetic 82-64=18; text rejects individual inference and causation. Scripted correction checked against pre-fixed independent source standard; no learner outcome claim."
+    },
+    {
+      "run_id": "aa8e9f43-e690-4a8f-931c-93aed1747a90",
+      "goal": "Retrieval practice: independently verify group means, desktop 1440",
+      "latest_version": 3,
+      "latest_answer": "均值差18分，不能推出每个人提高18分，也不能推断因果。独立标签页订正第 3 版。",
+      "feedback_answer_version": 1,
+      "immutable_v1": "82减64等于18，所以每个人提高了18分。",
+      "versions": [
+        {
+          "version": 1,
+          "answer_text": "82减64等于18，所以每个人提高了18分。"
+        },
+        {
+          "version": 2,
+          "answer_text": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。"
+        },
+        {
+          "version": 3,
+          "answer_text": "均值差18分，不能推出每个人提高18分，也不能推断因果。独立标签页订正第 3 版。"
+        }
+      ],
+      "standard_check": "Arithmetic 82-64=18; text rejects individual inference and causation. Scripted correction checked against pre-fixed independent source standard; no learner outcome claim."
+    },
+    {
+      "run_id": "a018db54-a093-45a9-9fb1-ab83c1cb78b4",
+      "goal": "Retrieval practice: independently verify group means, desktop 1280",
+      "latest_version": 2,
+      "latest_answer": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。",
+      "feedback_answer_version": 1,
+      "immutable_v1": "82减64等于18，所以每个人提高了18分。",
+      "versions": [
+        {
+          "version": 1,
+          "answer_text": "82减64等于18，所以每个人提高了18分。"
+        },
+        {
+          "version": 2,
+          "answer_text": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。"
+        }
+      ],
+      "standard_check": "Arithmetic 82-64=18; text rejects individual inference and causation. Scripted correction checked against pre-fixed independent source standard; no learner outcome claim."
+    },
+    {
+      "run_id": "ff167792-0c9c-4395-bdda-c006d38cae3e",
+      "goal": "Retrieval practice: independently verify group means, desktop 1440",
+      "latest_version": 2,
+      "latest_answer": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。",
+      "feedback_answer_version": 1,
+      "immutable_v1": "82减64等于18，所以每个人提高了18分。",
+      "versions": [
+        {
+          "version": 1,
+          "answer_text": "82减64等于18，所以每个人提高了18分。"
+        },
+        {
+          "version": 2,
+          "answer_text": "82与64的均值之差是18分，不能推出每个人提高18分，也不能仅凭均值推断因果。"
+        }
+      ],
+      "standard_check": "Arithmetic 82-64=18; text rejects individual inference and causation. Scripted correction checked against pre-fixed independent source standard; no learner outcome claim."
+    }
+  ],
+  "read_only_before": {
+    "runs": 22,
+    "model_calls": 86,
+    "tool_calls": 52
+  },
+  "read_only_after": {
+    "runs": 22,
+    "model_calls": 86,
+    "tool_calls": 52
+  },
+  "mock_calls_before": 86,
+  "mock_calls_after": 86,
+  "read_operations": [
+    {
+      "operation": "LIST",
+      "status": 200
+    },
+    {
+      "operation": "RUNS",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    },
+    {
+      "operation": "ATTEMPT_HISTORY",
+      "status": 200
+    },
+    {
+      "operation": "READ",
+      "status": 200
+    },
+    {
+      "operation": "FEEDBACK_NOTES",
+      "status": 200
+    }
+  ],
+  "actual_databases": true
+}

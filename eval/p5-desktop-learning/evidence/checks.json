@@ -1,0 +1,122 @@
+{
+  "p5-baseline-valid-journey": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T15:31:46.630777+00:00",
+    "finished_at_utc": "2026-10-26T15:32:42.190438+00:00",
+    "log_sha256": "fcc66ab29ac6e318690abaf48db0128f9a973b799595bea3d13f034a2c1c2120"
+  },
+  "p5-after-journey": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T15:37:00.564182+00:00",
+    "finished_at_utc": "2026-10-26T15:38:02.844268+00:00",
+    "log_sha256": "c43f12a5a559a625233b749f56b10db2768751a535b012c4ddad777e06b32118"
+  },
+  "p5-boundaries-final": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T15:44:04.284264+00:00",
+    "finished_at_utc": "2026-10-26T15:45:24.438909+00:00",
+    "log_sha256": "d371ddfe022de7f2c56d77e5837f08eab0b42f86ac04054c61c8e63ca1bbb14c"
+  },
+  "p5-before-pending-feedback": {
+    "status": "FAILED",
+    "exit_code": 1,
+    "started_at_utc": "2026-10-26T15:33:03.684935+00:00",
+    "finished_at_utc": "2026-10-26T15:33:08.238890+00:00",
+    "log_sha256": "ac1e732421e67e4a234eaab5968919433abe77926729bd812ebdd278bd5fe16b",
+    "expected_outcome": "failure before the corresponding implementation fix"
+  },
+  "p5-before-continuation": {
+    "status": "FAILED",
+    "exit_code": 1,
+    "started_at_utc": "2026-10-26T15:32:52.772312+00:00",
+    "finished_at_utc": "2026-10-26T15:32:57.613822+00:00",
+    "log_sha256": "63814995939213b5c08b4b0649ea4546e04de9ffff1bc62c2a63ee83d433f2f3",
+    "expected_outcome": "failure before the corresponding implementation fix"
+  },
+  "p5-delivery-vue-tests": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:26:47.147027+00:00",
+    "finished_at_utc": "2026-10-26T16:27:25.936193+00:00",
+    "log_sha256": "43017160b94f2e355359c1f3cdc7c16f4dd797b32004a97377b252fd6b2ffc79"
+  },
+  "p5-delivery-vue-build": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:27:26.009083+00:00",
+    "finished_at_utc": "2026-10-26T16:27:41.248477+00:00",
+    "log_sha256": "2e1a160f7aee1d05c75de4aef4161ce524379ca90e2cd01a9ece99eddbe4b2ab"
+  },
+  "p5-delivery-continuation-boundaries": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:28:55.282212+00:00",
+    "finished_at_utc": "2026-10-26T16:28:56.786658+00:00",
+    "log_sha256": "1e728c76e937ecd0ccccb5fe3d76091458c684a9918343e87253a249617ff5db"
+  },
+  "p5-java-mysql-test-role": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:28:54.464935+00:00",
+    "finished_at_utc": "2026-10-26T16:29:20.730034+00:00",
+    "log_sha256": "35c17d8db689c8a90f188bb756a835b329ddc8893defbd26e46d84ceda9ab25f"
+  },
+  "p5-real-database-evidence": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:27:54.181766+00:00",
+    "finished_at_utc": "2026-10-26T16:27:58.715168+00:00",
+    "log_sha256": "d544b59442ecb5a86b5850fcfb3cf77fe6026e33bc337787f01c48392d58e0e8"
+  },
+  "python-prior-output": {
+    "pytest_result": "845 passed, 2 warnings in 503.67s",
+    "supervisor": "interrupted, original record retained without altering status",
+    "fresh_terminal_check": "p5-python-terminal SUCCEEDED; 845 passed, 0 skipped"
+  },
+  "p5-final-state-race-tests": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:35:51.382594+00:00",
+    "finished_at_utc": "2026-10-26T16:36:25.487595+00:00",
+    "log_sha256": "3f48791fb632d2ab0eaffd5129b38bf25cefcf2dc17658539d44c2222d3642b2"
+  },
+  "p5-final-state-race-build": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:36:25.542284+00:00",
+    "finished_at_utc": "2026-10-26T16:36:40.195199+00:00",
+    "log_sha256": "b0ac9479952075323744072a44fef4bbf9e39a4d73c9cd8386a60a725c9af379"
+  },
+  "p5-before-late-completion": {
+    "status": "FAILED",
+    "exit_code": 1,
+    "started_at_utc": "2026-10-26T16:35:15.198476+00:00",
+    "finished_at_utc": "2026-10-26T16:35:19.880545+00:00",
+    "log_sha256": "db205c1d656b213886d64ebb587095c9a39ca48a79c99057184c35505d3a4037",
+    "expected_outcome": "failure before the corresponding implementation fix"
+  },
+  "p5-exact-head-journey": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:33:27.289012+00:00",
+    "finished_at_utc": "2026-10-26T16:34:31.738593+00:00",
+    "log_sha256": "f9b5b2074b3669fa86fc4bd9d76169bc0e10bed7fbf5951015e5200c4f13a3b9"
+  },
+  "p5-exact-head-boundaries": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:34:31.799000+00:00",
+    "finished_at_utc": "2026-10-26T16:35:44.841392+00:00",
+    "log_sha256": "cc128f9bcb0401a514a01a724c3ccf8dcaa03461b78226c8f8bc633bd2cbe703"
+  },
+  "p5-python-terminal": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "started_at_utc": "2026-10-26T16:32:35.379902+00:00",
+    "finished_at_utc": "2026-10-26T16:41:17.849613+00:00",
+    "log_sha256": "20d6bcab6e49bf264c886c10c18289f59f06aeab565fca7b3dbff74df5793f00"
+  }
+}

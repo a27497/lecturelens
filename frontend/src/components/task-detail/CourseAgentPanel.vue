@@ -2,12 +2,13 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
 import { studyCommand as sendStudyCommand, studyEvents, studyStatus } from "../../api/study";
-import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun, StudyCommand } from "../../api/study";
+import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun, StudyCommand, PracticeResult } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import type { LearningTaskPosition } from "./learningTaskPosition";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
+import { practiceContinuationPlan } from "./practiceContinuation";
 import PracticeResultsPanel from "./PracticeResultsPanel.vue";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
@@ -44,6 +45,64 @@ const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
 const questionIndex = ref(0);
 const resultsOpen = ref(false);
+const progressRows = ref<PracticeResult[] | null>(null);
+const progressLoading = ref(false);
+const progressError = ref("");
+let progressSequence = 0;
+const continuationPlan = computed(() => practiceContinuationPlan(progressRows.value ?? [], feedbackRuns.value));
+const continuation = computed(() => continuationPlan.value.continuation);
+function acceptProgress(response: StudyResponse) {
+  const rows = response.practice_results;
+  const count = artifact.value?.questions.length ?? 0;
+  const validRows = rows && rows.length === count && new Set(rows.map(row => row.question_index)).size === count
+    && rows.every(row => Number.isInteger(row.question_index) && row.question_index >= 0 && row.question_index < count);
+  if (!artifact.value || response.run?.run_id !== run.value?.run_id || response.artifact?.artifact_id !== artifact.value.artifact_id || !validRows) {
+    progressRows.value = null;
+    // Feedback and progress belong to one validated READ snapshot.
+    feedbackRuns.value = [];
+    progressError.value = "学习进度暂时无法读取，请刷新重试；已保存记录不受影响。";
+    return false;
+  }
+  progressRows.value = rows!; progressError.value = "";
+  feedbackRuns.value = response.feedback_runs ?? [];
+  observeAttempts(response.attempts ?? rows!.flatMap(row => row.attempt ? [row.attempt] : []));
+  return true;
+}
+async function refreshProgress() {
+  if (!run.value || !artifact.value) return false;
+  const current = version; const request = ++progressSequence;
+  const task = props.taskId; const id = run.value.run_id; const artifactId = artifact.value.artifact_id;
+  progressLoading.value = true; progressError.value = "";
+  try {
+    const response = await studyCommand(task, { operation: "READ", session_id: sessionId.value, run_id: id });
+    if (current !== version || request !== progressSequence || run.value?.run_id !== id || artifact.value?.artifact_id !== artifactId) return false;
+    return acceptProgress(response);
+  } catch (failure) {
+    if (current === version && request === progressSequence) {
+      progressRows.value = null;
+      feedbackRuns.value = [];
+      progressError.value = (failure as { response?: { status?: number } })?.response?.status === 409 ? "课程版本或学习记录已变化，请重新打开课程核对；已保存记录不受影响。" : "学习进度暂时无法读取，请刷新重试；已保存记录不受影响。";
+      if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    }
+    return false;
+  } finally { if (current === version && request === progressSequence) progressLoading.value = false; }
+}
+async function continuePractice() {
+  const expected = continuation.value; const current = version;
+  if (!expected || progressLoading.value || !await refreshProgress()) return;
+  if (current !== version) return;
+  const next = continuation.value;
+  // Recheck before navigating: another tab may have saved a different answer or note.
+  if (!next || next.index !== expected.index || next.label !== expected.label || next.feedback?.run_id !== expected.feedback?.run_id) {
+    progressError.value = "学习进度已更新，请按最新提示继续。";
+    return;
+  }
+  await openResult(next.index, next.feedback ? "feedback" : "question", next.feedback);
+}
+function savedAttempt(value: StudyAttempt) {
+  observeAttempts([value]);
+  void refreshProgress();
+}
 const resultsElement = ref<HTMLElement>();
 async function toggleResults() {
   if (resultsOpen.value) { await chooseQuestion(questionIndex.value); return; }
@@ -60,7 +119,9 @@ function observeAttempts(rows: StudyAttempt[]) {
 }
 const feedbackPanels = new Map<number, { showFeedback: (row: StudyFeedbackRun) => Promise<void> }>();
 async function openResult(index: number, kind: "question" | "history" | "feedback", feedback?: StudyFeedbackRun) {
+  const current = version;
   await chooseQuestion(index);
+  if (current !== version) return;
   if (kind === "history") await answerForms.get(index)?.showHistory();
   if (kind === "feedback" && feedback) {
     // An older persisted result may be outside the recent-feedback window, including when generation is disabled.
@@ -145,6 +206,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
   controller?.abort(); clearTimeout(timer);
   controller = null; cursor = 0;
   enabled.value = null; ready.value = false; loading.value = true; error.value = "";
+  progressSequence++; progressRows.value = null; progressLoading.value = false; progressError.value = "";
   submitting.value = false; revealing.value = false;
   sessionId.value = ""; sourceRevision.value = undefined; run.value = null; artifact.value = null; events.value = []; answers.value = null; attempts.value = [];
   requestKey = ""; requestGoal = ""; sessionKey = randomUuid();
@@ -165,10 +227,21 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
       const list = await studyCommand(task, { operation: "LIST" });
       if (current !== version) return;
       sessions.value = list.sessions ?? [];
-      sessionId.value = selectedSession ?? sessions.value[0]?.session_id ?? "";
-      sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
-      if (sessionId.value) {
+      const candidates = selectedSession ? [selectedSession] : sessions.value.slice(0, 20).map(session => session.session_id);
+      for (const candidate of candidates) {
+        sessionId.value = candidate;
+        sourceRevision.value = sessions.value.find(session => session.session_id === candidate)?.revision;
         await refresh(current, task, undefined, selectedRun);
+        if (current !== version) return;
+        // Flashcard generation creates Sessions too. Automatic restore uses the bounded LIST
+        // to find practice; an explicit session selection never falls back to another session.
+        if (selectedSession || run.value) break;
+      }
+      if (!run.value && !selectedSession) {
+        sessionId.value = candidates[0] ?? "";
+        sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
+      }
+      if (sessionId.value) {
         const history = await studyCommand(task, { operation: "RUNS", session_id: sessionId.value });
         if (current !== version) return;
         recentRuns.value = history.runs ?? [];
@@ -185,15 +258,20 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
 }
 
 async function refresh(current: number, task: string, expectedKey?: string, selectedRun?: string) {
+  const progressAtRead = progressSequence;
   const id = selectedRun ?? run.value?.run_id;
   const response = await studyCommand(task, { operation: "READ", session_id: sessionId.value, ...(id ? { run_id: id } : {}) });
   if (current !== version || (expectedKey && response.run?.request_key !== expectedKey)) return;
   run.value = response.run ?? null; artifact.value = response.artifact ?? null;
   approvalRequired.value = response.run?.approval_required ?? approvalRequired.value;
   approval.value = response.approval ?? null;
-  attempts.value = response.attempts ?? [];
+  observeAttempts(response.attempts ?? []);
   feedbackEnabled.value = response.feedback_enabled ?? false;
-  feedbackRuns.value = response.feedback_runs ?? [];
+  // A completion snapshot can predate a save followed by a newer progress read,
+  // including its feedback status and persisted check note.
+  if (progressAtRead === progressSequence) {
+    if (artifact.value?.questions.length) acceptProgress(response);
+  }
   if (!goal.value && run.value) goal.value = run.value.goal;
 }
 
@@ -202,7 +280,7 @@ async function start() {
   if (hasDrafts.value && !window.confirm("开始新的练习会离开本次未保存作答或核对文字。请先保存，或确认放弃这些修改。")) return;
   const current = ++version; const task = props.taskId; const text = goal.value.trim();
   controller?.abort(); clearTimeout(timer); revealing.value = false;
-  submitting.value = true; error.value = ""; artifact.value = null; answers.value = null; events.value = []; attempts.value = []; cursor = 0;
+  submitting.value = true; error.value = ""; progressSequence++; progressRows.value = null; progressLoading.value = false; progressError.value = ""; artifact.value = null; answers.value = null; events.value = []; attempts.value = []; cursor = 0;
   const selectedScope = props.learningScope ? JSON.parse(JSON.stringify(props.learningScope)) as LearningScope : undefined;
   const fingerprint=JSON.stringify([text, selectedScope, approvalRequired.value]);
   if (requestGoal !== fingerprint || !requestKey) { requestKey = randomUuid(); requestGoal = fingerprint; }
@@ -314,6 +392,10 @@ async function reveal() {
           </div>
         </details></details>
         <template v-if="artifact.questions.length">
+          <section v-if="run" class="practice-continuation" aria-label="继续本次练习" :aria-busy="progressLoading">
+            <div><strong>继续本次练习</strong><p v-if="progressLoading" role="status">正在核对已保存进度…</p><template v-else-if="progressRows"><p v-if="continuation">{{ continuation.reason }}</p><p v-else>本次作答均已保存并有核对记录，可回看练习结果。</p></template><p class="continuation-boundary">依据已保存记录提示，不代表答案正确。未保存文字仍保留在本页。</p><p v-if="progressError" role="status">{{ progressError }}</p></div>
+            <div class="continuation-actions"><el-button v-if="continuation" class="continue-practice" type="primary" :disabled="progressLoading" @click="continuePractice">{{ continuation.label }}</el-button><el-button v-else-if="progressRows && !progressLoading" @click="toggleResults">回看练习结果</el-button><button v-if="continuationPlan.revisionHintIndex !== null" class="practice-revision-hint" type="button" :disabled="progressLoading" @click="chooseQuestion(continuationPlan.revisionHintIndex)">另有 {{ continuationPlan.revisionHintCount }} 道题有订正建议</button><button class="refresh-practice-progress" type="button" :disabled="progressLoading" @click="refreshProgress">刷新学习进度</button></div>
+          </section>
           <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
@@ -322,8 +404,8 @@ async function reveal() {
         <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @observed-attempts="observeAttempts" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
         <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
-          <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="value => { attempts = [...attempts.filter(a => a.question_index !== index), value]; }" />
-          <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
+          <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="savedAttempt" />
+          <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @progress-change="refreshProgress" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
           <p v-else-if="!feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
           <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
@@ -398,6 +480,8 @@ header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p,
 .agent-panel--compact .run-progress--ready { margin-top: 2px; padding: 0 !important; border-radius: 0; background: transparent; color: var(--color-ink-soft); }
 .agent-panel--compact .run-progress--ready strong { font-weight: 500; font-size: 12px; }
 .agent-panel--compact .study-artifact { margin-top: 10px; padding-top: 12px; gap: 10px; }
+.practice-continuation { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--color-border); border-left: 3px solid var(--color-brand); border-radius: var(--radius-sm); background: var(--color-canvas); }
+.practice-continuation strong { font-size: 14px; }.practice-continuation p { font-size: 13px; line-height: 1.65; margin-top: 5px; }.practice-continuation .continuation-boundary { color: var(--color-ink-soft); font-size: 12px; }.continuation-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }.refresh-practice-progress, .practice-revision-hint { border: 0; background: transparent; color: var(--color-brand); font: inherit; font-size: 12px; padding: 6px 0; cursor: pointer; }.refresh-practice-progress:disabled, .practice-revision-hint:disabled { cursor: wait; opacity: .65; }
 .practice-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .practice-toolbar .practice-guidance { order: 2; font-size: 12px; }
 .agent-panel--compact .question-nav button { font-size: 13px; padding: 7px 12px; }
