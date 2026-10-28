@@ -1,5 +1,7 @@
 <div align="center">
 
+未发布工作区新增 [P9 课程证据选择题](docs/P9_EVIDENCE_CHOICE.md)：Mock 原文识别题提交后按私有答案键程序判分；开放题不自动判分，不提供掌握度或薄弱点统计。
+
 # LectureLens
 
 ### 把课程视频，变成可以追问的学习过程

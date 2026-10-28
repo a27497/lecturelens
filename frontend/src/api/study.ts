@@ -14,7 +14,7 @@ export interface StudyRun {
     single_turn_evidence?: { ok: boolean; code: string | null; checked_at: number; version: number } | null }>;
 }
 export interface Citation { evidence_id: string; text: string; start_ms: number; end_ms: number; source_type: string }
-export interface PracticeQuestion { question: string; evidence_ids: string[]; answer?: string; rubric?: string }
+export interface PracticeQuestion { kind?: "choice"; options?: { id: string; text: string }[]; question: string; evidence_ids: string[]; answer?: string; rubric?: string }
 export interface StudyArtifact {
   kind?: "practice" | "insufficient_evidence"; artifact_id: string; title: string; explanation: string; evidence_ids: string[];
   human_edited?: boolean; edited_by?: number;
@@ -37,6 +37,7 @@ export interface StudyResponse {
   note?: FeedbackNote; notes?: FeedbackNote[];
 }
 export interface StudyAttempt {
+  selected_option_id?: string; choice_result?: { is_correct: boolean; correct_option_id: string; citations: Citation[] };
   attempt_id: string; artifact_id: string; question_index: number; version: number;
   answer_text: string; created_at: string;
 }
@@ -58,6 +59,7 @@ export interface StudyCommand {
   learning_scope?: LearningScope;
   approval_required?: boolean; approval_decision?: "approve" | "edit" | "reject"; approval_edit?: string;
   card_id?: string; rating?: "Again" | "Hard" | "Good" | "Easy";
+  practice_format?: "open" | "choice"; selected_option_id?: string;
   operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
   attempt_id?: string; feedback_id?: string; note_text?: string; disposition?: "disputed" | "acknowledged";

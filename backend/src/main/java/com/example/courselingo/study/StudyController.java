@@ -58,7 +58,7 @@ public class StudyController {
         if(command==null || command.operation()==null || !Set.of("GENERATE_CARDS","DUE_CARDS","READ_CARD","REVIEW_CARD","CREATE_SESSION","LIST","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
                 || (command.goal()!=null && (command.goal().isBlank() || command.goal().length()>1000))
                 || command.after()<0) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id(),command.card_id())) {
+        for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id(),command.card_id(),command.selected_option_id())) {
             if(id!=null && (id.isBlank() || id.length()>128)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         }
         if (Set.of("SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK").contains(command.operation()) &&
@@ -66,8 +66,12 @@ public class StudyController {
                  command.question_index()==null || command.question_index()<0 || command.question_index()>1))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.operation().equals("SAVE_ATTEMPT") && (command.request_key()==null ||
-                command.expected_version()==null || command.expected_version()<0 || command.answer_text()==null ||
-                command.answer_text().isBlank() || command.answer_text().length()>4000))
+                command.expected_version()==null || command.expected_version()<0 ||
+                (command.selected_option_id()==null ? command.answer_text()==null || command.answer_text().isBlank() || command.answer_text().length()>4000 : command.answer_text()!=null)))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (command.practice_format()!=null && (!command.operation().equals("START") || !Set.of("open","choice").contains(command.practice_format())))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (command.selected_option_id()!=null && !command.operation().equals("SAVE_ATTEMPT"))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.before_version()!=null && command.before_version()<1) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.operation().equals("START_FEEDBACK") && (command.request_key()==null || command.attempt_id()==null))
@@ -105,6 +109,8 @@ public class StudyController {
         if(command.artifact_id()!=null) payload.put("artifact_id",command.artifact_id());
         if(command.question_index()!=null) payload.put("question_index",command.question_index());
         if(command.answer_text()!=null) payload.put("answer_text",command.answer_text());
+        if(command.selected_option_id()!=null) payload.put("selected_option_id",command.selected_option_id());
+        if(command.practice_format()!=null) payload.put("practice_format",command.practice_format());
         if(command.expected_version()!=null) payload.put("expected_version",command.expected_version());
         if(command.before_version()!=null) payload.put("before_version",command.before_version());
         if(command.attempt_id()!=null) payload.put("attempt_id",command.attempt_id());
@@ -184,7 +190,15 @@ public class StudyController {
                           String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                           String attempt_id,String feedback_id,String note_text,String disposition,
                           Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope,
-                          String card_id,String rating) {
+                          String card_id,String rating,String practice_format,String selected_option_id) {
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition,
+                       Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope,
+                       String card_id,String rating) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,approval_required,approval_decision,approval_edit,learning_scope,card_id,rating,null,null);
+        }
         public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                        String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                        String attempt_id,String feedback_id,String note_text,String disposition,

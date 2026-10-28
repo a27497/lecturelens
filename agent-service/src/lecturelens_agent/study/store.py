@@ -30,6 +30,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_run ON study_run(session_id)
     WHERE status IN ('queued','running','awaiting_approval');
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS model_config jsonb;
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS learning_scope jsonb;
+ALTER TABLE study_run ADD COLUMN IF NOT EXISTS practice_format text NOT NULL DEFAULT 'open';
 CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_scope_run ON study_run(session_id)
     WHERE status IN ('queued','running','awaiting_approval','queued_scoped_v1','running_scoped_v1','awaiting_approval_scoped_v1');
 CREATE TABLE IF NOT EXISTS study_event (
@@ -113,6 +114,9 @@ class StudyStore:
             from .flashcards import SCHEMA as CARD_SCHEMA
 
             conn.execute(CARD_SCHEMA)
+            from .choice import SCHEMA as CHOICE_SCHEMA
+
+            conn.execute(CHOICE_SCHEMA)
 
     @staticmethod
     def _session(conn, command):
@@ -166,6 +170,9 @@ class StudyStore:
                 if cards and (mode != "mock" or command.approval_required):
                     raise StudyError("FLASHCARDS_MOCK_ONLY")
                 task_kind = "flashcards" if cards else "practice"
+                practice_format = command.practice_format or "open"
+                if practice_format == "choice" and (mode != "mock" or command.approval_required):
+                    raise StudyError("CHOICE_MOCK_ONLY_WITHOUT_APPROVAL")
                 if cards and command.goal is None:
                     command = command.model_copy(update={"goal": "从课程证据生成简短闪卡"})
                 if not command.goal or not command.goal.strip() or not command.request_key:
@@ -182,6 +189,7 @@ class StudyStore:
                         prior.get("learning_scope") != frozen_scope
                         or prior["goal"] != command.goal
                         or prior["task_kind"] != task_kind
+                        or prior["practice_format"] != practice_format
                         or prior["approval_required"] != command.approval_required
                     ):
                         raise StudyError("REQUEST_KEY_CONFLICT")
@@ -196,8 +204,8 @@ class StudyStore:
                     self.model_resolver(command.owner_id) if mode == "real" and self.model_resolver else None
                 )
                 row = conn.execute(
-                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required,learning_scope,status,task_kind)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
+                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required,learning_scope,status,task_kind,practice_format)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
                     (
                         run_id,
                         command.session_id,
@@ -207,8 +215,16 @@ class StudyStore:
                         Jsonb(config) if config else None,
                         command.approval_required,
                         Jsonb(frozen_scope) if frozen_scope is not None else None,
-                        stored_status({"learning_scope": frozen_scope, "task_kind": task_kind}, "queued"),
+                        stored_status(
+                            {
+                                "learning_scope": frozen_scope,
+                                "task_kind": task_kind,
+                                "practice_format": practice_format,
+                            },
+                            "queued",
+                        ),
                         task_kind,
+                        practice_format,
                     ),
                 ).fetchone()
                 self._event(conn, run_id, "run_queued", {})
@@ -234,6 +250,16 @@ class StudyStore:
                 run = conn.execute("SELECT * FROM study_run WHERE run_id=%s", (run["run_id"],)).fetchone()
                 return self._view(conn, run)
             if command.operation == "START_FEEDBACK":
+                question = conn.execute(
+                    "SELECT content FROM study_artifact WHERE artifact_id=%s AND run_id=%s",
+                    (command.artifact_id, run["run_id"]),
+                ).fetchone()
+                if (
+                    question
+                    and command.question_index < len(question["content"]["questions"])
+                    and question["content"]["questions"][command.question_index].get("kind") == "choice"
+                ):
+                    raise StudyError("CHOICE_USES_PROGRAM_JUDGMENT", 422)
                 from .feedback_store import start_feedback
 
                 return start_feedback(self, conn, run, command, mode)
@@ -257,7 +283,14 @@ class StudyStore:
                 ).fetchone()
                 if not artifact:
                     raise StudyError("ARTIFACT_NOT_READY")
-                return {"questions": artifact["content"]["questions"]}
+                from .choice import public_question
+
+                return {
+                    "questions": [
+                        public_question(q) if q.get("kind") == "choice" else q
+                        for q in artifact["content"]["questions"]
+                    ]
+                }
             if command.operation == "EVENTS":
                 rows = conn.execute(
                     "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s "
@@ -288,9 +321,9 @@ class StudyStore:
         public = None
         if artifact:
             public = {**artifact["content"], "artifact_id": artifact["artifact_id"]}
-            public["questions"] = [
-                {"question": q["question"], "evidence_ids": q["evidence_ids"]} for q in public["questions"]
-            ]
+            from .choice import public_question
+
+            public["questions"] = [public_question(q) for q in public["questions"]]
         attempts = current_attempts(conn, artifact["artifact_id"]) if artifact else []
         return {
             "run": {
@@ -309,6 +342,7 @@ class StudyStore:
                     "created_at",
                     "finished_at",
                     "task_kind",
+                    "practice_format",
                     "approval_required",
                 )
             }
@@ -373,7 +407,7 @@ class StudyStore:
     def candidates(self):
         with self.connect() as conn:
             return conn.execute("""SELECT r.*,s.owner_id,s.course_id,s.revision FROM study_run r JOIN study_session s USING(session_id)
-                WHERE r.status IN ('queued','running','queued_scoped_v1','running_scoped_v1','queued_cards_v1','running_cards_v1') ORDER BY r.created_at LIMIT 20""").fetchall()
+                WHERE r.status IN ('queued','running','queued_scoped_v1','running_scoped_v1','queued_cards_v1','running_cards_v1','queued_choice_v1','running_choice_v1') ORDER BY r.created_at LIMIT 20""").fetchall()
 
     @contextmanager
     def execution_lock(self, session_id):

@@ -44,6 +44,8 @@ class StudyCommand(StudyScope):
     after: Annotated[int, Field(ge=0)] = 0
     artifact_id: Identifier | None = None
     question_index: Annotated[int, Field(ge=0, le=1, strict=True)] | None = None
+    practice_format: Literal["open", "choice"] | None = None
+    selected_option_id: Identifier | None = None
     answer_text: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
     expected_version: Annotated[int, Field(ge=0, strict=True)] | None = None
     before_version: Annotated[int, Field(ge=1, strict=True)] | None = None
@@ -58,6 +60,10 @@ class StudyCommand(StudyScope):
 
     @model_validator(mode="after")
     def attempt_scope(self):
+        if self.practice_format is not None and self.operation != "START":
+            raise ValueError("Practice format belongs to a new practice Run")
+        if self.selected_option_id is not None and self.operation != "SAVE_ATTEMPT":
+            raise ValueError("An option selection belongs to a saved attempt")
         if self.operation == "GENERATE_CARDS" and (not self.session_id or not self.request_key):
             raise ValueError("Card generation requires a Session and request key")
         if self.operation in {"READ_CARD", "REVIEW_CARD"} and not self.card_id:
@@ -74,8 +80,17 @@ class StudyCommand(StudyScope):
             if not all((self.session_id, self.run_id, self.artifact_id)) or self.question_index is None:
                 raise ValueError("An attempt requires an explicit artifact and question")
         if self.operation == "SAVE_ATTEMPT":
-            if not self.request_key or self.expected_version is None or not (self.answer_text or "").strip():
-                raise ValueError("An attempt requires nonempty text, a request key and an expected version")
+            text = bool((self.answer_text or "").strip())
+            selection = self.selected_option_id is not None
+            if (
+                not self.request_key
+                or self.expected_version is None
+                or text == selection
+                or (selection and self.answer_text is not None)
+            ):
+                raise ValueError(
+                    "An attempt requires exactly one nonempty text or option, request key and version"
+                )
         if self.operation == "START_FEEDBACK" and not all((self.attempt_id, self.request_key)):
             raise ValueError("Feedback requires a saved answer and a request key")
         if self.operation in {"SAVE_FEEDBACK_NOTE", "FEEDBACK_NOTES"}:

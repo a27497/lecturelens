@@ -561,3 +561,22 @@ it('keeps saved progress when a late completion read arrives after the answer fo
   expect(wrapper.get('.practice-continuation').text()).toContain('作答已保存');
   expect(form.get<HTMLTextAreaElement>('textarea').element.value).toBe(state.attempts[0]!.answer_text); wrapper.unmount();
 });
+
+it('starts choice practice only after explicit format selection and keeps open practice default', async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [] };
+    if (command.operation === 'CREATE_SESSION') return { session_id: 'session', revision: 1 };
+    if (command.operation === 'START') return { run, artifact };
+    return {};
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.get('select[aria-label="练习形式"]').element).toHaveProperty('value', 'open');
+    await wrapper.get('select[aria-label="练习形式"]').setValue('choice');
+    expect(studyCommand).not.toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START' }));
+    await wrapper.get('textarea').setValue('Identify course evidence.');
+    await wrapper.findAll('button').find(b => b.text() === '解释并出题')!.trigger('click'); await flushPromises();
+    expect(studyCommand).toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START', practice_format: 'choice', approval_required: false }));
+  } finally { wrapper.unmount(); }
+});

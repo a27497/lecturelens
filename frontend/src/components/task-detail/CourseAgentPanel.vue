@@ -10,6 +10,7 @@ import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
 import { practiceContinuationPlan } from "./practiceContinuation";
 import PracticeResultsPanel from "./PracticeResultsPanel.vue";
+import PracticeChoiceForm from "./PracticeChoiceForm.vue";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
@@ -40,6 +41,8 @@ const attempts = ref<StudyAttempt[]>([]);
 const sessions = ref<NonNullable<StudyResponse['sessions']>>([]);
 const recentRuns = ref<NonNullable<StudyResponse['runs']>>([]);
 const approvalRequired = ref(false);
+const practiceFormat = ref<"open" | "choice">("open");
+watch(practiceFormat, value => { if (value === "choice") approvalRequired.value = false; });
 const approval = ref<StudyResponse["approval"]>(null);
 const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
@@ -168,7 +171,7 @@ async function chooseQuestion(index: number) {
   await nextTick();
   const question = questionElements.get(index);
   question?.scrollIntoView({ block: "start" });
-  question?.querySelector<HTMLTextAreaElement>("textarea")?.focus({ preventScroll: true });
+  question?.querySelector<HTMLElement>('textarea,input[type="radio"]')?.focus({ preventScroll: true });
 }
 
 async function studyCommand(task: string, command: StudyCommand) {
@@ -282,7 +285,7 @@ async function start() {
   controller?.abort(); clearTimeout(timer); revealing.value = false;
   submitting.value = true; error.value = ""; progressSequence++; progressRows.value = null; progressLoading.value = false; progressError.value = ""; artifact.value = null; answers.value = null; events.value = []; attempts.value = []; cursor = 0;
   const selectedScope = props.learningScope ? JSON.parse(JSON.stringify(props.learningScope)) as LearningScope : undefined;
-  const fingerprint=JSON.stringify([text, selectedScope, approvalRequired.value]);
+  const fingerprint=JSON.stringify([text, selectedScope, approvalRequired.value, practiceFormat.value]);
   if (requestGoal !== fingerprint || !requestKey) { requestKey = randomUuid(); requestGoal = fingerprint; }
   try {
     if (!sessionId.value) {
@@ -291,7 +294,7 @@ async function start() {
       sessionId.value = response.session_id!;
       sourceRevision.value = response.revision;
     }
-    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value, ...(selectedScope ? { learning_scope: selectedScope } : {}) });
+    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value, ...(practiceFormat.value === "choice" ? { practice_format: "choice" as const } : {}), ...(selectedScope ? { learning_scope: selectedScope } : {}) });
     if (current !== version) return;
     run.value = response.run ?? null; artifact.value = response.artifact ?? null;
     approval.value = response.approval ?? null;
@@ -393,7 +396,7 @@ async function reveal() {
         </details></details>
         <template v-if="artifact.questions.length">
           <section v-if="run" class="practice-continuation" aria-label="继续本次练习" :aria-busy="progressLoading">
-            <div><strong>继续本次练习</strong><p v-if="progressLoading" role="status">正在核对已保存进度…</p><template v-else-if="progressRows"><p v-if="continuation">{{ continuation.reason }}</p><p v-else>本次作答均已保存并有核对记录，可回看练习结果。</p></template><p class="continuation-boundary">依据已保存记录提示，不代表答案正确。未保存文字仍保留在本页。</p><p v-if="progressError" role="status">{{ progressError }}</p></div>
+            <div><strong>继续本次练习</strong><p v-if="progressLoading" role="status">正在核对已保存进度…</p><template v-else-if="progressRows"><p v-if="continuation">{{ continuation.reason }}</p><p v-else>{{ artifact.questions.some(q => q.kind === 'choice') ? '已保存作答已有判分或核对记录，可回看练习结果。' : '本次作答均已保存并有核对记录，可回看练习结果。' }}</p></template><p class="continuation-boundary">{{ artifact.questions.some(q => q.kind === 'choice') ? '继续入口依据已保存进度提示；选择题判分不代表掌握程度。' : '依据已保存记录提示，不代表答案正确。未保存文字仍保留在本页。' }}</p><p v-if="progressError" role="status">{{ progressError }}</p></div>
             <div class="continuation-actions"><el-button v-if="continuation" class="continue-practice" type="primary" :disabled="progressLoading" @click="continuePractice">{{ continuation.label }}</el-button><el-button v-else-if="progressRows && !progressLoading" @click="toggleResults">回看练习结果</el-button><button v-if="continuationPlan.revisionHintIndex !== null" class="practice-revision-hint" type="button" :disabled="progressLoading" @click="chooseQuestion(continuationPlan.revisionHintIndex)">另有 {{ continuationPlan.revisionHintCount }} 道题有订正建议</button><button class="refresh-practice-progress" type="button" :disabled="progressLoading" @click="refreshProgress">刷新学习进度</button></div>
           </section>
           <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
@@ -404,10 +407,10 @@ async function reveal() {
         <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @observed-attempts="observeAttempts" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
         <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
           <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
-          <PracticeAnswerForm :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="savedAttempt" />
-          <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @progress-change="refreshProgress" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
-          <p v-else-if="!feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
-          <div v-if="answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
+          <component :is="question.kind === 'choice' ? PracticeChoiceForm : PracticeAnswerForm" v-bind="question.kind === 'choice' ? { question, sourceRevision } : {}" :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="savedAttempt" @seek="(milliseconds: number, context: EvidenceSeekContext) => $emit('seek', milliseconds, context)" />
+          <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="question.kind !== 'choice' && run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @progress-change="refreshProgress" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
+          <p v-else-if="question.kind !== 'choice' && !feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
+          <div v-if="question.kind !== 'choice' && answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
         <div v-if="artifact.questions.length > 1" class="actions">
           <el-button :disabled="questionIndex === 0" @click="chooseQuestion(questionIndex - 1)">上一题</el-button>
@@ -421,7 +424,9 @@ async function reveal() {
         <p>填写目标并点击“解释并出题”才会开始新的学习执行。未保存输入只保留在本页。</p>
       <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
-      <label><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active)" />发布前由我审批</label>
+      <label>练习形式 <select v-model="practiceFormat" aria-label="练习形式" :disabled="Boolean(active || submitting)"><option value="open">开放题 · 文本作答</option><option value="choice">课程证据选择题 + 开放题（Mock）</option></select></label>
+      <p v-if="practiceFormat === 'choice'">Mock 原文识别题：提交后程序判分；开放题仍只给反馈。当前选择题生成不支持发布前审批。</p>
+      <label><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active) || practiceFormat === 'choice'" />发布前由我审批</label>
 
       <div class="actions">
         <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">解释并出题</el-button>

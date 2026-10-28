@@ -1577,3 +1577,9 @@ Available through the opt-in [Tutor service entry point](P8_TUTOR.md). All route
 | `POST /api/tasks/{id}/tutor/sessions/{sessionId}/turns/{clientTurnId}/cancel` | Cancels queued/running work; terminal replay does not modify it |
 
 CREATE/TURN require course readiness. Read/list/cancel check access without requiring the retrieval index to be ready. A turn has status `queued/running/completed/failed/cancelled`; completed outcome is `answered/socratic_prompt/insufficient_evidence`, while failed/cancelled turns have outcome `failed` and no published answer. Completed turns include `answer`, optional `evaluation`, canonical `citations`, usage and counters. Source/checkpoint data for rejected proposals is not public. `TUTOR_SESSION_STALE`, request-key conflict, busy and budget limits return 409; inaccessible sessions return 404. The current product provider is Mock only; a separate frozen eval channel is not a product deployment.
+
+## P9 课程证据选择题（Mock）
+
+`START` 可选 `practice_format: "choice"`，缺省保持开放题；带学习范围仍使用 `scoped-command`。仅 mock 且不要求发布审批时接受。`READ` 中选择题包含 `kind: "choice"`、`options: [{id,text}]`，不包含正确项身份；`ANSWERS` 也不能提前揭示选择题 key。
+
+`SAVE_ATTEMPT` 对选择题传 `selected_option_id`，不传 `answer_text`；开放题仍传非空文本，不传选项。空、非法或混合正文被拒绝，不写对错记录。服务器保存选项文字及 `choice_result: {is_correct,correct_option_id,citations}`，同事务产生作答版本，重试/并发/所有权/版本规则沿用现有协议。正确项和可定位引用仅随已提交的结果返回，READ 和历史可恢复。开放题没有 `choice_result`；新反馈请求默认仍关闭。字段和边界详见 [P9](P9_EVIDENCE_CHOICE.md)。
