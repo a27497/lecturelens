@@ -123,3 +123,71 @@ it('REVIEW: continue checking must target feedback after expanded answer history
     expect(form.findAll('.answer-history article')).toHaveLength(3);
   } finally { wrapper.unmount(); scroll.mockRestore(); }
 });
+
+it('restores saved practice behind newer flashcard-only sessions without creating work', async () => {
+  const state = continuationState();
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: ['cards-new', 'cards-old', 'session'].map(session_id => ({ session_id, revision: 1 })) };
+    if (command.operation === 'RUNS') return { runs: [{ run_id: run.run_id, goal: run.goal, status: run.status, created_at: '' }] };
+    return command.session_id === 'session' ? structuredClone(state) : { run: null };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.get('.continue-practice').text()).toBe('继续核对第 2 题');
+    await wrapper.get('.continue-practice').trigger('click'); await flushPromises();
+    expect(wrapper.get('.practice-question.is-current textarea').element).toHaveProperty('value', 'saved question 2');
+    expect(studyCommand).toHaveBeenCalledWith('task', { operation: 'RUNS', session_id: 'session' });
+    expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => ['LIST', 'READ', 'RUNS'].includes(c.operation))).toBe(true);
+  } finally { wrapper.unmount(); }
+});
+
+it('honors explicit selection of a session with no practice', async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: ['cards', 'session'].map(session_id => ({ session_id, revision: 1 })) };
+    if (command.operation === 'RUNS') return { runs: [] };
+    return command.session_id === 'session' ? continuationState() : { run: null };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.find('.continue-practice').exists()).toBe(true);
+    vi.mocked(studyCommand).mockClear();
+    await wrapper.get('.learning-history select').setValue('cards'); await flushPromises();
+    expect(wrapper.find('.continue-practice').exists()).toBe(false);
+    expect(wrapper.get('.learning-history select').element).toHaveProperty('value', 'cards');
+    expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => c.session_id !== 'session')).toBe(true);
+  } finally { wrapper.unmount(); }
+});
+
+it('does not continue searching an old course after a late empty practice read', async () => {
+  let resolve!: (value: { run: null }) => void;
+  vi.mocked(studyCommand).mockImplementation(async (task, command) => {
+    if (command.operation === 'LIST') return { sessions: task === 'old' ? ['cards', 'older-practice'].map(session_id => ({ session_id, revision: 1 })) : [] };
+    if (command.operation === 'READ') return new Promise(r => { resolve = r; });
+    return {};
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'old' }, global: { stubs } });
+  try {
+    await flushPromises(); await wrapper.setProps({ taskId: 'new' }); await flushPromises();
+    resolve({ run: null }); await flushPromises();
+    expect(wrapper.find('.continue-practice').exists()).toBe(false);
+    expect(vi.mocked(studyCommand).mock.calls.some(([, c]) => c.session_id === 'older-practice')).toBe(false);
+    expect(vi.mocked(studyCommand).mock.calls.some(([task, c]) => task === 'new' && c.session_id)).toBe(false);
+  } finally { wrapper.unmount(); }
+});
+
+it('keeps the newest session available when no listed session contains practice', async () => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: ['newest', 'older'].map(session_id => ({ session_id, revision: 1 })) };
+    if (command.operation === 'START') return { run: { ...run, session_id: command.session_id! }, artifact };
+    return { run: null, runs: [] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    await wrapper.get('textarea').setValue('New practice goal');
+    await wrapper.findAll('button').find(b => b.text() === '解释并出题')!.trigger('click'); await flushPromises();
+    expect(studyCommand).toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START', session_id: 'newest' }));
+  } finally { wrapper.unmount(); }
+});

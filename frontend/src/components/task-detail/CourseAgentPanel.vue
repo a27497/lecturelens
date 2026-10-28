@@ -227,10 +227,21 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
       const list = await studyCommand(task, { operation: "LIST" });
       if (current !== version) return;
       sessions.value = list.sessions ?? [];
-      sessionId.value = selectedSession ?? sessions.value[0]?.session_id ?? "";
-      sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
-      if (sessionId.value) {
+      const candidates = selectedSession ? [selectedSession] : sessions.value.slice(0, 20).map(session => session.session_id);
+      for (const candidate of candidates) {
+        sessionId.value = candidate;
+        sourceRevision.value = sessions.value.find(session => session.session_id === candidate)?.revision;
         await refresh(current, task, undefined, selectedRun);
+        if (current !== version) return;
+        // Flashcard generation creates Sessions too. Automatic restore uses the bounded LIST
+        // to find practice; an explicit session selection never falls back to another session.
+        if (selectedSession || run.value) break;
+      }
+      if (!run.value && !selectedSession) {
+        sessionId.value = candidates[0] ?? "";
+        sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
+      }
+      if (sessionId.value) {
         const history = await studyCommand(task, { operation: "RUNS", session_id: sessionId.value });
         if (current !== version) return;
         recentRuns.value = history.runs ?? [];
