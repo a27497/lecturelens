@@ -80,6 +80,7 @@ async function refreshProgress() {
   } catch (failure) {
     if (current === version && request === progressSequence) {
       progressRows.value = null;
+      feedbackRuns.value = [];
       progressError.value = (failure as { response?: { status?: number } })?.response?.status === 409 ? "课程版本或学习记录已变化，请重新打开课程核对；已保存记录不受影响。" : "学习进度暂时无法读取，请刷新重试；已保存记录不受影响。";
       if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
     }

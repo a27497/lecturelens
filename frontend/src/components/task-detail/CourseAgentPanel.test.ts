@@ -440,6 +440,36 @@ it('refreshes continuation from another tab: keeps local draft while recognizing
   expect(vi.mocked(studyCommand).mock.calls.every(([, c]) => ['LIST','READ','RUNS'].includes(c.operation))).toBe(true); wrapper.unmount();
 });
 
+it.each([
+  { kind: 'network', failure: new Error('network unavailable'), message: '学习进度暂时无法读取，请刷新重试；已保存记录不受影响。' },
+  { kind: '409', failure: { response: { status: 409 } }, message: '课程版本或学习记录已变化，请重新打开课程核对；已保存记录不受影响。' },
+])('clears feedback and continuation on a $kind progress refresh failure while preserving answer drafts', async ({ failure, message }) => {
+  const state = continuationState(); let fail = false;
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    if (command.operation === 'READ' && fail) throw failure;
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.get('.continue-practice').text()).toBe('继续核对第 2 题');
+    expect(wrapper.findAllComponents(PracticeFeedbackPanel).map(panel => panel.props('initial')?.run_id)).toEqual(['f0', 'f1']);
+    await wrapper.get('.practice-question.is-current .practice-answer textarea').setValue('keep my local answer draft');
+    fail = true;
+    await wrapper.get('.refresh-practice-progress').trigger('click'); await flushPromises();
+    expect(wrapper.find('.continue-practice').exists()).toBe(false);
+    expect(wrapper.find('.practice-revision-hint').exists()).toBe(false);
+    expect(wrapper.get('.practice-continuation').text()).toContain(message);
+    expect(wrapper.findAllComponents(PracticeFeedbackPanel)).toHaveLength(2);
+    for (const panel of wrapper.findAllComponents(PracticeFeedbackPanel)) {
+      expect(panel.props('initial')).toBeUndefined();
+      expect(panel.props('history')).toEqual([]);
+    }
+    expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea').element.value).toBe('keep my local answer draft');
+  } finally { wrapper.unmount(); }
+});
+
 it('does not navigate using a failed progress read, preserves saved content and exposes a retry', async () => {
   const state = continuationState(); let fail = false;
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {

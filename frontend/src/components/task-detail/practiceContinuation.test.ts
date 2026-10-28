@@ -41,6 +41,28 @@ function checkedRow(index: number, action: 'revise' | 'clarify' | 'retain' = 're
   return { question_index: index, attempt: saved, feedback_run: checked, latest_feedback_status: 'succeeded' };
 }
 
+it('prioritizes answered work without feedback over an unanswered question in the same practice', () => {
+  const rows: PracticeResult[] = [
+    { question_index: 0, attempt: null, feedback_run: null, latest_feedback_status: null },
+    { question_index: 1, attempt, feedback_run: null, latest_feedback_status: null },
+  ];
+  const next = practiceContinuation(rows);
+  expect(next?.index).toBe(1);
+  expect(next?.label).toBe('继续第 2 题自查');
+});
+
+it('prioritizes running feedback over an unanswered question in the same practice', () => {
+  const active: StudyFeedbackRun = { ...feedback, run_id: 'active-feedback', attempt_id: attempt.attempt_id, answer_version: attempt.version, status: 'running', feedback: null };
+  const rows: PracticeResult[] = [
+    { question_index: 0, attempt: null, feedback_run: null, latest_feedback_status: null },
+    { question_index: 1, attempt, feedback_run: null, latest_feedback_status: 'running', latest_feedback_answer_version: 2 },
+  ];
+  const next = practiceContinuation(rows, [active]);
+  expect(next?.index).toBe(1);
+  expect(next?.label).toBe('查看第 2 题反馈进度');
+  expect(next?.feedback).toBe(active);
+});
+
 it('prioritizes unanswered work and counts checked revision suggestions in question order', () => {
   const unanswered: PracticeResult = { question_index: 2, attempt: null, feedback_run: null, latest_feedback_status: null };
   const plan = practiceContinuationPlan([checkedRow(3, 'clarify'), unanswered, checkedRow(0), checkedRow(1, 'retain')]);
