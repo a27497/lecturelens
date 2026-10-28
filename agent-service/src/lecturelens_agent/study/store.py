@@ -63,7 +63,36 @@ class RunStopped(Exception):
 
 
 class BudgetExceeded(Exception):
-    pass
+    def __init__(self, reason=None, **details):
+        self.diagnostics = {"reason": reason, **details} if reason else {}
+        super().__init__(reason or "RUN_BUDGET_EXCEEDED")
+
+
+def reservation_error(row, kind, tokens=0, **context):
+    reason = (
+        "model_calls"
+        if kind == "model" and row["model_calls"] >= 6
+        else "tool_calls"
+        if kind == "tool" and row["tool_calls"] >= 8
+        else "reserved_tokens"
+        if row["reserved_tokens"] + tokens > 64000
+        else None
+    )
+    if reason:
+        return BudgetExceeded(
+            reason,
+            kind=kind,
+            requested_tokens=tokens,
+            reserved_tokens=row["reserved_tokens"],
+            remaining_tokens=max(0, 64000 - row["reserved_tokens"]),
+            token_limit=64000,
+            model_calls=row["model_calls"],
+            model_call_limit=6,
+            tool_calls=row["tool_calls"],
+            tool_call_limit=8,
+            **context,
+        )
+    return None
 
 
 class StudyStore:
@@ -410,7 +439,7 @@ class StudyStore:
         if not row or public_status(row["status"]) != "running" or row["worker_token"] != token:
             raise RunStopped()
         if row["deadline"] and datetime.now(timezone.utc) >= row["deadline"]:
-            raise BudgetExceeded()
+            raise BudgetExceeded("deadline", deadline=row["deadline"].isoformat())
         return row
 
     def guard(self, run_id, token):
@@ -439,12 +468,9 @@ class StudyStore:
                 # Legacy checkpoints already charged the logical tool before journal keys existed.
                 conn.execute("INSERT INTO study_reservation VALUES (%s,%s,%s)", (run_id, kind, key))
                 return
-            if (
-                (kind == "model" and row["model_calls"] >= 6)
-                or (kind == "tool" and row["tool_calls"] >= 8)
-                or row["reserved_tokens"] + tokens > 64000
-            ):
-                raise BudgetExceeded()
+            error = reservation_error(row, kind, tokens)
+            if error:
+                raise error
             column = "model_calls" if kind == "model" else "tool_calls"
             conn.execute(
                 f"UPDATE study_run SET {column}={column}+1,reserved_tokens=reserved_tokens+%s WHERE run_id=%s",
@@ -488,7 +514,7 @@ class StudyStore:
                 raise StudyError(code or "READ_RETRY_EXHAUSTED", 503)
             if count:
                 if row["tool_calls"] >= 8:
-                    raise BudgetExceeded()
+                    raise reservation_error(row, "tool")
                 conn.execute("UPDATE study_run SET tool_calls=tool_calls+1 WHERE run_id=%s", (run_id,))
             payload = {
                 **metadata,
@@ -586,10 +612,15 @@ class StudyStore:
             },
         )
 
-    def finish(self, run_id, token, status, error=None):
+    def finish(self, run_id, token, status, error=None, *, budget_diagnostics=None):
         with self.connect() as conn:
             row = conn.execute("SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (run_id,)).fetchone()
             if row and public_status(row["status"]) == "running" and row["worker_token"] == token:
                 if status == "succeeded" and row["deadline"] <= datetime.now(timezone.utc):
                     status, error = "budget_exceeded", "DEADLINE_EXCEEDED"
+                    budget_diagnostics = {"reason": "deadline", "deadline": row["deadline"].isoformat()}
+                if budget_diagnostics:
+                    # The rejecting reservation transaction rolls back. Commit
+                    # its payload-free reason atomically with the fenced terminal.
+                    self._event(conn, run_id, "budget_rejected", budget_diagnostics)
                 self._finish(conn, run_id, status, error)

@@ -27,8 +27,8 @@ from .failures import failure_category
 from .goals import refusal_text
 from .intervals import interval_practice
 from .linear import LinearPracticeArgs, bind_linear_request, linear_practice
-from .method_scope import latest_coverage
-from .provider import decision_schemas
+from .method_scope import latest_coverage, observation_scope, reusable_coverage
+from .provider import decision_schemas, request_reservation
 from .quality import (
     IndependentSolution,
     QualityReview,
@@ -179,8 +179,14 @@ class StudyRuntime:
                     self.store.finish(run["run_id"], token, "succeeded")
             except RunStopped:
                 pass
-            except BudgetExceeded:
-                self.store.finish(run["run_id"], token, "budget_exceeded", "RUN_BUDGET_EXCEEDED")
+            except BudgetExceeded as error:
+                self.store.finish(
+                    run["run_id"],
+                    token,
+                    "budget_exceeded",
+                    "RUN_BUDGET_EXCEEDED",
+                    budget_diagnostics=error.diagnostics,
+                )
             except Exception as error:  # noqa: BLE001 -- explicit terminal error, no provider details
                 code = (
                     error.code
@@ -230,12 +236,13 @@ class StudyRuntime:
 
             output_tokens = review_output_tokens(body.get("review_mode")) if purpose == "review" else 900
             wire_messages = review_wire_messages(messages) if purpose == "review" else messages
-            tokens = (
-                len(json.dumps(wire_messages, ensure_ascii=False).encode())
-                + len(json.dumps(schemas).encode())
-                + output_tokens
-            )
-            metadata = {"attempt": row["model_calls"] + 1, "purpose": purpose}
+            reservation = request_reservation(wire_messages, schemas, output_tokens)
+            tokens = sum(reservation[key] for key in ("message_bytes", "schema_bytes", "output_tokens"))
+            metadata = {
+                "attempt": row["model_calls"] + 1,
+                "purpose": purpose,
+                "reservation": reservation,
+            }
             if purpose == "review":
                 metadata["review_stage"] = body.get("review_mode", "candidate_review")
             if hasattr(provider, "identity"):
@@ -765,9 +772,12 @@ class StudyRuntime:
                     if completed_windows:
                         result["context_windows"] = completed_windows
                     if arguments.get("practice_kind") in {"general", "linear_points"}:
-                        result["course_coverage"] = observe_methods(
-                            found, arguments.get("practice_kind", "general")
-                        )
+                        kind = arguments["practice_kind"]
+                        coverage = reusable_coverage(state["history"], found, kind)
+                        result["course_coverage"] = coverage or observe_methods(found, kind)
+                        result["method_observation_scope"] = observation_scope(found, kind)
+                        if coverage is not None:
+                            result["reused_method_observation"] = True
                 elif name == "check_python_example":
                     # Scope is already validated against visible owned Evidence in decide().
                     result = {
@@ -805,28 +815,21 @@ class StudyRuntime:
                         observed = self.authority.read(run, "READ", evidence_ids=selected)["evidence"]
                         if {item["evidence_id"] for item in observed} != set(selected):
                             raise StudyError("UNSUPPORTED_CITATION")
-                        # Existing observations remain valid under this revision fence
-                        # while their exact sources remain selected. A window read need
-                        # not pay for a second identical planning judgment. New searches
-                        # still observe methods afresh; final review checks current fields.
-                        retained_methods = coverage["methods"]
-                        if retained_methods and all(
-                            method["evidence_id"] in selected for method in retained_methods.values()
-                        ):
-                            result["course_coverage"] = coverage
+                        kind = next(
+                            (
+                                h["result"].get("practice_kind", "general")
+                                for h in reversed(state["history"])
+                                if h["tool"] == "search_course_evidence"
+                            ),
+                            "general",
+                        )
+                        retained = reusable_coverage(state["history"], observed, kind)
+                        if retained is not None:
+                            result["course_coverage"] = retained
                             result["reused_method_observation"] = True
                         else:
-                            result["course_coverage"] = observe_methods(
-                                observed,
-                                next(
-                                    (
-                                        h["result"].get("practice_kind", "general")
-                                        for h in reversed(state["history"])
-                                        if h["tool"] == "search_course_evidence"
-                                    ),
-                                    "general",
-                                ),
-                            )
+                            result["course_coverage"] = observe_methods(observed, kind)
+                        result["method_observation_scope"] = observation_scope(observed, kind)
                 elif name == "report_insufficient_evidence":
                     artifact = {
                         "kind": "insufficient_evidence",
