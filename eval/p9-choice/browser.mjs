@@ -3,7 +3,7 @@ import {chromium,expect} from '../../frontend/node_modules/@playwright/test/inde
 import {mkdir,writeFile} from 'node:fs/promises';
 const {PREVIEW_URL:origin,PREVIEW_TASK:task,PREVIEW_EMAIL:email,PREVIEW_PASSWORD:password,PREVIEW_EVIDENCE:out,PREVIEW_SHA:sha,PREVIEW_DIRTY:sourceDirty}=process.env;
 await mkdir(out+'/screenshots',{recursive:true});
-const checks=[],requests=[],snapshots=[],errors=[],blocked=[],pending=[];
+const checks=[],requests=[],snapshots=[],errors=[],blocked=[],pending=[],bodyReadFailures=[];
 let phase='before-submission';
 const browser=await chromium.launch({executablePath:'/opt/google/chrome/chrome',headless:true,chromiumSandbox:true});
 const context=await browser.newContext({viewport:{width:1440,height:900},timezoneId:'Asia/Shanghai'});
@@ -12,7 +12,7 @@ const page=await context.newPage();page.on('pageerror',e=>errors.push(String(e))
 page.on('response',r=>{if(r.url().includes('/study/')&&r.request().method()==='POST'){
  const operation=r.request().postDataJSON()?.operation,atPhase=phase;
  requests.push({operation,status:r.status(),phase:atPhase,path:new URL(r.url()).pathname});
- const promise=(async()=>{if(r.ok()){const body=await r.json();snapshots.push({operation,phase:atPhase,data:body.data})}})();pending.push(promise);
+ const promise=(async()=>{if(r.ok()){const body=await r.json();snapshots.push({operation,phase:atPhase,data:body.data})}})().catch(error=>{bodyReadFailures.push({operation,phase:atPhase,reason:String(error)})});pending.push(promise);
 }});
 const current=page.locator('.practice-question.is-current'),choice=current.locator('.practice-choice'),result=choice.locator('.choice-result'),entry=page.getByRole('region',{name:'继续本次练习',exact:true});
 const nav=name=>page.getByRole('navigation',{name:'课程内容导航'}).getByRole('button',{name,exact:true});
@@ -33,7 +33,7 @@ try{
   const status=await page.evaluate(async({task,state})=>{
    const response=await fetch(`/api/tasks/${task}/study/command`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+localStorage.getItem('courselingo.accessToken')},body:JSON.stringify({operation:'SAVE_ATTEMPT',session_id:state.run.session_id,run_id:state.run.run_id,artifact_id:state.artifact.artifact_id,question_index:0,request_key:'p9-empty-selection',expected_version:0})});return response.status;
   },{task,state});expect(status).toBe(400);
-  await page.reload();await expect(choice.getByRole('radio')).toHaveCount(3,{timeout:30000});await expect(result).toHaveCount(0);await Promise.all(pending);
+  await Promise.all(pending);await page.reload();await expect(choice.getByRole('radio')).toHaveCount(3,{timeout:30000});await expect(result).toHaveCount(0);await Promise.all(pending);
   const before=snapshots.filter(s=>s.phase==='before-submission');expect(before.some(s=>s.operation==='ANSWERS')).toBe(true);for(const s of before)expect(JSON.stringify(s.data)).not.toContain('correct_option_id');expect(before.filter(s=>s.data?.attempts).every(s=>s.data.attempts.length===0)).toBe(true);
   await shot('02-blank-still-ungraded');
  });
@@ -44,8 +44,8 @@ try{
   await page.getByRole('button',{name:'返回当前学习任务',exact:true}).click();await expect(result.getByRole('heading')).toHaveText('第 1 版 · 错误');
  });
  await step('04 reload preserves wrong result; changed correct selection saves a new correct version',async()=>{
-  await page.reload();await expect(result.getByRole('heading')).toHaveText('第 1 版 · 错误',{timeout:30000});await shot('04-wrong-restored');
-  await choice.locator(`input[value="${correctId}"]`).check();await expect(result).toContainText('当前选择尚未提交');await choice.getByRole('button',{name:'提交并判分',exact:true}).click();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确');await page.reload();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});
+  await Promise.all(pending);await page.reload();await expect(result.getByRole('heading')).toHaveText('第 1 版 · 错误',{timeout:30000});await shot('04-wrong-restored');
+  await choice.locator(`input[value="${correctId}"]`).check();await expect(result).toContainText('当前选择尚未提交');await choice.getByRole('button',{name:'提交并判分',exact:true}).click();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确');await Promise.all(pending);await page.reload();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});
   await choice.getByRole('button',{name:'修改记录',exact:true}).click();await expect(choice.locator('.answer-history')).toContainText('第 1 版');await expect(choice.locator('.answer-history')).toContainText('错误');await expect(choice.locator('.answer-history')).toContainText('第 2 版');await shot('04-correct-restored-and-history');
  });
  await step('05 continuation skips graded choice; open answer remains text plus optional feedback',async()=>{
@@ -58,9 +58,9 @@ try{
  await step('06 Tutor and flashcards coexist; saved choice result survives their navigation',async()=>{
   await nav('Tutor 对话').click();await page.getByRole('textbox',{name:'向课程 Tutor 提问',exact:true}).fill('Explain the asynchronous course pipeline.');await page.getByRole('button',{name:'发送',exact:true}).click();await expect(page.locator('.tutor .answer')).toBeVisible({timeout:45000});await shot('06-tutor');
   await nav('闪卡复习').click();await page.getByRole('button',{name:'生成一组证据闪卡',exact:true}).click();await expect(page.locator('.flashcards .card')).toBeVisible({timeout:45000});await page.getByRole('button',{name:'翻面 · 显示答案',exact:true}).click();await expect(page.locator('.flashcards .card .answer')).toBeVisible();await shot('06-flashcards');
-  await nav('解释与练习').click();await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.getByRole('navigation',{name:'练习题目'}).getByRole('button',{name:/第 1 题/}).click();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.setViewportSize({width:1280,height:800});await page.reload();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(nav('Tutor 对话')).toBeVisible();await expect(nav('闪卡复习')).toBeVisible();await shot('06-1280-choice-restored');
+  await nav('解释与练习').click();await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.getByRole('navigation',{name:'练习题目'}).getByRole('button',{name:/第 1 题/}).click();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.setViewportSize({width:1280,height:800});await Promise.all(pending);await page.reload();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(nav('Tutor 对话')).toBeVisible();await expect(nav('闪卡复习')).toBeVisible();await shot('06-1280-choice-restored');
  });
- expect(errors).toEqual([]);expect(blocked).toEqual([]);expect(requests.filter(r=>r.status!==200)).toEqual([expect.objectContaining({operation:'SAVE_ATTEMPT',status:400})]);status='PASS';
+ expect(errors).toEqual([]);expect(blocked).toEqual([]);expect(bodyReadFailures.every(e=>e.operation==='READ'&&/No resource with given identifier|Target.*closed|No data found for resource/.test(e.reason))).toBe(true);expect(requests.filter(r=>r.status!==200)).toEqual([expect.objectContaining({operation:'SAVE_ATTEMPT',status:400})]);status='PASS';
 }catch(error){failure=String(error);console.error(failure);await shot('failure').catch(()=>{})}
-finally{await Promise.allSettled(pending);await writeFile(out+'/browser-results.json',JSON.stringify({sha,sourceDirty:sourceDirty==='true',status,failure,checks,requests,snapshots,errors,blocked,httpFixtures:false,realChain:'Vue -> Java -> Python -> independent MySQL/PostgreSQL',mode:'mock'},null,2));await browser.close()}
+finally{await Promise.allSettled(pending);await writeFile(out+'/browser-results.json',JSON.stringify({sha,sourceDirty:sourceDirty==='true',status,failure,checks,requests,snapshots,errors,blocked,bodyReadFailures,httpFixtures:false,realChain:'Vue -> Java -> Python -> independent MySQL/PostgreSQL',mode:'mock'},null,2));await browser.close()}
 if(status!=='PASS')process.exitCode=1;
