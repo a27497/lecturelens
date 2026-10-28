@@ -55,9 +55,9 @@ public class StudyController {
     }
 
     private JsonNode invoke(String taskId,long owner,Command command) {
-        if(command==null || command.operation()==null || !Set.of("GENERATE_CARDS","DUE_CARDS","READ_CARD","REVIEW_CARD","CREATE_SESSION","LIST","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
+        if(command==null || command.operation()==null || !Set.of("GENERATE_CARDS","DUE_CARDS","READ_CARD","REVIEW_CARD","CREATE_SESSION","LIST","CHOICE_REVIEW","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
                 || (command.goal()!=null && (command.goal().isBlank() || command.goal().length()>1000))
-                || command.after()<0) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+                || command.after()<0 || ("CHOICE_REVIEW".equals(command.operation()) && command.after()>Integer.MAX_VALUE)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id(),command.card_id(),command.selected_option_id())) {
             if(id!=null && (id.isBlank() || id.length()>128)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         }

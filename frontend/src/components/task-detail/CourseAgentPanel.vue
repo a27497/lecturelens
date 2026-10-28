@@ -11,6 +11,8 @@ import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterD
 import { practiceContinuationPlan } from "./practiceContinuation";
 import PracticeResultsPanel from "./PracticeResultsPanel.vue";
 import PracticeChoiceForm from "./PracticeChoiceForm.vue";
+import ChoiceReviewPanel from "./ChoiceReviewPanel.vue";
+import type { ChoiceReviewItem } from "../../api/study";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
@@ -32,6 +34,8 @@ const error = ref("");
 const goal = ref("");
 const sessionId = ref("");
 const sourceRevision = ref<number>();
+const courseRevision = ref<number>();
+const choiceReviewVersion = ref(0);
 const run = ref<StudyRun | null>(null);
 const artifact = ref<StudyArtifact | null>(null);
 const events = ref<StudyEvent[]>([]);
@@ -104,6 +108,7 @@ async function continuePractice() {
 }
 function savedAttempt(value: StudyAttempt) {
   observeAttempts([value]);
+  if (value.choice_result) choiceReviewVersion.value++;
   void refreshProgress();
 }
 const resultsElement = ref<HTMLElement>();
@@ -192,8 +197,16 @@ onBeforeUnmount(() => { version++; controller?.abort(); clearTimeout(timer); });
 
 async function openHistory(fresh = false, selectedSession?: string, selectedRun?: string) {
   const goalDraft = goal.value.trim() && goal.value.trim() !== (run.value?.goal ?? "");
-  if ((hasDrafts.value || goalDraft) && !window.confirm("切换学习记录会离开本次未保存输入（目标、作答或核对文字）。请先保存，或确认放弃这些修改。")) return;
+  if ((hasDrafts.value || goalDraft) && !window.confirm("切换学习记录会离开本次未保存输入（目标、作答或核对文字）。请先保存，或确认放弃这些修改。")) return false;
   await load(fresh, selectedSession, selectedRun);
+  return true;
+}
+
+async function openReviewQuestion(item: ChoiceReviewItem) {
+  if (!await openHistory(false, item.session_id, item.run_id)) return;
+  if (run.value?.run_id === item.run_id && artifact.value?.artifact_id === item.artifact_id) {
+    await chooseQuestion(item.question_index);
+  }
 }
 
 async function changeSession(event: Event) {
@@ -221,6 +234,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
     const config = await studyStatus(task);
     if (current !== version) return;
     enabled.value = config.enabled;
+    courseRevision.value = config.revision;
     if (!config.enabled) return;
     const index = await getEvidenceIndexStatus(task);
     if (current !== version) return;
@@ -233,7 +247,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
       const candidates = selectedSession ? [selectedSession] : sessions.value.slice(0, 20).map(session => session.session_id);
       for (const candidate of candidates) {
         sessionId.value = candidate;
-        sourceRevision.value = sessions.value.find(session => session.session_id === candidate)?.revision;
+        sourceRevision.value = sessions.value.find(session => session.session_id === candidate)?.revision ?? config.revision;
         await refresh(current, task, undefined, selectedRun);
         if (current !== version) return;
         // Flashcard generation creates Sessions too. Automatic restore uses the bounded LIST
@@ -367,6 +381,7 @@ async function reveal() {
       <el-button @click="load()">重新检查</el-button>
     </div>
     <div v-else-if="enabled">
+      <ChoiceReviewPanel v-if="courseRevision !== undefined" :task-id="taskId" :revision="courseRevision" :refresh-key="choiceReviewVersion" @open="openReviewQuestion" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" @access-failure="$emit('accessFailure')" />
       <div v-if="!ready" role="status"><p>{{ readinessText }}</p><el-button text @click="$emit('navigate', 'overview')">查看处理进度</el-button><el-button text @click="load()">刷新状态</el-button></div>
       <p v-if="run?.model_mode === 'mock' && !artifact" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
       <div v-if="run" class="run-progress" :class="{ 'run-progress--ready': artifact }" aria-live="polite">

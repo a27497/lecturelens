@@ -1583,3 +1583,7 @@ CREATE/TURN require course readiness. Read/list/cancel check access without requ
 `START` 可选 `practice_format: "choice"`，缺省保持开放题；带学习范围仍使用 `scoped-command`。仅 mock 且不要求发布审批时接受。`READ` 中选择题包含 `kind: "choice"`、`options: [{id,text}]`，不包含正确项身份；`ANSWERS` 也不能提前揭示选择题 key。
 
 `SAVE_ATTEMPT` 对选择题传 `selected_option_id`，不传 `answer_text`；开放题仍传非空文本，不传选项。空、非法或混合正文被拒绝，不写对错记录。服务器保存选项文字及 `choice_result: {is_correct,correct_option_id,citations}`，同事务产生作答版本，重试/并发/所有权/版本规则沿用现有协议。正确项和可定位引用仅随已提交的结果返回，READ 和历史可恢复。开放题没有 `choice_result`；新反馈请求默认仍关闭。字段和边界详见 [P9](P9_EVIDENCE_CHOICE.md)。
+
+## P10 答错待回看
+
+`POST /api/tasks/{id}/study/command` 新增 `CHOICE_REVIEW`，无需 Session；`after` 是非负分页偏移（默认 0，上限 2147483647）。Java 从认证与课程事实取得 owner/revision 并在读取前后检查；Python 返回当前 owner/course/revision 跨 Session 的最新已提交选择题判分计数及错误列表。响应为 `{revision,correct_count,wrong_count,items,next_after}`，每页最多 20 项；每项包含 Session/Run/artifact/question 定位、公开题面与已提交 attempt/choice_result/citations。最新版本改答正确后退出错误列表。只读，无新 Run、表或模型调用；计数不是掌握程度。详见 [P10](P10_CHOICE_REVIEW.md)。

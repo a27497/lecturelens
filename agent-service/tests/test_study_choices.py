@@ -427,7 +427,7 @@ def test_new_choice_runtime_cannot_inherit_the_frozen_p7_evaluation_identity():
     from lecturelens_agent.study.acceptance_cost import CostDenied, verify_development_agent, verify_p7_agent
 
     # The immutable P7 manifest is not repinned to present this new runtime as that candidate.
-    assert verify_development_agent() == 62
+    assert verify_development_agent() == 63
     with pytest.raises(CostDenied, match="IDENTITY_CHANGED"):
         verify_p7_agent()
 

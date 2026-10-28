@@ -22,6 +22,7 @@ class StudyCommand(StudyScope):
         "REVIEW_CARD",
         "CREATE_SESSION",
         "LIST",
+        "CHOICE_REVIEW",
         "RUNS",
         "START",
         "READ",
@@ -60,6 +61,8 @@ class StudyCommand(StudyScope):
 
     @model_validator(mode="after")
     def attempt_scope(self):
+        if self.operation == "CHOICE_REVIEW" and self.after > 2**31 - 1:
+            raise ValueError("Review page offset is too large")
         if self.practice_format is not None and self.operation != "START":
             raise ValueError("Practice format belongs to a new practice Run")
         if self.selected_option_id is not None and self.operation != "SAVE_ATTEMPT":

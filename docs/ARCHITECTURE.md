@@ -222,3 +222,7 @@ Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Jav
 ## P9 课程证据选择题（Mock）
 
 `choice_graph` 复用原 Run journal、预算和 checkpoint，Mock 观察检索证据后生成原文识别单选题及一题开放题。发布前验证私有正确项与实际课程原文一致；缺证据或非法 key 明确停止。`choice.judge` 在保存选择的事务内确定性比较选项 ID，结果保存在 PostgreSQL 的不可变作答版本中。Java 仅新增两字段的校验/签名转发，MySQL 不存选择或判分。公开题面与显式 ANSWERS 均过滤私有 key；判分结果才携带正确项和 Evidence。开放题仍走原保存/反馈路径，详见 [P9](P9_EVIDENCE_CHOICE.md)。
+
+## P10 答错待回看
+
+`study/choice_review.py` 从 PostgreSQL 既有 attempt/artifact/Run/Session 连接投影，先按题取最新已提交版本，再筛选严格为 false 的程序判分。owner/course/revision、成功发布与选择题类型围栏同时生效，分页与正确/错误计数共享一次查询快照。Java 只放行只读 operation 并验证认证/当前版本，不新增字段或 MySQL 表。前端恢复原题及 Evidence 定位，沿用未保存输入与版本保护，不创建新模型任务或长期画像。见 [P10](P10_CHOICE_REVIEW.md)。

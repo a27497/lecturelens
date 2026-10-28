@@ -423,7 +423,7 @@ def test_nonexistent_citation_stops_entire_round_fail(isolated, tmp_path):
 def test_prior_offline_frozen_gate_unchanged():
     from datetime import datetime, timedelta, timezone
 
-    assert verify_development_agent() == 62
+    assert verify_development_agent() == 63
     now = datetime.now(timezone.utc)
     policy = CostPolicy("offline", now.isoformat(), (now + timedelta(hours=1)).isoformat())
     policy.validate()
