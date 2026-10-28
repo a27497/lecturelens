@@ -71,7 +71,7 @@ Java 先验证当前用户、课程存在、处理成功及索引 READY，再签
 
 练习草稿经过目标条件、逐字段来源、答案一致性和课程方法范围复核。复核意见可触发预算内修订，最多提交两份候选；参数、未知工具、重复调用和越权引用错误明确停止。受限 Python AST 工具没有导入、I/O、循环或任意方法执行能力。数值工具按声明条件核算，计算正确不能替代课程支持检查。通过后原子保存解释、两道练习和私有答案，或保存证据不足产物。工具契约及上下文规则见 [Agent 执行说明](L2_STUDY_AGENT.md)和[复核说明](L2_QUALITY_REVIEW.md)。
 
-作答保存为不可变版本；反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。模型选授权来源，程序回填权威原文；学生引文必须匹配实际作答。新作答不会把旧反馈重新标为新版本，用户核对记录单独保存。`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有运行和记录保持原语义。Session 可携带最近两个已完成轮次的有限摘要与产物引用；自动评分、长期学习记忆和复习调度尚未交付。见[学习交互](L3_LEARNING_FLOW.md)。
+作答保存为不可变版本；反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。模型选授权来源，程序回填权威原文；学生引文必须匹配实际作答。新作答不会把旧反馈重新标为新版本，用户核对记录单独保存。`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有运行和记录保持原语义。Session 可携带最近两个已完成轮次的有限摘要与产物引用；自动评分、长期学习记忆尚未交付；证据闪卡与 FSRS 自评调度实验性已实现，仅离线 Mock，真实生成质量 NOT_RUN，见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。见[学习交互](L3_LEARNING_FLOW.md)。
 
 ### 持久状态与恢复
 
@@ -212,3 +212,9 @@ Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Jav
 - [AU 完成报告](../eval/phase-completion/FINAL_AU.md)：冻结学习闭环的任务质量与机制证据。
 - [并发与隔离实验](../eval/multi-user-phase-e/README.md)：固定响应、真实模型、取消/恢复和检索失败分别统计。
 - [评测索引](../eval/README.md)：候选身份、历史失败、冻结数据与保留集边界；已有结果不代表未见课程泛化。
+
+## P8 Tutor（实验性，离线 Mock）
+
+独立 `lecturelens_real_eval.tutor` 包通过可选 ASGI 入口包装原服务；冻结 `lecturelens_agent` 源码与 AU/P7 gate 保持原字节。Java `TutorController` 仅负责认证、课程权限/版本和签名转发，Vue `CourseTutorPanel` 消费会话、轮次及 canonical 引用。模型选择检索并观察证据后决定回答、Socratic 引导或证据不足；Python/PG 的 `tutor_session/tutor_turn` 保存有界上下文、预算、取消、响应 journal 和原子发布 checkpoint。无 Java/MySQL 新表或跨服务写入。
+
+这是多轮 Tutor 实验路径，普通单轮 QA 保留独立入口；Mock 仅验证协议。产品真实模型、语义质量、长期记忆和自动评分未验收。版本变化使 Session stale，Evidence tombstone 触发独立级联清理；原 Study worker 不消费 Tutor 状态。实现/运行边界见 [P8](P8_TUTOR.md)，独立双模型评测通道与离线记录见 [P8 Eval](../eval/p8-tutor/README.md)。

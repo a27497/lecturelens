@@ -11,6 +11,67 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class StudyControllerTest {
+    @Test void flashcardCommandsUseAuthenticatedRevisionAndReadsNeedNoReadyIndex() throws Exception {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);
+        when(authority.current(eq("course"),eq(42L),anyBoolean())).thenReturn(7L);
+        var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var review=json.readValue("{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Good\",\"request_key\":\"key\",\"expected_version\":0}", StudyController.Command.class);
+        controller.command("course","Bearer owner",review);
+        var captured=org.mockito.ArgumentCaptor.forClass(Map.class);verify(transport).command(captured.capture());
+        assertThat(captured.getValue()).containsEntry("owner_id",42L).containsEntry("course_id","course")
+            .containsEntry("revision",7L).containsEntry("card_id","card").containsEntry("rating","Good");
+        verify(authority,times(2)).current("course",42L,false);
+        verify(authority,never()).current("course",42L,true);
+        clearInvocations(transport,authority);
+        controller.command("course","Bearer owner",new StudyController.Command("DUE_CARDS",null,null,null,null,0));
+        verify(authority,times(2)).current("course",42L,false);
+        clearInvocations(transport,authority);
+        controller.command("course","Bearer owner",new StudyController.Command("GENERATE_CARDS","session",null,"generate",null,0));
+        verify(authority).current("course",42L,true);
+    }
+
+    @Test void flashcardInvalidRatingAndMissingScopeNeverReachAgent() throws Exception {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        var controller=new StudyController(users,properties,authority,transport,json);
+        for (var body:java.util.List.of(
+            "{\"operation\":\"GENERATE_CARDS\"}",
+            "{\"operation\":\"READ_CARD\"}",
+            "{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Other\",\"request_key\":\"key\",\"expected_version\":0}",
+            "{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Good\",\"expected_version\":0}")) {
+            var command=json.readValue(body,StudyController.Command.class);
+            assertThatThrownBy(()->controller.command("course","Bearer owner",command))
+                .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        }
+        verifyNoInteractions(transport,authority);
+    }
+
+    @Test void flashcardDeletionOrRevisionRaceHidesResponse() {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var due=new StudyController.Command("DUE_CARDS",null,null,null,null,0);
+        when(authority.current("course",42L,false)).thenReturn(7L,8L);
+        assertThatThrownBy(()->controller.command("course","Bearer owner",due))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        when(authority.current("course",42L,false)).thenThrow(new com.example.courselingo.common.exception.BusinessException(
+            com.example.courselingo.common.error.ErrorCode.TASK_NOT_FOUND));
+        clearInvocations(transport);
+        assertThatThrownBy(()->controller.command("course","Bearer owner",due))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        verifyNoInteractions(transport);
+    }
+
     @Test void scopedWireRouteRequiresStartAndScopeAndNeverDowngradesToLegacy() throws Exception {
         var users=mock(CurrentUserService.class);when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
         var properties=new StudyProperties();properties.setEnabled(true);

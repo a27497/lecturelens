@@ -3,7 +3,7 @@ import type { CourseWorkspace } from "./workspace";
 
 export type ContentView = "translated" | "source" | "timeline" | "visual";
 export type SeekRequest = { milliseconds: number; sequence: number };
-const workspaces: CourseWorkspace[] = ["agent", "overview", "content", "study", "qa", "files", "technical"];
+const workspaces: CourseWorkspace[] = ["tutor", "flashcards", "agent", "overview", "content", "study", "qa", "files", "technical"];
 const textViews: ContentView[] = ["translated", "source", "timeline", "visual"];
 // A bounded URL coordinate, independent of signed media URLs or learning data.
 export const MAX_POSITION_MS = 7 * 24 * 60 * 60 * 1000;

@@ -194,6 +194,10 @@ class StudyRuntime:
 
     def graph(self, run, token, saver, provider=None):
         provider = provider or self.provider
+        if run.get("task_kind") == "flashcards":
+            from .flashcard_graph import graph
+
+            return graph(self, run, token, saver, provider, State)
         if run.get("task_kind") == "feedback":
             from .feedback import feedback_graph
 

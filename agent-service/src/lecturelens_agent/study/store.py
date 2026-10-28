@@ -110,6 +110,9 @@ class StudyStore:
             from .learning_scope import SCHEMA as SCOPE_SCHEMA
 
             conn.execute(SCOPE_SCHEMA)
+            from .flashcards import SCHEMA as CARD_SCHEMA
+
+            conn.execute(CARD_SCHEMA)
 
     @staticmethod
     def _session(conn, command):
@@ -146,6 +149,10 @@ class StudyStore:
                     (command.owner_id, command.course_id, command.revision),
                 ).fetchall()
                 return {"sessions": rows, "mode": mode}
+            if command.operation in {"DUE_CARDS", "READ_CARD", "REVIEW_CARD"}:
+                from .flashcards import card_command
+
+                return card_command(self, conn, command)
             self._session(conn, command)
             if command.operation == "RUNS":
                 rows = conn.execute(
@@ -154,7 +161,13 @@ class StudyStore:
                     (command.session_id,),
                 ).fetchall()
                 return {"runs": [row | {"status": public_status(row["status"])} for row in rows]}
-            if command.operation == "START":
+            if command.operation in {"START", "GENERATE_CARDS"}:
+                cards = command.operation == "GENERATE_CARDS"
+                if cards and (mode != "mock" or command.approval_required):
+                    raise StudyError("FLASHCARDS_MOCK_ONLY")
+                task_kind = "flashcards" if cards else "practice"
+                if cards and command.goal is None:
+                    command = command.model_copy(update={"goal": "从课程证据生成简短闪卡"})
                 if not command.goal or not command.goal.strip() or not command.request_key:
                     raise StudyError("GOAL_AND_REQUEST_KEY_REQUIRED", 422)
                 frozen_scope = (
@@ -168,7 +181,7 @@ class StudyStore:
                     if (
                         prior.get("learning_scope") != frozen_scope
                         or prior["goal"] != command.goal
-                        or prior["task_kind"] != "practice"
+                        or prior["task_kind"] != task_kind
                         or prior["approval_required"] != command.approval_required
                     ):
                         raise StudyError("REQUEST_KEY_CONFLICT")
@@ -183,8 +196,8 @@ class StudyStore:
                     self.model_resolver(command.owner_id) if mode == "real" and self.model_resolver else None
                 )
                 row = conn.execute(
-                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required,learning_scope,status)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
+                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required,learning_scope,status,task_kind)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
                     (
                         run_id,
                         command.session_id,
@@ -194,7 +207,8 @@ class StudyStore:
                         Jsonb(config) if config else None,
                         command.approval_required,
                         Jsonb(frozen_scope) if frozen_scope is not None else None,
-                        stored_status({"learning_scope": frozen_scope}, "queued"),
+                        stored_status({"learning_scope": frozen_scope, "task_kind": task_kind}, "queued"),
+                        task_kind,
                     ),
                 ).fetchone()
                 self._event(conn, run_id, "run_queued", {})
@@ -359,7 +373,7 @@ class StudyStore:
     def candidates(self):
         with self.connect() as conn:
             return conn.execute("""SELECT r.*,s.owner_id,s.course_id,s.revision FROM study_run r JOIN study_session s USING(session_id)
-                WHERE r.status IN ('queued','running','queued_scoped_v1','running_scoped_v1') ORDER BY r.created_at LIMIT 20""").fetchall()
+                WHERE r.status IN ('queued','running','queued_scoped_v1','running_scoped_v1','queued_cards_v1','running_cards_v1') ORDER BY r.created_at LIMIT 20""").fetchall()
 
     @contextmanager
     def execution_lock(self, session_id):
@@ -495,7 +509,9 @@ class StudyStore:
             self._active(conn, run_id, token)
             self._event(conn, run_id, name, payload)
 
-    def save_tool(self, run_id, token, call_id, name, arguments, result, artifact=None, feedback=None):
+    def save_tool(
+        self, run_id, token, call_id, name, arguments, result, artifact=None, feedback=None, cards=None
+    ):
         with self.connect() as conn:
             run = self._active(conn, run_id, token)
             prior = conn.execute(
@@ -533,6 +549,13 @@ class StudyStore:
                 self._event(conn, run_id, "artifact_created", public)
                 # Keep accepted checks available for private audit and checkpoint recovery too.
                 result = {**result, **public}
+            if cards is not None:
+                from .flashcards import publish
+
+                result = {**result, "deck_id": publish(conn, run, cards)}
+                self._event(
+                    conn, run_id, "deck_created", {"deck_id": result["deck_id"], "card_count": len(cards)}
+                )
             if feedback is not None:
                 from .feedback_store import save_feedback
 

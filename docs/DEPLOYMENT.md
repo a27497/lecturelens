@@ -326,3 +326,14 @@ docker compose --env-file .env down
 回滚时停止新学习 Run，恢复原 Python 启动源和模型路由；Java/MySQL 的课程权威事实不迁移到 Python。PostgreSQL 中的 Agent 派生状态按已发布版本的兼容策略保留或清理，不通过手工改表伪造成功状态。原始运行预算与权限边界不得因发布或回滚而放宽。
 
 本轮验收使用的隔离 8084/8094/8095/5184 与测试 Redis 16381 已关闭；开发数据库和私有回放记录保留用于审计。线上配置在验收结束时已核对未变化。
+
+## P7 离线闪卡候选（本轮不部署）
+
+闪卡/FSRS 仅在当前 worktree 以 Mock 验证；没有修改任何线上配置。新增 PostgreSQL 表与队列 fence
+由 Python 初始化，Java 不执行迁移。读/评分可消费已有有效卡片，生成在 real 模式被明确拒绝。
+不要将 P7 新状态改成旧 worker 能消费的状态。后续发布与真实 Provider 适配需独立审查和授权；
+隔离启动与检查命令见 [P7 报告](../eval/p7-flashcards/REPORT.md) 和 [设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+### P8 Tutor（可选实验，未部署）
+
+原默认启动命令不自动启用 Tutor。离线 Mock 调试使用 `lecturelens_real_eval.tutor.app:create_app --factory` 作为 ASGI 入口，并设置 `TUTOR_ENABLED=true`、`AGENT_LLM_MODE=mock`；网关沿用 Java `STUDY_AGENT_ENABLED` 与既有签名/课程权限配置。不得将独立真实评测 adapter 安装到产品工厂。新增 PG 表通过初始化幂等 DDL 创建，Java/MySQL 无迁移。完整配置、预算、停止与回滚见 [P8 Tutor](P8_TUTOR.md)。

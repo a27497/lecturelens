@@ -1,0 +1,743 @@
+{
+  "version": "p8-tutor-v1",
+  "boundary": "Public known courses; new dialogues, not an independent unseen-course holdout. Mock tests mechanics only.",
+  "dialogues": [
+    {
+      "dialogue_id": "algorithms-l1-1",
+      "lecture_id": "algorithms-l1",
+      "turns": [
+        {
+          "text": "Explain graph adjacency lists briefly using this lecture.",
+          "expected_topic": "graph adjacency lists",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "graph adjacency lists",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "graph adjacency lists",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l1-2",
+      "lecture_id": "algorithms-l1",
+      "turns": [
+        {
+          "text": "Explain BFS levels and shortest paths briefly using this lecture.",
+          "expected_topic": "BFS levels and shortest paths",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "BFS levels and shortest paths",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "BFS levels and shortest paths",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l1-3",
+      "lecture_id": "algorithms-l1",
+      "turns": [
+        {
+          "text": "Explain directed and undirected graphs briefly using this lecture.",
+          "expected_topic": "directed and undirected graphs",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "directed and undirected graphs",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "directed and undirected graphs",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How would it run in Pregel across distributed workers?",
+          "expected_topic": "directed and undirected graphs",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Pregel"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l2-1",
+      "lecture_id": "algorithms-l2",
+      "turns": [
+        {
+          "text": "Explain DFS back edges briefly using this lecture.",
+          "expected_topic": "DFS back edges",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "DFS back edges",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "DFS back edges",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l2-2",
+      "lecture_id": "algorithms-l2",
+      "turns": [
+        {
+          "text": "Explain topological sorting and directed acyclic graphs briefly using this lecture.",
+          "expected_topic": "topological sorting and directed acyclic graphs",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "topological sorting and directed acyclic graphs",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "topological sorting and directed acyclic graphs",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l2-3",
+      "lecture_id": "algorithms-l2",
+      "turns": [
+        {
+          "text": "Explain DFS edge classification briefly using this lecture.",
+          "expected_topic": "DFS edge classification",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "DFS edge classification",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "DFS edge classification",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How does it compare with Gabow's strongly connected components algorithm?",
+          "expected_topic": "DFS edge classification",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Gabow"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l3-1",
+      "lecture_id": "algorithms-l3",
+      "turns": [
+        {
+          "text": "Explain edge relaxation and distance upper bounds briefly using this lecture.",
+          "expected_topic": "edge relaxation and distance upper bounds",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "edge relaxation and distance upper bounds",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "edge relaxation and distance upper bounds",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l3-2",
+      "lecture_id": "algorithms-l3",
+      "turns": [
+        {
+          "text": "Explain Dijkstra nonnegative weights briefly using this lecture.",
+          "expected_topic": "Dijkstra nonnegative weights",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "Dijkstra nonnegative weights",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "Dijkstra nonnegative weights",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "algorithms-l3-3",
+      "lecture_id": "algorithms-l3",
+      "turns": [
+        {
+          "text": "Explain DAG shortest paths briefly using this lecture.",
+          "expected_topic": "DAG shortest paths",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "DAG shortest paths",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "DAG shortest paths",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How does it extend to contraction hierarchies for road networks?",
+          "expected_topic": "DAG shortest paths",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "contraction hierarchies"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l1-1",
+      "lecture_id": "probability-l1",
+      "turns": [
+        {
+          "text": "Explain sample spaces and probability axioms briefly using this lecture.",
+          "expected_topic": "sample spaces and probability axioms",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "sample spaces and probability axioms",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "sample spaces and probability axioms",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l1-2",
+      "lecture_id": "probability-l1",
+      "turns": [
+        {
+          "text": "Explain discrete and continuous sample spaces briefly using this lecture.",
+          "expected_topic": "discrete and continuous sample spaces",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "discrete and continuous sample spaces",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "discrete and continuous sample spaces",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l1-3",
+      "lecture_id": "probability-l1",
+      "turns": [
+        {
+          "text": "Explain the union bound briefly using this lecture.",
+          "expected_topic": "the union bound",
+          "context_followup": false,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "the union bound",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "the union bound",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "union"
+          ]
+        },
+        {
+          "text": "How does that define a Dirichlet posterior over its probabilities?",
+          "expected_topic": "the union bound",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Dirichlet"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l2-1",
+      "lecture_id": "probability-l2",
+      "turns": [
+        {
+          "text": "Explain conditional probability briefly using this lecture.",
+          "expected_topic": "conditional probability",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "conditional probability",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "conditional probability",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l2-2",
+      "lecture_id": "probability-l2",
+      "turns": [
+        {
+          "text": "Explain the total probability theorem briefly using this lecture.",
+          "expected_topic": "the total probability theorem",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "the total probability theorem",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "the total probability theorem",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l2-3",
+      "lecture_id": "probability-l2",
+      "turns": [
+        {
+          "text": "Explain Bayes rule briefly using this lecture.",
+          "expected_topic": "Bayes rule",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "Bayes rule",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "Bayes rule",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How would that change when using a Jeffreys prior for Bayesian estimation?",
+          "expected_topic": "Bayes rule",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Jeffreys"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l3-1",
+      "lecture_id": "probability-l3",
+      "turns": [
+        {
+          "text": "Explain independence of two events briefly using this lecture.",
+          "expected_topic": "independence of two events",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "independence of two events",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "independence of two events",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l3-2",
+      "lecture_id": "probability-l3",
+      "turns": [
+        {
+          "text": "Explain conditional independence briefly using this lecture.",
+          "expected_topic": "conditional independence",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "conditional independence",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "conditional independence",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "probability-l3-3",
+      "lecture_id": "probability-l3",
+      "turns": [
+        {
+          "text": "Explain pairwise and mutual independence briefly using this lecture.",
+          "expected_topic": "pairwise and mutual independence",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "pairwise and mutual independence",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "pairwise and mutual independence",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How does it follow from de Finetti's representation theorem?",
+          "expected_topic": "pairwise and mutual independence",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "de Finetti"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l1-1",
+      "lecture_id": "quantum-l1",
+      "turns": [
+        {
+          "text": "Explain quantum superposition briefly using this lecture.",
+          "expected_topic": "quantum superposition",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "quantum superposition",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "quantum superposition",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l1-2",
+      "lecture_id": "quantum-l1",
+      "turns": [
+        {
+          "text": "Explain probabilistic measurement briefly using this lecture.",
+          "expected_topic": "probabilistic measurement",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "probabilistic measurement",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "probabilistic measurement",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l1-3",
+      "lecture_id": "quantum-l1",
+      "turns": [
+        {
+          "text": "Explain classical and quantum descriptions briefly using this lecture.",
+          "expected_topic": "classical and quantum descriptions",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "classical and quantum descriptions",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "classical and quantum descriptions",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How does it evolve under the Lindblad master equation for an open system?",
+          "expected_topic": "classical and quantum descriptions",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Lindblad"
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l2-1",
+      "lecture_id": "quantum-l2",
+      "turns": [
+        {
+          "text": "Explain photon interference briefly using this lecture.",
+          "expected_topic": "photon interference",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "photon interference",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "photon interference",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l2-2",
+      "lecture_id": "quantum-l2",
+      "turns": [
+        {
+          "text": "Explain polarization measurements briefly using this lecture.",
+          "expected_topic": "polarization measurements",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "polarization measurements",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        },
+        {
+          "text": "My reply: it depends on the assumptions. Can you check my reasoning?",
+          "expected_topic": "polarization measurements",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": true
+        }
+      ]
+    },
+    {
+      "dialogue_id": "quantum-l2-3",
+      "lecture_id": "quantum-l2",
+      "turns": [
+        {
+          "text": "Explain single photon experiments briefly using this lecture.",
+          "expected_topic": "single photon experiments",
+          "context_followup": false,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Why is that?",
+          "expected_topic": "single photon experiments",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "Give an example of it from the lecture.",
+          "expected_topic": "single photon experiments",
+          "context_followup": true,
+          "expected_insufficient": false,
+          "socratic": false
+        },
+        {
+          "text": "How does that explain the Hong Ou Mandel coincidence dip?",
+          "expected_topic": "single photon experiments",
+          "context_followup": true,
+          "expected_insufficient": true,
+          "socratic": false,
+          "zero_hit_terms": [
+            "Hong"
+          ]
+        }
+      ]
+    }
+  ]
+}

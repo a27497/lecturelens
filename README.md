@@ -132,10 +132,12 @@ cp .env.agent.example .env.agent.local
 
 ## 项目范围
 
-本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆、自动复习调度尚未交付。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。
+本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆尚未交付；证据闪卡与 FSRS 自评复习调度已实验性实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 说明](docs/P7_EVIDENCE_FLASHCARDS.md)；独立[真实评测通道](eval/p7-real/README.md)已实现，仅完成离线验证，真实请求为 0。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。
 
 ## License & credits
 
 代码使用 [MIT License](LICENSE)。
 
 产品截图中的历史课程片段来自 Ana Bell 的 [MIT OpenCourseWare 6.0001, Lecture 3](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/)，按 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 用于非商业展示；MIT 不为本项目背书。图片与课程内容不因代码采用 MIT License 而改变原有授权。
+
+P8 course Tutor is an **experimental, mock-only** course workspace panel with saved multi-turn conversations, inline Evidence citations, explicit insufficient-evidence outcomes and Socratic prompts/reply feedback. Python/PostgreSQL own its state; Java is the authenticated gateway. The opt-in entry point and limits are in [P8 Tutor](docs/P8_TUTOR.md). The [24-dialogue evaluation harness](eval/p8-tutor/README.md) records two v8 live PASS results on known public courses; earlier FAIL/PARTIAL trials remain unchanged. Candidate `p8-tutor-20261027-v9` makes citable evidence the ordered union of all searches in the current turn, excluding prior-turn citations. The [v9 report](eval/p8-tutor/REPORT.md#offline-per-turn-union-citable-evidence-v9) separates offline protocol verification from v8 live results; v9 real-model quality is NOT_RUN, and unseen-course generalization remains unverified. AU/P7 frozen behavior and online configuration remain unchanged.

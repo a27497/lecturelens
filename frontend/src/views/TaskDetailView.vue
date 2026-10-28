@@ -24,6 +24,8 @@ import CourseOverviewPanel from "../components/task-detail/CourseOverviewPanel.v
 import CourseAgentPanel from "../components/task-detail/CourseAgentPanel.vue";
 import CourseModelUsagePanel from "../components/task-detail/CourseModelUsagePanel.vue";
 import CourseQaPanel from "../components/task-detail/CourseQaPanel.vue";
+import CourseTutorPanel from "../components/task-detail/CourseTutorPanel.vue";
+import CourseFlashcardsPanel from "../components/task-detail/CourseFlashcardsPanel.vue";
 import CourseStudyPanel from "../components/task-detail/CourseStudyPanel.vue";
 import CourseTechnicalPanel from "../components/task-detail/CourseTechnicalPanel.vue";
 import CourseVideoAside from "../components/task-detail/CourseVideoAside.vue";
@@ -50,7 +52,7 @@ const classicLayout = ref(false);
 const narrowQuery = window.matchMedia("(max-width: 900px)");
 const narrowScreen = ref(narrowQuery.matches);
 function updateNarrowScreen() { narrowScreen.value = narrowQuery.matches; }
-const lastLearningWorkspace = ref<"agent" | "qa">("agent");
+const lastLearningWorkspace = ref<"agent" | "qa" | "flashcards" | "tutor">("agent");
 const learningWorkspace = computed(() => !classicLayout.value && activeWorkspace.value === "content" ? lastLearningWorkspace.value : activeWorkspace.value);
 const materialsRef = ref<HTMLElement | null>(null);
 const readingTarget = ref<HTMLElement | null>(null);
@@ -207,7 +209,7 @@ function applyLocation() {
   const location = readCourseLocation(route.query);
   classicLayout.value = location.classic;
   activeWorkspace.value = location.workspace;
-  if (location.workspace === "qa" || location.workspace === "agent") lastLearningWorkspace.value = location.workspace;
+  if (location.workspace === "qa" || location.workspace === "agent" || location.workspace === "flashcards" || location.workspace === "tutor") lastLearningWorkspace.value = location.workspace;
   readingView.value = location.textView;
   positionMs.value = location.milliseconds;
   seekRequest.value = { milliseconds: location.milliseconds, sequence: ++seekSequence };
@@ -234,7 +236,7 @@ function changeWorkspace(workspace: CourseWorkspace) {
   cancelEvidenceNavigation();
   evidenceNavigationError.value = "";
   activeWorkspace.value = workspace;
-  if (workspace === "qa" || workspace === "agent") lastLearningWorkspace.value = workspace;
+  if (workspace === "qa" || workspace === "agent" || workspace === "flashcards" || workspace === "tutor") lastLearningWorkspace.value = workspace;
   reviewingEvidence.value = false;
   writeLocation(true);
 }
@@ -537,7 +539,7 @@ async function confirmRetryTask() {
       <div v-if="hasTaskId && !courseBlocked && classicLayout" v-show="!(reviewingEvidence && narrowScreen && !classicLayout)" class="workspace-wayfinding" aria-label="学习工作区导航">
         <div class="workspace-wayfinding__actions">
           <button type="button" :aria-pressed="activeWorkspace === 'content'" @click="showMaterials">看视频与原文</button>
-          <button type="button" :aria-pressed="activeWorkspace !== 'content'" @click="showLearning">{{ lastLearningWorkspace === 'qa' ? '返回课程问答' : learningTask?.totalQuestions ? `继续第 ${learningTask.questionIndex + 1} 题` : '解释与练习' }}</button>
+          <button type="button" :aria-pressed="activeWorkspace !== 'content'" @click="showLearning">{{ lastLearningWorkspace === 'tutor' ? '返回 Tutor 对话' : lastLearningWorkspace === 'flashcards' ? '返回闪卡复习' : lastLearningWorkspace === 'qa' ? '返回课程问答' : learningTask?.totalQuestions ? `继续第 ${learningTask.questionIndex + 1} 题` : '解释与练习' }}</button>
         </div>
         <button type="button" class="layout-switch" @click="changeLayout">{{ classicLayout ? '连续工作区' : '经典布局' }}</button>
       </div>
@@ -617,6 +619,8 @@ async function confirmRetryTask() {
               @navigate="changeWorkspace"
               @retry="confirmRetryTask"
             />
+            <CourseTutorPanel v-else-if="learningWorkspace === 'tutor'" :task-id="taskId" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
+            <CourseFlashcardsPanel v-else-if="learningWorkspace === 'flashcards'" :task-id="taskId" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
             <CourseStudyPanel v-else-if="learningWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
             <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
             <CourseQaPanel @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="learningWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
