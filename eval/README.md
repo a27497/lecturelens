@@ -57,3 +57,5 @@
 历史失败没有改判或删除：主分支的 Markdown 持续记录负责叙事，evidence tag 负责完整公开快照，私有 `.data` 负责原始回放。
 
 - [发布审批与 SIGKILL 恢复矩阵](approval-recovery-20261014/README.md)：默认关闭的学习者审批、持久预算/调用日志与真实 PostgreSQL 子进程恢复；确定性执行验证，不是教学质量评分。
+
+- [P8 Tutor](p8-tutor/README.md): 24 dialogues/80 turns across eight public lecture snapshots; deterministic multi-turn/Socratic/abstention mechanisms and separate Flash/Pro ledger channel. Offline only; real-model task quality NOT_RUN. Does not modify frozen P7/AU assets.

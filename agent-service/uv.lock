@@ -275,6 +275,18 @@ wheels = [
 ]
 
 [[package]]
+name = "fsrs"
+version = "6.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ee/4c/8191a44434d7e41f039a3bac58ac540fd077189b036f9b0d1ff882f2a713/fsrs-6.3.0.tar.gz", hash = "sha256:3abbafd66469ebf58d35a5d5bb693a492e1db44232e09aa8e4d731bf047cd0ae", size = 32430, upload-time = "2025-10-13T07:10:01.094Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f9/98/463f1f89532627acd958f065f4af3054e614de4cd11e1e88a21594a2039f/fsrs-6.3.0-py3-none-any.whl", hash = "sha256:deb2b613c917651a48ec90dfde3b1c8808d136f8ae78ffdcc00a5ddb216db78e", size = 22593, upload-time = "2025-10-13T07:09:59.924Z" },
+]
+
+[[package]]
 name = "fsspec"
 version = "2026.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -611,6 +623,7 @@ dependencies = [
     { name = "cryptography" },
     { name = "fastapi" },
     { name = "fastembed" },
+    { name = "fsrs" },
     { name = "httpx" },
     { name = "huggingface-hub" },
     { name = "langgraph" },
@@ -633,6 +646,7 @@ requires-dist = [
     { name = "cryptography", specifier = ">=46,<49" },
     { name = "fastapi", specifier = ">=0.115,<1" },
     { name = "fastembed", specifier = ">=0.7,<1" },
+    { name = "fsrs", specifier = "==6.3.0" },
     { name = "httpx", specifier = ">=0.28,<1" },
     { name = "huggingface-hub", specifier = ">=1,<2" },
     { name = "langgraph", specifier = ">=1,<2" },

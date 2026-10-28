@@ -1,0 +1,16 @@
+{
+  "compose_project": "lecturelens-p7-flashcards-20261027",
+  "container": "lecturelens-p7-flashcards-20261027-postgres-1",
+  "status": "exited",
+  "exit_code": 0,
+  "running": false,
+  "ports_used": [
+    "127.0.0.1:25701 PostgreSQL",
+    "127.0.0.1:25702 Python (temporary)",
+    "127.0.0.1:25703 browser gateway fixture (temporary)"
+  ],
+  "listeners_after_cleanup": [],
+  "volume": "retained isolated p7-postgres",
+  "provider_real_calls": 0,
+  "deployed": false
+}

@@ -199,7 +199,7 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
-    assert verify_development_agent(copied) == 57
+    assert verify_development_agent(copied) == 60
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_frozen_agent(copied)
     altered = copied / "study/provider.py"
@@ -229,7 +229,7 @@ def test_cli_plan_is_read_only_and_fake_policy_cannot_activate(gate, tmp_path):
     result = subprocess.run([*command, "plan"], capture_output=True, text=True, check=True, timeout=10)
     plan = json.loads(result.stdout)
     assert plan["provider_requests"] == 0 and plan["money_limit_implies_max_admitted_calls"] == 9
-    assert plan["verified_development_modules"] == 57
+    assert plan["verified_development_modules"] == 60
     assert plan["historical_agent_candidate"] == FROZEN_AGENT
     assert plan["agent_candidate"] == DEVELOPMENT_AGENT
     policy_file = tmp_path / "fake-policy.json"
@@ -1253,6 +1253,14 @@ def test_historical_identity_positive_and_tampering_rejected(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    # Restore the prior source bytes; current P7 must never pass a historical identity fence.
+    import tarfile
+
+    with tarfile.open(Path(__file__).parent / "fixtures/p7-prior-source.tar.gz") as archive:
+        for member in archive.getmembers():
+            (copied / member.name).write_bytes(archive.extractfile(member).read())
+    for added in ("flashcards.py", "flashcard_graph.py", "scheduling.py"):
+        (copied / "study" / added).unlink()
     prior_store = Path(__file__).parent / "fixtures/acceptance_store_702b2f8.py.txt"
     (copied / "study/store.py").write_bytes(prior_store.read_bytes())
     (copied / "study/results.py").unlink()
@@ -1279,10 +1287,10 @@ def test_development_manifest_tampering_is_rejected(tmp_path, monkeypatch):
     from lecturelens_agent.study import acceptance_cost
 
     original = Path(acceptance_cost.__file__)
-    raw = original.with_name("development_agent_manifest.json").read_text()
+    raw = original.with_name("p7_agent_manifest.json").read_text()
     changed = json.loads(raw)
     changed["study/store.py"] = "0" * 64
-    (tmp_path / "development_agent_manifest.json").write_text(json.dumps(changed))
+    (tmp_path / "p7_agent_manifest.json").write_text(json.dumps(changed))
     monkeypatch.setattr(acceptance_cost, "__file__", str(tmp_path / original.name))
     with pytest.raises(CostDenied, match="MANIFEST_CHANGED"):
         verify_development_agent()

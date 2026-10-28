@@ -57,6 +57,7 @@ export interface StudyEvent { sequence: number; event_type: string; payload: { [
 export interface StudyCommand {
   learning_scope?: LearningScope;
   approval_required?: boolean; approval_decision?: "approve" | "edit" | "reject"; approval_edit?: string;
+  card_id?: string; rating?: "Again" | "Hard" | "Good" | "Easy";
   operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
   attempt_id?: string; feedback_id?: string; note_text?: string; disposition?: "disputed" | "acknowledged";
@@ -113,4 +114,16 @@ export async function studyEvents(taskId: string, sessionId: string, runId: stri
 export interface PracticeResult {
   question_index: number; attempt: StudyAttempt | null; feedback_run: StudyFeedbackRun | null;
   latest_feedback_status: RunStatus | null; latest_feedback_answer_version?: number | null;
+}
+
+export interface EvidenceCard {
+  card_id: string; deck_id: string; front: string; back: string; citations: Citation[];
+  revision: number; version: number; due_at: string;
+}
+export interface DueCards {
+  cards: EvidenceCard[]; due_count: number; total_count: number; reviewed_today: number;
+  next_due_at: string | null; generation: StudyRun | null; server_now: string; day_timezone: "UTC";
+}
+export async function dueCards(taskId: string): Promise<DueCards> {
+  return await studyCommand(taskId, { operation: "DUE_CARDS" }) as unknown as DueCards;
 }

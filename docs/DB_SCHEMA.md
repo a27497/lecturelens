@@ -7,7 +7,7 @@
 - 分片上传的高频 chunk 状态优先放 Redis Set，不默认逐片落库。
 - MinIO 保存原始视频、音频中间文件、字幕文件、学习包文件。
 - 所有 owner 资源必须有 `user_id`。
-- 所有数据库结构变更必须通过 Flyway 管理。
+- MySQL 结构变更通过 Flyway 管理；Python/PostgreSQL 沿用 Agent 启动时幂等 DDL 初始化，不由 Java 写入。
 
 ## Flyway 迁移规则
 
@@ -632,3 +632,19 @@ Indexes:
 - `idx_course_video_chunk_user_created (user_id, created_at)` supports owner diagnostics.
 
 Foreign keys cascade from `analysis_task` and `user_account`. Successful rebuild deletes and reinserts only rows for the same `task_id + user_id + target_language`; build failure preserves existing chunks.
+
+## P7 Agent PostgreSQL 学习产物（实验性）
+
+`study_deck` 以唯一 run_id 绑定 Session 的 owner/course/revision，保存标题与 FSRS policy。
+`study_card` 保存 front/back/citations、schedule JSON、due_at timestamptz、version，deck/ordinal 唯一。
+`study_review_log` 保存 request_key、expected_version、自评、reviewed_at、before_state/after_state/policy；
+card/request_key 与 card/expected_version 分别唯一。三表沿 Run 删除级联，revision 变化立即不可读且不迁移旧学习状态。
+`study_run.task_kind` 增加 flashcards，旧候选约束被有意扩展；独立队列状态与活动唯一索引阻止旧 worker 消费。
+迁移在 `study/flashcards.py:SCHEMA`，由 `StudyStore.initialize()` 的原 advisory lock 保护，无 MySQL/Flyway 变更。
+具体幂等、并发和删除语义见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+### P8 Tutor PostgreSQL additions (experimental)
+
+`lecturelens_real_eval.tutor.store.TutorStore.initialize()` applies additive idempotent DDL using the Agent migration advisory lock. `tutor_session` owns scoped conversation identity/revision, status, budgets and bounded summary; `tutor_turn` owns ordered idempotent submissions, outcomes, canonical citations, usage, cancellation/deadline and response/observation checkpoints. Turns cascade on session deletion. Indexes enforce one active turn and unique session/client ID and ordinal. See [P8 state and failure semantics](P8_TUTOR.md).
+
+The isolated evaluation ledger separately creates `p8_tutor_real_run` and `p8_tutor_real_event`; these are not course/business tables. There are no Tutor MySQL tables or Flyway migrations.

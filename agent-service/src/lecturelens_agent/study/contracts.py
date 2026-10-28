@@ -16,6 +16,10 @@ class StudyScope(Contract):
 
 class StudyCommand(StudyScope):
     operation: Literal[
+        "GENERATE_CARDS",
+        "DUE_CARDS",
+        "READ_CARD",
+        "REVIEW_CARD",
         "CREATE_SESSION",
         "LIST",
         "RUNS",
@@ -31,6 +35,8 @@ class StudyCommand(StudyScope):
         "FEEDBACK_NOTES",
         "DECIDE_APPROVAL",
     ]
+    card_id: Identifier | None = None
+    rating: Literal["Again", "Hard", "Good", "Easy"] | None = None
     session_id: Identifier | None = None
     run_id: Identifier | None = None
     request_key: Identifier | None = None
@@ -52,6 +58,14 @@ class StudyCommand(StudyScope):
 
     @model_validator(mode="after")
     def attempt_scope(self):
+        if self.operation == "GENERATE_CARDS" and (not self.session_id or not self.request_key):
+            raise ValueError("Card generation requires a Session and request key")
+        if self.operation in {"READ_CARD", "REVIEW_CARD"} and not self.card_id:
+            raise ValueError("Explicit card required")
+        if self.operation == "REVIEW_CARD" and (
+            not self.request_key or not self.rating or self.expected_version is None
+        ):
+            raise ValueError("Review requires rating, request key and expected version")
         if self.learning_scope is not None and (
             self.operation != "START" or self.learning_scope.revision != self.revision
         ):
