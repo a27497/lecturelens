@@ -21,7 +21,7 @@ const step=async(name,fn)=>{console.log(name);await fn();checks.push(name)};
 let status='FAIL',failure,correctId,originalSession;
 const review=page.getByRole('region',{name:'答错待回看',exact:true});
 const openReview=async()=>{await expect(review).toBeVisible({timeout:30000});if(await review.getByRole('button',{name:'答错待回看',exact:true}).count())await review.getByRole('button',{name:'答错待回看',exact:true}).click();await expect(review.locator('.judgment-counts')).toBeVisible();await Promise.all(pending)};
-const restoreOriginal=async()=>{await page.getByRole('button',{name:'学习记录',exact:true}).click();await page.locator('.learning-history select').selectOption(originalSession);await expect(choice.getByRole('radio')).toHaveCount(3,{timeout:30000});await page.getByRole('navigation',{name:'练习题目'}).getByRole('button',{name:/第 1 题/}).click()};
+const restoreOriginal=async()=>{await expect(review).toBeVisible({timeout:30000});const history=page.locator('.learning-history');await expect(history).toBeVisible();if(!await history.evaluate(element=>element.open))await history.locator(':scope > summary').click();await history.locator('select').selectOption(originalSession);await expect(choice.getByRole('radio')).toHaveCount(3,{timeout:30000});await page.getByRole('navigation',{name:'练习题目'}).getByRole('button',{name:/第 1 题/}).click()};
 try{
  await step('01 real login and explicit mock choice generation',async()=>{
   await page.goto(origin+'/login');await page.getByPlaceholder('you@example.com').fill(email);await page.getByPlaceholder('请输入密码').fill(password);await page.getByRole('button',{name:'登录',exact:true}).click();await expect(page).toHaveURL(origin+'/tasks');
