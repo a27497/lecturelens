@@ -648,3 +648,9 @@ card/request_key 与 card/expected_version 分别唯一。三表沿 Run 删除�
 `lecturelens_real_eval.tutor.store.TutorStore.initialize()` applies additive idempotent DDL using the Agent migration advisory lock. `tutor_session` owns scoped conversation identity/revision, status, budgets and bounded summary; `tutor_turn` owns ordered idempotent submissions, outcomes, canonical citations, usage, cancellation/deadline and response/observation checkpoints. Turns cascade on session deletion. Indexes enforce one active turn and unique session/client ID and ordinal. See [P8 state and failure semantics](P8_TUTOR.md).
 
 The isolated evaluation ledger separately creates `p8_tutor_real_run` and `p8_tutor_real_event`; these are not course/business tables. There are no Tutor MySQL tables or Flyway migrations.
+
+### P9 choice practice PostgreSQL additions (experimental)
+
+`study_run.practice_format` defaults to `open`; `choice` snapshots the explicit Mock generation format and is immutable. Choice runs use `queued_choice_v1` / `running_choice_v1`; the additive active-Run index covers all practice, feedback and card states.
+
+`study_attempt.selected_option_id` and `choice_result` are nullable for legacy/open answers and paired for choice submissions. The JSON result stores deterministic equality judgment, the correct option ID and version-bound Evidence citations. Selection, judgment and event commit in one transaction; the existing unique request/version keys and deletion cascade still apply. DDL is in `study/attempts.py`, `study/store.py` and `study/choice.py`, applied under the existing migration advisory lock. No MySQL/Flyway change. See [P9](P9_EVIDENCE_CHOICE.md).

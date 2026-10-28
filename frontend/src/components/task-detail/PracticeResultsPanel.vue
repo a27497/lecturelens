@@ -33,6 +33,7 @@ async function load() {
 }
 function feedbackLabel(row: PracticeResult) {
   if (!row.attempt) return "先保存作答";
+  if (row.attempt.choice_result) return `程序判分：${row.attempt.choice_result.is_correct ? "正确" : "错误"}`;
   if (!row.feedback_run?.feedback) return "待反馈";
   return row.feedback_run.attempt_id === row.attempt.attempt_id ? `第 ${row.attempt.version} 版反馈` : `已有旧版反馈（第 ${row.feedback_run.answer_version} 版）`;
 }
@@ -40,7 +41,7 @@ const statusText = { queued: "反馈等待开始", running: "反馈进行中", a
 </script>
 <template>
   <section class="practice-results" aria-label="本次练习结果" aria-live="polite">
-    <header><div><h3>本次练习结果</h3><p>来自已保存记录。保存和反馈状态不是成绩；本页草稿不计入结果。</p></div><el-button :loading="loading" @click="load">刷新结果</el-button></header>
+    <header><div><h3>本次练习结果</h3><p>来自已保存记录。开放题保存和反馈状态不是成绩；选择题仅对照本题答案键。本页草稿不计入结果。</p></div><el-button :loading="loading" @click="load">刷新结果</el-button></header>
     <p v-if="loading" role="status">正在读取练习结果…</p>
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-else-if="!loading && !rows.length">本次尚无可显示的练习结果。</p>

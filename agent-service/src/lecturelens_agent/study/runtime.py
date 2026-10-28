@@ -203,6 +203,11 @@ class StudyRuntime:
 
             return feedback_graph(self, run, token, saver, provider, State)
 
+        if run.get("practice_format") == "choice":
+            from .choice_graph import graph
+
+            return graph(self, run, token, saver, provider, State)
+
         def guard():
             if self.stop.is_set():
                 # Graceful shutdown leaves the run running and its checkpoint available for restart.

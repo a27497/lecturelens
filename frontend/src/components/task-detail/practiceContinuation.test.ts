@@ -97,3 +97,13 @@ it.each(['pending', 'disputed', 'running', 'older-feedback', 'no-feedback'] as c
   expect(plan.revisionHintCount).toBe(2);
   expect(plan.revisionHintIndex).toBe(1);
 });
+
+it('continues the unanswered open question instead of asking for model feedback on a graded choice', () => {
+  const graded = { ...attempt, question_index: 0, selected_option_id: 'A', choice_result: { is_correct: false, correct_option_id: 'B', citations: [] } };
+  const next = practiceContinuation([
+    { question_index: 0, attempt: graded, feedback_run: null, latest_feedback_status: null },
+    { question_index: 1, attempt: null, feedback_run: null, latest_feedback_status: null },
+  ]);
+  expect(next?.index).toBe(1); expect(next?.label).toBe('继续第 2 题作答');
+  expect(practiceContinuation([{ question_index: 0, attempt: graded, feedback_run: null, latest_feedback_status: null }])).toBeNull();
+});

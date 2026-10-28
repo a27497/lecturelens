@@ -26,15 +26,17 @@ class LearningScope(Contract):
         return self
 
 
-ACTIVE_SQL = "'queued','running','awaiting_approval','queued_scoped_v1','running_scoped_v1','awaiting_approval_scoped_v1','queued_cards_v1','running_cards_v1'"
+ACTIVE_SQL = "'queued','running','awaiting_approval','queued_scoped_v1','running_scoped_v1','awaiting_approval_scoped_v1','queued_cards_v1','running_cards_v1','queued_choice_v1','running_choice_v1'"
 
 
 def public_status(status):
-    return status.removesuffix("_scoped_v1").removesuffix("_cards_v1")
+    return status.removesuffix("_scoped_v1").removesuffix("_cards_v1").removesuffix("_choice_v1")
 
 
 def stored_status(run, status):
-    # Old workers only poll queued/running; they cannot claim a scope they cannot enforce.
+    # Old workers only poll queued/running; they cannot claim a protocol they cannot enforce.
+    if run.get("practice_format") == "choice" and run.get("task_kind", "practice") == "practice":
+        return f"{status}_choice_v1"
     if run.get("task_kind") == "flashcards":
         return f"{status}_cards_v1"
     return f"{status}_scoped_v1" if run.get("learning_scope") is not None else status

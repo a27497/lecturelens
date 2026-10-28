@@ -52,7 +52,7 @@ export function practiceContinuation(rows: PracticeResult[], feedbackRuns: Study
       return { index: row.question_index, label: `继续第 ${n} 题订正`, feedback: row.feedback_run,
         reason: `已保存第 ${row.attempt.version} 版作答；已有反馈仅对应第 ${row.feedback_run.answer_version} 版。请对照来源自查，新版尚无对应反馈。` };
     }
-    if (!row.feedback_run?.feedback) return { index: row.question_index, label: `继续第 ${n} 题自查`, reason: '作答已保存，尚无可用反馈。可以先核对课程来源；获取反馈需另行点击。' };
+    if (!row.feedback_run?.feedback && !row.attempt.choice_result) return { index: row.question_index, label: `继续第 ${n} 题自查`, reason: '作答已保存，尚无可用反馈。可以先核对课程来源；获取反馈需另行点击。' };
   }
   const unanswered = ordered.find(row => !row.attempt);
   if (unanswered) return { index: unanswered.question_index, label: `继续第 ${unanswered.question_index + 1} 题作答`, reason: '本题尚无已保存作答。本页未保存文字会保留，刷新或离开页面会丢失。' };
