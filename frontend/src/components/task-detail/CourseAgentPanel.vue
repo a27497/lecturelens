@@ -8,7 +8,7 @@ import type { LearningTaskPosition } from "./learningTaskPosition";
 import StudyApprovalPanel from "./StudyApprovalPanel.vue";
 import RunTracePanel from "./RunTracePanel.vue";
 import { recruiterDemo, recruiterDemoEnabled, demoGoals } from "../../recruiterDemo";
-import { practiceContinuation } from "./practiceContinuation";
+import { practiceContinuationPlan } from "./practiceContinuation";
 import PracticeResultsPanel from "./PracticeResultsPanel.vue";
 import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
@@ -49,7 +49,8 @@ const progressRows = ref<PracticeResult[] | null>(null);
 const progressLoading = ref(false);
 const progressError = ref("");
 let progressSequence = 0;
-const continuation = computed(() => progressRows.value ? practiceContinuation(progressRows.value, feedbackRuns.value) : null);
+const continuationPlan = computed(() => practiceContinuationPlan(progressRows.value ?? [], feedbackRuns.value));
+const continuation = computed(() => continuationPlan.value.continuation);
 function acceptProgress(response: StudyResponse) {
   const rows = response.practice_results;
   const count = artifact.value?.questions.length ?? 0;
@@ -57,6 +58,8 @@ function acceptProgress(response: StudyResponse) {
     && rows.every(row => Number.isInteger(row.question_index) && row.question_index >= 0 && row.question_index < count);
   if (!artifact.value || response.run?.run_id !== run.value?.run_id || response.artifact?.artifact_id !== artifact.value.artifact_id || !validRows) {
     progressRows.value = null;
+    // Feedback and progress belong to one validated READ snapshot.
+    feedbackRuns.value = [];
     progressError.value = "学习进度暂时无法读取，请刷新重试；已保存记录不受影响。";
     return false;
   }
@@ -255,7 +258,6 @@ async function refresh(current: number, task: string, expectedKey?: string, sele
   // A completion snapshot can predate a save followed by a newer progress read,
   // including its feedback status and persisted check note.
   if (progressAtRead === progressSequence) {
-    feedbackRuns.value = response.feedback_runs ?? [];
     if (artifact.value?.questions.length) acceptProgress(response);
   }
   if (!goal.value && run.value) goal.value = run.value.goal;
@@ -380,7 +382,7 @@ async function reveal() {
         <template v-if="artifact.questions.length">
           <section v-if="run" class="practice-continuation" aria-label="继续本次练习" :aria-busy="progressLoading">
             <div><strong>继续本次练习</strong><p v-if="progressLoading" role="status">正在核对已保存进度…</p><template v-else-if="progressRows"><p v-if="continuation">{{ continuation.reason }}</p><p v-else>本次作答均已保存并有核对记录，可回看练习结果。</p></template><p class="continuation-boundary">依据已保存记录提示，不代表答案正确。未保存文字仍保留在本页。</p><p v-if="progressError" role="status">{{ progressError }}</p></div>
-            <div class="continuation-actions"><el-button v-if="continuation" class="continue-practice" type="primary" :disabled="progressLoading" @click="continuePractice">{{ continuation.label }}</el-button><el-button v-else-if="progressRows && !progressLoading" @click="toggleResults">回看练习结果</el-button><button class="refresh-practice-progress" type="button" :disabled="progressLoading" @click="refreshProgress">刷新学习进度</button></div>
+            <div class="continuation-actions"><el-button v-if="continuation" class="continue-practice" type="primary" :disabled="progressLoading" @click="continuePractice">{{ continuation.label }}</el-button><el-button v-else-if="progressRows && !progressLoading" @click="toggleResults">回看练习结果</el-button><button v-if="continuationPlan.revisionHintIndex !== null" class="practice-revision-hint" type="button" :disabled="progressLoading" @click="chooseQuestion(continuationPlan.revisionHintIndex)">另有 {{ continuationPlan.revisionHintCount }} 道题有订正建议</button><button class="refresh-practice-progress" type="button" :disabled="progressLoading" @click="refreshProgress">刷新学习进度</button></div>
           </section>
           <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
@@ -467,7 +469,7 @@ header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p,
 .agent-panel--compact .run-progress--ready strong { font-weight: 500; font-size: 12px; }
 .agent-panel--compact .study-artifact { margin-top: 10px; padding-top: 12px; gap: 10px; }
 .practice-continuation { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--color-border); border-left: 3px solid var(--color-brand); border-radius: var(--radius-sm); background: var(--color-canvas); }
-.practice-continuation strong { font-size: 14px; }.practice-continuation p { font-size: 13px; line-height: 1.65; margin-top: 5px; }.practice-continuation .continuation-boundary { color: var(--color-ink-soft); font-size: 12px; }.continuation-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }.refresh-practice-progress { border: 0; background: transparent; color: var(--color-brand); font: inherit; font-size: 12px; padding: 6px 0; cursor: pointer; }.refresh-practice-progress:disabled { cursor: wait; opacity: .65; }
+.practice-continuation strong { font-size: 14px; }.practice-continuation p { font-size: 13px; line-height: 1.65; margin-top: 5px; }.practice-continuation .continuation-boundary { color: var(--color-ink-soft); font-size: 12px; }.continuation-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }.refresh-practice-progress, .practice-revision-hint { border: 0; background: transparent; color: var(--color-brand); font: inherit; font-size: 12px; padding: 6px 0; cursor: pointer; }.refresh-practice-progress:disabled, .practice-revision-hint:disabled { cursor: wait; opacity: .65; }
 .practice-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .practice-toolbar .practice-guidance { order: 2; font-size: 12px; }
 .agent-panel--compact .question-nav button { font-size: 13px; padding: 7px 12px; }

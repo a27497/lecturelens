@@ -7,6 +7,25 @@ export interface PracticeContinuation {
   feedback?: StudyFeedbackRun;
 }
 
+function hasCheckedRevision(row: PracticeResult): boolean {
+  const feedback = row.feedback_run?.feedback;
+  return Boolean(row.attempt && row.feedback_run?.attempt_id === row.attempt.attempt_id
+    && feedback?.note?.disposition === 'acknowledged'
+    && !['queued', 'running', 'awaiting_approval'].includes(row.latest_feedback_status ?? '')
+    && feedback.content.observations?.some(item => item.action === 'revise' || item.action === 'clarify'));
+}
+
+export function practiceContinuationPlan(rows: PracticeResult[], feedbackRuns: StudyFeedbackRun[] = []) {
+  const continuation = practiceContinuation(rows, feedbackRuns);
+  const revisions = rows.filter(hasCheckedRevision).sort((a, b) => a.question_index - b.question_index);
+  const showHint = continuation !== null && !revisions.some(row => row.question_index === continuation.index);
+  return {
+    continuation,
+    revisionHintCount: showHint ? revisions.length : 0,
+    revisionHintIndex: showHint ? revisions[0]?.question_index ?? null : null,
+  };
+}
+
 // These are saved-work suggestions, never correctness or mastery decisions.
 export function practiceContinuation(rows: PracticeResult[], feedbackRuns: StudyFeedbackRun[] = []): PracticeContinuation | null {
   const ordered = [...rows].sort((a, b) => a.question_index - b.question_index);
@@ -35,8 +54,9 @@ export function practiceContinuation(rows: PracticeResult[], feedbackRuns: Study
     }
     if (!row.feedback_run?.feedback) return { index: row.question_index, label: `继续第 ${n} 题自查`, reason: '作答已保存，尚无可用反馈。可以先核对课程来源；获取反馈需另行点击。' };
   }
-  const revision = ordered.find(row => row.feedback_run?.feedback?.content.observations?.some(item => item.action === 'revise' || item.action === 'clarify'));
-  if (revision) return { index: revision.question_index, label: `回看第 ${revision.question_index + 1} 题订正建议`, feedback: revision.feedback_run!, reason: '你已记录核对意见，反馈仍有订正或澄清建议。可对照来源决定是否保存新版作答；核对记录不表示已订正。' };
   const unanswered = ordered.find(row => !row.attempt);
-  return unanswered ? { index: unanswered.question_index, label: `继续第 ${unanswered.question_index + 1} 题作答`, reason: '本题尚无已保存作答。本页未保存文字会保留，刷新或离开页面会丢失。' } : null;
+  if (unanswered) return { index: unanswered.question_index, label: `继续第 ${unanswered.question_index + 1} 题作答`, reason: '本题尚无已保存作答。本页未保存文字会保留，刷新或离开页面会丢失。' };
+  const revision = ordered.find(hasCheckedRevision);
+  if (revision) return { index: revision.question_index, label: `回看第 ${revision.question_index + 1} 题订正建议`, feedback: revision.feedback_run!, reason: '你已记录核对意见，反馈仍有订正或澄清建议。可对照来源决定是否保存新版作答；核对记录不表示已订正。' };
+  return null;
 }

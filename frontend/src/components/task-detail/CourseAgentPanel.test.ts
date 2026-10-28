@@ -1,6 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, expect, it, vi } from "vitest";
 import CourseAgentPanel from "./CourseAgentPanel.vue";
+import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
 import { studyCommand, studyEvents, studyStatus } from "../../api/study";
 import type { StudyArtifact, StudyRun, StudyEvent } from "../../api/study";
@@ -290,12 +291,12 @@ it("prioritizes the restored question over the folded new goal, and guards draft
 });
 
 it("clears discarded feedback-note draft markers when history reload unmounts the feedback panel", async () => {
-  const savedFeedback = { feedback_id: "feedback", attempt_id: "answer", answer_version: 1, question_index: 0, answer_text: "saved", note: null,
-    content: { kind: "guidance", mode: "mock", citations: [] } };
+  const state = continuationState();
+  state.feedback_runs[0]!.feedback.note = null;
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
     if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
     if (command.operation === "RUNS") return { runs: [{ ...run, created_at: "2026-10-26" }] };
-    return { run, artifact, feedback_enabled: true, feedback_runs: [{ run_id: "feedback-run", status: "succeeded", attempt_id: "answer", answer_version: 1, question_index: 0, feedback: savedFeedback }] } as never;
+    return state;
   });
   Object.defineProperty(window, "confirm", { configurable: true, value: vi.fn(() => true) });
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
@@ -321,6 +322,83 @@ function continuationState() {
   const practice_results = attempts.map((attempt, question_index) => ({ question_index, attempt, feedback_run: feedback_runs[question_index]!, latest_feedback_status: 'succeeded' as const, latest_feedback_answer_version: 1 }));
   return { run, artifact, attempts, feedback_runs, practice_results, feedback_enabled: true };
 }
+
+it('shows the secondary revision hint beside unanswered work and jumps to that question without losing drafts', async () => {
+  const base = continuationState();
+  const state = { ...base, attempts: [base.attempts[1]!],
+    feedback_runs: [{ ...base.feedback_runs[1]!, feedback: { ...base.feedback_runs[1]!.feedback, note: base.feedback_runs[0]!.feedback.note } }],
+    practice_results: [{ question_index: 0, attempt: null, feedback_run: null, latest_feedback_status: null },
+      { ...base.practice_results[1]!, feedback_run: { ...base.feedback_runs[1]!, feedback: { ...base.feedback_runs[1]!.feedback, note: base.feedback_runs[0]!.feedback.note } } }] };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.get('.continue-practice').text()).toBe('继续第 1 题作答');
+    expect(wrapper.get('.practice-revision-hint').text()).toBe('另有 1 道题有订正建议');
+    await wrapper.get('.practice-question.is-current .practice-answer textarea').setValue('local unfinished answer');
+    await wrapper.get('.practice-revision-hint').trigger('click'); await flushPromises();
+    expect(wrapper.get('.practice-question.is-current .question-text').text()).toContain(artifact.questions[1]!.question);
+    await wrapper.findAll('.question-nav button')[0]!.trigger('click');
+    expect(wrapper.get<HTMLTextAreaElement>('.practice-question.is-current .practice-answer textarea').element.value).toBe('local unfinished answer');
+    expect(vi.mocked(studyCommand).mock.calls.every(([, command]) => ['LIST', 'READ', 'RUNS'].includes(command.operation))).toBe(true);
+  } finally { wrapper.unmount(); }
+});
+
+it.each([true, false])('hides the secondary hint when checked work has revision suggestions: %s', async hasSuggestions => {
+  const state = continuationState();
+  state.feedback_runs[1]!.feedback.note = state.feedback_runs[0]!.feedback.note;
+  if (!hasSuggestions) state.feedback_runs.forEach(row => { row.feedback.content.observations = []; });
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    return state;
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.find('.practice-revision-hint').exists()).toBe(false);
+    expect(wrapper.find('.continue-practice').exists()).toBe(hasSuggestions);
+    if (hasSuggestions) expect(wrapper.get('.continue-practice').text()).toBe('回看第 1 题订正建议');
+  } finally { wrapper.unmount(); }
+});
+
+it.each(['missing-row', 'duplicate-index'] as const)('clears feedback and progress together after a malformed completion READ: %s', async malformed => {
+  const initial = continuationState();
+  let state = { ...initial, run: { ...run, status: 'running' as StudyRun['status'] } };
+  let event!: (value: StudyEvent) => void;
+  vi.mocked(studyEvents).mockImplementation((_task, _session, _run, _after, _signal, callback) => {
+    event = callback;
+    return new Promise(() => {});
+  });
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'session', revision: 1 }] };
+    return structuredClone(state);
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    expect(wrapper.get('.continue-practice').text()).toBe('继续核对第 2 题');
+    expect(wrapper.findAllComponents(PracticeFeedbackPanel).map(panel => panel.props('initial')?.run_id)).toEqual(['f0', 'f1']);
+    state = { ...initial,
+      feedback_runs: initial.feedback_runs.map(row => ({ ...row, run_id: `unvalidated-${row.run_id}` })),
+      practice_results: malformed === 'missing-row' ? initial.practice_results.slice(0, 1) : [initial.practice_results[0]!, initial.practice_results[0]!] };
+    event({ sequence: 1, event_type: 'run_finished', payload: {} }); await flushPromises();
+    expect(wrapper.find('.continue-practice').exists()).toBe(false);
+    expect(wrapper.find('.practice-revision-hint').exists()).toBe(false);
+    expect(wrapper.get('.practice-continuation').text()).toContain('学习进度暂时无法读取');
+    for (const panel of wrapper.findAllComponents(PracticeFeedbackPanel)) {
+      expect(panel.props('initial')).toBeUndefined();
+      expect(panel.props('history')).toEqual([]);
+    }
+    expect(wrapper.findAllComponents(PracticeFeedbackPanel)).toHaveLength(2);
+    state = initial;
+    await wrapper.get('.refresh-practice-progress').trigger('click'); await flushPromises();
+    expect(wrapper.get('.continue-practice').text()).toBe('继续核对第 2 题');
+    expect(wrapper.findAllComponents(PracticeFeedbackPanel).map(panel => panel.props('initial')?.run_id)).toEqual(['f0', 'f1']);
+  } finally { wrapper.unmount(); }
+});
 
 it('continues the pending second feedback through real child panels, preserving question and note drafts without model commands', async () => {
   const state = continuationState();

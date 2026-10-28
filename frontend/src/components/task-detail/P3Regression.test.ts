@@ -17,7 +17,8 @@ const stubs = {
 };
 const attempt: StudyAttempt = { attempt_id: "a1", artifact_id: "artifact", question_index: 0, version: 1, answer_text: "saved v1", created_at: "2026-10-26" };
 const old: StudyFeedbackRun = { run_id: "f1", status: "succeeded", error_code: null, attempt_id: "a1", answer_version: 1, question_index: 0, feedback: { feedback_id: "feedback", attempt_id: "a1", answer_version: 1, question_index: 0, answer_text: "saved v1", note: null, content: { kind: "guidance", mode: "mock", observations: [], human_guidance: "old completed guidance", citations: [] } } };
-const base: StudyResponse = { run: { run_id: "practice", session_id: "session", status: "succeeded", goal: "goal", model_mode: "mock", model_calls: 1, tool_calls: 1, error_code: null }, artifact: { artifact_id: "artifact", title: "title", explanation: "explanation", questions: [{ question: "question", evidence_ids: [] }], evidence_ids: [], citations: [], revision: 1, mode: "mock" }, attempts: [attempt], feedback_enabled: true, feedback_runs: [old] };
+const base: StudyResponse = { run: { run_id: "practice", session_id: "session", status: "succeeded", goal: "goal", model_mode: "mock", model_calls: 1, tool_calls: 1, error_code: null }, artifact: { artifact_id: "artifact", title: "title", explanation: "explanation", questions: [{ question: "question", evidence_ids: [] }], evidence_ids: [], citations: [], revision: 1, mode: "mock" }, attempts: [attempt], feedback_enabled: true, feedback_runs: [old],
+  practice_results: [{ question_index: 0, attempt, feedback_run: old, latest_feedback_status: "succeeded", latest_feedback_answer_version: 1 }] };
 let server: StudyResponse;
 let detail: StudyFeedbackRun;
 const wrappers: ReturnType<typeof mount>[] = [];
