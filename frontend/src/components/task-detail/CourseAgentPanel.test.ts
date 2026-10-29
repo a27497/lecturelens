@@ -580,3 +580,21 @@ it('starts choice practice only after explicit format selection and keeps open p
     expect(studyCommand).toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START', practice_format: 'choice', approval_required: false }));
   } finally { wrapper.unmount(); }
 });
+
+it('opens a review question from a Session outside the recent LIST with current Evidence revision', async () => {
+  const item = { session_id: 'older-session', run_id: 'older-run', artifact_id: 'older-artifact', question_index: 0 };
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === 'LIST') return { sessions: [{ session_id: 'recent', revision: 1 }] };
+    if (command.operation === 'READ' && command.session_id === item.session_id) return { run: { ...run, run_id: item.run_id, session_id: item.session_id }, artifact: { ...artifact, artifact_id: item.artifact_id, questions: [{ kind: 'choice' as const, question: 'Older saved question', options: [{ id: 'A', text: 'First' }, { id: 'B', text: 'Second' }], evidence_ids: ['e1'] }] } };
+    return { run: null, runs: [] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: 'task' }, global: { stubs } });
+  try {
+    await flushPromises();
+    wrapper.findComponent({ name: 'ChoiceReviewPanel' }).vm.$emit('open', item);
+    await flushPromises();
+    expect(studyCommand).toHaveBeenCalledWith('task', { operation: 'READ', session_id: item.session_id, run_id: item.run_id });
+    expect(wrapper.find('.practice-question.is-current').text()).toContain('Older saved question');
+    expect(wrapper.findComponent({ name: 'PracticeChoiceForm' }).props('sourceRevision')).toBe(1);
+  } finally { wrapper.unmount(); }
+});

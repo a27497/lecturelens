@@ -129,3 +129,15 @@ export interface DueCards {
 export async function dueCards(taskId: string): Promise<DueCards> {
   return await studyCommand(taskId, { operation: "DUE_CARDS" }) as unknown as DueCards;
 }
+
+export interface ChoiceReviewItem {
+  session_id: string; run_id: string; artifact_id: string; question_index: number;
+  question: PracticeQuestion; attempt: StudyAttempt;
+}
+export interface ChoiceReview {
+  revision: number; correct_count: number; wrong_count: number;
+  items: ChoiceReviewItem[]; next_after: number | null;
+}
+export async function choiceReview(taskId: string, after = 0): Promise<ChoiceReview> {
+  return await studyCommand(taskId, { operation: "CHOICE_REVIEW", after }) as unknown as ChoiceReview;
+}

@@ -157,6 +157,10 @@ class StudyStore:
                 from .flashcards import card_command
 
                 return card_command(self, conn, command)
+            if command.operation == "CHOICE_REVIEW":
+                from .choice_review import choice_review
+
+                return choice_review(conn, command)
             self._session(conn, command)
             if command.operation == "RUNS":
                 rows = conn.execute(

@@ -25,10 +25,12 @@ FROZEN_AGENT = "e34d8c596d74d4320ce6a224359190374520e4d3"
 FROZEN_MANIFEST_SHA256 = "d94e896c768c0bf74c66b11f2105a1e541fe01f1c94ea1f14710d5c1a2777f00"
 PRIOR_DEVELOPMENT_AGENT = "p3-read-review-480fc58639fd4a59"
 P7_AGENT = "p7-flashcards-56df1f68a682ab00"
-DEVELOPMENT_AGENT = "p9-choice-2b5fa77bab87da38"
+P9_AGENT = "p9-choice-2b5fa77bab87da38"
+DEVELOPMENT_AGENT = "p10-choice-review-442bb2af75c77ed1"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
-DEVELOPMENT_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
+P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
+DEVELOPMENT_MANIFEST_SHA256 = "442bb2af75c77ed1f1a0d4b858dce9b43751b5eb4e9d9e7ff5835a5609c870ab"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -115,9 +117,14 @@ def verify_p7_agent(package=None):
     return _verify_agent(package, "p7_agent_manifest.json", P7_MANIFEST_SHA256)
 
 
+def verify_p9_agent(package=None):
+    """Historical P9 identity only; later review runtimes must fail."""
+    return _verify_agent(package, "p9_agent_manifest.json", P9_MANIFEST_SHA256)
+
+
 def verify_development_agent(package=None):
-    """P9 offline mechanics candidate; no inherited frozen quality or live permission."""
-    return _verify_agent(package, "p9_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """P10 offline mechanics candidate; no inherited frozen quality or live permission."""
+    return _verify_agent(package, "p10_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)

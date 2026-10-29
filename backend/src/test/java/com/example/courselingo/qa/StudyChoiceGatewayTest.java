@@ -49,4 +49,37 @@ class StudyChoiceGatewayTest {
         }
         verifyNoInteractions(transport,authority);
     }
+
+    @Test void reviewIsReadOnlyAndUsesCurrentAuthenticatedCourseScope() throws Exception {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"preview@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);
+        when(authority.current("course",42L,false)).thenReturn(7L);
+        var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        var projection=json.readTree("{\"revision\":7,\"correct_count\":1,\"wrong_count\":0,\"items\":[]}");
+        when(transport.command(anyMap())).thenReturn(projection);
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var result=controller.command("course","Bearer preview",new StudyController.Command("CHOICE_REVIEW",null,null,null,null,20));
+        assertThat(result.data()).isEqualTo(projection);
+        var captured=org.mockito.ArgumentCaptor.forClass(Map.class);verify(transport).command(captured.capture());
+        assertThat(captured.getValue()).containsEntry("owner_id",42L).containsEntry("course_id","course").containsEntry("revision",7L).containsEntry("after",20L).doesNotContainKey("session_id");
+        verify(authority,times(2)).current("course",42L,false);
+        verify(authority,never()).current(anyString(),anyLong(),eq(true));
+        clearInvocations(transport);
+        when(authority.current("course",42L,false)).thenReturn(7L,8L);
+        assertThatThrownBy(()->controller.command("course","Bearer preview",new StudyController.Command("CHOICE_REVIEW",null,null,null,null,0)))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+    }
+
+    @Test void reviewRejectsOversizedPageOffset() {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"preview@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);var transport=mock(StudyTransport.class);
+        var controller=new StudyController(users,properties,authority,transport,new ObjectMapper());
+        assertThatThrownBy(()->controller.command("course","Bearer preview",new StudyController.Command("CHOICE_REVIEW",null,null,null,null,(long)Integer.MAX_VALUE+1)))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        verifyNoInteractions(authority,transport);
+    }
 }

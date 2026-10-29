@@ -29,6 +29,7 @@ from lecturelens_agent.study.acceptance_cost import (
     MAX_BODY,
     MODEL,
     P7_AGENT,
+    P9_AGENT,
     UPSTREAM,
     CostDenied,
     CostLedger,
@@ -36,6 +37,7 @@ from lecturelens_agent.study.acceptance_cost import (
     verify_development_agent,
     verify_frozen_agent,
     verify_p7_agent,
+    verify_p9_agent,
     worker_snapshot,
 )
 from lecturelens_agent.study.acceptance_egress import (
@@ -201,7 +203,7 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
-    assert verify_development_agent(copied) == 62
+    assert verify_development_agent(copied) == 63
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_frozen_agent(copied)
     altered = copied / "study/provider.py"
@@ -231,7 +233,7 @@ def test_cli_plan_is_read_only_and_fake_policy_cannot_activate(gate, tmp_path):
     result = subprocess.run([*command, "plan"], capture_output=True, text=True, check=True, timeout=10)
     plan = json.loads(result.stdout)
     assert plan["provider_requests"] == 0 and plan["money_limit_implies_max_admitted_calls"] == 9
-    assert plan["verified_development_modules"] == 62
+    assert plan["verified_development_modules"] == 63
     assert plan["historical_agent_candidate"] == FROZEN_AGENT
     assert plan["agent_candidate"] == DEVELOPMENT_AGENT
     policy_file = tmp_path / "fake-policy.json"
@@ -1250,7 +1252,7 @@ def test_review_read_extension_preserves_prior_frozen_manifest_identity():
 
 
 @pytest.fixture
-def historical_p7_package(tmp_path):
+def historical_p9_package(tmp_path):
     import tarfile
 
     import lecturelens_agent
@@ -1258,6 +1260,19 @@ def historical_p7_package(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    # Preserve the P9 candidate independently of the new read-only projection.
+    with tarfile.open(Path(__file__).parent / "fixtures/p10-prior-source.tar.gz") as archive:
+        for member in archive.getmembers():
+            (copied / member.name).write_bytes(archive.extractfile(member).read())
+    (copied / "study/choice_review.py").unlink()
+    return copied
+
+
+@pytest.fixture
+def historical_p7_package(historical_p9_package):
+    import tarfile
+
+    copied = historical_p9_package
     # Reconstruct exact P7 bytes without Git access or weakening the historical manifest.
     with tarfile.open(Path(__file__).parent / "fixtures/p9-prior-source.tar.gz") as archive:
         for member in archive.getmembers():
@@ -1265,6 +1280,17 @@ def historical_p7_package(tmp_path):
     for added in ("choice.py", "choice_graph.py"):
         (copied / "study" / added).unlink()
     return copied
+
+
+def test_p9_identity_positive_and_tampering_rejected(historical_p9_package):
+    copied = historical_p9_package
+    assert verify_p9_agent(copied) == 62
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_development_agent(copied)
+    with (copied / "study/store.py").open("a") as out:
+        out.write("\n# tampered\n")
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_p9_agent(copied)
 
 
 def test_p7_identity_positive_and_tampering_rejected(historical_p7_package):
@@ -1305,7 +1331,7 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
     now = datetime.now(timezone.utc)
     policy = CostPolicy("synthetic", now.isoformat(), (now + timedelta(hours=1)).isoformat())
     policy.validate()
-    for historical in (FROZEN_AGENT, P7_AGENT):
+    for historical in (FROZEN_AGENT, P7_AGENT, P9_AGENT):
         with pytest.raises(CostDenied, match="POLICY_INVALID"):
             replace(policy, candidate_sha=historical).validate()
     with pytest.raises(CostDenied, match="POLICY_INVALID"):
@@ -1314,7 +1340,11 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
 
 @pytest.mark.parametrize(
     ("manifest", "verifier"),
-    [("p9_agent_manifest.json", verify_development_agent), ("p7_agent_manifest.json", verify_p7_agent)],
+    [
+        ("p10_agent_manifest.json", verify_development_agent),
+        ("p9_agent_manifest.json", verify_p9_agent),
+        ("p7_agent_manifest.json", verify_p7_agent),
+    ],
 )
 def test_development_manifest_tampering_is_rejected(tmp_path, monkeypatch, manifest, verifier):
     from lecturelens_agent.study import acceptance_cost
