@@ -146,7 +146,7 @@ class HttpPaths(unittest.IsolatedAsyncioTestCase):
                             "client_turn_id": "turn1",
                             "status": "queued" if reads == 1 else "completed",
                             "model_calls": 2,
-                            "answer": "cited text",
+                            "answer": "cited text [ev-1]",
                             "citations": [{"evidence_id": "ev-1"}],
                             "outcome": "answered",
                         }
@@ -234,50 +234,71 @@ class Provenance(unittest.TestCase):
             "concurrency": 1,
             "warmup": False,
             "request_id": "r1",
+            "source_sha": "a" * 40,
+            "label": "DEV_SMOKE_NOT_RESUME",
             "ok": True,
             "latency_ms": 10,
             "http_status": 200,
         }
         metrics = summary([row], 1)
         item = dict(
-            scenario="S1", concurrency=1, warmup=False, undrained_tutor=False, **metrics
+            scenario="S1",
+            concurrency=1,
+            warmup=False,
+            undrained_tutor=False,
+            stop={"requests": 1, "admission_seconds": None, "timeout_seconds": 60},
+            **metrics,
         )
-        source = {"sha": "synthetic-sha", "source_dirty": False}
+        source = {"sha": "a" * 40, "source_dirty": False}
+        config = {
+            "scenarios": ["S1"],
+            "concurrency": [1],
+            "requests_per_group": 1,
+            "admission_seconds": None,
+            "operation_timeout_seconds": 60,
+        }
         result = {
-            "head": "synthetic-sha",
+            "head": "a" * 40,
             "source": source,
             "end_source": source,
             "success": True,
             "valid_clean_source_evidence": True,
             "stages": {"cleanup": {"status": "PASS"}},
-            "config": {},
-            "config_sha256": hashlib.sha256(b"{}").hexdigest(),
-            "warmups": [],
+            "config": config,
+            "config_sha256": hashlib.sha256(
+                json.dumps(config, sort_keys=True).encode()
+            ).hexdigest(),
+            "warmups": [dict(item, warmup=True)],
             "groups": [item],
             "label": "DEV_SMOKE_NOT_RESUME",
         }
         with tempfile.TemporaryDirectory() as temp:
             directory = Path(temp)
-            (directory / "requests.jsonl").write_text(json.dumps(row) + "\n")
+            (directory / "requests.jsonl").write_text(
+                json.dumps(row)
+                + "\n"
+                + json.dumps(dict(row, warmup=True, request_id="warmup"))
+                + "\n"
+            )
 
             def write():
                 (directory / "result.json").write_text(json.dumps(result))
 
             write()
-            self.assertEqual(verify(directory, "synthetic-sha")["status"], "PASS")
+            self.assertEqual(verify(directory, "a" * 40)["status"], "PASS")
             with self.assertRaisesRegex(AssertionError, "SHA"):
                 verify(directory, "wrong-sha")
             with self.assertRaisesRegex(AssertionError, "No genuine"):
-                verify(directory, "synthetic-sha", require_busy=True)
+                verify(directory, "a" * 40, require_busy=True)
             result["source"]["source_dirty"] = True
             write()
             with self.assertRaisesRegex(AssertionError, "Dirty"):
-                verify(directory, "synthetic-sha")
+                verify(directory, "a" * 40)
             result["source"]["source_dirty"] = False
             item["succeeded"] = 99
             write()
             with self.assertRaisesRegex(AssertionError, "succeeded"):
-                verify(directory, "synthetic-sha")
+                verify(directory, "a" * 40)
 
 
 if __name__ == "__main__":

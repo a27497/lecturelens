@@ -9,12 +9,14 @@ import json
 import math
 import os
 import platform
+import resource
 import secrets
 import signal
 import subprocess
 import sys
 import zipfile
 from datetime import datetime, timezone
+from importlib.metadata import distributions
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -31,6 +33,14 @@ spec.loader.exec_module(existing)
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def process_start_ticks(pid):
+    try:
+        # comm may contain spaces; fields following the final ')' start at field 3.
+        return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[19]
+    except (OSError, IndexError):
+        return None
 
 
 def source():
@@ -71,13 +81,74 @@ def machine():
         )
         * 1024,
     }
-    for key, file in (
-        ("cgroup_cpu_max", "/sys/fs/cgroup/cpu.max"),
-        ("cgroup_memory_max", "/sys/fs/cgroup/memory.max"),
-    ):
-        if Path(file).exists():
-            result[key] = Path(file).read_text().strip()
+    result["cgroup_limits"] = cgroup_limits()
+    result["rlimit_nofile"] = resource.getrlimit(resource.RLIMIT_NOFILE)
+    result["rlimit_nproc"] = resource.getrlimit(resource.RLIMIT_NPROC)
     return result
+
+
+def cgroup_limits(root=Path("/sys/fs/cgroup"), membership=Path("/proc/self/cgroup")):
+    """Read visible v2 ancestors; missing/unreadable limits cannot authorize a rental run."""
+    try:
+        entries = membership.read_text().splitlines()
+        relative = next(e[3:] for e in entries if e.startswith("0::"))
+        parts = Path(relative).parts[1:]
+        if ".." in parts:
+            return {"verified": False}
+        leaf = root.joinpath(*parts)
+        # A cgroup namespace may expose the current subtree directly at the mount root.
+        if not leaf.exists():
+            return {"verified": False}
+        cpu, memory, paths = [], [], []
+        for directory in (leaf, *leaf.parents):
+            if directory != root and root not in directory.parents:
+                break
+
+            # The real v2 mount root has no parent controller limit files.
+            def read_limit(name, unlimited, directory=directory):
+                file = directory / name
+                if (
+                    directory == root
+                    and not file.exists()
+                    and (root / "cgroup.controllers").is_file()
+                ):
+                    return unlimited
+                return file.read_text().strip()
+
+            quota, period = read_limit("cpu.max", "max 100000").split()
+            limit = read_limit("memory.max", "max")
+            if quota != "max":
+                cpu.append(int(quota) / int(period))
+            if limit != "max":
+                memory.append(int(limit))
+            paths.append(str(directory.relative_to(root)))
+            if directory == root:
+                break
+        return {
+            "verified": True,
+            "cpu_limit": min(cpu) if cpu else None,
+            "memory_limit": min(memory) if memory else None,
+            "visible_ancestors": paths,
+        }
+    except (OSError, ValueError, StopIteration, ZeroDivisionError):
+        return {"verified": False}
+
+
+def require_rental_host(host):
+    limits = host["cgroup_limits"]
+    if (
+        host["affinity_cpus"] < 16
+        or host["memory_bytes"] < 60_000_000_000
+        or not limits["verified"]
+        or (limits["cpu_limit"] is not None and limits["cpu_limit"] < 16)
+        or (
+            limits["memory_limit"] is not None
+            and limits["memory_limit"] < 60_000_000_000
+        )
+    ):
+        raise RuntimeError(
+            "Rental profile requires verified visible cgroup v2 limits, >=16 available vCPUs and >=60 GB RAM"
+        )
 
 
 class Environment(existing.Smoke):
@@ -87,7 +158,11 @@ class Environment(existing.Smoke):
         existing.AGENT = f"lecturelens-perf-p0-{suffix}-pg"
         super().__init__(SimpleNamespace(output_dir=args.output, legacy_only=False))
         self.options = args
-        self.result["schema_version"] = 1
+        self.result["output_directory"] = str(self.out)
+        self.result["repository_root"] = str(ROOT)
+        self.result["runner_pid"] = os.getpid()
+        self.result["runner_start_ticks"] = process_start_ticks(os.getpid())
+        self.result["schema_version"] = 2
         self.result["started_at_utc"] = datetime.now(timezone.utc).isoformat()
         self.result["not_run"] = [
             "rental-machine full baseline",
@@ -95,6 +170,27 @@ class Environment(existing.Smoke):
             "Tutor evaluation expansion/blind review",
             "Agent full pytest (no product changes)",
         ]
+
+    def save(self):
+        self.result["owned_projects"] = list(self.owned)
+        super().save()
+
+    def spawn(self, command, name, cwd=ROOT, env=None):
+        process = super().spawn(command, name, cwd, env)
+        self.result.setdefault("children", []).append(
+            {
+                "name": name,
+                "pid": process.pid,
+                "start_ticks": process_start_ticks(process.pid),
+            }
+        )
+        self.save()
+        return process
+
+    def run(self, command, name, timeout=120, cwd=ROOT):
+        # Record ownership before an up command can partially create resources or be killed.
+        self.save()
+        super().run(command, name, timeout, cwd)
 
     def compose(self, project, *arguments):
         if project == existing.AGENT:
@@ -135,19 +231,7 @@ class Environment(existing.Smoke):
         )
         self.result["machine"] = machine()
         if self.options.profile == "rental":
-            host = self.result["machine"]
-            quota = host.get("cgroup_cpu_max", "max").split()
-            constrained = quota[0] != "max" and int(quota[0]) / int(quota[1]) < 16
-            limit = host.get("cgroup_memory_max", "max")
-            if (
-                host["affinity_cpus"] < 16
-                or host["memory_bytes"] < 60_000_000_000
-                or constrained
-                or (limit != "max" and int(limit) < 60_000_000_000)
-            ):
-                raise RuntimeError(
-                    "Rental profile requires at least 16 available vCPUs / 60 GB RAM"
-                )
+            require_rental_host(self.result["machine"])
             self.result["not_run"].remove("rental-machine full baseline")
         self.result["config"] = {
             "profile": self.options.profile,
@@ -175,7 +259,12 @@ class Environment(existing.Smoke):
             "feedback_enabled": False,
             "offline_dependency_bootstrap": self.options.offline,
             "minio_source_build": self.options.build_minio,
+            "run_deadline_seconds": self.options.run_deadline,
+            "latency_contract": "v2 operation excludes cancellation cleanup; turn timer starts before turn POST; wall includes cleanup/drain",
         }
+        self.result["python_distributions"] = sorted(
+            (d.metadata["Name"], d.version) for d in distributions()
+        )
         files = (
             list(HERE.glob("*.py"))
             + list(HERE.glob("*.yaml"))
@@ -239,7 +328,7 @@ class Environment(existing.Smoke):
             "compile-delay-wrapper",
             60,
         )
-        for binary in ("java", "docker"):
+        for binary in ("java", "docker", "uv"):
             command = [binary, "--version"]
             self.result[binary + "_version"] = self.capture(command)
         self.result["compose_version"] = self.capture(
@@ -485,11 +574,71 @@ class Environment(existing.Smoke):
         ]
         (self.out / "REPORT.md").write_text("\n".join(lines) + "\n")
 
+    def cleanup(self):
+        signal.alarm(0)
+        failures = []
+        log_failures = []
+        for process, _ in reversed(self.children):
+            try:
+                self.stop(process)
+            except Exception as error:  # noqa: BLE001 -- still visit all owned resources
+                failures.append(type(error).__name__)
+        for project in reversed(self.owned):
+            try:
+                self.run(
+                    self.compose(project, "logs", "--no-color"),
+                    f"{project}-services",
+                    20,
+                )
+            except Exception as error:  # noqa: BLE001 -- log failure must never suppress teardown
+                log_failures.append({"project": project, "error": type(error).__name__})
+            try:
+                self.run(
+                    self.compose(
+                        project, "down", "-v", "--remove-orphans", "--timeout", "5"
+                    ),
+                    f"{project}-down",
+                    45,
+                )
+            except Exception as error:  # noqa: BLE001 -- still visit the other project
+                failures.append(type(error).__name__)
+            for kind in ("container", "volume", "network"):
+                try:
+                    if self.capture(
+                        [
+                            "docker",
+                            kind,
+                            "ls",
+                            "-q",
+                            "--filter",
+                            f"label=com.docker.compose.project={project}",
+                        ]
+                    ):
+                        failures.append(f"Remaining_{kind}")
+                except Exception as error:  # noqa: BLE001 -- retain inspection failure and finish teardown
+                    failures.append(type(error).__name__)
+        self.result["cleanup_log_errors"] = log_failures
+        (self.out / "docker-end.txt").write_text(
+            json.dumps(
+                {
+                    "owned_projects": self.owned,
+                    "failures": failures,
+                    "log_errors": log_failures,
+                },
+                indent=2,
+            )
+            + "\n"
+        )
+        if failures:
+            raise RuntimeError(f"Owned cleanup failed: {failures}")
+
     def execute(self):
         def interrupted(*_):
             raise KeyboardInterrupt("Harness interrupted; owned cleanup follows")
 
         signal.signal(signal.SIGTERM, interrupted)
+        signal.signal(signal.SIGALRM, interrupted)
+        signal.alarm(self.options.run_deadline)
         success = False
         try:
             with self.stage("preflight"):
@@ -521,21 +670,10 @@ class Environment(existing.Smoke):
         except (Exception, KeyboardInterrupt) as error:  # noqa: BLE001 -- always retain failure and clean owned resources
             self.result["failure"] = self.redact(str(error))
         finally:
+            signal.alarm(0)
             try:
                 with self.stage("cleanup"):
                     self.cleanup()
-                    for project in self.owned:
-                        for kind in ("container", "volume", "network"):
-                            assert not self.capture(
-                                [
-                                    "docker",
-                                    kind,
-                                    "ls",
-                                    "-q",
-                                    "--filter",
-                                    f"label=com.docker.compose.project={project}",
-                                ]
-                            ), f"Owned {kind} remains"
             except (Exception, KeyboardInterrupt) as error:  # noqa: BLE001 -- always retain failure and clean owned resources
                 self.result["cleanup_failure"] = self.redact(str(error))
                 success = False
@@ -560,6 +698,12 @@ def arguments(argv=None):
     parser.add_argument("--timeout", type=float, default=60)
     parser.add_argument("--mock-delay-ms", type=int, default=25)
     parser.add_argument("--qa-per-minute", type=int, default=10)
+    parser.add_argument(
+        "--run-deadline",
+        type=int,
+        default=1200,
+        help="Total runner execution deadline; cleanup runs after this deadline",
+    )
     parser.add_argument(
         "--offline",
         action="store_true",
@@ -598,6 +742,7 @@ def arguments(argv=None):
         or not math.isfinite(args.timeout)
         or args.timeout <= 0
         or args.qa_per_minute < 1
+        or not 1 <= args.run_deadline <= 86400
         or not 0 <= args.mock_delay_ms <= 5000
     ):
         parser.error("Invalid positive limits/delay/concurrency")

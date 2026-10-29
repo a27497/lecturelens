@@ -12,6 +12,7 @@ ROOT = HERE.parents[1]
 
 
 def cleanup(directory):
+    directory = directory.resolve()
     result = json.loads((directory / "result.json").read_text())
     projects = result["projects"]
     if (
@@ -21,12 +22,27 @@ def cleanup(directory):
             for p in projects
         )
         or projects[0].rsplit("-", 1)[0] != projects[1].rsplit("-", 1)[0]
+        or len(set(projects)) != 2
+        or {p.rsplit("-", 1)[1] for p in projects} != {"infra", "pg"}
     ):
         raise ValueError("Refuse projects outside this harness namespace")
+    if result.get("output_directory") != str(directory) or result.get(
+        "repository_root"
+    ) != str(ROOT):
+        raise ValueError(
+            "Refuse cleanup from a copied/legacy result or another worktree"
+        )
+    owned = result.get("owned_projects")
+    if (
+        not isinstance(owned, list)
+        or len(owned) != len(set(owned))
+        or not set(owned) <= set(projects)
+    ):
+        raise ValueError("Refuse cleanup without an exact ownership journal")
     # Down needs interpolation, not the original password or an authenticated database connection.
     env = {k: os.environ[k] for k in ("PATH", "HOME") if k in os.environ}
     env["SMOKE_POSTGRES_PASSWORD"] = "unused-cleanup-only"
-    for project in projects:
+    for project in owned:
         if project.endswith("-pg"):
             files = ["-f", str(HERE / "compose.yaml")]
         else:

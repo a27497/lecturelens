@@ -1,6 +1,11 @@
-# Performance P0 harness preparation
+# Performance P0 harness
 
-This directory measures **Mock execution mechanics**, with the existing retrieval
+P11-A review: [findings and deterministic evidence](P11_A_REVIEW.md).
+The approved-independent-machine procedure is [P11_RENTAL_PLAN.md](P11_RENTAL_PLAN.md).
+Do not start services or execute load on the shared SameScale server. Commands
+that create a stack below are for a separately approved disposable host only.
+
+The runner measures **Mock execution mechanics**, with the existing retrieval
 busy lock left intact. Development runs are labeled **DEV_SMOKE_NOT_RESUME** in
 both JSON and Markdown. They are neither rental-machine baselines nor resume
 numbers. Rental-machine full runs, real-model Tutor quality, expanded/held-out
@@ -26,7 +31,7 @@ From the repository root, run a small healthy-path smoke:
 
 ```bash
 python3 scripts/dev/run_check.py --name perf-dev-health \
-  --output .data/perf-p0/checks --timeout 1200 -- \
+  --output .data/perf-p0/checks --timeout 1800 -- \
   bash eval/perf-p0/run.sh --profile dev --concurrency 1 --requests 3 \
   --mock-delay-ms 25 --output .data/perf-p0/dev-health
 ```
@@ -35,7 +40,7 @@ Then directly exercise lock contention in a separate fresh environment:
 
 ```bash
 python3 scripts/dev/run_check.py --name perf-dev-busy \
-  --output .data/perf-p0/checks --timeout 1200 -- \
+  --output .data/perf-p0/checks --timeout 1800 -- \
   bash eval/perf-p0/run.sh --profile dev --scenarios S1 --concurrency 1,8 \
   --requests 64 --output .data/perf-p0/dev-busy
 ```
@@ -50,14 +55,14 @@ cannot produce clean-source evidence accepted by `verify.py`.
 
 ```bash
 python3 scripts/dev/run_check.py --name perf-rental-mock \
-  --output .data/perf-p0/checks --timeout 7200 -- \
+  --output .data/perf-p0/checks --timeout 7800 -- \
   bash eval/perf-p0/run.sh --profile rental --scenarios S1,S2,S3 \
   --concurrency 1,4,8,16 --seconds 60 --timeout 60 --mock-delay-ms 150 \
-  --qa-per-minute 100000 --output .data/perf-p0/rental-mock-01
+  --qa-per-minute 100000 --run-deadline 7200 --output .data/perf-p0/rental-mock-01
 ```
 
 The rental profile refuses fewer than 16 available logical CPUs or 60 GB memory,
-including detected cgroup limits. This is a guard against running the full matrix
+including visible cgroup v2 ancestor limits; unknown limits fail closed. This is a guard against running the full matrix
 on a small development machine, not proof of dedicated hardware. Record the
 provider's machine specification separately. The example explicitly raises the
 **existing isolated QA per-owner rate limit** from its preserved default of 10
@@ -149,7 +154,9 @@ window). After admission stops, in-flight work drains within each operation's
 timeout. Wall time includes drain and HTTP-client setup; operation latency runs
 from admission through validation/completion. A failed S3 attempt cancels and
 drains its own turn with an additional bounded eight-second cleanup window;
-latency includes that cleanup and an undrained turn stops subsequent groups.
+schema v2 records cleanup separately from operation/turn latency, while drained
+wall time still includes it. An undrained turn stops further admission and
+subsequent groups.
 Do not interpret a timeout as an absent or successful observation.
 
 - `result.json`: schema/config, label, Git SHA + dirty/source drift checks, CPU
@@ -158,7 +165,12 @@ Do not interpret a timeout as an absent or successful observation.
   warmups, per-group counts, error rate and throughput.
 - `requests.jsonl`: one row per logical attempt, with warmup flag, latency, HTTP
   request/poll counts, last operation HTTP status, error category and Retry-After.
-  No tokens, headers, prompts, answers or passwords are written here. Cancel
+  No credentials, prompts, answers or arbitrary error payloads are written here.
+  Schema v2 also records all response status counts, HTTP sends (including sends
+  without a response), separate cleanup time, turn time and relative wall offsets.
+  `http_status_counts` remains the legacy **last response per logical operation**
+  histogram; `http_response_status_counts` counts actual responses and can exceed
+  operation count for Tutor polling. Cancel
   cleanup requests are counted separately and do not overwrite the error status.
 - `REPORT.md`: concise group table and NOT_RUN list. P50/P95 use nearest rank in
   milliseconds; JSON separates **all / successful / failed** latency samples.
@@ -174,9 +186,9 @@ Verify final clean-source evidence and recompute metrics from raw rows:
 
 ```bash
 agent-service/.venv/bin/python eval/perf-p0/verify.py .data/perf-p0/dev-health \
-  --sha "$(git rev-parse HEAD)"
+  --sha "$(git rev-parse HEAD)" --check-inputs
 agent-service/.venv/bin/python eval/perf-p0/verify.py .data/perf-p0/dev-busy \
-  --sha "$(git rev-parse HEAD)" --require-busy
+  --sha "$(git rev-parse HEAD)" --check-inputs --require-busy
 ```
 
 Expected 503s never turn into a synthetic pass: `--require-busy` fails unless S1
@@ -184,17 +196,23 @@ actually observed `503 / Retrieval busy` and `Retry-After: 1`. If this machine
 cannot reproduce it within the bounded smoke, retain that observation honestly.
 
 Normal completion, errors, Ctrl-C and SIGTERM run owned cleanup, verify no
-containers/volumes/networks remain and retain failure logs. Use the supervisor's
-Ctrl-C/timeout path; never suspend a sudo child or kill processes by broad name.
+containers/volumes/networks remain and retain failure logs. Use `--run-deadline` (default 1200s), or verify and SIGTERM the exact recorded
+runner PID/start ticks; leave 600s between the internal and outer deadlines for
+cleanup. The generic supervisor has only five seconds of kill grace: Ctrl-C of
+that supervisor can interrupt teardown. Never suspend a sudo child or kill
+processes by broad name.
 After SIGKILL/host failure, remove only the recorded Compose projects with:
 
 ```bash
 python3 eval/perf-p0/cleanup.py .data/perf-p0/dev-health
 ```
 
-Emergency cleanup needs no original password; it removes recorded resources,
+Emergency cleanup requires the same output/worktree and an explicit ownership
+journal. It refuses copied or legacy results, including old P0 results without
+that journal. It needs no original password and removes only owned resources,
 not application processes. Stop surviving Java/Agent children via the original
-supervisor/session, verifying their recorded command/output directory first.
+supervisor/session, verifying each recorded PID/start ticks and that its command belongs to this
+output directory first.
 
 ## Targeted verification
 
@@ -204,7 +222,7 @@ agent-service/.venv/bin/ruff format --check eval/perf-p0
 bash -n eval/perf-p0/run.sh
 python3 scripts/dev/run_check.py --name perf-harness-unit \
   --output .data/perf-p0/checks --timeout 120 -- \
-  agent-service/.venv/bin/python -m unittest discover -s eval/perf-p0 -p test_harness.py -v
+  agent-service/.venv/bin/python eval/perf-p0/deterministic_tests.py
 ```
 
 Self-tests use simulated HTTP only to verify harness accounting/protocol rules;
@@ -213,3 +231,12 @@ compilation and actual wrapper use are checked by each service smoke. No product
 or shared Study code changed, so Agent full pytest, frontend build and product
 Java suites are NOT_RUN for this harness-only change. Existing development and
 Tutor frozen hashes can be checked without rewriting any manifest.
+
+Schema v1 historical evidence is read-only and remains verifiable at its own
+recorded SHA, rather than current HEAD. Schema v1 latency includes cancellation
+cleanup. Do not compare it directly with v2 operation/turn latency. `verify.py`
+now uses independent metric recomputation and rejects missing matrix points,
+failed/missing warmups, nonfinite metrics, raw SHA/label drift and empty groups;
+its checks stay active under `python -O`. Run the guarded deterministic suite
+for P11-A; it forbids IP sockets, DNS and service subprocesses. No fresh stack or
+load validation has been performed for the reviewed v2 harness.
