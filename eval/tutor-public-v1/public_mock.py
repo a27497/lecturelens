@@ -234,7 +234,8 @@ def run(args):
     }
     counts = execution_counts(rows)
     bad_reviews = sum(
-        r["status"] == "completed" and (not r["review"] or r["review"].get("error"))
+        r["status"] == "completed"
+        and (not r["review"] or bool(r["review"].get("error")))
         for r in rows
     )
     complete = (
