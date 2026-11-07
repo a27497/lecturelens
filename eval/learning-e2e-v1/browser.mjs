@@ -79,7 +79,8 @@ try{
   await nav('解释与练习').click();await restoreOriginal();await openReview();await expect(review).toContainText('正确 1 · 错误 0');await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.getByRole('navigation',{name:'练习题目'}).getByRole('button',{name:/第 1 题/}).click();await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(entry.getByRole('button',{name:'回看练习结果',exact:true})).toBeVisible();await page.setViewportSize({width:1280,height:800});await Promise.all(pending);await page.reload();await restoreOriginal();await openReview();await expect(review).toContainText('正确 1 · 错误 0');await expect(result.getByRole('heading')).toHaveText('第 2 版 · 正确',{timeout:30000});await expect(nav('Tutor 对话')).toBeVisible();await expect(nav('闪卡复习')).toBeVisible();await shot('06-1280-choice-restored');
  });
  await step('07 course reader and actual synthetic video decoding',async()=>{
-  await nav('课程材料').click();await expect(page.locator('.timeline-row').first()).toBeVisible();
+  // Desktop keeps the reader beside the learning panel; its material tab is mobile-only.
+  await expect(page.locator('.timeline-row').first()).toBeVisible();
   const video=page.locator('video');await expect(video).toHaveCount(1);
   await video.evaluate(async v=>{v.muted=true;await v.play()});
   await expect.poll(()=>video.evaluate(v=>v.currentTime)).toBeGreaterThan(0.1);
