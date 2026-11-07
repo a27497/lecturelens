@@ -1,0 +1,1074 @@
+{
+  "phase": "zero-cost-tutor-followup-final-v17",
+  "starting_sha": "0a701c34d9ab236d1dd8acad5714618b016c63d3",
+  "actual_candidate": "p8-tutor-verified-v17-development",
+  "implementation_sha": "3b9bae4859af243dc6b77bf0fa5ba6c4b0221c31",
+  "freeze_sha": "f5738535734a69cea98ab911bfd30205d8a58971",
+  "delivery_sha": "Commit containing REPORT.md; exact SHA is returned in final handoff.",
+  "candidate_manifest_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+  "packet_sha256": "e413ce3b8f9786b1cebd860fb2c4b36961cfeac2e2d2f53e69461eb6f233f0b1",
+  "identity_files": 16,
+  "parent_v16_identity_files_unchanged": 18,
+  "source_version_checks": [
+    "all16 new manifest files",
+    "all18 v16 parent files",
+    "full relevant tracked source roots equal implementation commit",
+    "no untracked source paths",
+    "live exact clean authorized HEAD and code-commit blob hashes",
+    "actual execution HEAD/code commit retained"
+  ],
+  "readiness": {
+    "real_diagnostic": "BLOCKED_INDEPENDENT_REFERENCE_REVIEW_FRESH_GRANT_AND_DISPATCH_VALID_PREFLIGHT_RECEIPTS",
+    "entry": "FROZEN_CANDIDATE_OFFLINE_VERIFIED",
+    "formal_quality": "NOT_RUN_WITH_KNOWN_A03_CONTEXT_CROP_AND_PEDAGOGICAL_LIMITS"
+  },
+  "real_calls": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "new_cost_usd": "0",
+  "not_run": {
+    "real_quality_improvement": "NOT_RUN",
+    "cost_optimization": "NOT_RUN",
+    "independent_human_agreement": "NOT_RUN",
+    "SQL_holdout": "NOT_RUN",
+    "scaling": "NOT_RUN",
+    "learning_effects": "NOT_RUN",
+    "candidate_execution_on_review_packet": "NOT_RUN",
+    "independent_reference_review": "NOT_RUN",
+    "authenticated_account_configuration_and_dispatch_receipt": "NOT_RUN"
+  },
+  "defaults_ci_schema_public_protocol_changed": false,
+  "existing_starting_product_source_files_changed": 0,
+  "seven_issue_statuses": [
+    {
+      "id": "A02",
+      "priority": "P0",
+      "class": [
+        "MISSING_REAL_VALIDATION",
+        "BOUNDED_REPRESENTATION_CAPABILITY"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_REAL_COMPLIANCE_NOT_RUN",
+      "change": "No repeated delivery rewrite. V17 keeps final length/citation/budget gates and has positive maximum-field PG cases. Model point selection and all mandatory-content retention have not run.",
+      "evidence": [
+        "agent-service/tests/test_tutor_v17.py::test_verified_actual_maximum_source_and_feedback_publication",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/v14-replay-check.json"
+      ],
+      "residual": "A legal bounded form does not prove the model selects all required conditions; v17 is narrower than free paraphrase.",
+      "next": "Independent review must retain every obligation; only the one later authorized diagnostic can measure real compliance.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A03",
+      "priority": "P1",
+      "class": [
+        "REPRODUCED_PRODUCT_PUBLICATION_DEFECT",
+        "RESIDUAL_CONTEXTUAL_SEMANTIC_DEFECT"
+      ],
+      "status": "PARTIALLY_FIXED_ARBITRARY_ASSERTION_SURFACE_CLOSED_CONTEXT_CROP_REMAINS",
+      "change": "Real anchor plus invented course claim/grade is independently reproduced in v15. V17 permits source spans, checked value expressions and learner/source comparisons; no renamed free derivation/grade channel. Final review additionally reproduced ignored AST comments as visible prose in frozen v16. V17 validates the complete displayed value grammar before AST evaluation.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/reproduction/v15-a03-reproduction.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a03-rejection.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-feedback-comparison.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-residual-source-context-crop.json",
+        ".data/tutor-followup-v16-20261108/v16-comment-bypass.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-comment-rejection.json"
+      ],
+      "residual": "A source crop can omit negation/conditions and still publish. Correct arithmetic may use irrelevant premises; comparison feedback may not correct a misconception.",
+      "next": "Keep the negative crop fixture; independent source/obligation review and semantic evaluation required. No full entailment claim.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A04",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_PRODUCT_DEFECT",
+        "EXPLICIT_NEW_PATH_ALREADY_FIXED",
+        "ACTIVATION_OUTSIDE_CURRENT_SCOPE"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_LEGACY_PROJECTION_REMAINS",
+      "change": "New v17 factory reuses complete-v1 without changing Java or old source identities. Actual gateway/new-factory/Java-authority/PG verifies complete raw source and binding.",
+      "evidence": [
+        "backend/src/test/java/com/example/courselingo/qa/TutorVerifiedCrossServiceIT.java",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service/runtime.json"
+      ],
+      "residual": "Legacy normalized1200 projection remains. Oversized/truncated sources explicitly fail instead of continuing across ranges.",
+      "next": "Separately authorize reviewed default/legacy consumer activation or bounded continuation; no silent switch or migration here.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A05",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_PRODUCT_DEFECT",
+        "EXPLICIT_NEW_GENERATION_PATH_ALREADY_FIXED"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_SHARED_NORMALIZATION_REMAINS",
+      "change": "Raw code/newlines/hash retained through actual v17 product chain; no duplicate normalization rewrite.",
+      "evidence": [
+        "backend/src/test/java/com/example/courselingo/qa/TutorCompleteEvidenceTest.java",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service-view.json"
+      ],
+      "residual": "Legacy/shared retrieval normalization is unchanged; ingestion completeness is NOT_RUN.",
+      "next": "Review shared consumers only with concrete activation need. Keep bounded complete projection and old identities.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A06",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_DEFAULT_DEFECT",
+        "NEW_FACTORY_MOCK_ALREADY_FIXED",
+        "DEFAULT_SWITCH_NOT_AUTHORIZED"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_OLD_DEFAULT_REMAINS",
+      "change": "New VerifiedMock preserves whole bounded code paragraphs and values[0], including actual default factory path. Frozen default Mock remains byte-identical.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/default-syntax-loss.json",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service-view.json"
+      ],
+      "residual": "Original default still rewrites brackets. It is not v17 or promoted by this phase.",
+      "next": "A separately reviewed default activation with immutable old entry is required; do not edit frozen source to erase history.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A10",
+      "priority": "P2",
+      "class": [
+        "SOURCE_TRUTH_DESIGN_BOUNDARY",
+        "CAPABILITY_LIMIT"
+      ],
+      "status": "PARTIALLY_FIXED_ATTRIBUTION_STRUCTURED_EXTERNAL_TRUTH_NOT_PROVIDED",
+      "change": "Course text can only be a literal attributed span; generated numeric/sequence values are computed under a declared pure sublanguage. No arbitrary execution or verification assertion channel.",
+      "evidence": [
+        "agent-service/src/lecturelens_real_eval/tutor/verified_runtime.py",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/source-truth-limitation.json",
+        "agent-service/src/lecturelens_real_eval/tutor/guarded_runtime.py"
+      ],
+      "residual": "Outdated/false source statements remain unchanged and are not verified facts. Pure rational/value expressions do not execute course Python/R importer code.",
+      "next": "Independent reference judgment must preserve attribution versus executable-truth distinction; new execution capability would need separately bounded scope.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A12",
+      "priority": "P2",
+      "class": [
+        "REPRODUCED_FREE_TEXT_SOLUTION_LEAK_FIXED",
+        "PEDAGOGICAL_CAPABILITY_NOT_RUN"
+      ],
+      "status": "PARTIALLY_FIXED_REPRODUCED_SURFACE_CLOSED_HINT_SUITABILITY_NOT_RUN",
+      "change": "V15 spelled-out answer bypass independently publishes. V17 only accepts source-bound intent enums; arbitrary answer, feedback, intent or extra text cannot be rendered. Five positive hint acts remain.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/reproduction/v15-a12-reproduction.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a12-rejection-source.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a12-rejection-hint_extra.json",
+        "agent-service/tests/test_tutor_v17.py::test_verified_socratic_act_has_no_free_solution_channel"
+      ],
+      "residual": "Hints can be generic or inappropriate. Opening an authoritative source may show its solution; this is not source access control or measured learning quality.",
+      "next": "Independent per-task targeted-guidance review and later authorized diagnostic. Do not label enum acceptance complete pedagogical assurance.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    }
+  ],
+  "complete_semantic_closure_claim": false,
+  "precursor_v16": {
+    "code_sha": "f74f77f82d3cd950e639c591c5e6d8d0c6dd4a05",
+    "freeze_sha": "751d380b95d5b11b87ad53b3505304ea74030db8",
+    "manifest_sha256": "511aee6998451f925e9707f70349a4db9ae5ab733973a6d95ebeebce4c1e32a6",
+    "mechanism_tests_passed": 63,
+    "disposition": "RETAINED_REJECTED_AFTER_INDEPENDENT_PG_REPRODUCTION_OF_IGNORED_AST_COMMENT_DISPLAY",
+    "frozen_files_or_results_overwritten": false,
+    "reproduction": ".data/tutor-followup-v16-20261108/v16-comment-bypass.json",
+    "current_checkout_source_fence": "Rejects later additions by design; reproduce at recorded precursor commits."
+  },
+  "final_checks": {
+    "final-v17-runtime-entry": {
+      "name": "final-v17-runtime-entry",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-final-v17",
+        "scripts/dev/check_tutor_guarded.py",
+        "--output",
+        ".data/tutor-followup-v17-20261108/final-v17"
+      ],
+      "code": 0,
+      "seconds": 50.737
+    },
+    "final-v17-java-cross": {
+      "name": "final-v17-java-cross",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=final-cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorGuardedCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 17.832
+    },
+    "final-v15-compatibility": {
+      "name": "final-v15-compatibility",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v15",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-followup-v16-20261108/v15-compatibility"
+      ],
+      "code": 0,
+      "seconds": 67.49
+    },
+    "final-legacy-mechanisms": {
+      "name": "final-legacy-mechanisms",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-legacy",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/legacy-mechanisms"
+      ],
+      "code": 0,
+      "seconds": 253.878
+    },
+    "final-historical-reconstruction": {
+      "name": "final-historical-reconstruction",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-history",
+        "scripts/dev/check_tutor_zero_cost_audit.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction"
+      ],
+      "code": 0,
+      "seconds": 98.247
+    },
+    "final-vue": {
+      "name": "final-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-followup-v16-20261108/vue-results.json"
+      ],
+      "code": 0,
+      "seconds": 47.526
+    },
+    "final-vue-types": {
+      "name": "final-vue-types",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vue-tsc/bin/vue-tsc.js",
+        "-b",
+        "frontend/tsconfig.json"
+      ],
+      "code": 0,
+      "seconds": 27.664
+    },
+    "final-v17-default-verify": {
+      "name": "final-v17-default-verify",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-default",
+        "scripts/dev/run_tutor_diagnostic_v17.py"
+      ],
+      "code": 0,
+      "seconds": 1.864
+    },
+    "final-v17-live-denial": {
+      "name": "final-v17-live-denial",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-live-denial",
+        "scripts/dev/run_tutor_diagnostic_v17.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-followup-v17-20261108/denied-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 1.887
+    }
+  },
+  "test_results": {
+    "actual_v17_python_runtime_and_entry": {
+      "passed": 69,
+      "skipped": 0
+    },
+    "java_actual_cross_service": {
+      "passed": 35,
+      "skipped": 0
+    },
+    "v15_compatibility": {
+      "passed": 43,
+      "skipped": 0
+    },
+    "inherited_python": {
+      "passed": 249,
+      "skipped": 0
+    },
+    "historical_reconstruction_diagnostics": {
+      "passed": 25,
+      "skipped": 0
+    },
+    "vue": {
+      "passed": 343,
+      "failed": 0,
+      "pending": 0
+    },
+    "vue_types_exit_code": 0
+  },
+  "verification_timing_note": "V15/inherited/history/Vue ran before the additive v17 lexer correction; their frozen affected sources are unchanged. V17 and actual cross-service path reran after freeze. No broader suite is falsely claimed to execute a different version.",
+  "expected_denial": {
+    "check": "final-v17-live-denial",
+    "exit_code": 2,
+    "output_directory_created": false,
+    "credential_or_provider_transport_admitted": false,
+    "generic_cli_unknown_counts_not_relabelled_zero": true
+  },
+  "ruff": {
+    "historical_previous_phase_diagnostics": 9,
+    "current_phase_named_python_files": 16,
+    "current_diagnostics": 0,
+    "format_check_exit_code": 0,
+    "attribution": "RUFF_ATTRIBUTION.json",
+    "old_frozen_sources_reformatted": false
+  },
+  "actual_frozen_entry_mock_cases": {
+    "budget": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 102000,
+        "pending": 0,
+        "blocked": "REAL_EVAL_BUDGET_EXHAUSTED"
+      },
+      "global_stop": "REAL_EVAL_BUDGET_EXHAUSTED",
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "fabricated_id": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "sent_requests": 2,
+      "ledger": {
+        "calls": 2,
+        "nano_usd": 3321900,
+        "pending": 0,
+        "blocked": "REAL_EVAL_CITATION_FABRICATED"
+      },
+      "global_stop": "REAL_EVAL_PROTOCOL_FAILURE",
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "malformed": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 2325600,
+        "pending": 0,
+        "blocked": null
+      },
+      "global_stop": "REAL_EVAL_REQUEST_FAILED",
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "model_mismatch": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 102000,
+        "pending": 0,
+        "blocked": "REAL_EVAL_MODEL_MISMATCH"
+      },
+      "global_stop": "REAL_EVAL_MODEL_MISMATCH",
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "none": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 32,
+      "ledger": {
+        "calls": 32,
+        "nano_usd": 3264000,
+        "pending": 0,
+        "blocked": null
+      },
+      "global_stop": null,
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "support_invalid": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 12,
+      "failed": 1,
+      "skipped": 3,
+      "sent_requests": 27,
+      "ledger": {
+        "calls": 27,
+        "nano_usd": 2754000,
+        "pending": 0,
+        "blocked": null
+      },
+      "global_stop": null,
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    },
+    "unknown_usage": {
+      "candidate_sha256": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+      "expected": 16,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 2325600,
+        "pending": 0,
+        "blocked": null
+      },
+      "global_stop": "REAL_EVAL_REQUEST_FAILED",
+      "source_scope": "SYNTHETIC_PROTOCOL_ONLY_NOT_THE_PROSPECTIVE_PACKET",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0"
+    }
+  },
+  "mock_sent_requests_total": 65,
+  "mock_packet": "SEPARATE_SYNTHETIC16_NOT_REVIEW_PACKET_NOT_NEW_QUALITY_SAMPLES",
+  "draft_rehearsal": "Identity-stubbed8-test rehearsal retained only as preparation, not frozen identity acceptance.",
+  "reference_review": {
+    "positions": 16,
+    "questions_points_gates_and_literal_quotes_preserved": true,
+    "review_pack": "reference-review-pack.json",
+    "readable_pack": "REFERENCE_REVIEW.md",
+    "packet_development_exposed": true,
+    "second_pass_reviewer": "SAME_CODEX_AUTHOR_PARTICIPATED_IN_QUESTION_AND_RUNTIME_AUTHORING",
+    "independent_reviewer": null,
+    "dispositions": "PENDING",
+    "candidate_execution": "NOT_RUN",
+    "human_ratings_or_agreement": "NOT_RUN",
+    "source_scope": "KNOWN_PUBLIC_COURSES_NO_SQL",
+    "inherited_authored_after_freeze_label_scope": "Original v15 question authoring only; v17 material was development-exposed before implementation/freeze, not fresh task selection."
+  },
+  "raw_artifacts": {
+    "new_mock": "Bounded pre-JSON HTTP decoded entity bytes; known authorization secret redacted, headers not retained; redaction/reencoding/partial states explicit; not TLS frames or arbitrary secret detection.",
+    "historical": "RECONSTRUCTED_HTTP_ENVELOPES_FROM_RETAINED_PARSED_PROPOSALS_AND_USAGE_NOT_ORIGINAL_RESPONSE_BYTES"
+  },
+  "historical_reconstruction": {
+    "exact_original_request_bodies": 108,
+    "scheduled_outcomes_unchanged": 48,
+    "matching_new_pg_jsonl_events": 216,
+    "historical_manifest_files_unchanged": 2053,
+    "original_correct_scheduled": {
+      "v12": [
+        13,
+        16
+      ],
+      "v13": [
+        11,
+        16
+      ],
+      "v14": [
+        9,
+        16
+      ]
+    },
+    "raw_response_bytes_available": false,
+    "old_failures_preserved": true
+  },
+  "future_only_proposal": {
+    "path": "FUTURE_DIAGNOSTIC.md",
+    "entry": "scripts/dev/run_tutor_diagnostic_v17.py",
+    "requested_model_id": "deepseek-flash",
+    "route": "https://api.deepseek.com/chat/completions",
+    "temperature": 0,
+    "thinking": "disabled",
+    "output_tokens": 1200,
+    "concurrency": 1,
+    "transport_retries": 0,
+    "scheduled": 16,
+    "max_attempts": 80,
+    "local_reserved_plus_settled_liability_ceiling_usd": "0.70",
+    "supplier_invoice_guarantee": false,
+    "reviewer_requests": 0,
+    "embedding_requests": 0,
+    "authorized": false,
+    "executed": false,
+    "current_price_model_immutable_backend": "Published configuration and rates documentary-checked; account access and immutable per-request backend unverified; dated dispatch receipt still required."
+  },
+  "network_boundary": "Mock-only actual transports and explicit loopback DB/authority. Python counters exclude native libpq/Java/Node; OS-wide isolation NOT_CHECKED.",
+  "cleanup": {
+    "removed_only_container": "53e539864e674abe80bc318711b45c36fb772dd12cd01792427ccf95c66f3563",
+    "owned_name": "lecturelens-tutor-followup-v16-20261108",
+    "verified_owned_label": "tutor-followup-v16-20261108",
+    "remaining_application_schemas": 0,
+    "public_application_tables": 0,
+    "original_running_containers": 23,
+    "original_containers_preserved": 23,
+    "extra_containers": [],
+    "port25841_closed": true,
+    "evidence_roots_preserved": [
+      ".data/tutor-followup-v16-20261108",
+      ".data/tutor-followup-v17-20261108"
+    ],
+    "live_denied_output_absent": true
+  },
+  "local_evidence_manifests": [
+    {
+      "root": ".data/tutor-followup-v16-20261108",
+      "path": ".data/tutor-followup-v16-20261108/evidence-manifest.json",
+      "sha256": "4dc20dbff853ab8d08aa540afd3bc4c0a0887953162140aa2c95a1952407f28f",
+      "files": 1977
+    },
+    {
+      "root": ".data/tutor-followup-v17-20261108",
+      "path": ".data/tutor-followup-v17-20261108/evidence-manifest.json",
+      "sha256": "44e1f74dcd5435e7a2fa49e7eb44a76df07acbe6f419a9a76e139ef32ecd0d1b",
+      "files": 301
+    }
+  ],
+  "key_artifacts": {
+    ".data/tutor-followup-v16-20261108/reproduction/v15-a03-reproduction.json": "d7054758e147c7ea90c1fa3357fee0dc548d9c73bb1e4fa963dcceb5380070de",
+    ".data/tutor-followup-v16-20261108/reproduction/v15-a12-reproduction.json": "6dc2acb641b3d5b1740cbcbdfd7b30d1c32739d2aff82edfe0055ca0c707cd55",
+    ".data/tutor-followup-v16-20261108/v16-comment-bypass.json": "77e80ba4e851e48a8f418529739eee9b769b5e065a067e8d886f3f9b476d9820",
+    ".data/tutor-followup-v17-20261108/final-v17/v17-comment-rejection.json": "0de1e74b48b1c0e5d946916ba690cdb6d51b4e66f80f6fc753017511bf2d2fa3",
+    ".data/tutor-followup-v17-20261108/final-v17/v17-residual-source-context-crop.json": "f7967480b16bd4c1ece74674a37a943119fc3ad525084e14e61ac978f539c898",
+    ".data/tutor-followup-v17-20261108/final-v17/results.xml": "9bcb80cc180994cbead2452d5ed146725285fc4adf985e29d6c68dfbba6e3e88",
+    ".data/tutor-followup-v17-20261108/final-cross-service/cross-service/runtime.json": "623fb9364aab85db47693bd28fd75b34b95531c72e6b28589ebbf32296dc21f3",
+    ".data/tutor-followup-v17-20261108/final-cross-service/cross-service-view.json": "99051a4a21c4edcb34bd6f0c9e2f93b9ae3d849987fd512a1f98a453a7c97b1b",
+    ".data/tutor-followup-v17-20261108/java-final-summary.json": "5a729dcdcfc405398c37a00acbd02b78d6caa7e154a0aeeef5647655ce0b008d",
+    ".data/tutor-followup-v17-20261108/python-versions.json": "2d9ef7e0ed269b0f03b153f7e55576b3dd091516514f6bac47103c246cb8bc00",
+    ".data/tutor-followup-v17-20261108/structural-review.json": "52ded9768114717eabfedfdc647a95794757a691de2b22fdcbb721f7ddff79a1",
+    ".data/tutor-followup-v16-20261108/ruff-historical.json": "b6edb2b8493f8099055fd02cda337335ea7f377404b4ab763c656d26529dff64",
+    ".data/tutor-followup-v16-20261108/ruff-followup-final.json": "8ac6d104133e69eb8648f8fccf969993cb475196a5e69a0e89e8c12fbfbb24dd",
+    ".data/tutor-followup-v16-20261108/cleanup.json": "1c07997fc6feebebd6f48a6c3992e5c83d3a2780ee200821f58f748436e17e45"
+  },
+  "documents": {
+    "eval/tutor-followup-v17-v1/REPORT.md": "3945cb4f9a259ce155bacdecd09dccbca1dd5f7e8dbaf33ef2d0dfb8ccc08cb8",
+    "eval/tutor-followup-v17-v1/FINAL_REVIEW.md": "6bdfee0a0eb430f18fb41834b47964ce4d7705ab5e8c80d5091f4dfe1def9602",
+    "eval/tutor-followup-v17-v1/FUTURE_DIAGNOSTIC.md": "ca0e9a562b17c61b45bd3ad44577a8d8c3019333e55c7dbb395699edc401ae02",
+    "eval/tutor-followup-v17-v1/ISSUE_STATUS.json": "cef18ac0f08c2d1b9e70f548b144c6b1cedd3128d0db88e3dfedf103eb219920",
+    "eval/tutor-followup-v17-v1/RUFF_ATTRIBUTION.json": "3faf19b2750a4383b3e341ddf2e7aed09709d19a6984977fdfad675b2bd0cc51",
+    "eval/tutor-followup-v17-v1/candidate.json": "287cde807fde4933ddc2ced79659f045d43c545f6f4432ab21c2d2f9ed5fb815",
+    "eval/tutor-followup-v17-v1/sample-candidate.json": "e413ce3b8f9786b1cebd860fb2c4b36961cfeac2e2d2f53e69461eb6f233f0b1",
+    "eval/tutor-followup-v17-v1/reference-review-pack.json": "12297d781f54c6add8e6719d7aa0602e0c29fc6318e5b28aa9e998204c559acf",
+    "eval/tutor-followup-v17-v1/REFERENCE_REVIEW.md": "d97d0e0f7bc5b94db5f3d56eb4ec4f69c703cb994def6483bfe75e77d6bd3ce0",
+    "eval/tutor-followup-v17-v1/execution-protocol.json": "4ae9631874f08d69b3a13a06cfd49dcca222ecf8126c57de582dd32e646fc254",
+    "eval/tutor-followup-v17-v1/authorization-template.json": "11e21ef3e4003e183fd257a40d44a8263d84334562f88a84dad8ba7351623eb2",
+    "eval/tutor-followup-v17-v1/OFFICIAL_PREFLIGHT.md": "83dc9660a8606fb26c3150a2a8a7f1fa0380924e3265782ece431b56ffe37b8b",
+    "eval/tutor-followup-v17-v1/OFFICIAL_PREFLIGHT.json": "797e4d9da23b4f53a6827eb74263e7cd38358d7ff1bc3baac0d14af327c78b4f"
+  },
+  "retained_nonzero_supervisor_records": {
+    "final-live-denial": {
+      "name": "final-live-denial",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-live-denial",
+        "scripts/dev/run_tutor_diagnostic_v16.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-followup-v16-20261108/denied-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 1.662,
+      "classification": "EXPECTED_ADMISSION_DENIAL"
+    },
+    "final-v17-live-denial": {
+      "name": "final-v17-live-denial",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-live-denial",
+        "scripts/dev/run_tutor_diagnostic_v17.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-followup-v17-20261108/denied-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 1.887,
+      "classification": "EXPECTED_ADMISSION_DENIAL"
+    },
+    "v16-typed-contract": {
+      "name": "v16-typed-contract",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-typed",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/typed-contract"
+      ],
+      "code": 1,
+      "seconds": 12.748,
+      "classification": "AUTHOR_TEST_ASSERTION_FAILURE_RETAINED"
+    }
+  },
+  "all_supervisor_records": {
+    "final-default-verify": {
+      "name": "final-default-verify",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-default",
+        "scripts/dev/run_tutor_diagnostic_v16.py"
+      ],
+      "code": 0,
+      "seconds": 1.639
+    },
+    "final-historical-reconstruction": {
+      "name": "final-historical-reconstruction",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-history",
+        "scripts/dev/check_tutor_zero_cost_audit.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction"
+      ],
+      "code": 0,
+      "seconds": 98.247
+    },
+    "final-legacy-mechanisms": {
+      "name": "final-legacy-mechanisms",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-legacy",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/legacy-mechanisms"
+      ],
+      "code": 0,
+      "seconds": 253.878
+    },
+    "final-live-denial": {
+      "name": "final-live-denial",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-live-denial",
+        "scripts/dev/run_tutor_diagnostic_v16.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-followup-v16-20261108/denied-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 1.662
+    },
+    "final-v15-compatibility": {
+      "name": "final-v15-compatibility",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v15",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-followup-v16-20261108/v15-compatibility"
+      ],
+      "code": 0,
+      "seconds": 67.49
+    },
+    "final-v16-java-cross": {
+      "name": "final-v16-java-cross",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=final-cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorVerifiedCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 16.594
+    },
+    "final-v16-runtime-entry": {
+      "name": "final-v16-runtime-entry",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-final-v16",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/final-v16"
+      ],
+      "code": 0,
+      "seconds": 115.328
+    },
+    "final-v17-default-verify": {
+      "name": "final-v17-default-verify",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-default",
+        "scripts/dev/run_tutor_diagnostic_v17.py"
+      ],
+      "code": 0,
+      "seconds": 1.864
+    },
+    "final-v17-java-cross": {
+      "name": "final-v17-java-cross",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=final-cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorGuardedCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 17.832
+    },
+    "final-v17-live-denial": {
+      "name": "final-v17-live-denial",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-live-denial",
+        "scripts/dev/run_tutor_diagnostic_v17.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-followup-v17-20261108/denied-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 1.887
+    },
+    "final-v17-runtime-entry": {
+      "name": "final-v17-runtime-entry",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-final-v17",
+        "scripts/dev/check_tutor_guarded.py",
+        "--output",
+        ".data/tutor-followup-v17-20261108/final-v17"
+      ],
+      "code": 0,
+      "seconds": 50.737
+    },
+    "final-vue-types": {
+      "name": "final-vue-types",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vue-tsc/bin/vue-tsc.js",
+        "-b",
+        "frontend/tsconfig.json"
+      ],
+      "code": 0,
+      "seconds": 27.664
+    },
+    "final-vue": {
+      "name": "final-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-followup-v16-20261108/vue-results.json"
+      ],
+      "code": 0,
+      "seconds": 47.526
+    },
+    "v16-capture-admission": {
+      "name": "v16-capture-admission",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-capture",
+        "scripts/dev/check_tutor_followup.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-followup-v16-20261108/capture-admission"
+      ],
+      "code": 0,
+      "seconds": 13.002
+    },
+    "v16-comment-reproduction": {
+      "name": "v16-comment-reproduction",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-comment-reproduction",
+        ".data/tutor-followup-v16-20261108/reproduce-calculation-comment.py"
+      ],
+      "code": 0,
+      "seconds": 1.718
+    },
+    "v16-cross-service": {
+      "name": "v16-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorVerifiedCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 32.091
+    },
+    "v16-entry-rehearsal": {
+      "name": "v16-entry-rehearsal",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-rehearsal",
+        ".data/tutor-followup-v16-20261108/rehearse-entry.py"
+      ],
+      "code": 0,
+      "seconds": 20.122
+    },
+    "v16-independent-reproduction": {
+      "name": "v16-independent-reproduction",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-reproduction",
+        "scripts/dev/check_tutor_followup.py",
+        "--stage",
+        "reproduce",
+        "--output",
+        ".data/tutor-followup-v16-20261108/reproduction"
+      ],
+      "code": 0,
+      "seconds": 2.219
+    },
+    "v16-prefreeze-regression": {
+      "name": "v16-prefreeze-regression",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-prefreeze",
+        "scripts/dev/check_tutor_followup.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-followup-v16-20261108/prefreeze"
+      ],
+      "code": 0,
+      "seconds": 29.875
+    },
+    "v16-publication-final": {
+      "name": "v16-publication-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-publication",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/publication"
+      ],
+      "code": 0,
+      "seconds": 12.998
+    },
+    "v16-receipt-limits": {
+      "name": "v16-receipt-limits",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-receipt-limits",
+        "scripts/dev/check_tutor_followup.py",
+        "--stage",
+        "live_receipt_cannot",
+        "--output",
+        ".data/tutor-followup-v16-20261108/receipt-limits"
+      ],
+      "code": 0,
+      "seconds": 1.73
+    },
+    "v16-typed-contract": {
+      "name": "v16-typed-contract",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-typed",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/typed-contract"
+      ],
+      "code": 1,
+      "seconds": 12.748
+    },
+    "v16-typed-corrected": {
+      "name": "v16-typed-corrected",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-typed-corrected",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/typed-corrected"
+      ],
+      "code": 0,
+      "seconds": 13.0
+    },
+    "v16-typed-values": {
+      "name": "v16-typed-values",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-values",
+        "scripts/dev/check_tutor_followup.py",
+        "--output",
+        ".data/tutor-followup-v16-20261108/typed-values"
+      ],
+      "code": 0,
+      "seconds": 12.899
+    },
+    "v17-cross-service": {
+      "name": "v17-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorGuardedCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 27.308
+    },
+    "v17-prefreeze": {
+      "name": "v17-prefreeze",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-followup-v16-20261108/network-v17-prefreeze",
+        "scripts/dev/check_tutor_guarded.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-followup-v16-20261108/v17-prefreeze"
+      ],
+      "code": 0,
+      "seconds": 23.881
+    }
+  },
+  "local_commits": [
+    "886c97d305457664bca69711b81957d5f98cafc4 Add opt-in verified Tutor publication and controller-owned Socratic acts",
+    "f74f77f82d3cd950e639c591c5e6d8d0c6dd4a05 Prepare a default-safe Tutor diagnostic entry and explicit reference-review blockers",
+    "751d380b95d5b11b87ad53b3505304ea74030db8 Freeze the v16 diagnostic candidate with independent reference review pending",
+    "3b9bae4859af243dc6b77bf0fa5ba6c4b0221c31 Close ignored calculation text under a new v17 Tutor identity",
+    "f5738535734a69cea98ab911bfd30205d8a58971 Freeze the corrected v17 diagnostic candidate without paid readiness"
+  ],
+  "stop": "Authorized zero-cost phase complete; no automatic paid, default activation, push, PR, merge, deployment or expansion.",
+  "official_documentary_preflight": {
+    "status": "DOCUMENTARY_CHECK_ONLY_NOT_DISPATCH_RECEIPT",
+    "read_utc": "2026-11-07T17:48:49+00:00",
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/",
+      "https://api-docs.deepseek.com/api/create-chat-completion/"
+    ],
+    "requested_model_id_documented": "deepseek-flash",
+    "documented_serving_version": "DeepSeek-V4.1-Flash-1017",
+    "documented_peak_cache_miss_input_nano_usd_per_token": 300,
+    "documented_peak_output_nano_usd_per_token": 1200,
+    "frozen_rates_match_documented_peak_rates": true,
+    "requested_configuration_documented": {
+      "thinking": "disabled",
+      "temperature": 0,
+      "max_tokens": 1200,
+      "tool_choice": "required"
+    },
+    "credential_access": false,
+    "provider_api_requests": 0,
+    "model_embedding_reviewer_requests": 0,
+    "account_availability": "NOT_RUN",
+    "request_specific_backend": "UNKNOWN",
+    "dispatch_receipt_issued": false,
+    "paid_authorization": false,
+    "new_provider_cost_usd": "0"
+  }
+}

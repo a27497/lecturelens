@@ -1,0 +1,142 @@
+{
+  "version": "v17-seven-partial-reassessment-v1",
+  "default_changed": false,
+  "records": [
+    {
+      "id": "A02",
+      "priority": "P0",
+      "class": [
+        "MISSING_REAL_VALIDATION",
+        "BOUNDED_REPRESENTATION_CAPABILITY"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_REAL_COMPLIANCE_NOT_RUN",
+      "change": "No repeated delivery rewrite. V17 keeps final length/citation/budget gates and has positive maximum-field PG cases. Model point selection and all mandatory-content retention have not run.",
+      "evidence": [
+        "agent-service/tests/test_tutor_v17.py::test_verified_actual_maximum_source_and_feedback_publication",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/v14-replay-check.json"
+      ],
+      "residual": "A legal bounded form does not prove the model selects all required conditions; v17 is narrower than free paraphrase.",
+      "next": "Independent review must retain every obligation; only the one later authorized diagnostic can measure real compliance.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A03",
+      "priority": "P1",
+      "class": [
+        "REPRODUCED_PRODUCT_PUBLICATION_DEFECT",
+        "RESIDUAL_CONTEXTUAL_SEMANTIC_DEFECT"
+      ],
+      "status": "PARTIALLY_FIXED_ARBITRARY_ASSERTION_SURFACE_CLOSED_CONTEXT_CROP_REMAINS",
+      "change": "Real anchor plus invented course claim/grade is independently reproduced in v15. V17 permits source spans, checked value expressions and learner/source comparisons; no renamed free derivation/grade channel. Final review additionally reproduced ignored AST comments as visible prose in frozen v16. V17 validates the complete displayed value grammar before AST evaluation.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/reproduction/v15-a03-reproduction.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a03-rejection.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-feedback-comparison.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-residual-source-context-crop.json",
+        ".data/tutor-followup-v16-20261108/v16-comment-bypass.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-comment-rejection.json"
+      ],
+      "residual": "A source crop can omit negation/conditions and still publish. Correct arithmetic may use irrelevant premises; comparison feedback may not correct a misconception.",
+      "next": "Keep the negative crop fixture; independent source/obligation review and semantic evaluation required. No full entailment claim.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A04",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_PRODUCT_DEFECT",
+        "EXPLICIT_NEW_PATH_ALREADY_FIXED",
+        "ACTIVATION_OUTSIDE_CURRENT_SCOPE"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_LEGACY_PROJECTION_REMAINS",
+      "change": "New v17 factory reuses complete-v1 without changing Java or old source identities. Actual gateway/new-factory/Java-authority/PG verifies complete raw source and binding.",
+      "evidence": [
+        "backend/src/test/java/com/example/courselingo/qa/TutorVerifiedCrossServiceIT.java",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service/runtime.json"
+      ],
+      "residual": "Legacy normalized1200 projection remains. Oversized/truncated sources explicitly fail instead of continuing across ranges.",
+      "next": "Separately authorize reviewed default/legacy consumer activation or bounded continuation; no silent switch or migration here.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A05",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_PRODUCT_DEFECT",
+        "EXPLICIT_NEW_GENERATION_PATH_ALREADY_FIXED"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_SHARED_NORMALIZATION_REMAINS",
+      "change": "Raw code/newlines/hash retained through actual v17 product chain; no duplicate normalization rewrite.",
+      "evidence": [
+        "backend/src/test/java/com/example/courselingo/qa/TutorCompleteEvidenceTest.java",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service-view.json"
+      ],
+      "residual": "Legacy/shared retrieval normalization is unchanged; ingestion completeness is NOT_RUN.",
+      "next": "Review shared consumers only with concrete activation need. Keep bounded complete projection and old identities.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A06",
+      "priority": "P1",
+      "class": [
+        "LEGACY_FROZEN_DEFAULT_DEFECT",
+        "NEW_FACTORY_MOCK_ALREADY_FIXED",
+        "DEFAULT_SWITCH_NOT_AUTHORIZED"
+      ],
+      "status": "PARTIALLY_FIXED_UNCHANGED_OLD_DEFAULT_REMAINS",
+      "change": "New VerifiedMock preserves whole bounded code paragraphs and values[0], including actual default factory path. Frozen default Mock remains byte-identical.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/default-syntax-loss.json",
+        ".data/tutor-followup-v17-20261108/final-cross-service/cross-service-view.json"
+      ],
+      "residual": "Original default still rewrites brackets. It is not v17 or promoted by this phase.",
+      "next": "A separately reviewed default activation with immutable old entry is required; do not edit frozen source to erase history.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A10",
+      "priority": "P2",
+      "class": [
+        "SOURCE_TRUTH_DESIGN_BOUNDARY",
+        "CAPABILITY_LIMIT"
+      ],
+      "status": "PARTIALLY_FIXED_ATTRIBUTION_STRUCTURED_EXTERNAL_TRUTH_NOT_PROVIDED",
+      "change": "Course text can only be a literal attributed span; generated numeric/sequence values are computed under a declared pure sublanguage. No arbitrary execution or verification assertion channel.",
+      "evidence": [
+        "agent-service/src/lecturelens_real_eval/tutor/verified_runtime.py",
+        ".data/tutor-followup-v16-20261108/historical-reconstruction/source-truth-limitation.json",
+        "agent-service/src/lecturelens_real_eval/tutor/guarded_runtime.py"
+      ],
+      "residual": "Outdated/false source statements remain unchanged and are not verified facts. Pure rational/value expressions do not execute course Python/R importer code.",
+      "next": "Independent reference judgment must preserve attribution versus executable-truth distinction; new execution capability would need separately bounded scope.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    },
+    {
+      "id": "A12",
+      "priority": "P2",
+      "class": [
+        "REPRODUCED_FREE_TEXT_SOLUTION_LEAK_FIXED",
+        "PEDAGOGICAL_CAPABILITY_NOT_RUN"
+      ],
+      "status": "PARTIALLY_FIXED_REPRODUCED_SURFACE_CLOSED_HINT_SUITABILITY_NOT_RUN",
+      "change": "V15 spelled-out answer bypass independently publishes. V17 only accepts source-bound intent enums; arbitrary answer, feedback, intent or extra text cannot be rendered. Five positive hint acts remain.",
+      "evidence": [
+        ".data/tutor-followup-v16-20261108/reproduction/v15-a12-reproduction.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a12-rejection-source.json",
+        ".data/tutor-followup-v17-20261108/final-v17/v17-a12-rejection-hint_extra.json",
+        "agent-service/tests/test_tutor_v17.py::test_verified_socratic_act_has_no_free_solution_channel"
+      ],
+      "residual": "Hints can be generic or inappropriate. Opening an authoritative source may show its solution; this is not source access control or measured learning quality.",
+      "next": "Independent per-task targeted-guidance review and later authorized diagnostic. Do not label enum acceptance complete pedagogical assurance.",
+      "previous_status": "PARTIALLY_FIXED",
+      "root_confidence": "HIGH_FOR_REPRODUCED_MECHANISM; REAL_FREQUENCY_NOT_RUN"
+    }
+  ],
+  "full_semantic_closure_claim": false
+}

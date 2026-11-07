@@ -61,7 +61,7 @@ metadata; it cannot authenticate reviewer independence or manufacture approval.
 
 The requested model is `deepseek-flash`, output1200, temperature0, thinking disabled,
 concurrency1, retries0, at most80 attempts and US$0.70 local reserved-plus-settled
-liability. Availability/current prices and an immutable backend remain unverified.
+liability. Published model/configuration/rates have a dated [documentary check](../eval/tutor-followup-v17-v1/OFFICIAL_PREFLIGHT.md); account access, dispatch-time conditions and an immutable backend remain unverified.
 Raw artifacts retain bounded pre-JSON HTTP entity bytes, with known request-secret
 redaction; encoded/partial/redacted states are explicit and headers are omitted.
 There is no arbitrary-secret detector or supplier invoice guarantee.
