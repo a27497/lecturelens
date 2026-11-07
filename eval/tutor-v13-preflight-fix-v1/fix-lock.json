@@ -1,0 +1,10 @@
+{
+  "version": "v13-preflight-fix-v1",
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "base_freeze_sha256": "4c4f0f7ad9960231b31808bdbaeb26a45cc750a3a7590ae06819c3bb3f6fdf2f",
+  "change": "Import pytest explicitly; register inherited guarded PG fixtures as a plugin; corrected tests execute unchanged v2 entry through this fixed-scope gate. No task/reference/threshold/candidate/protocol change.",
+  "files": {
+    "entry.py": "4fe380baa46dfc3db09e79324fc91aa1e5ac4fbf9ccfb60efbe0188493ed147c",
+    "test_preflight.py": "a020c6c20b3c7f4a372be2609f5037113de77cc648620ebebb2b1b4725f6b271"
+  }
+}

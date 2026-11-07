@@ -1,0 +1,16 @@
+{
+  "status": "PASS_REPAIRED_NO_COST_PREFLIGHT",
+  "tests": 53,
+  "failed": 0,
+  "skipped": 0,
+  "repair_tests": 7,
+  "parent_entry_tests": 46,
+  "seconds": 43.381,
+  "real_model_requests": 0,
+  "embedding_requests": 0,
+  "reviewer_requests": 0,
+  "xml_sha256": "30b503ca1c541d646132287e8dfa8a9987e9debc7a30febde64bdfa46d87b26e",
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v13-resumed-20261107",
+  "historical_full_runtime_regression": "273 passed at b1781987f7b15315e36f253f58c84903899ec6a5; runtime/candidate unchanged",
+  "historical_failed_bundle_preserved": true
+}
