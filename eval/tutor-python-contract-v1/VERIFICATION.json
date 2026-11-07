@@ -1,0 +1,100 @@
+{
+  "status": "OFFLINE_CONTRACT_VERIFIED_NOT_REAL_QUALITY",
+  "checked_code_sha": "af44fa534bced28cedb9a6d0e2530c92677170ab",
+  "baseline_sha": "6775d1100acb1cd9229c7a9cabeb7d86e21f7377",
+  "earlier_full_regression_sha": "a6d331d72cbb6768282ef92e46326ba86cf07511",
+  "candidate_sha256": "8f430ba637bb13dfd415bf29d4785e116d44141d7d3c49946ede77cee45079cf",
+  "scope_sha256": "27c3361d841412f950b9aac5ab08a0d14e40b4fb0bc60801be0c9d181e5180d7",
+  "historical_files_checked": 74,
+  "historical_files_changed": [],
+  "tests": {
+    "committed.xml": {
+      "tests": "288",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "147.777",
+      "sha256": "d4a41934350c35443c95c222579dc2b33d7bc077155e2d7d6d01d89095433cbf"
+    },
+    "r2-final.xml": {
+      "tests": "82",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "8.486",
+      "sha256": "f0ef3c80d0ce2f668278a3db3f97946c53523ef613c1b0ab4a9071e5e8992795"
+    },
+    "tools-final.xml": {
+      "tests": "44",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "4.272",
+      "sha256": "db6eaeeadac0ac8ce775a12fb52a6290e000ccd589e8e1d9300f0a260f463d60"
+    }
+  },
+  "network_counters": {
+    "network-committed": {
+      "database_connections": 0,
+      "loopback_test_connections": 0,
+      "denied_connections": 0,
+      "record_files": 1
+    },
+    "network-r2-final": {
+      "database_connections": 0,
+      "loopback_test_connections": 0,
+      "denied_connections": 0,
+      "record_files": 1
+    },
+    "network-tools-final": {
+      "database_connections": 0,
+      "loopback_test_connections": 0,
+      "denied_connections": 0,
+      "record_files": 3
+    },
+    "network-scope-final": {
+      "database_connections": 0,
+      "loopback_test_connections": 0,
+      "denied_connections": 0,
+      "record_files": 1
+    }
+  },
+  "fixed_answer_checks": {
+    "provenance": "HAND_CONSTRUCTED_CODEX_MOCK_NOT_HUMAN_LABELS",
+    "courses": 2,
+    "session_prefixes": 4,
+    "turns": 15,
+    "completed": 15,
+    "model_decision_calls": 30,
+    "real_provider_calls": 0,
+    "canonical_abstentions": 2,
+    "target_turns": [
+      "python-01:3",
+      "python-02:1",
+      "python-02:3",
+      "python-04:4"
+    ],
+    "pilot_turns_covered": [
+      "python-01:1",
+      "python-01:2",
+      "python-01:3",
+      "python-01:4",
+      "sheets-01:1",
+      "sheets-01:2",
+      "sheets-01:3",
+      "sheets-01:4"
+    ],
+    "records": [
+      ".data/tutor-python-contract-v1-20261107/fixed-r2-final/test_fixed_answers_publish_ori0/python-01-fixed-contract.json",
+      ".data/tutor-python-contract-v1-20261107/fixed-r2-final/test_fixed_answers_publish_ori1/python-02-fixed-contract.json",
+      ".data/tutor-python-contract-v1-20261107/fixed-r2-final/test_fixed_answers_publish_ori2/python-04-fixed-contract.json",
+      ".data/tutor-python-contract-v1-20261107/fixed-r2-final/test_fixed_answers_publish_ori3/sheets-01-fixed-contract.json"
+    ]
+  },
+  "real_quality": "NOT_RUN",
+  "real_human_agreement": "NOT_RUN",
+  "real_tokens_cost": "NOT_RUN",
+  "learning_outcomes": "NOT_RUN",
+  "network_counter_scope": "Python socket audit only; libpq C connections are not counted. Safety also relies on explicit fixed providers / httpx.MockTransport, stripped provider configuration and the startup guard assertion; counters alone are not a global network trace.",
+  "database_restored": "dedicated container exited 0; retained volume; zero python_contract_* test schemas remained before stop"
+}
