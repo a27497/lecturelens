@@ -1,0 +1,136 @@
+{
+  "code_sha": "c41245becb5e6f72494e5c045883da79bc7d1fbf",
+  "counts": {
+    "expected": 8,
+    "executed": 8,
+    "completed": 8,
+    "failed": 0,
+    "missing": 0,
+    "scorable": 8,
+    "scored": 8,
+    "expected_answer": 6,
+    "expected_abstention": 2
+  },
+  "requests": 20,
+  "provider_tokens": {
+    "requests": 20,
+    "all_http_status_200": true,
+    "successful_requests": 20,
+    "failed_requests": 0,
+    "prompt_tokens": 58565,
+    "completion_tokens": 3618,
+    "total_tokens": 62183,
+    "usage_missing_requests": 0,
+    "returned_model_missing_requests": 20,
+    "cache_breakdown": "UNKNOWN_CAPTURE_FAILED"
+  },
+  "costs": {
+    "currency": "USD",
+    "ledger_peak_no_cache_estimate": "0.0219111",
+    "off_peak_uncached_counterfactual": "0.01095555",
+    "off_peak_all_cached_counterfactual": "0.002346495",
+    "actual_bill": "UNKNOWN_NOT_QUERIED",
+    "account_balance": "UNKNOWN",
+    "budget_authorized": "0.70"
+  },
+  "task_correct": {
+    "numerator": 4,
+    "denominator": 8,
+    "definition": "All mandatory reference requirements plus no material false extra assertion"
+  },
+  "core_reference_complete": {
+    "numerator": 5,
+    "denominator": 8
+  },
+  "refusal_correct": {
+    "numerator": 2,
+    "denominator": 2
+  },
+  "cross_turn_consistency": {
+    "numerator": 6,
+    "denominator": 6,
+    "definition": "Six context-dependent turns preserve entities/scenario without contradicting earlier published answers; factual correctness is separate"
+  },
+  "citation_metrics": {
+    "assigned_turns": 8,
+    "annotated_turns": 8,
+    "missing_turns": 0,
+    "citation_support_accuracy": {
+      "numerator": 22,
+      "denominator": 24,
+      "value": 0.9166666666666666
+    },
+    "citation_presence_coverage": {
+      "numerator": 24,
+      "denominator": 31,
+      "value": 0.7741935483870968
+    },
+    "supported_citation_coverage": {
+      "numerator": 22,
+      "denominator": 31,
+      "value": 0.7096774193548387
+    },
+    "uncertain_citation_pairs": 1,
+    "status": "ANNOTATED"
+  },
+  "claim_inventory": {
+    "distinct_claims": 34,
+    "citation_required": 31,
+    "with_explicit_citations": 24,
+    "supported_by_attached_citation": 22,
+    "fully_cited_answer_turns": [
+      "python-01:2"
+    ],
+    "fully_supported_answer_turns": [],
+    "answer_turn_denominator": 6
+  },
+  "execution": {
+    "local_searches": 11,
+    "finish_decisions": 9,
+    "format_repairs": 1,
+    "repair_records": [
+      {
+        "turn_id": "653fc5d0-a679-4ddf-808f-f71f0bbd9ab3",
+        "reason": "TUTOR_FINISH_REPAIR_REQUIRED",
+        "details": {
+          "evidence_ids": {
+            "limit": 4,
+            "actual": 7
+          }
+        }
+      }
+    ],
+    "transport_retries": 0,
+    "reviewer_calls": 0,
+    "concurrency": 1
+  },
+  "source_review_type": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "independent_check": {
+    "existing_files_unchanged": 546,
+    "pg_jsonl_record_content_equal": true,
+    "pg_jsonl_events": 40,
+    "request_wire_sha_matches": 20,
+    "result_turn_keys_unique": 8,
+    "frozen_scope_exact": true,
+    "reference_fields_absent_from_tutor_body": true,
+    "final_output_citation_ids_valid": 21
+  },
+  "model_identity": {
+    "requested": "deepseek-flash",
+    "returned": "UNKNOWN_CAPTURE_FAILED",
+    "missing_calls": 20,
+    "public_doc_mapping": "DOCUMENTATION_ONLY_NOT_VERIFIED_RESPONSE_VERSION"
+  },
+  "decision": "DO_NOT_EXPAND_BEFORE_QUALITY_AND_RESPONSE_METADATA_DEFECTS_ARE_RESOLVED",
+  "human_agreement": "NOT_RUN",
+  "cohen_kappa": "NOT_RUN",
+  "model_reviewer": "NOT_RUN_DISABLED",
+  "learning_effects": "NOT_RUN",
+  "expanded_evaluation": "NOT_RUN",
+  "artifacts": {
+    "run": ".data/tutor-pilot-v1/first-real-20261107",
+    "audit": ".data/tutor-first-live-20261107",
+    "postgres_snapshot": ".data/tutor-first-live-20261107/postgres-run-snapshot.json",
+    "source_labels": ".data/tutor-first-live-20261107/codex-source-review.json"
+  }
+}
