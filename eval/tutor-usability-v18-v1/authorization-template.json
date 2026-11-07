@@ -1,0 +1,14 @@
+{
+  "authorized": false,
+  "scope": "ONE_V18_THREE_TURN_SMOKE_NO_RETRY_NO_EXPANSION",
+  "model": "deepseek-flash",
+  "max_output_tokens": 4096,
+  "max_requests": 12,
+  "max_nano_usd": 300000000,
+  "candidate_sha256": null,
+  "packet_sha256": null,
+  "git_head": null,
+  "run_id": null,
+  "expires_utc": null,
+  "note": "NOT A GRANT. Fill only after fresh explicit approval of this frozen scope. No previous authorization is valid."
+}

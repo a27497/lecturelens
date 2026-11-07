@@ -1,0 +1,130 @@
+{
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "reviewer": "Codex, same author as question and implementation",
+  "independent_human_review": "NOT_RUN; not required for this bounded development smoke",
+  "status": "SOURCE_CHECKED_DEVELOPMENT_REFERENCE_NOT_BLIND_GOLD",
+  "evidence": [
+    {
+      "quote": "once for each thing in a sequence",
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "line": 135,
+      "evidence_id": "a8aba2c5ce282d526066551ae3dd65a34a0e7a9a00ff6b5633f66c34c1fc2fb6",
+      "source_file_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "evidence_text_sha256": "3a09cd28f10b9059a403e2d63096cab304d869d5faa2777818ad0e06c2c70b61"
+    },
+    {
+      "quote": "length = length + 1",
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "line": 193,
+      "evidence_id": "4c5cfe65b0d6822117044e97dd3ea7d0728025a2a31904285400fda0b02e1d32",
+      "source_file_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "evidence_text_sha256": "573a85502748de72448605d2a7dd11b108d7d28e74a2193f7262ad02e09cc6b8"
+    },
+    {
+      "quote": "print('There are', length, 'names in the list.')",
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "line": 194,
+      "evidence_id": "4c5cfe65b0d6822117044e97dd3ea7d0728025a2a31904285400fda0b02e1d32",
+      "source_file_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "evidence_text_sha256": "573a85502748de72448605d2a7dd11b108d7d28e74a2193f7262ad02e09cc6b8"
+    },
+    {
+      "quote": "by using `odds[0]`",
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "line": 45,
+      "evidence_id": "521428bec042cf1f1e8a4a943c762ed73f35d610e64623f9af245a13b6317f7f",
+      "source_file_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "evidence_text_sha256": "71cf250537a45b604af737f588d772cafa0a6e955285c4591f58f7cf6b099f07"
+    },
+    {
+      "quote": "we must indent anything we",
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "line": 152,
+      "evidence_id": "a552d28a101b51e954f6365fb091e6648b17fd37476bec0a09d58a3999bcd880",
+      "source_file_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "evidence_text_sha256": "ed3358d1eee05cee45f28e5f404f94624757d8dd4ff658d3677753938ced2a17"
+    }
+  ],
+  "tasks": [
+    {
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "text": "Explain the supplied loop lesson to a beginner in four connected parts: why a loop replaces repeated indexed print statements; trace an explicit variation starting length at 2 and visiting Ada then Grace; show that variation as commented Python code and explain inside versus outside printing; explain names[0] and names[1] under this list. State the assumptions and distinguish the changed-example derivation from the original course output. Keep all requested parts and cite their sources.",
+      "socratic": false,
+      "depends_on_turns": [],
+      "reference_points": [
+        "A loop applies its body once per element without a separate indexed print for each item.",
+        "Under the explicitly changed start2/two-name example:2 then3 then4, final4; do not substitute the original zero/three-name trace.",
+        "Valid commented Python with names list, length initially2, increment inside loop, final print outside. Preserve brackets and indentation.",
+        "Outside print occurs once after loop; inside print occurs per visit (3,4 in this variation).",
+        "names[0] is Ada, names[1] is Grace under the supplied list; distinguish this derivation from the original source and from claimed execution."
+      ],
+      "evidence_quotes": [
+        "once for each thing in a sequence",
+        "length = length + 1",
+        "print('There are', length, 'names in the list.')",
+        "by using `odds[0]`",
+        "we must indent anything we"
+      ],
+      "scoring": "All listed necessary points required; any unsupported substantive claim, wrong derivation, missing condition, invalid binding, overlength, or Socratic solution is FAIL. Infrastructure failures are separate, never quality passes.",
+      "ambiguities": [
+        "Changed numeric example is an explicit learner assumption, not a literal source result.",
+        "A full source citation can reveal solutions; withhold them in generated Socratic text, not by changing authoritative source access.",
+        "Rules/templates alone do not establish hint relevance or semantic support."
+      ]
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:2",
+      "text": "Keep helping with that changed counting example. Ask me one guiding question about whether the final print is inside or outside the loop; do not give the trace or final value.",
+      "socratic": true,
+      "depends_on_turns": [
+        1
+      ],
+      "reference_points": [
+        "One question directs attention to indentation/body boundary and the location of final print.",
+        "Do not give final4, intermediate values, complete code or full solution in answer/feedback.",
+        "Relevant current-turn citation; full source remains inspectable and may contain solutions."
+      ],
+      "evidence_quotes": [
+        "once for each thing in a sequence",
+        "length = length + 1",
+        "print('There are', length, 'names in the list.')",
+        "by using `odds[0]`",
+        "we must indent anything we"
+      ],
+      "scoring": "All listed necessary points required; any unsupported substantive claim, wrong derivation, missing condition, invalid binding, overlength, or Socratic solution is FAIL. Infrastructure failures are separate, never quality passes.",
+      "ambiguities": [
+        "Changed numeric example is an explicit learner assumption, not a literal source result.",
+        "A full source citation can reveal solutions; withhold them in generated Socratic text, not by changing authoritative source access.",
+        "Rules/templates alone do not establish hint relevance or semantic support."
+      ]
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:3",
+      "text": "I think the final counter is3 because it changes only once, and the last print runs inside the loop. Correct both points and explain the changed trace.",
+      "socratic": false,
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "reference_points": [
+        "Use actual earlier changed input:initial2, Ada/Grace, two increments ending4.",
+        "Explain the current learner errors:one increment per visit, not once total; unindented final print outside, not inside.",
+        "Include specific feedback comparing the learner reply with source evidence, without inventing a grade or permanent mastery.",
+        "Answer and feedback retain relevant bound citations and source conditions; no unsupported execution assertion."
+      ],
+      "evidence_quotes": [
+        "once for each thing in a sequence",
+        "length = length + 1",
+        "print('There are', length, 'names in the list.')",
+        "by using `odds[0]`",
+        "we must indent anything we"
+      ],
+      "scoring": "All listed necessary points required; any unsupported substantive claim, wrong derivation, missing condition, invalid binding, overlength, or Socratic solution is FAIL. Infrastructure failures are separate, never quality passes.",
+      "ambiguities": [
+        "Changed numeric example is an explicit learner assumption, not a literal source result.",
+        "A full source citation can reveal solutions; withhold them in generated Socratic text, not by changing authoritative source access.",
+        "Rules/templates alone do not establish hint relevance or semantic support."
+      ]
+    }
+  ]
+}
