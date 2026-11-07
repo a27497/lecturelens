@@ -1,0 +1,19 @@
+{
+  "version": "v14-fresh-freeze-v1",
+  "frozen_utc": "2026-11-07T15:14:22.470909+00:00",
+  "before_any_candidate_result": true,
+  "files": {
+    "sources.json": "f2cd090f34a084c375e9d008a1b487b941e74779d349109cb0bef2dfa1ec27f8",
+    "questions.json": "ac34bf0df1c73a83e3534fac6089460a8b8abdc3c215698efb9633ea7b43f4d4",
+    "development.json": "ad5211552a4ce51668a88f8ada816f23707690e9fe4ff380a9c63c78dd0a822f",
+    "snapshot.json": "6e24e3fd92a0b59a7edb9c2d488c891e29fc29d1ece28cba24dcaee8ec3adfaa",
+    "grading-rules.json": "6c08abb8ee86c647e0b4d1b1719b0867d92312af623f4c2d9e6d8665ea2942e8",
+    "CONTENT_REVIEW.json": "6d4b76c8981f954975c754d4c9940611030f10dc639c2348cf9a2006c974f4eb",
+    "run-plan.json": "f28b9bae8fd653ed09922ec5a451a7b629e98b5c6c32dec45c6077027dfb2576",
+    "adapter-lock.json": "ea30d8658c41a7da45fae160f9adc46d728ccd4fa2b3a28bbcfa1ffc8a6bc1fd",
+    "run_fresh.py": "17cb9b0762261b0e767ca009c644f1413bda256524464e77e186fc84d969e96b",
+    "v14_fresh_contract.py": "a4d0099c540e7740971879268ac12e375e0535e05f1af7a2c2f8e2de1d8b620f",
+    "test_fresh.py": "c705ed9c87d3f221cad56f954ef5e796094d1325b6af1ebf9af93bfd260bd39b",
+    "EXECUTION_SHEET.md": "624317e1af42b5a15e5aae7548e9cd7fb91c045c7563494f06f01b6789baeadf"
+  }
+}

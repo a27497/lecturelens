@@ -1,0 +1,201 @@
+{
+  "decision": "INCOMPLETE_PREFLIGHT_REJECTED",
+  "quality_status": "NOT_RUN",
+  "reason": "V14_SOURCE_CHANGED",
+  "expected": 16,
+  "attempted": 0,
+  "completed": 0,
+  "failed_turns": 0,
+  "skipped": 0,
+  "missing": 16,
+  "preflight_failures": 1,
+  "scorable": 0,
+  "semantically_scored": 0,
+  "positions_accounted": 16,
+  "delivered_complete_correct": {
+    "numerator": 0,
+    "denominator": 16,
+    "interpretation": "NO_EXECUTION_NOT_A_MODEL_ERROR_RATE"
+  },
+  "completed_answer_correctness": {
+    "numerator": 0,
+    "denominator": 0,
+    "value": null,
+    "status": "NOT_RUN"
+  },
+  "citation_support": {
+    "numerator": 0,
+    "denominator": 0,
+    "value": null,
+    "status": "NOT_RUN"
+  },
+  "supported_claim_coverage": {
+    "numerator": 0,
+    "denominator": 0,
+    "value": null,
+    "status": "NOT_RUN"
+  },
+  "critical_types": "NOT_RUN",
+  "overlong_repair": "NOT_RUN",
+  "exclusive_assertions": "NOT_RUN",
+  "real_requests": 0,
+  "embedding_requests": 0,
+  "reviewer_requests": 0,
+  "provider_usage": "NOT_RUN_NO_RESPONSES",
+  "provider_cache_usage": "NOT_RUN_NO_RESPONSES",
+  "local_ledger": "NOT_CREATED",
+  "local_reservation_usd": "0",
+  "local_settlement_usd": "0",
+  "rate_calculated_cost_usd": "0",
+  "supplier_actual_bill": "UNKNOWN_NOT_QUERIED",
+  "paid_sender_started": false,
+  "credential_consumed": false,
+  "preflight_head": "fb1342034e0f6e617a40991281455ae7fd846e29",
+  "preflight_entry_state": "UNCOMMITTED_ADDITIVE_ENTRY_BOUND_BY_FREEZE_HASHES",
+  "actual_real_execution_sha": "NOT_RUN",
+  "candidate": "p8-tutor-draft-repair-v14-development",
+  "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "freeze_sha256": "ba3d1b14dd410e770b2cdfd062e3c7042d93d70a32c27b61d871472aecb390a0",
+  "plan_sha256": "f28b9bae8fd653ed09922ec5a451a7b629e98b5c6c32dec45c6077027dfb2576",
+  "new_sources": [
+    "episodes/05-loop.md",
+    "episodes/05-exporting-data.md"
+  ],
+  "raw_root": ".data/tutor-v14-real-20261107",
+  "cleanup": {
+    "container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port_closed": true,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "original_running_containers": 23,
+    "all_original_services_running": true
+  },
+  "authorization": "ENDED_WITH_STOPPED_BATCH_NO_AUTOMATIC_REPAIR_OR_RETRY",
+  "not_run": [
+    "v14_real_quality",
+    "v14_real_cost_optimization",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion",
+    "learning_effects"
+  ],
+  "preflight_check": {
+    "name": "v14-fresh-preflight",
+    "command": [
+      "agent-service/.venv/bin/python",
+      "eval/tutor-scale/safe_exec.py",
+      ".data/tutor-v14-real-20261107/network-preflight",
+      ".data/tutor-v14-real-20261107/check_fresh.py"
+    ],
+    "code": 1,
+    "seconds": 1.417
+  },
+  "source_hash_diagnostic": {
+    "source_checks": [
+      {
+        "course": "carpentries-python",
+        "field": "local_path",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+        "expected": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "observed": "dd472a2a972b5b25a24b120a9da4ce8a79cdd3e3df89ace7e62873894c02c206",
+        "match": false
+      },
+      {
+        "course": "carpentries-python",
+        "field": "license_local_path",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-LICENSE.md",
+        "expected": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+        "observed": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+        "match": true
+      },
+      {
+        "course": "carpentries-spreadsheets",
+        "field": "local_path",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+        "expected": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e",
+        "observed": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e",
+        "match": true
+      },
+      {
+        "course": "carpentries-spreadsheets",
+        "field": "license_local_path",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-LICENSE.md",
+        "expected": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+        "observed": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+        "match": true
+      }
+    ],
+    "real_requests": 0,
+    "credential_consumed": false,
+    "action": "STOP_AFTER_FIRST_PREFLIGHT_FAILURE_NO_REPAIR_OR_DISPATCH"
+  },
+  "artifact_files": 17,
+  "artifact_manifest_sha256": "94a7d6ed39b04193b335254fc1a5325a5e1235e61553c1ee2598d848446f99fe",
+  "review_type": "CODEX_NONBLIND_SOURCE_PREPARATION_NO_CANDIDATE_ANSWERS_TO_REVIEW",
+  "frozen_requirements": {
+    "scheduled": 16,
+    "completed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "missing": 0,
+    "reviewed": 16,
+    "correct_over_scheduled_minimum": 14,
+    "per_course_minimum": 7,
+    "per_course_denominator": 8,
+    "critical_index_turns": [
+      "v14-python-counter:3",
+      "v14-python-polynomial:1",
+      "v14-python-polynomial:2"
+    ],
+    "critical_index_minimum": 3,
+    "critical_index_denominator": 3,
+    "clean_refusal_minimum": 4,
+    "clean_refusal_denominator": 4,
+    "clarification_turns": [
+      "v14-python-polynomial:2",
+      "v14-sheets-portability:2"
+    ],
+    "clarification_minimum": 2,
+    "context_turns": [
+      "v14-python-counter:2",
+      "v14-python-counter:4",
+      "v14-python-polynomial:2",
+      "v14-python-polynomial:3",
+      "v14-python-polynomial:4",
+      "v14-sheets-portability:2",
+      "v14-sheets-portability:3",
+      "v14-sheets-portability:4",
+      "v14-sheets-lineends:2",
+      "v14-sheets-lineends:4"
+    ],
+    "context_minimum": 9,
+    "context_denominator": 10,
+    "citation_support_minimum": 0.95,
+    "supported_claim_coverage_minimum": 0.9,
+    "expected_answer_full_supported_minimum": 10,
+    "expected_answer_denominator": 12
+  },
+  "new_test_collection": 0,
+  "new_tests_executed": 0,
+  "new_entry_status": "UNVALIDATED_PREFLIGHT_REJECTED",
+  "official_pricing": {
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "verified_on": "2026-11-07",
+    "observed_utc": "2026-11-07T15:14:22.471895+00:00",
+    "currency": "USD",
+    "unit_tokens": 1000000,
+    "requested_model": "deepseek-flash",
+    "documented_model_version": "DeepSeek-V4.1-Flash-1017",
+    "immutable_response_version": "UNKNOWN",
+    "input_cache_miss_peak": "0.30",
+    "input_cache_hit_peak": "0.006",
+    "output_peak": "1.20",
+    "input_cache_miss_offpeak": "0.15",
+    "input_cache_hit_offpeak": "0.003",
+    "output_offpeak": "0.60",
+    "period": "OFF_PEAK_WEEKEND",
+    "source_sha256": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "supplier_actual_bill": "UNKNOWN_NOT_QUERIED"
+  }
+}

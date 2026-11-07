@@ -1,0 +1,1734 @@
+{
+  "version": "tutor-v14-fresh-v1",
+  "split": "development",
+  "dialogues": [
+    {
+      "dialogue_id": "v14-python-counter",
+      "course_id": "carpentries-python",
+      "lecture_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Repeating Actions with Loops\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. Trace the unit's length = 0 loop over names = ['Curie', 'Darwin', 'Turing']. Give each value/length update, the final printed line, and explain why that print runs once rather than once per name.",
+          "category": "accumulator",
+          "task_type": "accumulator",
+          "tags": [],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Trace the unit's length = 0 loop over names = ['Curie', 'Darwin', 'Turing']. Give each value/length update, the final printed line, and explain why that print runs once rather than once per name.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "810a15d3d0cf8b6da41030e064389ed413616fca13c0e7d8f05ffdfd2c46f944",
+              "2c02902fded905bad94bc4db8cf725a4fc96299217702061f8593b802a4e50fa",
+              "8855f1b51195eafc871171ba7a9a6426e3a55f9302c4841977c853a9328d4688",
+              "69afc98a08997083b8569e93dce6c518dee0afc5bc929d2fdb700a2ddafd3ef6",
+              "4b3297721ae131a06f1be432ff7145abbeb84bdf2b83e03296c3b910e6214c07",
+              "c5f8d01216847cae0af12f91ef806975fa75e0dcc6677960495deb88e5f40d7f",
+              "4e37d82c8dc3d7c098e5b2a9b6d91ae26f0370cf0769b690214d4f113171005a",
+              "0f48a1bc8f8991cf1f4ba47c35e9feb7fd1b560731958d5fe95d9664fba98b19",
+              "0a21388f7a6295d6f89d96b673175303b9b8c407ac1586e891c3d2849e78cf9c"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                187,
+                217
+              ],
+              [
+                134,
+                154
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "810a15d3d0cf8b6da41030e064389ed413616fca13c0e7d8f05ffdfd2c46f944",
+                "quote": "Here's another loop that repeatedly updates a variable:",
+                "line_start": 187,
+                "line_end": 187,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L187-L187"
+              },
+              {
+                "evidence_id": "2c02902fded905bad94bc4db8cf725a4fc96299217702061f8593b802a4e50fa",
+                "quote": "```python\nlength = 0\nnames = ['Curie', 'Darwin', 'Turing']\nfor value in names:\n    length = length + 1\nprint('There are', length, 'names in the list.')\n```",
+                "line_start": 189,
+                "line_end": 195,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L189-L195"
+              },
+              {
+                "evidence_id": "8855f1b51195eafc871171ba7a9a6426e3a55f9302c4841977c853a9328d4688",
+                "quote": "```output\nThere are 3 names in the list.\n```",
+                "line_start": 197,
+                "line_end": 199,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L197-L199"
+              },
+              {
+                "evidence_id": "69afc98a08997083b8569e93dce6c518dee0afc5bc929d2fdb700a2ddafd3ef6",
+                "quote": "It's worth tracing the execution of this little program step by step.\nSince there are three names in `names`,\nthe statement on line 4 will be executed three times.\nThe first time around,\n`length` is zero (the value assigned to it on line 1)\nand `value` is `Curie`.\nThe statement adds 1 to the old value of `length`,\nproducing 1,\nand updates `length` to refer to that new value.\nThe next time around,\n`value` is `Darwin` and `length` is 1,\nso `length` is updated to be 2.\nAfter one more update,\n`length` is 3;\nsince there is nothing left in `names` for Python to process,\nthe loop finishes\nand the `print` function on line 5 tells us our final answer.",
+                "line_start": 201,
+                "line_end": 217,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L201-L217"
+              },
+              {
+                "evidence_id": "4b3297721ae131a06f1be432ff7145abbeb84bdf2b83e03296c3b910e6214c07",
+                "quote": "The improved version uses a [for loop](../learners/reference.md#for-loop)\nto repeat an operation --- in this case, printing --- once for each thing in a sequence.\nThe general form of a loop is:",
+                "line_start": 134,
+                "line_end": 136,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L134-L136"
+              },
+              {
+                "evidence_id": "c5f8d01216847cae0af12f91ef806975fa75e0dcc6677960495deb88e5f40d7f",
+                "quote": "```python\nfor variable in collection:\n    # do things using variable, such as print\n```",
+                "line_start": 138,
+                "line_end": 141,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L138-L141"
+              },
+              {
+                "evidence_id": "4e37d82c8dc3d7c098e5b2a9b6d91ae26f0370cf0769b690214d4f113171005a",
+                "quote": "Using the odds example above, the loop might look like this:",
+                "line_start": 143,
+                "line_end": 143,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L143-L143"
+              },
+              {
+                "evidence_id": "0f48a1bc8f8991cf1f4ba47c35e9feb7fd1b560731958d5fe95d9664fba98b19",
+                "quote": "where each number (`num`) in the variable `odds` is looped through and printed one number after\nanother. The other numbers in the diagram denote which loop cycle the number was printed in (1\nbeing the first loop cycle, and 6 being the final loop cycle).",
+                "line_start": 147,
+                "line_end": 149,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L147-L149"
+              },
+              {
+                "evidence_id": "0a21388f7a6295d6f89d96b673175303b9b8c407ac1586e891c3d2849e78cf9c",
+                "quote": "We can call the [loop variable](../learners/reference.md#loop-variable) anything we like, but\nthere must be a colon at the end of the line starting the loop, and we must indent anything we\nwant to run inside the loop. Unlike many other languages, there is no command to signify the end\nof the loop body (e.g. `end for`); everything indented after the `for` statement belongs to the loop.",
+                "line_start": 151,
+                "line_end": 154,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L151-L154"
+              }
+            ],
+            "reference_points": [
+              "Initial length 0; iterations Curie:1, Darwin:2, Turing:3.",
+              "Exact final output: There are 3 names in the list.",
+              "Increment is inside loop, print is outside indentation; loop runs once per sequence element."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Initial length 0; iterations Curie:1, Darwin:2, Turing:3.; Exact final output: There are 3 names in the list.; Increment is inside loop, print is outside indentation; loop runs once per sequence element. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "In the following example, name starts as 'Rosalind' and is then reused as the loop variable. What are the four displayed output lines, and does finishing that loop restore 'Rosalind'? Explain what the text says about the variable after a loop.",
+          "category": "loop-state",
+          "task_type": "loop-state",
+          "tags": [],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "In the following example, name starts as 'Rosalind' and is then reused as the loop variable. What are the four displayed output lines, and does finishing that loop restore 'Rosalind'? Explain what the text says about the variable after a loop.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "2e217dce9f011b4692937f429accb0790a4b2611d021577a37e9f1f6a732d943",
+              "28ada85bbb507b0fdb58c3aae21885bd94294ae7d5001699756f7156ada50bd0",
+              "6399b3b2ce26bcf49e647f507f1518c0a59d224fe0ddc87166d29c78b86eb612"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                219,
+                235
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "2e217dce9f011b4692937f429accb0790a4b2611d021577a37e9f1f6a732d943",
+                "quote": "Note that a loop variable is a variable that is being used to record progress in a loop.\nIt still exists after the loop is over,\nand we can re-use variables previously defined as loop variables as well:",
+                "line_start": 219,
+                "line_end": 221,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L219-L221"
+              },
+              {
+                "evidence_id": "28ada85bbb507b0fdb58c3aae21885bd94294ae7d5001699756f7156ada50bd0",
+                "quote": "```python\nname = 'Rosalind'\nfor name in ['Curie', 'Darwin', 'Turing']:\n    print(name)\nprint('after the loop, name is', name)\n```",
+                "line_start": 223,
+                "line_end": 228,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L223-L228"
+              },
+              {
+                "evidence_id": "6399b3b2ce26bcf49e647f507f1518c0a59d224fe0ddc87166d29c78b86eb612",
+                "quote": "```output\nCurie\nDarwin\nTuring\nafter the loop, name is Turing\n```",
+                "line_start": 230,
+                "line_end": 235,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L230-L235"
+              }
+            ],
+            "reference_points": [
+              "Printed Curie, Darwin, Turing, then after the loop, name is Turing.",
+              "Loop variable still exists afterward; previous Rosalind is not restored in the shown example."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Printed Curie, Darwin, Turing, then after the loop, name is Turing.; Loop variable still exists afterward; previous Rosalind is not restored in the shown example. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Separate task from From 1 to N: list the numbers generated by range(3), range(2, 5), and range(3, 10, 2). Then give the unit's loop printing 1, 2, 3, explaining why its stop is 4 rather than 3.",
+          "category": "critical-order",
+          "task_type": "critical-order",
+          "tags": [
+            "critical"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Separate task from From 1 to N: list the numbers generated by range(3), range(2, 5), and range(3, 10, 2). Then give the unit's loop printing 1, 2, 3, explaining why its stop is 4 rather than 3.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "2484bd206c5a1bbb957b77c3ecbc7ed66418d0226f56fdef7d8e39a55c174be1",
+              "aa29d080f009e4f29cacf4beda3b6bda7209e905ad3c4fe445f2f1f661fcbcc4",
+              "1a1904dc22d25a81b97defe71e8e3cf0353077fd4d0119b45dc00d6d1e0fea9e",
+              "8ad3ae72622fad3a92e2c9136f3720c46f513dc24b5720c0c96cc0ef22975e0b",
+              "fd5b73f1454480865215e228d7ba1d43b7c454949d4323eca1d2d15f3899752e",
+              "b02caaf2f78f0e04cd022bfacc69af8505aa942453111d4819f1f3c55a02d587",
+              "69fc7cdc754b5873f25851f670ae277ab15fd3494542f898d7636c75582e1895",
+              "233dc226ea943d6aaff30396c97d031cd228c41c3a3c2d6d1661e66c68564bab"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                255,
+                286
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "2484bd206c5a1bbb957b77c3ecbc7ed66418d0226f56fdef7d8e39a55c174be1",
+                "quote": "## From 1 to N",
+                "line_start": 255,
+                "line_end": 255,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L255-L255"
+              },
+              {
+                "evidence_id": "aa29d080f009e4f29cacf4beda3b6bda7209e905ad3c4fe445f2f1f661fcbcc4",
+                "quote": "Python has a built-in function called `range` that generates a sequence of numbers. `range` can\naccept 1, 2, or 3 parameters.",
+                "line_start": 257,
+                "line_end": 258,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L257-L258"
+              },
+              {
+                "evidence_id": "1a1904dc22d25a81b97defe71e8e3cf0353077fd4d0119b45dc00d6d1e0fea9e",
+                "quote": "- If one parameter is given, `range` generates a sequence of that length,\n  starting at zero and incrementing by 1.\n  For example, `range(3)` produces the numbers `0, 1, 2`.\n- If two parameters are given, `range` starts at\n  the first and ends just before the second, incrementing by one.\n  For example, `range(2, 5)` produces `2, 3, 4`.\n- If `range` is given 3 parameters,\n  it starts at the first one, ends just before the second one, and increments by the third one.\n  For example, `range(3, 10, 2)` produces `3, 5, 7, 9`.",
+                "line_start": 260,
+                "line_end": 268,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L260-L268"
+              },
+              {
+                "evidence_id": "8ad3ae72622fad3a92e2c9136f3720c46f513dc24b5720c0c96cc0ef22975e0b",
+                "quote": "Using `range`,\nwrite a loop that prints the first 3 natural numbers:",
+                "line_start": 270,
+                "line_end": 271,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L270-L271"
+              },
+              {
+                "evidence_id": "fd5b73f1454480865215e228d7ba1d43b7c454949d4323eca1d2d15f3899752e",
+                "quote": "```python\n1\n2\n3\n```",
+                "line_start": 273,
+                "line_end": 277,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L273-L277"
+              },
+              {
+                "evidence_id": "b02caaf2f78f0e04cd022bfacc69af8505aa942453111d4819f1f3c55a02d587",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 279,
+                "line_end": 279,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L279-L279"
+              },
+              {
+                "evidence_id": "69fc7cdc754b5873f25851f670ae277ab15fd3494542f898d7636c75582e1895",
+                "quote": "## Solution",
+                "line_start": 281,
+                "line_end": 281,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L281-L281"
+              },
+              {
+                "evidence_id": "233dc226ea943d6aaff30396c97d031cd228c41c3a3c2d6d1661e66c68564bab",
+                "quote": "```python\nfor number in range(1, 4):\n    print(number)\n```",
+                "line_start": 283,
+                "line_end": 286,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L283-L286"
+              }
+            ],
+            "reference_points": [
+              "range(3):0,1,2; range(2,5):2,3,4; range(3,10,2):3,5,7,9.",
+              "for number in range(1, 4): followed by indented print(number).",
+              "Two/three-argument range ends just before second parameter; 4 is excluded and 3 included."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "range(3):0,1,2; range(2,5):2,3,4; range(3,10,2):3,5,7,9.; for number in range(1, 4): followed by indented print(number).; Two/three-argument range ends just before second parameter; 4 is excluded and 3 included. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "For those range sequences, provide the exact internal C storage layout and byte-allocation formula that this unit teaches for range objects, including a proof that no other implementation is possible.",
+          "category": "insufficient",
+          "task_type": "insufficient",
+          "tags": [],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            3
+          ],
+          "expected_topic": "For those range sequences, provide the exact internal C storage layout and byte-allocation formula that this unit teaches for range objects, including a proof that no other implementation is possible.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                255,
+                268
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "2484bd206c5a1bbb957b77c3ecbc7ed66418d0226f56fdef7d8e39a55c174be1",
+                "quote": "## From 1 to N",
+                "line_start": 255,
+                "line_end": 255,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L255-L255"
+              },
+              {
+                "evidence_id": "aa29d080f009e4f29cacf4beda3b6bda7209e905ad3c4fe445f2f1f661fcbcc4",
+                "quote": "Python has a built-in function called `range` that generates a sequence of numbers. `range` can\naccept 1, 2, or 3 parameters.",
+                "line_start": 257,
+                "line_end": 258,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L257-L258"
+              },
+              {
+                "evidence_id": "1a1904dc22d25a81b97defe71e8e3cf0353077fd4d0119b45dc00d6d1e0fea9e",
+                "quote": "- If one parameter is given, `range` generates a sequence of that length,\n  starting at zero and incrementing by 1.\n  For example, `range(3)` produces the numbers `0, 1, 2`.\n- If two parameters are given, `range` starts at\n  the first and ends just before the second, incrementing by one.\n  For example, `range(2, 5)` produces `2, 3, 4`.\n- If `range` is given 3 parameters,\n  it starts at the first one, ends just before the second one, and increments by the third one.\n  For example, `range(3, 10, 2)` produces `3, 5, 7, 9`.",
+                "line_start": 260,
+                "line_end": 268,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L260-L268"
+              }
+            ],
+            "reference_points": [
+              "Clean refusal: the supplied episode teaches generated sequences, not C layout, byte formula or uniqueness proof."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm.",
+            "insufficiency_reason": "Complete episode does not supply C range-object representation, byte allocation, or implementation uniqueness proof.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "Clean refusal: the supplied episode teaches generated sequences, not C layout, byte formula or uniqueness proof. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "v14-python-polynomial",
+      "course_id": "carpentries-python",
+      "lecture_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Repeating Actions with Loops\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. In Computing the Value of a Polynomial, explain what each pair from enumerate(coefs) represents for coefs = [2, 4, 3]. Give the three pairs, explain the order of constant/linear/quadratic coefficients, and evaluate the displayed polynomial at x = 5.",
+          "category": "critical-order",
+          "task_type": "critical-order",
+          "tags": [
+            "critical"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "In Computing the Value of a Polynomial, explain what each pair from enumerate(coefs) represents for coefs = [2, 4, 3]. Give the three pairs, explain the order of constant/linear/quadratic coefficients, and evaluate the displayed polynomial at x = 5.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "cb0d08d3205853c250d2e3d20903ca627e391bc6e7941720a1e22cc589d5837b",
+              "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+              "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+              "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+              "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+              "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+              "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                379,
+                405
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "cb0d08d3205853c250d2e3d20903ca627e391bc6e7941720a1e22cc589d5837b",
+                "quote": "## Computing the Value of a Polynomial",
+                "line_start": 379,
+                "line_end": 379,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L379-L379"
+              },
+              {
+                "evidence_id": "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+                "quote": "The built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:",
+                "line_start": 381,
+                "line_end": 383,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L381-L383"
+              },
+              {
+                "evidence_id": "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+                "quote": "```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```",
+                "line_start": 385,
+                "line_end": 388,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L385-L388"
+              },
+              {
+                "evidence_id": "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+                "quote": "The code above loops through `a_list`, assigning the index to `idx` and the value to `val`.",
+                "line_start": 390,
+                "line_end": 390,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L390-L390"
+              },
+              {
+                "evidence_id": "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+                "quote": "Suppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.",
+                "line_start": 392,
+                "line_end": 395,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L392-L395"
+              },
+              {
+                "evidence_id": "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+                "quote": "```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```",
+                "line_start": 397,
+                "line_end": 402,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L397-L402"
+              },
+              {
+                "evidence_id": "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4",
+                "quote": "```output\n97",
+                "line_start": 404,
+                "line_end": 405,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L404-L405"
+              }
+            ],
+            "reference_points": [
+              "enumerate pairs are index,value: (0,2),(1,4),(2,3), indices start at zero.",
+              "Coefficients encode constant, linear, quadratic terms in that order.",
+              "2*5**0+4*5**1+3*5**2=97; displayed result97."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "enumerate pairs are index,value: (0,2),(1,4),(2,3), indices start at zero.; Coefficients encode constant, linear, quadratic terms in that order.; 2*5**0+4*5**1+3*5**2=97; displayed result97. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Clarification: I called its first pair (1, 2), so I treated 2 as a linear coefficient. Is that right? Correct the first pair, its exponent and contribution at x = 5, and identify the actual linear and quadratic terms.",
+          "category": "clarification",
+          "task_type": "clarification",
+          "tags": [
+            "critical",
+            "clarification"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "Clarification: I called its first pair (1, 2), so I treated 2 as a linear coefficient. Is that right? Correct the first pair, its exponent and contribution at x = 5, and identify the actual linear and quadratic terms.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+              "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+              "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+              "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+              "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+              "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                381,
+                405
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+                "quote": "The built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:",
+                "line_start": 381,
+                "line_end": 383,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L381-L383"
+              },
+              {
+                "evidence_id": "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+                "quote": "```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```",
+                "line_start": 385,
+                "line_end": 388,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L385-L388"
+              },
+              {
+                "evidence_id": "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+                "quote": "The code above loops through `a_list`, assigning the index to `idx` and the value to `val`.",
+                "line_start": 390,
+                "line_end": 390,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L390-L390"
+              },
+              {
+                "evidence_id": "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+                "quote": "Suppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.",
+                "line_start": 392,
+                "line_end": 395,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L392-L395"
+              },
+              {
+                "evidence_id": "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+                "quote": "```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```",
+                "line_start": 397,
+                "line_end": 402,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L397-L402"
+              },
+              {
+                "evidence_id": "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4",
+                "quote": "```output\n97",
+                "line_start": 404,
+                "line_end": 405,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L404-L405"
+              }
+            ],
+            "reference_points": [
+              "First pair (0,2), exponent0, constant contribution2.",
+              "Linear term4*x=20; quadratic term3*x**2=75 at x5.",
+              "Index is exponent; value is coefficient, not one-based ordinal labels."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "First pair (0,2), exponent0, constant contribution2.; Linear term4*x=20; quadratic term3*x**2=75 at x5.; Index is exponent; value is coefficient, not one-based ordinal labels. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Now show the unit's accumulator loop using enumerate for that same x and coefficients. State its initial y and each successive accumulated value, keep index and coefficient roles distinct, and say how the final accumulator agrees with the displayed result.",
+          "category": "multi-point",
+          "task_type": "multi-point",
+          "tags": [],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "expected_topic": "Now show the unit's accumulator loop using enumerate for that same x and coefficients. State its initial y and each successive accumulated value, keep index and coefficient roles distinct, and say how the final accumulator agrees with the displayed result.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+              "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+              "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+              "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+              "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+              "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4",
+              "2e3b20661bd4ba1fa17c67d254bba6f24bae07f0124901bc4c801f6d00237b48",
+              "c096bb37b573364e5ee7fd01af8da93a54db34bab04135b1bcf16499a8b7d4d0",
+              "41d73f3743c3646f169e0f2874c942a5e0d76685f3522f48e882d31a8645ed76",
+              "d6c605c17295a26096608539e413626825fbf082046682372b0e46872de6d5e4"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                381,
+                405
+              ],
+              [
+                408,
+                419
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+                "quote": "The built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:",
+                "line_start": 381,
+                "line_end": 383,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L381-L383"
+              },
+              {
+                "evidence_id": "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+                "quote": "```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```",
+                "line_start": 385,
+                "line_end": 388,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L385-L388"
+              },
+              {
+                "evidence_id": "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+                "quote": "The code above loops through `a_list`, assigning the index to `idx` and the value to `val`.",
+                "line_start": 390,
+                "line_end": 390,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L390-L390"
+              },
+              {
+                "evidence_id": "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+                "quote": "Suppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.",
+                "line_start": 392,
+                "line_end": 395,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L392-L395"
+              },
+              {
+                "evidence_id": "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+                "quote": "```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```",
+                "line_start": 397,
+                "line_end": 402,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L397-L402"
+              },
+              {
+                "evidence_id": "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4",
+                "quote": "```output\n97",
+                "line_start": 404,
+                "line_end": 405,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L404-L405"
+              },
+              {
+                "evidence_id": "2e3b20661bd4ba1fa17c67d254bba6f24bae07f0124901bc4c801f6d00237b48",
+                "quote": "Write a loop using `enumerate(coefs)` which computes the value `y` of any\npolynomial, given `x` and `coefs`.",
+                "line_start": 408,
+                "line_end": 409,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L408-L409"
+              },
+              {
+                "evidence_id": "c096bb37b573364e5ee7fd01af8da93a54db34bab04135b1bcf16499a8b7d4d0",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 411,
+                "line_end": 411,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L411-L411"
+              },
+              {
+                "evidence_id": "41d73f3743c3646f169e0f2874c942a5e0d76685f3522f48e882d31a8645ed76",
+                "quote": "## Solution",
+                "line_start": 413,
+                "line_end": 413,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L413-L413"
+              },
+              {
+                "evidence_id": "d6c605c17295a26096608539e413626825fbf082046682372b0e46872de6d5e4",
+                "quote": "```python\ny = 0\nfor idx, coef in enumerate(coefs):\n    y = y + coef * x**idx\n```",
+                "line_start": 415,
+                "line_end": 419,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L415-L419"
+              }
+            ],
+            "reference_points": [
+              "y=0; for idx, coef in enumerate(coefs): indented y = y + coef * x**idx.",
+              "idx is exponent, coef is coefficient; cited values/x imply increments2,20,75.",
+              "Successive y values2,22,97; final matches displayed97; mark trace as derivation."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "y=0; for idx, coef in enumerate(coefs): indented y = y + coef * x**idx.; idx is exponent, coef is coefficient; cited values/x imply increments2,20,75.; Successive y values2,22,97; final matches displayed97; mark trace as derivation. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "For that polynomial loop, give the formal numerical-stability theorem and worst-case floating-point error bound that this unit provides for every IEEE-754 rounding mode, with its proof.",
+          "category": "insufficient",
+          "task_type": "insufficient",
+          "tags": [],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            3
+          ],
+          "expected_topic": "For that polynomial loop, give the formal numerical-stability theorem and worst-case floating-point error bound that this unit provides for every IEEE-754 rounding mode, with its proof.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                379,
+                419
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "cb0d08d3205853c250d2e3d20903ca627e391bc6e7941720a1e22cc589d5837b",
+                "quote": "## Computing the Value of a Polynomial",
+                "line_start": 379,
+                "line_end": 379,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L379-L379"
+              },
+              {
+                "evidence_id": "4769925f90d7bf99620b743574b9aaa7d543e8d23ef4668922eeb4b007ec59fa",
+                "quote": "The built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:",
+                "line_start": 381,
+                "line_end": 383,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L381-L383"
+              },
+              {
+                "evidence_id": "e413c458a86f4bec829f424bfa94d1cfc09c74b5c0d7fe778c4babed53b6b727",
+                "quote": "```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```",
+                "line_start": 385,
+                "line_end": 388,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L385-L388"
+              },
+              {
+                "evidence_id": "3dcadb833b43cddb17bbad57feb84a4f391f5af5df2ed58f9f9927389e6ce770",
+                "quote": "The code above loops through `a_list`, assigning the index to `idx` and the value to `val`.",
+                "line_start": 390,
+                "line_end": 390,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L390-L390"
+              },
+              {
+                "evidence_id": "cb0273d7c25ebca074565fc731caa55015edd27c1dd2bf6638345bd52f537715",
+                "quote": "Suppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.",
+                "line_start": 392,
+                "line_end": 395,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L392-L395"
+              },
+              {
+                "evidence_id": "7a7e0aff0519b57a072778d95a770c878caab56af0312a721f593452f23893b0",
+                "quote": "```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```",
+                "line_start": 397,
+                "line_end": 402,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L397-L402"
+              },
+              {
+                "evidence_id": "7e4ee85aa3c463e8df60a36acaadae44f7f8a46bad31511aaa0b6097751faaf4",
+                "quote": "```output\n97\n```",
+                "line_start": 404,
+                "line_end": 406,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L404-L406"
+              },
+              {
+                "evidence_id": "2e3b20661bd4ba1fa17c67d254bba6f24bae07f0124901bc4c801f6d00237b48",
+                "quote": "Write a loop using `enumerate(coefs)` which computes the value `y` of any\npolynomial, given `x` and `coefs`.",
+                "line_start": 408,
+                "line_end": 409,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L408-L409"
+              },
+              {
+                "evidence_id": "c096bb37b573364e5ee7fd01af8da93a54db34bab04135b1bcf16499a8b7d4d0",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 411,
+                "line_end": 411,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L411-L411"
+              },
+              {
+                "evidence_id": "41d73f3743c3646f169e0f2874c942a5e0d76685f3522f48e882d31a8645ed76",
+                "quote": "## Solution",
+                "line_start": 413,
+                "line_end": 413,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L413-L413"
+              },
+              {
+                "evidence_id": "d6c605c17295a26096608539e413626825fbf082046682372b0e46872de6d5e4",
+                "quote": "```python\ny = 0\nfor idx, coef in enumerate(coefs):\n    y = y + coef * x**idx\n```",
+                "line_start": 415,
+                "line_end": 419,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L415-L419"
+              }
+            ],
+            "reference_points": [
+              "Clean refusal: the episode gives a loop and example, no IEEE-754 theorem, all-mode error bound or proof."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm.",
+            "insufficiency_reason": "No floating-point error/stability theorem or IEEE-754 rounding-mode proof appears in this complete episode.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "Clean refusal: the episode gives a loop and example, no IEEE-754 theorem, all-mode error bound or proof. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "v14-sheets-portability",
+      "course_id": "carpentries-spreadsheets",
+      "lecture_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Exporting data from spreadsheets\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. For an analysis handoff, summarize all four listed reasons against relying on Excel's default format, including the note about other spreadsheet formats. Recommend the two delimited alternatives, explain what CSV contains and why it is portable, and state whether the exported file can still be opened in Excel.",
+          "category": "multi-point",
+          "task_type": "multi-point",
+          "tags": [],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "For an analysis handoff, summarize all four listed reasons against relying on Excel's default format, including the note about other spreadsheet formats. Recommend the two delimited alternatives, explain what CSV contains and why it is portable, and state whether the exported file can still be opened in Excel.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "3829259e2724e402f1fba96447565a67e0857af6464599e044c2a03eaf649609",
+              "f164d86365a3a1d4ac42ec5290247189fa13814cbbfa769a419b014baf281d75",
+              "c3f53217d0da3b213077db48b1950f2bfead5ba8f1771beed99f8927f63f0423",
+              "61081e713ba168b3da7a765ba2c8c4104a0814904fcc29cd9b41d480e86f6d9d",
+              "ffaef30700803e12007565525b668a066be3ed63327bf50e4a437f21af0eddf9",
+              "1b266fed606ddb4b1d3e9a669a93e40fe24991b274e40166573567c3f8b2899c",
+              "a9ec3bb86d1c65bbbc688d902ca49e5a813059b7e577c6b271003cff067c8ffe",
+              "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+              "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+              "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                20,
+                39
+              ],
+              [
+                48,
+                64
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "3829259e2724e402f1fba96447565a67e0857af6464599e044c2a03eaf649609",
+                "quote": "Storing the data you're going to work with for your analyses in Excel\ndefault file format (`*.xls` or `*.xlsx` - depending on the Excel\nversion) isn't a good idea. Why?",
+                "line_start": 20,
+                "line_end": 22,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L20-L22"
+              },
+              {
+                "evidence_id": "f164d86365a3a1d4ac42ec5290247189fa13814cbbfa769a419b014baf281d75",
+                "quote": "- Because it is a proprietary format, and it is possible that in\n  the future, technology won't exist (or will become sufficiently\n  rare) to make it inconvenient, if not impossible, to open the file.",
+                "line_start": 24,
+                "line_end": 26,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L24-L26"
+              },
+              {
+                "evidence_id": "c3f53217d0da3b213077db48b1950f2bfead5ba8f1771beed99f8927f63f0423",
+                "quote": "- Other spreadsheet software may not be able to open files\n  saved in a proprietary Excel format.",
+                "line_start": 28,
+                "line_end": 29,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L28-L29"
+              },
+              {
+                "evidence_id": "61081e713ba168b3da7a765ba2c8c4104a0814904fcc29cd9b41d480e86f6d9d",
+                "quote": "- Different versions of Excel may handle data\n  differently, leading to inconsistencies.",
+                "line_start": 31,
+                "line_end": 32,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L31-L32"
+              },
+              {
+                "evidence_id": "ffaef30700803e12007565525b668a066be3ed63327bf50e4a437f21af0eddf9",
+                "quote": "- Finally, more journals and grant agencies are requiring you\n  to deposit your data in a data repository, and most of them don't\n  accept Excel format. It needs to be in one of the formats\n  discussed below.",
+                "line_start": 34,
+                "line_end": 37,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L34-L37"
+              },
+              {
+                "evidence_id": "1b266fed606ddb4b1d3e9a669a93e40fe24991b274e40166573567c3f8b2899c",
+                "quote": "- The above points also apply to other formats such as open data formats used by LibreOffice / Open Office. These formats are not static and do not get parsed the same way by different software packages.",
+                "line_start": 39,
+                "line_end": 39,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L39-L39"
+              },
+              {
+                "evidence_id": "a9ec3bb86d1c65bbbc688d902ca49e5a813059b7e577c6b271003cff067c8ffe",
+                "quote": "Storing data in a universal, open, and static format will help deal with this problem. Try tab-delimited (tab separated values\nor TSV) or comma-delimited (comma separated values or CSV). CSV files are plain text files where the columns are separated by commas,\nhence 'comma separated values' or CSV. The advantage of a CSV file over an Excel/SPSS/etc. file is that we can open and read a CSV file\nusing just about any software, including plain text editors like TextEdit or NotePad.\nData in a CSV file can also be easily imported into other formats and\nenvironments, such as SQLite and R. We're not tied to a certain version of a certain expensive program when we work with CSV files, so\nit's a\ngood format to work with for maximum portability and endurance. Most spreadsheet programs can save to delimited text formats like CSV\neasily, although they may give you a warning during the file export.",
+                "line_start": 48,
+                "line_end": 56,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L48-L56"
+              },
+              {
+                "evidence_id": "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+                "quote": "To save a file you have opened in Excel in CSV format:",
+                "line_start": 58,
+                "line_end": 58,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L58-L58"
+              },
+              {
+                "evidence_id": "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+                "quote": "1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.",
+                "line_start": 60,
+                "line_end": 62,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L60-L62"
+              },
+              {
+                "evidence_id": "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3",
+                "quote": "An important note for backwards compatibility: you can open CSV files in Excel!",
+                "line_start": 64,
+                "line_end": 64,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L64-L64"
+              }
+            ],
+            "reference_points": [
+              "Four listed reasons: proprietary future accessibility risk; other spreadsheet software compatibility; differing Excel versions/inconsistency; repository requirements often do not accept Excel.",
+              "Note also applies to other changing formats such as LibreOffice/OpenOffice: not static/parsed identically.",
+              "Recommend TSV and CSV; CSV is plain text with commas separating columns, readable by editors/many programs and not tied to an expensive version.",
+              "CSV can still be opened in Excel. No universal compatibility or exclusive CSV claim."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Four listed reasons: proprietary future accessibility risk; other spreadsheet software compatibility; differing Excel versions/inconsistency; repository requirements often do not accept Excel.; Note also applies to other changing formats such as LibreOffice/OpenOffice: not static/parsed identically.; Recommend TSV and CSV; CSV is plain text with commas separating columns, readable by editors/many programs and not tied to an expensive version.; CSV can still be opened in Excel. No universal compatibility or exclusive CSV claim. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Clarification: I concluded that CSV is the only acceptable format and Excel cannot reopen it after export. Does the unit support either conclusion? Correct both while keeping your portability recommendation.",
+          "category": "clarification",
+          "task_type": "clarification",
+          "tags": [
+            "clarification",
+            "exclusivity"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "Clarification: I concluded that CSV is the only acceptable format and Excel cannot reopen it after export. Does the unit support either conclusion? Correct both while keeping your portability recommendation.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "a9ec3bb86d1c65bbbc688d902ca49e5a813059b7e577c6b271003cff067c8ffe",
+              "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+              "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+              "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                48,
+                64
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "a9ec3bb86d1c65bbbc688d902ca49e5a813059b7e577c6b271003cff067c8ffe",
+                "quote": "Storing data in a universal, open, and static format will help deal with this problem. Try tab-delimited (tab separated values\nor TSV) or comma-delimited (comma separated values or CSV). CSV files are plain text files where the columns are separated by commas,\nhence 'comma separated values' or CSV. The advantage of a CSV file over an Excel/SPSS/etc. file is that we can open and read a CSV file\nusing just about any software, including plain text editors like TextEdit or NotePad.\nData in a CSV file can also be easily imported into other formats and\nenvironments, such as SQLite and R. We're not tied to a certain version of a certain expensive program when we work with CSV files, so\nit's a\ngood format to work with for maximum portability and endurance. Most spreadsheet programs can save to delimited text formats like CSV\neasily, although they may give you a warning during the file export.",
+                "line_start": 48,
+                "line_end": 56,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L48-L56"
+              },
+              {
+                "evidence_id": "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+                "quote": "To save a file you have opened in Excel in CSV format:",
+                "line_start": 58,
+                "line_end": 58,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L58-L58"
+              },
+              {
+                "evidence_id": "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+                "quote": "1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.",
+                "line_start": 60,
+                "line_end": 62,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L60-L62"
+              },
+              {
+                "evidence_id": "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3",
+                "quote": "An important note for backwards compatibility: you can open CSV files in Excel!",
+                "line_start": 64,
+                "line_end": 64,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L64-L64"
+              }
+            ],
+            "reference_points": [
+              "No exclusive CSV claim: TSV/tab-delimited is also recommended.",
+              "Unit explicitly says CSV can be opened in Excel.",
+              "Portability recommendation survives; no guarantee for every file/program."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "No exclusive CSV claim: TSV/tab-delimited is also recommended.; Unit explicitly says CSV can be opened in Excel.; Portability recommendation survives; no guarantee for every file/program. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "I will choose CSV for this handoff. Give the exact three Save as steps in the unit, including the selected format and the checks before saving. Distinguish that procedure from a promise that every downstream importer will behave identically.",
+          "category": "ordinary",
+          "task_type": "ordinary",
+          "tags": [],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "I will choose CSV for this handoff. Give the exact three Save as steps in the unit, including the selected format and the checks before saving. Distinguish that procedure from a promise that every downstream importer will behave identically.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+              "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+              "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3",
+              "fd437f231671bfb58603c122de2f01e51dae7ca2a3fb7acef177fec9f1b5a367",
+              "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+              "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+              "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+              "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+              "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+              "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+              "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+              "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+              "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+              "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+              "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                58,
+                64
+              ],
+              [
+                68,
+                94
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "b06c2589d3cdaf2d4ff227b6ccbc33530212b325968e11c93963e89a71b668d8",
+                "quote": "To save a file you have opened in Excel in CSV format:",
+                "line_start": 58,
+                "line_end": 58,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L58-L58"
+              },
+              {
+                "evidence_id": "88e4aaec30de485cb15f5547703cd3a90602e02cc7dfb649fb6000cc41fd694d",
+                "quote": "1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.",
+                "line_start": 60,
+                "line_end": 62,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L60-L62"
+              },
+              {
+                "evidence_id": "dcf13110605a7261ed80aa237ee38efa73436e5e6a85fe9e85b3f6fee9aa44c3",
+                "quote": "An important note for backwards compatibility: you can open CSV files in Excel!",
+                "line_start": 64,
+                "line_end": 64,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L64-L64"
+              },
+              {
+                "evidence_id": "fd437f231671bfb58603c122de2f01e51dae7ca2a3fb7acef177fec9f1b5a367",
+                "quote": "## A Note on Cross-platform Operability",
+                "line_start": 68,
+                "line_end": 68,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L68-L68"
+              },
+              {
+                "evidence_id": "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+                "quote": "By default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.",
+                "line_start": 70,
+                "line_end": 70,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L70-L70"
+              },
+              {
+                "evidence_id": "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+                "quote": "As such, when exporting to CSV using Excel, your data in text format will look like this:",
+                "line_start": 72,
+                "line_end": 72,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L72-L72"
+              },
+              {
+                "evidence_id": "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+                "quote": "> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>",
+                "line_start": 74,
+                "line_end": 74,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L74-L74"
+              },
+              {
+                "evidence_id": "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+                "quote": "When opening your CSV file in Excel again, it will parse it as follows:",
+                "line_start": 76,
+                "line_end": 76,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L76-L76"
+              },
+              {
+                "evidence_id": "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+                "quote": "<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">",
+                "line_start": 78,
+                "line_end": 78,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L78-L78"
+              },
+              {
+                "evidence_id": "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+                "quote": "However, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:",
+                "line_start": 80,
+                "line_end": 80,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L80-L80"
+              },
+              {
+                "evidence_id": "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+                "quote": "Your data in text format then look like this:",
+                "line_start": 82,
+                "line_end": 82,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L82-L82"
+              },
+              {
+                "evidence_id": "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+                "quote": "> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> \u2026",
+                "line_start": 84,
+                "line_end": 88,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L84-L88"
+              },
+              {
+                "evidence_id": "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+                "quote": "You will then see a weird character or possibly the string `CR` or `\\r`:",
+                "line_start": 90,
+                "line_end": 90,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L90-L90"
+              },
+              {
+                "evidence_id": "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+                "quote": "<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">",
+                "line_start": 92,
+                "line_end": 92,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L92-L92"
+              },
+              {
+                "evidence_id": "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735",
+                "quote": "thus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility.",
+                "line_start": 94,
+                "line_end": 94,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L94-L94"
+              }
+            ],
+            "reference_points": [
+              "File then Save as.",
+              "Format select Comma Separated Values (*.csv).",
+              "Double-check filename and location, hit Save.",
+              "Procedure is stated; no guarantee all downstream importers behave identically."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "File then Save as.; Format select Comma Separated Values (*.csv).; Double-check filename and location, hit Save.; Procedure is stated; no guarantee all downstream importers behave identically. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "The unit also warns about combining Excel serial dates from different sources. For that handoff, give the exact 1900/1904 date-conversion formula and the February 29, 1900 edge-case correction that this supplied unit prescribes.",
+          "category": "insufficient",
+          "task_type": "insufficient",
+          "tags": [],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            3
+          ],
+          "expected_topic": "The unit also warns about combining Excel serial dates from different sources. For that handoff, give the exact 1900/1904 date-conversion formula and the February 29, 1900 edge-case correction that this supplied unit prescribes.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                41,
+                46
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "551901f15f9b6c141a5d07685880b72324f53cf2ae247cccddc203a423813bcf",
+                "quote": "As an example of inconsistencies in data storage, do you remember how we talked about how Excel stores dates earlier? It turns out that\nthere are multiple defaults for different versions of the software, and you can switch between them all. So, say you're\ncompiling Excel-stored data from multiple sources. There are dates in each file - Excel interprets them as their own internally consistent\nserial numbers. When you combine the data, Excel will take the serial number from the place you're importing it from, and interpret it\nusing the rule set for the version of Excel you're using. Essentially, you could be adding errors to your data, and it wouldn't\nnecessarily be flagged by any data cleaning methods if your ranges overlap.",
+                "line_start": 41,
+                "line_end": 46,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L41-L46"
+              }
+            ],
+            "reference_points": [
+              "Clean refusal: warning describes differing defaults/serial interpretation, but this unit supplies neither conversion formula nor leap-year edge-case correction."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm.",
+            "insufficiency_reason": "The complete export episode warns about version-dependent serial dates but contains no 1900/1904 conversion algorithm or February29,1900 correction.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "Clean refusal: warning describes differing defaults/serial interpretation, but this unit supplies neither conversion formula nor leap-year edge-case correction. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "v14-sheets-lineends",
+      "course_id": "carpentries-spreadsheets",
+      "lecture_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Exporting data from spreadsheets\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. Explain the Cross-platform Operability example: name the stated UNIX and Windows line endings, describe the condition under which a different parser misreads the exported file, and explain the unit's 2\\r integer example without turning it into a guarantee about every importer.",
+          "category": "conditional-scope",
+          "task_type": "conditional-scope",
+          "tags": [
+            "exclusivity"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Explain the Cross-platform Operability example: name the stated UNIX and Windows line endings, describe the condition under which a different parser misreads the exported file, and explain the unit's 2\\r integer example without turning it into a guarantee about every importer.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "fd437f231671bfb58603c122de2f01e51dae7ca2a3fb7acef177fec9f1b5a367",
+              "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+              "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+              "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+              "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+              "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+              "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+              "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+              "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+              "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+              "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+              "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                68,
+                94
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "fd437f231671bfb58603c122de2f01e51dae7ca2a3fb7acef177fec9f1b5a367",
+                "quote": "## A Note on Cross-platform Operability",
+                "line_start": 68,
+                "line_end": 68,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L68-L68"
+              },
+              {
+                "evidence_id": "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+                "quote": "By default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.",
+                "line_start": 70,
+                "line_end": 70,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L70-L70"
+              },
+              {
+                "evidence_id": "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+                "quote": "As such, when exporting to CSV using Excel, your data in text format will look like this:",
+                "line_start": 72,
+                "line_end": 72,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L72-L72"
+              },
+              {
+                "evidence_id": "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+                "quote": "> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>",
+                "line_start": 74,
+                "line_end": 74,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L74-L74"
+              },
+              {
+                "evidence_id": "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+                "quote": "When opening your CSV file in Excel again, it will parse it as follows:",
+                "line_start": 76,
+                "line_end": 76,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L76-L76"
+              },
+              {
+                "evidence_id": "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+                "quote": "<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">",
+                "line_start": 78,
+                "line_end": 78,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L78-L78"
+              },
+              {
+                "evidence_id": "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+                "quote": "However, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:",
+                "line_start": 80,
+                "line_end": 80,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L80-L80"
+              },
+              {
+                "evidence_id": "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+                "quote": "Your data in text format then look like this:",
+                "line_start": 82,
+                "line_end": 82,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L82-L82"
+              },
+              {
+                "evidence_id": "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+                "quote": "> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> \u2026",
+                "line_start": 84,
+                "line_end": 88,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L84-L88"
+              },
+              {
+                "evidence_id": "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+                "quote": "You will then see a weird character or possibly the string `CR` or `\\r`:",
+                "line_start": 90,
+                "line_end": 90,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L90-L90"
+              },
+              {
+                "evidence_id": "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+                "quote": "<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">",
+                "line_start": 92,
+                "line_end": 92,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L92-L92"
+              },
+              {
+                "evidence_id": "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735",
+                "quote": "thus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility.",
+                "line_start": 94,
+                "line_end": 94,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L94-L94"
+              }
+            ],
+            "reference_points": [
+              "Most coding/statistical environments expect ASCII LF; Windows defaults to CR LF.",
+              "Problem described for a different system that does not parse CR; CR may remain as weird character/string.",
+              "The text says 2\\r is not a valid integer and may cause error in R/Python; keep claim tied to described handling."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Most coding/statistical environments expect ASCII LF; Windows defaults to CR LF.; Problem described for a different system that does not parse CR; CR may remain as weird character/string.; The text says 2\\r is not a valid integer and may cause error in R/Python; keep claim tied to described handling. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Does that example establish that only Windows exports are affected, and that every CRLF CSV fails everywhere? Use the unit's platform statement and its parser condition to assess both parts.",
+          "category": "conditional-scope",
+          "task_type": "conditional-scope",
+          "tags": [
+            "exclusivity"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "Does that example establish that only Windows exports are affected, and that every CRLF CSV fails everywhere? Use the unit's platform statement and its parser condition to assess both parts.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+              "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+              "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+              "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+              "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+              "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+              "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+              "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+              "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+              "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+              "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                70,
+                94
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+                "quote": "By default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.",
+                "line_start": 70,
+                "line_end": 70,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L70-L70"
+              },
+              {
+                "evidence_id": "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+                "quote": "As such, when exporting to CSV using Excel, your data in text format will look like this:",
+                "line_start": 72,
+                "line_end": 72,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L72-L72"
+              },
+              {
+                "evidence_id": "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+                "quote": "> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>",
+                "line_start": 74,
+                "line_end": 74,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L74-L74"
+              },
+              {
+                "evidence_id": "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+                "quote": "When opening your CSV file in Excel again, it will parse it as follows:",
+                "line_start": 76,
+                "line_end": 76,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L76-L76"
+              },
+              {
+                "evidence_id": "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+                "quote": "<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">",
+                "line_start": 78,
+                "line_end": 78,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L78-L78"
+              },
+              {
+                "evidence_id": "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+                "quote": "However, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:",
+                "line_start": 80,
+                "line_end": 80,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L80-L80"
+              },
+              {
+                "evidence_id": "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+                "quote": "Your data in text format then look like this:",
+                "line_start": 82,
+                "line_end": 82,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L82-L82"
+              },
+              {
+                "evidence_id": "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+                "quote": "> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> \u2026",
+                "line_start": 84,
+                "line_end": 88,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L84-L88"
+              },
+              {
+                "evidence_id": "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+                "quote": "You will then see a weird character or possibly the string `CR` or `\\r`:",
+                "line_start": 90,
+                "line_end": 90,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L90-L90"
+              },
+              {
+                "evidence_id": "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+                "quote": "<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">",
+                "line_start": 92,
+                "line_end": 92,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L92-L92"
+              },
+              {
+                "evidence_id": "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735",
+                "quote": "thus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility.",
+                "line_start": 94,
+                "line_end": 94,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L94-L94"
+              }
+            ],
+            "reference_points": [
+              "Not only Windows: the unit says the example also happens with Excel for OSX due to legacy Windows compatibility.",
+              "Not universal: described problem is a system that does not parse CR; the unit also shows Excel reopening/parsing its file.",
+              "Preserve conditional scope rather than asserting all CRLF fails."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Not only Windows: the unit says the example also happens with Excel for OSX due to legacy Windows compatibility.; Not universal: described problem is a system that does not parse CR; the unit also shows Excel reopening/parsing its file.; Preserve conditional scope rather than asserting all CRLF fails. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Separate checklist: list all three named ways the unit gives to standardize line endings, naming both Git files and the CSV filter pattern for that route. Then summarize the R/xlsx alternative and every listed caveat, preserving exactly how narrowly its Windows-only limitation is stated.",
+          "category": "multi-point",
+          "task_type": "multi-point",
+          "tags": [
+            "supported-exclusivity"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Separate checklist: list all three named ways the unit gives to standardize line endings, naming both Git files and the CSV filter pattern for that route. Then summarize the R/xlsx alternative and every listed caveat, preserving exactly how narrowly its Windows-only limitation is stated.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "1fc11a9115e4a23ddb78809e3727932ae8946601ebda8c53320ea992fd5ba55c",
+              "c18dff0db1776809cf6957cd1136e181a44a4dfe4683df6d0775f5fa305c38f5",
+              "33529aa7105e8a8a1f174a58ae0a18f79a7f57106d78fc2105d2483a796a7bf6",
+              "b9b650fbf3ef125c561998537f84e5ff1a29f04afde262daa80441a13be2ce79",
+              "59435ba1d4ab43d9f97400bf19f318a109638934d1e8528f36d4364f96ea0648",
+              "ece69d9ee57a29f9e8eb24d826f88828c1cd932d9a23866868ba410cd0c364d9",
+              "233fdd17eeb82041a2e20c4b8505b56d35ce7558906d3ba47b9e3099ae03b85e",
+              "981c3ca8e5472931e4fca48397f23f2e7a66df071ad7028f7aa1b1a4e6f5406c",
+              "1f8246b0ec962b7e32072301516551db285ad8cbd6acd4d0fa9ac6a26307d47c",
+              "87def2ef18de13f87f13fff3f581cd20c19ca9f2a7a015035307ab4da2109171",
+              "778777a2a9184fd31491d2550c7b5462b2fb1cea12bc5301720f06d3443dd0a6"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                96,
+                129
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "1fc11a9115e4a23ddb78809e3727932ae8946601ebda8c53320ea992fd5ba55c",
+                "quote": "There are a handful of solutions for enforcing uniform UNIX-style line endings on your exported CSV files:",
+                "line_start": 96,
+                "line_end": 96,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L96-L96"
+              },
+              {
+                "evidence_id": "c18dff0db1776809cf6957cd1136e181a44a4dfe4683df6d0775f5fa305c38f5",
+                "quote": "1. When exporting from Excel, save as a \"Windows comma separated (.csv)\" file",
+                "line_start": 98,
+                "line_end": 98,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L98-L98"
+              },
+              {
+                "evidence_id": "33529aa7105e8a8a1f174a58ae0a18f79a7f57106d78fc2105d2483a796a7bf6",
+                "quote": "2. If you store your data file under version control using Git, edit the `.git/config` file in your repository to automatically translate `\\r\\n` line endings into `\\n`.\n  Add the following to the file ([see the detailed tutorial](https://nicercode.github.io/blog/2013-04-30-excel-and-line-endings)):",
+                "line_start": 100,
+                "line_end": 101,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L100-L101"
+              },
+              {
+                "evidence_id": "b9b650fbf3ef125c561998537f84e5ff1a29f04afde262daa80441a13be2ce79",
+                "quote": "  ```\n   [filter \"cr\"]\n   \tclean = LC_CTYPE=C awk '{printf(\\\"%s\\\\n\\\", $0)}' | LC_CTYPE=C tr '\\\\r' '\\\\n'\n   \tsmudge = tr '\\\\n' '\\\\r'` \n  ```",
+                "line_start": 103,
+                "line_end": 107,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L103-L107"
+              },
+              {
+                "evidence_id": "59435ba1d4ab43d9f97400bf19f318a109638934d1e8528f36d4364f96ea0648",
+                "quote": "  and then create a file `.gitattributes` that contains the line:",
+                "line_start": 109,
+                "line_end": 109,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L109-L109"
+              },
+              {
+                "evidence_id": "ece69d9ee57a29f9e8eb24d826f88828c1cd932d9a23866868ba410cd0c364d9",
+                "quote": "  ```\n   *.csv filter=cr\n  ```",
+                "line_start": 111,
+                "line_end": 113,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L111-L113"
+              },
+              {
+                "evidence_id": "233fdd17eeb82041a2e20c4b8505b56d35ce7558906d3ba47b9e3099ae03b85e",
+                "quote": "3. Use [dos2unix](https://dos2unix.sourceforge.net/) (available on OSX, \\*nix, and Cygwin) on local files to standardize line endings.",
+                "line_start": 115,
+                "line_end": 115,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L115-L115"
+              },
+              {
+                "evidence_id": "981c3ca8e5472931e4fca48397f23f2e7a66df071ad7028f7aa1b1a4e6f5406c",
+                "quote": "#### A note on R and `.xlsx`",
+                "line_start": 117,
+                "line_end": 117,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L117-L117"
+              },
+              {
+                "evidence_id": "1f8246b0ec962b7e32072301516551db285ad8cbd6acd4d0fa9ac6a26307d47c",
+                "quote": "There are R packages that can read `.xls` or `.xlsx` files (as well as\nGoogle spreadsheets). It is even possible to access different\nworksheets in the `.xlsx` documents.",
+                "line_start": 119,
+                "line_end": 121,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L119-L121"
+              },
+              {
+                "evidence_id": "87def2ef18de13f87f13fff3f581cd20c19ca9f2a7a015035307ab4da2109171",
+                "quote": "**But**",
+                "line_start": 123,
+                "line_end": 123,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L123-L123"
+              },
+              {
+                "evidence_id": "778777a2a9184fd31491d2550c7b5462b2fb1cea12bc5301720f06d3443dd0a6",
+                "quote": "- some of these only work on Windows\n- this equates to replacing a (simple but manual) export to `csv` with\n  additional complexity/dependencies in the data analysis R code\n- data formatting best practice still apply\n- Is there really a good reason why `csv` (or similar) is not adequate?",
+                "line_start": 125,
+                "line_end": 129,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L125-L129"
+              }
+            ],
+            "reference_points": [
+              "Three routes: export as Windows comma separated (.csv); Git filter configured in .git/config plus .gitattributes containing *.csv filter=cr; dos2unix.",
+              "R packages can read xls/xlsx/Google spreadsheets and different worksheets.",
+              "Some of these only work on Windows, not all R packages.",
+              "R route adds complexity/dependencies instead of simple manual CSV export; formatting best practices still apply; question whether CSV or similar is inadequate."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Three routes: export as Windows comma separated (.csv); Git filter configured in .git/config plus .gitattributes containing *.csv filter=cr; dos2unix.; R packages can read xls/xlsx/Google spreadsheets and different worksheets.; Some of these only work on Windows, not all R packages.; R route adds complexity/dependencies instead of simple manual CSV export; formatting best practices still apply; question whether CSV or similar is inadequate. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. No unrequested external implementation recipe. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Those export remedies concern line endings. Now supply the complete RFC 4180 ABNF and quote-escaping parser algorithm for embedded quotes that this unit prescribes, including its record-state transition rules.",
+          "category": "insufficient",
+          "task_type": "insufficient",
+          "tags": [],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2,
+            3
+          ],
+          "expected_topic": "Those export remedies concern line endings. Now supply the complete RFC 4180 ABNF and quote-escaping parser algorithm for embedded quotes that this unit prescribes, including its record-state transition rules.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                68,
+                115
+              ],
+              [
+                131,
+                140
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "fd437f231671bfb58603c122de2f01e51dae7ca2a3fb7acef177fec9f1b5a367",
+                "quote": "## A Note on Cross-platform Operability",
+                "line_start": 68,
+                "line_end": 68,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L68-L68"
+              },
+              {
+                "evidence_id": "74bc57712c5e22e06b0b234c439f96011401fc6519c95c2bf935dc2a50e64b61",
+                "quote": "By default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.",
+                "line_start": 70,
+                "line_end": 70,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L70-L70"
+              },
+              {
+                "evidence_id": "00525efe5dbea5e6af9de8986d58d690b927742cd039533cdae99d502f712fd2",
+                "quote": "As such, when exporting to CSV using Excel, your data in text format will look like this:",
+                "line_start": 72,
+                "line_end": 72,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L72-L72"
+              },
+              {
+                "evidence_id": "0b868d8a99dde8375cc52cfbca69ff91cf6c33a765c0932840fefa6a0d687758",
+                "quote": "> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>",
+                "line_start": 74,
+                "line_end": 74,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L74-L74"
+              },
+              {
+                "evidence_id": "1e6b714d92abdb4c3e8becd1972507e53e1202c1dd458825d08699ac4dbf02a2",
+                "quote": "When opening your CSV file in Excel again, it will parse it as follows:",
+                "line_start": 76,
+                "line_end": 76,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L76-L76"
+              },
+              {
+                "evidence_id": "83f810eb726c1ea5bc1240225c5a60e08f3d7b4bf855c36a31bec92fb7e3c0d3",
+                "quote": "<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">",
+                "line_start": 78,
+                "line_end": 78,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L78-L78"
+              },
+              {
+                "evidence_id": "658475f8bbb716284c9b3022e870dc6b8b120b65b65e21e70816ce42aeea4870",
+                "quote": "However, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:",
+                "line_start": 80,
+                "line_end": 80,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L80-L80"
+              },
+              {
+                "evidence_id": "57ea15519e3718775261029d5c20e35a9df6086abf50bbb33c23539f4793397f",
+                "quote": "Your data in text format then look like this:",
+                "line_start": 82,
+                "line_end": 82,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L82-L82"
+              },
+              {
+                "evidence_id": "d637d5ff373449ff5b75a0d583a4d46479127d658e81b15b352f1348038c5f66",
+                "quote": "> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> \u2026",
+                "line_start": 84,
+                "line_end": 88,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L84-L88"
+              },
+              {
+                "evidence_id": "80ea93187c1b2f749e16cd4ad977f43cc2db67268025f078f342fbcc974c4f0a",
+                "quote": "You will then see a weird character or possibly the string `CR` or `\\r`:",
+                "line_start": 90,
+                "line_end": 90,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L90-L90"
+              },
+              {
+                "evidence_id": "4a4c4e34ad9cbf1e0135e98f6426b72b10995b9bed69d3367a1d53f2ea7dc255",
+                "quote": "<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">",
+                "line_start": 92,
+                "line_end": 92,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L92-L92"
+              },
+              {
+                "evidence_id": "d6343fa8d916316e7fc3547699df4c914af5d06dcf2e2667c5f5dd5107c69735",
+                "quote": "thus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility.",
+                "line_start": 94,
+                "line_end": 94,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L94-L94"
+              },
+              {
+                "evidence_id": "1fc11a9115e4a23ddb78809e3727932ae8946601ebda8c53320ea992fd5ba55c",
+                "quote": "There are a handful of solutions for enforcing uniform UNIX-style line endings on your exported CSV files:",
+                "line_start": 96,
+                "line_end": 96,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L96-L96"
+              },
+              {
+                "evidence_id": "c18dff0db1776809cf6957cd1136e181a44a4dfe4683df6d0775f5fa305c38f5",
+                "quote": "1. When exporting from Excel, save as a \"Windows comma separated (.csv)\" file",
+                "line_start": 98,
+                "line_end": 98,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L98-L98"
+              },
+              {
+                "evidence_id": "33529aa7105e8a8a1f174a58ae0a18f79a7f57106d78fc2105d2483a796a7bf6",
+                "quote": "2. If you store your data file under version control using Git, edit the `.git/config` file in your repository to automatically translate `\\r\\n` line endings into `\\n`.\n  Add the following to the file ([see the detailed tutorial](https://nicercode.github.io/blog/2013-04-30-excel-and-line-endings)):",
+                "line_start": 100,
+                "line_end": 101,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L100-L101"
+              },
+              {
+                "evidence_id": "b9b650fbf3ef125c561998537f84e5ff1a29f04afde262daa80441a13be2ce79",
+                "quote": "  ```\n   [filter \"cr\"]\n   \tclean = LC_CTYPE=C awk '{printf(\\\"%s\\\\n\\\", $0)}' | LC_CTYPE=C tr '\\\\r' '\\\\n'\n   \tsmudge = tr '\\\\n' '\\\\r'` \n  ```",
+                "line_start": 103,
+                "line_end": 107,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L103-L107"
+              },
+              {
+                "evidence_id": "59435ba1d4ab43d9f97400bf19f318a109638934d1e8528f36d4364f96ea0648",
+                "quote": "  and then create a file `.gitattributes` that contains the line:",
+                "line_start": 109,
+                "line_end": 109,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L109-L109"
+              },
+              {
+                "evidence_id": "ece69d9ee57a29f9e8eb24d826f88828c1cd932d9a23866868ba410cd0c364d9",
+                "quote": "  ```\n   *.csv filter=cr\n  ```",
+                "line_start": 111,
+                "line_end": 113,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L111-L113"
+              },
+              {
+                "evidence_id": "233fdd17eeb82041a2e20c4b8505b56d35ce7558906d3ba47b9e3099ae03b85e",
+                "quote": "3. Use [dos2unix](https://dos2unix.sourceforge.net/) (available on OSX, \\*nix, and Cygwin) on local files to standardize line endings.",
+                "line_start": 115,
+                "line_end": 115,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L115-L115"
+              },
+              {
+                "evidence_id": "3f078be7f7dd031c45235cc07b8231ab90b0aab77aaff984b4b48df171cf3c8d",
+                "quote": "#### Caveats on commas",
+                "line_start": 131,
+                "line_end": 131,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L131-L131"
+              },
+              {
+                "evidence_id": "dc412c6457d03964303754c4bd0055e5feb0205d86e57217d010034a0e0b91f6",
+                "quote": "In some datasets, the data values themselves may include commas (,). This is particularly true in countries that\nuse commas as decimal separators. In that case, the software which you use (including Excel)\nwill most likely incorrectly display the data in columns. This is because the commas which are a part of the data values will be\ninterpreted as delimiters.",
+                "line_start": 133,
+                "line_end": 136,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L133-L136"
+              },
+              {
+                "evidence_id": "7ca565aebc9d0a996cf14948c76066c11b03443ea9d3517b2e5a50c11d279656",
+                "quote": "If you are working with data that contains commas, you likely will need to use another delimiter when working in a spreadsheet. In this\ncase, consider using tabs as your delimiter and working with TSV files. TSV files can be exported from spreadsheet\nprograms in the same way as CSV files. For more of a discussion on data formats and potential issues with commas within datasets see [the discussion page](https://www.datacarpentry.org/spreadsheet-ecology-lesson/discuss).",
+                "line_start": 138,
+                "line_end": 140,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/05-exporting-data.md#L138-L140"
+              }
+            ],
+            "reference_points": [
+              "Clean refusal: the complete episode has delimiter/line-ending guidance, not RFC4180 ABNF or a quote-escaping state-machine algorithm."
+            ],
+            "allowed_answer_boundary": "Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm.",
+            "insufficiency_reason": "Complete episode does not provide RFC4180 grammar or a quoting/escaping parser state machine.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "Clean refusal: the complete episode has delimiter/line-ending guidance, not RFC4180 ABNF or a quote-escaping state-machine algorithm. Boundary: Use the supplied complete episode and explicit bounded derivations from cited premises. Preserve every requested point, condition and quantifier; no ungrounded exclusivity or software-wide guarantee. Clean course-bounded refusal; do not supply the missing algorithm. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    }
+  ]
+}
