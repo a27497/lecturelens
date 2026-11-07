@@ -1,0 +1,309 @@
+{
+  "code_sha": "c1c7e52699dd7f5877599067a49c486c34d1657e",
+  "candidate_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "plan_sha256": "59fb85627dc75145e851b2a902348274284b43e5bce8d709da722d2f179a1ac8",
+  "scope": {
+    "courses": 2,
+    "sessions": 2,
+    "expected": 8,
+    "executed": 8,
+    "completed": 8,
+    "failed": 0,
+    "missing": 0,
+    "scorable": 8,
+    "reviewed": 8
+  },
+  "requests": {
+    "real_http": 19,
+    "http_200": 19,
+    "failed": 0,
+    "local_searches": 10,
+    "finish_decisions": 9,
+    "format_repairs": [
+      {
+        "turn_id": "c08f2c19-ce93-40d0-ba65-d256e51b8a82",
+        "ordinal": 1,
+        "reason": "TUTOR_FINISH_REPAIR_REQUIRED",
+        "details": {
+          "text": {
+            "limit": 1600,
+            "actual": 1652
+          }
+        }
+      }
+    ],
+    "reviewer": 0,
+    "transport_retries": 0,
+    "pending": 0
+  },
+  "baseline_metrics": {
+    "verified_correct": 4,
+    "known_incorrect": 4,
+    "uncertain": 0,
+    "task_denominator": 8,
+    "claims": 34,
+    "citation_required": 31,
+    "citation_support": {
+      "numerator": 22,
+      "denominator": 24,
+      "value": 0.9166666666666666
+    },
+    "citation_presence": {
+      "numerator": 24,
+      "denominator": 31,
+      "value": 0.7741935483870968
+    },
+    "supported_coverage": {
+      "numerator": 22,
+      "denominator": 31,
+      "value": 0.7096774193548387
+    }
+  },
+  "retest_metrics": {
+    "verified_correct": 6,
+    "known_incorrect": 1,
+    "uncertain": 1,
+    "task_denominator": 8,
+    "claims": 39,
+    "citation_required": 38,
+    "citation_support": {
+      "numerator": 30,
+      "denominator": 30,
+      "value": 1.0
+    },
+    "citation_presence": {
+      "numerator": 30,
+      "denominator": 38,
+      "value": 0.7894736842105263
+    },
+    "supported_coverage": {
+      "numerator": 30,
+      "denominator": 38,
+      "value": 0.7894736842105263
+    }
+  },
+  "baseline_provider_usage": {
+    "prompt_tokens": 58565,
+    "completion_tokens": 3618,
+    "total_tokens": 62183
+  },
+  "retest_provider_usage": {
+    "prompt_tokens": 68787,
+    "completion_tokens": 3652,
+    "total_tokens": 72439,
+    "prompt_cache_hit_tokens": 21504,
+    "prompt_cache_miss_tokens": 47283
+  },
+  "costs": {
+    "currency": "USD",
+    "rate_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "queried_on": "2026-11-07",
+    "off_peak_rule": "UTC Saturday; published weekend rule",
+    "rates_usd_per_million": {
+      "cache_hit": "0.003",
+      "cache_miss": "0.15",
+      "output": "0.60"
+    },
+    "retest_provider_usage_times_source_rates_usd": "0.009348162",
+    "baseline_cache_aware_fee": "UNKNOWN_CAPTURE_FAILED",
+    "actual_invoice": "UNKNOWN_NOT_QUERIED",
+    "account_balance": "UNKNOWN_NOT_QUERIED",
+    "local_peak_no_cache_basis_baseline_usd": "0.0219111",
+    "local_peak_no_cache_basis_retest_usd": "0.0250185",
+    "local_basis_delta_usd": "0.0031074",
+    "local_basis_delta_relative": "0.1418185303339403316127442255",
+    "authorized_local_cap_usd": "0.10",
+    "maximum_local_prefix_exposure_nano_usd": 30515700,
+    "unused_authorization_does_not_permit_new_trials": true,
+    "actual_supplier_bill_hard_cap": "UNVERIFIED_ACCEPTED_LIMITATION",
+    "actual_cost_saving": "NOT_COMPARABLE_BASELINE_CACHE_UNKNOWN"
+  },
+  "metadata": {
+    "returned_model_counts": {
+      "deepseek-flash": 19
+    },
+    "response_ids_present": 19,
+    "response_ids_unique": 19,
+    "allowlisted_request_header_ids_present": 0,
+    "fingerprint_counts": {
+      "bc19ba97cbe016479903222bb1578db6": 19
+    },
+    "cache_complete_calls": 19,
+    "usage_complete_calls": 19,
+    "anomalous_calls": 0,
+    "actual_immutable_model_version": "UNVERIFIED_NOT_INFERRED_FROM_ALIAS_OR_DOCUMENTATION"
+  },
+  "validation": {
+    "expected_keys_exact_unique": true,
+    "pg_jsonl_full_content_equal": true,
+    "pg_jsonl_events": 38,
+    "wire_sha_matches": 19,
+    "all_final_ids_observed": true,
+    "reference_fields_absent": true,
+    "preexisting_files_unchanged": 2090,
+    "baseline_original_scores_changed": false
+  },
+  "decision": "DO_NOT_EXPAND_YET_BOUNDED_FRESH_DEVELOPMENT_DIAGNOSIS_ONLY_AFTER_NEW_SCOPE_REVIEW_AND_AUTHORIZATION",
+  "review_type": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "human_agreement": "NOT_RUN",
+  "cohen_kappa": "NOT_RUN",
+  "reviewer": "NOT_RUN_DISABLED",
+  "SQL_holdout": "NOT_RUN",
+  "expanded_evaluation": "NOT_RUN",
+  "learning_effects": "NOT_RUN",
+  "review_counts": {
+    "expected_turns": 8,
+    "completed": 8,
+    "failed": 0,
+    "missing": 0,
+    "scorable": 8,
+    "reviewed": 8,
+    "verified_complete_correct": 6,
+    "known_incorrect": 1,
+    "uncertain_reviewed_not_passed": 1,
+    "core_reference_complete": 7,
+    "expected_abstention_correct": {
+      "numerator": 2,
+      "denominator": 2
+    },
+    "context_consistent": {
+      "numerator": 6,
+      "denominator": 6
+    },
+    "whole_answer_fully_supported": {
+      "baseline": {
+        "numerator": 0,
+        "denominator": 6
+      },
+      "retest": {
+        "numerator": 2,
+        "denominator": 6
+      }
+    },
+    "whole_answer_fully_cited": {
+      "baseline": {
+        "numerator": 1,
+        "denominator": 6
+      },
+      "retest": {
+        "numerator": 2,
+        "denominator": 6
+      }
+    }
+  },
+  "context_size_comparison": {
+    "real_provider_token_delta": {
+      "prompt_tokens": {
+        "absolute": 10222,
+        "relative": 0.17454110817040894
+      },
+      "completion_tokens": {
+        "absolute": 34,
+        "relative": 0.009397457158651189
+      },
+      "total_tokens": {
+        "absolute": 10256,
+        "relative": 0.1649325378318833
+      }
+    },
+    "baseline_actual_requests": {
+      "requests": 20,
+      "request_bytes": 206427,
+      "system_chars": 55840,
+      "evidence_chars": 36903,
+      "history_summary_chars": 43860
+    },
+    "retest_actual_requests": {
+      "requests": 19,
+      "request_bytes": 245676,
+      "system_chars": 62377,
+      "evidence_chars": 70341,
+      "history_summary_chars": 39551
+    },
+    "note": "Source-only comparison is characters, not tokens. Total billed input changes also include prompt/schema/history, queries, response behavior and request count; no single-cause causal estimate.",
+    "largest_turn_reservation": {
+      "turn_key": "python-01:1",
+      "reserved_units": 62925,
+      "limit_units": 64000,
+      "unit": "runtime JSON-byte proxy plus output allowance, not provider tokens"
+    },
+    "same_new_queries": {
+      "count": 10,
+      "old_chars": 28698,
+      "new_chars": 58276
+    }
+  },
+  "per_turn_review": {
+    "python-01:1": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "CORRECT_WITH_CODE_CITATION_GAP",
+      "reason": "Numerical functionality/import/load/assignment are present; no false whole-unit scope assertion. Import code lacks a local explicit citation. The closing result citation explicitly explains the immediately preceding assignment example.",
+      "context_consistent": null,
+      "abstention_correct": null
+    },
+    "python-01:2": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "CORRECT_DTYPE_RESULT_AND_GROUNDING",
+      "reason": "Corrects the integer premise and now includes the observed float64/floating-point result, with the dtype code/output/prose in one cited passage.",
+      "context_consistent": true,
+      "abstention_correct": null
+    },
+    "python-01:3": {
+      "task_correct": false,
+      "reference_complete": false,
+      "disposition": "PRIMARY_INDEX_STILL_WRONG_FOR_FROZEN_ORDINAL",
+      "reason": "Rows/columns and axes correct. Main requested expression remains data[30,20]. Correct conditional data[29,19] and 31st/21st explanation improve qualification, but do not resolve the frozen ordinal question as the main answer. Source 194-219 was not observed; second search unused. No wording/rubric relaxation.",
+      "context_consistent": true,
+      "abstention_correct": null
+    },
+    "python-01:4": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "CORRECT_ABSTENTION",
+      "reason": "No learner laptop/version observation; no compatibility guarantee inferred.",
+      "context_consistent": true,
+      "abstention_correct": true
+    },
+    "sheets-01:1": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "BOTH_RISKS_AND_DESIGN_PRESENT",
+      "reason": "Now includes inconsistent formatting plus recombination/manual-work risk and single-table/date-column redesign. Qualified lack of physical merge instructions read in the local tabs context, not as a denial that the unit teaches other topics.",
+      "context_consistent": null,
+      "abstention_correct": null
+    },
+    "sheets-01:2": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "HEADER_ALTERNATIVE_NOW_CITED",
+      "reason": "Rejects repeated headers and gives supported freeze alternative. Row-as-observation consequence is the same bounded inference credited in the baseline.",
+      "context_consistent": true,
+      "abstention_correct": null
+    },
+    "sheets-01:3": {
+      "task_correct": null,
+      "reference_complete": true,
+      "disposition": "CORE_CORRECT_UNVERIFIED_RAW_ONLY_EXTRA",
+      "reason": "Reference row association/date-column contrast is complete. Claim that the previously proposed consolidated table keeps raw observations ONLY is not established by the scenario or unit. One observation per row does not exclude calculated columns. Mark full-answer correctness uncertain, not proven false or pass; retain this reviewed unit in denominator.",
+      "context_consistent": true,
+      "abstention_correct": null
+    },
+    "sheets-01:4": {
+      "task_correct": true,
+      "reference_complete": true,
+      "disposition": "CORRECT_ABSTENTION",
+      "reason": "Actual workbook absent; no exact duplicate/misalignment count is inferred from the illustration.",
+      "context_consistent": true,
+      "abstention_correct": true
+    }
+  },
+  "artifacts": {
+    "run": ".data/tutor-retest-v1/v11-real-20261107",
+    "audit": ".data/tutor-retest-v1/v11-audit-20261107",
+    "supervisor": ".data/dev-checks/tutor-v11-real-retest-20261107"
+  },
+  "baseline_scores_corrected": false,
+  "database_final_state": "exited 0; volume retained"
+}
