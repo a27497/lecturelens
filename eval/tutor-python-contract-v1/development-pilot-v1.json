@@ -1,0 +1,57 @@
+{
+  "scope_id": "tutor-public-v1-python-contract-pilot-v1",
+  "dataset_version": "tutor-public-v1",
+  "dataset_lock_sha256": "4645c31d7e3eff19aa534714613d3ead64c1a7fcefcccba463fdbe9ef77f4620",
+  "split_manifest_sha256": "1eea49193925d5565bae62ce611d79871a1b78ad450c494b344ac4456bed9a3c",
+  "candidate": "p8-tutor-python-notation-v10-development",
+  "candidate_manifest_sha256": "9f0981ecf628fcacc8a75fc6ae3ddd50c627abd5440039db0855a5d05633292f",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.python_runtime:PythonTutorRuntime",
+  "execution_authorized": false,
+  "counts": {
+    "courses": 2,
+    "sessions": 2,
+    "turns": 8
+  },
+  "sessions": [
+    {
+      "course_id": "carpentries-python",
+      "dialogue_id": "python-01",
+      "split": "development",
+      "turns": 4,
+      "turns_sha256": "5d29532a8bf43d94d11d189f610015206abf88a8825fae534c6d0912c2e8e847"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "dialogue_id": "sheets-01",
+      "split": "development",
+      "turns": 4,
+      "turns_sha256": "c2244ee7777c26ade79f60975f3a54ae5af3de980929b5318c20b01e7e24f13e"
+    }
+  ],
+  "turn_keys": [
+    "python-01:1",
+    "python-01:2",
+    "python-01:3",
+    "python-01:4",
+    "sheets-01:1",
+    "sheets-01:2",
+    "sheets-01:3",
+    "sheets-01:4"
+  ],
+  "selection_rule": "One shortest complete session per development course, frozen before any real candidate run; preserve order and never truncate by budget.",
+  "pending_confirmation": {
+    "tutor_model_id": null,
+    "reviewer_enabled": null,
+    "reviewer_model_id": null,
+    "retry_policy": null,
+    "total_provider_calls_hard_cap": null,
+    "money_hard_cap": null,
+    "currency": null,
+    "pricing_source": null,
+    "account_balance": "UNKNOWN"
+  },
+  "real_quality": "NOT_RUN",
+  "real_human_agreement": "NOT_RUN",
+  "real_token_cost": "NOT_RUN",
+  "learning_outcomes": "NOT_RUN"
+}

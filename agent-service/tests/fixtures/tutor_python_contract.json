@@ -1,0 +1,256 @@
+{
+  "provenance": "HAND_CONSTRUCTED_CODEX_CONTRACT_FIXTURES_NOT_MODEL_OUTPUTS_OR_HUMAN_ANNOTATIONS",
+  "quality_status": "NOT_RUN",
+  "target_turns": [
+    "python-01:3",
+    "python-02:1",
+    "python-02:3",
+    "python-04:4"
+  ],
+  "sessions": [
+    "python-01",
+    "python-02",
+    "python-04",
+    "sheets-01"
+  ],
+  "cases": {
+    "python-01:1": {
+      "segments": [
+        {
+          "text": "NumPy adds numerical array functionality; import it with `import numpy`.",
+          "source_lines": [
+            23,
+            31
+          ]
+        },
+        {
+          "text": "Retain the loaded CSV array with `data = numpy.loadtxt(fname='inflammation-01.csv', delimiter=',')`.",
+          "source_lines": [
+            90,
+            97
+          ]
+        }
+      ],
+      "code_snippets": [
+        "import numpy",
+        "data = numpy.loadtxt(fname='inflammation-01.csv', delimiter=',')"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-01:2": {
+      "segments": [
+        {
+          "text": "`numpy.ndarray` is the container type, not a guarantee of integer elements. The episode reports `data.dtype` as `float64`.",
+          "source_lines": [
+            142,
+            149,
+            153
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "python-01:3": {
+      "segments": [
+        {
+          "text": "Rows represent patients and columns represent days.",
+          "source_lines": [
+            132
+          ]
+        },
+        {
+          "text": "Patient 30 on day 20 is `data[29, 19]`, because Python counts indices from zero.",
+          "source_lines": [
+            202
+          ]
+        }
+      ],
+      "code_snippets": [
+        "data[29, 19]"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-01:4": {
+      "segments": [],
+      "code_snippets": [],
+      "expected_outcome": "insufficient_evidence"
+    },
+    "python-02:1": {
+      "segments": [
+        {
+          "text": "Use `data[0:4, 0:10]`; the stop indices are excluded, giving shape `(4, 10)`.",
+          "source_lines": [
+            246,
+            257
+          ]
+        }
+      ],
+      "code_snippets": [
+        "data[0:4, 0:10]"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-02:2": {
+      "segments": [
+        {
+          "text": "The rows have indices 5 through 9, not 10. There are five patients and ten day columns.",
+          "source_lines": [
+            257,
+            264
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "python-02:3": {
+      "segments": [
+        {
+          "text": "The original array has 40 columns.",
+          "source_lines": [
+            173
+          ]
+        },
+        {
+          "text": "`data[:3, 36:]` takes rows 0 through 2 and columns 36 through 39, giving shape `(3, 4)`.",
+          "source_lines": [
+            281,
+            287
+          ]
+        }
+      ],
+      "code_snippets": [
+        "data[:3, 36:]",
+        "data[:3, -4:]"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-04:1": {
+      "segments": [
+        {
+          "text": "`numpy.diff` subtracts each preceding value from the next. The seven values give six differences: `[0, 2, -2, 4, -2, 0]`.",
+          "source_lines": [
+            699,
+            714,
+            724
+          ]
+        }
+      ],
+      "code_snippets": [
+        "[0, 2, -2, 4, -2, 0]"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-04:2": {
+      "segments": [
+        {
+          "text": "A drop has a negative signed difference and can be missed by a signed maximum; use absolute differences to measure magnitude in either direction.",
+          "source_lines": [
+            786,
+            794
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "python-04:3": {
+      "segments": [
+        {
+          "text": "Difference along the day columns with `numpy.diff(data, axis=1)`, producing shape `(60, 39)`.",
+          "source_lines": [
+            738,
+            757
+          ]
+        },
+        {
+          "text": "Use `numpy.max(numpy.absolute(numpy.diff(data, axis=1)), axis=1)` for one largest magnitude per patient, shape `(60,)`.",
+          "source_lines": [
+            794
+          ]
+        }
+      ],
+      "code_snippets": [
+        "numpy.max(numpy.absolute(numpy.diff(data, axis=1)), axis=1)"
+      ],
+      "expected_outcome": "answered"
+    },
+    "python-04:4": {
+      "segments": [
+        {
+          "text": "`A[:, 0]` drops a singleton dimension, producing a one-dimensional array.",
+          "source_lines": [
+            642
+          ]
+        },
+        {
+          "text": "Use `numpy.hstack((A[:, :1], A[:, -1:]))` to preserve column dimensions and obtain a 3-by-2 array.",
+          "source_lines": [
+            649,
+            655
+          ]
+        }
+      ],
+      "code_snippets": [
+        "numpy.hstack((A[:, :1], A[:, -1:]))"
+      ],
+      "expected_outcome": "answered"
+    },
+    "sheets-01:1": {
+      "segments": [
+        {
+          "text": "Separate tabs can develop inconsistent formatting and must be combined for analysis.",
+          "source_lines": [
+            62
+          ]
+        },
+        {
+          "text": "A day column in a single table can encode the distinction instead of separate daily tabs.",
+          "source_lines": [
+            67
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "sheets-01:2": {
+      "segments": [
+        {
+          "text": "Repeated header rows can be mistaken for data. Freeze the column headers instead.",
+          "source_lines": [
+            69,
+            73
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "sheets-01:3": {
+      "segments": [
+        {
+          "text": "Side-by-side tables can make different samples appear to be one observation in a row.",
+          "source_lines": [
+            41,
+            51
+          ]
+        },
+        {
+          "text": "A date column in a consolidated observation table records the distinction explicitly.",
+          "source_lines": [
+            67
+          ]
+        }
+      ],
+      "code_snippets": [],
+      "expected_outcome": "answered"
+    },
+    "sheets-01:4": {
+      "segments": [],
+      "code_snippets": [],
+      "expected_outcome": "insufficient_evidence"
+    }
+  }
+}
