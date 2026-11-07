@@ -1,0 +1,335 @@
+{
+  "version": "tutor-zero-cost-audit-v1",
+  "status": "AUDIT_COMPLETE_NO_PRODUCT_FIX",
+  "audited_base_sha": "7db24be3e820039fcc5d2f605ebfd6de76a9c724",
+  "historical_v14_execution_sha": "81020d1abd7c89a995bf9eba153302af7481c71b",
+  "candidate_unchanged": "p8-tutor-draft-repair-v14-development",
+  "candidate_manifest_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "diagnostic_files_sha256": {
+    "scripts/dev/check_tutor_zero_cost_audit.py": "3c197fdb4060f8f75232e4cff2e4c2b3156257bdb471c505da37eea925fdde2e",
+    "scripts/dev/test_tutor_zero_cost_audit.py": "483ba810f16865b6d662f95282e84cf30105e77d89b4c58dcf35e707799d45f2",
+    "frontend/tests/diagnostics/tutorZeroCostAudit.test.ts": "ab3dec03e66a8533b153ed2417d7edee3214c65bfa0990f6336582e7302aa615",
+    "backend/src/test/java/com/example/courselingo/qa/TutorEvidenceAuditTest.java": "d637952034530ac1091e2b48582ebc604c5bc031fe8ea1677ba6397dfffbbb0b"
+  },
+  "checks": {
+    "audit-final": {
+      "name": "audit-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-audit-20261108/network-delivery",
+        "scripts/dev/check_tutor_zero_cost_audit.py",
+        "--output",
+        ".data/tutor-audit-20261108/delivery"
+      ],
+      "code": 0,
+      "seconds": 26.334
+    },
+    "audit-existing-mechanisms": {
+      "name": "audit-existing-mechanisms",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-audit-20261108/network-existing",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-audit-20261108/existing-mechanisms"
+      ],
+      "code": 0,
+      "seconds": 246.587
+    },
+    "audit-java": {
+      "name": "audit-java",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtest=TutorEvidenceAuditTest,TutorControllerTest,StudyAuthorityTest",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 29.983
+    },
+    "audit-frontend-corrected": {
+      "name": "audit-frontend-corrected",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "tests/diagnostics/tutorZeroCostAudit.test.ts",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-audit-20261108/frontend-results.json"
+      ],
+      "code": 0,
+      "seconds": 1.687
+    }
+  },
+  "python_tests": {
+    "new_diagnostics": {
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "inherited_mechanisms": {
+      "tests": 249,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "java_tests": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "new_diagnostics": 2,
+    "storage": "H2_and_mocks"
+  },
+  "vue_tests": {
+    "tests": 19,
+    "passed": 19,
+    "failed": 0,
+    "pending": 0,
+    "new_diagnostics": 2,
+    "storage": "mocked_APIs"
+  },
+  "replays": {
+    "v12": {
+      "exact_wire_requests": 42,
+      "unchanged_turn_outcomes": 16,
+      "pg_jsonl_events_equal": 84,
+      "raw_response_bytes_available": false,
+      "reconstructed_envelopes": true,
+      "ledger_amounts": "SIMULATED_RETAINED_USAGE_NOT_NEW_CHARGES"
+    },
+    "v13": {
+      "exact_wire_requests": 34,
+      "unchanged_turn_outcomes": 16,
+      "pg_jsonl_events_equal": 68,
+      "raw_response_bytes_available": false,
+      "reconstructed_envelopes": true,
+      "ledger_amounts": "SIMULATED_RETAINED_USAGE_NOT_NEW_CHARGES"
+    },
+    "v14": {
+      "exact_wire_requests": 32,
+      "unchanged_turn_outcomes": 16,
+      "pg_jsonl_events_equal": 64,
+      "raw_response_bytes_available": false,
+      "reconstructed_envelopes": true,
+      "ledger_amounts": "SIMULATED_RETAINED_USAGE_NOT_NEW_CHARGES"
+    }
+  },
+  "historical_annotations": {
+    "v12": {
+      "assertions": 84,
+      "citation_requiring": 74,
+      "pairs": 62,
+      "supported_pairs": 59,
+      "correct": 13,
+      "scheduled": 16,
+      "completed": 16,
+      "literal_source_quotes_checked": 77,
+      "historical_ledger_nano_usd": 57713400,
+      "historical_calls_reconciled": 42,
+      "semantic_rejudgment": "NONBLIND_AUDIT_NOT_INDEPENDENT_HUMAN"
+    },
+    "v13": {
+      "assertions": 45,
+      "citation_requiring": 37,
+      "pairs": 38,
+      "supported_pairs": 37,
+      "correct": 11,
+      "scheduled": 16,
+      "completed": 12,
+      "literal_source_quotes_checked": 44,
+      "historical_ledger_nano_usd": 45606300,
+      "historical_calls_reconciled": 34,
+      "semantic_rejudgment": "NONBLIND_AUDIT_NOT_INDEPENDENT_HUMAN"
+    },
+    "v14": {
+      "assertions": 47,
+      "citation_requiring": 42,
+      "pairs": 36,
+      "supported_pairs": 36,
+      "correct": 9,
+      "scheduled": 16,
+      "completed": 10,
+      "literal_source_quotes_checked": 45,
+      "historical_ledger_nano_usd": 46152000,
+      "historical_calls_reconciled": 32,
+      "semantic_rejudgment": "NONBLIND_AUDIT_NOT_INDEPENDENT_HUMAN"
+    }
+  },
+  "prior_manifests": {
+    "tutor-v12-real-20261107": {
+      "files": 72,
+      "manifest_sha256": "baf8c007984597f37a546c74ebe109c5377bb876ecb8ee599b4bd7ce12bbb1a8",
+      "all_files_unchanged": true
+    },
+    "tutor-v13-resumed-20261107": {
+      "files": 487,
+      "manifest_sha256": "bf07f62a2b0477c8c8d4f323379f542f7e656e2e4c9ebfc236ca0912ef574b26",
+      "all_files_unchanged": true
+    },
+    "tutor-v14-offline-20261107": {
+      "files": 1028,
+      "manifest_sha256": "cbbd82f6f98453ce3552960863639668af05c82f7f410d1742d04955940d2696",
+      "all_files_unchanged": true
+    },
+    "tutor-v14-live-20261107": {
+      "files": 358,
+      "manifest_sha256": "2b9c39428d10473f4d088badfbae93b17ab4e973a8660c4521b0dafcbafb06cd",
+      "all_files_unchanged": true
+    },
+    "tutor-v14-diagnosis-20261107": {
+      "files": 108,
+      "manifest_sha256": "b76388125efe3b1b012a94f6c3c645b8d04ba953f0044caecf01396a0a44e5c1",
+      "all_files_unchanged": true
+    }
+  },
+  "network_records": {
+    "network-complete/2154988.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final/2138674.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-existing/2164604.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-existing/2164711.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-existing/2136874.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-delivery/2171704.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-initial/2126608.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "network_caveat": "Python audit counters exclude native libpq and Node/Java; Python guards reject credentials/real HTTP; Vue APIs mocked; Maven offline and Java H2/mocks. No OS-wide egress claim.",
+  "real_requests": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "new_cost_usd": "0",
+  "product_behavior_changes": 0,
+  "frozen_asset_changes": 0,
+  "short_citation_prototype": "NOT_IMPLEMENTED_NOT_RUN",
+  "issue_index": [
+    {
+      "id": "A01",
+      "priority": "P0"
+    },
+    {
+      "id": "A02",
+      "priority": "P0"
+    },
+    {
+      "id": "A03",
+      "priority": "P1"
+    },
+    {
+      "id": "A04",
+      "priority": "P1"
+    },
+    {
+      "id": "A05",
+      "priority": "P1"
+    },
+    {
+      "id": "A06",
+      "priority": "P1"
+    },
+    {
+      "id": "A07",
+      "priority": "P1"
+    },
+    {
+      "id": "A08",
+      "priority": "P2"
+    },
+    {
+      "id": "A09",
+      "priority": "P2"
+    },
+    {
+      "id": "A10",
+      "priority": "P2"
+    },
+    {
+      "id": "A11",
+      "priority": "P2"
+    },
+    {
+      "id": "A12",
+      "priority": "P2"
+    }
+  ],
+  "recommended_first_batch": "New acceptance obligation contract, followed by bounded-delivery candidate; no selected short-reference solution",
+  "cleanup": {
+    "audit_container": "lecturelens-tutor-audit-20261108",
+    "created_container_id": "b048dc19ae3a2b203abd24ce5e16fa2d0a777f610c4e2402bb860c377b193836",
+    "state": "STOPPED_AND_REMOVED",
+    "tmpfs_removed": true,
+    "temporary_schemas_before_stop": 0,
+    "public_tables_before_stop": 0,
+    "original_running_containers": 23,
+    "original_container_ids_unchanged": true,
+    "port25841_closed": true,
+    "existing_evaluation_volumes_used": false
+  },
+  "raw_root": ".data/tutor-audit-20261108",
+  "raw_manifest_files": 1715,
+  "raw_manifest_sha256": "87389599444a7b6d1648f5d66d13c1173978ab267dd56289ea838beeae97baf7",
+  "report_sha256": "d3988db1844d018c32ac5dc2d97381e44af5a0ee2add2637ece4c1188ad9ec82",
+  "NOT_RUN": [
+    "real_quality_improvement",
+    "cost_optimization",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "scaling",
+    "learning_effects",
+    "short_reference_prototype",
+    "real_model_embedding_reviewer_calls"
+  ],
+  "NOT_CHECKED": [
+    "early_P8_private_raw_evidence_missing_in_checkout",
+    "complete_early_v10_v11_raw_replays",
+    "OS_wide_network_isolation",
+    "arbitrary_multiworker_stress",
+    "all_malformed_source_structures"
+  ],
+  "earlier_audit_attempts": {
+    "initial_python": "19 passed, 1 audit assertion failed; original answer contains Excel for OSX, but omits reopening",
+    "initial_frontend": "config path doubled, startup failed before tests",
+    "final24": "24 passed before literal quote/accounting additions",
+    "complete24": "24 passed including quote/accounting checks",
+    "final25": "25 passed including default Mock syntax corruption"
+  }
+}
