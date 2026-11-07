@@ -36,7 +36,7 @@ if __name__ == "__main__":
     write(
         HERE / "candidate.json",
         dict(
-            candidate="tutor-scale-preparation-v2",
+            candidate="tutor-scale-preparation-v2-r4",
             base_commit="74208e10b37583b951cf2a45a0b644bfed11b902",
             previous_candidate_sha256=digest(BASE / "candidate.json"),
             files={str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)},

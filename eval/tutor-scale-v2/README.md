@@ -191,7 +191,7 @@ agent-service/.venv/bin/python eval/tutor-scale/safe_exec.py \
   -q -p no:cacheprovider eval/tutor-scale-v2/test_v2.py
 # Read-only DB/content verification; source scope is still validated first.
 agent-service/.venv/bin/python eval/tutor-scale/safe_exec.py \
-  .data/tutor-scale-v2/network-verify-NEW eval/tutor-scale-v2/verify.py \
+  .data/tutor-scale-v2/network-verify-NEW eval/tutor-scale-v2/verify_pilot.py \
   --queue eval/tutor-scale-v2/development-queue-v1.json \
   --run .data/tutor-scale-v2/pilot-NEW --database --output .data/tutor-scale-v2/verify-NEW.json
 ```

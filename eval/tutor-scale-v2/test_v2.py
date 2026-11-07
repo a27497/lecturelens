@@ -403,8 +403,8 @@ def test_original_random_sample_selection_is_unchanged(tmp_path):
 def test_v2_verifier_is_not_shadowed_by_legacy_module():
     from pathlib import Path
 
-    import verify
+    import verify_pilot
     from shared import legacy
 
-    assert Path(verify.__file__).resolve() == HERE / "verify.py"
+    assert Path(verify_pilot.__file__).resolve() == HERE / "verify_pilot.py"
     assert Path(legacy.__file__).resolve() == BASE / "run.py"
