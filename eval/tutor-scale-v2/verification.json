@@ -1,0 +1,225 @@
+{
+  "schema": "tutor-scale-v2-public-verification",
+  "executed_code_sha": "190499cb53857bc4b860f52224d51859639e30a9",
+  "candidate_sha256": "f25a4f928b863caf20d5e2f241056a704a8184ce5b2d887fa788691701e77320",
+  "queue_sha256": "b0ed6c1ee7c7ad774016fc3bb0214fe5ef18c808fca9919a9dfaba7e0a9c2c84",
+  "tests": {
+    "new": 23,
+    "legacy_tools": 11,
+    "total": 34,
+    "failures": 0,
+    "skips": 0
+  },
+  "workflow": {
+    "normal": {
+      "returncode": 0,
+      "independent_validation": {
+        "queue_sha256": "b0ed6c1ee7c7ad774016fc3bb0214fe5ef18c808fca9919a9dfaba7e0a9c2c84",
+        "counts": {
+          "expected_turns": 20,
+          "executed_result_turns": 20,
+          "completed_turns": 20,
+          "failed_turns": 0,
+          "missing_result_turns": 0,
+          "attempted_turns": 20,
+          "scorable_turns": 20,
+          "statuses": {
+            "completed": 20
+          }
+        },
+        "attempted_requests": 60,
+        "ledger_states": {
+          "reserved": 60,
+          "settled": 60
+        },
+        "pg_content_equal_events": 120,
+        "quality_status": "NOT_RUN",
+        "no_holdout_execution": true,
+        "cost_status": "NOT_RUN"
+      },
+      "diagnostic_items": 0,
+      "quality_status": "NOT_RUN",
+      "task_applicable": 20,
+      "refusal_applicable": 8,
+      "context_applicable": 8,
+      "annotation_count": 0
+    },
+    "timeout": {
+      "returncode": 1,
+      "independent_validation": {
+        "queue_sha256": "b0ed6c1ee7c7ad774016fc3bb0214fe5ef18c808fca9919a9dfaba7e0a9c2c84",
+        "counts": {
+          "expected_turns": 20,
+          "executed_result_turns": 20,
+          "completed_turns": 18,
+          "failed_turns": 2,
+          "missing_result_turns": 0,
+          "attempted_turns": 20,
+          "scorable_turns": 18,
+          "statuses": {
+            "failed": 2,
+            "completed": 18
+          }
+        },
+        "attempted_requests": 56,
+        "ledger_states": {
+          "reserved": 56,
+          "failed": 2,
+          "settled": 54
+        },
+        "pg_content_equal_events": 112,
+        "quality_status": "NOT_RUN",
+        "no_holdout_execution": true,
+        "cost_status": "NOT_RUN"
+      },
+      "diagnostic_items": 2,
+      "quality_status": "NOT_RUN",
+      "task_applicable": 20,
+      "refusal_applicable": 8,
+      "context_applicable": 8,
+      "annotation_count": 0
+    },
+    "malformed": {
+      "returncode": 1,
+      "independent_validation": {
+        "queue_sha256": "b0ed6c1ee7c7ad774016fc3bb0214fe5ef18c808fca9919a9dfaba7e0a9c2c84",
+        "counts": {
+          "expected_turns": 20,
+          "executed_result_turns": 20,
+          "completed_turns": 18,
+          "failed_turns": 2,
+          "missing_result_turns": 0,
+          "attempted_turns": 20,
+          "scorable_turns": 18,
+          "statuses": {
+            "failed": 2,
+            "completed": 18
+          }
+        },
+        "attempted_requests": 56,
+        "ledger_states": {
+          "reserved": 56,
+          "failed": 2,
+          "settled": 54
+        },
+        "pg_content_equal_events": 112,
+        "quality_status": "NOT_RUN",
+        "no_holdout_execution": true,
+        "cost_status": "NOT_RUN"
+      },
+      "diagnostic_items": 2,
+      "quality_status": "NOT_RUN",
+      "task_applicable": 20,
+      "refusal_applicable": 8,
+      "context_applicable": 8,
+      "annotation_count": 0
+    },
+    "budget": {
+      "returncode": 1,
+      "independent_validation": {
+        "queue_sha256": "b0ed6c1ee7c7ad774016fc3bb0214fe5ef18c808fca9919a9dfaba7e0a9c2c84",
+        "counts": {
+          "expected_turns": 20,
+          "executed_result_turns": 2,
+          "completed_turns": 0,
+          "failed_turns": 2,
+          "missing_result_turns": 18,
+          "attempted_turns": 2,
+          "scorable_turns": 0,
+          "statuses": {
+            "failed": 2,
+            "MISSING": 18
+          }
+        },
+        "attempted_requests": 4,
+        "ledger_states": {
+          "reserved": 2,
+          "settled": 2
+        },
+        "pg_content_equal_events": 4,
+        "quality_status": "NOT_RUN",
+        "no_holdout_execution": true,
+        "cost_status": "NOT_RUN"
+      },
+      "diagnostic_items": 20,
+      "quality_status": "NOT_RUN",
+      "task_applicable": 20,
+      "refusal_applicable": 8,
+      "context_applicable": 8,
+      "annotation_count": 0
+    },
+    "fully_missing": {
+      "diagnostic_items": 20,
+      "attempted_turns": 0,
+      "origin": "HAND_CONSTRUCTED_MOCK_CRASH_FIXTURE"
+    },
+    "original_random_sample": {
+      "primary": 100,
+      "overlap": 20,
+      "packet_and_template_bytes_unchanged": true
+    },
+    "arithmetic": {
+      "expected": 20,
+      "completed": 18,
+      "failed": 1,
+      "missing": 1,
+      "task_assessed": 4,
+      "task_correct": 2,
+      "assessed_rate": "2/4",
+      "planned_confirmed_lower_bound": "2/20",
+      "expected_answer_supported_coverage": "1/12",
+      "label_origin": "HAND_CONSTRUCTED_FIXTURE"
+    },
+    "preservation": {
+      "old_pg_tables_unchanged": true,
+      "protected_previous_files": 296,
+      "all_file_hashes_unchanged": true
+    }
+  },
+  "negative_preflight": {
+    "results": {
+      "changed_queue": "QUEUE_HASH_MISMATCH",
+      "changed_data_copy": "DATASET_CHANGED"
+    },
+    "ledger_creation_count": 0,
+    "model_calls": 0,
+    "source_materials_unchanged": true
+  },
+  "observed_completed_network_records": 8,
+  "observed_denied_connections": 0,
+  "artifact_sha256": {
+    ".data/tutor-scale-v2/workflow-r4-verification.json": "add9356925da1b383304c51a28078b3e09b40da2d4bbb790f2f85f68b565e2db",
+    ".data/tutor-scale-v2/final-r4-tests.xml": "8ce5d4b7fa35ccb5aa26781cc2eda3d852f55a6771dfe3927d2098a9db3ae531",
+    ".data/tutor-scale-v2/preflight-negative-r4.json": "48ecef68e3945857a94b3dee275cb8f634c0cc7e0845ad69afee152ecaadf23b",
+    ".data/tutor-scale-v2/scalev2-normal-r4/config.json": "5f38dc077f4b3ec8fada21b03e7d658f5e1315d1c0ee5fd7019b3f9c7db8bd3b",
+    ".data/tutor-scale-v2/scalev2-normal-r4/expected-turns.json": "4c001dbde041ee2c92fda5f2735f5fa367452d6b752d7ad4bbfbe96ec8b27610",
+    ".data/tutor-scale-v2/scalev2-normal-r4/turns.jsonl": "dc5b9fac99715ffb845943605f508004fbc588cfe3ed39ad1a76aa80930d33f9",
+    ".data/tutor-scale-v2/scalev2-normal-r4/summary.json": "8d242b56ca128103deba4e4907230289b4f7150d4c3cbd34d322362d79795d42",
+    ".data/tutor-scale-v2/diagnostic-fully-missing-r4.json": "23c364c0c3ee3600d608cbfc2a4b480e6f061bd9b21ab23b15ac8e37cd50dd3d",
+    ".data/tutor-scale-v2/independent-arithmetic-r4.json": "6380f42d8d5ba61fb4fde821566c73d8d666743881e58965f1b9cfadc3b10081",
+    ".data/tutor-scale-v2/diagnostic-normal-r4.json": "1b73f8b475bc56fc8e38a2d7b1238516db0d9a43156b9103c97a486e92c59353",
+    ".data/tutor-scale-v2/diagnostic-timeout-r4.json": "69ee246a29a9153149178a4bf91a951eeac756a9c0687da4bbcb9ef762c84e78",
+    ".data/tutor-scale-v2/diagnostic-malformed-r4.json": "b8d6a6175ef1fa3fa885bd8894dc2f4786a495cda139694c5886c8bb20a77ea2",
+    ".data/tutor-scale-v2/diagnostic-budget-r4.json": "8a2829905a5ae8bdda009b2f988eaf6f4bbae67197073a3397d2fea0b66b5c73",
+    ".data/tutor-scale-v2/scores-normal-r4.json": "059bb8bbe0769ab5c9b1b3553810067fa45014540dc0f22c0041b4104621becd",
+    ".data/tutor-scale-v2/scores-timeout-r4.json": "d1ba64ab4d8cd0149d8a9e72a81ce2b52fc3f8f25fc98c271478b5a5118e1304",
+    ".data/tutor-scale-v2/scores-malformed-r4.json": "5193dc8d17c027b18474f26eefc76ac2e52f32480e46c53ff2909ebf47f17420",
+    ".data/tutor-scale-v2/scores-budget-r4.json": "e470ea05e48909fb3bf59a70ec80bf55cd12f0ca6f9486cf66d80baff4408b1e"
+  },
+  "not_run": [
+    "real_generation",
+    "embedding",
+    "real_reviewer",
+    "real_quality",
+    "real_human_agreement",
+    "real_tokens",
+    "real_billing_cost",
+    "learning_effects",
+    "public_course_expansion",
+    "load_test",
+    "deployment"
+  ],
+  "future_model_choice": "UNCONFIRMED",
+  "future_live_call_cap": "UNCONFIRMED",
+  "future_live_USD_cap": "UNCONFIRMED"
+}
