@@ -398,3 +398,13 @@ def test_original_random_sample_selection_is_unchanged(tmp_path):
     assert {key["mappings"][i["item_id"]]["turn_key"] for i in b["items"]} == overlap
     assert len(a["items"]) == 100 and len(b["items"]) == 20
     assert sum(key["mappings"][i["item_id"]]["split"] == "holdout" for i in a["items"]) == 25
+
+
+def test_v2_verifier_is_not_shadowed_by_legacy_module():
+    from pathlib import Path
+
+    import verify
+    from shared import legacy
+
+    assert Path(verify.__file__).resolve() == HERE / "verify.py"
+    assert Path(legacy.__file__).resolve() == BASE / "run.py"

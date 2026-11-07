@@ -8,7 +8,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 BASE = ROOT / "eval/tutor-scale"
-sys.path.insert(0, str(BASE))
+# Keep the executing v2 directory ahead of v1 modules with the same filename.
+sys.path.insert(1, str(BASE))
 import run as legacy  # noqa: E402
 from blind import validate_rating as validate_citations  # noqa: E402
 from dataset import digest, load, write  # noqa: E402
