@@ -1,5 +1,9 @@
 # P8 course Tutor — experimental, offline only
 
+The separate [v16 verified-publication candidate](TUTOR_VERIFIED_DEVELOPMENT.md)
+narrows source/derivation and hint output without switching this frozen default.
+Its independent reference review and real diagnostic remain blocked/NOT_RUN.
+
 The separate [bounded v15 development path](TUTOR_BOUNDED_DEVELOPMENT.md) is now
 implemented for offline validation. It does not replace this frozen/default
 runtime. The authenticated browser protocol is shared; its factory, Evidence

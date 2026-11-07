@@ -1,0 +1,112 @@
+{
+  "baseline_sha": "0a701c34d9ab236d1dd8acad5714618b016c63d3",
+  "previous_phase_introduced": 9,
+  "historical_diagnostics": [
+    {
+      "path": "agent-service/src/lecturelens_real_eval/tutor/bounded_runtime.py",
+      "code": "I001",
+      "row": 3,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "5f1745bd4a24420c9a094471519dd78ab9169037",
+      "line_commit": "5f1745bd4a24420c9a094471519dd78ab9169037",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "agent-service/src/lecturelens_real_eval/tutor/bounded_store.py",
+      "code": "I001",
+      "row": 3,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "0a0738c03ed65f207b0b2416bae682ecfd822b8b",
+      "line_commit": "0a0738c03ed65f207b0b2416bae682ecfd822b8b",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "agent-service/src/lecturelens_real_eval/tutor/complete_authority.py",
+      "code": "I001",
+      "row": 3,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "a6a26b217f715239459c32e60a5c38f04a117c66",
+      "line_commit": "a6a26b217f715239459c32e60a5c38f04a117c66",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "agent-service/tests/test_tutor_v15.py",
+      "code": "I001",
+      "row": 3,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "5f1745bd4a24420c9a094471519dd78ab9169037",
+      "line_commit": "5f1745bd4a24420c9a094471519dd78ab9169037",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "agent-service/tests/test_tutor_v15.py",
+      "code": "I001",
+      "row": 618,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "5f1745bd4a24420c9a094471519dd78ab9169037",
+      "line_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "scripts/dev/run_tutor_phase_mock.py",
+      "code": "I001",
+      "row": 3,
+      "message": "Import block is un-sorted or un-formatted",
+      "file_introduced_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "line_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "scripts/dev/run_tutor_phase_mock.py",
+      "code": "C408",
+      "row": 92,
+      "message": "Unnecessary `dict()` call (rewrite as a literal)",
+      "file_introduced_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "line_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "scripts/dev/run_tutor_phase_mock.py",
+      "code": "C408",
+      "row": 102,
+      "message": "Unnecessary `dict()` call (rewrite as a literal)",
+      "file_introduced_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "line_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    },
+    {
+      "path": "scripts/dev/run_tutor_phase_mock.py",
+      "code": "C408",
+      "row": 118,
+      "message": "Unnecessary `dict()` call (rewrite as a literal)",
+      "file_introduced_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "line_commit": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+      "introduced_in_previous_phase": true,
+      "current_phase_source_change": false,
+      "disposition": "HISTORICAL_RECORDED_NOT_REFORMATTED; frozen source bytes retained; no current-phase diagnostic"
+    }
+  ],
+  "old_file_edit_count": 0,
+  "new_or_modified_followup_python_required_result": "RUFF_ZERO_BEFORE_FINAL_FREEZE",
+  "new_or_modified_followup_python_result": {
+    "file_count": 9,
+    "exit_code": 0,
+    "diagnostics": 0
+  }
+}

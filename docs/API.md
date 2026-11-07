@@ -1566,6 +1566,12 @@ rating 严格为 Again/Hard/Good/Easy；客户端不提交时间。重复 key �
 
 ## P8 Tutor (experimental)
 
+The explicit [v16 factory](TUTOR_VERIFIED_DEVELOPMENT.md) preserves the public
+answer/evaluation/canonical-citation fields and v15 accounting. Its internal model
+tool accepts exact excerpts, checked value expressions and typed hint acts; it is
+not backward compatible with v15 model proposals. Separate schema/entry admission
+is required. Product defaults and public gateway routes are unchanged.
+
 The explicit [v15 development factory](TUTOR_BOUNDED_DEVELOPMENT.md) uses the same
 browser routes and canonical citation format. Its turns additionally expose
 `accounting` records: known numeric usage, explicit unknown/not-run usage state,

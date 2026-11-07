@@ -55,3 +55,28 @@ human gold. No candidate has executed the packet itself. The second source pass
 is by the same Codex author. `reference-review-pack.json` and REFERENCE_REVIEW.md
 contain per-question source locations, obligations, ambiguity and scoring checks;
 independent reviewer/dispositions remain null/PENDING. Paid admission stays blocked.
+
+## Stage 2: execution and evidence prerequisites
+
+The default diagnostic entry verifies source/contract hashes without DB/transport/
+credential access. Explicit live admission additionally checks a fresh bound grant,
+declared independent reference review, current pricing/configuration, exact clean
+HEAD and frozen code-commit blobs, plus a durable one-use run-ID claim. Mock uses
+synthetic16 only. The mirrored ledger bounds all attempts/repairs at80 and local
+reserved-plus-settled liability atUS$0.70; unknown outcomes keep full risk and stop.
+The raw capture saves bounded HTTP entity bytes before JSON parsing, with known
+authorization-secret redaction (including JSON escapes), no headers/exceptions,
+and explicit incomplete/redacted status. It never reconstructs historical bytes.
+
+The draft protocol rehearsal passed8 fault/normal tests with identity verification
+explicitly stubbed; it is not final identity/freeze acceptance. Publication,
+capture, admission and hard-limit regressions passed with real isolated PG.
+The actual Java-controller/HTTP/new-factory/authority/PG chain passed35 Java tests,
+including two-session isolation, same-ID replay, owner/version and canonical code
+binding. Final acceptance must rerun the actual frozen entry without the stub.
+
+All9 historical Ruff diagnostics originated in the previous phase. Frozen old
+sources remain unchanged; their exact attribution is in RUFF_ATTRIBUTION.json.
+The nine named current-phase Python files pass Ruff with zero diagnostics; no
+directory formatting or source-asset formatting is used. Initial current-phase
+import/fixture style errors were fixed before freeze.
