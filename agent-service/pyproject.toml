@@ -35,7 +35,7 @@ testpaths = ["tests"]
 line-length = 110
 # Evaluation code, downloads and private evidence are immutable, including when
 # explicitly passed from outside this configuration's directory.
-extend-exclude = ["../eval", "../.data"]
+extend-exclude = ["**/eval/**", "**/.data/**"]
 force-exclude = true
 
 [tool.ruff.lint]

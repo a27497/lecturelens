@@ -13,3 +13,13 @@ Node 使用 `export PATH=/opt/node/bin:$PATH`。源码、构建与日志留在�
 不使用其他 worktree 的服务、配置、容器或数据库。
 
 命令与最终数字见 [P7 检查记录](../eval/p7-flashcards/REPORT.md)。
+
+## Formatting evaluation assets
+
+Format only explicitly named, editable Python implementation/test paths. Never
+run a directory-wide formatter over downloaded sources or frozen evaluations:
+Ruff includes Markdown code fences. `agent-service/pyproject.toml` force-excludes
+`eval/` and `.data/`, including explicitly passed files; `eval/ruff.toml` also
+protects evaluation assets during automatic configuration discovery. Keep these
+exclusions in place. Put new maintenance checks in `scripts/dev/` and format only
+their exact paths; never reformat frozen code or update source hashes to fit it.

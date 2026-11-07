@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import httpx
@@ -52,6 +53,14 @@ def clone(tmp_path):
     target = tmp_path / "eval/tutor-v14-fresh-v1"
     shutil.copytree(C.HERE, target, ignore=shutil.ignore_patterns("__pycache__"))
     return target
+
+
+@pytest.fixture
+def format_scratch():
+    # A mirror beneath real .data would be excluded by that ancestor alone,
+    # masking a broken eval exclusion and preventing the positive code check.
+    with tempfile.TemporaryDirectory(prefix="lecturelens-v14-format-") as directory:
+        yield Path(directory)
 
 
 def prepare():
@@ -127,7 +136,7 @@ def test_previous_formatted_bytes_rejected_without_hash_replacement(tmp_path, mo
 def test_reproduce_original_directory_formatter_defect_in_scratch(tmp_path):
     source = tmp_path / "python-original.md"
     source.write_bytes((C.HERE / "materials/carpentries-python-new.md").read_bytes())
-    config = tmp_path / "original-pyproject.toml"
+    config = tmp_path / "pyproject.toml"
     config.write_bytes(
         subprocess.check_output(["git", "show", BASE_SHA + ":agent-service/pyproject.toml"], cwd=ROOT)
     )
@@ -151,7 +160,8 @@ def test_reproduce_original_directory_formatter_defect_in_scratch(tmp_path):
 
 
 @pytest.mark.parametrize("mode", ["explicit-config-directory", "discovered-config", "explicit-files"])
-def test_formatter_preserves_downloads_and_all_frozen_assets(tmp_path, mode):
+def test_formatter_preserves_downloads_and_all_frozen_assets(format_scratch, mode):
+    tmp_path = format_scratch
     target = clone(tmp_path)
     config = tmp_path / "agent-service/pyproject.toml"
     config.parent.mkdir()
@@ -191,7 +201,8 @@ def test_formatter_preserves_downloads_and_all_frozen_assets(tmp_path, mode):
     )
 
 
-def test_explicit_nonfrozen_code_still_formats(tmp_path):
+def test_explicit_nonfrozen_code_still_formats(format_scratch):
+    tmp_path = format_scratch
     config = tmp_path / "agent-service/pyproject.toml"
     config.parent.mkdir()
     config.write_bytes((ROOT / "agent-service/pyproject.toml").read_bytes())
