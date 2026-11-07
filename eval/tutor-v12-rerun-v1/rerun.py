@@ -60,7 +60,8 @@ def preflight(args):
 def accounting_safe(state):
     return (
         isinstance(state, dict)
-        and state.get("blocked") is None
+        and "blocked" in state
+        and state["blocked"] is None
         and type(state.get("pending")) is int
         and state["pending"] == 0
         and type(state.get("calls")) is int

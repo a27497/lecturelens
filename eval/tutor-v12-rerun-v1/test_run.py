@@ -543,3 +543,11 @@ def test_wire_persistence_failure_is_not_reported_as_dispatch(tmp_path):
     with pytest.raises(FileNotFoundError):
         wire.handle_request(httpx.Request("POST", "https://api.deepseek.com/chat/completions", content=b"{}"))
     assert wire.count == 0 and not seen
+
+
+def test_incomplete_accounting_is_unknown_and_cannot_continue():
+    state = dict(calls=0, nano_usd=0, pending=0)
+    assert not rerun.accounting_safe(state)
+    protocol = C.verify()[-1]
+    turn = dict(status="failed", error_code="TUTOR_REPAIR_BUDGET_UNAVAILABLE", calls=[])
+    assert rerun.classify(turn, state, rerun.bridge.legacy.TutorPolicy(), protocol)[0] == "STOP_ALL"
