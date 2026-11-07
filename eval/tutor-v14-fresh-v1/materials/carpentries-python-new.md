@@ -188,10 +188,10 @@ Here's another loop that repeatedly updates a variable:
 
 ```python
 length = 0
-names = ["Curie", "Darwin", "Turing"]
+names = ['Curie', 'Darwin', 'Turing']
 for value in names:
     length = length + 1
-print("There are", length, "names in the list.")
+print('There are', length, 'names in the list.')
 ```
 
 ```output
@@ -221,10 +221,10 @@ It still exists after the loop is over,
 and we can re-use variables previously defined as loop variables as well:
 
 ```python
-name = "Rosalind"
-for name in ["Curie", "Darwin", "Turing"]:
+name = 'Rosalind'
+for name in ['Curie', 'Darwin', 'Turing']:
     print(name)
-print("after the loop, name is", name)
+print('after the loop, name is', name)
 ```
 
 ```output
@@ -296,7 +296,7 @@ for number in range(1, 4):
 Given the following loop:
 
 ```python
-word = "oxygen"
+word = 'oxygen'
 for letter in word:
     print(letter)
 ```
@@ -325,7 +325,7 @@ The body of the loop is executed 6 times.
 Exponentiation is built into Python:
 
 ```python
-print(5**3)
+print(5 ** 3)
 ```
 
 ```output

@@ -1,0 +1,4 @@
+# Also protect evaluations when Ruff discovers configuration without --config.
+extend = "../agent-service/pyproject.toml"
+exclude = ["*"]
+force-exclude = true

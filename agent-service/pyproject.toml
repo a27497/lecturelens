@@ -33,6 +33,10 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 110
+# Evaluation code, downloads and private evidence are immutable, including when
+# explicitly passed from outside this configuration's directory.
+extend-exclude = ["../eval", "../.data"]
+force-exclude = true
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "B", "BLE"]
