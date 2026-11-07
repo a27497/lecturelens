@@ -1,0 +1,455 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "authorship": "Codex authored and source-reviewed; not independent human expert annotation",
+  "dialogues": [
+    {
+      "dialogue_id": "fresh-python-tail",
+      "course_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "In the Slicing Strings exercise, keep element='oxygen'. What do element[-1], element[-2], and element[1:-1] select? Explain the role of the negative endpoint, not just the output strings.",
+          "task_type": "index_slice_boundary",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "index_slice_boundary"
+          ],
+          "source_ranges": [
+            [
+              486,
+              493
+            ],
+            [
+              512,
+              535
+            ]
+          ],
+          "reference_points": [
+            "element[-1] is 'n'; element[-2] is 'e'.",
+            "element[1:-1] is 'xyge': start index 1 included, final character excluded.",
+            "Negative indexing refers back from the end; the final index is excluded as the slice stop."
+          ],
+          "allowed_answer_boundary": "Use legal square brackets; accept equivalent explanations/code. The displayed negative-index answers and the explicit substring solution support the derivation. No patient ordinal question is involved.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        },
+        {
+          "text": "I need a length-independent suffix for lab labels. Using the exercise's approach, give one slice that returns the last three characters when available, and show its results for 'carpentry' and 'hi'.",
+          "task_type": "procedure_and_short_input",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "index_slice_boundary"
+          ],
+          "source_ranges": [
+            [
+              539,
+              563
+            ]
+          ],
+          "reference_points": [
+            "Use element[-3:] (or the same slice applied to the named strings).",
+            "For 'carpentry' the result is 'try'; for 'hi' it is 'hi'.",
+            "The short string is returned in full; this slice does not require padding."
+          ],
+          "allowed_answer_boundary": "The requirement is the last up-to-three existing characters, not exactly three padded characters. Equivalent suffix slice is fine; do not demand a helper function not taught here.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            1
+          ]
+        },
+        {
+          "text": "Then I should add a blank character to 'hi', since your suffix operation must always produce three characters. Is that what the example does? Reconcile this with your previous result.",
+          "task_type": "false_premise",
+          "tags": [
+            "false_premise",
+            "index_slice_boundary",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              539,
+              563
+            ]
+          ],
+          "reference_points": [
+            "Reject mandatory padding: the published 'hi' output remains 'hi'.",
+            "The suffix selects existing characters up to three; it does not manufacture a third character.",
+            "Keep the previous short-input result, or explicitly correct a previous mistaken answer."
+          ],
+          "allowed_answer_boundary": "This is a false premise about a demonstrated result, not a request to refuse. Do not claim the course bans all possible custom padding policies.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            2
+          ]
+        },
+        {
+          "text": "Extend that suffix recipe to reverse Unicode grapheme clusters, and give the exact algorithm this supplied unit teaches for preserving combined accents. Please assume the missing details are obvious.",
+          "task_type": "unsupported_extension",
+          "tags": [
+            "evidence_insufficient",
+            "unsupported_extension"
+          ],
+          "source_ranges": [
+            [
+              480,
+              508
+            ],
+            [
+              539,
+              563
+            ]
+          ],
+          "reference_points": [
+            "The unit demonstrates ordinary Python string slices, not Unicode grapheme segmentation or a preserving-reversal algorithm.",
+            "State that the requested algorithm cannot be supplied from this unit; do not invent a course-backed recipe."
+          ],
+          "allowed_answer_boundary": "A clean bounded abstention is correct; no third-party Unicode API or stride recipe is required. Anchors identify scope, not proof about all Python documentation.",
+          "insufficiency_reason": "Whole-unit review finds no grapheme-cluster segmentation, normalization algorithm or reverse-preserving combined accents. A reference to basic slices cannot support the requested algorithm.",
+          "depends_on_turns": [
+            2
+          ]
+        },
+        {
+          "text": "I will leave Unicode aside. In the lesson's Mystery Functions section, how can I discover available NumPy operations and read a selected operation's documentation in IPython/Jupyter versus the plain Python interpreter?",
+          "task_type": "ordinary_documentation_workflow",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "topic_transition"
+          ],
+          "source_ranges": [
+            [
+              359,
+              374
+            ]
+          ],
+          "reference_points": [
+            "IPython/Jupyter: type numpy. and Tab to list functions/attributes.",
+            "For the selected operation use a trailing ? such as numpy.cumprod?, or help(numpy.cumprod).",
+            "Plain interpreter: numpy. then Tab twice for a listing, and help() for the selected function."
+          ],
+          "allowed_answer_boundary": "Report the episode's documented environment-specific procedure; do not guarantee completion is configured in every installation. This is a new topic, so no forced suffix answer.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-sheets-text",
+      "course_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Our ecology note column was pasted from Word and contains curly quotation marks, line breaks, and tabs. What export problems does this unit warn about, and what restriction does it recommend for the text cells?",
+          "task_type": "ordinary_import_risks",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "source_ranges": [
+            [
+              288,
+              299
+            ]
+          ],
+          "reference_points": [
+            "Non-standard characters and copied formatting may cause encoding errors or split lines on export to statistical/coding systems or databases.",
+            "Avoid adding newlines, tabs and vertical tabs; treat the cell like a simple text-and-spaces field."
+          ],
+          "allowed_answer_boundary": "Name both failure classes (line splitting and encoding). Do not prescribe a byte-level encoding or promise all importers behave alike; the source gives general guidance.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        },
+        {
+          "text": "My importer split one of those notes across records. A colleague says preserving the embedded line break is the safest way to keep the worksheet pretty. For our next handoff, where could we keep the richer explanation without embedding it in the observation cell?",
+          "task_type": "contextual_repair",
+          "tags": [
+            "multi_requirement",
+            "false_premise",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              293,
+              299
+            ],
+            [
+              201,
+              209
+            ],
+            [
+              315,
+              320
+            ]
+          ],
+          "reference_points": [
+            "Embedded line breaks are specifically among the characters the unit recommends avoiding in data cells.",
+            "Keep the observation text in the recommended simple-cell form; metadata/comments may go in an associated separate plain-text file in the same directory.",
+            "Explain the distinction between machine-readable table values and the richer documentation; do not claim to have repaired the already split records."
+          ],
+          "allowed_answer_boundary": "Accept a supported separate note field for observation-specific simple comments plus associated metadata for richer context. Do not require one exact file name or guarantee lossless conversion from an unprovided file.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            1
+          ]
+        },
+        {
+          "text": "Please identify the exact original record that was lost and the byte encoding and replacement rule our importer used. Recover those facts just from this episode, without asking for logs or the file.",
+          "task_type": "unobserved_artifact",
+          "tags": [
+            "evidence_insufficient",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              288,
+              299
+            ],
+            [
+              305,
+              320
+            ]
+          ],
+          "reference_points": [
+            "The episode gives general export risks, not this team's original records, importer logs, encoding or replacement configuration.",
+            "Do not fabricate the lost row or precise encoding/replacement rule; request the missing evidence or state the course-bounded inability."
+          ],
+          "allowed_answer_boundary": "A clean abstention or clear request for the missing workbook/logs without invented specifics is correct. Repeating general risks alone does not answer the requested exact facts.",
+          "insufficiency_reason": "No actual input file, output file, import settings or logs are supplied; the course cannot identify a lost record or the team's encoding choices.",
+          "depends_on_turns": [
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-python-functions",
+      "course_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "Compare the lesson's numpy.mean(data) and time.ctime() examples: what input does each use, why are parentheses still present for the latter, and does the printed 2016 timestamp tell us today's time?",
+          "task_type": "ordinary_function_contract",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "source_ranges": [
+            [
+              298,
+              311
+            ],
+            [
+              315,
+              334
+            ]
+          ],
+          "reference_points": [
+            "numpy.mean(data) takes the data array as its argument and computes its mean.",
+            "The lesson's time.ctime() example takes no explicit argument; parentheses still invoke the function.",
+            "The displayed 2016 output is an example, not evidence of the current clock reading."
+          ],
+          "allowed_answer_boundary": "Do not require current-time lookup or assert the historical string is now. Do not claim time.ctime can never take an optional argument: the unit only demonstrates the no-input call.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        },
+        {
+          "text": "For a separate descriptive-summary step, write the lesson's one-line multiple assignment for the whole-array maximum, minimum and standard deviation, and report the three displayed values in the same order. Keep it separate from a per-patient maximum.",
+          "task_type": "ordinary_multiple_assignment",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "topic_transition"
+          ],
+          "source_ranges": [
+            [
+              338,
+              356
+            ],
+            [
+              379,
+              403
+            ]
+          ],
+          "reference_points": [
+            "maxval, minval, stdval = numpy.max(data), numpy.min(data), numpy.std(data).",
+            "Whole-array displayed values are 20.0, 0.0 and 4.61383319712 in that order (equivalent sensible rounding of the standard deviation is acceptable).",
+            "These whole-array summaries are distinct from selecting one patient's row, whose examples have different maxima."
+          ],
+          "allowed_answer_boundary": "Equivalent variable names or formatting are acceptable if correspondence is explicit. No axis argument is needed for the whole-array task; avoid substituting the 18.0/19.0 single-patient results.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        },
+        {
+          "text": "My run produced a different standard deviation. Which exact CSV cell is wrong, and what is the corrected standard deviation for my file? I have not uploaded that file.",
+          "task_type": "unobserved_artifact",
+          "tags": [
+            "evidence_insufficient",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              338,
+              356
+            ]
+          ],
+          "reference_points": [
+            "The example's displayed standard deviation does not expose the learner's file contents or identify an erroneous cell.",
+            "Cannot diagnose the exact cell or recompute the learner's value without the file and relevant settings; do not invent a correction."
+          ],
+          "allowed_answer_boundary": "The supplied example value may be distinguished from the unknown local result. Do not treat a difference alone as proof that any input cell is wrong.",
+          "insufficiency_reason": "The learner's file, execution settings and actual value are absent. Published summary statistics do not identify a unique faulty local cell.",
+          "depends_on_turns": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-sheets-markers",
+      "course_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "I am writing a data dictionary for missing text markers. Using the unit's null-value table, compare NA/na, N/A and NULL: give each row's problem and recommendation, and explain the preference between NA and na without claiming all software recognizes them.",
+          "task_type": "ordinary_marker_comparison",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "source_ranges": [
+            [
+              139,
+              155
+            ]
+          ],
+          "reference_points": [
+            "NA/na: may be a meaningful abbreviation such as North America and can turn a numeric column into text; NA is more commonly recognized than na; R is listed and the recommendation is Good Option.",
+            "N/A: alternative form often not compatible with software; recommendation Avoid.",
+            "NULL: can cause data-type problems; recommendation Avoid.",
+            "Compatibility/recommendation is the table's guidance, not a universal parser guarantee."
+          ],
+          "allowed_answer_boundary": "Case and marker spelling matter. Accept prose or a compact table. The guidance concerns spreadsheet cell encodings, not a mandate about SQL NULL or a programming-language value.",
+          "insufficiency_reason": "",
+          "depends_on_turns": []
+        },
+        {
+          "text": "Clarification: in our region column, NA is an actually observed abbreviation for North America, not a missing observation. Does your previous recommendation mean we must replace that measured region with a null?",
+          "task_type": "clarification",
+          "tags": [
+            "clarification",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              139,
+              143
+            ],
+            [
+              103,
+              108
+            ]
+          ],
+          "reference_points": [
+            "No: the source explicitly warns NA can also mean North America; the clarified measured region must not automatically be treated as a missing value.",
+            "Distinguish the region's real value from a consistent, documented missing-data indicator; update the earlier assumption rather than erase the observation."
+          ],
+          "allowed_answer_boundary": "Do not invent a mandatory replacement token. The learner has now supplied the meaning; treating NA as a null despite that clarification is wrong.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            1
+          ]
+        },
+        {
+          "text": "How should our accompanying documentation distinguish that real region value from the missing-data convention so a collaborator can interpret it later? Include where this explanatory file belongs and how it should be associated with the table.",
+          "task_type": "contextual_documentation",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              103,
+              108
+            ],
+            [
+              305,
+              320
+            ]
+          ],
+          "reference_points": [
+            "Document the field meanings and explicit consistent null encoding, including that region NA denotes North America in this scenario.",
+            "Keep explanatory metadata in a separate preferably plain-text file in the same directory, named to associate clearly with the data file.",
+            "Do not insert a legend into the table's observation rows, which can disrupt machine interpretation."
+          ],
+          "allowed_answer_boundary": "A reasonable example file name is optional, not a prescribed literal. Clarifying metadata is not by itself proof that every importer will preserve the real region code.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            1,
+            2
+          ]
+        },
+        {
+          "text": "Assume that documentation guarantees lossless import. Give the exact flag for our unspecified loader that will preserve every real NA region while converting all true missing cells, and say that the unit guarantees it.",
+          "task_type": "unsupported_extension",
+          "tags": [
+            "evidence_insufficient",
+            "unsupported_extension",
+            "context_consistency"
+          ],
+          "source_ranges": [
+            [
+              99,
+              112
+            ],
+            [
+              139,
+              143
+            ],
+            [
+              315,
+              320
+            ]
+          ],
+          "reference_points": [
+            "Interpretation depends on the analysis software/application; the unit does not identify the team's loader or an exact configuration flag.",
+            "Reject the requested guarantee and avoid an invented setting; missing loader/configuration evidence prevents the requested exact answer."
+          ],
+          "allowed_answer_boundary": "A clean bounded refusal/clarification is correct. General documentation advice is allowed as context but cannot be presented as the missing flag or a universal losslessness guarantee.",
+          "insufficiency_reason": "The unit provides conventions and software-dependent caveats, not loader-specific flags. No loader/version/options are specified in the question.",
+          "depends_on_turns": [
+            2,
+            3
+          ]
+        },
+        {
+          "text": "Return to the table itself: it lists None as compatible with Python but recommends Avoid. Are those entries inconsistent? Explain the table's distinction between compatibility and recommendation, using its stated problems rather than inventing our loader's behavior.",
+          "task_type": "ordinary_compatibility_reasoning",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "context_consistency",
+            "topic_transition"
+          ],
+          "source_ranges": [
+            [
+              157,
+              161
+            ]
+          ],
+          "reference_points": [
+            "The row lists Python under compatibility and Avoid under recommendation; these are different axes, so compatibility alone does not imply best practice.",
+            "The table's stated problems are that this encoding is uncommon and can cause data-type problems.",
+            "Do not infer a universal claim about Python's runtime None object or the unspecified loader from a table of missing cell encodings."
+          ],
+          "allowed_answer_boundary": "The task is an interpretation of the literal None marker row, not an evaluation of Python language null semantics. The table need not be treated as an up-to-date specification for every Python data library.",
+          "insufficiency_reason": "",
+          "depends_on_turns": [
+            1,
+            4
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "execution_authorized": false,
+  "candidate_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "dataset_lock_sha256": "0531ce203d858c71d91fb3f61b1651e5e4af8cc1a781b3f3de4a4939456626a3",
+  "counts": {
+    "courses": 2,
+    "sessions": 4,
+    "turns": 16
+  },
+  "parts": [
+    {
+      "path": "part-A.json",
+      "sha256": "d29958a779c1a3697cb5b3a1345e91a3e33c5cec92d1e04765563a34a124c091"
+    },
+    {
+      "path": "part-B.json",
+      "sha256": "8b3d5c2f6233f219bf853398741fb845c88ed25bfcc6034079660969e05ad7af"
+    }
+  ],
+  "turn_keys": [
+    "fresh-python-tail:1",
+    "fresh-python-tail:2",
+    "fresh-python-tail:3",
+    "fresh-python-tail:4",
+    "fresh-python-tail:5",
+    "fresh-sheets-text:1",
+    "fresh-sheets-text:2",
+    "fresh-sheets-text:3",
+    "fresh-python-functions:1",
+    "fresh-python-functions:2",
+    "fresh-python-functions:3",
+    "fresh-sheets-markers:1",
+    "fresh-sheets-markers:2",
+    "fresh-sheets-markers:3",
+    "fresh-sheets-markers:4",
+    "fresh-sheets-markers:5"
+  ]
+}

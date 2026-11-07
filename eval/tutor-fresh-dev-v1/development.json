@@ -1,0 +1,1423 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "split": "development",
+  "dialogues": [
+    {
+      "dialogue_id": "fresh-python-tail",
+      "course_id": "carpentries-python",
+      "lecture_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Analyzing Patient Data (complete episode 2)\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. In the Slicing Strings exercise, keep element='oxygen'. What do element[-1], element[-2], and element[1:-1] select? Explain the role of the negative endpoint, not just the output strings.",
+          "category": "index_slice_boundary",
+          "task_type": "index_slice_boundary",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "index_slice_boundary"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "In the Slicing Strings exercise, keep element='oxygen'. What do element[-1], element[-2], and element[1:-1] select? Explain the role of the negative endpoint, not just the output strings.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "0a7bf43751bba8c62c691ab79e04adfe457bbf7d1687df44bde69a0476c36031",
+              "65c57209b245e25155e7d620a5a0a5a41c76251b5287cbffb7ca4cdb9e69bd19",
+              "0c6dbe649f3490b29999abcc39b73a17e88da130c4662f0946330e82205d7d92",
+              "aa82cfaabed6b9cfaf978caa767b6d6133e8275595d6ae5c1c80897491f009ed",
+              "ff0e0ccfaa9355ce57524f439757f3318abf8bdb641161f83d592e95cb41f4d4",
+              "32a27ec4fb514886489c0d64373c518d2c966d7df77c2a4d293d464aad5ecbf5",
+              "a683ffb78a3e351f3885c761254811efd0cc9612d91fffe76bb6b37624b4b7d3",
+              "4b0b9c166f12d6866d68f2bcc2a5f6c36962a7849e880e2d9cefba7a79e23f20",
+              "83da607676ad18dad4297eec106fa28648749c069965666c7530307a456d400f",
+              "3373d00f199f438e2eefb301c6beab28a0303f50e4aac05fdbfe9e53617e630f"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                486,
+                493
+              ],
+              [
+                512,
+                535
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "0a7bf43751bba8c62c691ab79e04adfe457bbf7d1687df44bde69a0476c36031",
+                "quote": "element = 'oxygen'\nprint('first three characters:', element[0:3])\nprint('last three characters:', element[3:6])\n```",
+                "line_start": 486,
+                "line_end": 489,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L486-L489"
+              },
+              {
+                "evidence_id": "65c57209b245e25155e7d620a5a0a5a41c76251b5287cbffb7ca4cdb9e69bd19",
+                "quote": "```output\nfirst three characters: oxy\nlast three characters: gen",
+                "line_start": 491,
+                "line_end": 493,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L491-L493"
+              },
+              {
+                "evidence_id": "0c6dbe649f3490b29999abcc39b73a17e88da130c4662f0946330e82205d7d92",
+                "quote": "What is `element[-1]`?\nWhat is `element[-2]`?",
+                "line_start": 512,
+                "line_end": 513,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L512-L513"
+              },
+              {
+                "evidence_id": "aa82cfaabed6b9cfaf978caa767b6d6133e8275595d6ae5c1c80897491f009ed",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 515,
+                "line_end": 515,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L515-L515"
+              },
+              {
+                "evidence_id": "ff0e0ccfaa9355ce57524f439757f3318abf8bdb641161f83d592e95cb41f4d4",
+                "quote": "## Solution",
+                "line_start": 517,
+                "line_end": 517,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L517-L517"
+              },
+              {
+                "evidence_id": "32a27ec4fb514886489c0d64373c518d2c966d7df77c2a4d293d464aad5ecbf5",
+                "quote": "```output\nn\ne\n```",
+                "line_start": 519,
+                "line_end": 522,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L519-L522"
+              },
+              {
+                "evidence_id": "a683ffb78a3e351f3885c761254811efd0cc9612d91fffe76bb6b37624b4b7d3",
+                "quote": "Given those answers,\nexplain what `element[1:-1]` does.",
+                "line_start": 526,
+                "line_end": 527,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L526-L527"
+              },
+              {
+                "evidence_id": "4b0b9c166f12d6866d68f2bcc2a5f6c36962a7849e880e2d9cefba7a79e23f20",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 529,
+                "line_end": 529,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L529-L529"
+              },
+              {
+                "evidence_id": "83da607676ad18dad4297eec106fa28648749c069965666c7530307a456d400f",
+                "quote": "## Solution",
+                "line_start": 531,
+                "line_end": 531,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L531-L531"
+              },
+              {
+                "evidence_id": "3373d00f199f438e2eefb301c6beab28a0303f50e4aac05fdbfe9e53617e630f",
+                "quote": "Creates a substring from index 1 up to (not including) the final index,\neffectively removing the first and last letters from 'oxygen'",
+                "line_start": 533,
+                "line_end": 534,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L533-L534"
+              }
+            ],
+            "reference_points": [
+              "element[-1] is 'n'; element[-2] is 'e'.",
+              "element[1:-1] is 'xyge': start index 1 included, final character excluded.",
+              "Negative indexing refers back from the end; the final index is excluded as the slice stop."
+            ],
+            "allowed_answer_boundary": "Use legal square brackets; accept equivalent explanations/code. The displayed negative-index answers and the explicit substring solution support the derivation. No patient ordinal question is involved.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "element[-1] is 'n'; element[-2] is 'e'.; element[1:-1] is 'xyge': start index 1 included, final character excluded.; Negative indexing refers back from the end; the final index is excluded as the slice stop. Boundary: Use legal square brackets; accept equivalent explanations/code. The displayed negative-index answers and the explicit substring solution support the derivation. No patient ordinal question is involved. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "I need a length-independent suffix for lab labels. Using the exercise's approach, give one slice that returns the last three characters when available, and show its results for 'carpentry' and 'hi'.",
+          "category": "procedure_and_short_input",
+          "task_type": "procedure_and_short_input",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "index_slice_boundary"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "I need a length-independent suffix for lab labels. Using the exercise's approach, give one slice that returns the last three characters when available, and show its results for 'carpentry' and 'hi'.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4bb2c5009926da606874ae82e7fe00bf035f983a2ee8be1f952da2f6eb1b2f4e",
+              "883d6ccc4a12cfc14b05ebfff24196ba9d75b75bc08f616b5a6884eca0289d0d",
+              "8eed20c83986b764ebff1a3a0a774ec21b55c3cb3cf2f5853b8d7a5a6617ac02",
+              "e44451d908917a5202d96c4f8e463d22514c0c1a86b3224b02c829abe4294330",
+              "f25e2e833198dacb966d6f093db154635cf639e26cabc5a37503b4df83a671da"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                539,
+                563
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "4bb2c5009926da606874ae82e7fe00bf035f983a2ee8be1f952da2f6eb1b2f4e",
+                "quote": "How can we rewrite the slice for getting the last three characters of `element`,\nso that it works even if we assign a different string to `element`?\nTest your solution with the following strings: `carpentry`, `clone`, `hi`.",
+                "line_start": 539,
+                "line_end": 541,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L539-L541"
+              },
+              {
+                "evidence_id": "883d6ccc4a12cfc14b05ebfff24196ba9d75b75bc08f616b5a6884eca0289d0d",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 543,
+                "line_end": 543,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L543-L543"
+              },
+              {
+                "evidence_id": "8eed20c83986b764ebff1a3a0a774ec21b55c3cb3cf2f5853b8d7a5a6617ac02",
+                "quote": "## Solution",
+                "line_start": 545,
+                "line_end": 545,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L545-L545"
+              },
+              {
+                "evidence_id": "e44451d908917a5202d96c4f8e463d22514c0c1a86b3224b02c829abe4294330",
+                "quote": "```python\nelement = 'oxygen'\nprint('last three characters:', element[-3:])\nelement = 'carpentry'\nprint('last three characters:', element[-3:])\nelement = 'clone'\nprint('last three characters:', element[-3:])\nelement = 'hi'\nprint('last three characters:', element[-3:])\n```",
+                "line_start": 547,
+                "line_end": 556,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L547-L556"
+              },
+              {
+                "evidence_id": "f25e2e833198dacb966d6f093db154635cf639e26cabc5a37503b4df83a671da",
+                "quote": "```output\nlast three characters: gen\nlast three characters: try\nlast three characters: one\nlast three characters: hi\n```",
+                "line_start": 558,
+                "line_end": 563,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L558-L563"
+              }
+            ],
+            "reference_points": [
+              "Use element[-3:] (or the same slice applied to the named strings).",
+              "For 'carpentry' the result is 'try'; for 'hi' it is 'hi'.",
+              "The short string is returned in full; this slice does not require padding."
+            ],
+            "allowed_answer_boundary": "The requirement is the last up-to-three existing characters, not exactly three padded characters. Equivalent suffix slice is fine; do not demand a helper function not taught here.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Use element[-3:] (or the same slice applied to the named strings).; For 'carpentry' the result is 'try'; for 'hi' it is 'hi'.; The short string is returned in full; this slice does not require padding. Boundary: The requirement is the last up-to-three existing characters, not exactly three padded characters. Equivalent suffix slice is fine; do not demand a helper function not taught here. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Then I should add a blank character to 'hi', since your suffix operation must always produce three characters. Is that what the example does? Reconcile this with your previous result.",
+          "category": "false_premise",
+          "task_type": "false_premise",
+          "tags": [
+            "false_premise",
+            "index_slice_boundary",
+            "context_consistency"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "Then I should add a blank character to 'hi', since your suffix operation must always produce three characters. Is that what the example does? Reconcile this with your previous result.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4bb2c5009926da606874ae82e7fe00bf035f983a2ee8be1f952da2f6eb1b2f4e",
+              "883d6ccc4a12cfc14b05ebfff24196ba9d75b75bc08f616b5a6884eca0289d0d",
+              "8eed20c83986b764ebff1a3a0a774ec21b55c3cb3cf2f5853b8d7a5a6617ac02",
+              "e44451d908917a5202d96c4f8e463d22514c0c1a86b3224b02c829abe4294330",
+              "f25e2e833198dacb966d6f093db154635cf639e26cabc5a37503b4df83a671da"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                539,
+                563
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "4bb2c5009926da606874ae82e7fe00bf035f983a2ee8be1f952da2f6eb1b2f4e",
+                "quote": "How can we rewrite the slice for getting the last three characters of `element`,\nso that it works even if we assign a different string to `element`?\nTest your solution with the following strings: `carpentry`, `clone`, `hi`.",
+                "line_start": 539,
+                "line_end": 541,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L539-L541"
+              },
+              {
+                "evidence_id": "883d6ccc4a12cfc14b05ebfff24196ba9d75b75bc08f616b5a6884eca0289d0d",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 543,
+                "line_end": 543,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L543-L543"
+              },
+              {
+                "evidence_id": "8eed20c83986b764ebff1a3a0a774ec21b55c3cb3cf2f5853b8d7a5a6617ac02",
+                "quote": "## Solution",
+                "line_start": 545,
+                "line_end": 545,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L545-L545"
+              },
+              {
+                "evidence_id": "e44451d908917a5202d96c4f8e463d22514c0c1a86b3224b02c829abe4294330",
+                "quote": "```python\nelement = 'oxygen'\nprint('last three characters:', element[-3:])\nelement = 'carpentry'\nprint('last three characters:', element[-3:])\nelement = 'clone'\nprint('last three characters:', element[-3:])\nelement = 'hi'\nprint('last three characters:', element[-3:])\n```",
+                "line_start": 547,
+                "line_end": 556,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L547-L556"
+              },
+              {
+                "evidence_id": "f25e2e833198dacb966d6f093db154635cf639e26cabc5a37503b4df83a671da",
+                "quote": "```output\nlast three characters: gen\nlast three characters: try\nlast three characters: one\nlast three characters: hi\n```",
+                "line_start": 558,
+                "line_end": 563,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L558-L563"
+              }
+            ],
+            "reference_points": [
+              "Reject mandatory padding: the published 'hi' output remains 'hi'.",
+              "The suffix selects existing characters up to three; it does not manufacture a third character.",
+              "Keep the previous short-input result, or explicitly correct a previous mistaken answer."
+            ],
+            "allowed_answer_boundary": "This is a false premise about a demonstrated result, not a request to refuse. Do not claim the course bans all possible custom padding policies.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Reject mandatory padding: the published 'hi' output remains 'hi'.; The suffix selects existing characters up to three; it does not manufacture a third character.; Keep the previous short-input result, or explicitly correct a previous mistaken answer. Boundary: This is a false premise about a demonstrated result, not a request to refuse. Do not claim the course bans all possible custom padding policies. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Extend that suffix recipe to reverse Unicode grapheme clusters, and give the exact algorithm this supplied unit teaches for preserving combined accents. Please assume the missing details are obvious.",
+          "category": "unsupported_extension",
+          "task_type": "unsupported_extension",
+          "tags": [
+            "evidence_insufficient",
+            "unsupported_extension"
+          ],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "Extend that suffix recipe to reverse Unicode grapheme clusters, and give the exact algorithm this supplied unit teaches for preserving combined accents. Please assume the missing details are obvious.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                480,
+                508
+              ],
+              [
+                539,
+                563
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "2961a38b0f127df851a8d42043915c7614837d652bd8c33019bf71dbe9466062",
+                "quote": "## Slicing Strings",
+                "line_start": 480,
+                "line_end": 480,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L480-L480"
+              },
+              {
+                "evidence_id": "3a3bddfcf7d6c322f0a51f17817acac7c3ea35906c0cd32f0c6c6d4d5fd356cf",
+                "quote": "A section of an array is called a [slice](../learners/reference.md#slice).\nWe can take slices of character strings as well:",
+                "line_start": 482,
+                "line_end": 483,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L482-L483"
+              },
+              {
+                "evidence_id": "0a7bf43751bba8c62c691ab79e04adfe457bbf7d1687df44bde69a0476c36031",
+                "quote": "```python\nelement = 'oxygen'\nprint('first three characters:', element[0:3])\nprint('last three characters:', element[3:6])\n```",
+                "line_start": 485,
+                "line_end": 489,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L485-L489"
+              },
+              {
+                "evidence_id": "65c57209b245e25155e7d620a5a0a5a41c76251b5287cbffb7ca4cdb9e69bd19",
+                "quote": "```output\nfirst three characters: oxy\nlast three characters: gen\n```",
+                "line_start": 491,
+                "line_end": 494,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L491-L494"
+              },
+              {
+                "evidence_id": "58f7104f3f72edfe72b85c1b947034c865e78d3ab99603e0b7d922e080ca7f73",
+                "quote": "What is the value of `element[:4]`?\nWhat about `element[4:]`?\nOr `element[:]`?",
+                "line_start": 496,
+                "line_end": 498,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L496-L498"
+              },
+              {
+                "evidence_id": "31267527aa565095718515567b5286915de5fc8cab692845ceecd9fa50fed05d",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 500,
+                "line_end": 500,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L500-L500"
+              },
+              {
+                "evidence_id": "e573eff2049eb3ee23a5424839e5aa07efc49bd3f69b352a052401aa3ac5abd8",
+                "quote": "## Solution",
+                "line_start": 502,
+                "line_end": 502,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L502-L502"
+              },
+              {
+                "evidence_id": "d869c02258b58974720d07323495f15ec2bb3c35720ed5770c3da42084e97419",
+                "quote": "```output\noxyg\nen\noxygen\n```",
+                "line_start": 504,
+                "line_end": 508,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L504-L508"
+              },
+              {
+                "evidence_id": "4bb2c5009926da606874ae82e7fe00bf035f983a2ee8be1f952da2f6eb1b2f4e",
+                "quote": "How can we rewrite the slice for getting the last three characters of `element`,\nso that it works even if we assign a different string to `element`?\nTest your solution with the following strings: `carpentry`, `clone`, `hi`.",
+                "line_start": 539,
+                "line_end": 541,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L539-L541"
+              },
+              {
+                "evidence_id": "883d6ccc4a12cfc14b05ebfff24196ba9d75b75bc08f616b5a6884eca0289d0d",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 543,
+                "line_end": 543,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L543-L543"
+              },
+              {
+                "evidence_id": "8eed20c83986b764ebff1a3a0a774ec21b55c3cb3cf2f5853b8d7a5a6617ac02",
+                "quote": "## Solution",
+                "line_start": 545,
+                "line_end": 545,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L545-L545"
+              },
+              {
+                "evidence_id": "e44451d908917a5202d96c4f8e463d22514c0c1a86b3224b02c829abe4294330",
+                "quote": "```python\nelement = 'oxygen'\nprint('last three characters:', element[-3:])\nelement = 'carpentry'\nprint('last three characters:', element[-3:])\nelement = 'clone'\nprint('last three characters:', element[-3:])\nelement = 'hi'\nprint('last three characters:', element[-3:])\n```",
+                "line_start": 547,
+                "line_end": 556,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L547-L556"
+              },
+              {
+                "evidence_id": "f25e2e833198dacb966d6f093db154635cf639e26cabc5a37503b4df83a671da",
+                "quote": "```output\nlast three characters: gen\nlast three characters: try\nlast three characters: one\nlast three characters: hi\n```",
+                "line_start": 558,
+                "line_end": 563,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L558-L563"
+              }
+            ],
+            "reference_points": [
+              "The unit demonstrates ordinary Python string slices, not Unicode grapheme segmentation or a preserving-reversal algorithm.",
+              "State that the requested algorithm cannot be supplied from this unit; do not invent a course-backed recipe."
+            ],
+            "allowed_answer_boundary": "A clean bounded abstention is correct; no third-party Unicode API or stride recipe is required. Anchors identify scope, not proof about all Python documentation.",
+            "insufficiency_reason": "Whole-unit review finds no grapheme-cluster segmentation, normalization algorithm or reverse-preserving combined accents. A reference to basic slices cannot support the requested algorithm.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The unit demonstrates ordinary Python string slices, not Unicode grapheme segmentation or a preserving-reversal algorithm.; State that the requested algorithm cannot be supplied from this unit; do not invent a course-backed recipe. Boundary: A clean bounded abstention is correct; no third-party Unicode API or stride recipe is required. Anchors identify scope, not proof about all Python documentation. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "I will leave Unicode aside. In the lesson's Mystery Functions section, how can I discover available NumPy operations and read a selected operation's documentation in IPython/Jupyter versus the plain Python interpreter?",
+          "category": "ordinary_documentation_workflow",
+          "task_type": "ordinary_documentation_workflow",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "topic_transition"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "I will leave Unicode aside. In the lesson's Mystery Functions section, how can I discover available NumPy operations and read a selected operation's documentation in IPython/Jupyter versus the plain Python interpreter?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ef3825787c20d60c0d579913e792272390605b2ed1c28abb808c4291bf1e4d93",
+              "9268ff40dc8292dfac432fab7bca6c734d7107b4d17ae9f5cae54eae1f95963b",
+              "36e062258f62eb53d54f3dfdd0792c5eaf9bdcd32926f82d2efc966c5ef1b0eb"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                359,
+                374
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "ef3825787c20d60c0d579913e792272390605b2ed1c28abb808c4291bf1e4d93",
+                "quote": ":::::::::::::::::::::::::::::::::::::::::  callout",
+                "line_start": 359,
+                "line_end": 359,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L359-L359"
+              },
+              {
+                "evidence_id": "9268ff40dc8292dfac432fab7bca6c734d7107b4d17ae9f5cae54eae1f95963b",
+                "quote": "## Mystery Functions in IPython",
+                "line_start": 361,
+                "line_end": 361,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L361-L361"
+              },
+              {
+                "evidence_id": "36e062258f62eb53d54f3dfdd0792c5eaf9bdcd32926f82d2efc966c5ef1b0eb",
+                "quote": "How did we know what functions NumPy has and how to use them?\nIf you are working in IPython or in a Jupyter Notebook, there is an easy way to find out.\nIf you type the name of something followed by a dot, then you can use\n[tab completion](../learners/reference.md#tab-completion)\n(e.g. type `numpy.` and then press <kbd>Tab</kbd>)\nto see a list of all functions and attributes that you can use. After selecting one, you\ncan also add a question mark (e.g. `numpy.cumprod?`), and IPython will return an\nexplanation of the method! This is the same as doing `help(numpy.cumprod)`.\nSimilarly, if you are using the \"plain vanilla\" Python interpreter, you can type `numpy.`\nand press the <kbd>Tab</kbd> key twice for a listing of what is available. You can then use the\n`help()` function to see an explanation of the function you're interested in,\nfor example: `help(numpy.cumprod)`.",
+                "line_start": 363,
+                "line_end": 374,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L363-L374"
+              }
+            ],
+            "reference_points": [
+              "IPython/Jupyter: type numpy. and Tab to list functions/attributes.",
+              "For the selected operation use a trailing ? such as numpy.cumprod?, or help(numpy.cumprod).",
+              "Plain interpreter: numpy. then Tab twice for a listing, and help() for the selected function."
+            ],
+            "allowed_answer_boundary": "Report the episode's documented environment-specific procedure; do not guarantee completion is configured in every installation. This is a new topic, so no forced suffix answer.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "IPython/Jupyter: type numpy. and Tab to list functions/attributes.; For the selected operation use a trailing ? such as numpy.cumprod?, or help(numpy.cumprod).; Plain interpreter: numpy. then Tab twice for a listing, and help() for the selected function. Boundary: Report the episode's documented environment-specific procedure; do not guarantee completion is configured in every installation. This is a new topic, so no forced suffix answer. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-python-functions",
+      "course_id": "carpentries-python",
+      "lecture_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Analyzing Patient Data (complete episode 2)\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. Compare the lesson's numpy.mean(data) and time.ctime() examples: what input does each use, why are parentheses still present for the latter, and does the printed 2016 timestamp tell us today's time?",
+          "category": "ordinary_function_contract",
+          "task_type": "ordinary_function_contract",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Compare the lesson's numpy.mean(data) and time.ctime() examples: what input does each use, why are parentheses still present for the latter, and does the printed 2016 timestamp tell us today's time?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4004a664339d3daa1b08ba898f786bd225b584e3ec8b93d9d3a1564ed28b7f49",
+              "30e5c78e6dd3520bc37847c84fd4b810e39a95aa0e16d693d7ca672c2ce05f34",
+              "ab53884ba370ed1a31831358d8a46bfd88d93c6d395068de39ad73b7a3cd7e0d",
+              "f8ef42d05cc919fc1f22d3e4494ad762319dd2ac716310c7e50bc231caea6c34",
+              "36a5b9270a282a4eff076e0bebf47a9db7f5d72c868d093d87ed8cb81a07d718",
+              "a9ad7e59d0dd9af9a2ffb5b782e48527d4c3042a0d6fc2f28be61459e15b142c",
+              "839fef98ddc3208427d12c695da577331a86c1caa2e1f03d9df6432995fe36bb",
+              "7b7d4957f260b83bb06f59d5d766116c7293da6974ad3eb45b95217f7daf2106",
+              "955a053ae5469101a01d98b135dafa73268655c0a8d7fefd853b7011956df7fd"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                298,
+                311
+              ],
+              [
+                315,
+                334
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "4004a664339d3daa1b08ba898f786bd225b584e3ec8b93d9d3a1564ed28b7f49",
+                "quote": "NumPy has several useful functions that take an array as input to perform operations on its values.\nIf we want to find the average inflammation for all patients on\nall days, for example, we can ask NumPy to compute `data`'s mean value:",
+                "line_start": 298,
+                "line_end": 300,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L298-L300"
+              },
+              {
+                "evidence_id": "30e5c78e6dd3520bc37847c84fd4b810e39a95aa0e16d693d7ca672c2ce05f34",
+                "quote": "```python\nprint(numpy.mean(data))\n```",
+                "line_start": 302,
+                "line_end": 304,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L302-L304"
+              },
+              {
+                "evidence_id": "ab53884ba370ed1a31831358d8a46bfd88d93c6d395068de39ad73b7a3cd7e0d",
+                "quote": "```output\n6.14875\n```",
+                "line_start": 306,
+                "line_end": 308,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L306-L308"
+              },
+              {
+                "evidence_id": "f8ef42d05cc919fc1f22d3e4494ad762319dd2ac716310c7e50bc231caea6c34",
+                "quote": "`mean` is a [function](../learners/reference.md#function) that takes\nan array as an [argument](../learners/reference.md#argument).",
+                "line_start": 310,
+                "line_end": 311,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L310-L311"
+              },
+              {
+                "evidence_id": "36a5b9270a282a4eff076e0bebf47a9db7f5d72c868d093d87ed8cb81a07d718",
+                "quote": "## Not All Functions Have Input",
+                "line_start": 315,
+                "line_end": 315,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L315-L315"
+              },
+              {
+                "evidence_id": "a9ad7e59d0dd9af9a2ffb5b782e48527d4c3042a0d6fc2f28be61459e15b142c",
+                "quote": "Generally, a function uses inputs to produce outputs.\nHowever, some functions produce outputs without\nneeding any input. For example, checking the current time\ndoesn't require any input.",
+                "line_start": 317,
+                "line_end": 320,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L317-L320"
+              },
+              {
+                "evidence_id": "839fef98ddc3208427d12c695da577331a86c1caa2e1f03d9df6432995fe36bb",
+                "quote": "```python\nimport time\nprint(time.ctime())\n```",
+                "line_start": 322,
+                "line_end": 325,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L322-L325"
+              },
+              {
+                "evidence_id": "7b7d4957f260b83bb06f59d5d766116c7293da6974ad3eb45b95217f7daf2106",
+                "quote": "```output\nSat Mar 26 13:07:33 2016\n```",
+                "line_start": 327,
+                "line_end": 329,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L327-L329"
+              },
+              {
+                "evidence_id": "955a053ae5469101a01d98b135dafa73268655c0a8d7fefd853b7011956df7fd",
+                "quote": "For functions that don't take in any arguments,\nwe still need parentheses (`()`)\nto tell Python to go and do something for us.",
+                "line_start": 331,
+                "line_end": 333,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L331-L333"
+              }
+            ],
+            "reference_points": [
+              "numpy.mean(data) takes the data array as its argument and computes its mean.",
+              "The lesson's time.ctime() example takes no explicit argument; parentheses still invoke the function.",
+              "The displayed 2016 output is an example, not evidence of the current clock reading."
+            ],
+            "allowed_answer_boundary": "Do not require current-time lookup or assert the historical string is now. Do not claim time.ctime can never take an optional argument: the unit only demonstrates the no-input call.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "numpy.mean(data) takes the data array as its argument and computes its mean.; The lesson's time.ctime() example takes no explicit argument; parentheses still invoke the function.; The displayed 2016 output is an example, not evidence of the current clock reading. Boundary: Do not require current-time lookup or assert the historical string is now. Do not claim time.ctime can never take an optional argument: the unit only demonstrates the no-input call. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "For a separate descriptive-summary step, write the lesson's one-line multiple assignment for the whole-array maximum, minimum and standard deviation, and report the three displayed values in the same order. Keep it separate from a per-patient maximum.",
+          "category": "ordinary_multiple_assignment",
+          "task_type": "ordinary_multiple_assignment",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "topic_transition"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "For a separate descriptive-summary step, write the lesson's one-line multiple assignment for the whole-array maximum, minimum and standard deviation, and report the three displayed values in the same order. Keep it separate from a per-patient maximum.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d99f5afc188758e91aa3b0fc13b9e53871d92179e8d4826cc5a76ef1be5a1f45",
+              "a0b373bc564258db57368bf9be4fa0b0673c50693704228942877824fab04cb9",
+              "a865ebfc1bf3c1dba31951ba6b17dcdbd4d970e3d53100c8454b4114503be6a3",
+              "1cec2611941525e6ed2a4aac32d1ee7ed458d0442ec3c5994a46b494bc1652a4",
+              "0832477a3725a831cb1898f256e11772affa5de5033d513a7cad26a23c7d74d1",
+              "746edfc4b6f02d024ffd58adeb2569b10aeb2d3ebc36f8a7e9b88cc8b01a1e17",
+              "eec1faec56af1ce1bf64166b115bd0ce6a48d471ab86b52fb1e92e74be237629",
+              "73e92191a08bd30b1dc37f3d82f5c0ca66168c8b8ed90363d4dec1629c61bc81",
+              "9a32f2c8d89c914c0b9108e84f7ee1e6511d215fb86e0f9d825a3a4d7ecbdba6",
+              "53be457388928e436470d003370f7822537d455ae64855828dd481b1d4021413",
+              "78a32762f1baac3e50e23382fe3825c60d0b6e6afedc7b79e325582111d195cb"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                338,
+                356
+              ],
+              [
+                379,
+                403
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "d99f5afc188758e91aa3b0fc13b9e53871d92179e8d4826cc5a76ef1be5a1f45",
+                "quote": "Let's use three other NumPy functions to get some descriptive values about the dataset.\nWe'll also use multiple assignment,\na convenient Python feature that will enable us to do this all in one line.",
+                "line_start": 338,
+                "line_end": 340,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L338-L340"
+              },
+              {
+                "evidence_id": "a0b373bc564258db57368bf9be4fa0b0673c50693704228942877824fab04cb9",
+                "quote": "```python\nmaxval, minval, stdval = numpy.max(data), numpy.min(data), numpy.std(data)",
+                "line_start": 342,
+                "line_end": 343,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L342-L343"
+              },
+              {
+                "evidence_id": "a865ebfc1bf3c1dba31951ba6b17dcdbd4d970e3d53100c8454b4114503be6a3",
+                "quote": "print('maximum inflammation:', maxval)\nprint('minimum inflammation:', minval)\nprint('standard deviation:', stdval)\n```",
+                "line_start": 345,
+                "line_end": 348,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L345-L348"
+              },
+              {
+                "evidence_id": "1cec2611941525e6ed2a4aac32d1ee7ed458d0442ec3c5994a46b494bc1652a4",
+                "quote": "Here we've assigned the return value from `numpy.max(data)` to the variable `maxval`, the value\nfrom `numpy.min(data)` to `minval`, and so on.",
+                "line_start": 350,
+                "line_end": 351,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L350-L351"
+              },
+              {
+                "evidence_id": "0832477a3725a831cb1898f256e11772affa5de5033d513a7cad26a23c7d74d1",
+                "quote": "```output\nmaximum inflammation: 20.0\nminimum inflammation: 0.0\nstandard deviation: 4.61383319712",
+                "line_start": 353,
+                "line_end": 356,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L353-L356"
+              },
+              {
+                "evidence_id": "746edfc4b6f02d024ffd58adeb2569b10aeb2d3ebc36f8a7e9b88cc8b01a1e17",
+                "quote": "When analyzing data, though,\nwe often want to look at variations in statistical values,\nsuch as the maximum inflammation per patient\nor the average inflammation per day.\nOne way to do this is to create a new temporary array of the data we want,\nthen ask it to do the calculation:",
+                "line_start": 379,
+                "line_end": 384,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L379-L384"
+              },
+              {
+                "evidence_id": "eec1faec56af1ce1bf64166b115bd0ce6a48d471ab86b52fb1e92e74be237629",
+                "quote": "```python\npatient_0 = data[0, :] # 0 on the first axis (rows), everything on the second (columns)\nprint('maximum inflammation for patient 0:', numpy.max(patient_0))\n```",
+                "line_start": 386,
+                "line_end": 389,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L386-L389"
+              },
+              {
+                "evidence_id": "73e92191a08bd30b1dc37f3d82f5c0ca66168c8b8ed90363d4dec1629c61bc81",
+                "quote": "```output\nmaximum inflammation for patient 0: 18.0\n```",
+                "line_start": 391,
+                "line_end": 393,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L391-L393"
+              },
+              {
+                "evidence_id": "9a32f2c8d89c914c0b9108e84f7ee1e6511d215fb86e0f9d825a3a4d7ecbdba6",
+                "quote": "We don't actually need to store the row in a variable of its own.\nInstead, we can combine the selection and the function call:",
+                "line_start": 395,
+                "line_end": 396,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L395-L396"
+              },
+              {
+                "evidence_id": "53be457388928e436470d003370f7822537d455ae64855828dd481b1d4021413",
+                "quote": "```python\nprint('maximum inflammation for patient 2:', numpy.max(data[2, :]))\n```",
+                "line_start": 398,
+                "line_end": 400,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L398-L400"
+              },
+              {
+                "evidence_id": "78a32762f1baac3e50e23382fe3825c60d0b6e6afedc7b79e325582111d195cb",
+                "quote": "```output\nmaximum inflammation for patient 2: 19.0",
+                "line_start": 402,
+                "line_end": 403,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L402-L403"
+              }
+            ],
+            "reference_points": [
+              "maxval, minval, stdval = numpy.max(data), numpy.min(data), numpy.std(data).",
+              "Whole-array displayed values are 20.0, 0.0 and 4.61383319712 in that order (equivalent sensible rounding of the standard deviation is acceptable).",
+              "These whole-array summaries are distinct from selecting one patient's row, whose examples have different maxima."
+            ],
+            "allowed_answer_boundary": "Equivalent variable names or formatting are acceptable if correspondence is explicit. No axis argument is needed for the whole-array task; avoid substituting the 18.0/19.0 single-patient results.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "maxval, minval, stdval = numpy.max(data), numpy.min(data), numpy.std(data).; Whole-array displayed values are 20.0, 0.0 and 4.61383319712 in that order (equivalent sensible rounding of the standard deviation is acceptable).; These whole-array summaries are distinct from selecting one patient's row, whose examples have different maxima. Boundary: Equivalent variable names or formatting are acceptable if correspondence is explicit. No axis argument is needed for the whole-array task; avoid substituting the 18.0/19.0 single-patient results. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "My run produced a different standard deviation. Which exact CSV cell is wrong, and what is the corrected standard deviation for my file? I have not uploaded that file.",
+          "category": "unobserved_artifact",
+          "task_type": "unobserved_artifact",
+          "tags": [
+            "evidence_insufficient",
+            "context_consistency"
+          ],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "My run produced a different standard deviation. Which exact CSV cell is wrong, and what is the corrected standard deviation for my file? I have not uploaded that file.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                338,
+                356
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "d99f5afc188758e91aa3b0fc13b9e53871d92179e8d4826cc5a76ef1be5a1f45",
+                "quote": "Let's use three other NumPy functions to get some descriptive values about the dataset.\nWe'll also use multiple assignment,\na convenient Python feature that will enable us to do this all in one line.",
+                "line_start": 338,
+                "line_end": 340,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L338-L340"
+              },
+              {
+                "evidence_id": "a0b373bc564258db57368bf9be4fa0b0673c50693704228942877824fab04cb9",
+                "quote": "```python\nmaxval, minval, stdval = numpy.max(data), numpy.min(data), numpy.std(data)",
+                "line_start": 342,
+                "line_end": 343,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L342-L343"
+              },
+              {
+                "evidence_id": "a865ebfc1bf3c1dba31951ba6b17dcdbd4d970e3d53100c8454b4114503be6a3",
+                "quote": "print('maximum inflammation:', maxval)\nprint('minimum inflammation:', minval)\nprint('standard deviation:', stdval)\n```",
+                "line_start": 345,
+                "line_end": 348,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L345-L348"
+              },
+              {
+                "evidence_id": "1cec2611941525e6ed2a4aac32d1ee7ed458d0442ec3c5994a46b494bc1652a4",
+                "quote": "Here we've assigned the return value from `numpy.max(data)` to the variable `maxval`, the value\nfrom `numpy.min(data)` to `minval`, and so on.",
+                "line_start": 350,
+                "line_end": 351,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L350-L351"
+              },
+              {
+                "evidence_id": "0832477a3725a831cb1898f256e11772affa5de5033d513a7cad26a23c7d74d1",
+                "quote": "```output\nmaximum inflammation: 20.0\nminimum inflammation: 0.0\nstandard deviation: 4.61383319712",
+                "line_start": 353,
+                "line_end": 356,
+                "locator": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md#L353-L356"
+              }
+            ],
+            "reference_points": [
+              "The example's displayed standard deviation does not expose the learner's file contents or identify an erroneous cell.",
+              "Cannot diagnose the exact cell or recompute the learner's value without the file and relevant settings; do not invent a correction."
+            ],
+            "allowed_answer_boundary": "The supplied example value may be distinguished from the unknown local result. Do not treat a difference alone as proof that any input cell is wrong.",
+            "insufficiency_reason": "The learner's file, execution settings and actual value are absent. Published summary statistics do not identify a unique faulty local cell.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The example's displayed standard deviation does not expose the learner's file contents or identify an erroneous cell.; Cannot diagnose the exact cell or recompute the learner's value without the file and relevant settings; do not invent a correction. Boundary: The supplied example value may be distinguished from the unknown local result. Do not treat a difference alone as proof that any input cell is wrong. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-sheets-text",
+      "course_id": "carpentries-spreadsheets",
+      "lecture_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Formatting problems (complete episode 3)\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. Our ecology note column was pasted from Word and contains curly quotation marks, line breaks, and tabs. What export problems does this unit warn about, and what restriction does it recommend for the text cells?",
+          "category": "ordinary_import_risks",
+          "task_type": "ordinary_import_risks",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Our ecology note column was pasted from Word and contains curly quotation marks, line breaks, and tabs. What export problems does this unit warn about, and what restriction does it recommend for the text cells?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "3624d392f35522ddcf8f5731c64c6c525e7065c2f302923290d03e907267d9cd",
+              "6fb42b8649a8f0a59d3758a6533623b86ac4986b3c8ed8ece5d0c1e66d3afa9f",
+              "f863706c41b139b4efe868a3ecfbe9bd41effe920debd4325d4bbbac11a967c7",
+              "70fdaf23a7548bf914cbd4f017e7420d6b41b1508d5ba4c397a1f86d8b608dd0"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                288,
+                299
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "3624d392f35522ddcf8f5731c64c6c525e7065c2f302923290d03e907267d9cd",
+                "quote": "## Using special characters in data {#special}",
+                "line_start": 288,
+                "line_end": 288,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L288-L288"
+              },
+              {
+                "evidence_id": "6fb42b8649a8f0a59d3758a6533623b86ac4986b3c8ed8ece5d0c1e66d3afa9f",
+                "quote": "**Example**: You treat your spreadsheet program as a word processor when writing notes, for example copying data directly from Word or\nother applications.",
+                "line_start": 290,
+                "line_end": 291,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L290-L291"
+              },
+              {
+                "evidence_id": "f863706c41b139b4efe868a3ecfbe9bd41effe920debd4325d4bbbac11a967c7",
+                "quote": "**Solution**: This is a common strategy. For example, when writing longer text in a cell, people often include line breaks, em-dashes,\netc in their spreadsheet.  Also, when copying data in from applications such as Word, formatting and fancy non-standard characters (such\nas left- and right-aligned quotation marks) are included.  When exporting this data into a coding/statistical environment or into a\nrelational database, dangerous things may occur, such as lines being cut in half and encoding errors being thrown.",
+                "line_start": 293,
+                "line_end": 296,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L293-L296"
+              },
+              {
+                "evidence_id": "70fdaf23a7548bf914cbd4f017e7420d6b41b1508d5ba4c397a1f86d8b608dd0",
+                "quote": "General best practice is to avoid adding characters such as newlines, tabs, and vertical tabs.  In other words, treat a text cell as if\nit were a simple web form that can only contain text and spaces.",
+                "line_start": 298,
+                "line_end": 299,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L298-L299"
+              }
+            ],
+            "reference_points": [
+              "Non-standard characters and copied formatting may cause encoding errors or split lines on export to statistical/coding systems or databases.",
+              "Avoid adding newlines, tabs and vertical tabs; treat the cell like a simple text-and-spaces field."
+            ],
+            "allowed_answer_boundary": "Name both failure classes (line splitting and encoding). Do not prescribe a byte-level encoding or promise all importers behave alike; the source gives general guidance.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Non-standard characters and copied formatting may cause encoding errors or split lines on export to statistical/coding systems or databases.; Avoid adding newlines, tabs and vertical tabs; treat the cell like a simple text-and-spaces field. Boundary: Name both failure classes (line splitting and encoding). Do not prescribe a byte-level encoding or promise all importers behave alike; the source gives general guidance. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "My importer split one of those notes across records. A colleague says preserving the embedded line break is the safest way to keep the worksheet pretty. For our next handoff, where could we keep the richer explanation without embedding it in the observation cell?",
+          "category": "contextual_repair",
+          "task_type": "contextual_repair",
+          "tags": [
+            "multi_requirement",
+            "false_premise",
+            "context_consistency"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "My importer split one of those notes across records. A colleague says preserving the embedded line break is the safest way to keep the worksheet pretty. For our next handoff, where could we keep the richer explanation without embedding it in the observation cell?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f863706c41b139b4efe868a3ecfbe9bd41effe920debd4325d4bbbac11a967c7",
+              "70fdaf23a7548bf914cbd4f017e7420d6b41b1508d5ba4c397a1f86d8b608dd0",
+              "463a036f1872d00ee77b9857d5cbf1f2bc913695f420fe271c38264c9b23ba08",
+              "6c9a4e077ae913445755a70eca0bb0b364f3b498975cd571d332ce51d10e601e",
+              "884fd1c3daaf4ae798b2032491eb8faf22651aea22e00c5e03ee600714bf8416",
+              "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                293,
+                299
+              ],
+              [
+                201,
+                209
+              ],
+              [
+                315,
+                320
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "f863706c41b139b4efe868a3ecfbe9bd41effe920debd4325d4bbbac11a967c7",
+                "quote": "**Solution**: This is a common strategy. For example, when writing longer text in a cell, people often include line breaks, em-dashes,\netc in their spreadsheet.  Also, when copying data in from applications such as Word, formatting and fancy non-standard characters (such\nas left- and right-aligned quotation marks) are included.  When exporting this data into a coding/statistical environment or into a\nrelational database, dangerous things may occur, such as lines being cut in half and encoding errors being thrown.",
+                "line_start": 293,
+                "line_end": 296,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L293-L296"
+              },
+              {
+                "evidence_id": "70fdaf23a7548bf914cbd4f017e7420d6b41b1508d5ba4c397a1f86d8b608dd0",
+                "quote": "General best practice is to avoid adding characters such as newlines, tabs, and vertical tabs.  In other words, treat a text cell as if\nit were a simple web form that can only contain text and spaces.",
+                "line_start": 298,
+                "line_end": 299,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L298-L299"
+              },
+              {
+                "evidence_id": "463a036f1872d00ee77b9857d5cbf1f2bc913695f420fe271c38264c9b23ba08",
+                "quote": "## Placing comments or units in cells {#units}",
+                "line_start": 201,
+                "line_end": 201,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L201-L201"
+              },
+              {
+                "evidence_id": "6c9a4e077ae913445755a70eca0bb0b364f3b498975cd571d332ce51d10e601e",
+                "quote": "**Example**: Your data was collected, in part, by a summer student who you later found out was mis-identifying some of your species, some\nof the time. You want a way to note these data are suspect.",
+                "line_start": 203,
+                "line_end": 204,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L203-L204"
+              },
+              {
+                "evidence_id": "884fd1c3daaf4ae798b2032491eb8faf22651aea22e00c5e03ee600714bf8416",
+                "quote": "**Solution**: Most analysis software can't see Excel or LibreOffice comments, and would be confused by comments placed within your data\ncells. As described above for formatting, create another field if you need to add notes to cells. Similarly, don't include units in\ncells: ideally, all the measurements you place in one column should be in the same unit, but if for some reason they aren't, create\nanother field and specify the units the cell is in.",
+                "line_start": 206,
+                "line_end": 209,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L206-L209"
+              },
+              {
+                "evidence_id": "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac",
+                "quote": "However, metadata should not be contained in the data file itself. Unlike a table in a paper or a supplemental file, metadata (in the\nform of legends) should not be included in a data file since this information is not data, and including it can disrupt how computer\nprograms interpret your data file. Rather, metadata should be stored as a separate file in the same directory as your data file,\npreferably in plain text format with a name that clearly associates it with your data file. Because metadata files are free text format,\nthey also allow you to encode comments, units, information about how null values are encoded, etc. that are important to document but can\ndisrupt the formatting of your data file.",
+                "line_start": 315,
+                "line_end": 320,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L315-L320"
+              }
+            ],
+            "reference_points": [
+              "Embedded line breaks are specifically among the characters the unit recommends avoiding in data cells.",
+              "Keep the observation text in the recommended simple-cell form; metadata/comments may go in an associated separate plain-text file in the same directory.",
+              "Explain the distinction between machine-readable table values and the richer documentation; do not claim to have repaired the already split records."
+            ],
+            "allowed_answer_boundary": "Accept a supported separate note field for observation-specific simple comments plus associated metadata for richer context. Do not require one exact file name or guarantee lossless conversion from an unprovided file.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Embedded line breaks are specifically among the characters the unit recommends avoiding in data cells.; Keep the observation text in the recommended simple-cell form; metadata/comments may go in an associated separate plain-text file in the same directory.; Explain the distinction between machine-readable table values and the richer documentation; do not claim to have repaired the already split records. Boundary: Accept a supported separate note field for observation-specific simple comments plus associated metadata for richer context. Do not require one exact file name or guarantee lossless conversion from an unprovided file. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Please identify the exact original record that was lost and the byte encoding and replacement rule our importer used. Recover those facts just from this episode, without asking for logs or the file.",
+          "category": "unobserved_artifact",
+          "task_type": "unobserved_artifact",
+          "tags": [
+            "evidence_insufficient",
+            "context_consistency"
+          ],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "expected_topic": "Please identify the exact original record that was lost and the byte encoding and replacement rule our importer used. Recover those facts just from this episode, without asking for logs or the file.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                288,
+                299
+              ],
+              [
+                305,
+                320
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "3624d392f35522ddcf8f5731c64c6c525e7065c2f302923290d03e907267d9cd",
+                "quote": "## Using special characters in data {#special}",
+                "line_start": 288,
+                "line_end": 288,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L288-L288"
+              },
+              {
+                "evidence_id": "6fb42b8649a8f0a59d3758a6533623b86ac4986b3c8ed8ece5d0c1e66d3afa9f",
+                "quote": "**Example**: You treat your spreadsheet program as a word processor when writing notes, for example copying data directly from Word or\nother applications.",
+                "line_start": 290,
+                "line_end": 291,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L290-L291"
+              },
+              {
+                "evidence_id": "f863706c41b139b4efe868a3ecfbe9bd41effe920debd4325d4bbbac11a967c7",
+                "quote": "**Solution**: This is a common strategy. For example, when writing longer text in a cell, people often include line breaks, em-dashes,\netc in their spreadsheet.  Also, when copying data in from applications such as Word, formatting and fancy non-standard characters (such\nas left- and right-aligned quotation marks) are included.  When exporting this data into a coding/statistical environment or into a\nrelational database, dangerous things may occur, such as lines being cut in half and encoding errors being thrown.",
+                "line_start": 293,
+                "line_end": 296,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L293-L296"
+              },
+              {
+                "evidence_id": "70fdaf23a7548bf914cbd4f017e7420d6b41b1508d5ba4c397a1f86d8b608dd0",
+                "quote": "General best practice is to avoid adding characters such as newlines, tabs, and vertical tabs.  In other words, treat a text cell as if\nit were a simple web form that can only contain text and spaces.",
+                "line_start": 298,
+                "line_end": 299,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L298-L299"
+              },
+              {
+                "evidence_id": "8f2aeeb24c1d708ddd275c4460f8f6c639857ce15cff7fd099a1be71f79d98eb",
+                "quote": "**Solution**: Recording data about your data (\"metadata\") is essential. You may be on intimate terms with your dataset while you are\ncollecting and analysing it, but the chances that you will still remember that the variable \"sglmemgp\" means single member of group, for\nexample, or the exact algorithm you used to transform a variable or create a derived one, after a few months, a year, or more are slim.",
+                "line_start": 305,
+                "line_end": 307,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L305-L307"
+              },
+              {
+                "evidence_id": "c1e1ca29449affc234d6a28df8b25eb096bcebd373c593fc9371c336455f354a",
+                "quote": "As well, there are many reasons other people may want to examine or use your data - to understand your findings, to verify your findings,\nto review your submitted publication, to replicate your results, to design a similar study, or even to archive your data for access and\nre-use by others. While digital data by definition are machine-readable, understanding their meaning is a job for human beings. The\nimportance of documenting your data during the collection and analysis phase of your research cannot be overestimated, especially if your\nresearch is going to be part of the scholarly record.",
+                "line_start": 309,
+                "line_end": 313,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L309-L313"
+              },
+              {
+                "evidence_id": "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac",
+                "quote": "However, metadata should not be contained in the data file itself. Unlike a table in a paper or a supplemental file, metadata (in the\nform of legends) should not be included in a data file since this information is not data, and including it can disrupt how computer\nprograms interpret your data file. Rather, metadata should be stored as a separate file in the same directory as your data file,\npreferably in plain text format with a name that clearly associates it with your data file. Because metadata files are free text format,\nthey also allow you to encode comments, units, information about how null values are encoded, etc. that are important to document but can\ndisrupt the formatting of your data file.",
+                "line_start": 315,
+                "line_end": 320,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L315-L320"
+              }
+            ],
+            "reference_points": [
+              "The episode gives general export risks, not this team's original records, importer logs, encoding or replacement configuration.",
+              "Do not fabricate the lost row or precise encoding/replacement rule; request the missing evidence or state the course-bounded inability."
+            ],
+            "allowed_answer_boundary": "A clean abstention or clear request for the missing workbook/logs without invented specifics is correct. Repeating general risks alone does not answer the requested exact facts.",
+            "insufficiency_reason": "No actual input file, output file, import settings or logs are supplied; the course cannot identify a lost record or the team's encoding choices.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The episode gives general export risks, not this team's original records, importer logs, encoding or replacement configuration.; Do not fabricate the lost row or precise encoding/replacement rule; request the missing evidence or state the course-bounded inability. Boundary: A clean abstention or clear request for the missing workbook/logs without invented specifics is correct. Repeating general risks alone does not answer the requested exact facts. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "fresh-sheets-markers",
+      "course_id": "carpentries-spreadsheets",
+      "lecture_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Use only the supplied unit \"Formatting problems (complete episode 3)\" for this conversation. Cite course evidence for factual claims and say when it is insufficient. I am writing a data dictionary for missing text markers. Using the unit's null-value table, compare NA/na, N/A and NULL: give each row's problem and recommendation, and explain the preference between NA and na without claiming all software recognizes them.",
+          "category": "ordinary_marker_comparison",
+          "task_type": "ordinary_marker_comparison",
+          "tags": [
+            "normal_task",
+            "multi_requirement"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "I am writing a data dictionary for missing text markers. Using the unit's null-value table, compare NA/na, N/A and NULL: give each row's problem and recommendation, and explain the preference between NA and na without claiming all software recognizes them.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                139,
+                155
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5",
+                "quote": "<tr>\n\t<td> NA, na </td>\n\t<td> Can also be an abbreviation (e.g., North America), can  cause problems with data type (turn a numerical column into a text column). NA is more commonly recognized than na. </td>\t\n\t<td> R </td>\n\t<td> Good Option </td>\n</tr>\n<tr>\t\n\t<td> N/A </td>\n\t<td> Alternative form of NA, but often not compatible with software </td>\t\n\t<td>   </td>\n\t<td> Avoid </td>\n</tr>\n<tr>\t\n\t<td> NULL </td>\n\t<td> Can cause problem with data type </td>\n\t<td>  </td>\n\t<td> Avoid </td>",
+                "line_start": 139,
+                "line_end": 155,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L139-L155"
+              }
+            ],
+            "reference_points": [
+              "NA/na: may be a meaningful abbreviation such as North America and can turn a numeric column into text; NA is more commonly recognized than na; R is listed and the recommendation is Good Option.",
+              "N/A: alternative form often not compatible with software; recommendation Avoid.",
+              "NULL: can cause data-type problems; recommendation Avoid.",
+              "Compatibility/recommendation is the table's guidance, not a universal parser guarantee."
+            ],
+            "allowed_answer_boundary": "Case and marker spelling matter. Accept prose or a compact table. The guidance concerns spreadsheet cell encodings, not a mandate about SQL NULL or a programming-language value.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "NA/na: may be a meaningful abbreviation such as North America and can turn a numeric column into text; NA is more commonly recognized than na; R is listed and the recommendation is Good Option.; N/A: alternative form often not compatible with software; recommendation Avoid.; NULL: can cause data-type problems; recommendation Avoid.; Compatibility/recommendation is the table's guidance, not a universal parser guarantee. Boundary: Case and marker spelling matter. Accept prose or a compact table. The guidance concerns spreadsheet cell encodings, not a mandate about SQL NULL or a programming-language value. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Clarification: in our region column, NA is an actually observed abbreviation for North America, not a missing observation. Does your previous recommendation mean we must replace that measured region with a null?",
+          "category": "clarification",
+          "task_type": "clarification",
+          "tags": [
+            "clarification",
+            "context_consistency"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "Clarification: in our region column, NA is an actually observed abbreviation for North America, not a missing observation. Does your previous recommendation mean we must replace that measured region with a null?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5",
+              "255126e959faf749fbba142c0ea276da0af5c5181a524d8df95c407960f6d447",
+              "9da8a208ce051741b4b9aaafe5f3d8a05724cda49980957abc1564625b3b3023"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                139,
+                143
+              ],
+              [
+                103,
+                108
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5",
+                "quote": "<tr>\n\t<td> NA, na </td>\n\t<td> Can also be an abbreviation (e.g., North America), can  cause problems with data type (turn a numerical column into a text column). NA is more commonly recognized than na. </td>\t\n\t<td> R </td>\n\t<td> Good Option </td>",
+                "line_start": 139,
+                "line_end": 143,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L139-L143"
+              },
+              {
+                "evidence_id": "255126e959faf749fbba142c0ea276da0af5c5181a524d8df95c407960f6d447",
+                "quote": "A solution will depend on the final application of your data and how you intend to analyze it,\nbut it is essential to use a clearly defined and CONSISTENT null indicator. Blank cells are the best choices for most applications;\nwhen working in R, `NA` may be an acceptable null value choice.",
+                "line_start": 103,
+                "line_end": 105,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L103-L105"
+              },
+              {
+                "evidence_id": "9da8a208ce051741b4b9aaafe5f3d8a05724cda49980957abc1564625b3b3023",
+                "quote": "There are a many reasons why null values get represented differently within a dataset.\nSometimes confusing null values are automatically recorded from the measuring device. If that's the case, there's not much you can do, but it can be addressed in data cleaning with a tool like [OpenRefine](https://www.datacarpentry.org/OpenRefine-ecology-lesson/) before analyzing or sharing. In other cases, null values are used to convey different reasons why the data is missing. This is important information to capture, but is actually using one column to capture two pieces of information. Like for [using formatting to convey information](#formatting) it would be good here to create a new column like 'data\\_missing' and use that column to capture the different reasons.",
+                "line_start": 107,
+                "line_end": 108,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L107-L108"
+              }
+            ],
+            "reference_points": [
+              "No: the source explicitly warns NA can also mean North America; the clarified measured region must not automatically be treated as a missing value.",
+              "Distinguish the region's real value from a consistent, documented missing-data indicator; update the earlier assumption rather than erase the observation."
+            ],
+            "allowed_answer_boundary": "Do not invent a mandatory replacement token. The learner has now supplied the meaning; treating NA as a null despite that clarification is wrong.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "No: the source explicitly warns NA can also mean North America; the clarified measured region must not automatically be treated as a missing value.; Distinguish the region's real value from a consistent, documented missing-data indicator; update the earlier assumption rather than erase the observation. Boundary: Do not invent a mandatory replacement token. The learner has now supplied the meaning; treating NA as a null despite that clarification is wrong. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "How should our accompanying documentation distinguish that real region value from the missing-data convention so a collaborator can interpret it later? Include where this explanatory file belongs and how it should be associated with the table.",
+          "category": "contextual_documentation",
+          "task_type": "contextual_documentation",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "context_consistency"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "expected_topic": "How should our accompanying documentation distinguish that real region value from the missing-data convention so a collaborator can interpret it later? Include where this explanatory file belongs and how it should be associated with the table.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "255126e959faf749fbba142c0ea276da0af5c5181a524d8df95c407960f6d447",
+              "9da8a208ce051741b4b9aaafe5f3d8a05724cda49980957abc1564625b3b3023",
+              "8f2aeeb24c1d708ddd275c4460f8f6c639857ce15cff7fd099a1be71f79d98eb",
+              "c1e1ca29449affc234d6a28df8b25eb096bcebd373c593fc9371c336455f354a",
+              "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                103,
+                108
+              ],
+              [
+                305,
+                320
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "255126e959faf749fbba142c0ea276da0af5c5181a524d8df95c407960f6d447",
+                "quote": "A solution will depend on the final application of your data and how you intend to analyze it,\nbut it is essential to use a clearly defined and CONSISTENT null indicator. Blank cells are the best choices for most applications;\nwhen working in R, `NA` may be an acceptable null value choice.",
+                "line_start": 103,
+                "line_end": 105,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L103-L105"
+              },
+              {
+                "evidence_id": "9da8a208ce051741b4b9aaafe5f3d8a05724cda49980957abc1564625b3b3023",
+                "quote": "There are a many reasons why null values get represented differently within a dataset.\nSometimes confusing null values are automatically recorded from the measuring device. If that's the case, there's not much you can do, but it can be addressed in data cleaning with a tool like [OpenRefine](https://www.datacarpentry.org/OpenRefine-ecology-lesson/) before analyzing or sharing. In other cases, null values are used to convey different reasons why the data is missing. This is important information to capture, but is actually using one column to capture two pieces of information. Like for [using formatting to convey information](#formatting) it would be good here to create a new column like 'data\\_missing' and use that column to capture the different reasons.",
+                "line_start": 107,
+                "line_end": 108,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L107-L108"
+              },
+              {
+                "evidence_id": "8f2aeeb24c1d708ddd275c4460f8f6c639857ce15cff7fd099a1be71f79d98eb",
+                "quote": "**Solution**: Recording data about your data (\"metadata\") is essential. You may be on intimate terms with your dataset while you are\ncollecting and analysing it, but the chances that you will still remember that the variable \"sglmemgp\" means single member of group, for\nexample, or the exact algorithm you used to transform a variable or create a derived one, after a few months, a year, or more are slim.",
+                "line_start": 305,
+                "line_end": 307,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L305-L307"
+              },
+              {
+                "evidence_id": "c1e1ca29449affc234d6a28df8b25eb096bcebd373c593fc9371c336455f354a",
+                "quote": "As well, there are many reasons other people may want to examine or use your data - to understand your findings, to verify your findings,\nto review your submitted publication, to replicate your results, to design a similar study, or even to archive your data for access and\nre-use by others. While digital data by definition are machine-readable, understanding their meaning is a job for human beings. The\nimportance of documenting your data during the collection and analysis phase of your research cannot be overestimated, especially if your\nresearch is going to be part of the scholarly record.",
+                "line_start": 309,
+                "line_end": 313,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L309-L313"
+              },
+              {
+                "evidence_id": "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac",
+                "quote": "However, metadata should not be contained in the data file itself. Unlike a table in a paper or a supplemental file, metadata (in the\nform of legends) should not be included in a data file since this information is not data, and including it can disrupt how computer\nprograms interpret your data file. Rather, metadata should be stored as a separate file in the same directory as your data file,\npreferably in plain text format with a name that clearly associates it with your data file. Because metadata files are free text format,\nthey also allow you to encode comments, units, information about how null values are encoded, etc. that are important to document but can\ndisrupt the formatting of your data file.",
+                "line_start": 315,
+                "line_end": 320,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L315-L320"
+              }
+            ],
+            "reference_points": [
+              "Document the field meanings and explicit consistent null encoding, including that region NA denotes North America in this scenario.",
+              "Keep explanatory metadata in a separate preferably plain-text file in the same directory, named to associate clearly with the data file.",
+              "Do not insert a legend into the table's observation rows, which can disrupt machine interpretation."
+            ],
+            "allowed_answer_boundary": "A reasonable example file name is optional, not a prescribed literal. Clarifying metadata is not by itself proof that every importer will preserve the real region code.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Document the field meanings and explicit consistent null encoding, including that region NA denotes North America in this scenario.; Keep explanatory metadata in a separate preferably plain-text file in the same directory, named to associate clearly with the data file.; Do not insert a legend into the table's observation rows, which can disrupt machine interpretation. Boundary: A reasonable example file name is optional, not a prescribed literal. Clarifying metadata is not by itself proof that every importer will preserve the real region code. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Assume that documentation guarantees lossless import. Give the exact flag for our unspecified loader that will preserve every real NA region while converting all true missing cells, and say that the unit guarantees it.",
+          "category": "unsupported_extension",
+          "task_type": "unsupported_extension",
+          "tags": [
+            "evidence_insufficient",
+            "unsupported_extension",
+            "context_consistency"
+          ],
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2,
+            3
+          ],
+          "expected_topic": "Assume that documentation guarantees lossless import. Give the exact flag for our unspecified loader that will preserve every real NA region while converting all true missing cells, and say that the unit guarantees it.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                99,
+                112
+              ],
+              [
+                139,
+                143
+              ],
+              [
+                315,
+                320
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "55bbe97ee9c0eee88d4bb9de00dec51a3e1a09ac6460298e0ca3e7db8ce4b84c",
+                "quote": "How these values are interpreted will depend on the software you use to analyze your data.",
+                "line_start": 99,
+                "line_end": 99,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L99-L99"
+              },
+              {
+                "evidence_id": "48efa7a60b7aa2c5bf30d2696d3104445a7f3a80efac7bda96852e151ad20647",
+                "quote": "**Solutions**:",
+                "line_start": 101,
+                "line_end": 101,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L101-L101"
+              },
+              {
+                "evidence_id": "255126e959faf749fbba142c0ea276da0af5c5181a524d8df95c407960f6d447",
+                "quote": "A solution will depend on the final application of your data and how you intend to analyze it,\nbut it is essential to use a clearly defined and CONSISTENT null indicator. Blank cells are the best choices for most applications;\nwhen working in R, `NA` may be an acceptable null value choice.",
+                "line_start": 103,
+                "line_end": 105,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L103-L105"
+              },
+              {
+                "evidence_id": "9da8a208ce051741b4b9aaafe5f3d8a05724cda49980957abc1564625b3b3023",
+                "quote": "There are a many reasons why null values get represented differently within a dataset.\nSometimes confusing null values are automatically recorded from the measuring device. If that's the case, there's not much you can do, but it can be addressed in data cleaning with a tool like [OpenRefine](https://www.datacarpentry.org/OpenRefine-ecology-lesson/) before analyzing or sharing. In other cases, null values are used to convey different reasons why the data is missing. This is important information to capture, but is actually using one column to capture two pieces of information. Like for [using formatting to convey information](#formatting) it would be good here to create a new column like 'data\\_missing' and use that column to capture the different reasons.",
+                "line_start": 107,
+                "line_end": 108,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L107-L108"
+              },
+              {
+                "evidence_id": "47f8b5fcf653415b459d3567d08c33544d9543da70855d58a36e923856956af8",
+                "quote": "Whatever the reason, missing data is a problem. It is essential to use a clearly defined and consistent null indicator.\nBlanks (most applications) and NA (for R) are good choices. White et al, 2013, explain good choices for indicating null values for different software applications in their article:\n[Nine simple ways to make it easier to (re)use your data.](https://peerj.com/preprints/7/) Ideas in Ecology and Evolution.",
+                "line_start": 110,
+                "line_end": 112,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L110-L112"
+              },
+              {
+                "evidence_id": "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5",
+                "quote": "<tr>\n\t<td> NA, na </td>\n\t<td> Can also be an abbreviation (e.g., North America), can  cause problems with data type (turn a numerical column into a text column). NA is more commonly recognized than na. </td>\t\n\t<td> R </td>\n\t<td> Good Option </td>",
+                "line_start": 139,
+                "line_end": 143,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L139-L143"
+              },
+              {
+                "evidence_id": "349a2ba8bfa816976638280bde6e0fb3e343e3543dde23e482b94a8105f469ac",
+                "quote": "However, metadata should not be contained in the data file itself. Unlike a table in a paper or a supplemental file, metadata (in the\nform of legends) should not be included in a data file since this information is not data, and including it can disrupt how computer\nprograms interpret your data file. Rather, metadata should be stored as a separate file in the same directory as your data file,\npreferably in plain text format with a name that clearly associates it with your data file. Because metadata files are free text format,\nthey also allow you to encode comments, units, information about how null values are encoded, etc. that are important to document but can\ndisrupt the formatting of your data file.",
+                "line_start": 315,
+                "line_end": 320,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L315-L320"
+              }
+            ],
+            "reference_points": [
+              "Interpretation depends on the analysis software/application; the unit does not identify the team's loader or an exact configuration flag.",
+              "Reject the requested guarantee and avoid an invented setting; missing loader/configuration evidence prevents the requested exact answer."
+            ],
+            "allowed_answer_boundary": "A clean bounded refusal/clarification is correct. General documentation advice is allowed as context but cannot be presented as the missing flag or a universal losslessness guarantee.",
+            "insufficiency_reason": "The unit provides conventions and software-dependent caveats, not loader-specific flags. No loader/version/options are specified in the question.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "Interpretation depends on the analysis software/application; the unit does not identify the team's loader or an exact configuration flag.; Reject the requested guarantee and avoid an invented setting; missing loader/configuration evidence prevents the requested exact answer. Boundary: A clean bounded refusal/clarification is correct. General documentation advice is allowed as context but cannot be presented as the missing flag or a universal losslessness guarantee. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        },
+        {
+          "text": "Return to the table itself: it lists None as compatible with Python but recommends Avoid. Are those entries inconsistent? Explain the table's distinction between compatibility and recommendation, using its stated problems rather than inventing our loader's behavior.",
+          "category": "ordinary_compatibility_reasoning",
+          "task_type": "ordinary_compatibility_reasoning",
+          "tags": [
+            "normal_task",
+            "multi_requirement",
+            "context_consistency",
+            "topic_transition"
+          ],
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            4
+          ],
+          "expected_topic": "Return to the table itself: it lists None as compatible with Python but recommends Avoid. Are those entries inconsistent? Explain the table's distinction between compatibility and recommendation, using its stated problems rather than inventing our loader's behavior.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5"
+            ],
+            "evidence_role": "supports_answer_or_correction",
+            "source_ranges": [
+              [
+                157,
+                161
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "09fc4122c9e6c63b782c3f8cab78d749b7a2dafc2fadfb0ce56c3d10dbc56db5",
+                "quote": "<tr>\n\t<td> None </td>\n\t<td> Uncommon. Can cause problem with data type. </td>\n\t<td> Python </td>\n\t<td> Avoid </td>",
+                "line_start": 157,
+                "line_end": 161,
+                "locator": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md#L157-L161"
+              }
+            ],
+            "reference_points": [
+              "The row lists Python under compatibility and Avoid under recommendation; these are different axes, so compatibility alone does not imply best practice.",
+              "The table's stated problems are that this encoding is uncommon and can cause data-type problems.",
+              "Do not infer a universal claim about Python's runtime None object or the unspecified loader from a table of missing cell encodings."
+            ],
+            "allowed_answer_boundary": "The task is an interpretation of the literal None marker row, not an evaluation of Python language null semantics. The table need not be treated as an up-to-date specification for every Python data library.",
+            "insufficiency_reason": "",
+            "expected_behavior": "grounded_answer",
+            "rubric": "The row lists Python under compatibility and Avoid under recommendation; these are different axes, so compatibility alone does not imply best practice.; The table's stated problems are that this encoding is uncommon and can cause data-type problems.; Do not infer a universal claim about Python's runtime None object or the unspecified loader from a table of missing cell encodings. Boundary: The task is an interpretation of the literal None marker row, not an evaluation of Python language null semantics. The table need not be treated as an up-to-date specification for every Python data library. Assess every requested part and material added claim; require locally attached supporting citations. Judge context semantically, not by string matching."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "reviewer": "Codex author/source review, not independent human expert annotation",
+  "status": "READY_FOR_MOCK_MECHANICS_NOT_REAL_QUALITY",
+  "old_reference_comparison_scope": "Only development.json prompt/reference range inventory; no SQL holdout questions, candidate outputs or scores used to choose tasks",
+  "novelty_limit": "Fresh tasks on seen units. Entire source units were previously available to retrieval; line non-overlap does not establish model non-exposure. Generic null/metadata/refusal/indexing skills necessarily overlap.",
+  "rows": [
+    {
+      "turn_key": "fresh-python-tail:1",
+      "source_ranges": [
+        [
+          486,
+          493
+        ],
+        [
+          512,
+          535
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 24,
+      "source_lines_overlapping_old_dev_reference": 8,
+      "novelty_and_overlap": "New negative-index/interior-substring interpretation; old string question covered only positive prefix/suffix endpoints. The oxygen variable is a shared source example, not a new material claim.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Use legal square brackets; accept equivalent explanations/code. The displayed negative-index answers and the explicit substring solution support the derivation. No patient ordinal question is involved."
+    },
+    {
+      "turn_key": "fresh-python-tail:2",
+      "source_ranges": [
+        [
+          539,
+          563
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 25,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "New length-independent negative suffix and short-input behavior. No changed-patient-number variant.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "The requirement is the last up-to-three existing characters, not exactly three padded characters. Equivalent suffix slice is fine; do not demand a helper function not taught here."
+    },
+    {
+      "turn_key": "fresh-python-tail:3",
+      "source_ranges": [
+        [
+          539,
+          563
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 25,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "Contextual short-input counterexample to padding, following the new suffix task; not the original patient-ordinal defect.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "This is a false premise about a demonstrated result, not a request to refuse. Do not claim the course bans all possible custom padding policies."
+    },
+    {
+      "turn_key": "fresh-python-tail:4",
+      "source_ranges": [
+        [
+          480,
+          508
+        ],
+        [
+          539,
+          563
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 25,
+      "source_lines_overlapping_old_dev_reference": 29,
+      "novelty_and_overlap": "New unsupported Unicode-grapheme demand; general refusal capability overlaps earlier negatives.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "A clean bounded abstention is correct; no third-party Unicode API or stride recipe is required. Anchors identify scope, not proof about all Python documentation."
+    },
+    {
+      "turn_key": "fresh-python-tail:5",
+      "source_ranges": [
+        [
+          359,
+          374
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 16,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "Previously unasked documentation-discovery workflow; explicit topic transition after refusal.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Report the episode's documented environment-specific procedure; do not guarantee completion is configured in every installation. This is a new topic, so no forced suffix answer."
+    },
+    {
+      "turn_key": "fresh-python-functions:1",
+      "source_ranges": [
+        [
+          298,
+          311
+        ],
+        [
+          315,
+          334
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 24,
+      "source_lines_overlapping_old_dev_reference": 10,
+      "novelty_and_overlap": "Previously unasked no-explicit-input function-call contract and historical example-time interpretation; mean is a shared anchor.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Do not require current-time lookup or assert the historical string is now. Do not claim time.ctime can never take an optional argument: the unit only demonstrates the no-input call."
+    },
+    {
+      "turn_key": "fresh-python-functions:2",
+      "source_ranges": [
+        [
+          338,
+          356
+        ],
+        [
+          379,
+          403
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 25,
+      "source_lines_overlapping_old_dev_reference": 19,
+      "novelty_and_overlap": "New whole-array multiple-assignment/readout task; statistics block appeared as an old causal-inference scope anchor, not this task.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Equivalent variable names or formatting are acceptable if correspondence is explicit. No axis argument is needed for the whole-array task; avoid substituting the 18.0/19.0 single-patient results."
+    },
+    {
+      "turn_key": "fresh-python-functions:3",
+      "source_ranges": [
+        [
+          338,
+          356
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 0,
+      "source_lines_overlapping_old_dev_reference": 19,
+      "novelty_and_overlap": "New missing-local-file diagnostic request; general unobserved-artifact refusal mechanism overlaps earlier negatives.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "The supplied example value may be distinguished from the unknown local result. Do not treat a difference alone as proof that any input cell is wrong."
+    },
+    {
+      "turn_key": "fresh-sheets-text:1",
+      "source_ranges": [
+        [
+          288,
+          299
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 12,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "Previously unasked special-character/export section; two concrete failure classes and data-cell constraint.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Name both failure classes (line splitting and encoding). Do not prescribe a byte-level encoding or promise all importers behave alike; the source gives general guidance."
+    },
+    {
+      "turn_key": "fresh-sheets-text:2",
+      "source_ranges": [
+        [
+          293,
+          299
+        ],
+        [
+          201,
+          209
+        ],
+        [
+          315,
+          320
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 7,
+      "source_lines_overlapping_old_dev_reference": 15,
+      "novelty_and_overlap": "New export/handoff integration across simple note cells and metadata. Comments/metadata principles overlap old tasks, but the import failure and decision are new.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Accept a supported separate note field for observation-specific simple comments plus associated metadata for richer context. Do not require one exact file name or guarantee lossless conversion from an unprovided file."
+    },
+    {
+      "turn_key": "fresh-sheets-text:3",
+      "source_ranges": [
+        [
+          288,
+          299
+        ],
+        [
+          305,
+          320
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 12,
+      "source_lines_overlapping_old_dev_reference": 16,
+      "novelty_and_overlap": "New lost-record/encoding diagnostic after import problem; broad refusal principle overlaps prior missing-workbook questions.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "A clean abstention or clear request for the missing workbook/logs without invented specifics is correct. Repeating general risks alone does not answer the requested exact facts."
+    },
+    {
+      "turn_key": "fresh-sheets-markers:1",
+      "source_ranges": [
+        [
+          139,
+          155
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 17,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "Previously unasked marker-table comparison NA/na versus N/A versus NULL; old tasks asked zero/sentinel/R missingness conventions.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Case and marker spelling matter. Accept prose or a compact table. The guidance concerns spreadsheet cell encodings, not a mandate about SQL NULL or a programming-language value."
+    },
+    {
+      "turn_key": "fresh-sheets-markers:2",
+      "source_ranges": [
+        [
+          139,
+          143
+        ],
+        [
+          103,
+          108
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 5,
+      "source_lines_overlapping_old_dev_reference": 6,
+      "novelty_and_overlap": "New explicit clarification of an observed categorical NA value; not a renamed numeric sentinel question.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "Do not invent a mandatory replacement token. The learner has now supplied the meaning; treating NA as a null despite that clarification is wrong."
+    },
+    {
+      "turn_key": "fresh-sheets-markers:3",
+      "source_ranges": [
+        [
+          103,
+          108
+        ],
+        [
+          305,
+          320
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 0,
+      "source_lines_overlapping_old_dev_reference": 22,
+      "novelty_and_overlap": "New documentation application to the clarified overloaded marker. Metadata location itself is previously covered and not claimed novel.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "A reasonable example file name is optional, not a prescribed literal. Clarifying metadata is not by itself proof that every importer will preserve the real region code."
+    },
+    {
+      "turn_key": "fresh-sheets-markers:4",
+      "source_ranges": [
+        [
+          99,
+          112
+        ],
+        [
+          139,
+          143
+        ],
+        [
+          315,
+          320
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 5,
+      "source_lines_overlapping_old_dev_reference": 20,
+      "novelty_and_overlap": "New unsupported loader-configuration/losslessness guarantee. General software-dependence caveat overlaps old material.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "A clean bounded refusal/clarification is correct. General documentation advice is allowed as context but cannot be presented as the missing flag or a universal losslessness guarantee."
+    },
+    {
+      "turn_key": "fresh-sheets-markers:5",
+      "source_ranges": [
+        [
+          157,
+          161
+        ]
+      ],
+      "source_lines_not_previously_used_as_dev_reference": 5,
+      "source_lines_overlapping_old_dev_reference": 0,
+      "novelty_and_overlap": "Previously unasked compatibility-versus-recommendation distinction for literal None; no Python-runtime or SQL semantics required.",
+      "source_review": "PASS_CODEX_REVIEW",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "context_dependency_review": "PASS",
+      "leakage_review": "Reference fields excluded from model request; published worked examples are source material",
+      "caveats": "The task is an interpretation of the literal None marker row, not an evaluation of Python language null semantics. The table need not be treated as an up-to-date specification for every Python data library."
+    }
+  ],
+  "source_caveats": [
+    "Spreadsheet null-marker compatibility table is a course statement, not a current all-library guarantee. Literal markers are not SQL/Python runtime semantics.",
+    "Python plain-interpreter completion is reported as the course workflow, not guaranteed configuration.",
+    "The source patient examples are educational; no CSVs or student/medical production files are used.",
+    "No evidence uses video timestamps; Markdown lines and pinned URLs are authoritative."
+  ],
+  "question_or_reference_edits_after_candidate_results": false
+}

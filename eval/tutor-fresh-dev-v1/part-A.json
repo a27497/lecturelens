@@ -1,0 +1,38 @@
+{
+  "dataset_version": "tutor-fresh-dev-v1",
+  "dataset_lock_sha256": "0531ce203d858c71d91fb3f61b1651e5e4af8cc1a781b3f3de4a4939456626a3",
+  "candidate_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "execution_authorized": false,
+  "part": "A",
+  "counts": {
+    "courses": 2,
+    "sessions": 2,
+    "turns": 8
+  },
+  "sessions": [
+    {
+      "course_id": "carpentries-python",
+      "dialogue_id": "fresh-python-tail",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "99de27c8a02a924186ac541799bc3773df099bcc2d3da300399952ac362aa712"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "dialogue_id": "fresh-sheets-text",
+      "split": "development",
+      "turns": 3,
+      "turns_sha256": "6272d042d7748035148e9beb93e46df4c542f4f2d66fbb84030943712ade4d0a"
+    }
+  ],
+  "turn_keys": [
+    "fresh-python-tail:1",
+    "fresh-python-tail:2",
+    "fresh-python-tail:3",
+    "fresh-python-tail:4",
+    "fresh-python-tail:5",
+    "fresh-sheets-text:1",
+    "fresh-sheets-text:2",
+    "fresh-sheets-text:3"
+  ]
+}

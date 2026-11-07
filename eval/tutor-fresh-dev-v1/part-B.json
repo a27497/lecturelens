@@ -1,0 +1,38 @@
+{
+  "dataset_version": "tutor-fresh-dev-v1",
+  "dataset_lock_sha256": "0531ce203d858c71d91fb3f61b1651e5e4af8cc1a781b3f3de4a4939456626a3",
+  "candidate_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "execution_authorized": false,
+  "part": "B",
+  "counts": {
+    "courses": 2,
+    "sessions": 2,
+    "turns": 8
+  },
+  "sessions": [
+    {
+      "course_id": "carpentries-python",
+      "dialogue_id": "fresh-python-functions",
+      "split": "development",
+      "turns": 3,
+      "turns_sha256": "183f1350ffef58a2ef1a122a1355059861d20cdbf1fc3c10ef2b7a55e84475a4"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "dialogue_id": "fresh-sheets-markers",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "19890c18cbadc56813bccb061b21663b3aa0cc243c3096a27b465c7a9b281027"
+    }
+  ],
+  "turn_keys": [
+    "fresh-python-functions:1",
+    "fresh-python-functions:2",
+    "fresh-python-functions:3",
+    "fresh-sheets-markers:1",
+    "fresh-sheets-markers:2",
+    "fresh-sheets-markers:3",
+    "fresh-sheets-markers:4",
+    "fresh-sheets-markers:5"
+  ]
+}

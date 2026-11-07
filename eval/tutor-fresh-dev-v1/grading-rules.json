@@ -1,0 +1,65 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "status": "PREREGISTERED_BEFORE_CANDIDATE_EXECUTION",
+  "assessment": "Future full source-based Codex review; not independent human gold or blind review",
+  "threshold_basis": "Small-sample engineering acceptance: at most one incomplete/incorrect turn per eight scheduled course turns, zero tolerated index boundary or clean-refusal errors, at most one semantic context error; strong claim support is required separately from completeness. Thresholds are normative risk tolerances, not estimated significance or generalization bounds. They were not selected by new candidate outcomes.",
+  "requirements": {
+    "scheduled_turns": 16,
+    "completed": 16,
+    "failed": 0,
+    "missing": 0,
+    "reviewed_turns": 16,
+    "complete_correct_over_all_scheduled": {
+      "minimum_numerator": 14,
+      "denominator": 16
+    },
+    "per_course_complete_correct": {
+      "minimum_numerator": 7,
+      "denominator": 8
+    },
+    "critical_index_slice_turns": [
+      "fresh-python-tail:1",
+      "fresh-python-tail:2",
+      "fresh-python-tail:3"
+    ],
+    "critical_index_slice_correct": {
+      "minimum_numerator": 3,
+      "denominator": 3
+    },
+    "expected_clean_refusals": {
+      "minimum_numerator": 4,
+      "denominator": 4
+    },
+    "clarification_turns": [
+      "fresh-sheets-markers:2"
+    ],
+    "clarification_correct": {
+      "minimum_numerator": 1,
+      "denominator": 1
+    },
+    "semantic_context_consistency": {
+      "minimum_numerator": 9,
+      "denominator": 10
+    },
+    "citation_support_accuracy_minimum": 0.95,
+    "supported_claim_coverage_minimum": 0.9,
+    "expected_answer_turns_full_supported_coverage": {
+      "minimum_numerator": 10,
+      "denominator": 12
+    }
+  },
+  "definitions": {
+    "task_correct": "All required points and justified reasonable alternatives, no materially false or unsupported addition. A correct core plus uncertain material extra is not a confirmed full pass.",
+    "turn_denominator": "All 16 scheduled turns, including failures, missing and wrong refusals. Report expected/executed/completed/failed/missing/scorable/reviewed/uncertain separately.",
+    "citation_support_accuracy": "Supported explicit substantive claim-citation pairs / all annotated pairs, including unsupported and uncertain. Null if none; zero citation pairs cannot pass this gate.",
+    "presence_coverage": "Citation-requiring substantive assertions with a local citation / all citation-requiring substantive assertions in complete claim inventories.",
+    "supported_claim_coverage": "Citation-requiring assertions with at least one locally attached supporting citation / all citation-requiring assertions. Material optional additions enter the inventory. No citation found means uncovered, not excluded.",
+    "turn_full_coverage": "Expected-answer turns with every required substantive assertion supported / 12 expected-answer turns. Failure, missing and wrong refusal cannot count covered. Claim-level ratios alone do not cover non-answers.",
+    "refusal": "For four insufficient tasks, no invented requested detail, no unsupported recipe or guarantee; clean refusal/appropriate request for missing evidence. Reasonable refusal is correct, not an uncited answer. Record wrong refusals on answerable turns separately.",
+    "context": "Ten dependent turns reviewed against actual prior conversation and explicit corrections/clarifications. No string-equality proxy. Wrong unpublished antecedents cannot be treated as facts.",
+    "missing_and_uncertain": "Missing assessment/claim inventory or uncertain full-task judgment is not a verified pass. Incomplete annotation blocks a PASS decision; no reviewer labels are fabricated.",
+    "decision": "PASS only if all prerequisites and thresholds hold in one authorized real trial with complete source review. Otherwise NEEDS_REVIEW or FAIL; preserve original scope/data/results and do not silently retest.",
+    "agreement": "Reviewer is off. Model-human agreement and independent human agreement/kappa remain NOT_RUN without valid independently paired labels.",
+    "mock": "Mock mechanics never enter real quality numerator, token usage or cost; fake oracle negative behavior is explicitly non-semantic."
+  }
+}

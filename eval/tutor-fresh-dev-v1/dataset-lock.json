@@ -1,0 +1,11 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "files": {
+    "candidate-freeze.json": "7d44eb83059171dc8a7f33278d45e10485cc491880c67019253622c61b7c0cd2",
+    "sources.json": "c10f0f9052f80564f9c37cf5b1ac92c2093acc53563e716ead1fa5427a77f3e2",
+    "questions.json": "23f97e51219741b6cebfc1bd62da9ce5bb73bc2164bf9d18fb368b2d5809df9f",
+    "snapshot.json": "0948ebc90ad1f3ec18fe0e1f2da430e91d0167ddc5ef45e66c36014077157327",
+    "development.json": "5b4697ce37db751ae2414572146bdc8984ecbad81f3f250070903c22f0200d11",
+    "grading-rules.json": "0eb59ce214d5607205d1b3cb9b12090ea0ba00ef83455a01e4ff42e317e628ca"
+  }
+}

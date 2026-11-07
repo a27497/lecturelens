@@ -1,0 +1,20 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "files": {
+    "candidate-freeze.json": "7d44eb83059171dc8a7f33278d45e10485cc491880c67019253622c61b7c0cd2",
+    "sources.json": "c10f0f9052f80564f9c37cf5b1ac92c2093acc53563e716ead1fa5427a77f3e2",
+    "questions.json": "23f97e51219741b6cebfc1bd62da9ce5bb73bc2164bf9d18fb368b2d5809df9f",
+    "snapshot.json": "0948ebc90ad1f3ec18fe0e1f2da430e91d0167ddc5ef45e66c36014077157327",
+    "development.json": "5b4697ce37db751ae2414572146bdc8984ecbad81f3f250070903c22f0200d11",
+    "grading-rules.json": "0eb59ce214d5607205d1b3cb9b12090ea0ba00ef83455a01e4ff42e317e628ca",
+    "dataset-lock.json": "0531ce203d858c71d91fb3f61b1651e5e4af8cc1a781b3f3de4a4939456626a3",
+    "part-A.json": "d29958a779c1a3697cb5b3a1345e91a3e33c5cec92d1e04765563a34a124c091",
+    "part-B.json": "8b3d5c2f6233f219bf853398741fb845c88ed25bfcc6034079660969e05ad7af",
+    "batch-plan.json": "4efdabb65a323155366184523757779a04b7ddfc7baf6717638590bdb91100ad",
+    "data.py": "a5bd867c3239bba9b46dae97327d45716b80ca58465c39aa2b5467d0ea28bb48",
+    "bridge.py": "84406e5ede1412f83abdea743158f49e06fb28454a578b9fbc8d52beec257621",
+    "batch_run.py": "a45c65014043c5c099ecc77c5a90e7c03ed26b8419ae561d41ff2b0340e42f76",
+    "test_batch.py": "b7e0ad56db32095725f248ca49eeb1b038166b9f42838ce47cc68068cca21dcc",
+    "CONTENT_REVIEW.json": "c6eb704fbc45b35cccc875b87a214b8681eb234e752ec962560d725b763c6edf"
+  }
+}
