@@ -97,7 +97,8 @@ try{
  await step('09 lost Tutor response retries the same turn once and restores both conversations',async()=>{
   const tutor=page.locator('.tutor');await Promise.all(pending);const previous=tutorSnapshots.filter(s=>s.data?.turns?.length===3).at(-1).data.session.session_id;
   await tutor.getByRole('button',{name:'新对话',exact:true}).click();
-  const fault=async route=>{const r=route.request();if(r.method()==='POST'&&r.url().endsWith('/turns')){await route.fetch();transportFaults.push({kind:'Tutor response lost after real server commit',path:new URL(r.url()).pathname});await page.unroute('**/tutor/sessions/**/turns',fault);await route.abort('failed')}else await route.fallback()};
+  let lost=false;
+  const fault=async route=>{const r=route.request();if(!lost&&r.method()==='POST'&&r.url().endsWith('/turns')){lost=true;const response=await route.fetch();expect(response.status()).toBe(200);transportFaults.push({kind:'Tutor response lost after real server commit',path:new URL(r.url()).pathname});await route.abort('failed')}else await route.fallback()};
   await page.route('**/tutor/sessions/**/turns',fault);
   await tutor.getByRole('textbox').fill('Explain the asynchronous course pipeline again.');await tutor.getByRole('button',{name:'发送',exact:true}).click();await expect(tutor.getByRole('alert')).toContainText('发送结果未知');await expect(tutor.getByRole('textbox')).toHaveValue('Explain the asynchronous course pipeline again.');await shot('09-tutor-unknown-outcome');
   await tutor.getByRole('button',{name:'重试同一条消息',exact:true}).click();await expect(tutor.locator('.answer')).toHaveCount(1,{timeout:45000});
@@ -107,7 +108,8 @@ try{
  await step('10 flashcard response loss is idempotent; due state survives refresh',async()=>{
   await nav('闪卡复习').click();const cards=page.locator('.flashcards');await expect(cards.locator('.card')).toBeVisible({timeout:30000});
   const summary=await cards.locator('.summary').innerText(),reviewed=Number(summary.match(/今日已复习 (\d+)/)[1]);await cards.getByRole('button',{name:'翻面 · 显示答案',exact:true}).click();await cards.locator('details > summary').click();await cards.getByRole('button',{name:/回看视频/}).first().click();await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(1);await shot('10-flashcard-evidence');await page.getByRole('button',{name:'返回当前学习任务',exact:true}).click();
-  const fault=async route=>{if(route.request().postDataJSON()?.operation==='REVIEW_CARD'){await route.fetch();transportFaults.push({kind:'flashcard review response lost after real server commit',path:new URL(route.request().url()).pathname});await page.unroute('**/study/command',fault);await route.abort('failed')}else await route.fallback()};await page.route('**/study/command',fault);
+  let lost=false;
+  const fault=async route=>{if(!lost&&route.request().postDataJSON()?.operation==='REVIEW_CARD'){lost=true;const response=await route.fetch();expect(response.status()).toBe(200);transportFaults.push({kind:'flashcard review response lost after real server commit',path:new URL(route.request().url()).pathname});await route.abort('failed')}else await route.fallback()};await page.route('**/study/command',fault);
   await cards.locator('.ratings').getByRole('button',{name:/Good/}).click();await expect(cards.getByRole('alert')).toContainText('操作未完成');await expect(cards.getByRole('button',{name:'重试上次评分',exact:true})).toBeVisible();await expect(cards.locator('.summary')).toContainText(`今日已复习 ${reviewed+1} 张`);await shot('10-flashcard-unknown-outcome');
   await cards.getByRole('button',{name:'重试上次评分',exact:true}).click();await expect(cards).toContainText('评分已保存');await expect(cards.locator('.summary')).toContainText(`今日已复习 ${reviewed+1} 张`);const final=await cards.locator('.summary').innerText();await page.reload();await nav('闪卡复习').click();await expect(cards.locator('.summary')).toHaveText(final,{timeout:30000});await shot('10-flashcard-progress-restored');
  });
