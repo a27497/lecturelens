@@ -1,0 +1,561 @@
+{
+  "review_type": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "grading_rules_sha256": "5493f4ba95e0f98a9abea97a9a431e2b973c14572435603718551341f398754b",
+  "counts": {
+    "expected": 16,
+    "attempted": 13,
+    "completed": 12,
+    "failed": 1,
+    "skipped": 3,
+    "missing": 0,
+    "unknown_attempts": 0,
+    "scorable": 12,
+    "semantically_scored": 12,
+    "all_outcomes_reviewed": 16,
+    "expected_answer": 12,
+    "expected_refusal": 4
+  },
+  "task_correctness": {
+    "numerator": 11,
+    "denominator": 16,
+    "value": 0.6875
+  },
+  "completed_answer_correctness": {
+    "numerator": 11,
+    "denominator": 12,
+    "value": 0.9166666666666666
+  },
+  "correct_turns": [
+    "new-python-sharing:1",
+    "new-python-sharing:2",
+    "new-python-sharing:3",
+    "new-python-sharing:4",
+    "new-python-stride:1",
+    "new-python-stride:2",
+    "new-python-stride:3",
+    "new-python-stride:4",
+    "new-sheets-validation:1",
+    "new-sheets-validation:2",
+    "new-sheets-validation:4"
+  ],
+  "completed_judgments": {
+    "correct": 11,
+    "incorrect": 0,
+    "uncertain": 1
+  },
+  "per_course": {
+    "carpentries-python": {
+      "numerator": 8,
+      "denominator": 8,
+      "value": 1.0
+    },
+    "carpentries-spreadsheets": {
+      "numerator": 3,
+      "denominator": 8,
+      "value": 0.375
+    }
+  },
+  "critical_index": {
+    "numerator": 3,
+    "denominator": 3,
+    "value": 1.0
+  },
+  "clarification": {
+    "numerator": 2,
+    "denominator": 2,
+    "value": 1.0
+  },
+  "clean_refusals": {
+    "numerator": 3,
+    "denominator": 4,
+    "value": 0.75
+  },
+  "clean_refusals_observed": {
+    "numerator": 3,
+    "denominator": 3,
+    "value": 1.0
+  },
+  "semantic_context": {
+    "numerator": 7,
+    "denominator": 10,
+    "value": 0.7
+  },
+  "semantic_context_observed": {
+    "numerator": 7,
+    "denominator": 7,
+    "value": 1.0
+  },
+  "citation_support": {
+    "numerator": 37,
+    "denominator": 38,
+    "value": 0.9736842105263158
+  },
+  "direct_citation_presence": {
+    "numerator": 34,
+    "denominator": 37,
+    "value": 0.918918918918919
+  },
+  "supported_claim_coverage": {
+    "numerator": 36,
+    "denominator": 37,
+    "value": 0.972972972972973
+  },
+  "supported_claims_direct": {
+    "numerator": 33,
+    "denominator": 37,
+    "value": 0.8918918918918919
+  },
+  "bounded_derivation_claims": [
+    {
+      "turn_key": "new-python-sharing:3",
+      "claim_id": "c4",
+      "premise_claims": [
+        "c1",
+        "c3",
+        "c5"
+      ]
+    },
+    {
+      "turn_key": "new-python-stride:1",
+      "claim_id": "c5",
+      "premise_claims": [
+        "c3"
+      ]
+    },
+    {
+      "turn_key": "new-python-stride:2",
+      "claim_id": "c2",
+      "premise_claims": [
+        "c1",
+        "c3"
+      ]
+    }
+  ],
+  "expected_answer_full_supported_coverage": {
+    "numerator": 8,
+    "denominator": 12,
+    "value": 0.6666666666666666
+  },
+  "required_full_supported_turns": [
+    "new-python-sharing:1",
+    "new-python-sharing:2",
+    "new-python-sharing:3",
+    "new-python-stride:1",
+    "new-python-stride:2",
+    "new-python-stride:3",
+    "new-sheets-validation:1",
+    "new-sheets-validation:2"
+  ],
+  "claims": {
+    "total": 45,
+    "citation_required": 37,
+    "explicit_pairs": 38,
+    "uncertain_pairs": 0
+  },
+  "wrong_refusals_on_answerable": 0,
+  "gates": {
+    "all16completed_reviewed": false,
+    "correct14of16": false,
+    "python7of8": true,
+    "sheets7of8": false,
+    "critical3of3": true,
+    "refusals4of4": false,
+    "clarifications2of2": true,
+    "context9of10": false,
+    "pair_support95": true,
+    "claim_coverage90": true,
+    "full_answers10of12": false
+  },
+  "decision": "FAIL",
+  "independent_human_agreement": "NOT_RUN",
+  "SQL_holdout": "NOT_RUN",
+  "expansion_60_300": "NOT_RUN",
+  "learning_effects": "NOT_RUN",
+  "execution_code_sha": "5bfca941e98f041d4efdcc6dcfb9f5d766d46554",
+  "actual_validation_version": "5bfca941e98f041d4efdcc6dcfb9f5d766d46554",
+  "candidate": "p8-tutor-claim-grounding-v13-development",
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "corrected_plan_sha256": "7e6c743fcc28e4e20144900e6fbbcf8a8b46ea97fc91772b03a4c178f8de05c9",
+  "preflight_fix_sha256": "17096438abbfe07a28de69180cdf91414100f61ad96692afbd6bd1927d3ad6fe",
+  "mechanics_status": "INCOMPLETE",
+  "quality_status": "FAIL",
+  "requests": {
+    "real_http": 34,
+    "http200": 34,
+    "failed_http": 0,
+    "channel_attempts": 34,
+    "settled": 34,
+    "pending": 0,
+    "events": 68,
+    "reviewer": 0,
+    "embedding": 0,
+    "retries": 0
+  },
+  "usage": {
+    "prompt_tokens": 127601,
+    "completion_tokens": 6105,
+    "total_tokens": 133706,
+    "prompt_cache_hit_tokens": 35456,
+    "prompt_cache_miss_tokens": 92145
+  },
+  "costs": {
+    "rate_calculated_off_peak_cache_aware_usd": "0.017591118",
+    "local_ledger_nano_usd": 45606300,
+    "local_ledger_usd": "0.0456063",
+    "maximum_prefix_exposure_nano_usd": 49290600,
+    "local_cap_usd": "0.70",
+    "supplier_actual_invoice_usd": "UNKNOWN_NOT_QUERIED",
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "source_date": "2026-11-07",
+    "phase_authorized_upper_limit_usd": "10.00",
+    "effective_tool_call_cap": 80
+  },
+  "metadata": {
+    "returned_model_counts": {
+      "deepseek-flash": 34
+    },
+    "response_ids_present": 34,
+    "request_ids_present": 0,
+    "fingerprints": {
+      "bc19ba97cbe016479903222bb1578db6": 34
+    },
+    "immutable_model_version": "UNKNOWN",
+    "unique_response_ids": 34,
+    "unique_local_request_ids": 34,
+    "unique_ledger_call_ids": 34
+  },
+  "failure": {
+    "turn_key": "new-sheets-qc:1",
+    "error_code": "TUTOR_FINISH_FORMAT_INVALID",
+    "draft_lengths": [
+      1657,
+      1691
+    ],
+    "text_cap": 1600,
+    "repair_chances_used": 1,
+    "runtime_reserved": 37321,
+    "runtime_cap": 64000,
+    "not_budget_exhaustion": true
+  },
+  "comparison": {
+    "baseline_execution_sha": "8358595c792b5ce28f965a5c724a0dc6d8b076bd",
+    "baseline_report_sha": "837915cc49837b0f2e5fb003ab21adc5f7c53567",
+    "baseline_counts": {
+      "expected": 16,
+      "attempted": 16,
+      "completed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "missing": 0,
+      "unknown_attempts": 0,
+      "scorable": 16,
+      "semantically_scored": 16,
+      "all_outcomes_reviewed": 16,
+      "expected_answer": 12,
+      "expected_refusal": 4
+    },
+    "baseline_correct_scheduled": {
+      "numerator": 13,
+      "denominator": 16,
+      "value": 0.8125
+    },
+    "baseline_correct_completed": {
+      "numerator": 13,
+      "denominator": 16,
+      "value": 0.8125
+    },
+    "baseline_citation_support": {
+      "numerator": 59,
+      "denominator": 62,
+      "value": 0.9516129032258065
+    },
+    "baseline_claim_coverage_original": {
+      "numerator": 59,
+      "denominator": 74,
+      "value": 0.7972972972972973
+    },
+    "baseline_claim_coverage_corrected": {
+      "numerator": 59,
+      "denominator": 73,
+      "value": 0.8082191780821918
+    },
+    "baseline_full_answer_coverage_original": {
+      "numerator": 3,
+      "denominator": 12,
+      "value": 0.25
+    },
+    "baseline_full_answer_coverage_corrected": {
+      "numerator": 4,
+      "denominator": 12,
+      "value": 0.3333333333333333
+    },
+    "baseline_usage": {
+      "prompt_tokens": 159654,
+      "completion_tokens": 8181,
+      "total_tokens": 167835,
+      "prompt_cache_hit_tokens": 45568,
+      "prompt_cache_miss_tokens": 114086
+    },
+    "baseline_costs": {
+      "rate_calculated_off_peak_cache_aware_usd": "0.022158204",
+      "local_ledger_nano_usd": 57713400,
+      "local_ledger_usd": "0.0577134",
+      "maximum_prefix_exposure_nano_usd": 63041400,
+      "local_cap_usd": "0.70",
+      "supplier_actual_invoice_usd": "UNKNOWN_NOT_QUERIED",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "source_date": "2026-11-07"
+    },
+    "different_questions_and_units": true,
+    "candidate_changed": true,
+    "stop_protocol_changed_versus_v12_rerun": false,
+    "old_answers_reused": false,
+    "comparison_interpretation": "UNPAIRED_DEVELOPMENT_REFERENCE_ONLY_NOT_CAUSAL_IMPROVEMENT_OR_GENERALIZATION"
+  },
+  "scoring_interpretation": {
+    "frozen_policy_support": {
+      "numerator": 36,
+      "denominator": 37,
+      "value": 0.972972972972973
+    },
+    "direct_support_only": {
+      "numerator": 33,
+      "denominator": 37,
+      "value": 0.8918918918918919
+    },
+    "explicit_derivations": [
+      {
+        "turn_key": "new-python-sharing:3",
+        "claim_id": "c4",
+        "premise_claims": [
+          "c1",
+          "c3",
+          "c5"
+        ]
+      },
+      {
+        "turn_key": "new-python-stride:1",
+        "claim_id": "c5",
+        "premise_claims": [
+          "c3"
+        ]
+      },
+      {
+        "turn_key": "new-python-stride:2",
+        "claim_id": "c2",
+        "premise_claims": [
+          "c1",
+          "c3"
+        ]
+      }
+    ],
+    "reason": "Frozen pre-result rubric explicitly permits bounded derivations established by local cited premises; no invented inline citation pair. Direct-only descriptive sensitivity also reported.",
+    "gate_under_frozen_policy": "FAIL",
+    "gate_under_direct_only": "FAIL",
+    "no_threshold_or_reference_changes": true,
+    "raw_summary_baseline_flag": {
+      "raw_candidate_and_stop_protocol_changed": true,
+      "meaning": "Inherited generic v11 comparison flag; not a correct description of comparison with v12 rerun.",
+      "versus_v12_rerun_stop_protocol_changed": false,
+      "both_protocol": "v12-session-isolated-live-v1",
+      "both_protocol_sha256": "926f79b8f0c873b18ffab7d8efdaad9668f0ba605040fdba2070df126d4104e5",
+      "raw_not_overwritten": true
+    }
+  },
+  "per_position": [
+    {
+      "turn_key": "new-python-sharing:1",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-python-sharing:2",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-python-sharing:3",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-python-sharing:4",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-python-stride:1",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-python-stride:2",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-python-stride:3",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-python-stride:4",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-sheets-validation:1",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-sheets-validation:2",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-sheets-validation:3",
+      "status": "completed",
+      "task_correct": null,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-sheets-validation:4",
+      "status": "completed",
+      "task_correct": true,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": true
+    },
+    {
+      "turn_key": "new-sheets-qc:1",
+      "status": "failed",
+      "task_correct": null,
+      "skip_code": null,
+      "blocked_by": null,
+      "root_failure": null,
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-sheets-qc:2",
+      "status": "SKIPPED",
+      "task_correct": null,
+      "skip_code": "DEPENDENCY_FAILED_OR_SKIPPED",
+      "blocked_by": [
+        "new-sheets-qc:1"
+      ],
+      "root_failure": "new-sheets-qc:1",
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-sheets-qc:3",
+      "status": "SKIPPED",
+      "task_correct": null,
+      "skip_code": "DEPENDENCY_FAILED_OR_SKIPPED",
+      "blocked_by": [
+        "new-sheets-qc:2"
+      ],
+      "root_failure": "new-sheets-qc:1",
+      "context_consistent": null
+    },
+    {
+      "turn_key": "new-sheets-qc:4",
+      "status": "SKIPPED",
+      "task_correct": null,
+      "skip_code": "DEPENDENCY_FAILED_OR_SKIPPED",
+      "blocked_by": [
+        "new-sheets-qc:2",
+        "new-sheets-qc:3"
+      ],
+      "root_failure": "new-sheets-qc:1",
+      "context_consistent": null
+    }
+  ],
+  "preflight": {
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0,
+    "earlier_runtime_regression_passed": 273,
+    "old_failed_preflight_artifacts_preserved": true
+  },
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v13-resumed-20261107",
+  "cleanup": {
+    "dedicated_container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "state": "exited",
+    "exit_code": 0,
+    "loopback_port_closed": true,
+    "volume_retained": true,
+    "original_running_containers_unchanged": 23,
+    "no_other_service_started": true
+  },
+  "remaining_blockers": [
+    "Repeated answer length violation after single bounded format repair",
+    "Required full-batch completion/refusal/context/full-coverage gates not met",
+    "Unverified exclusivity addition in completed validation answer",
+    "No independent human agreement or unseen-course evidence"
+  ],
+  "next_stage": "DO_NOT_EXPAND_UNDER_THIS_AUTHORIZATION",
+  "not_run": [
+    "independent_human_agreement_kappa",
+    "SQL_holdout",
+    "expansion_60_300",
+    "learning_effects",
+    "unseen_course_generalization",
+    "supplier_actual_invoice_or_balance",
+    "immutable_backend_version_verification",
+    "additional_real_trial",
+    "real_continuation_to_a_later_independent_session_after_this_last_session_failure"
+  ],
+  "authorization": "ENDED_AFTER_THIS_SINGLE_REAL_VALIDATION",
+  "raw_artifact_files": 487,
+  "raw_artifact_manifest_sha256": "bf07f62a2b0477c8c8d4f323379f542f7e656e2e4c9ebfc236ca0912ef574b26",
+  "source_review_sha256": "fa52a2667cb3968d3b423de42ddda101fdaaa938e7a70b83add0c10208eee9fc",
+  "failure_analysis_sha256": "4b5d54084e656e88fbdcfd7b364377fcb63ed082be401b011150d16b59f08f61",
+  "reconciliation_sha256": "293a9664b2ac49ac139b1fd534a1c953d72406242724e568bd16bfbb7815e722",
+  "delivery_audit_sha256": "aa2ed09df5ed313ceabbc8c48a135c4ca487ead0e8e74bdba46e6d9ed1527e0c",
+  "pricing_observation_sha256": "527fc201a2732454d622ebb662d13f6064ae902de0936081ec74f263c82e9192"
+}
