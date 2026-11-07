@@ -5,7 +5,7 @@
   "base_sha": "300be51515867f7ece4f3a9224a484e825219ee0",
   "historical_manifest_sha256": "370d61d64abf1921927ae7e5ba6e5cc6c1e887aeaa9f4ef792aef723e1117426",
   "files": {
-    "eval/tutor-scale/README.md": "b6a8c0a15768ac2fa098f8d31ac2accecede9ef02f637d5fc096f1aa91017a82",
+    "eval/tutor-scale/README.md": "71473d263c1c5328aed233b3049d4df686f3c558805e8e1175375b645c1d4aec",
     "eval/tutor-scale/author.py": "26e16ffb28d9422acff7ee3adf006d6b1de65de2d643d7a0f5f7e17853770c12",
     "eval/tutor-scale/blind.py": "686ed8b2210c600cdc59ab9e5a9ea72c9748f5bb2382ff2d49e6488864fc5bbc",
     "eval/tutor-scale/compose.yaml": "6e3b5b97a60b674d70382c7934b0bc821a98c0ef8e63b29c5958fb289fbb7bfa",
@@ -16,7 +16,7 @@
     "eval/tutor-scale/safe_exec.py": "ffa323eb334a23ec63985b316151223cd446e168800e8c6eaf47b364dcb45029",
     "eval/tutor-scale/scoring.py": "5adfd99963455f7d8eef7fcbf6d4d517dfa508f8970f4eee6de69be89e53658f",
     "eval/tutor-scale/test_tools.py": "b874991324e6776386039cc0ec799c4ea6eeb4af23035b09cdf05604cface3f2",
-    "eval/tutor-scale/verify.py": "895e8b41273badc872bd698fe94f89098bec63fc6c0a744a2fba8ce74ae9f81e"
+    "eval/tutor-scale/verify.py": "cf9c5900dc12e974f023f4655deba05ff8ee254cae3f819b2c55f220cb90f246"
   },
   "note": "New evaluation tooling identity; historical P8 v9 and AU pins unchanged. Runtime modules remain pinned by original P8 verify_inputs(). No real quality result."
 }

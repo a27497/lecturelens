@@ -51,7 +51,7 @@ def check(run, database=False, blind=None):
         call_total += len(calls)
         call_by_key.update(c["turn_key"] for c in calls)
         reserved += sum(e["state"] == "reserved" for e in ledger)
-        settled += sum(e["state"] == "settled" for e in ledger)
+        settled += sum(e["state"] in {"settled", "failed"} for e in ledger)
         assert all(c["cost_status"] == "NOT_RUN" for c in calls)
         if config["data_kind"] == "MOCK":
             assert all(c["usage_source"] == "MOCK_NOT_BILLABLE" and not c["live"] for c in calls)

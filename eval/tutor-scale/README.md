@@ -94,7 +94,8 @@ $0.70 reservation per course (whole invocation <=1200 calls / $2.80). The frozen
 400 calls / $0.70 per shard; larger inputs are rejected, not silently capped. Runtime per-turn limits and
 20-second deadline remain unchanged. Every request reserves before send; unknown/failed outcomes retain the
 reservation and cannot be replayed. A blocked shard stops; later shards may run within their allocated budget.
-No budget transfers or automatic resume. Mock's legacy dollar arithmetic is a ledger test, **not billing**.
+No budget transfers or automatic resume. `settled_calls` counts terminal settlements, including failed
+requests charged at their reservation; it does not mean successful provider responses. Mock's legacy dollar arithmetic is a ledger test, **not billing**.
 Inject a bounded synthetic first-call timeout/malformed response with `--smoke --fault timeout` or
 `--smoke --fault malformed`; use `--max-calls 4` for a budget-stop test. These must remain incomplete.
 
