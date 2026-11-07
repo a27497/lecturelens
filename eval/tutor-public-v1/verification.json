@@ -1,0 +1,373 @@
+{
+  "schema": "tutor-public-v1-verification",
+  "checked_at": "2026-11-07T09:29:36.951844+00:00",
+  "baseline_sha": "2e862b82ae0c8592f301d62a0083ad24db512fff",
+  "split_freeze_sha": "31acd91",
+  "split_sha256": "1eea49193925d5565bae62ce611d79871a1b78ad450c494b344ac4456bed9a3c",
+  "full_mock_and_smoke_code_sha": "035aa9c56b473a391bcb6fe899aa5507b85f3a4f",
+  "final_test_and_review_code_sha": "40569c6fdd00737ac7bd6ba6e24d9358bced1d09",
+  "coverage_note": "Since the full Mock code SHA, only public_review.py and test_public.py changed: retain assigned overlap denominators and add a regression assertion. The generation driver/data/runtime are identical. All 44 tests and empty-review rescoring passed at the later SHA. The final commit adds documentation/verification only.",
+  "dataset_lock_sha256": "4645c31d7e3eff19aa534714613d3ead64c1a7fcefcccba463fdbe9ef77f4620",
+  "dataset_counts": {
+    "courses": 3,
+    "sessions": 12,
+    "turns": 60,
+    "development_courses": 2,
+    "development_sessions": 8,
+    "development_turns": 40,
+    "holdout_courses": 1,
+    "holdout_sessions": 4,
+    "holdout_turns": 20,
+    "answerable_turns": 45,
+    "insufficient_evidence_turns": 10,
+    "out_of_scope_turns": 5,
+    "false_premise_turns": 12,
+    "declared_context_turns": 40
+  },
+  "sources": [
+    {
+      "course_id": "carpentries-python",
+      "url": "https://swcarpentry.github.io/python-novice-inflammation/02-numpy.html",
+      "revision": "eb18f246aee338b2a6169ba18d8c5ced7cf89f53",
+      "sha256": "a0ca18db59b888dcfa6d00e5680465720e4a8c7feed3b369b2c92d053c592ad3",
+      "license": "CC-BY-4.0",
+      "software_license": "MIT",
+      "license_sha256": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "url": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/02-common-mistakes.html",
+      "revision": "78a54d7a7adcc961e83f463ba5392232e035cc6c",
+      "sha256": "617226dece8c7de38808688c7053272e3a32cca7a1a28fedf0d6d7cb04ae24f9",
+      "license": "CC-BY-4.0",
+      "software_license": "MIT",
+      "license_sha256": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a"
+    },
+    {
+      "course_id": "carpentries-sql",
+      "url": "https://swcarpentry.github.io/sql-novice-survey/03-filter.html",
+      "revision": "0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee",
+      "sha256": "c60e7f76b5d8d253eb27aa0a0f8c6d17befb648350ad1aa2692714611b4ca19b",
+      "license": "CC-BY-4.0",
+      "software_license": "MIT",
+      "license_sha256": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a"
+    }
+  ],
+  "full_mock": {
+    "data_kind": "MOCK",
+    "courses": 3,
+    "sessions": 12,
+    "expected_turns": 60,
+    "executed_result_turns": 60,
+    "completed_turns": 60,
+    "failed_turns": 0,
+    "missing_result_turns": 0,
+    "attempted_turns": 60,
+    "scorable_turns": 60,
+    "statuses": {
+      "completed": 60
+    },
+    "mechanics_status": "COMPLETE",
+    "failures": [],
+    "recorded_calls": 180,
+    "review_failed_or_missing": 0,
+    "outcome_counts": {
+      "answered": 45,
+      "insufficient_evidence": 15
+    },
+    "quality_status": "NOT_RUN",
+    "human_scores_status": "NOT_RUN",
+    "cost_status": "NOT_RUN",
+    "real_tokens_status": "NOT_RUN",
+    "reserved_calls": 180,
+    "settled_calls": 180,
+    "pending_calls": 0,
+    "unknown_accounting_shards": 0,
+    "known_accounting": {
+      "reserved_calls": 180,
+      "settled_calls": 180,
+      "pending_calls": 0
+    }
+  },
+  "independent_recount": {
+    "code_sha": "035aa9c56b473a391bcb6fe899aa5507b85f3a4f",
+    "dataset_courses": 3,
+    "dataset_sessions": 12,
+    "dataset_turns": 60,
+    "development_turns": 40,
+    "holdout_turns": 20,
+    "declared_context_turns": 40,
+    "task_types": {
+      "fact_and_procedure": 2,
+      "false_premise": 12,
+      "contextual_application": 8,
+      "insufficient_evidence": 10,
+      "procedure": 4,
+      "worked_example": 2,
+      "contextual_comparison": 3,
+      "procedure_and_interpretation": 1,
+      "out_of_scope": 5,
+      "contextual_synthesis": 3,
+      "error_diagnosis": 2,
+      "fact_and_redesign": 1,
+      "source_qualification": 1,
+      "contextual_explanation": 1,
+      "contextual_recovery": 1,
+      "contextual_repair": 1,
+      "procedure_and_evidence": 1,
+      "source_interpretation": 1,
+      "synthesis": 1
+    },
+    "selected_sessions": [
+      "python-01",
+      "python-02",
+      "python-03",
+      "python-04",
+      "sheets-01",
+      "sheets-02",
+      "sheets-03",
+      "sheets-04",
+      "sql-01",
+      "sql-02",
+      "sql-03",
+      "sql-04"
+    ],
+    "executed_turns": 60,
+    "statuses": {
+      "completed": 60
+    },
+    "requests": 180,
+    "ledger_events": 360,
+    "ledger_states": {
+      "reserved": 180,
+      "settled": 180
+    },
+    "pg_content_equal_events": 360,
+    "pg_compared_turns": 60,
+    "preexisting_state_unchanged": true,
+    "preexisting_state": {
+      "sessions": {
+        "rows": 200,
+        "sha256": "6dbe1d7e93c0609af886adfd23ee2ca246aec95b2146e6531742f1c81102ea75"
+      },
+      "turns": {
+        "rows": 954,
+        "sha256": "ad37d3cd8041d0d11ec7888e47f1c14307522a8ba71dbf58b304f14360e458a6"
+      },
+      "runs": {
+        "rows": 57,
+        "sha256": "0da24842f2162d14981791e82ac883b7ef58b935b25e7e4861dd946361e18ad7"
+      },
+      "events": {
+        "rows": 5573,
+        "sha256": "7932a35bc98f7b97dfcf5cd00f58ba36c6be3b599fff0a03dc0af7a7373ff357"
+      }
+    },
+    "selected_course_evidence_only": true,
+    "real_quality": "NOT_RUN",
+    "human_agreement": "NOT_RUN",
+    "real_tokens_and_cost": "NOT_RUN",
+    "learning_effect": "NOT_RUN"
+  },
+  "smoke": {
+    "code_sha": "035aa9c56b473a391bcb6fe899aa5507b85f3a4f",
+    "dataset_courses": 3,
+    "dataset_sessions": 12,
+    "dataset_turns": 60,
+    "development_turns": 40,
+    "holdout_turns": 20,
+    "declared_context_turns": 40,
+    "task_types": {
+      "fact_and_procedure": 2,
+      "false_premise": 12,
+      "contextual_application": 8,
+      "insufficient_evidence": 10,
+      "procedure": 4,
+      "worked_example": 2,
+      "contextual_comparison": 3,
+      "procedure_and_interpretation": 1,
+      "out_of_scope": 5,
+      "contextual_synthesis": 3,
+      "error_diagnosis": 2,
+      "fact_and_redesign": 1,
+      "source_qualification": 1,
+      "contextual_explanation": 1,
+      "contextual_recovery": 1,
+      "contextual_repair": 1,
+      "procedure_and_evidence": 1,
+      "source_interpretation": 1,
+      "synthesis": 1
+    },
+    "selected_sessions": [
+      "python-01"
+    ],
+    "executed_turns": 4,
+    "statuses": {
+      "completed": 4
+    },
+    "requests": 12,
+    "ledger_events": 24,
+    "ledger_states": {
+      "reserved": 12,
+      "settled": 12
+    },
+    "pg_content_equal_events": 24,
+    "pg_compared_turns": 4,
+    "preexisting_state_unchanged": true,
+    "preexisting_state": {
+      "sessions": {
+        "rows": 200,
+        "sha256": "6dbe1d7e93c0609af886adfd23ee2ca246aec95b2146e6531742f1c81102ea75"
+      },
+      "turns": {
+        "rows": 954,
+        "sha256": "ad37d3cd8041d0d11ec7888e47f1c14307522a8ba71dbf58b304f14360e458a6"
+      },
+      "runs": {
+        "rows": 57,
+        "sha256": "0da24842f2162d14981791e82ac883b7ef58b935b25e7e4861dd946361e18ad7"
+      },
+      "events": {
+        "rows": 5573,
+        "sha256": "7932a35bc98f7b97dfcf5cd00f58ba36c6be3b599fff0a03dc0af7a7373ff357"
+      }
+    },
+    "selected_course_evidence_only": true,
+    "real_quality": "NOT_RUN",
+    "human_agreement": "NOT_RUN",
+    "real_tokens_and_cost": "NOT_RUN",
+    "learning_effect": "NOT_RUN"
+  },
+  "blind_review": {
+    "code_sha": "40569c6fdd00737ac7bd6ba6e24d9358bced1d09",
+    "primary": 60,
+    "independent_overlap": 12,
+    "packet_replay_byte_equal": true,
+    "source_notices_included": true,
+    "model_identity_fields_absent": true,
+    "completed_annotations": 0,
+    "human_scores_status": "NOT_RUN",
+    "quality_status": "NOT_RUN",
+    "valid_model_human_pairs": 0,
+    "valid_independent_human_pairs": 0,
+    "expected_answer_denominator": 45,
+    "expected_abstention_denominator": 15,
+    "context_denominator": 40,
+    "packets": {
+      "A": "f1f11455c7e7ace053985a46fcafd0f697b59a5fc99f15ae85fe0d786bc73ec3",
+      "B": "bb60f193aaa82a62dcd0c2e8869d49c99d5c2a94ebee56b2ca530c1a61548947"
+    }
+  },
+  "test_supervisor": {
+    "status": "SUCCEEDED",
+    "started_at_utc": "2026-11-07T09:27:48.985760+00:00",
+    "runner_pid": 415014,
+    "runner_start_ticks": 542208,
+    "cwd": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+    "executable": "python",
+    "argv_sha256": "76c3c102a39b47967b140d71798a50efd760d384c6f96a3cc4a61831cf20c095",
+    "timeout_seconds": 120.0,
+    "grace_seconds": 2,
+    "cleanup_seconds": 3,
+    "child_returncode": 0,
+    "exit_code": 0,
+    "log_path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/dev-checks/tutor-public-tests-r2-20261107/output.log",
+    "disk_before": {
+      "used_bytes": 211904024576,
+      "available_bytes": 46985572352,
+      "allowed": true
+    },
+    "child_pid": 415028,
+    "pgid": 415028,
+    "child_start_ticks": 542214,
+    "cleanup": {
+      "pgid": 415028,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "finished_at_utc": "2026-11-07T09:27:54.145641+00:00",
+    "elapsed_seconds": 5.159900362999906,
+    "disk_after": {
+      "used_bytes": 211907567616,
+      "available_bytes": 46982029312,
+      "allowed": true
+    },
+    "log_sha256": "754eb544c897d4c2e5a7fdfad966ffbf8c8e3f54e8f4b842ffc22d0d2963fa9f"
+  },
+  "artifacts": {
+    "environment-before.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/environment-before.json",
+      "sha256": "d00728df1f7d13e211188b2a4cf2e930810c4e372a96c23e756d97e2ee0b1a95"
+    },
+    "baseline.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/baseline.json",
+      "sha256": "803d270321411fc0b7a1c68bbe3199524de1dde38579df86c564874b6efab341"
+    },
+    "independent_check.py": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/independent_check.py",
+      "sha256": "ddd330f86f8bb7f53106b110f96bb6a832a9f2cbd0e6228cd6da726e7d2a432e"
+    },
+    "review_roundtrip.py": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/review_roundtrip.py",
+      "sha256": "46d324ec6284523ee240ac6df76f603f8d63fd8ee60841cf9df16bf39e4ae374"
+    },
+    "verify_saved_review.py": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/verify_saved_review.py",
+      "sha256": "f17f1917d73a9ecd121804fcc357d4c3e5130e669e2e45c3865af4ceb19fb8c7"
+    },
+    "independent-full.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/independent-full.json",
+      "sha256": "baa110e606c390e0ceb31a1f79dc00961d1b13ce5f94b3e29443d59c069813fe"
+    },
+    "independent-smoke.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/independent-smoke.json",
+      "sha256": "fe255ad3f8d6d067f49f87cebd41723859ff50bd390951011145048bba95efda"
+    },
+    "blind-verification.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/blind-verification.json",
+      "sha256": "23608ac14bf324902e8bcca126214e489230f00aaaa7cba49352b417ce5ce1fd"
+    },
+    "blind-scores-r2-20261107.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/blind-scores-r2-20261107.json",
+      "sha256": "3fd09725addaaa5bc53ba1980ed2abf777bb38eac4fb6c2de5248de958f81b47"
+    },
+    "tutor-public-full-20261107": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/dev-checks/tutor-public-full-20261107/run.json",
+      "sha256": "a12c6152a2b3fe1de7d426a19fbe40ddbbd8de7b6d28c22124536fc6a2a0df12"
+    },
+    "tutor-public-smoke-r2-20261107": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/dev-checks/tutor-public-smoke-r2-20261107/run.json",
+      "sha256": "5e45744ead92243ffeb3557415438bb1158bf7c7c2e74fba082cf866a87290e6"
+    },
+    "tutor-public-tests-r2-20261107": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/dev-checks/tutor-public-tests-r2-20261107/run.json",
+      "sha256": "6dc1b99d886c9fa99abfa3ea2ba077b21d6dfc1da317945b4968f30bac91a71d"
+    },
+    "environment-after.json": {
+      "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/environment-after.json",
+      "sha256": "544891c3f90741bf5da591bf3eac16c35cbf9eff3a4d0ad8673c150a0571da0d"
+    }
+  },
+  "preserved_failed_trial": {
+    "path": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-public-v1/pubv1-smoke-20261107",
+    "code_sha": "af1632f",
+    "failure": "Nullable success-review result used in sum; fixed in 035aa9c. Four raw turns and their calls/ledgers retained. No summary was emitted by this failed trial."
+  },
+  "not_run": [
+    "REAL_TUTOR_QUALITY",
+    "REAL_CITATION_SUPPORT_ACCURACY",
+    "REAL_CITATION_COVERAGE",
+    "INDEPENDENT_EXPERT_LABELS",
+    "REAL_REVIEWER",
+    "HUMAN_AGREEMENT_KAPPA",
+    "REAL_TOKENS",
+    "REAL_COST",
+    "LEARNING_EFFECT",
+    "PAID_TRIAL"
+  ],
+  "future_prices_and_authorized_budget": "UNKNOWN_UNCONFIRMED"
+}

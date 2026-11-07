@@ -100,7 +100,7 @@ agent-service/.venv/bin/python eval/tutor-scale/safe_exec.py \
 Run from repository root with fresh output/network names. `--split` is required. Repeat `--course`/`--session`
 for exact IDs. Unknown, duplicate, empty or cross-split choices fail before ledger creation. No turn truncation,
 budget-derived scope or full-suite fallback. The safe launcher strips provider/proxy/tracing environment and
-blocks non-test egress. Longer checks can use the existing bounded supervisor documented in
+blocks non-test Python socket egress. The fence is not a host-wide packet capture; libpq connections are verified separately through PG records. Longer checks can use the existing bounded supervisor documented in
 [v2](../tutor-scale-v2/README.md).
 
 The 3..240 total request ceiling is conservatively divided across selected courses. Each shard retains the
