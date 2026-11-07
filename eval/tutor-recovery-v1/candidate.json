@@ -1,0 +1,15 @@
+{
+  "candidate": "p8-tutor-repair-context-v12-development",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.repair_context_runtime:RepairContextTutorRuntime",
+  "parent_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "context_version": "adjacent-source-passages-v1-with-kept-format-repair-view-v1",
+  "source_projection": "Unchanged v11 PassageAuthority",
+  "default_registration": false,
+  "live_authorized": false,
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/repair_context_runtime.py": "b24e9dc90624697a4656ef125a5469efa1131a5c632b9657060e439300bb0a56",
+    "eval/tutor-recovery-v1/contract.py": "e254cd5eb4ab5572bf67d854c45714b98df4631b43d498630ec375a195e8856f",
+    "eval/tutor-recovery-v1/session_driver.py": "aef1e6ac6cb004b2cf1dab24214040b00f8d283e509c5bd7f05a53eca1272f12",
+    "eval/tutor-recovery-v1/replay_support.py": "6ea63040c201d3b9a208cc2df3cd7d199a295d59cdb99d95a046efd3f10ed4ac"
+  }
+}
