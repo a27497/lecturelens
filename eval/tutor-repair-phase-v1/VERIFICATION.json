@@ -1,0 +1,738 @@
+{
+  "phase": "tutor-repair-phase-v1",
+  "starting_sha": "7c913ecb2ccd3756c78d2126b90e63ee4221ccfd",
+  "implementation_sha": "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047",
+  "delivery_sha": "Commit containing REPORT.md; final handoff provides its exact SHA.",
+  "candidate": "p8-tutor-bounded-v15-development",
+  "candidate_manifest_sha256": "fe805deee6282e5cd0993b48d76d3500103a3933a36da3e2d5aab919b6955e30",
+  "candidate_hashed_file_count": 12,
+  "parent_frozen_tutor_sources_unchanged": true,
+  "historical_paths_and_ci_unchanged": true,
+  "default_identity_changed": false,
+  "database_migration": false,
+  "real_calls": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "new_cost_usd": "0",
+  "quality_status": {
+    "real_quality_improvement": "NOT_RUN",
+    "cost_optimization": "NOT_RUN",
+    "human_agreement": "NOT_RUN",
+    "SQL_holdout": "NOT_RUN",
+    "scaling": "NOT_RUN",
+    "learning_effects": "NOT_RUN",
+    "prospective_candidate_execution": "NOT_RUN"
+  },
+  "readiness": {
+    "dispatch": "BLOCKED_NO_FRESH_GRANT_NO_INDEPENDENT_REFERENCE_REVIEW_NO_FROZEN_LIVE_ENTRY",
+    "quality_acceptance": "BLOCKED_A03_A12_AND_NOT_RUN_REAL_EVIDENCE",
+    "release": "NOT_AUTHORIZED"
+  },
+  "issue_register": [
+    {
+      "id": "A01",
+      "priority": "P0",
+      "status": "FIXED_NEW_CONTRACT"
+    },
+    {
+      "id": "A02",
+      "priority": "P0",
+      "status": "PARTIALLY_FIXED"
+    },
+    {
+      "id": "A03",
+      "priority": "P1",
+      "status": "PARTIALLY_FIXED"
+    },
+    {
+      "id": "A04",
+      "priority": "P1",
+      "status": "PARTIALLY_FIXED_LEGACY_REMAINS"
+    },
+    {
+      "id": "A05",
+      "priority": "P1",
+      "status": "PARTIALLY_FIXED_LEGACY_REMAINS"
+    },
+    {
+      "id": "A06",
+      "priority": "P1",
+      "status": "PARTIALLY_FIXED_OLD_DEFAULT_REMAINS"
+    },
+    {
+      "id": "A07",
+      "priority": "P1",
+      "status": "FIXED_FRONTEND"
+    },
+    {
+      "id": "A08",
+      "priority": "P2",
+      "status": "FIXED_NEW_CONTEXT_PATH"
+    },
+    {
+      "id": "A09",
+      "priority": "P2",
+      "status": "FIXED_NEW_OFFLINE_RETRIEVAL_PATH"
+    },
+    {
+      "id": "A10",
+      "priority": "P2",
+      "status": "PARTIALLY_FIXED_SOURCE_TRUTH_DESIGN_BOUNDARY"
+    },
+    {
+      "id": "A11",
+      "priority": "P2",
+      "status": "FIXED_NEW_ACCOUNTING_PATH"
+    },
+    {
+      "id": "A12",
+      "priority": "P2",
+      "status": "PARTIALLY_FIXED"
+    }
+  ],
+  "issue_totals": {
+    "fixed_in_explicit_scope": 5,
+    "partially_fixed": 7,
+    "unfixed_only": 0,
+    "reclassified_nondefect": 0
+  },
+  "final_supervised_checks": {
+    "final-v15-runtime": {
+      "name": "final-v15-runtime",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-v15-final",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-repair-phase-20261108/v15-final"
+      ],
+      "code": 0,
+      "seconds": 37.354
+    },
+    "final-java-cross": {
+      "name": "final-java-cross",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-final",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 16.879
+    },
+    "final-legacy-mechanisms": {
+      "name": "final-legacy-mechanisms",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-legacy",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/legacy-mechanisms"
+      ],
+      "code": 0,
+      "seconds": 243.224
+    },
+    "final-historical-replay": {
+      "name": "final-historical-replay",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-historical",
+        "scripts/dev/check_tutor_zero_cost_audit.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/historical-replay"
+      ],
+      "code": 0,
+      "seconds": 60.903
+    },
+    "final-vue": {
+      "name": "final-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-repair-phase-20261108/vue-final-results.json"
+      ],
+      "code": 0,
+      "seconds": 45.322
+    },
+    "final-vue-types": {
+      "name": "final-vue-types",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vue-tsc/bin/vue-tsc.js",
+        "-b",
+        "frontend/tsconfig.json"
+      ],
+      "code": 0,
+      "seconds": 28.245
+    },
+    "final-v15-mock16": {
+      "name": "final-v15-mock16",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-mock16",
+        "scripts/dev/run_tutor_phase_mock.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/v15-mock16"
+      ],
+      "code": 0,
+      "seconds": 10.498
+    }
+  },
+  "final_test_results": {
+    "new_python": {
+      "passed": 43,
+      "skipped": 0
+    },
+    "inherited_python": {
+      "passed": 249,
+      "skipped": 0
+    },
+    "historical_replay_diagnostics": {
+      "passed": 25,
+      "skipped": 0
+    },
+    "java": {
+      "passed": 35,
+      "skipped": 0
+    },
+    "vue": {
+      "passed": 343,
+      "pending": 0
+    },
+    "vue_types": {
+      "exit_code": 0
+    }
+  },
+  "lint": {
+    "status": "FAIL_STYLE_ONLY_DEFERRED_FROZEN_BYTES_RETAINED",
+    "exit_code": 1,
+    "diagnostics": 9,
+    "import_order_or_format": 6,
+    "dict_literal_suggestions": 3,
+    "exact_command_record": ".data/tutor-repair-phase-20261108/ruff-final.json"
+  },
+  "historical_replay": {
+    "exact_request_bodies": 108,
+    "scheduled_outcomes_equal": 48,
+    "new_pg_jsonl_events_equal": 216,
+    "historical_manifest_files_unchanged": 2053,
+    "original_raw_response_bytes_available": false,
+    "reconstructed_envelopes_from_retained_parsed_proposals_and_usage": true,
+    "preserved_correct_scheduled": {
+      "v12": [
+        13,
+        16
+      ],
+      "v13": [
+        11,
+        16
+      ],
+      "v14": [
+        9,
+        16
+      ]
+    },
+    "original_failures_preserved": true,
+    "new_real_generation_success": "NOT_RUN"
+  },
+  "mock16": {
+    "candidate_sha256": "fe805deee6282e5cd0993b48d76d3500103a3933a36da3e2d5aab919b6955e30",
+    "expected": 16,
+    "completed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "requests": 32,
+    "ledger": {
+      "calls": 32,
+      "nano_usd": 3264000,
+      "pending": 0,
+      "blocked": null
+    },
+    "usage_kind": "SIMULATED_NOT_NEW_CHARGES",
+    "quality": "NOT_RUN",
+    "real_model_calls": 0,
+    "embedding_calls": 0,
+    "reviewer_calls": 0,
+    "cost_usd": "0"
+  },
+  "cross_service": {
+    "actual": "Java controllers -> signed StudyTransport -> loopback Python new factory -> real isolated PG -> signed Java EvidenceAuthority",
+    "synthetic": [
+      "auth identity",
+      "H2 business facts",
+      "source/retrieval",
+      "SourcePreservingMock"
+    ],
+    "checks": [
+      "full raw code and values[0] retained",
+      "stored canonical citations",
+      "same client ID replay without new calls",
+      "completed cancellation preserves outcome",
+      "revision409",
+      "other owner404"
+    ],
+    "full_browser": "NOT_RUN",
+    "inflight_cancel_across_whole_browser_stack": "NOT_CHECKED"
+  },
+  "prospective_materials": {
+    "lock": "eval/tutor-repair-phase-v1/prospective-lock.json",
+    "packet_sha256": "094741e090688024cfb5e6120eb340f4902012977e3ddd4c885c0be614d1b81e",
+    "positions": 16,
+    "candidate_execution": "NOT_RUN",
+    "authorship": "SAME_CODEX_AUTHOR_AFTER_CANDIDATE_FREEZE_NOT_INDEPENDENT_HUMAN_GOLD",
+    "quotes_and_arithmetic_structural_check": ".data/tutor-repair-phase-20261108/prospective-structural-check.json",
+    "human_ratings": "UNASSIGNED_NULL"
+  },
+  "future_proposal": {
+    "document": "eval/tutor-repair-phase-v1/FUTURE_VALIDATION.md",
+    "requested_model_id": "deepseek-flash",
+    "availability_pricing": "UNVERIFIED_FUTURE_PREFLIGHT_REQUIRED",
+    "immutable_backend": "UNKNOWN",
+    "positions": 16,
+    "max_attempts": 80,
+    "local_reserved_plus_settled_ceiling_usd": "0.70",
+    "transport_retries": 0,
+    "reviewer_calls": 0,
+    "embedding_calls": 0,
+    "authorized": false,
+    "executed": false
+  },
+  "retained_failed_supervisors": {
+    "phase3-complete": {
+      "name": "phase3-complete",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase3-complete",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase3-complete"
+      ],
+      "code": 1,
+      "seconds": 8.548
+    },
+    "phase5-cross-corrected": {
+      "name": "phase5-cross-corrected",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-corrected",
+        "-Dtest=TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 1,
+      "seconds": 24.529
+    },
+    "phase5-cross-service": {
+      "name": "phase5-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-initial",
+        "-Dtest=TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 1,
+      "seconds": 25.409
+    }
+  },
+  "all_stage_terminal_records": {
+    "final-historical-replay": {
+      "name": "final-historical-replay",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-historical",
+        "scripts/dev/check_tutor_zero_cost_audit.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/historical-replay"
+      ],
+      "code": 0,
+      "seconds": 60.903
+    },
+    "final-java-cross": {
+      "name": "final-java-cross",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-final",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest,TutorTransportTest,StudyControllerTest,TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 16.879
+    },
+    "final-legacy-mechanisms": {
+      "name": "final-legacy-mechanisms",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-legacy",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/legacy-mechanisms"
+      ],
+      "code": 0,
+      "seconds": 243.224
+    },
+    "final-v15-mock16": {
+      "name": "final-v15-mock16",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-mock16",
+        "scripts/dev/run_tutor_phase_mock.py",
+        "--output",
+        ".data/tutor-repair-phase-20261108/v15-mock16"
+      ],
+      "code": 0,
+      "seconds": 10.498
+    },
+    "final-v15-runtime": {
+      "name": "final-v15-runtime",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-v15-final",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-repair-phase-20261108/v15-final"
+      ],
+      "code": 0,
+      "seconds": 37.354
+    },
+    "final-vue-types": {
+      "name": "final-vue-types",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vue-tsc/bin/vue-tsc.js",
+        "-b",
+        "frontend/tsconfig.json"
+      ],
+      "code": 0,
+      "seconds": 28.245
+    },
+    "final-vue": {
+      "name": "final-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-repair-phase-20261108/vue-final-results.json"
+      ],
+      "code": 0,
+      "seconds": 45.322
+    },
+    "phase1-delivery": {
+      "name": "phase1-delivery",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase1",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase1"
+      ],
+      "code": 0,
+      "seconds": 2.972
+    },
+    "phase2-java": {
+      "name": "phase2-java",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtest=TutorCompleteEvidenceTest,TutorEvidenceAuditTest,StudyAuthorityTest,TutorControllerTest",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 27.444
+    },
+    "phase2-python": {
+      "name": "phase2-python",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase2",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase2"
+      ],
+      "code": 0,
+      "seconds": 5.589
+    },
+    "phase3-complete": {
+      "name": "phase3-complete",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase3-complete",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase3-complete"
+      ],
+      "code": 1,
+      "seconds": 8.548
+    },
+    "phase3-corrected": {
+      "name": "phase3-corrected",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase3-corrected",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase3-corrected"
+      ],
+      "code": 0,
+      "seconds": 8.591
+    },
+    "phase3-semantic": {
+      "name": "phase3-semantic",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase3",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase3"
+      ],
+      "code": 0,
+      "seconds": 7.938
+    },
+    "phase4-python": {
+      "name": "phase4-python",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase4",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase4"
+      ],
+      "code": 0,
+      "seconds": 11.965
+    },
+    "phase4-settlement": {
+      "name": "phase4-settlement",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase4-settlement",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase4-settlement"
+      ],
+      "code": 0,
+      "seconds": 12.649
+    },
+    "phase4-vue-complete": {
+      "name": "phase4-vue-complete",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "tests/diagnostics/tutorZeroCostAudit.test.ts",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-repair-phase-20261108/vue-complete-results.json"
+      ],
+      "code": 0,
+      "seconds": 1.755
+    },
+    "phase4-vue": {
+      "name": "phase4-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "tests/diagnostics/tutorZeroCostAudit.test.ts",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-repair-phase-20261108/vue-results.json"
+      ],
+      "code": 0,
+      "seconds": 1.93
+    },
+    "phase5-cross-corrected": {
+      "name": "phase5-cross-corrected",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-corrected",
+        "-Dtest=TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 1,
+      "seconds": 24.529
+    },
+    "phase5-cross-export": {
+      "name": "phase5-cross-export",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-export",
+        "-Dtest=TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 13.848
+    },
+    "phase5-cross-service": {
+      "name": "phase5-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service-initial",
+        "-Dtest=TutorPhaseCrossServiceIT",
+        "test"
+      ],
+      "code": 1,
+      "seconds": 25.409
+    },
+    "phase5-python": {
+      "name": "phase5-python",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-repair-phase-20261108/network-phase5",
+        "scripts/dev/check_tutor_phase.py",
+        "--stage",
+        "delivery or evidence or semantic or reliability",
+        "--output",
+        ".data/tutor-repair-phase-20261108/phase5"
+      ],
+      "code": 0,
+      "seconds": 19.747
+    }
+  },
+  "network_boundary": "Python audit hooks exclude native libpq and Java/Node; not OS-wide isolation. Mock transports and explicit loopback services used. No provider requests.",
+  "cleanup": {
+    "removed_only_container": "f8656ddbe576daf8cbf14ab44830d0112eef20fda90d6b995fa89a62331f9dfa",
+    "owned_label_verified_before_removal": "tutor-repair-phase-20261108",
+    "nonpublic_application_schemas_before_cleanup": 0,
+    "public_application_tables": 0,
+    "original_running_containers": 23,
+    "original_containers_preserved": 23,
+    "remaining_extra_container_ids": [],
+    "loopback_port_25841_closed": true,
+    "failed_cross_service_schemas_exported_before_drop": 2,
+    "private_evidence_preserved": true,
+    "cleanup_check_correction": "Initial post-removal comparison used short original IDs against full current IDs and failed. Corrected comparison matches unique ID prefixes; all original services still running."
+  },
+  "private_evidence_root": ".data/tutor-repair-phase-20261108",
+  "private_evidence_manifest": {
+    "path": ".data/tutor-repair-phase-20261108/evidence-manifest.json",
+    "sha256": "3323167ab0ad6110e09d789bd9f6319569409de285cfaa338b5954808fc87417",
+    "file_count": 1357
+  },
+  "key_artifacts": {
+    ".data/tutor-repair-phase-20261108/v15-final/results.xml": "92319d3fb24d7b48d88e27f073d10ac03ced8e039786306294961bafb97cfa98",
+    ".data/tutor-repair-phase-20261108/legacy-mechanisms/results.xml": "c467d65db21f1cb5f749bef938282d10cffd74c918d980e922151fcdbd2040df",
+    ".data/tutor-repair-phase-20261108/historical-replay/results.xml": "e678214972948ebc47bc0847054dfcc32a444ef1203720c4c3c1953d9f390143",
+    ".data/tutor-repair-phase-20261108/vue-final-results.json": "635a2346eca86940ddb11cd9975d08aa85f8e29fb961a8d3ecc2219e45ef5da8",
+    ".data/tutor-repair-phase-20261108/java-final-summary.json": "dbd0972a21457fade1abd55a3ef8be5be127433e9d095687994b9acfba6d536b",
+    ".data/tutor-repair-phase-20261108/cross-service-final/cross-service/runtime.json": "24aae3317a0bca225fcae94554af5ea3e6e3152b8db03ae07b532ce730fd64c9",
+    ".data/tutor-repair-phase-20261108/cross-service-final/cross-service-view.json": "9ebdb5cf9e32e11d2b02b93ecbc550ef6b863269af9e7e1c23bce973d6429bc9",
+    ".data/tutor-repair-phase-20261108/cross-service-final/cross-service-python.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".data/tutor-repair-phase-20261108/v15-mock16/summary.json": "4e44c495f232ad660935836992873f0a45c1982309416000dcecb88ee57ab525",
+    ".data/tutor-repair-phase-20261108/v15-mock16/outcomes.json": "04b2d12cb49bc2c565c0263c83a824c9804aebc37f80c1c3159c6552174fffa8",
+    ".data/tutor-repair-phase-20261108/v15-mock16/calls.jsonl": "c7a98ac3d97fb273e76955d69a17f8e4628385c7dbe17d6d1e8bbe3fb60a6e97",
+    ".data/tutor-repair-phase-20261108/v15-mock16/ledger.jsonl": "d9c6c0fd890b6477dc0b8f49b93c2b364032dec63f16206fe001115ae139818b",
+    ".data/tutor-repair-phase-20261108/historical-replay/v12-replay-check.json": "91b3fe9d8fd4d03bf1eed77de7d4bfc9351f61a8816633bcb8fec29fc0c2594b",
+    ".data/tutor-repair-phase-20261108/historical-replay/v13-replay-check.json": "b364c1f5825f5498ad75b50c37ade1bd7323acf06a3310ea49785b29ee0aa3a5",
+    ".data/tutor-repair-phase-20261108/historical-replay/v14-replay-check.json": "d3b24b34c5a0e27ca07ac9ab653acc404c12be34c41065dd848a5037e65d500e",
+    ".data/tutor-repair-phase-20261108/prospective-structural-check.json": "46c2a0c8beaf3cf30ea531cf5c844c7c8544eb204d91d50574b5dbf64c650bce",
+    ".data/tutor-repair-phase-20261108/cleanup.json": "e3f5ee618558160072d6a5e5523f2da30013b7f7c4d2f218f81b0969e9fff5ee",
+    ".data/tutor-repair-phase-20261108/ruff-final.json": "ad1ec11ed183051089a5b20ff23f2e590da90fb71b96bc14f87fd60cde86e7c5",
+    ".data/tutor-repair-phase-20261108/ruff-final-diagnostics.json": "6271b88efc3635f1a4338fd9852a9becbb5b9427868c8bc70c3441d2621c3659",
+    ".data/tutor-repair-phase-20261108/failed-cross-schema-export.json": "d74c0400a69bfacbb436c762a94e0cb466fc331e9837bbd28344b8ea73fe8a0b"
+  },
+  "reviewed_documents": {
+    "eval/tutor-repair-phase-v1/candidate.json": "fe805deee6282e5cd0993b48d76d3500103a3933a36da3e2d5aab919b6955e30",
+    "eval/tutor-repair-phase-v1/contract-v2.json": "ace501ecfb81a163bd0eb8fbba90e52be2bed30920c6d716cd0edc866c29eb48",
+    "eval/tutor-repair-phase-v1/prospective-materials.json": "094741e090688024cfb5e6120eb340f4902012977e3ddd4c885c0be614d1b81e",
+    "eval/tutor-repair-phase-v1/prospective-lock.json": "074f03d2cc099aefc6f656701995507300aa5326011ded65dc20532fc40ebc1f",
+    "eval/tutor-repair-phase-v1/independent-rating-template.json": "529256d9ecc3736d216fcf272904973116690ecd1a1ea51392296a9611d9bccd",
+    "eval/tutor-repair-phase-v1/FINAL_REVIEW.md": "aa717e9622a5f716fe8e2806f42886a84272578b11567bd4b2aea378ff5f3229",
+    "eval/tutor-repair-phase-v1/FUTURE_VALIDATION.md": "bdfae4687ea604d731a6b853b88d3d269f565825787c03361c14a7366b9e7822",
+    "eval/tutor-repair-phase-v1/REPORT.md": "29b8369ec37915332df5a482630895b25e2f8196097e04824204c2334881f6ed"
+  },
+  "substage_commits": [
+    "5f1745bd4a24420c9a094471519dd78ab9169037 Add versioned Tutor obligations and bounded canonical-citation blocks",
+    "a6a26b217f715239459c32e60a5c38f04a117c66 Negotiate bounded complete Evidence and preserve Mock source syntax",
+    "402d46a14107b14b31c570c86d8e7cfbedfde875 Preserve full Tutor context and add bounded support observations",
+    "cf02559f799f6df131e510001ae4a80e6735b661 Keep attribution labels within the unchanged evaluation character limit",
+    "0a0738c03ed65f207b0b2416bae682ecfd822b8b Reconcile Tutor recovery and persist late call accounting without publishing",
+    "c46e0ed363d32aaa18a3fcfd35b93eeef20ad047 Freeze the bounded Tutor candidate and validate the cross-service Mock path"
+  ],
+  "stop": "No push/PR/merge/deployment/default switch or automatic paid continuation. Await approval."
+}
