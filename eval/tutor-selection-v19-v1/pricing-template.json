@@ -1,0 +1,10 @@
+{
+  "requested_model": "deepseek-flash",
+  "configuration_available_verified": false,
+  "input_nano_usd_per_token": 300,
+  "output_nano_usd_per_token": 1200,
+  "official_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "reviewed_utc": null,
+  "no_cache_peak_rates_cover_current_prices": false,
+  "note": "Not a dispatch receipt. Before the approved one-shot run, check current official documentation without credentials. Account/API availability is NOT_RUN and may fail the first bounded request."
+}

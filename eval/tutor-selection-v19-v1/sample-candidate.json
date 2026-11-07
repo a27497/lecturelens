@@ -1,0 +1,65 @@
+{
+  "version": "v18-three-turn-development-smoke-v1",
+  "usage": "DEVELOPMENT_EXPOSED_KNOWN_PUBLIC_COURSE_NOT_HOLDOUT",
+  "author": "Codex (same author as implementation and development tests); no independent human review",
+  "gates": {
+    "scheduled": 3,
+    "all_required_points": true,
+    "max_text_codepoints": 4096,
+    "max_evaluation_codepoints": 1024,
+    "max_distinct_ids": 4,
+    "max_format_repairs_per_turn": 1,
+    "no_unsupported_claims": true,
+    "no_solution_in_socratic": true,
+    "no_truncation_or_missing_required_content": true
+  },
+  "sessions": [
+    {
+      "dialogue_id": "v18-loop-teaching-smoke",
+      "course_id": "carpentries-python",
+      "turns": [
+        {
+          "turn_key": "v18-loop-teaching-smoke:1",
+          "text": "Explain the supplied loop lesson to a beginner in four connected parts: why a loop replaces repeated indexed print statements; trace an explicit variation starting length at 2 and visiting Ada then Grace; show that variation as commented Python code and explain inside versus outside printing; explain names[0] and names[1] under this list. State the assumptions and distinguish the changed-example derivation from the original course output. Keep all requested parts and cite their sources.",
+          "socratic": false,
+          "depends_on_turns": [],
+          "reference_points": [
+            "A loop applies its body once per element without a separate indexed print for each item.",
+            "Under the explicitly changed start2/two-name example:2 then3 then4, final4; do not substitute the original zero/three-name trace.",
+            "Valid commented Python with names list, length initially2, increment inside loop, final print outside. Preserve brackets and indentation.",
+            "Outside print occurs once after loop; inside print occurs per visit (3,4 in this variation).",
+            "names[0] is Ada, names[1] is Grace under the supplied list; distinguish this derivation from the original source and from claimed execution."
+          ]
+        },
+        {
+          "turn_key": "v18-loop-teaching-smoke:2",
+          "text": "Keep helping with that changed counting example. Ask me one guiding question about whether the final print is inside or outside the loop; do not give the trace or final value.",
+          "socratic": true,
+          "depends_on_turns": [
+            1
+          ],
+          "reference_points": [
+            "One question directs attention to indentation/body boundary and the location of final print.",
+            "Do not give final4, intermediate values, complete code or full solution in answer/feedback.",
+            "Relevant current-turn citation; full source remains inspectable and may contain solutions."
+          ]
+        },
+        {
+          "turn_key": "v18-loop-teaching-smoke:3",
+          "text": "I think the final counter is3 because it changes only once, and the last print runs inside the loop. Correct both points and explain the changed trace.",
+          "socratic": false,
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "reference_points": [
+            "Use actual earlier changed input:initial2, Ada/Grace, two increments ending4.",
+            "Explain the current learner errors:one increment per visit, not once total; unindented final print outside, not inside.",
+            "Include specific feedback comparing the learner reply with source evidence, without inventing a grade or permanent mastery.",
+            "Answer and feedback retain relevant bound citations and source conditions; no unsupported execution assertion."
+          ]
+        }
+      ]
+    }
+  ]
+}
