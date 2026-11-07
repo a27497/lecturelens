@@ -1,0 +1,317 @@
+{
+  "version": "tutor-v14-live-v1",
+  "decision": "FAIL",
+  "assessment": "CODEX_NONBLIND_ORIGINAL_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "execution_code_sha": "81020d1abd7c89a995bf9eba153302af7481c71b",
+  "preflight_code_sha": "81020d1abd7c89a995bf9eba153302af7481c71b",
+  "prior_zero_cost_validation_code_sha": "4e30c1765e1efd354c2180a1849a8eb6d2336111",
+  "candidate": "p8-tutor-draft-repair-v14-development",
+  "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "model": {
+    "requested": "deepseek-flash",
+    "returned": {
+      "deepseek-flash": 32
+    },
+    "immutable_version": "UNKNOWN_MOVING_ALIAS",
+    "system_fingerprint": {
+      "bc19ba97cbe016479903222bb1578db6": 32
+    },
+    "supplier_request_header_id_present": 0,
+    "supplier_request_header_id_unknown": 32
+  },
+  "settings": {
+    "model": "deepseek-flash",
+    "route": "https://api.deepseek.com/chat/completions",
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 1200,
+    "reviewer": "off",
+    "concurrency": 1,
+    "transport_retries": 0,
+    "sdk_retries": 0,
+    "application_transport_retries": 0
+  },
+  "freeze_lock": "eval/tutor-v14-fresh-v1/freeze-lock.json",
+  "freeze_lock_sha256": "ba3d1b14dd410e770b2cdfd062e3c7042d93d70a32c27b61d871472aecb390a0",
+  "plan_sha256": "f28b9bae8fd653ed09922ec5a451a7b629e98b5c6c32dec45c6077027dfb2576",
+  "protocol": "v12-session-isolated-live-v1",
+  "protocol_sha256": "926f79b8f0c873b18ffab7d8efdaad9668f0ba605040fdba2070df126d4104e5",
+  "grading_rules_sha256": "6c08abb8ee86c647e0b4d1b1719b0867d92312af623f4c2d9e6d8665ea2942e8",
+  "source_hashes": {
+    "carpentries-python": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "carpentries-spreadsheets": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e"
+  },
+  "counts": {
+    "expected": 16,
+    "attempted": 12,
+    "completed": 10,
+    "failed": 2,
+    "skipped": 4,
+    "missing": 0,
+    "scorable": 10,
+    "semantically_scored": 10,
+    "all_positions_reviewed": 16,
+    "expected_answer": 12,
+    "expected_refusal": 4
+  },
+  "completed_judgments": {
+    "correct": 9,
+    "incorrect": 1,
+    "uncertain": 0
+  },
+  "metrics": {
+    "task_correctness": {
+      "numerator": 9,
+      "denominator": 16,
+      "value": 0.5625
+    },
+    "completed_answer_correctness": {
+      "numerator": 9,
+      "denominator": 10,
+      "value": 0.9
+    },
+    "per_course": {
+      "carpentries-python": {
+        "numerator": 8,
+        "denominator": 8,
+        "value": 1.0
+      },
+      "carpentries-spreadsheets": {
+        "numerator": 1,
+        "denominator": 8,
+        "value": 0.125
+      }
+    },
+    "critical": {
+      "numerator": 3,
+      "denominator": 3,
+      "value": 1.0
+    },
+    "clarification": {
+      "numerator": 1,
+      "denominator": 2,
+      "value": 0.5
+    },
+    "refusal": {
+      "numerator": 2,
+      "denominator": 4,
+      "value": 0.5
+    },
+    "refusal_observed": {
+      "numerator": 2,
+      "denominator": 2,
+      "value": 1.0
+    },
+    "context": {
+      "numerator": 6,
+      "denominator": 10,
+      "value": 0.6
+    },
+    "context_observed": {
+      "numerator": 6,
+      "denominator": 6,
+      "value": 1.0
+    },
+    "citation_support": {
+      "numerator": 36,
+      "denominator": 36,
+      "value": 1.0
+    },
+    "direct_citation_presence": {
+      "numerator": 35,
+      "denominator": 42,
+      "value": 0.8333333333333334
+    },
+    "supported_claim_coverage": {
+      "numerator": 42,
+      "denominator": 42,
+      "value": 1.0
+    },
+    "supported_claims_direct": {
+      "numerator": 35,
+      "denominator": 42,
+      "value": 0.8333333333333334
+    },
+    "expected_answer_full_supported": {
+      "numerator": 7,
+      "denominator": 12,
+      "value": 0.5833333333333334
+    },
+    "direct_only_full_supported": {
+      "numerator": 2,
+      "denominator": 12,
+      "value": 0.16666666666666666
+    },
+    "claims": {
+      "total": 47,
+      "requiring": 42,
+      "explicit_pairs": 36,
+      "unsupported_pairs": 0,
+      "uncertain_pairs": 0
+    }
+  },
+  "gates": {
+    "all16complete": false,
+    "all16reviewed": true,
+    "correct14of16": false,
+    "python7of8": true,
+    "sheets7of8": false,
+    "critical3of3": true,
+    "refusals4of4": false,
+    "clarifications2of2": false,
+    "context9of10": false,
+    "citation_support95": true,
+    "claim_coverage90": true,
+    "full_answers10of12": false
+  },
+  "repair": {
+    "attempted": 2,
+    "succeeded": 0,
+    "hard_text_chars": 1600,
+    "target_text_chars": 1200,
+    "lengths": [
+      {
+        "turn_key": "v14-sheets-portability:1",
+        "initial": 1982,
+        "repair": 1799,
+        "turn_reserved_proxy": 39463
+      },
+      {
+        "turn_key": "v14-sheets-lineends:3",
+        "initial": 1818,
+        "repair": 1633,
+        "turn_reserved_proxy": 48534
+      }
+    ],
+    "exact_rejected_draft_and_mapping_verified": true
+  },
+  "exclusivity": {
+    "unsupported_published_assertions": 0,
+    "published_answers_reviewed": 10,
+    "conditional_scope_probe_complete_correct": {
+      "numerator": 1,
+      "denominator": 2
+    },
+    "only_csv_clarification": "SKIPPED",
+    "some_only_windows_checklist": "FAILED_UNPUBLISHED",
+    "real_general_resolution": "NOT_ESTABLISHED"
+  },
+  "incomplete_answer": {
+    "turn_key": "v14-sheets-lineends:2",
+    "missing_required_point": "Excel reopening/parsing its export as a positive counterexample",
+    "source_lines": [
+      76,
+      78
+    ],
+    "frozen_reference_point_index": 1,
+    "initial_private_review_draft_preserved": true
+  },
+  "requests": {
+    "real_http": 32,
+    "channel_records": 32,
+    "http200": 32,
+    "settled": 32,
+    "events": 64,
+    "pending": 0,
+    "retries": 0,
+    "reviewer": 0,
+    "embedding": 0
+  },
+  "usage": {
+    "prompt_tokens": 122392,
+    "completion_tokens": 7862,
+    "total_tokens": 130254,
+    "prompt_cache_hit_tokens": 34560,
+    "prompt_cache_miss_tokens": 87832
+  },
+  "costs": {
+    "rate_calculated_cache_aware_offpeak_usd": "0.01799568",
+    "local_ledger_nano_usd": 46152000,
+    "local_ledger_usd": "0.046152",
+    "maximum_reserved_plus_settled_nano_usd": 50536200,
+    "actual_supplier_bill": "UNKNOWN_NOT_QUERIED"
+  },
+  "authorization": {
+    "max_real_requests": 80,
+    "max_local_reserved_plus_settled_usd": "0.70",
+    "scope": "ONE_FROZEN16_REAL_TRIAL",
+    "state": "ENDED_NO_CARRY_FORWARD"
+  },
+  "preflight": {
+    "command_record": ".data/tutor-v14-live-20261107/checks/v14-live-preflight.json",
+    "actual_entry": "eval/tutor-v14-fresh-v1/run_fresh.py",
+    "passed": 30,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "real_requests": 0,
+    "original_219_and_recovery_249_evidence_hashes_verified": true,
+    "recovery_artifact_files_verified": 2356
+  },
+  "execution": {
+    "command_record": ".data/tutor-v14-live-20261107/checks/v14-real-once.json",
+    "supervisor_exit": 1,
+    "supervisor_seconds": 65.619,
+    "single_dispatch_invocation": true,
+    "local_failures_continue_independent_session_observed": true,
+    "global_stop": false,
+    "repeat_dispatch": "NOT_RUN"
+  },
+  "raw_root": ".data/tutor-v14-live-20261107",
+  "run_path": ".data/tutor-v14-live-20261107/v14-frozen16-once",
+  "raw_manifest_sha256": "2b9c39428d10473f4d088badfbae93b17ab4e973a8660c4521b0dafcbafb06cd",
+  "raw_manifest_files": 358,
+  "report": "eval/tutor-v14-live-v1/REAL_REPORT.md",
+  "report_sha256": "3f93613d7f3af04d679163ccbc42d15a7455e10697686f760d0a5a793b5f0cd7",
+  "raw_http_response_bytes_retained": false,
+  "parsed_proposals_and_allowlisted_telemetry_retained": true,
+  "protected_files_unchanged": 32,
+  "prior_artifact_files_verified": {
+    "tutor-v14-asset-recovery-20261107": 2356,
+    "tutor-v14-real-20261107": 17,
+    "tutor-v13-resumed-20261107": 487
+  },
+  "cleanup": {
+    "finished_utc": "2026-11-07T15:48:04.096278+00:00",
+    "container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port25841_closed": true,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "original_services_running": 23,
+    "original_service_set_unchanged": true,
+    "no_other_service_stopped": true
+  },
+  "comparison": {
+    "prior_v13": {
+      "completed": 12,
+      "failed": 1,
+      "skipped": 3,
+      "missing": 0,
+      "correct_over_scheduled": [
+        11,
+        16
+      ],
+      "correct_over_completed": [
+        11,
+        12
+      ]
+    },
+    "new_tasks_and_candidate": true,
+    "same_stop_protocol": true,
+    "descriptive_only": true,
+    "old_answers_reused": false,
+    "strict_before_after_improvement": "NOT_ESTABLISHED"
+  },
+  "remaining_blockers": [
+    "Both sole format repairs still exceed text hard limit",
+    "One completed answer omits a frozen required counterexample"
+  ],
+  "NOT_RUN": [
+    "cost_optimization",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion",
+    "learning_effects"
+  ]
+}
