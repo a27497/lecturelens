@@ -67,3 +67,7 @@
 P8 runtime/channel, adds full-result accounting and preregistered 100-turn blind review with independent
 overlap. Mock execution, scoring fixtures and empty annotation roundtrips establish mechanics only;
 real quality, real human agreement, billing and learning outcomes remain NOT_RUN.
+
+[The v2 frozen development pilot](tutor-scale-v2/README.md) adds an explicit 20-turn development queue,
+a separate exhaustive failure checklist, and task/refusal/context scoring with full planned denominators.
+It preserves the original 320-turn data and random 100/20 protocol. Real execution and quality remain NOT_RUN.

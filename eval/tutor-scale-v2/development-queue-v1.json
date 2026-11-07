@@ -1,0 +1,48 @@
+{
+  "queue_version": "tutor-development-pilot-v1",
+  "dataset_version": "tutor-scale-synthetic-v2",
+  "dataset_lock_sha256": "68c3465b597218ee7c1a85b5842c11c42929744a4e9a03a68fe502a328608736",
+  "counts": {
+    "courses": 2,
+    "sessions": 4,
+    "turns": 20
+  },
+  "sessions": [
+    {
+      "dialogue_id": "queue-03",
+      "course_id": "queue",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "4c4550a99cbdc068c5f41affd0af657539980f626f95a8f053a94e14657b7623"
+    },
+    {
+      "dialogue_id": "queue-09",
+      "course_id": "queue",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "26332d595a156318722a89d973be156f4601fc70eb5f0ada1445479ccdf4b97f"
+    },
+    {
+      "dialogue_id": "ecology-02",
+      "course_id": "ecology",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "639bcbd4ae0f359a111aebeae2f4990286efa601c0e095e2d697150598c1c457"
+    },
+    {
+      "dialogue_id": "ecology-08",
+      "course_id": "ecology",
+      "split": "development",
+      "turns": 5,
+      "turns_sha256": "da0db98c63dc9b4c6f5f580606760b004d9f373f477fa19df05279cb1a96dad4"
+    }
+  ],
+  "review_overlap_turns": [
+    "queue-03:1",
+    "queue-03:2",
+    "queue-09:3",
+    "ecology-02:4",
+    "ecology-08:5"
+  ],
+  "scope_policy": "COMPLETE_DEVELOPMENT_SESSIONS_ONLY_NO_FALLBACK_NO_HOLDOUT"
+}
