@@ -1,0 +1,377 @@
+{
+  "status": "PASS_ZERO_COST_ACTUAL_ENTRY_AND_REGRESSION",
+  "actual_validation_version": "4e30c1765e1efd354c2180a1849a8eb6d2336111",
+  "candidate": "p8-tutor-draft-repair-v14-development",
+  "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "identity_and_tutor_behavior_changed": false,
+  "tests": {
+    "collected": 249,
+    "passed": 249,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "historical_219": 219,
+    "frozen_fresh_entry": 17,
+    "new_asset_guards": 13
+  },
+  "commands": {
+    "collection": {
+      "name": "v14-assets-collect-v2",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-asset-recovery-20261107/network-collect-v2",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-v14-asset-recovery-20261107/collection-v2",
+        "--collect-only"
+      ],
+      "code": 0,
+      "seconds": 2.069
+    },
+    "final": {
+      "name": "v14-assets-final-v2",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-asset-recovery-20261107/network-final-v2",
+        "scripts/dev/check_v14_assets.py",
+        "--output",
+        ".data/tutor-v14-asset-recovery-20261107/final-v2"
+      ],
+      "code": 0,
+      "seconds": 189.522
+    },
+    "targeted": {
+      "name": "v14-assets-targeted",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-asset-recovery-20261107/network-targeted",
+        ".data/tutor-v14-asset-recovery-20261107/targeted.py"
+      ],
+      "code": 0,
+      "seconds": 7.786
+    },
+    "historical_pg": {
+      "name": "v14-assets-pg-integrity",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-asset-recovery-20261107/network-pg-integrity",
+        ".data/tutor-v14-asset-recovery-20261107/pg_integrity.py"
+      ],
+      "code": 0,
+      "seconds": 0.265
+    }
+  },
+  "preserved_initial_failure": {
+    "name": "v14-assets-final",
+    "command": [
+      "agent-service/.venv/bin/python",
+      "eval/tutor-scale/safe_exec.py",
+      ".data/tutor-v14-asset-recovery-20261107/network-final",
+      "scripts/dev/check_v14_assets.py",
+      "--output",
+      ".data/tutor-v14-asset-recovery-20261107/final"
+    ],
+    "code": 1,
+    "seconds": 191.417
+  },
+  "initial_result": {
+    "passed": 246,
+    "failed": 3,
+    "reason": "Two relative exclusion failures and one copied-config filename error; corrected, no original material altered by scratch formatter tests."
+  },
+  "restoration": {
+    "start_sha": "e4699e8e9144df50482eb671f89cebd1bf07cdf8",
+    "original_source": ".data/tutor-v14-real-20261107/python-original-source.md",
+    "source_manifest_sha256": "94a7d6ed39b04193b335254fc1a5325a5e1235e61553c1ee2598d848446f99fe",
+    "original_revision": "eb18f246aee338b2a6169ba18d8c5ced7cf89f53",
+    "original_path": "episodes/05-loop.md",
+    "expected_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "restored_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "rejected_sha256": "dd472a2a972b5b25a24b120a9da4ce8a79cdd3e3df89ace7e62873894c02c206",
+    "bytes": 10863,
+    "historical_artifacts_verified": 17,
+    "unknown_uncommitted_work": false
+  },
+  "integrity": {
+    "status": "PASS",
+    "protected_original_files": 20,
+    "historical_artifacts": {
+      ".data/tutor-v14-real-20261107": {
+        "files": 17,
+        "manifest_sha256": "94a7d6ed39b04193b335254fc1a5325a5e1235e61553c1ee2598d848446f99fe"
+      },
+      ".data/tutor-v14-offline-20261107": {
+        "files": 1028,
+        "manifest_sha256": "cbbd82f6f98453ce3552960863639668af05c82f7f410d1742d04955940d2696"
+      }
+    },
+    "sources": [
+      {
+        "path": "materials/carpentries-python-new.md",
+        "expected": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "actual": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "match": true
+      },
+      {
+        "path": "materials/carpentries-python-LICENSE.md",
+        "expected": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+        "actual": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+        "match": true
+      },
+      {
+        "path": "materials/carpentries-spreadsheets-new.md",
+        "expected": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e",
+        "actual": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e",
+        "match": true
+      },
+      {
+        "path": "materials/carpentries-spreadsheets-LICENSE.md",
+        "expected": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+        "actual": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+        "match": true
+      }
+    ],
+    "freeze_sha256": "ba3d1b14dd410e770b2cdfd062e3c7042d93d70a32c27b61d871472aecb390a0",
+    "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+    "real_requests": 0
+  },
+  "historical_pg_integrity": {
+    "status": "PASS_READ_ONLY",
+    "run_records": 1,
+    "event_records": 68,
+    "turn_records": 13,
+    "session_records": 4,
+    "historical_snapshot_unchanged": true,
+    "real_calls": 0
+  },
+  "actual_entry_preflight": {
+    "mode": "PREPARE_ONLY_NO_EGRESS",
+    "candidate": "p8-tutor-draft-repair-v14-development",
+    "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+    "plan_sha256": "f28b9bae8fd653ed09922ec5a451a7b629e98b5c6c32dec45c6077027dfb2576",
+    "adapter_lock_sha256": "ea30d8658c41a7da45fae160f9adc46d728ccd4fa2b3a28bbcfa1ffc8a6bc1fd",
+    "protocol": "v12-session-isolated-live-v1",
+    "counts": {
+      "courses": 2,
+      "sessions": 4,
+      "turns": 16,
+      "answerable": 12,
+      "insufficient": 4
+    },
+    "settings": {
+      "model": "deepseek-flash",
+      "route": "https://api.deepseek.com/chat/completions",
+      "temperature": 0,
+      "thinking": "disabled",
+      "max_output_tokens": 1200,
+      "reviewer": "off",
+      "concurrency": 1,
+      "transport_retries": 0,
+      "sdk_retries": 0,
+      "application_transport_retries": 0
+    },
+    "normal_requests": 32,
+    "maximum_requests": 80,
+    "max_usd": "NEW_USER_AUTHORIZATION_REQUIRED",
+    "max_calls": "NEW_USER_AUTHORIZATION_REQUIRED",
+    "real_quality": "NOT_RUN",
+    "real_cost": "NOT_RUN"
+  },
+  "actual_cli": {
+    "command": [
+      "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/agent-service/.venv/bin/python",
+      "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/eval/tutor-v14-fresh-v1/run_fresh.py",
+      "--agent",
+      "p8-tutor-draft-repair-v14-development",
+      "--model",
+      "deepseek-flash"
+    ],
+    "prepare_exit": 0,
+    "prepared": {
+      "mode": "PREPARE_ONLY_NO_EGRESS",
+      "candidate": "p8-tutor-draft-repair-v14-development",
+      "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+      "plan_sha256": "f28b9bae8fd653ed09922ec5a451a7b629e98b5c6c32dec45c6077027dfb2576",
+      "adapter_lock_sha256": "ea30d8658c41a7da45fae160f9adc46d728ccd4fa2b3a28bbcfa1ffc8a6bc1fd",
+      "protocol": "v12-session-isolated-live-v1",
+      "counts": {
+        "courses": 2,
+        "sessions": 4,
+        "turns": 16,
+        "answerable": 12,
+        "insufficient": 4
+      },
+      "settings": {
+        "model": "deepseek-flash",
+        "route": "https://api.deepseek.com/chat/completions",
+        "temperature": 0,
+        "thinking": "disabled",
+        "max_output_tokens": 1200,
+        "reviewer": "off",
+        "concurrency": 1,
+        "transport_retries": 0,
+        "sdk_retries": 0,
+        "application_transport_retries": 0
+      },
+      "normal_requests": 32,
+      "maximum_requests": 80,
+      "max_usd": "NEW_USER_AUTHORIZATION_REQUIRED",
+      "max_calls": "NEW_USER_AUTHORIZATION_REQUIRED",
+      "real_quality": "NOT_RUN",
+      "real_cost": "NOT_RUN"
+    },
+    "live_under_fence_exit": 2,
+    "real_calls": 0
+  },
+  "formatter_reproduction": {
+    "command": [
+      "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/agent-service/.venv/bin/ruff",
+      "format",
+      "--config",
+      "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-asset-recovery-20261107/final-v2/pytest/test_reproduce_original_direct0/pyproject.toml",
+      "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-asset-recovery-20261107/final-v2/pytest/test_reproduce_original_direct0/python-original.md"
+    ],
+    "stdout": "1 file reformatted\n",
+    "original_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "actual_formatted_sha256": "dd472a2a972b5b25a24b120a9da4ce8a79cdd3e3df89ace7e62873894c02c206",
+    "scratch_only": true
+  },
+  "formatter_guard_cases": [
+    {
+      "command": [
+        "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/agent-service/.venv/bin/ruff",
+        "format",
+        "/tmp/lecturelens-v14-format-cpmsixzf/eval/tutor-v14-fresh-v1"
+      ],
+      "stdout": "",
+      "stderr": "warning: No Python files found under the given path(s)\n",
+      "protected_files": 22,
+      "all_hashes_unchanged": true,
+      "scratch_only": true
+    },
+    {
+      "command": [
+        "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/agent-service/.venv/bin/ruff",
+        "format",
+        "--config",
+        "/tmp/lecturelens-v14-format-zivgole5/agent-service/pyproject.toml",
+        "/tmp/lecturelens-v14-format-zivgole5/eval/tutor-v14-fresh-v1"
+      ],
+      "stdout": "",
+      "stderr": "warning: No Python files found under the given path(s)\n",
+      "protected_files": 22,
+      "all_hashes_unchanged": true,
+      "scratch_only": true
+    },
+    {
+      "command": [
+        "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/agent-service/.venv/bin/ruff",
+        "format",
+        "--config",
+        "/tmp/lecturelens-v14-format-mljixyvq/agent-service/pyproject.toml",
+        "/tmp/lecturelens-v14-format-mljixyvq/eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+        "/tmp/lecturelens-v14-format-mljixyvq/eval/tutor-v14-fresh-v1/protected.py",
+        "/tmp/lecturelens-v14-format-mljixyvq/.data/record.py"
+      ],
+      "stdout": "",
+      "stderr": "warning: No Python files found under the given path(s)\n",
+      "protected_files": 22,
+      "all_hashes_unchanged": true,
+      "scratch_only": true
+    }
+  ],
+  "network": {
+    "network-collect/1917407.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-collect-v2/1944907.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final/1918223.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final/1939571.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final/1939616.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final-v2/1945449.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final-v2/1966570.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final-v2/1966651.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-pg-integrity/1927929.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-targeted/1943665.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-targeted/1943933.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-targeted/1944083.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "cleanup": {
+    "container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port_closed": true,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "original_running_containers": 23,
+    "all_original_services_running": true
+  },
+  "real_model_requests": 0,
+  "embedding_requests": 0,
+  "reviewer_requests": 0,
+  "cost_usd": "0",
+  "provider_usage": "NOT_RUN_NO_REAL_RESPONSES",
+  "raw_root": ".data/tutor-v14-asset-recovery-20261107",
+  "raw_artifact_files": 2356,
+  "raw_manifest_sha256": "e6567fb0c633a0d1c6da892655e6eef459a1a9b698d2988ec9132d196fd1d02a",
+  "readiness": "READY_TO_REQUEST_NEW_REAL_VALIDATION_AUTHORIZATION_ONLY",
+  "authorization": "NONE_ZERO_COST_STAGE_ONLY",
+  "not_run": [
+    "real_quality",
+    "real_compression_exclusivity_efficacy",
+    "real_cost_change",
+    "SQL_holdout",
+    "independent_human_agreement",
+    "expansion",
+    "learning_effects"
+  ]
+}
