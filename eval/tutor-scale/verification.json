@@ -1,0 +1,108 @@
+{
+  "data_kind": "MOCK",
+  "code_sha": "973613876d6d58e332da7b80547a6f48c671e6a3",
+  "candidate_sha256": "8e6aac7da6bb90d727f5b5ca99820deb6fc1e79df20a5e364b719c64e96af84f",
+  "dataset_version": "tutor-scale-synthetic-v2",
+  "dataset_lock_sha256": "68c3465b597218ee7c1a85b5842c11c42929744a4e9a03a68fe502a328608736",
+  "verification": {
+    "data_kind": "MOCK",
+    "courses": 4,
+    "sessions": 64,
+    "scheduled_turns": 320,
+    "partitions": {
+      "development": {
+        "courses": 3,
+        "sessions": 48,
+        "turns": 240
+      },
+      "holdout": {
+        "courses": 1,
+        "sessions": 16,
+        "turns": 80
+      }
+    },
+    "statuses": {
+      "completed": 320
+    },
+    "call_records": 960,
+    "embedded_calls": 960,
+    "reserved_calls": 960,
+    "settled_calls": 960,
+    "pg_mirror_events": 1920,
+    "cost_status": "NOT_RUN",
+    "quality_status": "NOT_RUN",
+    "blind_review": {
+      "primary": 100,
+      "overlap": 20,
+      "strata": 20,
+      "human_scores_status": "NOT_RUN"
+    }
+  },
+  "tests": {
+    "existing_tutor_p8": 231,
+    "final_tools": 11,
+    "failures": 0,
+    "skips": 0,
+    "distinct_tests": 242
+  },
+  "blind": {
+    "primary": 100,
+    "overlap": 20,
+    "completed_annotations": 0,
+    "model_human_comparable": 0,
+    "double_annotation_comparable": 0
+  },
+  "failures_verified": {
+    "timeout": {
+      "completed": 16,
+      "failed": 4
+    },
+    "malformed": {
+      "completed": 16,
+      "failed": 4
+    },
+    "budget": {
+      "failed": 4,
+      "missing": 16,
+      "reserved_calls": 4
+    }
+  },
+  "hand_constructed_score_examples": {
+    "citation_accuracy": "1/3",
+    "presence_coverage": "2/3",
+    "supported_coverage": "1/3",
+    "agreement": 0.75,
+    "kappa": 0.5,
+    "binary_pairs": 4,
+    "excluded_pairs": 2,
+    "label_origin": "HAND_CONSTRUCTED_TEST_FIXTURES_ONLY"
+  },
+  "observed_network_records": 18,
+  "observed_denied_connections": 0,
+  "artifact_sha256": {
+    ".data/tutor-scale/full-verified-final-20261107/config.json": "7d4ad80ebe623349a7c35cf2345ad0e9db0cdb739e5267708d820be939a52534",
+    ".data/tutor-scale/full-verified-final-20261107/summary.json": "bc1bc7709cda0efbdc1f1df7eb560be23dd553b19409e6e021172a0ca93c5e56",
+    ".data/tutor-scale/full-verified-final-20261107/turns.jsonl": "d3c54f4d18a6a15afe5de97adbe48fb6d171db22ef15a008a8cee9d9d4481448",
+    ".data/tutor-scale/blind-verified-final-20261107/packet-A.json": "2c63b5f337f9d593620c23266dc2436c68dde6b7ba693e1fe6ce7fe3964b231e",
+    ".data/tutor-scale/blind-verified-final-20261107/packet-B.json": "12ca569ec01ae41aa85cd44d5eeb66a67f47fe438709301dd8606f097ed66b53",
+    ".data/tutor-scale/blind-verified-final-20261107/scores.json": "c364156c7acdadf3a41c8835b839d1e5beda5e51757269aaa6705904c44d795e",
+    ".data/tutor-scale/full-independent-verification.json": "addd1d26f6076332fcf91d32bd26646d5b45ad72694c43b581aee0d0a7b16d54",
+    ".data/tutor-scale/smoke-independent-verification.json": "e2ccef696544997de279e58ee85eea9a2a79826504e8f929e3ed714d9f57f22f",
+    ".data/tutor-scale/fault-validation-final.json": "c95f8a6dbb896e043d2b0e75c8a2afb07dd113a342b838fca381bbd454182d63",
+    ".data/tutor-scale/historical-audit.json": "301f7b9a8fb0577c028a33615e23707e5832b46aae58925e868b1cf59a6576f0",
+    ".data/tutor-scale/final-tests.xml": "c43db85f9014cb6e986f404e039f00621f079b894f3fe8f28adbcbb35f31510e",
+    ".data/tutor-scale/tests.xml": "0582c6845f6f47159835e0186ed3c858d1bee512520d333d91a5f2b23aa9a3da",
+    ".data/tutor-scale/rebuild-verification.json": "b77163c1f8109d6ff1e91a12c89c35ad58e1ac3faba41a463c3a28999bdd6f5e"
+  },
+  "not_run": [
+    "external_models",
+    "real_citation_quality",
+    "real_human_agreement",
+    "real_tokens",
+    "real_billing_cost",
+    "learning_outcomes",
+    "load_test",
+    "deployment"
+  ],
+  "note": "Only synthetic aggregate verification is committed. Raw trials, ledgers and annotations stay ignored. No current price verification, invoice reconciliation or human annotation occurred."
+}
