@@ -4,6 +4,7 @@ import copy
 import json
 import os
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -93,6 +94,13 @@ def test_wrong_identity_or_unconfirmed_caps_never_start(tmp_path, monkeypatch, f
 
 
 def test_live_requires_explicit_flags_caps_and_current_pricing_without_key_lookup(tmp_path, monkeypatch):
+    # Reproduce the saved observation's date; production keeps the actual UTC clock.
+    class ObservationClock:
+        @staticmethod
+        def now(tz):
+            return datetime(2026, 11, 7, tzinfo=timezone.utc)
+
+    monkeypatch.setattr(pilot, "datetime", ObservationClock)
     forbid_credentials(monkeypatch)
     monkeypatch.delenv("LECTURELENS_REAL_EVAL", raising=False)
     options = args(tmp_path, "--live", "--max-calls", "40", "--max-usd", "0.70")
