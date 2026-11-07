@@ -1,0 +1,254 @@
+{
+  "review": "CODEX_PRE_RESULT_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "rows": [
+    {
+      "turn_key": "new-python-sharing:1",
+      "source_ranges": [
+        [
+          111,
+          136
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Explain the demonstrated shared-list behavior; do not claim all assignment copies values."
+    },
+    {
+      "turn_key": "new-python-sharing:2",
+      "source_ranges": [
+        [
+          139,
+          152
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Do not claim recursive/deep-copy guarantees."
+    },
+    {
+      "turn_key": "new-python-sharing:3",
+      "source_ranges": [
+        [
+          176,
+          224
+        ],
+        [
+          52,
+          69
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Use the explicit code list/output rather than inconsistent illustrative basket counts; no NumPy comma-index syntax."
+    },
+    {
+      "turn_key": "new-python-sharing:4",
+      "source_ranges": [
+        [
+          128,
+          158
+        ],
+        [
+          167,
+          224
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": false,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Clean bounded refusal; do not teach an external library recipe."
+    },
+    {
+      "turn_key": "new-python-stride:1",
+      "source_ranges": [
+        [
+          381,
+          414
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Preserve legal square-bracket code; use the provided primes example rather than unrelated suffix recipes."
+    },
+    {
+      "turn_key": "new-python-stride:2",
+      "source_ranges": [
+        [
+          402,
+          414
+        ],
+        [
+          52,
+          53
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "No original oxygen/NumPy patient question is reused."
+    },
+    {
+      "turn_key": "new-python-stride:3",
+      "source_ranges": [
+        [
+          495,
+          531
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Explain behavior for this list; do not generalize to numeric arrays or claim no solution/output exists."
+    },
+    {
+      "turn_key": "new-python-stride:4",
+      "source_ranges": [
+        [
+          495,
+          531
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": false,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Clean course-bounded refusal; no external numeric-array recipe."
+    },
+    {
+      "turn_key": "new-sheets-validation:1",
+      "source_ranges": [
+        [
+          24,
+          60
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Describe the lesson procedure, not a universal guarantee for all software/settings."
+    },
+    {
+      "turn_key": "new-sheets-validation:2",
+      "source_ranges": [
+        [
+          64,
+          69
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Do not invent a loader flag, exact style-name value or universal enforcement guarantee."
+    },
+    {
+      "turn_key": "new-sheets-validation:3",
+      "source_ranges": [
+        [
+          25,
+          48
+        ],
+        [
+          72,
+          76
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "No specific locale delimiter guarantee; treat source options as lesson procedure."
+    },
+    {
+      "turn_key": "new-sheets-validation:4",
+      "source_ranges": [
+        [
+          31,
+          55
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": false,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Clean bounded refusal; do not assume the learner has the exact screenshots' software version."
+    },
+    {
+      "turn_key": "new-sheets-qc:1",
+      "source_ranges": [
+        [
+          81,
+          91
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Do not claim a file was actually saved or guarantee recovery; cover all requested preservation/documentation points."
+    },
+    {
+      "turn_key": "new-sheets-qc:2",
+      "source_ranges": [
+        [
+          94,
+          122
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Do not infer all detected odd values are proven measurement errors."
+    },
+    {
+      "turn_key": "new-sheets-qc:3",
+      "source_ranges": [
+        [
+          132,
+          150
+        ],
+        [
+          121,
+          122
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": true,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Use code-free lesson workflow, not an invented repair or universal type classifier."
+    },
+    {
+      "turn_key": "new-sheets-qc:4",
+      "source_ranges": [
+        [
+          132,
+          150
+        ]
+      ],
+      "source_review": "CODEX_NONBLIND_PRE_RESULT_SOURCE_CHECK",
+      "answerable": false,
+      "prior_eval_overlap": "Different complete episode, source path absent from earlier development sources; no old question rewrite.",
+      "reference_points_checked": true,
+      "caveat": "Clean bounded refusal; do not label every uncolored/missing value as an erroneous animal measurement."
+    }
+  ],
+  "new_complete_episodes": true,
+  "no_SQL": true,
+  "answerable": 12,
+  "insufficient": 4,
+  "novelty_limit": "New tasks/units on known public courses; not unseen-course generalization. Generic capabilities overlap prior evaluation by design."
+}

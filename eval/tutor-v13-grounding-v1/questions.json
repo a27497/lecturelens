@@ -1,0 +1,356 @@
+{
+  "version": "tutor-v13-new-development-v1",
+  "split": "development",
+  "dialogues": [
+    {
+      "dialogue_id": "new-python-sharing",
+      "course_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "In the salsa examples, why does hot_salsa = mild_salsa followed by hot_salsa[0] = 'hot peppers' change both printed ingredient lists? Explain what those names refer to, and whether the list was immutable.",
+          "task_type": "ordinary_aliasing",
+          "source_ranges": [
+            [
+              111,
+              136
+            ]
+          ],
+          "reference_points": [
+            "Lists are mutable; the two names refer to the same list rather than independent copies.",
+            "Changing element zero through hot_salsa also changes what mild_salsa prints; both begin with hot peppers."
+          ],
+          "allowed_answer_boundary": "Explain the demonstrated shared-list behavior; do not claim all assignment copies values.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "I need the mild ingredients to stay unchanged. Show the lesson's replacement assignment and the two resulting first ingredients after the same edit. Clarification: I mean independent copies of this simple list, not merely two different variable names.",
+          "task_type": "clarification_copy",
+          "source_ranges": [
+            [
+              139,
+              152
+            ]
+          ],
+          "reference_points": [
+            "Use hot_salsa = list(mild_salsa), after the original mild list is established.",
+            "After hot_salsa[0] edit, mild still starts peppers while hot starts hot peppers.",
+            "Copying the value, rather than renaming the same object, provides the independence shown for this simple list."
+          ],
+          "allowed_answer_boundary": "Do not claim recursive/deep-copy guarantees.",
+          "depends_on_turns": [
+            1
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "Leaving salsa aside, use the unit's nested grocery list veg. What does veg[2] return, and what does veg[1][2] return? Explain which shelf and basket the indices identify, rather than treating those numbers as one-based labels.",
+          "task_type": "critical_nested_index",
+          "source_ranges": [
+            [
+              176,
+              224
+            ],
+            [
+              52,
+              69
+            ]
+          ],
+          "reference_points": [
+            "veg[2] returns the bottom/third row [lettuce, cilantro, peppers, zucchini].",
+            "veg[1][2] returns peppers: second row, third basket under zero-based indexing.",
+            "First index selects row, second selects item within that row."
+          ],
+          "allowed_answer_boundary": "Use the explicit code list/output rather than inconsistent illustrative basket counts; no NumPy comma-index syntax.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "For that nested veg, give the exact cycle-detection and memoization algorithm this unit teaches to make a recursive deep copy, including the named library API. Assume the simple list copy already proves all of it.",
+          "task_type": "unsupported_deep_copy",
+          "source_ranges": [
+            [
+              128,
+              158
+            ],
+            [
+              167,
+              224
+            ]
+          ],
+          "reference_points": [
+            "The unit demonstrates copying a simple list with list(...), not recursive cycle detection/memoization or a deep-copy library algorithm.",
+            "Refuse the requested exact course-backed algorithm instead of inferring it from the simple-list example."
+          ],
+          "allowed_answer_boundary": "Clean bounded refusal; do not teach an external library recipe.",
+          "depends_on_turns": [
+            2,
+            3
+          ],
+          "insufficiency_reason": "No recursive deep-copy or cycle algorithm/API is provided in the complete episode."
+        }
+      ]
+    },
+    {
+      "dialogue_id": "new-python-stride",
+      "course_id": "carpentries-python",
+      "turns": [
+        {
+          "text": "In Non-Continuous Slices, explain the three parts of primes[0:12:3] and give its printed subset. How does the step differ from multiplying the chosen values by three?",
+          "task_type": "critical_step",
+          "source_ranges": [
+            [
+              381,
+              414
+            ]
+          ],
+          "reference_points": [
+            "Slice start 0, stop 12 excluded, step 3 selects every third entry from the starting position.",
+            "Printed subset is [2, 7, 17, 29].",
+            "Step changes selected positions, not the numerical values by multiplication."
+          ],
+          "allowed_answer_boundary": "Preserve legal square-bracket code; use the provided primes example rather than unrelated suffix recipes.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "I now want to begin with the third entry of that same primes list. Should I change the start to 3 or to 2? Give the unit's changed slice and full printed result, keeping the same step.",
+          "task_type": "critical_step_correction",
+          "source_ranges": [
+            [
+              402,
+              414
+            ],
+            [
+              52,
+              53
+            ]
+          ],
+          "reference_points": [
+            "Third entry is zero-based index 2, so use primes[2:12:3].",
+            "Printed subset is [5, 13, 23, 37], retaining step 3.",
+            "Do not use start 3 merely because the ordinal is third."
+          ],
+          "allowed_answer_boundary": "No original oxygen/NumPy patient question is reused.",
+          "depends_on_turns": [
+            1
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "Separate task from the Overloading exercise: for counts = [2, 4, 6, 8, 10], does counts * 2 double each value or repeat the list? Give the full displayed result and the equivalent expression supplied in the solution.",
+          "task_type": "ordinary_operator_meaning",
+          "source_ranges": [
+            [
+              495,
+              531
+            ]
+          ],
+          "reference_points": [
+            "List multiplication repeats/concatenates the list, rather than doubling individual numbers.",
+            "Result is [2,4,6,8,10,2,4,6,8,10].",
+            "The solution gives counts + counts as equivalent."
+          ],
+          "allowed_answer_boundary": "Explain behavior for this list; do not generalize to numeric arrays or claim no solution/output exists.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "For that repeated list, which exact NumPy vectorization and fixed-width integer overflow policy does this supplied episode prescribe to replace the list operation without changing its behavior? Give the guaranteed dtype.",
+          "task_type": "unsupported_numpy_policy",
+          "source_ranges": [
+            [
+              495,
+              531
+            ]
+          ],
+          "reference_points": [
+            "Episode explains list operator overloading, not a prescribed NumPy vectorization/dtype/overflow policy.",
+            "Do not invent a course-backed NumPy replacement or guaranteed dtype."
+          ],
+          "allowed_answer_boundary": "Clean course-bounded refusal; no external numeric-array recipe.",
+          "depends_on_turns": [
+            3
+          ],
+          "insufficiency_reason": "The requested vectorization and overflow/dtype specification are not present in this episode."
+        }
+      ]
+    },
+    {
+      "dialogue_id": "new-sheets-validation",
+      "course_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "For the quality-assurance plot_id example, describe the validation setup that accepts only the taught plot identifiers. Include the target cells, setting type, bounds, and what happens when the example tries an invalid value.",
+          "task_type": "ordinary_validation_workflow",
+          "source_ranges": [
+            [
+              24,
+              60
+            ]
+          ],
+          "reference_points": [
+            "Select plot_id column; use Data / Data Validation.",
+            "Allow Whole number with minimum 1 and maximum 24.",
+            "The example rejects an invalid entry and offers trying again."
+          ],
+          "allowed_answer_boundary": "Describe the lesson procedure, not a universal guarantee for all software/settings.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "Clarification: I want invalid entries to warn instead of block. Which tab and setting does the lesson say to change? Also distinguish that from the place used to write a more informative input message.",
+          "task_type": "clarification_alert_policy",
+          "source_ranges": [
+            [
+              64,
+              69
+            ]
+          ],
+          "reference_points": [
+            "Modify Style on Error Alert to get a warning rather than an error.",
+            "Use Input Message tab for the explanatory message.",
+            "Update the previous rejection-only expectation: the described configuration can warn."
+          ],
+          "allowed_answer_boundary": "Do not invent a loader flag, exact style-name value or universal enforcement guarantee.",
+          "depends_on_turns": [
+            1
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "For another field restricted to sites A, B and C, how does the unit say to provide an allowed-value list, and what entry aid does that produce? Contrast this site list with the plot_id numeric constraint.",
+          "task_type": "ordinary_list_validation",
+          "source_ranges": [
+            [
+              25,
+              48
+            ],
+            [
+              72,
+              76
+            ]
+          ],
+          "reference_points": [
+            "Choose a list type in validation and supply allowed items in Source, comma- or semicolon-delimited as described.",
+            "The spreadsheet offers a dropdown of available items.",
+            "A/B/C membership is a categorical allowed list, distinct from whole-number bounds 1..24."
+          ],
+          "allowed_answer_boundary": "No specific locale delimiter guarantee; treat source options as lesson procedure.",
+          "depends_on_turns": [
+            1
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "What exact keyboard shortcut opens that dialog in the spreadsheet version installed on my laptop, and which operating-system-specific shortcut remapping does this unit guarantee? I have not named my version or OS.",
+          "task_type": "unsupported_shortcut",
+          "source_ranges": [
+            [
+              31,
+              55
+            ]
+          ],
+          "reference_points": [
+            "Lesson gives menu/dialog workflow, not a guaranteed shortcut/remapping for an unspecified installed version/OS.",
+            "State the evidence gap without inventing shortcut keys."
+          ],
+          "allowed_answer_boundary": "Clean bounded refusal; do not assume the learner has the exact screenshots' software version.",
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "insufficiency_reason": "Version/OS/remapping are unspecified and the supplied episode contains no exact guaranteed shortcut."
+        }
+      ]
+    },
+    {
+      "dialogue_id": "new-sheets-qc",
+      "course_id": "carpentries-spreadsheets",
+      "turns": [
+        {
+          "text": "Before sorting a workbook containing formulas, what original and working files does the unit ask me to keep, why should working data be values, and what should a README record as I manipulate the files?",
+          "task_type": "multi_point_preservation",
+          "source_ranges": [
+            [
+              81,
+              91
+            ]
+          ],
+          "reference_points": [
+            "Save original file with formulas and a name indicating original data; create a separate appropriately named/versioned working file.",
+            "Working data should be stored as values, because moving cells can compromise formulas/references.",
+            "README documents files, their content/format, folder organization, and manipulations/analyses to permit understanding/replication."
+          ],
+          "allowed_answer_boundary": "Do not claim a file was actually saved or guarantee recovery; cover all requested preservation/documentation points.",
+          "depends_on_turns": [],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "For that working copy, the Weight_grams exercise sorts Largest to Smallest. Must I expand the selection or sort that single column alone, and what does the published solution say happens to empty cells and cells containing g?",
+          "task_type": "critical_row_sort",
+          "source_ranges": [
+            [
+              94,
+              122
+            ]
+          ],
+          "reference_points": [
+            "Expand selection so entire observation rows move together; isolated single-column sort scrambles row associations.",
+            "Published example puts empty cells at bottom and g-containing cells toward top.",
+            "Explain that these positions are observed exercise behavior, not a guarantee for every application."
+          ],
+          "allowed_answer_boundary": "Do not infer all detected odd values are proven measurement errors.",
+          "depends_on_turns": [
+            1
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "Now apply the taught two-color conditional-formatting check to that same Weight_grams field. Give the setup path and explain which cells the solution says remain uncolored. How does that relate to the odd values you just found by sorting?",
+          "task_type": "ordinary_formatting_check",
+          "source_ranges": [
+            [
+              132,
+              150
+            ],
+            [
+              121,
+              122
+            ]
+          ],
+          "reference_points": [
+            "Select/highlight Weight_grams, Home / Conditional Formatting, choose/apply a 2-Color Scale rule.",
+            "Non-numerical cells remain uncolored, including g-containing cells and empty cells.",
+            "These are the same described odd-value classes; coloring is a cautious scan/flag, not proof of each value's cause or automated correction."
+          ],
+          "allowed_answer_boundary": "Use code-free lesson workflow, not an invented repair or universal type classifier.",
+          "depends_on_turns": [
+            2
+          ],
+          "insufficiency_reason": ""
+        },
+        {
+          "text": "From those uncolored cells alone, identify which exact animal had the wrong measured mass and give its corrected number. I have not supplied our workbook.",
+          "task_type": "unsupported_measurement_correction",
+          "source_ranges": [
+            [
+              132,
+              150
+            ]
+          ],
+          "reference_points": [
+            "The formatting exercise identifies categories of odd values, not this learner's record identity, true measured mass or corrected number.",
+            "Refuse exact diagnosis/correction without workbook/measurement evidence."
+          ],
+          "allowed_answer_boundary": "Clean bounded refusal; do not label every uncolored/missing value as an erroneous animal measurement.",
+          "depends_on_turns": [
+            2,
+            3
+          ],
+          "insufficiency_reason": "No learner workbook or true measurements are supplied; color categories cannot identify exact corrected masses."
+        }
+      ]
+    }
+  ]
+}

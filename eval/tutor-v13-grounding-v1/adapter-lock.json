@@ -1,0 +1,11 @@
+{
+  "version": "v13-new-development-adapter-v1",
+  "parent_adapter_sha256": "cdb50106d25f2b808d099080ccc33fc8ed21dd86d388369dc25697180f214e47",
+  "files": {
+    "trial_run.py": "f16968ad35905b1e85bed529383f3f527233a1d891fdac36c4d9a4bcc840cea7",
+    "test_grounding.py": "8f9d2e7c19f564ba84ed17bd4865a46ef095321e3165812dc056db9e9700c301",
+    "run-plan.json": "84936102b448d237b016adb83339faf27d4c678193a17d4bd02be478cc16fd17",
+    "candidate.json": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+    "v13_contract.py": "313407cea1baab30f7b4ba5cb8efd9d9ea40281ab4efeeeead7452c6b7d7f64f"
+  }
+}

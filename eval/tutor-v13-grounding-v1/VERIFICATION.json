@@ -1,0 +1,39 @@
+{
+  "status": "PASS_ZERO_COST_FROZEN_REGRESSION",
+  "tests": 273,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 146.263,
+  "new_tests": 18,
+  "parent_entry_tests": 46,
+  "recovery_tests": 42,
+  "frozen_original_data_tests": 20,
+  "tutor_mechanism_tests": 147,
+  "real_model_calls": 0,
+  "embedding_calls": 0,
+  "reviewer_calls": 0,
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "plan_sha256": "84936102b448d237b016adb83339faf27d4c678193a17d4bd02be478cc16fd17",
+  "freeze_sha256": "381beff7a312471e204e4e7b0622aea518fdf12bdd51b5ac442d7b03e9b32211",
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v13-stage-20261107",
+  "xml_sha256": "6f1eb13d9f0fd9888d4bb3824cf3c40d9079886bd4ba79cb096355e10639f1e8",
+  "protocol_functions_ast_identical": [
+    "accounting_safe",
+    "classify",
+    "counts",
+    "capture",
+    "RerunChannel",
+    "WireEvidence"
+  ],
+  "early_setup_failures_preserved": [
+    "foundation collection: generic run module name collided with frozen parent; entry renamed trial_run",
+    "foundation setup: test DSN stripped by socket launcher; configured inside guarded test process"
+  ],
+  "quality_claim": "Mock/fixed-response tests do not establish model quality",
+  "v12_scoring_correction": {
+    "original": "59/74 claims, 3/12 full answers",
+    "corrected": "59/73 claims, 4/12 full answers",
+    "complete_correct_unchanged": "13/16",
+    "decision_unchanged": "FAIL"
+  }
+}

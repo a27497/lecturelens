@@ -1,0 +1,12 @@
+{
+  "candidate": "p8-tutor-claim-grounding-v13-development",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.claim_grounding_runtime:ClaimGroundingTutorRuntime",
+  "parent_manifest_sha256": "4540369887eb2d84f79ee5351a8e1c0c82af859be8ff8d364ce7faf262a3afb2",
+  "default_registration": false,
+  "context_version": "question-solution-passages-v1",
+  "mechanism": "Source-only bounded question/Solution coalescing plus explicit completeness/scope/claim-grounding guidance. No semantic verifier, automatic citation attachment or extra model/tool calls.",
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/claim_grounding_runtime.py": "e7e940f26c07f507342c833b9e8c8bc2f7f5a8a1b0b2b9c0142549456f5f47d5",
+    "eval/tutor-v13-grounding-v1/v13_contract.py": "313407cea1baab30f7b4ba5cb8efd9d9ea40281ab4efeeeead7452c6b7d7f64f"
+  }
+}

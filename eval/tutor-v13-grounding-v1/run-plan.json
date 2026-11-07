@@ -1,0 +1,58 @@
+{
+  "version": "tutor-v13-new-development-v1",
+  "candidate": "p8-tutor-claim-grounding-v13-development",
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "execution_authorized": false,
+  "counts": {
+    "courses": 2,
+    "sessions": 4,
+    "turns": 16,
+    "answerable": 12,
+    "insufficient": 4
+  },
+  "settings": {
+    "model": "deepseek-flash",
+    "route": "https://api.deepseek.com/chat/completions",
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 1200,
+    "reviewer": "off",
+    "concurrency": 1,
+    "transport_retries": 0,
+    "sdk_retries": 0,
+    "application_transport_retries": 0
+  },
+  "protocol": "v12-session-isolated-live-v1",
+  "protocol_sha256": "926f79b8f0c873b18ffab7d8efdaad9668f0ba605040fdba2070df126d4104e5",
+  "turn_keys": [
+    "new-python-sharing:1",
+    "new-python-sharing:2",
+    "new-python-sharing:3",
+    "new-python-sharing:4",
+    "new-python-stride:1",
+    "new-python-stride:2",
+    "new-python-stride:3",
+    "new-python-stride:4",
+    "new-sheets-validation:1",
+    "new-sheets-validation:2",
+    "new-sheets-validation:3",
+    "new-sheets-validation:4",
+    "new-sheets-qc:1",
+    "new-sheets-qc:2",
+    "new-sheets-qc:3",
+    "new-sheets-qc:4"
+  ],
+  "original_inputs": {
+    "sources.json": "f563400aa96ae57686963616084bdaf21c188079cfbbfcc2cce4867bd1ee8cd7",
+    "questions.json": "b216fd4a46fb59e3f3b87cec22e9842393074521db1b1353ed4ec838111b33ff",
+    "development.json": "74bedbffe02d6f7291469aeded641609a8f32a092fcc3b59380f0d23c364ba99",
+    "snapshot.json": "c4672577b2359491c2a8db60de7ca3273c83437991c105e8bb13c2de4614f0be",
+    "grading-rules.json": "5493f4ba95e0f98a9abea97a9a431e2b973c14572435603718551341f398754b",
+    "CONTENT_REVIEW.json": "67ae5035df408f5bdc782de05a59ab808f08dbf1864dddad1da711e643a4949c"
+  },
+  "max_calls_tool_ceiling": 80,
+  "max_local_usd_tool_ceiling": "0.70",
+  "user_phase_usd_upper_limit": "10.00",
+  "normal_requests": 32,
+  "max_requests": 80
+}

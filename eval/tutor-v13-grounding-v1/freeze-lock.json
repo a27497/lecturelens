@@ -1,0 +1,23 @@
+{
+  "version": "v13-new-development-freeze-v1",
+  "frozen_utc": "2026-11-07T14:24:40.474210+00:00",
+  "candidate_result_observations": 0,
+  "files": {
+    "candidate.json": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+    "sources.json": "f563400aa96ae57686963616084bdaf21c188079cfbbfcc2cce4867bd1ee8cd7",
+    "questions.json": "b216fd4a46fb59e3f3b87cec22e9842393074521db1b1353ed4ec838111b33ff",
+    "snapshot.json": "c4672577b2359491c2a8db60de7ca3273c83437991c105e8bb13c2de4614f0be",
+    "development.json": "74bedbffe02d6f7291469aeded641609a8f32a092fcc3b59380f0d23c364ba99",
+    "grading-rules.json": "5493f4ba95e0f98a9abea97a9a431e2b973c14572435603718551341f398754b",
+    "CONTENT_REVIEW.json": "67ae5035df408f5bdc782de05a59ab808f08dbf1864dddad1da711e643a4949c",
+    "run-plan.json": "84936102b448d237b016adb83339faf27d4c678193a17d4bd02be478cc16fd17",
+    "adapter-lock.json": "20de57e4248b88bbe4c0b0d700f9b7739d3f6547bf50d024ca91a84c57da73e6",
+    "trial_run.py": "f16968ad35905b1e85bed529383f3f527233a1d891fdac36c4d9a4bcc840cea7",
+    "v13_contract.py": "313407cea1baab30f7b4ba5cb8efd9d9ea40281ab4efeeeead7452c6b7d7f64f",
+    "test_grounding.py": "8f9d2e7c19f564ba84ed17bd4865a46ef095321e3165812dc056db9e9700c301",
+    "materials/carpentries-python-LICENSE.md": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+    "materials/carpentries-python-new.md": "9f7cf80a805db45a25e89510153c5d1c6885e88c68d18fa6ce188fed08c7de41",
+    "materials/carpentries-spreadsheets-LICENSE.md": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+    "materials/carpentries-spreadsheets-new.md": "99ea134a3b98db2b59084fc05c6a0385f9d66257a708cf17d984c6af8f2b2dce"
+  }
+}

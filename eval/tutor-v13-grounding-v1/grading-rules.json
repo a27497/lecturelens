@@ -1,0 +1,63 @@
+{
+  "version": "tutor-v13-new-development-v1",
+  "status": "FROZEN_BEFORE_ANY_CANDIDATE_RESULT_ON_NEW_SAMPLE",
+  "assessment": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "basis": "Same normative tolerances as previous sixteen-position engineering gate; no outcome-selected threshold.",
+  "requirements": {
+    "scheduled": 16,
+    "completed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "missing": 0,
+    "reviewed": 16,
+    "correct_over_scheduled_minimum": 14,
+    "per_course_minimum": 7,
+    "per_course_denominator": 8,
+    "critical_index_turns": [
+      "new-python-sharing:3",
+      "new-python-stride:1",
+      "new-python-stride:2"
+    ],
+    "critical_index_minimum": 3,
+    "critical_index_denominator": 3,
+    "clean_refusal_minimum": 4,
+    "clean_refusal_denominator": 4,
+    "clarification_turns": [
+      "new-python-sharing:2",
+      "new-sheets-validation:2"
+    ],
+    "clarification_minimum": 2,
+    "context_turns": [
+      "new-python-sharing:2",
+      "new-python-sharing:4",
+      "new-python-stride:2",
+      "new-python-stride:4",
+      "new-sheets-validation:2",
+      "new-sheets-validation:3",
+      "new-sheets-validation:4",
+      "new-sheets-qc:2",
+      "new-sheets-qc:3",
+      "new-sheets-qc:4"
+    ],
+    "context_minimum": 9,
+    "context_denominator": 10,
+    "citation_support_minimum": 0.95,
+    "supported_claim_coverage_minimum": 0.9,
+    "expected_answer_full_supported_minimum": 10,
+    "expected_answer_denominator": 12
+  },
+  "definitions": {
+    "correct": "Every required point, no materially false/unsupported additions; uncertain and noncompleted outcomes never pass.",
+    "citation_pair": "Supported explicit substantive claim-citation pairs / every such annotated pair, including unsupported/uncertain. No pair yields null, not pass.",
+    "claim_coverage": "All distinct positive-source-requiring substantive assertions including optional applications/recommendations. Deduplicate restatements of the same semantic claim within the answer, including uncited paraphrases of an already cited claim. Distinct premises/conclusions remain separate.",
+    "attachment": "Local citation only. An explicitly introduced table, worked code/output example or labeled list may bind opening/closing citations. Do not inherit generic neighboring paragraph citations. Explicitly signaled bounded derivations can be supported by all cited premises; source text need not literally print a reasonable derivation.",
+    "truth_review": "Truth-review negative scope and conversation/refusal statements without imposing positive-citation requirements; any explicit substantive citation pair still enters pair support. Generic unsupported whole-unit absence is not established by a retrieval miss.",
+    "full_turn_coverage": "All required points present and every citation-requiring substantive assertion supported / all 12 expected answer positions. Failure/skip/missing/wrong refusal cannot improve denominator.",
+    "counts": "Completed, failed-unresolved, skipped and missing disjoint sum16. Scorable/completed and reviewed/semantic judgments reported separately. All16 outcomes reviewed.",
+    "refusal": "Four insufficient positions require a clean course-bounded abstention, no missing algorithm/configuration/measurement invention.",
+    "context": "Judge actual prior answers and explicit clarification on ten dependent positions, not textual match. No invented antecedents.",
+    "decision": "PASS only when every frozen requirement is met. Otherwise FAIL or NEEDS_REVIEW; no selective retry, sample/threshold edits or old-answer splice.",
+    "comparison": "Different units/tasks/candidate; descriptive comparison only, not causal improvement or generalization.",
+    "mock": "Fixed/Mock provider proves execution only; unsupported-valid-ID fixture remains semantically bad."
+  }
+}
