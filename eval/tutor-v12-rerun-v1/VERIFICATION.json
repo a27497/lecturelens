@@ -1,0 +1,353 @@
+{
+  "status": "PASS_FROZEN_ENTRY_NO_COST_PREFLIGHT_NOT_MODEL_QUALITY",
+  "task_start_sha": "b78a39b256c156f996d4f1a3d43ae2751699fb82",
+  "verification_code_sha": "982339cc4f871d14fe1d230e7e1538b917b363e0",
+  "candidate": "p8-tutor-repair-context-v12-development",
+  "candidate_manifest_sha256": "4540369887eb2d84f79ee5351a8e1c0c82af859be8ff8d364ce7faf262a3afb2",
+  "run_plan_sha256": "6a684a138d9fe2a04ccbb51f9d3bdbab25b44b5465a21a0c1082bbbc33dad825",
+  "adapter_lock_sha256": "cdb50106d25f2b808d099080ccc33fc8ed21dd86d388369dc25697180f214e47",
+  "protocol": "v12-session-isolated-live-v1",
+  "checks": {
+    "passed": 108,
+    "failed": 0,
+    "skipped": 0,
+    "new_entry": 46,
+    "unchanged_v12_recovery": 42,
+    "unchanged_frozen_data": 20,
+    "supervisor": {
+      "name": "entry-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v12-entry-20261107/network-final",
+        ".data/tutor-v12-entry-20261107/check_final.py"
+      ],
+      "code": 0,
+      "seconds": 57.569
+    }
+  },
+  "real_requests": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "original_artifacts_unchanged": {
+    "tutor-fresh-live-20261107": 62,
+    "tutor-recovery-v1-20261107": 592
+  },
+  "original_pg_unchanged": [
+    {
+      "ledger_events_equal": 34,
+      "sessions_equal": 2,
+      "turns_equal": 7
+    }
+  ],
+  "original_tracked_files_hash_verified": 2011,
+  "preexisting_tracked_files_unchanged": true,
+  "cases": [
+    {
+      "path": "pytest-final/test_divergence_stops_without_0/divergent/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "UNKNOWN",
+      "stops": [
+        {
+          "action": "STOP_ALL",
+          "reason": "BATCH_EXECUTION_OR_ACCOUNTING_EXCEPTION",
+          "error_type": "EvalError"
+        },
+        {
+          "action": "STOP_ALL",
+          "reason": "ACCOUNTING_UNKNOWN"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_full16_default_mock_and_z0/batch/summary.json",
+      "completed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "missing": 0,
+      "wire_requests": 32,
+      "reviewer_calls": 0,
+      "mechanics": "COMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": []
+    },
+    {
+      "path": "pytest-final/test_global_caps_include_exact0/batch/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "ACCOUNTING_UNSAFE_OR_UNKNOWN",
+          "error_code": "REAL_EVAL_BUDGET_EXHAUSTED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_global_caps_include_exact1/batch/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 0,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "ACCOUNTING_UNSAFE_OR_UNKNOWN",
+          "error_code": "REAL_EVAL_BUDGET_EXHAUSTED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_global_caps_include_exact2/batch/summary.json",
+      "completed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "missing": 0,
+      "wire_requests": 32,
+      "reviewer_calls": 0,
+      "mechanics": "COMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-sheets-markers:5",
+          "action": "STOP_ALL",
+          "reason": "GLOBAL_CAP_REACHED",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_local_failure_skips_depen0/local/summary.json",
+      "completed": 11,
+      "failed": 1,
+      "skipped": 4,
+      "missing": 0,
+      "wire_requests": 25,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_SESSION",
+          "reason": "TUTOR_FINISH_FORMAT_INVALID",
+          "error_code": "TUTOR_FINISH_FORMAT_INVALID"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_original_prefix_then_repa0/prefix/summary.json",
+      "completed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "missing": 9,
+      "wire_requests": 18,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-sheets-text:2",
+          "action": "STOP_ALL",
+          "reason": "GLOBAL_CAP_REACHED",
+          "error_code": null
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_0/usage_missing/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "CHANNEL_OR_USAGE_PROTOCOL_FAILURE",
+          "error_code": "REAL_EVAL_REQUEST_FAILED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_1/protocol/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "CHANNEL_OR_USAGE_PROTOCOL_FAILURE",
+          "error_code": "REAL_EVAL_REQUEST_FAILED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_2/timeout/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "CHANNEL_OR_USAGE_PROTOCOL_FAILURE",
+          "error_code": "REAL_EVAL_REQUEST_FAILED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_3/auth/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "CHANNEL_OR_USAGE_PROTOCOL_FAILURE",
+          "error_code": "REAL_EVAL_REQUEST_FAILED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_4/model_unavailable/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "CHANNEL_OR_USAGE_PROTOCOL_FAILURE",
+          "error_code": "REAL_EVAL_REQUEST_FAILED"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_5/anomaly/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 1,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "ACCOUNTING_UNSAFE_OR_UNKNOWN",
+          "error_code": "RERUN_USAGE_METADATA_INCONSISTENT"
+        }
+      ]
+    },
+    {
+      "path": "pytest-final/test_safety_failure_stops_all_6/foreign/summary.json",
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "missing": 15,
+      "wire_requests": 2,
+      "reviewer_calls": 0,
+      "mechanics": "INCOMPLETE",
+      "quality": "NOT_RUN",
+      "ledger_status": "KNOWN",
+      "stops": [
+        {
+          "turn_key": "fresh-python-tail:1",
+          "action": "STOP_ALL",
+          "reason": "ACCOUNTING_UNSAFE_OR_UNKNOWN",
+          "error_code": "REAL_EVAL_PROTOCOL_FAILURE"
+        }
+      ]
+    }
+  ],
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v12-entry-20261107",
+  "raw_files": 1571,
+  "raw_manifest_sha256": "3f60ea24c0d134f190e5bcfe5cc11b8f63217f7a03bd5ad90e405df15d1137b5",
+  "cleanup": {
+    "container": "/lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port_25841_closed": true,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "preexisting_containers_still_running": 23,
+    "real_requests": 0
+  },
+  "authorization": "NOT_GRANTED_NEW_NUMERIC_REQUEST_AND_USD_CAP_REQUIRED",
+  "current_pricing": "UNKNOWN_NOT_REFRESHED",
+  "remaining_blockers": [
+    "new batch authorization",
+    "execution-date reviewed compatible pricing and billing limitation",
+    "actual sender/API availability unverified"
+  ],
+  "not_run": [
+    "real_v12_quality",
+    "real_cost_change",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion",
+    "learning_effects",
+    "actual_live_sender_smoke_test"
+  ]
+}
