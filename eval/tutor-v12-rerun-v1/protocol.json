@@ -1,0 +1,18 @@
+{
+  "version": "v12-session-isolated-live-v1",
+  "local_terminal_errors": {
+    "TUTOR_REPAIR_BUDGET_UNAVAILABLE": "Turn/session repair reservation cannot fit existing persistent bounds",
+    "TUTOR_BUDGET_EXHAUSTED": "Turn/session call, tool or serialized-context bound",
+    "TUTOR_FINISH_FORMAT_INVALID": "Second format violation after the existing one-shot repair",
+    "TUTOR_SOCRATIC_CONTRACT": "Second mode/question violation after the existing one-shot repair",
+    "TUTOR_DEADLINE": "Runtime turn deadline; a channel timeout remains a global unknown outcome"
+  },
+  "precedence": ["unsafe_accounting", "channel_or_usage_failure", "global_cap", "local_terminal_error", "unknown_global_failure"],
+  "local_failure": "Preserve failed turn; close this complete-session unit; skip its remaining turns, recording explicit dependency blockers or conservative session closure; continue the next independent session",
+  "global_failure": "Stop all dispatch on global cap, failed channel/usage/protocol/auth/model request, fabricated or stale evidence, cancellation, pending/blocked/divergent/unknown accounting, exceptions or unclassified terminal errors",
+  "skipped_status": "SKIPPED; DEPENDENCY_FAILED_OR_SKIPPED or SESSION_CLOSED_AFTER_LOCAL_FAILURE",
+  "missing_status": "MISSING; GLOBAL_STOP_BEFORE_TURN; never impute an answer",
+  "ledger_allocation": "One new persistent global ledger for all 16 positions; no historical A/B allocation, balance, ledger or authorization is reused",
+  "recovery": "New output/run name only; no automatic resume, retransmission, replenishment, model fallback or semantic retest",
+  "quality": "Original frozen grading rules; skipped and missing remain in scheduled denominators; Mock responses never establish model quality"
+}
