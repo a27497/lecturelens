@@ -1,0 +1,18 @@
+{
+  "requested_model": "deepseek-flash",
+  "configuration_available_verified": true,
+  "configuration_verification_scope": "CURRENT_PUBLIC_DOCUMENTED_REQUEST_FIELDS_ONLY_NOT_ACCOUNT_OR_API_AVAILABILITY",
+  "input_nano_usd_per_token": 300,
+  "output_nano_usd_per_token": 1200,
+  "official_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "configuration_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+  "reviewed_utc": "2026-11-07T18:23:48+00:00",
+  "no_cache_peak_rates_cover_current_prices": true,
+  "documented_backend": "DeepSeek-V4.1-Flash-1017",
+  "account_access": "NOT_RUN",
+  "provider_api_requests": 0,
+  "credential_access": "NOT_RUN",
+  "authorization": "NONE; this is a documentary price/config receipt, not a paid grant",
+  "reviewer": "Codex, same implementation author, using official public documentation",
+  "validity": "At most24 hours under live_admission; recheck public documentation if expired or prices/config change. No new development phase required."
+}

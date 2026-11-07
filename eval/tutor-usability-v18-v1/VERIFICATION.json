@@ -1,0 +1,560 @@
+{
+  "version": "tutor-usability-v18-v1",
+  "status": "OFFLINE_USABILITY_MECHANICS_COMPLETE_SMOKE_PENDING_APPROVAL_NOT_REAL_QUALITY_PASS",
+  "base_sha": "eb01d290c18c6c4a63a8af1ea7a350aaf98e1dd1",
+  "implementation_sha": "4db4f05cf834a8dd8db155e58565afefc88b2b4d",
+  "freeze_sha": "af803989346eab1f526ec5137834377de69eccd0",
+  "actual_final_python_validation_head": "4db4f05cf834a8dd8db155e58565afefc88b2b4d",
+  "final_python_note": "Candidate manifest bytes were present before committing the unchanged manifest. Source tree matched code_commit; actual entry executed without identity stubs. Freeze commit adds only the same manifest. Later delivery adds reports only.",
+  "candidate_sha256": "34ddb43cdab734b630bc58637cd1497b418ffca1b631414c9e490049502f4950",
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "candidate": "p8-tutor-usable-v18-development",
+  "checks": {
+    "v17-compatibility": {
+      "name": "v17-compatibility",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-v17-compat",
+        "scripts/dev/check_tutor_guarded.py",
+        "--stage",
+        "source_publication or guarded_value_language or hint or positive or default_mock",
+        "--output",
+        ".data/tutor-usability-v18/v17-compatibility"
+      ],
+      "code": 0,
+      "seconds": 7.183
+    },
+    "v18-aligned-normal": {
+      "name": "v18-aligned-normal",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-aligned-normal",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "normal_long",
+        "--output",
+        ".data/tutor-usability-v18/aligned-normal"
+      ],
+      "code": 0,
+      "seconds": 1.818
+    },
+    "v18-cross-service": {
+      "name": "v18-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service",
+        "-Dtest=TutorCompleteEvidenceTest,TutorTransportTest,TutorControllerTest,StudyAuthorityTest,TutorUsableCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 27.321
+    },
+    "v18-entry-default": {
+      "name": "v18-entry-default",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-default-recorded",
+        "scripts/dev/run_tutor_smoke_v18.py"
+      ],
+      "code": 0,
+      "seconds": 1.017
+    },
+    "v18-entry-denied": {
+      "name": "v18-entry-denied",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-denial-recorded",
+        "scripts/dev/run_tutor_smoke_v18.py",
+        "--mode",
+        "live",
+        "--output",
+        ".data/tutor-usability-v18/unapproved-recorded-must-not-exist"
+      ],
+      "code": 2,
+      "seconds": 0.966
+    },
+    "v18-final-cross-service": {
+      "name": "v18-final-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=final-cross-service",
+        "-Dtest=TutorUsableCrossServiceIT",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 13.408
+    },
+    "v18-final-lint": {
+      "name": "v18-final-lint",
+      "command": [
+        "agent-service/.venv/bin/ruff",
+        "check",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_mock.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_app.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_policy.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_smoke.py",
+        "agent-service/tests/test_tutor_v18.py",
+        "scripts/dev/check_tutor_usable.py",
+        "scripts/dev/serve_tutor_usable_mock.py",
+        "scripts/dev/run_tutor_smoke_v18.py",
+        "scripts/dev/measure_tutor_usable.py"
+      ],
+      "code": 0,
+      "seconds": 0.017
+    },
+    "v18-final-python": {
+      "name": "v18-final-python",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-final-python",
+        "scripts/dev/check_tutor_usable.py",
+        "--output",
+        ".data/tutor-usability-v18/final-python"
+      ],
+      "code": 0,
+      "seconds": 26.295
+    },
+    "v18-lint": {
+      "name": "v18-lint",
+      "command": [
+        "agent-service/.venv/bin/ruff",
+        "check",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_mock.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_app.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_policy.py",
+        "agent-service/src/lecturelens_real_eval/tutor/usable_smoke.py",
+        "agent-service/tests/test_tutor_v18.py",
+        "scripts/dev/check_tutor_usable.py",
+        "scripts/dev/serve_tutor_usable_mock.py",
+        "scripts/dev/run_tutor_smoke_v18.py",
+        "scripts/dev/measure_tutor_usable.py"
+      ],
+      "code": 0,
+      "seconds": 0.016
+    },
+    "v18-pre-freeze-final": {
+      "name": "v18-pre-freeze-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-pre-freeze-final",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-usability-v18/pre-freeze-final"
+      ],
+      "code": 0,
+      "seconds": 14.251
+    },
+    "v18-pre-freeze": {
+      "name": "v18-pre-freeze",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-pre-freeze",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-usability-v18/pre-freeze"
+      ],
+      "code": 0,
+      "seconds": 14.401
+    },
+    "v18-runtime-01": {
+      "name": "v18-runtime-01",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-runtime-01",
+        "scripts/dev/check_tutor_usable.py",
+        "--output",
+        ".data/tutor-usability-v18/runtime-01"
+      ],
+      "code": 1,
+      "seconds": 12.398
+    },
+    "v18-runtime-02": {
+      "name": "v18-runtime-02",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-runtime-02",
+        "scripts/dev/check_tutor_usable.py",
+        "--output",
+        ".data/tutor-usability-v18/runtime-02"
+      ],
+      "code": 0,
+      "seconds": 13.599
+    },
+    "v18-runtime-03": {
+      "name": "v18-runtime-03",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-runtime-03",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-usability-v18/runtime-03"
+      ],
+      "code": 1,
+      "seconds": 13.199
+    },
+    "v18-runtime-04": {
+      "name": "v18-runtime-04",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-usability-v18/network-runtime-04",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-usability-v18/runtime-04"
+      ],
+      "code": 0,
+      "seconds": 13.948
+    },
+    "v18-vue-types": {
+      "name": "v18-vue-types",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vue-tsc/bin/vue-tsc.js",
+        "-b",
+        "frontend/tsconfig.json"
+      ],
+      "code": 0,
+      "seconds": 8.766
+    },
+    "v18-vue": {
+      "name": "v18-vue",
+      "command": [
+        "/opt/node/bin/node",
+        "frontend/node_modules/vitest/vitest.mjs",
+        "run",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "src/components/task-detail/CourseTutorPanel.usable.test.ts",
+        "--root",
+        "frontend",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-usability-v18/vue-results.json"
+      ],
+      "code": 0,
+      "seconds": 2.951
+    }
+  },
+  "mechanism_counts": {
+    "python_final_passed": 38,
+    "python_final_skipped": 0,
+    "java_targeted_passed": 24,
+    "java_final_cross_service_passed": 1,
+    "java_skipped": 0,
+    "vue_targeted_passed": 18,
+    "vue_types_exit_code": 0,
+    "v17_compatibility_passed": 10,
+    "v17_compatibility_deselected": 59,
+    "ruff_named_files": 10,
+    "ruff_diagnostics": 0,
+    "named_python_compile_exit_code": 0,
+    "python_static_type_check": "NOT_RUN; no configured/installed Python type checker; compile is not type checking"
+  },
+  "normal_teaching": {
+    "fixture_visible_codepoints": 2721,
+    "fixture_block_codepoints": [
+      598,
+      572,
+      552,
+      610
+    ],
+    "fixture_argument_utf8_bytes": 3025,
+    "schema_max_rendered_answer": 3989,
+    "schema_max_rendered_feedback": 950,
+    "limits": {
+      "text_codepoints": 4096,
+      "evaluation_codepoints": 1024,
+      "answer_blocks": 4,
+      "answer_block_text": 900,
+      "feedback_blocks": 2,
+      "feedback_block_text": 384,
+      "distinct_ids": 4,
+      "output_tokens": 4096,
+      "smoke_positions": 3,
+      "ordinary_decisions_per_turn": 3,
+      "format_repairs_per_turn": 1,
+      "requests": 12,
+      "reserved_plus_settled_nano_usd": 300000000,
+      "turn_proxy": 64000,
+      "session_proxy": 640000,
+      "turn_seconds": 20
+    },
+    "v17_supported_paraphrase": "REPRODUCED_TUTOR_SUPPORT_INVALID",
+    "v18_supported_paraphrase": "COMPLETED_MOCK_MECHANICS_ONLY",
+    "arbitrary_unsupported_explanation": "KNOWN_RESIDUAL_ACCEPTED_NOT_A_QUALITY_PASS"
+  },
+  "actual_frozen_entry": {
+    "entry-budget": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "global_stop": "REAL_EVAL_BUDGET_EXHAUSTED",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-fabricated_id": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 2,
+      "global_stop": "REAL_EVAL_PROTOCOL_FAILURE",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-format_once": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 8,
+      "global_stop": null,
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-format_twice": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 3,
+      "global_stop": "TUTOR_FINISH_FORMAT_INVALID",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-malformed": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "global_stop": "REAL_EVAL_REQUEST_FAILED",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-model_mismatch": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "global_stop": "REAL_EVAL_MODEL_MISMATCH",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-none": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 6,
+      "global_stop": null,
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-support_invalid": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 3,
+      "global_stop": "TUTOR_SUPPORT_INVALID",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    },
+    "entry-unknown_usage": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "global_stop": "REAL_EVAL_REQUEST_FAILED",
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "cost_usd": "0"
+    }
+  },
+  "mock_requests_in_final_entry_fixtures": 26,
+  "default_entry_exit": 0,
+  "unapproved_live_exit": 2,
+  "unapproved_output_exists": false,
+  "historical_replay": {
+    "scope": "BOUNDED_LENGTH_CHECK_NOT_FULL_AUDIT_OR_NEW_GENERATION",
+    "historical": [
+      {
+        "sequence": 24,
+        "turn_key": "v14-sheets-portability:1",
+        "source": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-live-20261107/v14-frozen16-once/turns.jsonl",
+        "proposal_sha256": "46aaf99f0ec07f324b8fe81c067bf78ac6db3b1ea7ef6c3e4a5ed30ca3c9c938",
+        "counts": {
+          "chars": 1982,
+          "utf8_bytes": 1988,
+          "json_string_chars": 1997,
+          "citation_occurrences": 9,
+          "distinct_citations": 4,
+          "citation_chars": 594,
+          "noncitation_chars": 1388,
+          "repeated_marker_chars": 330
+        },
+        "fits_old_1600": false,
+        "fits_new_4096_size_only": true,
+        "historical_verdict": "FAIL_UNCHANGED",
+        "new_generation": "NOT_RUN",
+        "replay": "RECONSTRUCTED_FROM_PARSED_PROPOSAL_NOT_ORIGINAL_RESPONSE_BYTES"
+      },
+      {
+        "sequence": 25,
+        "turn_key": "v14-sheets-portability:1",
+        "source": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-live-20261107/v14-frozen16-once/turns.jsonl",
+        "proposal_sha256": "653f063b85d3f70589ac116324c2ebf425d07e8916e314d3175c3c15e5ff9431",
+        "counts": {
+          "chars": 1799,
+          "utf8_bytes": 1805,
+          "json_string_chars": 1814,
+          "citation_occurrences": 9,
+          "distinct_citations": 4,
+          "citation_chars": 594,
+          "noncitation_chars": 1205,
+          "repeated_marker_chars": 330
+        },
+        "fits_old_1600": false,
+        "fits_new_4096_size_only": true,
+        "historical_verdict": "FAIL_UNCHANGED",
+        "new_generation": "NOT_RUN",
+        "replay": "RECONSTRUCTED_FROM_PARSED_PROPOSAL_NOT_ORIGINAL_RESPONSE_BYTES"
+      },
+      {
+        "sequence": 31,
+        "turn_key": "v14-sheets-lineends:3",
+        "source": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-live-20261107/v14-frozen16-once/turns.jsonl",
+        "proposal_sha256": "114cd1faf4737e364563d255611b9d1e0ac752580a0aa9f7388acf595bcbbfd5",
+        "counts": {
+          "chars": 1818,
+          "utf8_bytes": 1820,
+          "json_string_chars": 1843,
+          "citation_occurrences": 10,
+          "distinct_citations": 3,
+          "citation_chars": 660,
+          "noncitation_chars": 1158,
+          "repeated_marker_chars": 462
+        },
+        "fits_old_1600": false,
+        "fits_new_4096_size_only": true,
+        "historical_verdict": "FAIL_UNCHANGED",
+        "new_generation": "NOT_RUN",
+        "replay": "RECONSTRUCTED_FROM_PARSED_PROPOSAL_NOT_ORIGINAL_RESPONSE_BYTES"
+      },
+      {
+        "sequence": 32,
+        "turn_key": "v14-sheets-lineends:3",
+        "source": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v14-live-20261107/v14-frozen16-once/turns.jsonl",
+        "proposal_sha256": "c3b73c15b4093a2c389fc758a582ba26382d44aa9e2aef4b5353df2afd853ae3",
+        "counts": {
+          "chars": 1633,
+          "utf8_bytes": 1635,
+          "json_string_chars": 1658,
+          "citation_occurrences": 10,
+          "distinct_citations": 3,
+          "citation_chars": 660,
+          "noncitation_chars": 973,
+          "repeated_marker_chars": 462
+        },
+        "fits_old_1600": false,
+        "fits_new_4096_size_only": true,
+        "historical_verdict": "FAIL_UNCHANGED",
+        "new_generation": "NOT_RUN",
+        "replay": "RECONSTRUCTED_FROM_PARSED_PROPOSAL_NOT_ORIGINAL_RESPONSE_BYTES"
+      }
+    ],
+    "max_rendered_answer": 3989,
+    "max_rendered_feedback": 950,
+    "character_unit": "Python len / Unicode code points; labels, whitespace and full canonical IDs included",
+    "maximum_wire_liability_nano_usd": 294912000,
+    "reserved_plus_settled_cap_nano_usd": 300000000,
+    "cost_usd": "0",
+    "real_model_calls": 0,
+    "embedding_calls": 0,
+    "reviewer_calls": 0
+  },
+  "parent_integrity": {
+    "files": 43,
+    "status": "UNCHANGED",
+    "evidence": ".data/tutor-usability-v18/parent-integrity.json"
+  },
+  "reference_review": "Codex same author of questions, implementation and tests; nonblind source review; independent human NOT_RUN, not a required prerequisite for this bounded development smoke",
+  "limited_alignment_correction": "A long fixture initially anchored indexing to an error paragraph; before freeze, its actual search was expanded to the first-element rule, source quote/line was corrected and out-of-scope function-call explanation removed. Prior artifacts retained.",
+  "preliminary_failures": [
+    "runtime-01:22 passed/1 failed, test asserted a raw newline-containing answer inside JSON-escaped text; corrected to exact history field comparison",
+    "runtime-03:26 passed/1 failed, ledger test fixture omitted required route/tool fields; corrected fixture, not product limits",
+    "New lint/syntax findings corrected in explicitly named new files before code commit; no historical file formatting"
+  ],
+  "cleanup": {
+    "removed_owned_container": "a1d8e338b4268ac131a02a02142ed8bbecb98afcd065016ce36107b3d4403d8f",
+    "verified_label": "tutor-usability-v18",
+    "non_system_schemas_before_cleanup": [],
+    "public_tables_before_cleanup": 0,
+    "original_running_containers_preserved": 23,
+    "port25841_closed": true,
+    "scope": "Only this phase container removed; evidence retained; original services unchanged"
+  },
+  "local_evidence_root": ".data/tutor-usability-v18",
+  "local_evidence_file_count": 364,
+  "local_evidence_manifest_sha256": "22b267f020bd408b2765906121a1e6e4d7770ec820305e5c4a4321dcb751ed79",
+  "real_calls": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "cost_usd": "0",
+  "not_run": [
+    "real quality improvement",
+    "cost optimization",
+    "independent human agreement",
+    "SQL holdout",
+    "scaling",
+    "learning effects",
+    "provider latency/tokenization/output compliance",
+    "account/provider API availability",
+    "real browser/manual/student acceptance"
+  ],
+  "not_checked": [
+    "arbitrary unseen source/question combinations beyond bounded fixtures",
+    "all legacy/full16 regressions (intentionally outside this phase)",
+    "concurrent mixed identities or migration (exclusive schemas required)"
+  ],
+  "no_default_switch": true,
+  "historical_fail_unchanged": true,
+  "no_push_pr_merge_deploy_ci": true,
+  "documentary_price_config_receipt": "eval/tutor-usability-v18-v1/PUBLIC_PRICING_REVIEW.json",
+  "fresh_paid_grant": "ABSENT",
+  "no_additional_development_or_formal_human_gate_for_small_smoke": true
+}
