@@ -1,0 +1,174 @@
+{
+  "review_type": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "grading_rules_sha256": "0eb59ce214d5607205d1b3cb9b12090ea0ba00ef83455a01e4ff42e317e628ca",
+  "counts": {
+    "expected": 16,
+    "executed": 7,
+    "completed": 6,
+    "failed": 1,
+    "missing": 9,
+    "scorable": 6,
+    "semantically_scored": 6,
+    "all_outcomes_reviewed": 16,
+    "unscorable_failed_or_missing": 10,
+    "expected_answer": 12,
+    "expected_refusal": 4
+  },
+  "task_correctness": {
+    "numerator": 3,
+    "denominator": 16,
+    "value": 0.1875
+  },
+  "correct_turns": [
+    "fresh-python-tail:4",
+    "fresh-python-tail:5",
+    "fresh-sheets-text:1"
+  ],
+  "completed_answer_judgments": {
+    "correct": 3,
+    "incorrect": 2,
+    "uncertain": 1
+  },
+  "per_course": {
+    "carpentries-python": {
+      "numerator": 2,
+      "denominator": 8,
+      "value": 0.25
+    },
+    "carpentries-spreadsheets": {
+      "numerator": 1,
+      "denominator": 8,
+      "value": 0.125
+    }
+  },
+  "critical_index": {
+    "numerator": 0,
+    "denominator": 3,
+    "value": 0.0
+  },
+  "expected_clean_refusals": {
+    "numerator": 1,
+    "denominator": 4,
+    "value": 0.25
+  },
+  "clarification": {
+    "numerator": 0,
+    "denominator": 1,
+    "value": 0.0
+  },
+  "semantic_context": {
+    "numerator": 3,
+    "denominator": 10,
+    "value": 0.3
+  },
+  "semantic_context_observed": {
+    "numerator": 3,
+    "denominator": 3,
+    "value": 1.0
+  },
+  "citation_support": {
+    "numerator": 18,
+    "denominator": 21,
+    "value": 0.8571428571428571
+  },
+  "citation_presence": {
+    "numerator": 21,
+    "denominator": 25,
+    "value": 0.84
+  },
+  "supported_claim_coverage": {
+    "numerator": 18,
+    "denominator": 25,
+    "value": 0.72
+  },
+  "claims": {
+    "total": 29,
+    "citation_required": 25,
+    "annotated_pairs": 21,
+    "uncertain_pairs": 0
+  },
+  "required_full_supported_turns": [
+    "fresh-python-tail:5"
+  ],
+  "expected_answer_full_supported_coverage": {
+    "numerator": 1,
+    "denominator": 12,
+    "value": 0.08333333333333333
+  },
+  "wrong_refusals_on_answerable": 0,
+  "decision": "FAIL",
+  "independent_human_agreement": "NOT_RUN",
+  "model_reviewer": "NOT_RUN_DISABLED",
+  "sql_holdout": "NOT_RUN",
+  "expansion_300": "NOT_RUN",
+  "learning_effects": "NOT_RUN",
+  "execution_code_sha": "06b5858024b5b22cded0573dca7963c5a73b3d19",
+  "candidate": "p8-tutor-grounded-v11-development",
+  "candidate_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "batch_plan_sha256": "4efdabb65a323155366184523757779a04b7ddfc7baf6717638590bdb91100ad",
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-fresh-live-20261107",
+  "raw_artifact_manifest_sha256": "04636f69204a2d8aa57c928fbd97e02139d989efdc624180626489aab1e601f9",
+  "requests": {
+    "real_http": 17,
+    "http_200": 17,
+    "failed_http": 0,
+    "channel_attempts": 17,
+    "settled": 17,
+    "pending": 0,
+    "ledger_events": 34,
+    "reviewer": 0,
+    "transport_retries": 0
+  },
+  "usage": {
+    "prompt_tokens": 61668,
+    "completion_tokens": 3460,
+    "total_tokens": 65128,
+    "prompt_cache_hit_tokens": 16896,
+    "prompt_cache_miss_tokens": 44772
+  },
+  "costs": {
+    "currency": "USD",
+    "rate_calculated_off_peak_cache_aware_usd": "0.008842488",
+    "local_ledger_nano_usd": 22652400,
+    "local_ledger_usd": "0.0226524",
+    "maximum_prefix_exposure_nano_usd": 27859500,
+    "effective_local_cap_usd": "0.70",
+    "user_total_upper_limit_usd": "10.00",
+    "supplier_actual_invoice_usd": "UNKNOWN_NOT_QUERIED",
+    "supplier_actual_hard_cap": "UNVERIFIED",
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "source_date": "2026-11-07",
+    "rate_unit_tokens": 1000000,
+    "rates": {
+      "input_hit": ".003",
+      "input_miss": ".15",
+      "output": ".60"
+    },
+    "off_peak_basis": "UTC Saturday; documented weekend rule, subject to supplier invoice"
+  },
+  "metadata": {
+    "returned_model_counts": {
+      "deepseek-flash": 17
+    },
+    "fingerprint_counts": {
+      "bc19ba97cbe016479903222bb1578db6": 17
+    },
+    "response_ids_present": 17,
+    "response_ids_unique": 17,
+    "request_ids_present": 0,
+    "cache_complete_calls": 17,
+    "immutable_model_version": "UNKNOWN_NOT_PROVEN_BY_RETURNED_ALIAS"
+  },
+  "stop_code": "TUTOR_REPAIR_BUDGET_UNAVAILABLE",
+  "stop_reason": "Five distinct citations / 1601 text characters; prepaid repair would total 68950 > 64000 runtime byte-proxy units; no repair sent",
+  "cleanup": {
+    "container": "/lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port_25841_closed": true,
+    "volume_retained": true,
+    "preexisting_containers_still_running": 23,
+    "authorization_expired": true
+  },
+  "authorization_expired": true
+}
