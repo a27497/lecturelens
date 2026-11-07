@@ -230,3 +230,126 @@ def test_evidence_default_candidate_mock_preserves_actual_index_syntax(lab):
     assert result["status"] == "completed"
     assert "values[0]" in result["answer"] and "names=['a', 'b']" in result["answer"]
     assert result["citations"][0]["text"] == source["text"]
+
+
+@pytest.mark.parametrize("field", ["blocks", "evaluation_blocks"])
+def test_semantic_bad_anchor_in_either_field_never_publishes(lab, field):
+    def finish(body):
+        data = dict(outcome="answered", blocks=[block(body)])
+        data[field] = [{**block(body), "quote": "Fabricated source anchor absent from the course."}]
+        return data
+
+    p = Provider(finish)
+    result = run(lab, p)
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_SUPPORT_INVALID"
+    assert result["answer"] is None and not result["citations"] and len(p.requests) == 3
+
+
+def test_semantic_known_bad_anchor_repairs_with_explicit_observation(lab):
+    def finish(body):
+        value = block(body)
+        if "rejected_blocks" not in body:
+            value["quote"] = "Fabricated source anchor"
+        return dict(outcome="answered", blocks=[value])
+
+    p = Provider(finish)
+    result = run(lab, p)
+    assert result["status"] == "completed" and len(p.requests) == 3
+    observation = json.loads(p.requests[-1][0][-1]["content"])["observations"][-1]
+    assert observation["error"] == "TUTOR_SUPPORT_REPAIR_REQUIRED"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "The complete solution is y=97. Understood?",
+        "答案是97，明白吗？",
+        "I ran Python and verified this result.",
+    ],
+)
+def test_semantic_solution_cues_or_unobserved_execution_fail(lab, text):
+    p = Provider(lambda body: dict(outcome="socratic_prompt", blocks=[block(body, text)]))
+    result = run(lab, p, socratic=True)
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_SUPPORT_INVALID"
+
+
+def test_semantic_valid_anchor_does_not_prove_entailment_negative_fixture(lab):
+    # Deliberately bad claim survives the limited anchor check. Never count this as
+    # semantic success or describe v15 as a complete entailment verifier.
+    p = Provider(lambda body: dict(outcome="answered", blocks=[block(body, "Every loop cures influenza.")]))
+    result = run(lab, p)
+    assert result["status"] == "completed" and "cures influenza" in result["answer"]
+    assert result["answer"].startswith(HEADER)
+
+
+def test_semantic_full_feedback_and_answer_tail_survive_turn9(lab):
+    store, _, runtime, scope = lab
+    for n in range(1, 9):
+        runtime.command(Command(**scope, operation="TURN", client_turn_id=f"old{n}", text=f"Learner {n}"))
+        with store.connect() as conn:
+            conn.execute(
+                "UPDATE tutor_turn SET status='completed',outcome='answered',answer=%s,evaluation=%s WHERE session_id=%s AND ordinal=%s",
+                (
+                    "x" * 250 + " IMPORTANT_TAIL_CORRECTION",
+                    "EVALUATION_ONLY_CORRECTION",
+                    scope["session_id"],
+                    n,
+                ),
+            )
+    p = Provider(lambda body: dict(outcome="answered", blocks=[block(body)]))
+    result = run(lab, p)
+    body = json.loads(p.requests[0][0][-1]["content"])
+    assert len(body["history"]) == 8 and body["history"][0]["evaluation"] == "EVALUATION_ONLY_CORRECTION"
+    assert body["history"][0]["answer"].endswith("IMPORTANT_TAIL_CORRECTION")
+    assert result["status"] == "completed"
+
+
+def test_semantic_paraphrased_solution_can_bypass_cue_rules_negative_fixture(lab):
+    p = Provider(
+        lambda body: dict(
+            outcome="socratic_prompt",
+            blocks=[
+                block(
+                    body,
+                    "Add seventy-five, twenty and two to obtain ninety-seven. Can you repeat these steps?",
+                )
+            ],
+        )
+    )
+    result = run(lab, p, socratic=True)
+    assert result["status"] == "completed"
+    # This is an intentionally retained limitation, not a pedagogical success.
+    assert "ninety-seven" in result["answer"]
+
+
+def test_semantic_context_capacity_stops_before_provider_without_truncation(lab):
+    store, _, runtime, scope = lab
+    for n in range(1, 25):
+        runtime.command(Command(**scope, operation="TURN", client_turn_id=f"old{n}", text="L" * 2000))
+        with store.connect() as conn:
+            conn.execute(
+                "UPDATE tutor_turn SET status='completed',outcome='answered',answer=%s,evaluation=%s WHERE session_id=%s AND ordinal=%s",
+                ("A" * 1600, "E" * 500, scope["session_id"], n),
+            )
+    p = Provider(lambda body: dict(outcome="answered", blocks=[block(body)]))
+    result = run(lab, p)
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_BUDGET_EXHAUSTED"
+    assert not p.requests and result["reserved_tokens"] == 0
+
+
+@pytest.mark.parametrize("query,hit", [("zzzzunmatched", False), ("?", False), ("细胞分裂", True)])
+def test_semantic_retrieval_empty_observation_and_unicode(query, hit):
+    from lecturelens_real_eval.tutor.relevant_authority import RelevantSnapshotAuthority
+
+    e = dict(
+        evidence_id="e1",
+        text="细胞分裂 follows a bounded process.",
+        start_ms=0,
+        end_ms=1,
+        source_type="SUBTITLE",
+    )
+    authority = RelevantSnapshotAuthority({"lectures": {"x": {"evidence": [e]}}})
+    scope = dict(owner_id=811012, course_id="test", revision=1)
+    authority.register(scope, "x")
+    result = authority.read(scope, "SEARCH", query=query)
+    assert bool(result["evidence"]) is hit and result["retrieval_observation"]["no_hit"] is not hit

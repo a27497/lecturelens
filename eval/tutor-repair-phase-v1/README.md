@@ -64,3 +64,33 @@ StudyEvidenceAuthority with H2 facts and mocked deterministic sources/retrieval;
 Python tests use signed Mock HTTP negotiation and real disposable PG. Full
 Java↔Python validation is reserved for the final cross-service stage. No model,
 embedding or reviewer call is made. `bounded_app:create_app` is opt-in only.
+
+## Stage 3: observations, context and explicit semantic limits
+
+Each answer/evaluation block must carry an actual literal anchor in its bound,
+current-turn authoritative source. Missing anchors and obvious unobserved
+execution claims produce one support-repair observation using ordinary remaining
+slots, then fail closed. This does not add a paid reviewer or call budget.
+Rendered fields say `Unverified course account`; derivations are separately
+labelled. The contract distinguishes supplied-source attribution from independent
+execution. It does not hardcode the spreadsheet/Python answers.
+
+Obvious full-solution cues (code fences, assignment, explicit answer/result labels,
+including selected Chinese labels) in Socratic text are rejected/repaired. This
+is a conservative heuristic with false-positive/false-negative risks, not semantic
+hint validation. Two negative fixtures deliberately retain the limits: an
+unsupported influenza claim with a real anchor, and a paraphrased full solution
+without a cue can publish. Their test PASS records an unresolved defect, not
+learning quality. A03/A12 remain partial and block a semantic-quality claim.
+
+The new runtime retains full completed session messages, answer tails and feedback.
+Its existing byte/call/session caps reject an over-capacity context before provider
+entry; it never silently extracts a summary prefix. This can terminate a long
+conversation earlier, rather than promise all40 turns fit. The new opt-in lexical
+snapshot authority exposes empty positive-match results instead of arbitrary first
+rows, supports deterministic CJK bigram overlap, and leaves old identities and the
+actual product dense retriever unchanged. Retrieval quality remains NOT_RUN.
+
+Stage3 final targeted regression:29 tests passed, zero failures/errors/skips, using
+actual disposable PostgreSQL. Initial28-test pass predates the explicit heuristic
+bypass negative fixture and the final attribution label. Both records are retained.
