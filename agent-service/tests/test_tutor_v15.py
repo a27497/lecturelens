@@ -1,6 +1,7 @@
 """V15 product mechanisms on a disposable PG schema; never provider quality."""
 
 import copy
+import hashlib
 import json
 import os
 import uuid
@@ -168,3 +169,64 @@ def test_delivery_foreign_binding_never_gets_format_repair(lab):
     result = run(lab, p)
     assert result["status"] == "failed" and result["error_code"] == "TUTOR_CITATION_MISMATCH"
     assert len(p.requests) == 2 and not result["citations"]
+
+
+@pytest.mark.parametrize("damage", [None, "legacy", "hash", "owner", "truncated", "capacity"])
+def test_evidence_negotiation_hash_scope_and_capacity(damage):
+    from lecturelens_agent.study.authority import signature
+    from lecturelens_agent.study.store import StudyError
+    from lecturelens_real_eval.tutor.complete_authority import CompleteEvidenceAuthority
+
+    secret = "synthetic-test-service-secret-minimum-32"
+    scope = dict(owner_id=811012, course_id="complete", revision=1)
+    text = "for value in names:\n    length += 1\nprint(length)" + "x" * 1250
+
+    def send(request):
+        assert request.headers["X-LectureLens-Signature"] == signature(
+            secret, request.headers["X-LectureLens-Timestamp"], request.content, request.url.path
+        )
+        payload = json.loads(request.content)
+        assert payload["text_policy"] == "complete-v1"
+        source = dict(
+            evidence_id="e1",
+            text=text,
+            start_ms=0,
+            end_ms=1,
+            source_type="SUBTITLE",
+            text_complete=True,
+            content_hash=hashlib.sha256(text.encode()).hexdigest(),
+        )
+        result = {**scope, "text_policy": "complete-v1", "evidence": [source]}
+        if damage == "legacy":
+            del result["text_policy"]
+        if damage == "owner":
+            result["owner_id"] = 1
+        if damage == "hash":
+            source["content_hash"] = "f" * 64
+        if damage == "truncated":
+            source["text_complete"] = False
+        if damage == "capacity":
+            source["text"] = "x" * 8001
+        return httpx.Response(200, json=dict(data=result))
+
+    authority = CompleteEvidenceAuthority(
+        "http://127.0.0.1:39991", secret, transport=httpx.MockTransport(send)
+    )
+    if damage:
+        with pytest.raises(StudyError):
+            authority.read(scope, "READ", evidence_ids=["e1"])
+    else:
+        assert authority.read(scope, "READ", evidence_ids=["e1"])["evidence"][0]["text"] == text
+
+
+def test_evidence_default_candidate_mock_preserves_actual_index_syntax(lab):
+    from lecturelens_real_eval.tutor.bounded_mock import SourcePreservingMock
+
+    store, authority, runtime, scope = lab
+    source = authority.snapshot["lectures"]["carpentries-python"]["evidence"][0]
+    source["text"] = "The first value is values[0]; retain names=['a', 'b']."
+    runtime.read_evidence(scope, [source["evidence_id"]])
+    result = run(lab, SourcePreservingMock(), text="values names first")
+    assert result["status"] == "completed"
+    assert "values[0]" in result["answer"] and "names=['a', 'b']" in result["answer"]
+    assert result["citations"][0]["text"] == source["text"]

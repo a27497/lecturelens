@@ -8,6 +8,7 @@ import com.example.courselingo.evidence.CourseEvidenceService;
 import com.example.courselingo.evidence.EvidenceIndexSynchronizer;
 import com.example.courselingo.qa.service.DenseEvidenceClient;
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,8 @@ public class StudyEvidenceAuthority {
     public Map<String,Object> execute(Request request) {
         if (request.owner_id()==null || request.owner_id()<1 || request.course_id()==null || request.course_id().length()>128
                 || request.revision()<0 || request.action()==null) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        boolean complete="complete-v1".equals(request.text_policy());
+        if(request.text_policy()!=null && !complete) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         requireVersion(request);
         var authorized = request.learning_scope()==null && "CHECK".equals(request.action()) ? List.<CourseEvidence>of()
             : evidence.current(request.course_id(),request.owner_id()).stream().filter(CourseEvidence::retrievable).toList();
@@ -76,9 +79,23 @@ public class StudyEvidenceAuthority {
             }
         }
         requireVersion(request); // Source may change during retrieval; never return stale context.
-        var result=new LinkedHashMap<String,Object>(Map.of("owner_id",request.owner_id(),"course_id",request.course_id(),"revision",request.revision(),
-            "evidence",selected.stream().map(e->Map.of("evidence_id",e.evidenceId(),"text",bounded(e.normalizedText()),
-                "start_ms",e.startMs(),"end_ms",e.endMs(),"source_type",e.sourceType())).toList()));
+        // A new consumer negotiates complete raw text before any model call. Legacy
+        // consumers retain their frozen projection; oversized sources are never
+        // advertised as complete prefixes under the new policy.
+        if(complete && (selected.size()>8
+                || selected.stream().anyMatch(e->e.rawTextTruncated() || e.rawText().length()>8000)
+                || selected.stream().mapToLong(e->e.rawText().length()).sum()>16000
+                || selected.stream().mapToLong(e->e.rawText().getBytes(StandardCharsets.UTF_8).length).sum()>32768))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST,"STUDY_EVIDENCE_CAPACITY");
+        List<Map<String,Object>> output=new ArrayList<>();
+        for(var e:selected) {
+            Map<String,Object> row=new LinkedHashMap<>(Map.of("evidence_id",e.evidenceId(),"text",complete ? e.rawText() : bounded(e.normalizedText()),
+                "start_ms",e.startMs(),"end_ms",e.endMs(),"source_type",e.sourceType()));
+            if(complete) { row.put("text_complete",true); row.put("content_hash",e.contentHash()); }
+            output.add(row);
+        }
+        var result=new LinkedHashMap<String,Object>(Map.of("owner_id",request.owner_id(),"course_id",request.course_id(),"revision",request.revision(),"evidence",output));
+        if(complete) result.put("text_policy","complete-v1");
         if(scope!=null) result.put("learning_scope",scope);
         return result;
     }
@@ -114,7 +131,11 @@ public class StudyEvidenceAuthority {
     }
     private static String bounded(String text) { return text.length()>1200 ? text.substring(0,1200) : text; }
     public record Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
-                          List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course) {
+                          List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course,String text_policy) {
+        public Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
+                       List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course) {
+            this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,learning_scope,expand_to_course,null);
+        }
         public Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
                        List<String> evidence_ids,String evidence_id) {
             this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,null,null);

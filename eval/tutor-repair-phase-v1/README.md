@@ -37,3 +37,30 @@ are retained under `.data/tutor-repair-phase-20261108/phase1/` and `checks/`.
 Runtime identity is provisional until the final new manifest is frozen; no
 product registration/default change is made. Final issue tracking, limitations,
 substage commits and the unexecuted real-validation proposal follow in REPORT.md.
+
+## Stage 2: complete source negotiation and Mock syntax
+
+`complete-v1` is an additive Java Evidence projection negotiated and echoed even
+on CHECK. It returns raw text and its hash with `text_complete=true`, preserving
+code structure and suffixes. It rejects upstream-truncated text, rows over8000
+Java UTF-16 units, totals over16000 units or32768 UTF-8 bytes, and more than8 rows.
+It never returns a complete-labelled prefix. The Python adapter checks policy,
+scope, row/hash/completeness and capacity; an older Java server lacking the echo
+fails closed. Retrieval normalization and stored Evidence identity are unchanged.
+Legacy consumers retain the old normalized/prefix projection to avoid changing
+unrelated Study/frozen consumers. Activating the new projection requires the new
+explicit Tutor factory; it is not default deployment acceptance.
+
+The explicit v15 factory defaults to a source-preserving, credential-free Mock.
+It chooses whole bounded paragraphs, preserves programming brackets, and refuses
+when no whole paragraph fits. Its citations still pass the real runtime protocol.
+The frozen base Mock remains unchanged: fully fixing the old default would edit a
+frozen source or switch defaults, both excluded. A06 is therefore partial across
+all identities, fixed in the new candidate only. No monkeypatch or import-time
+replacement of the old default is used.
+
+Stage2:16 Python tests and24 Java tests passed, zero skipped. Java tests use actual
+StudyEvidenceAuthority with H2 facts and mocked deterministic sources/retrieval;
+Python tests use signed Mock HTTP negotiation and real disposable PG. Full
+Java↔Python validation is reserved for the final cross-service stage. No model,
+embedding or reviewer call is made. `bounded_app:create_app` is opt-in only.

@@ -69,6 +69,11 @@ def render(blocks):
 class BoundedTutorRuntime(TutorRuntime):
     """Bounded blocks change the model tool contract, never the browser answer protocol."""
 
+    def __init__(self, store, authority, provider=None):
+        from .bounded_mock import SourcePreservingMock
+
+        super().__init__(store, authority, provider or SourcePreservingMock())
+
     def request(self, session, turn, state, history):
         messages, schemas, _ = super().request(session, turn, state, history)
         body = json.loads(messages[-1]["content"])
