@@ -100,6 +100,8 @@ class MetadataTransport(httpx.BaseTransport):
     def handle_request(self, request):
         self.metadata = {}
         response = self.inner.handle_request(request)
+        if response.is_stream_consumed:
+            self.record_metadata(response.content)
         original = response.stream
         owner = self
 
@@ -110,22 +112,28 @@ class MetadataTransport(httpx.BaseTransport):
                     if len(captured) + len(chunk) <= 128 * 1024:
                         captured.extend(chunk)
                     yield chunk
-                try:
-                    data = json.loads(captured)
-                    version = data.get("model")
-                    if isinstance(version, str) and len(version) <= 128:
-                        owner.metadata["returned_model_version"] = version
-                    fingerprint = data.get("system_fingerprint")
-                    if isinstance(fingerprint, str) and len(fingerprint) <= 128:
-                        owner.metadata["system_fingerprint"] = fingerprint
-                except (ValueError, TypeError, AttributeError):
-                    pass  # Metadata absence is explicit; channel owns schema failure.
+                owner.record_metadata(captured)
 
             def close(self):
                 original.close()
 
         response.stream = Stream()
         return response
+
+    def record_metadata(self, body):
+        if len(body) > 128 * 1024:
+            return
+        try:
+            data = json.loads(body)
+            for source, target in (
+                ("model", "returned_model_version"),
+                ("system_fingerprint", "system_fingerprint"),
+            ):
+                value = data.get(source)
+                if isinstance(value, str) and len(value) <= 128:
+                    self.metadata[target] = value
+        except (ValueError, TypeError, AttributeError):
+            pass  # Channel owns schema validation; missing metadata stays explicit.
 
     def close(self):
         self.inner.close()
@@ -372,6 +380,7 @@ def run(args):
             failures.append(
                 dict(
                     course_id=course,
+                    error_type=type(exc).__name__,
                     error=exc.code if isinstance(exc, EvalError) else "SHARD_FAILED",
                 )
             )
