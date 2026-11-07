@@ -1,0 +1,40 @@
+{
+  "version": "tutor-repair-retest-v1",
+  "execution_authorized": false,
+  "original_plan_sha256": "27c3361d841412f950b9aac5ab08a0d14e40b4fb0bc60801be0c9d181e5180d7",
+  "candidate_manifest_sha256": "aa5b8d24b7902a2fdfecb32b4833ded02316baf4194d5ba81ca7263d09da1aed",
+  "sessions": [
+    {
+      "course_id": "carpentries-python",
+      "dialogue_id": "python-01",
+      "split": "development",
+      "turns": 4,
+      "turns_sha256": "5d29532a8bf43d94d11d189f610015206abf88a8825fae534c6d0912c2e8e847"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "dialogue_id": "sheets-01",
+      "split": "development",
+      "turns": 4,
+      "turns_sha256": "c2244ee7777c26ade79f60975f3a54ae5af3de980929b5318c20b01e7e24f13e"
+    }
+  ],
+  "turn_keys": [
+    "python-01:1",
+    "python-01:2",
+    "python-01:3",
+    "python-01:4",
+    "sheets-01:1",
+    "sheets-01:2",
+    "sheets-01:3",
+    "sheets-01:4"
+  ],
+  "conditions": {
+    "requested_model": "deepseek-flash",
+    "reviewer": "off",
+    "concurrency": 1,
+    "transport_retries": 0,
+    "max_total_calls": 40,
+    "max_usd": "UNCONFIRMED_NEW_AUTHORIZATION_REQUIRED"
+  }
+}
