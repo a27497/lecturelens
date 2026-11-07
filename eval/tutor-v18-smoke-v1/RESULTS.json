@@ -1,0 +1,244 @@
+{
+  "version": "tutor-v18-smoke-v1",
+  "verdict": "FAIL",
+  "verdict_basis": "No answer delivered on turn1; exact-span support correction would require a fourth ordinary decision after the3-decision limit;2 dependent turns skipped. Frozen all3-complete/all-required-points standard not met.",
+  "execution_sha": "39e1d7454dd5dfe055c9ab7697c88a631ed795e7",
+  "code_commit": "4db4f05cf834a8dd8db155e58565afefc88b2b4d",
+  "freeze_commit": "af80398",
+  "candidate": "p8-tutor-usable-v18-development",
+  "candidate_sha256": "34ddb43cdab734b630bc58637cd1497b418ffca1b631414c9e490049502f4950",
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "run_id": "v18-smoke-20261107-once",
+  "started": "2026-11-07T18:35:38.337668+00:00",
+  "ended": "2026-11-07T18:35:46.405845+00:00",
+  "single_invocation": true,
+  "supervisor": {
+    "name": "v18-real-once",
+    "command": [
+      "agent-service/.venv/bin/python",
+      ".data/tutor-v18-live-20261107/launch_once.py",
+      "--execute-authorized-once"
+    ],
+    "code": 0,
+    "seconds": 9.185
+  },
+  "preflight": "PASS; unchanged frozen source/materials, exact current user grant, documented current rates and isolated durable PG. Established provisioned credential internally injected without output or persistence.",
+  "counts": {
+    "scheduled": 3,
+    "attempted": 1,
+    "completed": 0,
+    "failed": 1,
+    "skipped": 2,
+    "missing": 0,
+    "published_answers": 0,
+    "published_citation_pairs": 0,
+    "paid_http_requests": 3,
+    "ordinary_decisions": 3,
+    "format_repairs": 0,
+    "support_repair_observations": 1,
+    "support_repair_dispatches": 0,
+    "reviewer_requests": 0,
+    "embedding_requests": 0,
+    "dropped_parallel_calls": 1
+  },
+  "stop_chain": [
+    "SOURCE_SPAN_MISMATCH in all4 blocks",
+    "TUTOR_SUPPORT_REPAIR_REQUIRED committed",
+    "next ordinary reservation rejected at3 calls",
+    "V18_SMOKE_TURN_REQUEST_LIMIT",
+    "dependent turns2/3 skipped"
+  ],
+  "turns": [
+    {
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "execution_status": "failed",
+      "delivery_verdict": "FAIL",
+      "answer_characters": null,
+      "feedback_characters": null,
+      "published_citations": 0,
+      "draft_rendered_codepoints": 1770,
+      "draft_block_text_codepoints": [
+        230,
+        228,
+        209,
+        729
+      ],
+      "draft_schema_size_valid": true,
+      "draft_source_ids_observed": 4,
+      "draft_literal_anchors_valid": 0,
+      "draft_rendered_status": "UNPUBLISHED_DIAGNOSTIC_ONLY",
+      "necessary_point_review": [
+        {
+          "point": 1,
+          "diagnostic": "Loop replaces repeated indexed prints: substantially explained in rejected draft; no delivered answer."
+        },
+        {
+          "point": 2,
+          "diagnostic": "Changed2->3->4 arithmetic correct in draft, but parenthetical about course3 is ambiguous/misleading against original counter0; later sentence correctly gives original0->3."
+        },
+        {
+          "point": 3,
+          "diagnostic": "Missing full commented Python program for changed Ada/Grace example."
+        },
+        {
+          "point": 4,
+          "diagnostic": "Missing once-after-loop versus per-visit print comparison, including3/4 inside trace."
+        },
+        {
+          "point": 5,
+          "diagnostic": "Missing names[0]=Ada and names[1]=Grace explanation under supplied list."
+        }
+      ],
+      "a03": "Fourth real/observed ID supports general loop rule, not original count trace/names/increment; correct count passage is retrieved but not bound to those claims. All literal anchors fail, so valid-anchor semantic robustness has NOT been demonstrated. No unsupported output was published.",
+      "over_refusal": "No model abstention; controller rejects declared exact-source/nonliteral-anchor violations, not arbitrary paraphrase semantics.",
+      "requests": 3
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:2",
+      "execution_status": "SKIPPED",
+      "reason": "V18_SMOKE_TURN_REQUEST_LIMIT",
+      "correctness": "NOT_RUN",
+      "citation_support": "NOT_RUN",
+      "socratic_suitability_or_leakage": "NOT_RUN",
+      "answer_characters": null,
+      "feedback_characters": null,
+      "requests": 0
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:3",
+      "execution_status": "SKIPPED",
+      "reason": "V18_SMOKE_TURN_REQUEST_LIMIT",
+      "correctness": "NOT_RUN",
+      "citation_support": "NOT_RUN",
+      "cross_turn_feedback": "NOT_RUN",
+      "answer_characters": null,
+      "feedback_characters": null,
+      "requests": 0
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 10700,
+    "completion_tokens": 815,
+    "total_tokens": 11515,
+    "prompt_cache_hit_tokens": 768,
+    "prompt_cache_miss_tokens": 9932
+  },
+  "per_request": [
+    {
+      "sequence": 1,
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "model": "deepseek-flash",
+      "http_status": 200,
+      "channel_status": "SUCCEEDED",
+      "prompt_tokens": 855,
+      "completion_tokens": 88,
+      "total_tokens": 943,
+      "cache_hit_tokens": 0,
+      "cache_miss_tokens": 855,
+      "local_reserved_nano_usd": 5880900,
+      "local_settled_nano_usd": 362100,
+      "latency_s": 1.0737826019976637,
+      "ledger_call_id": "d99b1bf3-dd52-49af-8226-71616a7e3fb7",
+      "output_token_cap": 4096,
+      "api_finish_reason": "tool_calls"
+    },
+    {
+      "sequence": 2,
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "model": "deepseek-flash",
+      "http_status": 200,
+      "channel_status": "SUCCEEDED",
+      "prompt_tokens": 4452,
+      "completion_tokens": 46,
+      "total_tokens": 4498,
+      "cache_hit_tokens": 384,
+      "cache_miss_tokens": 4068,
+      "local_reserved_nano_usd": 9178200,
+      "local_settled_nano_usd": 1390800,
+      "latency_s": 0.7325726700000814,
+      "ledger_call_id": "8c6af2ab-5578-42d7-8261-0623a3875369",
+      "output_token_cap": 4096,
+      "api_finish_reason": "tool_calls"
+    },
+    {
+      "sequence": 3,
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "model": "deepseek-flash",
+      "http_status": 200,
+      "channel_status": "SUCCEEDED",
+      "prompt_tokens": 5393,
+      "completion_tokens": 681,
+      "total_tokens": 6074,
+      "cache_hit_tokens": 384,
+      "cache_miss_tokens": 5009,
+      "local_reserved_nano_usd": 10047600,
+      "local_settled_nano_usd": 2435100,
+      "latency_s": 4.574611192998418,
+      "ledger_call_id": "261fb820-7c02-44b4-9bfb-17c2cd06f3ac",
+      "output_token_cap": 4096,
+      "api_finish_reason": "tool_calls"
+    }
+  ],
+  "local_ledger": {
+    "final_nano_usd": 4188000,
+    "final_usd": "0.004188000",
+    "peak_reserved_plus_settled_nano_usd": 11800500,
+    "peak_usd": "0.011800500",
+    "gross_reservation_nano_usd": 25106700,
+    "pending": 0,
+    "unknown_usage": false,
+    "cap_nano_usd": 300000000,
+    "pg_jsonl_events_equal": true,
+    "events": 6,
+    "rates": "300 input /1200 output nano-USD per token; no cache discounts, peak conservative accounting, not supplier bill"
+  },
+  "rate_based_cost_estimate": {
+    "usd": "0.001981104",
+    "basis": "Current documented weekend/off-peak prices:768 cache-hit tokens at$0.003/M,9932 miss at$0.15/M,815 output at$0.60/M",
+    "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "supplier_actual_charge": "UNKNOWN_NOT_QUERIED",
+    "not_cost_optimization_evidence": true
+  },
+  "reviewer": "Codex same author of candidate, questions and previous tests; nonblind source review, not independent human/AI cross-review",
+  "raw_record_caveats": [
+    "Frozen CLI exits0 after recording a runtime failure; not a smoke PASS.",
+    "Raw summary retains verify_inputs ready_for_live=false/blockers/real_calls=0 boilerplate even after admission. Actual admitted live run,3 wire pairs,3 ledger calls and real_model_calls=3 are authoritative execution evidence. Raw files were not edited."
+  ],
+  "artifacts": {
+    "root": ".data/tutor-v18-live-20261107",
+    "run": ".data/tutor-v18-live-20261107/run",
+    "private_manifest": ".data/tutor-v18-live-20261107/artifact-manifest.json",
+    "private_manifest_sha256": "1d49a2643a9640a5f4c403f3f205cb395213e7bd50c5be9f9b962d10061cfca7",
+    "raw_requests_and_responses": "run/wire/*-{request,response}.body; decoded HTTP entities before JSON parsing, not TLS frames; known authorization redaction, no headers retained",
+    "reconstructed_replay": false,
+    "retained_backup": ".data/tutor-v18-live-20261107/state.pgcustom",
+    "schema": "v18_diag_ead5dbb081ff4f659e9cafb852ca8502"
+  },
+  "cleanup": {
+    "removed_owned_container": "5ced02dc683dc3028b77e62ba37f641fc256e842b1777e361620adf2458eea23",
+    "verified_label": "tutor-v18-live-once-20261107",
+    "live_schema_dropped": false,
+    "retained_live_schema": "v18_diag_ead5dbb081ff4f659e9cafb852ca8502",
+    "durable_pgdata_retained": ".data/tutor-v18-live-20261107/pgdata",
+    "custom_backup": ".data/tutor-v18-live-20261107/state.pgcustom",
+    "backup_bytes": 14724,
+    "backup_sha256": "96e7cd3e3d5977a94d30fa2b5e5b6ea34d61d0aeb6a472a18f5df16d7b2b276d",
+    "original_running_containers_preserved": 23,
+    "port25841_closed": true,
+    "one_use_claim_retained": ".data/tutor-v18-authorizations/v18-smoke-20261107-once.used",
+    "grant": "CONSUMED_AND_EXPIRED; no further requests",
+    "scope": "Owned container removed only; live state and ledgers retained privately; no original service changed"
+  },
+  "remaining_authorization": "CONSUMED_AND_EXPIRED; unused requests/fee headroom do not authorize another run",
+  "not_run": [
+    "independent human agreement",
+    "cost optimization",
+    "SQL holdout",
+    "scaling",
+    "learning effects",
+    "full16",
+    "real quality improvement comparison",
+    "real browser/Java end-to-end delivery in this smoke (frozen public snapshot authority used)"
+  ],
+  "no_code_default_frozen_asset_ci_or_historical_result_changes": true
+}
