@@ -1,0 +1,88 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "reused_manifest_sha256": "720fb9fd986164b498eb72d931c54b53c949ce81b8c23cee9b03662cc387de14",
+  "sources": [
+    {
+      "course_id": "carpentries-python",
+      "split": "development",
+      "title": "Programming with Python",
+      "course_url": "https://swcarpentry.github.io/python-novice-inflammation/",
+      "unit_url": "https://swcarpentry.github.io/python-novice-inflammation/02-numpy.html",
+      "unit": "Analyzing Patient Data (complete episode 2)",
+      "repository": "swcarpentry/python-novice-inflammation",
+      "source_path": "episodes/02-numpy.md",
+      "dialogue_ids": [
+        "python-01",
+        "python-02",
+        "python-03",
+        "python-04"
+      ],
+      "language": "en",
+      "accessed_at": "2026-11-07T09:14:00.712191+00:00",
+      "source_revision": "eb18f246aee338b2a6169ba18d8c5ced7cf89f53",
+      "download_url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md",
+      "repository_source_url": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md",
+      "local_path": "materials/carpentries-python.md",
+      "sha256": "a0ca18db59b888dcfa6d00e5680465720e4a8c7feed3b369b2c92d053c592ad3",
+      "bytes": 25130,
+      "author": "The Carpentries and lesson contributors",
+      "author_link": "https://carpentries.org/",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "software_license": "MIT",
+      "license_evidence_url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/LICENSE.md",
+      "license_local_path": "materials/carpentries-python-LICENSE.md",
+      "license_sha256": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+      "attribution": "Derived from Programming with Python, Analyzing Patient Data (complete episode 2), Copyright (c) The Carpentries and contributors (https://carpentries.org/). Instructional text CC BY 4.0; example software MIT. Original Markdown retained unchanged; evidence segmentation and evaluation questions added by Codex. No endorsement.",
+      "changes": "Source Markdown and license are unmodified. External linked pages, images, data files and video are not copied. Evidence extraction uses original source line ranges."
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "split": "development",
+      "title": "Data Organization in Spreadsheets for Ecologists",
+      "course_url": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/",
+      "unit_url": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/02-common-mistakes.html",
+      "unit": "Formatting problems (complete episode 3)",
+      "repository": "datacarpentry/spreadsheet-ecology-lesson",
+      "source_path": "episodes/02-common-mistakes.md",
+      "dialogue_ids": [
+        "sheets-01",
+        "sheets-02",
+        "sheets-03",
+        "sheets-04"
+      ],
+      "language": "en",
+      "accessed_at": "2026-11-07T09:14:01.833033+00:00",
+      "source_revision": "78a54d7a7adcc961e83f463ba5392232e035cc6c",
+      "download_url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md",
+      "repository_source_url": "https://github.com/datacarpentry/spreadsheet-ecology-lesson/blob/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md",
+      "local_path": "materials/carpentries-spreadsheets.md",
+      "sha256": "617226dece8c7de38808688c7053272e3a32cca7a1a28fedf0d6d7cb04ae24f9",
+      "bytes": 17092,
+      "author": "The Carpentries and lesson contributors",
+      "author_link": "https://carpentries.org/",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "software_license": "MIT",
+      "license_evidence_url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/LICENSE.md",
+      "license_local_path": "materials/carpentries-spreadsheets-LICENSE.md",
+      "license_sha256": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+      "attribution": "Derived from Data Organization in Spreadsheets for Ecologists, Formatting problems (complete episode 3), Copyright (c) The Carpentries and contributors (https://carpentries.org/). Instructional text CC BY 4.0; example software MIT. Original Markdown retained unchanged; evidence segmentation and evaluation questions added by Codex. No endorsement.",
+      "changes": "Source Markdown and license are unmodified. External linked pages, images, data files and video are not copied. Evidence extraction uses original source line ranges.",
+      "secondary_attributions": [
+        {
+          "title": "Research Data MANTRA [online course]",
+          "creator": "EDINA and Data Library / Research Data Service, University of Edinburgh",
+          "source_url": "https://mantra.ed.ac.uk/",
+          "license": "CC-BY-4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "license_evidence_url": "https://mantra.ed.ac.uk/acknowledgements.html",
+          "retained_range": "Original source lines 301-326, including its attribution. MANTRA website/media not copied."
+        }
+      ]
+    }
+  ],
+  "reuse_date": "2026-11-07",
+  "material_base": "eval/tutor-public-v1",
+  "new_material_downloads": false
+}

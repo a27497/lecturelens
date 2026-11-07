@@ -1,0 +1,46 @@
+{
+  "version": "tutor-fresh-dev-v1",
+  "candidate": "p8-tutor-grounded-v11-development",
+  "candidate_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "frozen_base_code_sha": "b96157fbd0107efd793a9fb03b17f1776a3ce8ea",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.grounded_runtime:GroundedTutorRuntime",
+  "context_version": "adjacent-source-passages-v1",
+  "allowed_courses": [
+    "carpentries-python",
+    "carpentries-spreadsheets"
+  ],
+  "split": "development",
+  "execution_authorized": false,
+  "authoring_boundary": "No candidate responses used to choose or revise these new tasks. SQL holdout questions are excluded. This is fresh development, not a holdout or unseen-course set.",
+  "proposed_conditions": {
+    "requested_model": "deepseek-flash",
+    "reviewer": "off",
+    "concurrency": 1,
+    "transport_retries": 0,
+    "sdk_retries": 0,
+    "application_transport_retries": 0,
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 1200,
+    "total_call_cap": "UNCONFIRMED_PROPOSED_80",
+    "total_usd_cap": "UNCONFIRMED_NEW_AUTHORIZATION_REQUIRED"
+  },
+  "parts": [
+    {
+      "part": "A",
+      "sessions": [
+        "fresh-python-tail",
+        "fresh-sheets-text"
+      ],
+      "turns": 8
+    },
+    {
+      "part": "B",
+      "sessions": [
+        "fresh-python-functions",
+        "fresh-sheets-markers"
+      ],
+      "turns": 8
+    }
+  ]
+}
