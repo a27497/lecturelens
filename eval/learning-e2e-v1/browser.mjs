@@ -106,7 +106,9 @@ try{
   await page.reload();await nav('Tutor 对话').click();await expect(tutor.locator('.answer')).toHaveCount(1,{timeout:30000});await tutor.locator('select').selectOption(previous);await expect(tutor.locator('.answer')).toHaveCount(3,{timeout:30000});await shot('09-both-conversations-restored');
  });
  await step('10 flashcard response loss is idempotent; due state survives refresh',async()=>{
-  await nav('闪卡复习').click();const cards=page.locator('.flashcards');await expect(cards.locator('.card')).toBeVisible({timeout:30000});
+  await nav('闪卡复习').click();const cards=page.locator('.flashcards');await expect(cards.locator('.empty')).toContainText('当前复习已完成',{timeout:30000});await expect(cards.locator('.summary')).toContainText('今日已复习 1 张');
+  const completed=await cards.locator('.summary').innerText();await page.reload();await nav('闪卡复习').click();await expect(cards.locator('.summary')).toHaveText(completed,{timeout:30000});await shot('10-flashcard-empty-due-queue-restored');
+  await cards.getByRole('button',{name:'生成一组证据闪卡',exact:true}).click();await expect(cards.locator('.card')).toBeVisible({timeout:45000});
   const summary=await cards.locator('.summary').innerText(),reviewed=Number(summary.match(/今日已复习 (\d+)/)[1]);await cards.getByRole('button',{name:'翻面 · 显示答案',exact:true}).click();await cards.locator('details > summary').click();await cards.getByRole('button',{name:/回看视频/}).first().click();await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(1);await shot('10-flashcard-evidence');await page.getByRole('button',{name:'返回当前学习任务',exact:true}).click();
   let lost=false;
   const fault=async route=>{if(!lost&&route.request().postDataJSON()?.operation==='REVIEW_CARD'){lost=true;const response=await route.fetch();expect(response.status()).toBe(200);transportFaults.push({kind:'flashcard review response lost after real server commit',path:new URL(route.request().url()).pathname});await route.abort('failed')}else await route.fallback()};await page.route('**/study/command',fault);
