@@ -1,6 +1,8 @@
 # Mock learning-flow acceptance
 
 This is a local functional acceptance, not a real-provider quality evaluation.
+See the [acceptance report](REPORT.md) for actual results, retained failures,
+versions, screenshots and coverage limits.
 It reuses the P10 full-stack harness and P9 offline hash embedding adapter, with
 fresh Compose project names, accounts, synthetic media and databases. The browser
 extends P10's unchanged choice/review scenarios with actual course entry and media

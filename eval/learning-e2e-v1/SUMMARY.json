@@ -1,0 +1,207 @@
+{
+  "status": "PASS",
+  "executed_sha": "990662f6158f7ecdfeda447c16d252117f51f488",
+  "counts": {
+    "study_session": 4,
+    "study_run": 5,
+    "study_event": 330,
+    "study_artifact": 2,
+    "study_attempt": 3,
+    "study_feedback": 1,
+    "study_feedback_note": 2,
+    "study_deck": 2,
+    "study_card": 2,
+    "study_review_log": 2,
+    "tutor_session": 2,
+    "tutor_turn": 4
+  },
+  "browser_checks": 12,
+  "screenshots": 26,
+  "mock_study_runs": 5,
+  "completed_mock_tutor_turns": 4,
+  "unique_tutor_turn_requests": 4,
+  "tutor_turn_posts_including_replay": 5,
+  "lost_response_faults": 2,
+  "unexpected_http_errors": 0,
+  "expected_http_400": 1,
+  "tutor_api_pg_content_rows_compared": 4,
+  "tutor_api_pg_fields_compared": [
+    "turn_id",
+    "session_id",
+    "client_turn_id",
+    "ordinal",
+    "learner_text",
+    "socratic",
+    "status",
+    "outcome",
+    "answer",
+    "evaluation",
+    "citations",
+    "usage",
+    "model_calls",
+    "tool_calls",
+    "reserved_tokens",
+    "error_code"
+  ],
+  "other_api_pg_content": {
+    "study_attempt": {
+      "rows": 3,
+      "fields": [
+        "attempt_id",
+        "artifact_id",
+        "question_index",
+        "version",
+        "answer_text",
+        "selected_option_id",
+        "choice_result"
+      ]
+    },
+    "study_feedback_note": {
+      "rows": 2,
+      "fields": [
+        "note_id",
+        "version",
+        "disposition",
+        "note_text"
+      ]
+    },
+    "study_review_log": {
+      "rows": 2,
+      "fields": [
+        "review_id",
+        "card_id",
+        "request_key",
+        "expected_version",
+        "rating",
+        "before_state",
+        "after_state",
+        "policy"
+      ]
+    }
+  },
+  "event_sequences_contiguous": true,
+  "existing_containers_still_running": 23,
+  "owned_projects_removed": true,
+  "owned_ports_closed": true,
+  "original_tutor_frozen_hashes_verified": 18,
+  "real_provider_quality": "NOT_RUN",
+  "human_agreement": "NOT_RUN",
+  "learning_effect": "NOT_RUN",
+  "scope": "Bounded desktop Mock learning-flow functional acceptance; not real teaching quality",
+  "starting_sha": "829a70ff46211fc2614be7f8fb8c9d0aabd39f3b",
+  "branch": "codex/tutor-scale-preparation",
+  "locally_recorded_origin_main": "300be51515867f7ece4f3a9224a484e825219ee0",
+  "remote_main_freshness": "NOT_RUN",
+  "tests": {
+    "frontend": 336,
+    "java_related": 32,
+    "python_separate_postgres": 398,
+    "skipped": 0
+  },
+  "identities": {
+    "checked_sha": "d3bc7ca392871d133206e839ba023871625a2117",
+    "origin_main": "300be51515867f7ece4f3a9224a484e825219ee0",
+    "origin_main_remote_freshness": "NOT_CHECKED",
+    "product_diff": [],
+    "study_identity": "p10-choice-review-442bb2af75c77ed1",
+    "study_manifest_sha256": "442bb2af75c77ed1f1a0d4b858dce9b43751b5eb4e9d9e7ff5835a5609c870ab",
+    "study_modules_verified": 63,
+    "tutor_identity": "p8-tutor-20261027-v9",
+    "tutor_runtime": "lecturelens_real_eval.tutor.runtime.TutorRuntime with MockTutor",
+    "frozen_file_checks": {
+      "agent-service/src/lecturelens_real_eval/channel.py": true,
+      "agent-service/src/lecturelens_real_eval/runner.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/__init__.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/app.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/citations.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/contracts.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/runtime.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor/store.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor_channel.py": true,
+      "agent-service/src/lecturelens_real_eval/tutor_runner.py": true,
+      "eval/p7-real/snapshot.json": true,
+      "eval/p8-tutor/compose.yaml": true,
+      "eval/p8-tutor/dialogues.json": true,
+      "eval/p8-tutor/run.py": true,
+      "eval/p8-tutor/sample.py": true,
+      "eval/p8-tutor/thresholds.json": true,
+      "eval/retrieval-v2/corpus.json": true,
+      "eval/p8-tutor/run-repair-mutations.py": true
+    },
+    "real_provider_calls": 0
+  },
+  "product_code_changes": [],
+  "raw_evidence_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/learning-e2e-20261107",
+  "http_observation_scope": "Study POST responses; no claim of exhaustive traffic capture",
+  "retained_trials": [
+    {
+      "trial": "browser-01",
+      "status": "FAIL",
+      "cause": "acceptance desktop locator"
+    },
+    {
+      "trial": "browser-02",
+      "status": "FAIL",
+      "cause": "acceptance fault-route lifecycle"
+    },
+    {
+      "trial": "browser-03",
+      "status": "INTENTIONALLY_STOPPED",
+      "cause": "correct acceptance one-card queue assumption"
+    },
+    {
+      "trial": "browser-04",
+      "status": "FAIL",
+      "cause": "acceptance DOM text comparison"
+    },
+    {
+      "trial": "browser-05",
+      "status": "PASS"
+    }
+  ],
+  "evidence_sha256": {
+    "browser-05/browser-results.json": "97b8274a193dbbba0d6906107ba3d43f4f05ab56e4495d60cd9bd922adebb58a",
+    "browser-05/synthetic-state.json": "5880454261b5ae6443a8ebbb81caed3a44d819597c0cde1597f5b8206b7df1ff",
+    "browser-05/stack/result.json": "0aa790456634338c31e7f67d7d03ed0df3a29cd56e8585bee01b6f2df36f3732",
+    "independent-audit-final.json": "aec40f1cd3a872267d0630d17484b0763b4b024f877dbe5fe5c890ef6c142112",
+    "independent_audit.py": "320c69a8811ff97445d301f06c32cbc4aa42b4dffc3b4c72b8fe4a56be0cf951",
+    "identities.json": "49af7774ab6e3c9b8cfd2a8d379fae095dac327070c6521ca0326351e72bdad4",
+    "transport-fault-check.json": "a7521e9a2dae0fc100ca4a2dee0f1fda9dc88f49ac96d05960e9c2ed9f69182b",
+    "python/database.json": "9958278156fe9f356ed036722f2bd262ac119f58af45582d87a88ab59c697c88",
+    "python/targeted.log": "55671d1a8cc488f545f3f22b26e967651d292e8678160b9f22246a024652d9fb",
+    "checks/frontend-baseline/run.json": "908757087f84cd2aab13d74dcd558eec342339f36d50ad4a4dcf8c9d4860b3cc",
+    "checks/frontend-baseline/output.log": "d180edbe5b09de7482efe47a61abf1055c4cb51683eb072ec4c3afe8174cd07d",
+    "checks/java-baseline/run.json": "7b6a9647f317c0ff59b7a49f5665a4238cd917786a65255ec813f452a54e3777",
+    "checks/java-baseline/output.log": "8bfe4c90420c0adbae9ccac2c31959b96f269c12b25a75cb2ad870e7a678688a",
+    "checks/python-learning/run.json": "53503178e3b3b6f64f0554f1997c5e3834d82248090aff67e372eb5bbe29cf0b",
+    "checks/browser-05/run.json": "5216923d4afb8b51ed56b645c5cf7720273c9df5974ec480792d05f6cc250c09"
+  },
+  "screenshot_sha256": {
+    "browser-05/screenshots/01-generated-private-key-hidden.png": "6ddcb4eaeaf5a2c7e970083cc00d7e25989b2efa169855d8e85ab16debbea68c",
+    "browser-05/screenshots/02-blank-still-ungraded.png": "057661761a3d108f5b4d702fe21b6b74d4bfef4e6f517980222f4f9dfad8ea29",
+    "browser-05/screenshots/03-evidence-location.png": "dafe7f9e7f81bb7227e559599e28fb97d65a1a8efe2285ae9b7b3533578d4a82",
+    "browser-05/screenshots/03-wrong-and-revealed.png": "8212bb981e3a2332b1f8bf4041e85b87a2fbc413ebe3b387cc35d92fc988e385",
+    "browser-05/screenshots/03a-cross-session-review-before-switch.png": "f1e19ed3a7e9c3090e4362f0c8888eb4039431ce8b8078d15c03dfca2ff1be53",
+    "browser-05/screenshots/03b-review-from-another-session.png": "a0072ea13e0422fbccb27cad6d7b68b661b37db10446e27e0cda0c407ee921a6",
+    "browser-05/screenshots/03c-review-evidence-time-location.png": "c6c45ac4f29e514e1e141e39cfbc5057800515ef512815f0c91e46ecefd48f72",
+    "browser-05/screenshots/03d-original-question-restored.png": "3a719d3ad37a619de637ddde375662219df706948b5b02610daf1906b51f1ab3",
+    "browser-05/screenshots/04-correct-removes-review-item.png": "b781b2ab148dc7105db13c6331cfb829cbfed763f644bfc4938529a982e19e64",
+    "browser-05/screenshots/04-correct-restored-and-history.png": "0d7108c4eb235a1c1f726fdb74f6d69ca505f19d3ef614656ed3cca820b5f667",
+    "browser-05/screenshots/04-wrong-restored.png": "4bb773c2bdeabd68860291781c9da01eacea5a3c5c719b4dadc7826605e30848",
+    "browser-05/screenshots/05-open-text-feedback-and-completion.png": "37edf8c2225c92bafab7277adeb8205dcac0a4eee38fcf25b4b1bd15e985da96",
+    "browser-05/screenshots/06-1280-choice-restored.png": "cc292c0e80ff3b510453a9afcfa22206d9ddda8b3ce0d29cbff61d9ba073fc0f",
+    "browser-05/screenshots/06-flashcards.png": "e0eaa319e71122012bc7186a749615e8e68e6b5c04250d377cafbfdfd2c4afeb",
+    "browser-05/screenshots/06-tutor.png": "60db62f56e26e9ae33684bc8f87194fb1310951927d4f4545a69a1882170e1b3",
+    "browser-05/screenshots/07-course-reader-and-video.png": "98b9a50d0b6f29bbe84ad5b4bab2382f46a1e49c1a5f057ad4d397b61f4e9516",
+    "browser-05/screenshots/08-tutor-evidence.png": "cabaa30c3ff41cd0012833a0ddab776364b80e11da4111e03f8d2aa995b65c87",
+    "browser-05/screenshots/08-tutor-history-restored.png": "dc2b69ae620de0218a21dbe58943365f1e58f17fafb01ddff32ca03315d12360",
+    "browser-05/screenshots/09-both-conversations-restored.png": "218dce407af6a4015f61006c1bfed86527f9f43fe962d70c501def12422cc876",
+    "browser-05/screenshots/09-tutor-unknown-outcome.png": "54e26a2f91c04847333d5fb50f7dd87626ce73c9d1d4ec1bdc9557bcd6babdeb",
+    "browser-05/screenshots/10-flashcard-empty-due-queue-restored.png": "081610cdb825e172871472c224dae5a99ed87cc4716b9d1fa2aed7580d029bb4",
+    "browser-05/screenshots/10-flashcard-evidence.png": "94f6496816a2948f98f0f0531decbf4a735add4ddf141727822a4fbb64707af8",
+    "browser-05/screenshots/10-flashcard-progress-restored.png": "5237771df19c2bc24b550f804c39dff2a19fe23ca3519f42cde5f80ec3c9aae4",
+    "browser-05/screenshots/10-flashcard-unknown-outcome.png": "631b552c8ca6dfccb7d83b8b4e542f3f1337808798e909b9d4c9e3aeb903675b",
+    "browser-05/screenshots/11-feedback-correction-restored.png": "4996674e6dacb388532fa7cff79968f7e35675bea842e0f764c5ff3b3f99a7e4",
+    "browser-05/screenshots/11-feedback-source.png": "7dc593a271b6e619d64acfc1c9e8242a5f9baa5ddffe4b44f1c7282c4e79dc8d"
+  }
+}
