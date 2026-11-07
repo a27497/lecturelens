@@ -1,0 +1,13 @@
+{
+  "version": "v13-reference-locator-v2",
+  "base_adapter_sha256": "20de57e4248b88bbe4c0b0d700f9b7739d3f6547bf50d024ca91a84c57da73e6",
+  "files": {
+    "v13_v2_contract.py": "34ad97ce119ac85aedf2c96703ea319d4c5381aefcb1ee21ea86f9e3d78e6223",
+    "trial_run_v2.py": "a73517c572e441d6f45b2808f884ff5535eee90538354c44a501adab084d9086",
+    "test_locators.py": "9e0489e4d98565c8b8b31766263f06fd3bee68daaf82baea902c253ddc271099",
+    "reference-locators.json": "2e10bce8d73101e07f920c34aebe9509efbe6943cb99303077a2c137b1b7bfc2",
+    "grading-rules.json": "5493f4ba95e0f98a9abea97a9a431e2b973c14572435603718551341f398754b",
+    "CONTENT_REVIEW.json": "38438bc4a53eba88714533859ccc214676d01f731ce6332a7e45d7a754579e15",
+    "run-plan.json": "7e6c743fcc28e4e20144900e6fbbcf8a8b46ea97fc91772b03a4c178f8de05c9"
+  }
+}

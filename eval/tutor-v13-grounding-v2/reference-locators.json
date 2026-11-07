@@ -1,0 +1,72 @@
+{
+  "base_freeze_sha256": "381beff7a312471e204e4e7b0622aea518fdf12bdd51b5ac442d7b03e9b32211",
+  "reason": "PRE_LIVE_WEB_DISPLAY_VS_ORIGINAL_MARKDOWN_LINE_OFFSETS; no real result or paid request exists",
+  "unchanged": [
+    "candidate",
+    "questions",
+    "reference_points",
+    "boundaries",
+    "grading_thresholds",
+    "source_bytes",
+    "runtime",
+    "stop_protocol"
+  ],
+  "ranges": {
+    "new-sheets-validation:1": [
+      [
+        28,
+        67
+      ]
+    ],
+    "new-sheets-validation:2": [
+      [
+        71,
+        77
+      ]
+    ],
+    "new-sheets-validation:3": [
+      [
+        28,
+        53
+      ],
+      [
+        81,
+        85
+      ]
+    ],
+    "new-sheets-validation:4": [
+      [
+        35,
+        61
+      ]
+    ],
+    "new-sheets-qc:1": [
+      [
+        91,
+        102
+      ]
+    ],
+    "new-sheets-qc:2": [
+      [
+        106,
+        138
+      ]
+    ],
+    "new-sheets-qc:3": [
+      [
+        150,
+        170
+      ],
+      [
+        137,
+        138
+      ]
+    ],
+    "new-sheets-qc:4": [
+      [
+        150,
+        170
+      ]
+    ]
+  }
+}

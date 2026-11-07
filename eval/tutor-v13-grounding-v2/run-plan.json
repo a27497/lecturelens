@@ -1,0 +1,56 @@
+{
+  "version": "tutor-v13-new-development-v2",
+  "candidate": "p8-tutor-claim-grounding-v13-development",
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "execution_authorized": false,
+  "counts": {
+    "courses": 2,
+    "sessions": 4,
+    "turns": 16,
+    "answerable": 12,
+    "insufficient": 4
+  },
+  "settings": {
+    "model": "deepseek-flash",
+    "route": "https://api.deepseek.com/chat/completions",
+    "temperature": 0,
+    "thinking": "disabled",
+    "max_output_tokens": 1200,
+    "reviewer": "off",
+    "concurrency": 1,
+    "transport_retries": 0,
+    "sdk_retries": 0,
+    "application_transport_retries": 0
+  },
+  "protocol": "v12-session-isolated-live-v1",
+  "protocol_sha256": "926f79b8f0c873b18ffab7d8efdaad9668f0ba605040fdba2070df126d4104e5",
+  "turn_keys": [
+    "new-python-sharing:1",
+    "new-python-sharing:2",
+    "new-python-sharing:3",
+    "new-python-sharing:4",
+    "new-python-stride:1",
+    "new-python-stride:2",
+    "new-python-stride:3",
+    "new-python-stride:4",
+    "new-sheets-validation:1",
+    "new-sheets-validation:2",
+    "new-sheets-validation:3",
+    "new-sheets-validation:4",
+    "new-sheets-qc:1",
+    "new-sheets-qc:2",
+    "new-sheets-qc:3",
+    "new-sheets-qc:4"
+  ],
+  "original_inputs": {
+    "base_freeze_sha256": "381beff7a312471e204e4e7b0622aea518fdf12bdd51b5ac442d7b03e9b32211",
+    "reference_locators_sha256": "2e10bce8d73101e07f920c34aebe9509efbe6943cb99303077a2c137b1b7bfc2",
+    "grading_rules_sha256": "5493f4ba95e0f98a9abea97a9a431e2b973c14572435603718551341f398754b"
+  },
+  "max_calls_tool_ceiling": 80,
+  "max_local_usd_tool_ceiling": "0.70",
+  "user_phase_usd_upper_limit": "10.00",
+  "normal_requests": 32,
+  "max_requests": 80,
+  "reference_locator_patch_sha256": "2e10bce8d73101e07f920c34aebe9509efbe6943cb99303077a2c137b1b7bfc2"
+}

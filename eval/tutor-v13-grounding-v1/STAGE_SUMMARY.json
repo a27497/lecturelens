@@ -1,0 +1,207 @@
+{
+  "status": "STOPPED_AT_USER_REQUIRED_NO_COST_GATE",
+  "complete_stage_goal": false,
+  "starting_sha": "837915cc49837b0f2e5fb003ab21adc5f7c53567",
+  "frozen_candidate_commit": "b1781987f7b15315e36f253f58c84903899ec6a5",
+  "actual_real_execution_version": "NOT_RUN",
+  "candidate": "p8-tutor-claim-grounding-v13-development",
+  "candidate_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "candidate_runtime_sha256": "e7e940f26c07f507342c833b9e8c8bc2f7f5a8a1b0b2b9c0142549456f5f47d5",
+  "source_units": [
+    {
+      "course_id": "carpentries-python",
+      "unit": "Storing Multiple Values in Lists",
+      "source_revision": "eb18f246aee338b2a6169ba18d8c5ced7cf89f53",
+      "source_path": "episodes/04-lists.md",
+      "sha256": "9f7cf80a805db45a25e89510153c5d1c6885e88c68d18fa6ce188fed08c7de41"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "unit": "Quality control",
+      "source_revision": "78a54d7a7adcc961e83f463ba5392232e035cc6c",
+      "source_path": "episodes/04-quality-control.md",
+      "sha256": "99ea134a3b98db2b59084fc05c6a0385f9d66257a708cf17d984c6af8f2b2dce"
+    }
+  ],
+  "counts": {
+    "expected": 16,
+    "real_attempted": 0,
+    "completed": 0,
+    "failed_turns": 0,
+    "skipped": 0,
+    "unexecuted": 16,
+    "scorable": 0,
+    "semantically_scored": 0,
+    "preflight_collection_errors": 1
+  },
+  "quality": {
+    "scheduled_correctness": "NOT_RUN",
+    "completed_conditional_correctness": "NOT_RUN",
+    "critical": "NOT_RUN",
+    "citation_support": "NOT_RUN",
+    "claim_coverage": "NOT_RUN",
+    "clean_refusals": "NOT_RUN",
+    "context_consistency": "NOT_RUN",
+    "expansion_readiness": "BLOCKED"
+  },
+  "requests": {
+    "real_model": 0,
+    "embedding": 0,
+    "reviewer": 0,
+    "real_failed": 0,
+    "real_repair": 0,
+    "real_retry": 0
+  },
+  "usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_hit_tokens": 0,
+    "cache_miss_tokens": 0,
+    "basis": "NO_REAL_REQUEST"
+  },
+  "costs": {
+    "phase_authorized_usd": "10.00",
+    "unchanged_effective_batch_local_envelope_usd": "0.70",
+    "unchanged_call_ceiling": 80,
+    "rate_calculated_usd": "0",
+    "local_live_ledger_spend_usd": "0",
+    "live_ledger_created": false,
+    "supplier_bill": "NOT_QUERIED_NO_STAGE_DISPATCH"
+  },
+  "verification": {
+    "foundational_passed": 10,
+    "frozen_passed": 273,
+    "frozen_failed": 0,
+    "frozen_skipped": 0,
+    "final_corrected_bundle_exit": 2,
+    "final_corrected_bundle_tests_executed": 0,
+    "final_error": "NameError: pytest not defined during collection",
+    "not_a_real_model_failure": true
+  },
+  "v12_score_correction": {
+    "original_review_sha256": "bc7f448aba3b32a68a2fd24f16dc5de3ae86404e48ace49739a67782e9b87a68",
+    "original_report_sha256": "b0e9cb66c500da2ac7cbbf80524d251a529b61ecf42b965e5e425ff25f00b1ac",
+    "scope": "Single duplicate assertion correction; no original artifact rewritten",
+    "removed_duplicate": {
+      "turn_key": "fresh-sheets-markers:5",
+      "claim_id": "c5",
+      "duplicates": "c4 stated problems"
+    },
+    "original_supported_coverage": {
+      "numerator": 59,
+      "denominator": 74
+    },
+    "corrected_supported_coverage": {
+      "numerator": 59,
+      "denominator": 73
+    },
+    "original_presence": {
+      "numerator": 61,
+      "denominator": 74
+    },
+    "corrected_presence": {
+      "numerator": 61,
+      "denominator": 73
+    },
+    "original_full_turns": 3,
+    "corrected_full_turns": 4,
+    "full_turn_denominator": 12,
+    "additional_full_turn": "fresh-sheets-markers:5",
+    "correctness_unchanged": "13/16; 1 incorrect and 2 uncertain",
+    "citation_pair_support_unchanged": "59/62",
+    "decision_unchanged": "FAIL"
+  },
+  "preservation": {
+    "status": "STOPPED_AT_FAILED_NO_COST_PREFLIGHT",
+    "original_manifests_unchanged": {
+      "tutor-fresh-live-20261107": 62,
+      "tutor-recovery-v1-20261107": 592,
+      "tutor-v12-entry-20261107": 1571,
+      "tutor-v12-real-20261107": 72
+    },
+    "original_pg_unchanged": [
+      {
+        "events": 34,
+        "turns": 7,
+        "sessions": 2
+      },
+      {
+        "events": 84,
+        "turns": 16,
+        "sessions": 4
+      }
+    ],
+    "original_allowed_tracked_hashes_unchanged": 2011,
+    "real_model_requests": 0,
+    "embedding_requests": 0,
+    "reviewer_requests": 0,
+    "real_cost_usd": "0",
+    "new_real_run": "NOT_RUN",
+    "blocking_terminal_record": {
+      "name": "v13-reference-bundle-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v13-stage-20261107/network-locators",
+        ".data/tutor-v13-stage-20261107/check_grounding.py",
+        "locators",
+        "eval/tutor-v13-grounding-v2/test_locators.py"
+      ],
+      "code": 2,
+      "seconds": 1.518
+    },
+    "candidate_fix_regression": {
+      "name": "v13-frozen-regression",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v13-stage-20261107/network-frozen",
+        ".data/tutor-v13-stage-20261107/check_grounding.py",
+        "frozen",
+        "eval/tutor-v13-grounding-v1/test_grounding.py",
+        "eval/tutor-v12-rerun-v1/test_run.py",
+        "eval/tutor-recovery-v1/test_recovery.py",
+        "eval/tutor-fresh-dev-v1/test_batch.py",
+        "agent-service/tests/test_tutor.py",
+        "agent-service/tests/test_tutor_citations.py"
+      ],
+      "code": 0,
+      "seconds": 146.263
+    },
+    "no_live_sender_created": true,
+    "no_live_credential_lookup": true
+  },
+  "cleanup": {
+    "dedicated_container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "state": "exited",
+    "exit_code": 0,
+    "port_closed": true,
+    "volume_retained": true,
+    "other_running_containers_unchanged": 23,
+    "no_other_service_started": true
+  },
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v13-stage-20261107",
+  "blocking_record": "checks/v13-reference-bundle-final.json",
+  "remaining_blockers": [
+    "Corrected locator bundle final test import/collection failure",
+    "Corrected original-source reference bundle not yet regression-accepted",
+    "Real v13 semantic quality and cost change unmeasured"
+  ],
+  "not_run": [
+    "fresh_real_validation",
+    "post_fix_real_quality",
+    "real_cost_change",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion_60_300",
+    "learning_effects",
+    "unseen_course_generalization",
+    "supplier_invoice_or_balance",
+    "immutable_backend_version_verification"
+  ],
+  "authorization": "THIS_STAGE_CLOSED_NO_FOLLOW_ON_AUTHORITY",
+  "raw_artifact_files": 828,
+  "raw_artifact_manifest_sha256": "4e9417e7f10c3e9716acb826d378625127bc346d592c4aa9c2e07cd0cfb1ed46",
+  "first_freeze_sha256": "381beff7a312471e204e4e7b0622aea518fdf12bdd51b5ac442d7b03e9b32211",
+  "corrected_freeze_sha256": "4c4f0f7ad9960231b31808bdbaeb26a45cc750a3a7590ae06819c3bb3f6fdf2f"
+}

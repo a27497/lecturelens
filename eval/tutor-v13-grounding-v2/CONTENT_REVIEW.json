@@ -1,0 +1,68 @@
+{
+  "status": "PRE_LIVE_ORIGINAL_MARKDOWN_LOCATOR_REVIEW",
+  "base_preflight_invalidated": true,
+  "base_real_requests": 0,
+  "reviewer": "CODEX_NONBLIND_NOT_INDEPENDENT_HUMAN",
+  "reference_points_unchanged": true,
+  "questions_unchanged": true,
+  "all_python_ranges_checked_against_original": true,
+  "corrected_spreadsheet_ranges": {
+    "new-sheets-validation:1": [
+      [
+        28,
+        67
+      ]
+    ],
+    "new-sheets-validation:2": [
+      [
+        71,
+        77
+      ]
+    ],
+    "new-sheets-validation:3": [
+      [
+        28,
+        53
+      ],
+      [
+        81,
+        85
+      ]
+    ],
+    "new-sheets-validation:4": [
+      [
+        35,
+        61
+      ]
+    ],
+    "new-sheets-qc:1": [
+      [
+        91,
+        102
+      ]
+    ],
+    "new-sheets-qc:2": [
+      [
+        106,
+        138
+      ]
+    ],
+    "new-sheets-qc:3": [
+      [
+        150,
+        170
+      ],
+      [
+        137,
+        138
+      ]
+    ],
+    "new-sheets-qc:4": [
+      [
+        150,
+        170
+      ]
+    ]
+  },
+  "novelty": "Same16 new questions on two new complete episodes; no question selection after model outputs. Mock outputs have no semantic quality labels."
+}
