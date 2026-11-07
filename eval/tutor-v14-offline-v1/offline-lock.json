@@ -1,0 +1,10 @@
+{
+  "mode": "OFFLINE_ONLY_NO_PAID_AUTHORITY",
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/draft_repair_runtime.py": "c8013220ba89b53705d7ea3cc22f827541e299f3434e9ed659fdfff38d7553c2",
+    "eval/tutor-v14-offline-v1/v14_contract.py": "f4788935690a9b7ee51a89440d08dcc02e69b94848053e678db9f73232ae83e7",
+    "eval/tutor-v14-offline-v1/candidate.json": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+    "eval/tutor-v14-offline-v1/test_v14.py": "462ee252ed3491e606abc06da9934cc8ca81071602939eb18abfc61327cfbb36",
+    "eval/tutor-v14-offline-v1/v14_audit.py": "a112712d3cc1ac3822994abf4731b9b97f7154b5838315cd3cae6a955e31f0c2"
+  }
+}

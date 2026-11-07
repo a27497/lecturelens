@@ -1,0 +1,11 @@
+{
+  "candidate": "p8-tutor-draft-repair-v14-development",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.draft_repair_runtime:DraftRepairTutorRuntime",
+  "parent_manifest_sha256": "70b4f27471a61fb6db64e1a8318b2e4540b2d1428614f5e29f3a6166f4dd43a7",
+  "default_registration": false,
+  "mechanism": "Restore the rejected finish as untrusted format-repair input; explicit conditional entailment direction. No semantic verifier, extra repair, truncation, citation remapping or budget increase.",
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/draft_repair_runtime.py": "c8013220ba89b53705d7ea3cc22f827541e299f3434e9ed659fdfff38d7553c2",
+    "eval/tutor-v14-offline-v1/v14_contract.py": "f4788935690a9b7ee51a89440d08dcc02e69b94848053e678db9f73232ae83e7"
+  }
+}
