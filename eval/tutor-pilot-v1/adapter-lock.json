@@ -1,0 +1,8 @@
+{
+  "version": "tutor-public-eight-turn-adapter-v1",
+  "files": {
+    "pilot_run.py": "d01aec13c5e34bf8f78bf05b3b26fa13c85bee33876952575f8a2832ec50dc3d",
+    "test_pilot_run.py": "93a52194f143c54ec6256e16bf0b145b84ef67f388d167c8bbfeb6fff13f31ac",
+    "pricing-observation-20261107.json": "4bd4456127e0985799a0f02a8d49282974a30168c3dec68a79250e056752eaf1"
+  }
+}

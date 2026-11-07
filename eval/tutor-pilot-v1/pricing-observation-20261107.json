@@ -1,0 +1,21 @@
+{
+  "provider": "DeepSeek",
+  "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "version_source_url": "https://api-docs.deepseek.com/updates/",
+  "verified_on": "2026-11-07",
+  "currency": "USD",
+  "unit_tokens": 1000000,
+  "requested_model": "deepseek-flash",
+  "documented_version": "DeepSeek-V4.1-Flash-1017",
+  "version_pin": "MOVING_ALIAS_NO_IMMUTABLE_API_ID_VERIFIED",
+  "input_cache_miss_peak": "0.30",
+  "input_cache_miss_off_peak": "0.15",
+  "input_cache_hit_peak": "0.006",
+  "input_cache_hit_off_peak": "0.003",
+  "output_peak": "1.20",
+  "output_off_peak": "0.60",
+  "reservation_basis": "Peak cache-miss input and peak output; no discount assumed",
+  "billing_hard_cap_verified": false,
+  "account_balance": "UNKNOWN",
+  "spending_authorized": false
+}
