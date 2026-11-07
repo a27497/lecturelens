@@ -71,7 +71,7 @@ Each answer/evaluation block must carry an actual literal anchor in its bound,
 current-turn authoritative source. Missing anchors and obvious unobserved
 execution claims produce one support-repair observation using ordinary remaining
 slots, then fail closed. This does not add a paid reviewer or call budget.
-Rendered fields say `Unverified course account`; derivations are separately
+Rendered fields say `Unverified course text`; derivations are separately
 labelled. The contract distinguishes supplied-source attribution from independent
 execution. It does not hardcode the spreadsheet/Python answers.
 
@@ -91,6 +91,9 @@ snapshot authority exposes empty positive-match results instead of arbitrary fir
 rows, supports deterministic CJK bigram overlap, and leaves old identities and the
 actual product dense retriever unchanged. Retrieval quality remains NOT_RUN.
 
-Stage3 final targeted regression:29 tests passed, zero failures/errors/skips, using
-actual disposable PostgreSQL. Initial28-test pass predates the explicit heuristic
-bypass negative fixture and the final attribution label. Both records are retained.
+The first stage3 run passed28 tests. The next run found four maximum-field
+failures: the added attribution label made worst-case evaluation501 characters.
+The stage3 commit prematurely described that run as passed. The correction keeps
+the500 limit and shortens only the new label, then reruns all29 tests. The failed
+run and the inaccurate intermediate commit remain visible; final verification
+must use the corrected terminal record.
