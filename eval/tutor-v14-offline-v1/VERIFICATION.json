@@ -1,0 +1,164 @@
+{
+  "status": "PASS_OFFLINE_MECHANICS_ONLY",
+  "actual_validation_version": "bffe4ac2f96f43a5df645e5a40d88b49eaa498b8",
+  "candidate": "p8-tutor-draft-repair-v14-development",
+  "candidate_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "offline_lock_sha256": "c2fa76c7a9a729fd75653ef42c73e4f55e96976d35f08293bbb84e8056540fd3",
+  "tests": {
+    "collected": 219,
+    "passed": 219,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "new_v14": 33,
+    "frozen_v12_entry": 46,
+    "historical_v13": 18,
+    "existing_tutor": 122
+  },
+  "commands": {
+    "collection": {
+      "name": "v14-collection",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-offline-20261107/network-collection",
+        ".data/tutor-v14-offline-20261107/final_check.py",
+        "--collect-only"
+      ],
+      "code": 0,
+      "seconds": 1.668
+    },
+    "final": {
+      "name": "v14-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-offline-20261107/network-final",
+        ".data/tutor-v14-offline-20261107/final_check.py"
+      ],
+      "code": 0,
+      "seconds": 157.547
+    },
+    "historical_pg_final": {
+      "name": "v14-historical-pg-v2",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-v14-offline-20261107/network-pg-audit-v2",
+        ".data/tutor-v14-offline-20261107/pg_audit_v2.py"
+      ],
+      "code": 0,
+      "seconds": 0.265
+    }
+  },
+  "static_checks": [
+    "agent-service/.venv/bin/ruff check --config agent-service/pyproject.toml agent-service/src/lecturelens_real_eval/tutor/draft_repair_runtime.py eval/tutor-v14-offline-v1",
+    "git diff --check"
+  ],
+  "raw_root": ".data/tutor-v14-offline-20261107",
+  "raw_artifact_files": 1028,
+  "raw_manifest_sha256": "cbbd82f6f98453ce3552960863639668af05c82f7f410d1742d04955940d2696",
+  "historical_artifacts_verified": 487,
+  "historical_pg_integrity": {
+    "status": "PASS_READ_ONLY",
+    "run_records": 1,
+    "event_records": 68,
+    "turn_records": 13,
+    "session_records": 4,
+    "historical_snapshot_unchanged": true,
+    "real_calls": 0
+  },
+  "historical_result": {
+    "expected": 16,
+    "completed": 12,
+    "failed": 1,
+    "skipped": 3,
+    "missing": 0,
+    "correct_scheduled": [
+      11,
+      16
+    ],
+    "correct_completed": [
+      11,
+      12
+    ],
+    "gate": "FAIL_UNCHANGED"
+  },
+  "historical_citations": {
+    "explicit_pair_support": [
+      37,
+      38
+    ],
+    "direct_citation_presence": [
+      34,
+      37
+    ],
+    "directly_supported_claims": [
+      33,
+      37
+    ],
+    "supported_claim_coverage": [
+      36,
+      37
+    ],
+    "full_expected_answer_coverage": [
+      8,
+      12
+    ]
+  },
+  "historical_costs": {
+    "requests": 34,
+    "usage": {
+      "prompt_tokens": 127601,
+      "completion_tokens": 6105,
+      "total_tokens": 133706,
+      "prompt_cache_hit_tokens": 35456,
+      "prompt_cache_miss_tokens": 92145
+    },
+    "rate_calculated_usd": "0.017591118",
+    "local_ledger_usd": "0.0456063",
+    "maximum_transient_exposure_usd": "0.0492906",
+    "supplier_actual_bill": "UNKNOWN_NOT_QUERIED"
+  },
+  "this_stage": {
+    "real_model_calls": 0,
+    "embedding_calls": 0,
+    "reviewer_calls": 0,
+    "actual_cost_usd": "0",
+    "paid_authorization": "NONE_OFFLINE_ONLY"
+  },
+  "cleanup": {
+    "container": "/lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port_closed": true,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "original_running_containers": 23,
+    "all_original_services_running": true
+  },
+  "failed_diagnostic_attempts": [
+    {
+      "name": "v14-historical-pg",
+      "reason": "Read-only export script used uuid[] against text IDs; transaction aborted, no writes. Original script/log retained; corrected text[] audit passed."
+    },
+    {
+      "name": "Initial lint parse check",
+      "reason": "Test-authoring missing closing bracket corrected before final freeze/collection. Initial note retained."
+    }
+  ],
+  "remaining_risks": [
+    "No real post-fix compression/entailment efficacy or cost evidence",
+    "Prompt-only grounding mitigation is not a semantic verifier; valid-ID unsupported output can still publish",
+    "Full draft can legitimately exhaust unchanged context reservation",
+    "No new-sample live entry or paid authority",
+    "Immutable supplier model version and supplier invoice hard cap unknown"
+  ],
+  "not_run": [
+    "real_post_fix_quality",
+    "real_cost_change",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion_60_300",
+    "learning_effects"
+  ]
+}
