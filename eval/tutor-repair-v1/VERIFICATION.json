@@ -1,0 +1,127 @@
+{
+  "version": "tutor-repair-verification-v1",
+  "initial_head": "e770d613282144fb916411676b60bfa24e9e21f8",
+  "baseline_real_execution_code": "c41245becb5e6f72494e5c045883da79bc7d1fbf",
+  "full_regression_code": "b8e4777e9660c4051d3056bd68941215260d708c",
+  "final_verified_execution_code": "862abe9f31105e57b79a428fa2d3cdd331e76f00",
+  "full_regression": {
+    "tests": 374,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "final_targeted_regression": {
+    "tests": 157,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "code_difference_after_full_regression": "Decoded stream preserves per-chunk deadline checking and explicitly labels early close; new regression added; new candidate and scope locks updated. No context/runtime/parser/scorer change.",
+  "delivery_difference_after_final_verification": "English REPORT.md and this non-sensitive verification summary only; no executable or manifest changes.",
+  "old_agent": "p8-tutor-python-notation-v10-development-r2",
+  "new_agent": "p8-tutor-grounded-v11-development",
+  "parent_candidate_sha256": "8f430ba637bb13dfd415bf29d4785e116d44141d7d3c49946ede77cee45079cf",
+  "candidate_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "dataset_version": "tutor-public-v1",
+  "dataset_lock_sha256": "4645c31d7e3eff19aa534714613d3ead64c1a7fcefcccba463fdbe9ef77f4620",
+  "original_plan_sha256": "27c3361d841412f950b9aac5ab08a0d14e40b4fb0bc60801be0c9d181e5180d7",
+  "retest_plan_sha256": "59fb85627dc75145e851b2a902348274284b43e5bce8d709da722d2f179a1ac8",
+  "mock": {
+    "expected": 8,
+    "courses": 2,
+    "sessions": 2,
+    "completed": 8,
+    "failed": 0,
+    "missing": 0,
+    "requests": 16,
+    "events": 32,
+    "reviewer_calls": 0,
+    "all_request_hashes_match_reservations": true,
+    "pg_jsonl_full_records_equal": true,
+    "original_pg_run_40_events_8_turns_2_sessions_unchanged": true,
+    "preexisting_files_checked": 2041,
+    "changed_preexisting_files": [],
+    "candidate": "p8-tutor-grounded-v11-development",
+    "real_quality": "NOT_RUN",
+    "real_tokens_cost": "NOT_RUN"
+  },
+  "replay": {
+    "retained_parsed_responses": 20,
+    "turns": 8,
+    "original_pg_answers_and_search_observations_equal": true,
+    "raw_original_response_bodies": "UNAVAILABLE",
+    "retained_wrong_index_not_rewritten": true,
+    "post_fix_quality": "NOT_RUN"
+  },
+  "baseline_label_arithmetic": {
+    "review_type": "CODEX_SOURCE_RECHECK_AND_ARITHMETIC_ON_UNCHANGED_BASELINE_LABELS_NOT_HUMAN",
+    "turns": 8,
+    "claims": 34,
+    "required_claims": 31,
+    "explicit_claim_citation_pairs": 24,
+    "supported_pairs": 22,
+    "with_citations": 24,
+    "with_supported_citations": 22,
+    "strict_correct": 4,
+    "labels_modified": false,
+    "post_fix_real_quality": "NOT_RUN"
+  },
+  "database_final_state": {
+    "status": "exited",
+    "exit_code": 0,
+    "volume_retained": true
+  },
+  "socket_fence_summaries": {
+    "network-targeted": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-mock8": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-replay-final": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-prepare-final": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-recount": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "socket_fence_limit": "Python socket instrumentation only; libpq PG scope/full records independently checked, not a host-wide packet trace.",
+  "supervisor_records": [
+    ".data/dev-checks/tutor-repair-targeted-20261107/run.json",
+    ".data/dev-checks/tutor-repair-final-20261107/run.json",
+    ".data/dev-checks/tutor-repair-mock8-20261107/run.json"
+  ],
+  "raw_artifacts": ".data/tutor-repair-v1-20261107",
+  "new_real_requests": 0,
+  "new_paid_authorization": "NONE",
+  "future_usd_cap": "UNCONFIRMED",
+  "historic_returned_model_and_cache": "UNKNOWN_CAPTURE_FAILED",
+  "not_run": [
+    "post_fix_real_quality",
+    "real_token_cost_delta",
+    "supplier_invoice_account_balance",
+    "independent_human_agreement_kappa",
+    "model_reviewer",
+    "SQL_candidate_evaluation",
+    "expanded_evaluation",
+    "learning_effects"
+  ]
+}
