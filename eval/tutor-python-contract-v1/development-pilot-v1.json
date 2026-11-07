@@ -3,8 +3,8 @@
   "dataset_version": "tutor-public-v1",
   "dataset_lock_sha256": "4645c31d7e3eff19aa534714613d3ead64c1a7fcefcccba463fdbe9ef77f4620",
   "split_manifest_sha256": "1eea49193925d5565bae62ce611d79871a1b78ad450c494b344ac4456bed9a3c",
-  "candidate": "p8-tutor-python-notation-v10-development",
-  "candidate_manifest_sha256": "9f0981ecf628fcacc8a75fc6ae3ddd50c627abd5440039db0855a5d05633292f",
+  "candidate": "p8-tutor-python-notation-v10-development-r2",
+  "candidate_manifest_sha256": "8f430ba637bb13dfd415bf29d4785e116d44141d7d3c49946ede77cee45079cf",
   "runtime_entrypoint": "lecturelens_real_eval.tutor.python_runtime:PythonTutorRuntime",
   "execution_authorized": false,
   "counts": {

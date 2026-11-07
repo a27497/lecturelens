@@ -56,7 +56,12 @@ def test_prompt_and_request_bytes_preserve_parent_and_limits():
     assert "use parentheses for math/indexing" in V9_SYSTEM
     assert "use parentheses for math/indexing" not in SYSTEM
     assert "Never rewrite indexing as a function call" in SYSTEM
-    assert all(x in SYSTEM for x in ("data[29, 19]", "data[0:4, 0:10]", "inline code", "fenced code"))
+    assert all(
+        x in SYSTEM
+        for x in ("data[row_index, column_index]", "matrix[:, start:stop]", "inline code", "fenced code")
+    )
+    for key in FIXTURE["target_turns"]:
+        assert all(code not in SYSTEM for code in FIXTURE["cases"][key]["code_snippets"])
     assert all(
         x in SYSTEM for x in ("4 distinct evidence ids", "500 characters", "1600 characters", ABSTENTION)
     )

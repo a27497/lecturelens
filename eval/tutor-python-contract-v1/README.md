@@ -8,7 +8,7 @@ This was a contract conflict, not a reproduced real-model failure.
 
 ## Explicit identity, unchanged historical behavior
 
-`candidate.json` registers **p8-tutor-python-notation-v10-development**, entry point
+`candidate.json` registers **p8-tutor-python-notation-v10-development-r2**, entry point
 `lecturelens_real_eval.tutor.python_runtime:PythonTutorRuntime`. It inherits the frozen v9 controller and
 changes only the system instruction and finish-tool description. Request budget reservation includes the
 actual replacement message/schema bytes, including repair requests. Parent prompt drift fails closed.
@@ -18,7 +18,8 @@ Future execution must explicitly select this new class **and** verify its manife
 or authorization to execute one. No deployed/default identity has switched.
 
 The new instruction preserves `data[29, 19]`, `data[0:4, 0:10]`, `data[:3, 36:]` and dimension-preserving
-slices in prose, inline code and fenced code. Course citations retain `[evidence_id]` syntax and the existing
+slices in prose, inline code and fenced code. The instruction itself uses generic bounds/variables, without
+embedding the four task-specific answers. Course citations retain `[evidence_id]` syntax and the existing
 requirements: observed authoritative IDs, at most four distinct IDs, grounded answered turns and canonical
 abstention when evidence is insufficient. Ordinary brackets are not citations. **ID-shaped tokens remain
 citation candidates inside code**, including `data[e1]`; descriptive index names avoid this reserved lexical

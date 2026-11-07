@@ -8,7 +8,7 @@ from .runtime import TutorRuntime as V9TutorRuntime
 
 CODE_NOTATION = (
     "Preserve valid programming syntax, including array indexing and slicing with square brackets "
-    "such as data[29, 19], data[0:4, 0:10], data[:3, 36:] and A[:, :1]. "
+    "such as data[row_index, column_index], matrix[:, start:stop] and values[start:stop:step]. "
     "This applies to inline code and fenced code blocks. Never rewrite indexing as a function call. "
     "Place course citations as [evidence_id] next to the supported claim, preferably outside code. "
     "Ordinary non-ID-shaped brackets are not citations. A bracket token matching the evidence-ID grammar "
@@ -38,7 +38,7 @@ SYSTEM = _replace_once(
 
 
 class PythonTutorRuntime(V9TutorRuntime):
-    """Select explicitly with the v10 development manifest; no default/product switch."""
+    """Select explicitly with the v10-r2 development manifest; no default/product switch."""
 
     def request(self, session, turn, state, history):
         messages, schemas, _ = super().request(session, turn, state, history)

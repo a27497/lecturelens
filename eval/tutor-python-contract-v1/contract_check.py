@@ -11,7 +11,7 @@ sys.path.insert(1, str(ROOT / "eval/tutor-public-v1"))
 from public_bridge import verify_tooling  # noqa: E402
 from public_dataset import VERSION, digest, object_hash, read, select  # noqa: E402
 
-CANDIDATE = "p8-tutor-python-notation-v10-development"
+CANDIDATE = "p8-tutor-python-notation-v10-development-r2"
 ENTRYPOINT = "lecturelens_real_eval.tutor.python_runtime:PythonTutorRuntime"
 PARENT_SHA = "370d61d64abf1921927ae7e5ba6e5cc6c1e887aeaa9f4ef792aef723e1117426"
 EXTRA_FILES = {
