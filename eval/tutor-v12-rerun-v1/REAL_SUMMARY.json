@@ -1,0 +1,429 @@
+{
+  "review_type": "CODEX_NONBLIND_SOURCE_REVIEW_NOT_INDEPENDENT_HUMAN",
+  "grading_rules_sha256": "0eb59ce214d5607205d1b3cb9b12090ea0ba00ef83455a01e4ff42e317e628ca",
+  "counts": {
+    "expected": 16,
+    "attempted": 16,
+    "completed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "missing": 0,
+    "unknown_attempts": 0,
+    "scorable": 16,
+    "semantically_scored": 16,
+    "all_outcomes_reviewed": 16,
+    "expected_answer": 12,
+    "expected_refusal": 4
+  },
+  "task_correctness": {
+    "numerator": 13,
+    "denominator": 16,
+    "value": 0.8125
+  },
+  "completed_answer_correctness": {
+    "numerator": 13,
+    "denominator": 16,
+    "value": 0.8125
+  },
+  "correct_turns": [
+    "fresh-python-tail:2",
+    "fresh-python-tail:3",
+    "fresh-python-tail:4",
+    "fresh-sheets-text:3",
+    "fresh-python-functions:3",
+    "fresh-sheets-markers:4",
+    "fresh-python-tail:5",
+    "fresh-sheets-text:1",
+    "fresh-sheets-text:2",
+    "fresh-python-functions:2",
+    "fresh-sheets-markers:1",
+    "fresh-sheets-markers:2",
+    "fresh-sheets-markers:5"
+  ],
+  "completed_answer_judgments": {
+    "correct": 13,
+    "incorrect": 1,
+    "uncertain": 2
+  },
+  "per_course": {
+    "carpentries-python": {
+      "numerator": 6,
+      "denominator": 8,
+      "value": 0.75
+    },
+    "carpentries-spreadsheets": {
+      "numerator": 7,
+      "denominator": 8,
+      "value": 0.875
+    }
+  },
+  "critical_index": {
+    "numerator": 2,
+    "denominator": 3,
+    "value": 0.6666666666666666
+  },
+  "critical_index_core_reference": {
+    "numerator": 3,
+    "denominator": 3,
+    "value": 1.0
+  },
+  "expected_clean_refusals": {
+    "numerator": 4,
+    "denominator": 4,
+    "value": 1.0
+  },
+  "clarification": {
+    "numerator": 1,
+    "denominator": 1,
+    "value": 1.0
+  },
+  "semantic_context": {
+    "numerator": 10,
+    "denominator": 10,
+    "value": 1.0
+  },
+  "semantic_context_observed": {
+    "numerator": 10,
+    "denominator": 10,
+    "value": 1.0
+  },
+  "citation_support": {
+    "numerator": 59,
+    "denominator": 62,
+    "value": 0.9516129032258065
+  },
+  "citation_presence": {
+    "numerator": 61,
+    "denominator": 74,
+    "value": 0.8243243243243243
+  },
+  "supported_claim_coverage": {
+    "numerator": 59,
+    "denominator": 74,
+    "value": 0.7972972972972973
+  },
+  "claims": {
+    "total": 84,
+    "citation_required": 74,
+    "annotated_pairs": 62,
+    "uncertain_pairs": 0
+  },
+  "required_full_supported_turns": [
+    "fresh-python-tail:2",
+    "fresh-python-tail:5",
+    "fresh-python-functions:2"
+  ],
+  "expected_answer_full_supported_coverage": {
+    "numerator": 3,
+    "denominator": 12,
+    "value": 0.25
+  },
+  "wrong_refusals_on_answerable": 0,
+  "gates": {
+    "all16completed_reviewed": true,
+    "correct14of16": false,
+    "python7of8": false,
+    "sheets7of8": true,
+    "critical3of3": false,
+    "refusals4of4": true,
+    "clarification1of1": true,
+    "context9of10": true,
+    "citation_support95": true,
+    "supported_claim_coverage90": false,
+    "full_supported10of12": false
+  },
+  "decision": "FAIL",
+  "independent_human_agreement": "NOT_RUN",
+  "sql_holdout": "NOT_RUN",
+  "expansion_300": "NOT_RUN",
+  "learning_effects": "NOT_RUN",
+  "execution_code_sha": "8358595c792b5ce28f965a5c724a0dc6d8b076bd",
+  "actual_validation_version": "8358595c792b5ce28f965a5c724a0dc6d8b076bd",
+  "candidate": "p8-tutor-repair-context-v12-development",
+  "candidate_sha256": "4540369887eb2d84f79ee5351a8e1c0c82af859be8ff8d364ce7faf262a3afb2",
+  "run_plan_sha256": "6a684a138d9fe2a04ccbb51f9d3bdbab25b44b5465a21a0c1082bbbc33dad825",
+  "adapter_lock_sha256": "cdb50106d25f2b808d099080ccc33fc8ed21dd86d388369dc25697180f214e47",
+  "protocol": "v12-session-isolated-live-v1",
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-v12-real-20261107",
+  "execution_terminal_record": "checks/v12-real-original16.json",
+  "requests": {
+    "real_http": 42,
+    "http200": 42,
+    "failed_http": 0,
+    "channel_attempts": 42,
+    "settled": 42,
+    "pending": 0,
+    "events": 84,
+    "reviewer": 0,
+    "embedding": 0,
+    "retries": 0
+  },
+  "usage": {
+    "prompt_tokens": 159654,
+    "completion_tokens": 8181,
+    "total_tokens": 167835,
+    "prompt_cache_hit_tokens": 45568,
+    "prompt_cache_miss_tokens": 114086
+  },
+  "costs": {
+    "rate_calculated_off_peak_cache_aware_usd": "0.022158204",
+    "local_ledger_nano_usd": 57713400,
+    "local_ledger_usd": "0.0577134",
+    "maximum_prefix_exposure_nano_usd": 63041400,
+    "local_cap_usd": "0.70",
+    "supplier_actual_invoice_usd": "UNKNOWN_NOT_QUERIED",
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "source_date": "2026-11-07"
+  },
+  "metadata": {
+    "returned_model_counts": {
+      "deepseek-flash": 42
+    },
+    "response_ids_present": 42,
+    "request_ids_present": 0,
+    "fingerprints": {
+      "bc19ba97cbe016479903222bb1578db6": 42
+    },
+    "immutable_model_version": "UNKNOWN"
+  },
+  "comparison": {
+    "old_execution_code_sha": "06b5858024b5b22cded0573dca7963c5a73b3d19",
+    "old_counts": {
+      "expected": 16,
+      "executed": 7,
+      "completed": 6,
+      "failed": 1,
+      "missing": 9,
+      "scorable": 6,
+      "semantically_scored": 6,
+      "all_outcomes_reviewed": 16,
+      "unscorable_failed_or_missing": 10,
+      "expected_answer": 12,
+      "expected_refusal": 4
+    },
+    "old_batch_correctness": {
+      "numerator": 3,
+      "denominator": 16,
+      "value": 0.1875
+    },
+    "old_completed_correctness": {
+      "numerator": 3,
+      "denominator": 6,
+      "value": 0.5
+    },
+    "old_citation_support": {
+      "numerator": 18,
+      "denominator": 21,
+      "value": 0.8571428571428571
+    },
+    "old_supported_claim_coverage": {
+      "numerator": 18,
+      "denominator": 25,
+      "value": 0.72
+    },
+    "old_expected_answer_full_coverage": {
+      "numerator": 1,
+      "denominator": 12,
+      "value": 0.08333333333333333
+    },
+    "common_completed_positions": [
+      "fresh-python-tail:1",
+      "fresh-python-tail:2",
+      "fresh-python-tail:3",
+      "fresh-python-tail:4",
+      "fresh-python-tail:5",
+      "fresh-sheets-text:1"
+    ],
+    "common_old_correct": 3,
+    "common_new_correct": 5,
+    "common_denominator": 6,
+    "not_causal": true,
+    "candidate_and_protocol_changed": true,
+    "consumed_development_data_not_generalization": true,
+    "old_answers_reused": false
+  },
+  "per_position": [
+    {
+      "turn_key": "fresh-python-tail:1",
+      "task_correct": false,
+      "core_reference_complete": true,
+      "context_consistent": null,
+      "citation_pairs": 4,
+      "supported_pairs": 3,
+      "citation_requiring_claims": 6
+    },
+    {
+      "turn_key": "fresh-python-tail:2",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 4,
+      "supported_pairs": 4,
+      "citation_requiring_claims": 4
+    },
+    {
+      "turn_key": "fresh-python-tail:3",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 5,
+      "supported_pairs": 4,
+      "citation_requiring_claims": 7
+    },
+    {
+      "turn_key": "fresh-python-tail:4",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 0,
+      "supported_pairs": 0,
+      "citation_requiring_claims": 0
+    },
+    {
+      "turn_key": "fresh-sheets-text:3",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 0,
+      "supported_pairs": 0,
+      "citation_requiring_claims": 0
+    },
+    {
+      "turn_key": "fresh-python-functions:3",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 0,
+      "supported_pairs": 0,
+      "citation_requiring_claims": 0
+    },
+    {
+      "turn_key": "fresh-sheets-markers:4",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 0,
+      "supported_pairs": 0,
+      "citation_requiring_claims": 0
+    },
+    {
+      "turn_key": "fresh-python-tail:5",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": null,
+      "citation_pairs": 6,
+      "supported_pairs": 6,
+      "citation_requiring_claims": 6
+    },
+    {
+      "turn_key": "fresh-sheets-text:1",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": null,
+      "citation_pairs": 5,
+      "supported_pairs": 5,
+      "citation_requiring_claims": 6
+    },
+    {
+      "turn_key": "fresh-sheets-text:2",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 6,
+      "supported_pairs": 5,
+      "citation_requiring_claims": 8
+    },
+    {
+      "turn_key": "fresh-python-functions:1",
+      "task_correct": null,
+      "core_reference_complete": true,
+      "context_consistent": null,
+      "citation_pairs": 5,
+      "supported_pairs": 5,
+      "citation_requiring_claims": 7
+    },
+    {
+      "turn_key": "fresh-python-functions:2",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 4,
+      "supported_pairs": 4,
+      "citation_requiring_claims": 4
+    },
+    {
+      "turn_key": "fresh-sheets-markers:1",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": null,
+      "citation_pairs": 7,
+      "supported_pairs": 7,
+      "citation_requiring_claims": 8
+    },
+    {
+      "turn_key": "fresh-sheets-markers:2",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 4,
+      "supported_pairs": 4,
+      "citation_requiring_claims": 5
+    },
+    {
+      "turn_key": "fresh-sheets-markers:3",
+      "task_correct": null,
+      "core_reference_complete": false,
+      "context_consistent": true,
+      "citation_pairs": 6,
+      "supported_pairs": 6,
+      "citation_requiring_claims": 6
+    },
+    {
+      "turn_key": "fresh-sheets-markers:5",
+      "task_correct": true,
+      "core_reference_complete": true,
+      "context_consistent": true,
+      "citation_pairs": 6,
+      "supported_pairs": 6,
+      "citation_requiring_claims": 7
+    }
+  ],
+  "mechanics_status": "COMPLETE",
+  "quality_status": "FAIL",
+  "next_stage": "BLOCKED_BY_FROZEN_QUALITY_GATES_NO_AUTOMATIC_EXPANSION",
+  "cleanup": {
+    "dedicated_container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "state": "exited",
+    "exit_code": 0,
+    "loopback_port_closed": true,
+    "volume_retained": true,
+    "original_running_containers_unchanged": 23,
+    "no_other_service_started": true
+  },
+  "remaining_blockers": [
+    "Whole-unit source absence overclaim on negative-index task",
+    "Material unsupported syntax contrast in function explanation remains uncertain",
+    "Explicit consistent missing encoding is under-specified after region clarification",
+    "Uncited optional assertions and locally non-supporting citations",
+    "Independent human assessment and fresh unused samples not run"
+  ],
+  "not_run": [
+    "independent_human_agreement_kappa",
+    "model_reviewer_disabled",
+    "embeddings",
+    "SQL_holdout",
+    "expansion_300",
+    "learning_effects",
+    "unseen_course_generalization",
+    "supplier_actual_invoice_or_balance",
+    "immutable_backend_version_verification",
+    "next_batch_or_quality_driven_retry"
+  ],
+  "authorization": "CONSUMED_AND_ENDED_THIS_SINGLE_BATCH",
+  "raw_artifact_manifest_sha256": "baf8c007984597f37a546c74ebe109c5377bb876ecb8ee599b4bd7ce12bbb1a8",
+  "raw_artifact_files": 72,
+  "source_review_sha256": "bc7f448aba3b32a68a2fd24f16dc5de3ae86404e48ace49739a67782e9b87a68",
+  "reconciliation_sha256": "1b3d3071a508d94e7122e460d0d78b1d7c62d61dffcc21f95aa7bc931789b0c8",
+  "delivery_audit_sha256": "8f5e8e6559a058b4a4c2a46a3aa7e8be832cc12988be9136187c9f694a2f5a4d",
+  "pricing_observation_sha256": "f0c5b26dfe87bb8c7adeb14fc0c4292918a380c53e3f56f23f0aa6ad6d709741"
+}
