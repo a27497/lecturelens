@@ -1,0 +1,188 @@
+{
+  "version": "tutor-v14-delivery-diagnosis-v1",
+  "status": "DIAGNOSIS_COMPLETE_HISTORICAL_FAIL_UNCHANGED",
+  "validation": "PASS_ZERO_COST_DIAGNOSIS_NOT_FIX_EFFECTIVENESS",
+  "validation_base_sha": "5d228c40b04cc84886b1e73c3bad300ffe0ad28e",
+  "historical_execution_sha": "81020d1abd7c89a995bf9eba153302af7481c71b",
+  "diagnostic_file_sha256": {
+    "scripts/dev/v14_delivery_diagnosis.py": "e742dea41b9d60d9bd714203232b15f1b587fe9b0e7a1fd4e6359b07e8b19ed4",
+    "scripts/dev/test_v14_delivery_diagnosis.py": "4ae97ed4c163b0c4e6ff6775346d2587a7f13b0c592f19be27c557c4711bf76b",
+    "scripts/dev/check_v14_delivery_diagnosis.py": "f9987aeda826739384d262483763ac5c035bcc33a2d8ddc932072aaca96394dd"
+  },
+  "tests": {
+    "collected": 13,
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "pytest_seconds": 7.55,
+    "supervisor_seconds": 8.538
+  },
+  "preliminary_test_passes": 12,
+  "protected_files_unchanged": 34,
+  "historical_artifact_files_unchanged": 358,
+  "network_records": {
+    "network/2069339.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-collect/2074616.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "network-final/2075125.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "network_caveat": "Python socket counters exclude native libpq. PostgreSQL replay/exact64 event reconciliation executed on disposable schemas; these were dropped.",
+  "real_model_calls": 0,
+  "embedding_calls": 0,
+  "reviewer_calls": 0,
+  "cost_usd": "0",
+  "Tutor_behavior_changes": 0,
+  "identity_changes": 0,
+  "proposed_protocol_changes": "NOT_IMPLEMENTED",
+  "cleanup": {
+    "container": "lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "port25841_closed": true,
+    "evidence_volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "original_service_set_unchanged": true,
+    "original_services_running": 23,
+    "original_real_ledger_events_unchanged": 64,
+    "temporary_schemas_remaining": 0,
+    "finished_utc": "2026-11-07T16:01:08.938242+00:00"
+  },
+  "original_execution_counts": {
+    "expected": 16,
+    "attempted": 12,
+    "completed": 10,
+    "failed": 2,
+    "skipped": 4,
+    "missing": 0,
+    "scorable": 10
+  },
+  "original_strict_correctness": {
+    "scheduled": [
+      9,
+      16
+    ],
+    "completed": [
+      9,
+      10
+    ],
+    "full_supported_expected_answers": [
+      7,
+      12
+    ]
+  },
+  "scoring_correction": "NONE; additional question/reference alignment limitation documented without changing strict frozen result",
+  "excel_trace": {
+    "source_present": true,
+    "retrieval_hit": true,
+    "final_context_present": true,
+    "passage_cited": true,
+    "question_explicitly_requires_excel_reopening": false,
+    "frozen_reference_requires_it": true,
+    "unused_hard_char_capacity": 315,
+    "causal_model_omission_reason": "UNVERIFIED_CONTENT_SELECTION"
+  },
+  "independent_observed_errors": {
+    "wrong_refusals": 0,
+    "context_contradictions": 0,
+    "unobserved_refusals_due_to_skips": 2,
+    "unobserved_context_due_to_skips": 4
+  },
+  "original_citation_annotation_arithmetic": {
+    "explicit_pairs": 36,
+    "supported_pairs": 36,
+    "requiring_claims": 42,
+    "direct_supported": 35,
+    "frozen_supported": 42
+  },
+  "confirmed_failure_evidence": [
+    {
+      "turn_key": "v14-sheets-portability:1",
+      "initial_chars": 1982,
+      "repaired_chars": 1799,
+      "citation_occurrences": 9,
+      "citation_chars": 594,
+      "initial_output_tokens": 668,
+      "repair_output_tokens": 647,
+      "initial_finish_wire": 24,
+      "repair_wire": 25,
+      "exact_rejected_finish": true,
+      "exact_kept_evidence": true,
+      "turn_reserved_proxy": 39463
+    },
+    {
+      "turn_key": "v14-sheets-lineends:3",
+      "initial_chars": 1818,
+      "repaired_chars": 1633,
+      "citation_occurrences": 10,
+      "citation_chars": 660,
+      "initial_output_tokens": 730,
+      "repair_output_tokens": 697,
+      "initial_finish_wire": 31,
+      "repair_wire": 32,
+      "exact_rejected_finish": true,
+      "exact_kept_evidence": true,
+      "turn_reserved_proxy": 48534
+    }
+  ],
+  "manual_feasibility": {
+    "kind": "HUMAN_AUTHORED_NOT_MODEL_REPAIR",
+    "chars": [
+      1182,
+      1246
+    ],
+    "citation_occurrences_preserved": [
+      9,
+      10
+    ],
+    "score_credit": 0
+  },
+  "preferred_proposal": {
+    "name": "Durable turn-scoped short display citation references",
+    "status": "PROPOSED_NOT_IMPLEMENTED_REQUIRES_APPROVAL",
+    "changes_output_protocol": true,
+    "changes_numeric_length_limits": false,
+    "changes_repair_or_budget_limits": false,
+    "default_identity_changes": false,
+    "estimated_engineering_days": [
+      2,
+      3
+    ],
+    "counterfactual_display_chars": [
+      1460,
+      1277,
+      1238,
+      1053
+    ],
+    "model_effect": "NOT_RUN"
+  },
+  "real_calls": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "raw_root": ".data/tutor-v14-diagnosis-20261107",
+  "raw_manifest_files": 108,
+  "raw_manifest_sha256": "b76388125efe3b1b012a94f6c3c645b8d04ba953f0044caecf01396a0a44e5c1",
+  "report": "eval/tutor-v14-delivery-diagnosis-v1/REPORT.md",
+  "report_sha256": "d8c94a92e7e0c89cb6f13a372b2d844d30d27774b11e9944e0d52eb52924c02d",
+  "NOT_RUN": [
+    "behavior_implementation",
+    "real_fix_effectiveness",
+    "cost_optimization",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion",
+    "learning_effects"
+  ]
+}
