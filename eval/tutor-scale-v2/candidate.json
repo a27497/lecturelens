@@ -1,5 +1,5 @@
 {
-  "candidate": "tutor-scale-preparation-v2",
+  "candidate": "tutor-scale-preparation-v2-r2",
   "base_commit": "74208e10b37583b951cf2a45a0b644bfed11b902",
   "previous_candidate_sha256": "8e6aac7da6bb90d727f5b5ca99820deb6fc1e79df20a5e364b719c64e96af84f",
   "files": {
@@ -12,7 +12,7 @@
     "eval/tutor-scale-v2/queue-lock.json": "d6f6ed6fdf8a3bf39f69ffc70b47f73d5560f0503121943dee4d0ad5304d623c",
     "eval/tutor-scale-v2/records.py": "04c223d062cc841ca83ee46a40de4adf7da998229807afea4c58d352db550ca1",
     "eval/tutor-scale-v2/review.py": "a753f942c3882729278b3e14dd6a48c22772976bdb99e376a66ef797465f0b3d",
-    "eval/tutor-scale-v2/shared.py": "225107470031bdc4071149d2330b6541da27503014f05efd73a43aead7bd06f8",
+    "eval/tutor-scale-v2/shared.py": "9905909e55043e11315a15f60d98f8fb21d525d1ed007f0d28f0f1dd0d3c3944",
     "eval/tutor-scale-v2/task_scores.py": "3720d738392a2ffb99a4febcf2bf9eb8f3c67224192f51930c9e30257670fdaf",
     "eval/tutor-scale-v2/test_v2.py": "039bac2cd9c06c337df8387b00fa90259f058598274aa18b739345bc79fc3cc8",
     "eval/tutor-scale-v2/verify.py": "2c1f5dcb16b492dd6bb03b7976c439149baf8a9612a1e05f2fc40f1ae06ad1e3"

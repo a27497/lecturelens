@@ -13,7 +13,7 @@ import run as legacy  # noqa: E402
 from blind import validate_rating as validate_citations  # noqa: E402
 from dataset import digest, load, write  # noqa: E402
 from scoring import agreement  # noqa: E402
-from scoring import metrics as citation_metrics
+from scoring import metrics as citation_metrics  # noqa: E402
 
 __all__ = [
     "BASE",
