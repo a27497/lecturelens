@@ -75,6 +75,9 @@ def check(run, database=False, blind=None):
     summary = json.loads((run / "summary.json").read_text())
     assert summary["statuses"] == dict(totals) and summary["scheduled_turns"] == len(expected)
     assert summary["recorded_calls"] == embedded_calls
+    if "reserved_calls" in summary:
+        assert summary["reserved_calls"] == reserved
+        assert summary["settled_calls"] == settled
     assert summary["mechanics_status"] == "INCOMPLETE" or (
         totals == {"completed": len(expected)} and not summary["failures"]
     )

@@ -240,6 +240,21 @@ def preflight(live, pricing):
     return frozen
 
 
+def accounting_totals(shards):
+    known = [s for s in shards if s is not None]
+    values = dict(
+        reserved_calls=sum(s["calls"] for s in known),
+        settled_calls=sum(s["calls"] - s["pending"] for s in known),
+        pending_calls=sum(s["pending"] for s in known),
+    )
+    unknown = len(shards) - len(known)
+    return dict(
+        **{k: None if unknown else v for k, v in values.items()},
+        unknown_accounting_shards=unknown,
+        known_accounting=values,
+    )
+
+
 def run(args):
     frozen = preflight(args.live, args.pricing)
     snapshot, groups, counts = load()
@@ -281,7 +296,7 @@ def run(args):
     )
     write(out / "config.json", config)
     all_rows, failures = [], []
-    total_calls = 0
+    accountings = []
     for course in courses:
         subset = [d for d in scripts if d["course_id"] == course]
         shard = out / course
@@ -366,16 +381,7 @@ def run(args):
                         ),
                     ][-6:]
                     if ledger.check()["blocked"]:
-                        raise ValueError("LEDGER_BLOCKED")
-            accounting = ledger.check()
-            write(
-                shard / "accounting.json",
-                dict(
-                    legacy_reservation_accounting=accounting,
-                    note="MOCK dollar arithmetic is not billing. Failed/unknown calls retain reservations.",
-                ),
-            )
-            total_calls += accounting["calls"]
+                        raise EvalError(ledger.check()["blocked"])
         except Exception as exc:  # noqa: BLE001 -- preserve failed shard without secrets
             failures.append(
                 dict(
@@ -387,6 +393,19 @@ def run(args):
         finally:
             if runtime:
                 runtime.close()
+            try:
+                accounting = ledger.check()
+            except Exception:  # noqa: BLE001 -- unknown accounting must not become zero calls
+                accounting = None
+                failures.append(dict(course_id=course, error="ACCOUNTING_UNKNOWN"))
+            accountings.append(accounting)
+            write(
+                shard / "accounting.json",
+                dict(
+                    legacy_reservation_accounting=accounting,
+                    note="MOCK arithmetic is not billing; failed/unknown calls retain reservations.",
+                ),
+            )
         all_rows.extend(reconcile(subset, rows))
     for row in all_rows:
         append(out / "turns.jsonl", row)
@@ -414,7 +433,7 @@ def run(args):
         review_failed_or_missing=review_failed,
         failures=failures,
         recorded_calls=sum(len(r["calls"]) for r in all_rows),
-        settled_calls=total_calls,
+        **accounting_totals(accountings),
         failure_reasons=dict(Counter(r.get("error_code") for r in all_rows if r["status"] != "completed")),
     )
     write(out / "summary.json", summary)

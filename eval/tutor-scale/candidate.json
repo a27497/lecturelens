@@ -12,11 +12,11 @@
     "eval/tutor-scale/dataset-lock.json": "68c3465b597218ee7c1a85b5842c11c42929744a4e9a03a68fe502a328608736",
     "eval/tutor-scale/dataset.py": "0a3d6a79015b11d1ebcf99d43e4e7e199d2d5723feeda6c4ab29479c0a6a9054",
     "eval/tutor-scale/freeze.py": "65d30e430b4091d8272b7d5acd2872e555593eb626e00f51859cbb9f0fa877e2",
-    "eval/tutor-scale/run.py": "ee9d8c86d93b7a7c41d0a772a39f8e38f87f12bd309f5eccfd49beb4d727fe76",
+    "eval/tutor-scale/run.py": "4c217e749f755796a338a4a509acd3c22e26979c73ff825f885bea55a4924dcf",
     "eval/tutor-scale/safe_exec.py": "ffa323eb334a23ec63985b316151223cd446e168800e8c6eaf47b364dcb45029",
     "eval/tutor-scale/scoring.py": "5adfd99963455f7d8eef7fcbf6d4d517dfa508f8970f4eee6de69be89e53658f",
-    "eval/tutor-scale/test_tools.py": "48c2a0d95cdc2f337f99c245d3fa7199ceb7d3c57001fe95997d826a6622e125",
-    "eval/tutor-scale/verify.py": "d67a46651aa49976da9b536a38e18a0ab425fddbe6dcdcec60dbe2ac1da5aa33"
+    "eval/tutor-scale/test_tools.py": "b874991324e6776386039cc0ec799c4ea6eeb4af23035b09cdf05604cface3f2",
+    "eval/tutor-scale/verify.py": "895e8b41273badc872bd698fe94f89098bec63fc6c0a744a2fba8ce74ae9f81e"
   },
   "note": "New evaluation tooling identity; historical P8 v9 and AU pins unchanged. Runtime modules remain pinned by original P8 verify_inputs(). No real quality result."
 }

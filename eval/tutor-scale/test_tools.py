@@ -245,3 +245,14 @@ def test_bounded_metadata_tee():
     with httpx.Client(transport=transport) as client:
         assert client.get("https://unused.invalid").json()["model"] == "MOCK-v1"
     assert transport.metadata == dict(returned_model_version="MOCK-v1", system_fingerprint="mock-build")
+
+
+def test_failure_accounting_includes_failed_shards_and_unknowns():
+    from run import accounting_totals
+
+    result = accounting_totals([dict(calls=3, pending=1), dict(calls=1, pending=0)])
+    assert result["reserved_calls"] == 4 and result["settled_calls"] == 3
+    assert result["pending_calls"] == 1
+    result = accounting_totals([dict(calls=2, pending=0), None])
+    assert result["settled_calls"] is None and result["unknown_accounting_shards"] == 1
+    assert result["known_accounting"]["settled_calls"] == 2
