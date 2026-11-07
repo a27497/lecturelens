@@ -8,6 +8,13 @@ from .citations import assembled_citation_ids
 class SourcePreservingMock:
     mode = "mock"
 
+    def accounting_observation(self):
+        return {
+            "fee_state": "mock_not_billable",
+            "charged_nano_usd": 0,
+            "charge_basis": "no_external_request",
+        }
+
     def decide(self, messages, schemas, timeout):
         body = json.loads(messages[-1]["content"])
         if not body["observations"]:

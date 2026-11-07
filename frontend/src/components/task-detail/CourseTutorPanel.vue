@@ -41,6 +41,19 @@ function fail(reason: unknown) {
 function apply(result: TutorView) {
   ++readSequence;
   view.value = result;
+  // GET can acknowledge the same client request after its submit response was
+  // lost. Reconcile it before exhaustion disables an idempotent retry.
+  const requested = pending.value;
+  const confirmed = requested && result.turns.find(t => t.client_turn_id === requested.client_turn_id);
+  if (requested && confirmed) {
+    pending.value = undefined;
+    if (confirmed.learner_text === requested.text && confirmed.socratic === requested.socratic) {
+      draft.value = ""; error.value = "";
+    } else error.value = "保存的消息与待重试内容冲突，请核对对话后重新发送。";
+  } else if (requested && exhausted.value && !activeTurn.value) {
+    pending.value = undefined;
+    error.value = "对话预算已用完，未找到这条消息。可复制内容到新对话。";
+  }
   clearTimeout(timer);
   if (activeTurn.value && visible) timer = setTimeout(() => void refresh(), 700);
 }
@@ -79,7 +92,7 @@ function newConversation() {
   epoch++; clearTimeout(timer); view.value = null; draft.value = ""; error.value = ""; createKey = randomUuid();
 }
 async function send() {
-  if (busy.value || activeTurn.value || blocked.value || exhausted.value) return;
+  if (busy.value || activeTurn.value || blocked.value || (exhausted.value && !pending.value)) return;
   if (!pending.value) {
     if (!draft.value.trim()) return;
     pending.value = { client_turn_id: randomUuid(), text: draft.value.trim(), socratic: socratic.value };
@@ -151,7 +164,7 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
       <label><input v-model="socratic" type="checkbox" :disabled="busy || !!pending" /> Socratic · 用问题引导我</label>
       <label for="tutor-message">向课程 Tutor 提问</label>
       <textarea id="tutor-message" v-model="draft" maxlength="2000" rows="3" :disabled="busy || !!pending || blocked" placeholder="可以继续追问：为什么？能举个例子吗？" />
-      <button type="submit" :disabled="busy || !!activeTurn || loading || blocked || exhausted || (!pending && !draft.trim())">{{ pending ? '重试同一条消息' : '发送' }}</button>
+      <button type="submit" :disabled="busy || !!activeTurn || loading || blocked || (exhausted && !pending) || (!pending && !draft.trim())">{{ pending ? '重试同一条消息' : '发送' }}</button>
     </form>
   </section>
 </template>

@@ -353,3 +353,150 @@ def test_semantic_retrieval_empty_observation_and_unicode(query, hit):
     authority.register(scope, "x")
     result = authority.read(scope, "SEARCH", query=query)
     assert bool(result["evidence"]) is hit and result["retrieval_observation"]["no_hit"] is not hit
+
+
+def test_reliability_cancelled_late_usage_retained_without_publication(lab):
+    store, _, runtime, scope = lab
+
+    class Cancel:
+        def decide(self, *args):
+            runtime.command(Command(**scope, operation="CANCEL", client_turn_id="t1"))
+            return dict(
+                name="search_tutor_evidence",
+                arguments=dict(query="loop"),
+                usage=dict(prompt_tokens=123, completion_tokens=45),
+            )
+
+    result = run(lab, Cancel())
+    assert result["status"] == "cancelled" and result["answer"] is None
+    assert result["usage"] == [dict(prompt_tokens=123, completion_tokens=45)]
+    assert result["accounting"][0]["usage_state"] == "known"
+    assert result["accounting"][0]["reservation_released"] is False
+    assert result["reserved_tokens"] > 0 and not result["citations"]
+
+
+def test_reliability_unknown_usage_and_model_outcome_never_become_zero(lab):
+    class Fails:
+        def decide(self, *args):
+            raise TimeoutError("synthetic")
+
+    result = run(lab, Fails())
+    assert result["status"] == "failed" and result["usage"] == []
+    assert result["accounting"][0]["usage_state"] == "unknown"
+    assert result["accounting"][0]["usage"] is None
+    assert result["accounting"][0]["runtime_reserved_proxy"] > 0
+
+
+def test_reliability_known_usage_recording_is_idempotent(lab):
+    from lecturelens_agent.study.store import StudyError
+
+    _, _, runtime, _ = lab
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+    result = run(lab, p)
+    runtime.store.record_accounting(
+        result["turn_id"], 1, {"response_state": "returned"}, dict(prompt_tokens=100, completion_tokens=20)
+    )
+    with runtime.store.connect() as conn:
+        _, stored = runtime.store.rows(conn, result["turn_id"])
+    assert len(stored["usage"]) == 2 and len(stored["checkpoint"]["call_accounting"]) == 2
+    with pytest.raises(StudyError, match="TUTOR_USAGE_CONFLICT"):
+        runtime.store.record_accounting(
+            result["turn_id"], 1, {}, dict(prompt_tokens=999, completion_tokens=20)
+        )
+
+
+def test_reliability_reserved_restart_fails_without_retransmission(lab):
+    store, _, runtime, scope = lab
+    runtime.command(Command(**scope, operation="TURN", client_turn_id="unknown", text="Explain loops"))
+    candidate = store.candidates()[0]
+    with store.connect() as conn:
+        conn.execute(
+            "UPDATE tutor_turn SET checkpoint=%s,model_calls=1,reserved_tokens=1000 WHERE turn_id=%s",
+            (
+                psycopg.types.json.Jsonb(dict(phase="reserved", selected=[], observations=[])),
+                candidate["turn_id"],
+            ),
+        )
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+    runtime.provider = p
+    runtime.execute(candidate)
+    result = runtime.command(Command(**scope, operation="GET"))["turns"][-1]
+    assert result["error_code"] == "TUTOR_UNKNOWN_MODEL_OUTCOME" and not p.requests
+    assert result["accounting"][0]["usage_state"] == "unknown"
+
+
+def test_reliability_received_restart_reuses_response_and_usage_once(lab):
+    store, _, runtime, scope = lab
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+    original = runtime.act
+
+    def interrupted(*args):
+        raise RuntimeError("synthetic worker interruption after received checkpoint")
+
+    runtime.act = interrupted
+    result = run(lab, p)
+    runtime.act = original
+    with store.connect() as conn:
+        conn.execute(
+            "UPDATE tutor_turn SET status='running',error_code=NULL WHERE turn_id=%s", (result["turn_id"],)
+        )
+    runtime.execute(dict(turn_id=result["turn_id"], session_id=scope["session_id"]))
+    result = runtime.command(Command(**scope, operation="GET"))["turns"][-1]
+    # The saved search response executes after restart; only its finish call is new.
+    assert result["status"] == "completed" and len(p.requests) == 2 and len(result["usage"]) == 2
+
+
+def test_reliability_mock_ledger_settlement_is_separate_from_runtime_reservation(lab, tmp_path):
+    from lecturelens_real_eval.tutor.bounded_provider import BoundedTutorProvider
+    from lecturelens_real_eval.tutor.observed_channel import DecodedMetadataTransport, ObservedChannel
+    from lecturelens_real_eval.tutor_channel import Ledger, TutorPolicy
+
+    store, authority, runtime, scope = lab
+    ledger = Ledger(store.dsn, tmp_path / "ledger.jsonl", "bounded-simulated", TutorPolicy(max_calls=10))
+    ledger.install()
+    mock = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+
+    def send(request):
+        wire = json.loads(request.content)
+        result = mock.decide(wire["messages"], wire["tools"], 20)
+        return httpx.Response(
+            200,
+            json=dict(
+                model="deepseek-flash",
+                id="synthetic-call",
+                usage=dict(prompt_tokens=100, completion_tokens=40),
+                choices=[
+                    dict(
+                        finish_reason="tool_calls",
+                        message=dict(
+                            tool_calls=[
+                                dict(
+                                    type="function",
+                                    function=dict(
+                                        name=result["name"], arguments=json.dumps(result["arguments"])
+                                    ),
+                                )
+                            ]
+                        ),
+                    )
+                ],
+            ),
+        )
+
+    channel = ObservedChannel(
+        ledger,
+        records=tmp_path / "calls.jsonl",
+        transport=DecodedMetadataTransport(httpx.MockTransport(send)),
+    )
+    provider = BoundedTutorProvider(channel, authority)
+    provider.scope = scope
+    result = run(lab, provider)
+    assert result["status"] == "completed" and ledger.check()["calls"] == 2
+    assert all(r["fee_state"] == "settled" for r in result["accounting"])
+    assert sum(r["charged_nano_usd"] for r in result["accounting"]) == ledger.check()["nano_usd"]
+    assert all(
+        r["charge_basis"] == "conservative_local_ledger_not_supplier_invoice" for r in result["accounting"]
+    )
+    assert all(
+        r["runtime_reserved_proxy"] > 0 and not r["reservation_released"] for r in result["accounting"]
+    )

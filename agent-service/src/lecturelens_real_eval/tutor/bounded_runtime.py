@@ -3,6 +3,7 @@
 import copy
 import json
 import re
+from datetime import datetime, timezone
 from typing import Annotated, Literal
 
 from lecturelens_agent.contracts import Contract
@@ -74,8 +75,104 @@ class BoundedTutorRuntime(TutorRuntime):
 
     def __init__(self, store, authority, provider=None):
         from .bounded_mock import SourcePreservingMock
+        from .bounded_store import BoundedStore
 
-        super().__init__(store, authority, provider or SourcePreservingMock())
+        super().__init__(
+            store if isinstance(store, BoundedStore) else BoundedStore(store.dsn),
+            authority,
+            provider or SourcePreservingMock(),
+        )
+
+    def loop(self, turn_id):
+        while True:
+            with self.store.connect() as conn:
+                session, turn = self.store.rows(conn, turn_id)
+                if turn["status"] not in {"queued", "running"}:
+                    return
+                self.store.fence(conn, session)
+                self.guard(session, turn)
+                if turn["deadline"] is None:
+                    turn = conn.execute(
+                        "UPDATE tutor_turn SET status='running',deadline=now()+interval '20 seconds' WHERE turn_id=%s RETURNING *",
+                        (turn_id,),
+                    ).fetchone()
+                state, history = turn["checkpoint"], self.context(conn, session, turn)
+            if state["phase"] == "reserved":
+                self.store.record_accounting(
+                    turn_id, turn["model_calls"], {"response_state": "unknown_after_restart"}
+                )
+                raise StudyError("TUTOR_UNKNOWN_MODEL_OUTCOME")
+            if state["phase"] == "received":
+                if self.act(turn_id, state, history):
+                    return
+                continue
+            prepaid = state.get("repair_request")
+            if prepaid:
+                self.read_evidence(session, state["selected"])
+                messages, schemas, amount = prepaid
+            else:
+                messages, schemas, amount = self.request(session, turn, state, history)
+            state = {k: v for k, v in state.items() if k != "repair_request"}
+            state["repair_call"] = bool(prepaid)
+            with self.store.connect() as conn:
+                session, turn = self.store.rows(conn, turn_id)
+                self.guard(session, turn)
+                self.store.fence(conn, session)
+                if not prepaid:
+                    self.reserve_call(conn, session, turn, amount)
+                index = turn["model_calls"] + (0 if prepaid else 1)
+                self.store.checkpoint(conn, turn_id, {**state, "phase": "reserved"})
+            self.store.record_accounting(
+                turn_id,
+                index,
+                {
+                    "response_state": "reserved",
+                    "runtime_reserved_proxy": amount,
+                    "fee_state": "external_ledger_or_unknown",
+                    "reservation_released": False,
+                },
+            )
+            remaining = min(20, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds())
+            if remaining <= 0:
+                raise StudyError("TUTOR_DEADLINE")
+            channel = getattr(self.provider, "channel", None)
+            before_calls = (
+                len(channel.turn_calls) if channel is not None and hasattr(channel, "turn_calls") else 0
+            )
+            try:
+                response = self.provider.decide(messages, schemas, remaining)
+            except Exception:
+                usage, extra = None, {}
+                if (
+                    channel is not None
+                    and hasattr(channel, "turn_calls")
+                    and len(channel.turn_calls) > before_calls
+                ):
+                    latest = channel.turn_calls[-1]
+                    usage = latest.get("usage")
+                    extra["ledger_call_id"] = latest.get("ledger_call_id")
+                self.store.record_accounting(
+                    turn_id, index, {"response_state": "failed_or_unknown", **extra}, usage
+                )
+                if hasattr(self.provider, "accounting_observation"):
+                    self.store.record_accounting(turn_id, index, self.provider.accounting_observation())
+                raise
+            self.store.record_accounting(
+                turn_id,
+                index,
+                {"response_state": "returned"},
+                response.get("usage") if isinstance(response, dict) else None,
+            )
+            if hasattr(self.provider, "accounting_observation"):
+                self.store.record_accounting(turn_id, index, self.provider.accounting_observation())
+            usage = response.get("usage", {}) if isinstance(response, dict) else {}
+            if not isinstance(usage, dict) or any(type(v) is not int or v < 0 for v in usage.values()):
+                raise StudyError("TUTOR_PROTOCOL_FAILURE")
+            with self.store.connect() as conn:
+                session, turn = self.store.rows(conn, turn_id)
+                self.guard(session, turn)
+                self.store.fence(conn, session)
+                self.store.checkpoint(conn, turn_id, {**state, "phase": "received", "response": response})
 
     def context(self, conn, session, turn):
         # Keep complete bounded session records, including feedback and tails. The

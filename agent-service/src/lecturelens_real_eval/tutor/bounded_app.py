@@ -15,7 +15,7 @@ def create_app(*, tutor=None, **kwargs):
         def initialize(self):
             require_mock(os.environ.get("AGENT_LLM_MODE", "real"))
             self.runtime = BoundedTutorRuntime(
-                TutorStore(os.environ["AGENT_DATABASE_URL"]),
+                TutorStore(os.environ["TUTOR_V15_DATABASE_URL"]),
                 CompleteEvidenceAuthority(
                     os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080"), app.state.secret
                 ),
