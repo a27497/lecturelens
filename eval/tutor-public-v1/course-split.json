@@ -1,0 +1,69 @@
+{
+  "schema": "tutor-public-course-split-v1",
+  "frozen_at": "2026-11-07",
+  "frozen_before": "Question authoring and evaluation-adapter debugging",
+  "baseline_sha": "2e862b82ae0c8592f301d62a0083ad24db512fff",
+  "version": "tutor-public-v1",
+  "courses": [
+    {
+      "course_id": "carpentries-python",
+      "split": "development",
+      "title": "Programming with Python",
+      "course_url": "https://swcarpentry.github.io/python-novice-inflammation/",
+      "unit_url": "https://swcarpentry.github.io/python-novice-inflammation/02-numpy.html",
+      "unit": "Analyzing Patient Data (complete episode 2)",
+      "repository": "swcarpentry/python-novice-inflammation",
+      "source_path": "episodes/02-numpy.md",
+      "dialogue_ids": [
+        "python-01",
+        "python-02",
+        "python-03",
+        "python-04"
+      ]
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "split": "development",
+      "title": "Data Organization in Spreadsheets for Ecologists",
+      "course_url": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/",
+      "unit_url": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/02-common-mistakes.html",
+      "unit": "Formatting problems (complete episode 3)",
+      "repository": "datacarpentry/spreadsheet-ecology-lesson",
+      "source_path": "episodes/02-common-mistakes.md",
+      "dialogue_ids": [
+        "sheets-01",
+        "sheets-02",
+        "sheets-03",
+        "sheets-04"
+      ]
+    },
+    {
+      "course_id": "carpentries-sql",
+      "split": "holdout",
+      "title": "Databases and SQL",
+      "course_url": "https://swcarpentry.github.io/sql-novice-survey/",
+      "unit_url": "https://swcarpentry.github.io/sql-novice-survey/03-filter.html",
+      "unit": "Filtering (complete episode 3)",
+      "repository": "swcarpentry/sql-novice-survey",
+      "source_path": "episodes/03-filter.md",
+      "dialogue_ids": [
+        "sql-01",
+        "sql-02",
+        "sql-03",
+        "sql-04"
+      ]
+    }
+  ],
+  "license_precheck": {
+    "instruction": "CC-BY-4.0",
+    "software": "MIT",
+    "license_pages": [
+      "https://swcarpentry.github.io/python-novice-inflammation/LICENSE.html",
+      "https://datacarpentry.github.io/spreadsheet-ecology-lesson/LICENSE.html",
+      "https://swcarpentry.github.io/sql-novice-survey/LICENSE.html"
+    ],
+    "license_url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "holdout_policy": "SQL materials, questions, references and results are evaluation-only; never use them for prompt/product tuning. Codex will author and review them for evaluation, not tune a Tutor. Public exposure of base models is unknown. After any real trial preserve failures and use a fresh course for subsequent tuned candidates.",
+  "planned_design": "Four complete sessions and 20 learner turns per course; total 12 sessions and 60 turns. Vary session lengths and task order, not a fixed five-turn category template."
+}
