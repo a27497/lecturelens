@@ -215,7 +215,7 @@ Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Jav
 
 ## P8 Tutor（实验性，离线 Mock）
 
-The additive [v16 verified-publication path](TUTOR_VERIFIED_DEVELOPMENT.md) reuses
+The additive [v17 verified-publication path](TUTOR_VERIFIED_DEVELOPMENT.md) reuses
 the same authority, accounting and canonical browser fields with an exclusive
 schema. Model-selected excerpts/value expressions/hint acts replace free-form
 publication in that explicit variant. It does not change default workers or

@@ -1,8 +1,8 @@
 # Verified-publication Tutor development candidate
 
-`p8-tutor-verified-v16-development` is an opt-in, Mock-only product factory:
-`lecturelens_real_eval.tutor.verified_app:create_app`. It requires an exclusive
-non-public `TUTOR_V16_DATABASE_URL`; never share a schema with earlier workers.
+`p8-tutor-verified-v17-development` is an opt-in, Mock-only product factory:
+`lecturelens_real_eval.tutor.guarded_app:create_app`. It requires an exclusive
+non-public `TUTOR_V17_DATABASE_URL`; never share a schema with earlier workers.
 No default identity, old candidate, database schema or browser answer protocol is
 changed. The additive Java `complete-v1` Evidence projection is reused unchanged.
 
@@ -13,6 +13,8 @@ or computation supplies a bounded correction observation; format and persistent
 budgets retain their previous limits. Python/PostgreSQL store decisions, feedback
 comparisons, accounting and the atomic final result. Unknown reserved calls stop
 without resend; authority, deletion, cancellation and recovery fences still apply.
+
+The frozen v16 precursor is retained but rejected for an AST-comment/display gap. V17 requires the entire displayed expression to match a positive ASCII value grammar before AST interpretation; comments and control/prose suffixes cannot become an unchecked output channel.
 
 ## Changed publication contract
 
@@ -49,7 +51,7 @@ Full completed-turn context, complete Evidence and v15 accounting are retained.
 
 ## Candidate diagnostic entry
 
-`scripts/dev/run_tutor_diagnostic_v16.py` defaults to verify-only: no DB, network
+`scripts/dev/run_tutor_diagnostic_v17.py` defaults to verify-only: no DB, network
 transport or credential lookup. Mock mode exercises a separate synthetic16 and
 failure injection, never the unreviewed prospective packet. Live mode additionally
 requires an exact clean approved commit, source/contract hashes, independent
@@ -66,5 +68,5 @@ There is no arbitrary-secret detector or supplier invoice guarantee.
 
 The candidate and execution protocol are frozen while independent reference review
 is **BLOCKED**. The16 known-course positions are development-exposed, not holdout.
-See [the follow-up evidence](../eval/tutor-followup-v16-v1/README.md) and the final
+See [the follow-up evidence](../eval/tutor-followup-v17-v1/README.md) and the final
 REPORT.md / VERIFICATION.json there. No paid execution or promotion follows.

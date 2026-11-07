@@ -80,3 +80,13 @@ sources remain unchanged; their exact attribution is in RUFF_ATTRIBUTION.json.
 The nine named current-phase Python files pass Ruff with zero diagnostics; no
 directory formatting or source-asset formatting is used. Initial current-phase
 import/fixture style errors were fixed before freeze.
+
+## Final review rejects this precursor
+
+After the frozen63-test pass, a separate PG reproduction proved that AST comments
+were ignored during evaluation but retained in displayed expressions, allowing
+`2+2 # unsupported prose`. No v16 frozen source/asset/result is edited to hide it.
+The additive v17 runtime closes the full-string grammar gap; the final delivery
+is in [the v17 follow-up](../tutor-followup-v17-v1/README.md). V16 is not approved
+for live dispatch. Its source-root fence also rejects later source-tree changes;
+reproduction uses its recorded code/freeze commits.

@@ -1,0 +1,13 @@
+{
+  "authorized": false,
+  "scope": "ONE_V17_DIAGNOSTIC_NO_RETRY_NO_EXPANSION",
+  "candidate_sha256": null,
+  "packet_sha256": null,
+  "git_head": null,
+  "model": "deepseek-flash",
+  "max_requests": 80,
+  "max_nano_usd": 700000000,
+  "expires_utc": null,
+  "run_id": null,
+  "note": "NONEXECUTABLE TEMPLATE. All prior grants expired; a new explicit grant is required."
+}

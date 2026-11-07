@@ -1,0 +1,414 @@
+{
+  "version": "v17-reference-review-pack-candidate-v1",
+  "packet_sha256": "e413ce3b8f9786b1cebd860fb2c4b36961cfeac2e2d2f53e69461eb6f233f0b1",
+  "first_author": "Codex (same author as previous prospective packet and runtime)",
+  "second_pass_reviewer": "Codex (same current agent; participated in authoring)",
+  "second_pass_type": "NONBLIND_CODEX_SOURCE_CHECK_NOT_INDEPENDENT_HUMAN_REVIEW",
+  "independent_reviewer": null,
+  "status": "BLOCKED_NO_INDEPENDENT_REVIEWER",
+  "gates": {
+    "scheduled": 16,
+    "completed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "missing": 0,
+    "correct_minimum": 14,
+    "per_course_minimum": 7,
+    "per_course_denominator": 8,
+    "refusals": 4,
+    "socratic": 2,
+    "feedback": 2,
+    "critical": 3,
+    "clarifications": 2,
+    "context_minimum": 9,
+    "context_denominator": 10,
+    "citation_pair_support_minimum": 0.95,
+    "supported_claim_coverage_minimum": 0.9,
+    "full_answer_coverage_minimum": 10,
+    "full_answer_denominator": 12
+  },
+  "scoring": "All requested points plus material additions. Keep uncertain and noncompleted positions in scheduled denominators. All explicit substantive citation pairs and distinct requiring assertions, including optional additions; disclose direct-only versus bounded-derivation sensitivity. Preserve every failure.",
+  "tasks": [
+    {
+      "turn_key": "v15-prospective-counter:1",
+      "question": "Use only the supplied loop episode. As an explicit variation of its counting example, start length at 2 and visit two names, Ada then Grace. Trace each update, give the final value, and explain how an unindented final print differs from printing inside the loop. Mark the changed-example trace as a derivation.",
+      "necessary_points": [
+        "Initial2, updates3 then4, final4 under the explicitly supplied variation.",
+        "One increment per visited name; unindented final print runs after the loop once, inside printing runs for each name.",
+        "Explicitly label reasoning from the cited loop rule, not a printed course result or actual execution."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 134,
+          "line_end": 154,
+          "quote": "The improved version uses a [for loop](../learners/reference.md#for-loop)\nto repeat an operation --- in this case, printing --- once for each thing in a sequence.\nThe general form of a loop is:\n\n```python\nfor variable in collection:\n    # do things using variable, such as print\n```\n\nUsing the odds example above, the loop might look like this:\n\n![](fig/05-loops_image_num.png){alt=\"Loop variable 'num' being assigned the value of each element in the list odds in turn and then being printed\"}\n\nwhere each number (`num`) in the variable `odds` is looped through and printed one number after\nanother. The other numbers in the diagram denote which loop cycle the number was printed in (1\nbeing the first loop cycle, and 6 being the final loop cycle).\n\nWe can call the [loop variable](../learners/reference.md#loop-variable) anything we like, but\nthere must be a colon at the end of the line starting the loop, and we must indent anything we\nwant to run inside the loop. Unlike many other languages, there is no command to signify the end\nof the loop body (e.g. `end for`); everything indented after the `for` statement belongs to the loop."
+        },
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 187,
+          "line_end": 217,
+          "quote": "Here's another loop that repeatedly updates a variable:\n\n```python\nlength = 0\nnames = ['Curie', 'Darwin', 'Turing']\nfor value in names:\n    length = length + 1\nprint('There are', length, 'names in the list.')\n```\n\n```output\nThere are 3 names in the list.\n```\n\nIt's worth tracing the execution of this little program step by step.\nSince there are three names in `names`,\nthe statement on line 4 will be executed three times.\nThe first time around,\n`length` is zero (the value assigned to it on line 1)\nand `value` is `Curie`.\nThe statement adds 1 to the old value of `length`,\nproducing 1,\nand updates `length` to refer to that new value.\nThe next time around,\n`value` is `Darwin` and `length` is 1,\nso `length` is updated to be 2.\nAfter one more update,\n`length` is 3;\nsince there is nothing left in `names` for Python to process,\nthe loop finishes\nand the `print` function on line 5 tells us our final answer."
+        }
+      ],
+      "ambiguities_and_review_checks": "Explicit changed example, not the displayed original. Trace2->3->4; distinguish once-after-loop from each iteration. No execution observation is provided.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-counter:2",
+      "question": "Separate Socratic task: use the displayed Rosalind/name loop to ask me one source-grounded guiding question about the variable after the loop. Do not reveal its final value or provide the completed solution.",
+      "necessary_points": [
+        "A grounded question about reassignment/persistence, not the final Turing answer or full trace.",
+        "Correct Socratic outcome and question; source citation locally bound."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 219,
+          "line_end": 235,
+          "quote": "Note that a loop variable is a variable that is being used to record progress in a loop.\nIt still exists after the loop is over,\nand we can re-use variables previously defined as loop variables as well:\n\n```python\nname = 'Rosalind'\nfor name in ['Curie', 'Darwin', 'Turing']:\n    print(name)\nprint('after the loop, name is', name)\n```\n\n```output\nCurie\nDarwin\nTuring\nafter the loop, name is Turing\n```"
+        }
+      ],
+      "ambiguities_and_review_checks": "The source itself contains the final variable value. A guiding question must withhold it from automatic answer text; opening a course citation is learner-controlled source access.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-counter:3",
+      "question": "My reply to your guiding question is: finishing the loop restores Rosalind automatically. Give source-grounded feedback on that reply and then explain the displayed final variable value. Do not claim mastery or an automatic grade.",
+      "necessary_points": [
+        "Feedback corrects automatic restoration claim.",
+        "Displayed variable persists as Turing; earlier Rosalind was overwritten.",
+        "Nonempty independently source-bound evaluation of the actual learner reply."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 219,
+          "line_end": 235,
+          "quote": "Note that a loop variable is a variable that is being used to record progress in a loop.\nIt still exists after the loop is over,\nand we can re-use variables previously defined as loop variables as well:\n\n```python\nname = 'Rosalind'\nfor name in ['Curie', 'Darwin', 'Turing']:\n    print(name)\nprint('after the loop, name is', name)\n```\n\n```output\nCurie\nDarwin\nTuring\nafter the loop, name is Turing\n```"
+        }
+      ],
+      "ambiguities_and_review_checks": "Feedback must actually correct restoration, not merely repeat a generic encouragement. Accept source comparison only if the correction and Turing conclusion are clear. Do not credit mastery claims.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-counter:4",
+      "question": "For that loop, provide the memory-address layout and universal compiler proof that the supplied lesson gives for preserving a variable after iteration.",
+      "necessary_points": [
+        "Clean fixed course-bounded refusal; no address layout or compiler theorem supplied."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 219,
+          "line_end": 235,
+          "quote": "Note that a loop variable is a variable that is being used to record progress in a loop.\nIt still exists after the loop is over,\nand we can re-use variables previously defined as loop variables as well:\n\n```python\nname = 'Rosalind'\nfor name in ['Curie', 'Darwin', 'Turing']:\n    print(name)\nprint('after the loop, name is', name)\n```\n\n```output\nCurie\nDarwin\nTuring\nafter the loop, name is Turing\n```"
+        }
+      ],
+      "ambiguities_and_review_checks": "Absence is scoped to the supplied episode. Reviewer must inspect the full episode, not infer whole-course absence from the one anchor.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:1",
+      "question": "Use only the supplied loop episode. Socratic task: ask one guiding question that helps me distinguish index from coefficient in enumerate(coefs), using the course's coefficient representation. Do not supply the pairs or the completed polynomial value.",
+      "necessary_points": [
+        "A grounded guiding question about the two roles, without dumping pairs or the numerical solution.",
+        "Locally source-bound Socratic output."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 379,
+          "line_end": 405,
+          "quote": "## Computing the Value of a Polynomial\n\nThe built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:\n\n```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```\n\nThe code above loops through `a_list`, assigning the index to `idx` and the value to `val`.\n\nSuppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.\n\n```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```\n\n```output\n97"
+        }
+      ],
+      "ambiguities_and_review_checks": "The requested distinction is role of index versus coefficient. A generic question may be insufficiently targeted; do not waive this because the new controller owns wording.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:2",
+      "question": "My reply is: the coefficient is the exponent, and the first exponent is 1. Evaluate this reply using the course. Then, for the explicit changed example x=2 with coefs=[2,4,3], give each term and total, labelled as a derivation rather than a displayed or executed result.",
+      "necessary_points": [
+        "Nonempty grounded feedback: index is exponent, coefficient is value, zero-based first exponent0.",
+        "Changed-example terms2,8,12 and sum22, explicitly derived from the cited representation.",
+        "No invented execution or grade/mastery claim."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 379,
+          "line_end": 419,
+          "quote": "## Computing the Value of a Polynomial\n\nThe built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:\n\n```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```\n\nThe code above loops through `a_list`, assigning the index to `idx` and the value to `val`.\n\nSuppose you have encoded a polynomial as a list of coefficients in\nthe following way: the first element is the constant term, the\nsecond element is the coefficient of the linear term, the third is the\ncoefficient of the quadratic term, where the polynomial is of the form $ax^0 + bx^1 + cx^2$.\n\n```python\nx = 5\ncoefs = [2, 4, 3]\ny = coefs[0] * x**0 + coefs[1] * x**1 + coefs[2] * x**2\nprint(y)\n```\n\n```output\n97\n```\n\nWrite a loop using `enumerate(coefs)` which computes the value `y` of any\npolynomial, given `x` and `coefs`.\n\n:::::::::::::::  solution\n\n## Solution\n\n```python\ny = 0\nfor idx, coef in enumerate(coefs):\n    y = y + coef * x**idx\n```"
+        }
+      ],
+      "ambiguities_and_review_checks": "Changed values require terms2,8,12 and total22; index starts0. Comparison-only feedback may be incomplete. Do not infer automatic correctness from arithmetic validity.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:3",
+      "question": "Separate range comparison: list range(1,4) and range(1,4,2). Explain the excluded stop and why zero-based enumerate indices should not be confused with these generated values. Explicitly mark any new sequence evaluation as reasoning from the lesson.",
+      "necessary_points": [
+        "range(1,4) yields1,2,3; range(1,4,2) yields1,3.",
+        "Stop4 is excluded; enumerate index role is different from the generated range values.",
+        "Bounded derivations grounded in cited range and enumerate premises."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 255,
+          "line_end": 286,
+          "quote": "## From 1 to N\n\nPython has a built-in function called `range` that generates a sequence of numbers. `range` can\naccept 1, 2, or 3 parameters.\n\n- If one parameter is given, `range` generates a sequence of that length,\n  starting at zero and incrementing by 1.\n  For example, `range(3)` produces the numbers `0, 1, 2`.\n- If two parameters are given, `range` starts at\n  the first and ends just before the second, incrementing by one.\n  For example, `range(2, 5)` produces `2, 3, 4`.\n- If `range` is given 3 parameters,\n  it starts at the first one, ends just before the second one, and increments by the third one.\n  For example, `range(3, 10, 2)` produces `3, 5, 7, 9`.\n\nUsing `range`,\nwrite a loop that prints the first 3 natural numbers:\n\n```python\n1\n2\n3\n```\n\n:::::::::::::::  solution\n\n## Solution\n\n```python\nfor number in range(1, 4):\n    print(number)\n```"
+        },
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 379,
+          "line_end": 390,
+          "quote": "## Computing the Value of a Polynomial\n\nThe built-in function `enumerate` takes a sequence (e.g. a [list](04-lists.md)) and\ngenerates a new sequence of the same length. Each element of the new sequence is a pair composed\nof the index (0, 1, 2,...) and the value from the original sequence:\n\n```python\nfor idx, val in enumerate(a_list):\n    # Do something using idx and val\n```\n\nThe code above loops through `a_list`, assigning the index to `idx` and the value to `val`."
+        }
+      ],
+      "ambiguities_and_review_checks": "Both sequence values are new derivations; range stop exclusion differs from enumerate index. Do not credit only the first sequence or omit the conceptual distinction.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:4",
+      "question": "For those sequences, give the exact C-struct representation and byte allocation proof prescribed by this supplied lesson, including its proof for all Python implementations.",
+      "necessary_points": [
+        "Clean fixed course-bounded refusal; generated sequences are taught, internal representation/proof is not."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+          "line_start": 255,
+          "line_end": 286,
+          "quote": "## From 1 to N\n\nPython has a built-in function called `range` that generates a sequence of numbers. `range` can\naccept 1, 2, or 3 parameters.\n\n- If one parameter is given, `range` generates a sequence of that length,\n  starting at zero and incrementing by 1.\n  For example, `range(3)` produces the numbers `0, 1, 2`.\n- If two parameters are given, `range` starts at\n  the first and ends just before the second, incrementing by one.\n  For example, `range(2, 5)` produces `2, 3, 4`.\n- If `range` is given 3 parameters,\n  it starts at the first one, ends just before the second one, and increments by the third one.\n  For example, `range(3, 10, 2)` produces `3, 5, 7, 9`.\n\nUsing `range`,\nwrite a loop that prints the first 3 natural numbers:\n\n```python\n1\n2\n3\n```\n\n:::::::::::::::  solution\n\n## Solution\n\n```python\nfor number in range(1, 4):\n    print(number)\n```"
+        }
+      ],
+      "ambiguities_and_review_checks": "Refuse the absent representation/proof details while keeping the scope to this supplied episode.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-portability:1",
+      "question": "Use only the supplied export episode. Prepare an analysis handoff recommendation: name both delimited alternatives, define CSV's storage and portability, include all four listed Excel-format risks and the other-format caveat, and state whether Excel can reopen the export. Keep claims within the lesson's scope.",
+      "necessary_points": [
+        "TSV and CSV; CSV plain text with commas between columns, readable in many tools.",
+        "Four risks: future proprietary accessibility, other software compatibility, Excel version inconsistency, repository acceptance.",
+        "Other formats also change and can parse differently; Excel can reopen CSV; no universal guarantee."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 20,
+          "line_end": 64,
+          "quote": "Storing the data you're going to work with for your analyses in Excel\ndefault file format (`*.xls` or `*.xlsx` - depending on the Excel\nversion) isn't a good idea. Why?\n\n- Because it is a proprietary format, and it is possible that in\n  the future, technology won't exist (or will become sufficiently\n  rare) to make it inconvenient, if not impossible, to open the file.\n\n- Other spreadsheet software may not be able to open files\n  saved in a proprietary Excel format.\n\n- Different versions of Excel may handle data\n  differently, leading to inconsistencies.\n\n- Finally, more journals and grant agencies are requiring you\n  to deposit your data in a data repository, and most of them don't\n  accept Excel format. It needs to be in one of the formats\n  discussed below.\n\n- The above points also apply to other formats such as open data formats used by LibreOffice / Open Office. These formats are not static and do not get parsed the same way by different software packages.\n\nAs an example of inconsistencies in data storage, do you remember how we talked about how Excel stores dates earlier? It turns out that\nthere are multiple defaults for different versions of the software, and you can switch between them all. So, say you're\ncompiling Excel-stored data from multiple sources. There are dates in each file - Excel interprets them as their own internally consistent\nserial numbers. When you combine the data, Excel will take the serial number from the place you're importing it from, and interpret it\nusing the rule set for the version of Excel you're using. Essentially, you could be adding errors to your data, and it wouldn't\nnecessarily be flagged by any data cleaning methods if your ranges overlap.\n\nStoring data in a universal, open, and static format will help deal with this problem. Try tab-delimited (tab separated values\nor TSV) or comma-delimited (comma separated values or CSV). CSV files are plain text files where the columns are separated by commas,\nhence 'comma separated values' or CSV. The advantage of a CSV file over an Excel/SPSS/etc. file is that we can open and read a CSV file\nusing just about any software, including plain text editors like TextEdit or NotePad.\nData in a CSV file can also be easily imported into other formats and\nenvironments, such as SQLite and R. We're not tied to a certain version of a certain expensive program when we work with CSV files, so\nit's a\ngood format to work with for maximum portability and endurance. Most spreadsheet programs can save to delimited text formats like CSV\neasily, although they may give you a warning during the file export.\n\nTo save a file you have opened in Excel in CSV format:\n\n1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.\n\nAn important note for backwards compatibility: you can open CSV files in Excel!"
+        }
+      ],
+      "ambiguities_and_review_checks": "All four proprietary-format risks plus TSV/CSV and other-format caveat are mandatory. Length pressure is not grounds to omit obligations.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-portability:2",
+      "question": "Clarification: I interpreted your recommendation as saying CSV is uniquely acceptable and every spreadsheet program parses it identically. Assess both conclusions using the unit, preserving the portability recommendation.",
+      "necessary_points": [
+        "Reject exclusive CSV requirement: TSV also recommended.",
+        "No every-program identical-parsing guarantee; preserve portability as a recommendation."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 48,
+          "line_end": 64,
+          "quote": "Storing data in a universal, open, and static format will help deal with this problem. Try tab-delimited (tab separated values\nor TSV) or comma-delimited (comma separated values or CSV). CSV files are plain text files where the columns are separated by commas,\nhence 'comma separated values' or CSV. The advantage of a CSV file over an Excel/SPSS/etc. file is that we can open and read a CSV file\nusing just about any software, including plain text editors like TextEdit or NotePad.\nData in a CSV file can also be easily imported into other formats and\nenvironments, such as SQLite and R. We're not tied to a certain version of a certain expensive program when we work with CSV files, so\nit's a\ngood format to work with for maximum portability and endurance. Most spreadsheet programs can save to delimited text formats like CSV\neasily, although they may give you a warning during the file export.\n\nTo save a file you have opened in Excel in CSV format:\n\n1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.\n\nAn important note for backwards compatibility: you can open CSV files in Excel!"
+        },
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 68,
+          "line_end": 94,
+          "quote": "## A Note on Cross-platform Operability\n\nBy default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.\n\nAs such, when exporting to CSV using Excel, your data in text format will look like this:\n\n> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>\n\nWhen opening your CSV file in Excel again, it will parse it as follows:\n\n<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">\n\nHowever, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:\n\nYour data in text format then look like this:\n\n> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> …\n\nYou will then see a weird character or possibly the string `CR` or `\\r`:\n\n<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">\n\nthus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility."
+        }
+      ],
+      "ambiguities_and_review_checks": "Reject exclusivity and identical-parsing universal claims without weakening the lesson recommendation. No converse can be inferred from an example.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-portability:3",
+      "question": "I will choose CSV. Give the lesson's exact Save as procedure, naming the selected format and the filename/location checks. Separate the saved-file procedure from guarantees about downstream parsing.",
+      "necessary_points": [
+        "File then Save as.",
+        "Select Comma Separated Values (*.csv).",
+        "Check filename and location then Save; no downstream universal guarantee."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 57,
+          "line_end": 64,
+          "quote": "\nTo save a file you have opened in Excel in CSV format:\n\n1. From the top menu select 'File' and 'Save as'.\n2. In the 'Format' field, from the list, select 'Comma Separated Values' (`*.csv`).\n3. Double check the file name and the location where you want to save it and hit 'Save'.\n\nAn important note for backwards compatibility: you can open CSV files in Excel!"
+        },
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 68,
+          "line_end": 94,
+          "quote": "## A Note on Cross-platform Operability\n\nBy default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.\n\nAs such, when exporting to CSV using Excel, your data in text format will look like this:\n\n> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>\n\nWhen opening your CSV file in Excel again, it will parse it as follows:\n\n<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">\n\nHowever, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:\n\nYour data in text format then look like this:\n\n> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> …\n\nYou will then see a weird character or possibly the string `CR` or `\\r`:\n\n<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">\n\nthus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility."
+        }
+      ],
+      "ambiguities_and_review_checks": "The filename/location checks and exact selected CSV format are required. Save success is not a guarantee of downstream parsing.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-portability:4",
+      "question": "For my private workbook, state the exact number of corrupted date records after export and give the correction formula that this supplied episode proves preserves all of my original dates.",
+      "necessary_points": [
+        "Clean refusal: no private workbook/observations or proven lossless correction algorithm supplied."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 39,
+          "line_end": 46,
+          "quote": "- The above points also apply to other formats such as open data formats used by LibreOffice / Open Office. These formats are not static and do not get parsed the same way by different software packages.\n\nAs an example of inconsistencies in data storage, do you remember how we talked about how Excel stores dates earlier? It turns out that\nthere are multiple defaults for different versions of the software, and you can switch between them all. So, say you're\ncompiling Excel-stored data from multiple sources. There are dates in each file - Excel interprets them as their own internally consistent\nserial numbers. When you combine the data, Excel will take the serial number from the place you're importing it from, and interpret it\nusing the rule set for the version of Excel you're using. Essentially, you could be adding errors to your data, and it wouldn't\nnecessarily be flagged by any data cleaning methods if your ranges overlap."
+        }
+      ],
+      "ambiguities_and_review_checks": "No private workbook is available. Distinguish unavailable observations from a claim that all exports necessarily corrupt dates.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-lineends:1",
+      "question": "Use only the supplied export episode. Explain its LF/CRLF example, including the parser condition and OSX scope. Attribute the historical integer example to the lesson and distinguish that statement from an independently verified result for every Python or R importer.",
+      "necessary_points": [
+        "LF versus CRLF; described failure depends on a parser that does not handle CR.",
+        "OSX Excel also appears in the lesson; not Windows-exclusive.",
+        "Attribute 2\\r claim to the lesson; no observed execution or universal current importer proof."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 68,
+          "line_end": 94,
+          "quote": "## A Note on Cross-platform Operability\n\nBy default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.\n\nAs such, when exporting to CSV using Excel, your data in text format will look like this:\n\n> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>\n\nWhen opening your CSV file in Excel again, it will parse it as follows:\n\n<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">\n\nHowever, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:\n\nYour data in text format then look like this:\n\n> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> …\n\nYou will then see a weird character or possibly the string `CR` or `\\r`:\n\n<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">\n\nthus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility."
+        }
+      ],
+      "ambiguities_and_review_checks": "Historical attributed parser example differs from present executable truth. No Python/R execution is supplied; do not accept a universal current parsing claim.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-lineends:2",
+      "question": "Does the example prove every CRLF file fails in every program? Assess the stated parser condition and include the unit's positive Excel reopening/parsing counterexample explicitly.",
+      "necessary_points": [
+        "No universal failure conclusion from the stated conditional.",
+        "Explicit Excel reopening/parsing counterexample; no converse/exclusivity invention."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 70,
+          "line_end": 94,
+          "quote": "By default, most coding and statistical environments expect UNIX-style line endings (ASCII `LF` character) as representing line breaks.  However, Windows uses an alternate line ending signifier (ASCII `CR LF` characters) by default for legacy compatibility with Teletype-based systems.\n\nAs such, when exporting to CSV using Excel, your data in text format will look like this:\n\n> data1,data2<CR><LF>1,2<CR><LF>4,5<CR><LF>\n\nWhen opening your CSV file in Excel again, it will parse it as follows:\n\n<img width=\"307\" alt=\"screen shot 2017-03-31 at 7 15 07 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24560663/db4a5786-1643-11e7-931a-ca2c72336878.png\">\n\nHowever, if you open your CSV file on a different system that does not parse the `CR` character it will interpret your CSV file differently:\n\nYour data in text format then look like this:\n\n> data1<br>\n> data2<CR><br>\n> 1<br>\n> 2<CR><br>\n> …\n\nYou will then see a weird character or possibly the string `CR` or `\\r`:\n\n<img width=\"308\" alt=\"screen shot 2017-03-31 at 7 26 42 pm\" src=\"https://cloud.githubusercontent.com/assets/13110354/24561066/a990327c-1645-11e7-90b5-35a44e90f8d9.png\">\n\nthus causing terrible things to happen to your data.  For example, `2\\r` is not a valid integer, and thus will throw an error (if you're lucky) when you attempt to operate on it in R or Python.  Note that this happens on Excel for OSX as well as Windows, due to legacy Windows compatibility."
+        }
+      ],
+      "ambiguities_and_review_checks": "The positive Excel reopening/parsing counterexample is explicitly requested. It cannot be removed merely because an earlier model omitted it.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-lineends:3",
+      "question": "Now give the source's three line-ending remedies. Name both Git files and the CSV filter pattern, then include the R/xlsx route and every listed caveat with the exact some-only-Windows quantifier.",
+      "necessary_points": [
+        "Windows comma-separated export, Git filter and dos2unix.",
+        ".git/config and .gitattributes with *.csv filter=cr.",
+        "R can read xls/xlsx/Google sheets and worksheets; some packages only work on Windows, added complexity/dependencies, formatting practices remain, CSV or similar may suffice."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 96,
+          "line_end": 129,
+          "quote": "There are a handful of solutions for enforcing uniform UNIX-style line endings on your exported CSV files:\n\n1. When exporting from Excel, save as a \"Windows comma separated (.csv)\" file\n\n2. If you store your data file under version control using Git, edit the `.git/config` file in your repository to automatically translate `\\r\\n` line endings into `\\n`.\n  Add the following to the file ([see the detailed tutorial](https://nicercode.github.io/blog/2013-04-30-excel-and-line-endings)):\n  \n  ```\n   [filter \"cr\"]\n   \tclean = LC_CTYPE=C awk '{printf(\\\"%s\\\\n\\\", $0)}' | LC_CTYPE=C tr '\\\\r' '\\\\n'\n   \tsmudge = tr '\\\\n' '\\\\r'` \n  ```\n  \n  and then create a file `.gitattributes` that contains the line:\n  \n  ```\n   *.csv filter=cr\n  ```\n\n3. Use [dos2unix](https://dos2unix.sourceforge.net/) (available on OSX, \\*nix, and Cygwin) on local files to standardize line endings.\n\n#### A note on R and `.xlsx`\n\nThere are R packages that can read `.xls` or `.xlsx` files (as well as\nGoogle spreadsheets). It is even possible to access different\nworksheets in the `.xlsx` documents.\n\n**But**\n\n- some of these only work on Windows\n- this equates to replacing a (simple but manual) export to `csv` with\n  additional complexity/dependencies in the data analysis R code\n- data formatting best practice still apply\n- Is there really a good reason why `csv` (or similar) is not adequate?"
+        }
+      ],
+      "ambiguities_and_review_checks": "Three remedies, both Git files, filter pattern and every listed R caveat are required. Preserve some-only-Windows; do not silently strengthen it to all.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    },
+    {
+      "turn_key": "v15-prospective-lineends:4",
+      "question": "Give the RFC4180 grammar and full escaped-quote parser state machine prescribed by this supplied episode, including transition rules for every record state.",
+      "necessary_points": [
+        "Clean refusal; these grammar/state-machine details are absent from the supplied episode."
+      ],
+      "evidence": [
+        {
+          "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md",
+          "line_start": 96,
+          "line_end": 140,
+          "quote": "There are a handful of solutions for enforcing uniform UNIX-style line endings on your exported CSV files:\n\n1. When exporting from Excel, save as a \"Windows comma separated (.csv)\" file\n\n2. If you store your data file under version control using Git, edit the `.git/config` file in your repository to automatically translate `\\r\\n` line endings into `\\n`.\n  Add the following to the file ([see the detailed tutorial](https://nicercode.github.io/blog/2013-04-30-excel-and-line-endings)):\n  \n  ```\n   [filter \"cr\"]\n   \tclean = LC_CTYPE=C awk '{printf(\\\"%s\\\\n\\\", $0)}' | LC_CTYPE=C tr '\\\\r' '\\\\n'\n   \tsmudge = tr '\\\\n' '\\\\r'` \n  ```\n  \n  and then create a file `.gitattributes` that contains the line:\n  \n  ```\n   *.csv filter=cr\n  ```\n\n3. Use [dos2unix](https://dos2unix.sourceforge.net/) (available on OSX, \\*nix, and Cygwin) on local files to standardize line endings.\n\n#### A note on R and `.xlsx`\n\nThere are R packages that can read `.xls` or `.xlsx` files (as well as\nGoogle spreadsheets). It is even possible to access different\nworksheets in the `.xlsx` documents.\n\n**But**\n\n- some of these only work on Windows\n- this equates to replacing a (simple but manual) export to `csv` with\n  additional complexity/dependencies in the data analysis R code\n- data formatting best practice still apply\n- Is there really a good reason why `csv` (or similar) is not adequate?\n\n#### Caveats on commas\n\nIn some datasets, the data values themselves may include commas (,). This is particularly true in countries that\nuse commas as decimal separators. In that case, the software which you use (including Excel)\nwill most likely incorrectly display the data in columns. This is because the commas which are a part of the data values will be\ninterpreted as delimiters.\n\nIf you are working with data that contains commas, you likely will need to use another delimiter when working in a spreadsheet. In this\ncase, consider using tabs as your delimiter and working with TSV files. TSV files can be exported from spreadsheet\nprograms in the same way as CSV files. For more of a discussion on data formats and potential issues with commas within datasets see [the discussion page](https://www.datacarpentry.org/spreadsheet-ecology-lesson/discuss)."
+        }
+      ],
+      "ambiguities_and_review_checks": "The provided source has delimiter caveats but no full RFC grammar/state machine. Check full bounded episode before accepting absence.",
+      "scoring_rule": "All necessary points plus material additions must be assessed; an incomplete answer fails task correctness. Citation identity/quote membership and mechanics do not establish support or pedagogy. Never remove an obligation after candidate output.",
+      "reviewer": null,
+      "reviewer_participated_in_authorship": null,
+      "independent_review_status": "PENDING",
+      "disposition": null
+    }
+  ],
+  "development_exposure": "The author inspected these obligations while designing v17; bounded calculation unit fixtures include matching values. This is not independent task selection or fresh holdout."
+}

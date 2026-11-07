@@ -1566,7 +1566,7 @@ rating 严格为 Again/Hard/Good/Easy；客户端不提交时间。重复 key �
 
 ## P8 Tutor (experimental)
 
-The explicit [v16 factory](TUTOR_VERIFIED_DEVELOPMENT.md) preserves the public
+The explicit [v17 factory](TUTOR_VERIFIED_DEVELOPMENT.md) preserves the public
 answer/evaluation/canonical-citation fields and v15 accounting. Its internal model
 tool accepts exact excerpts, checked value expressions and typed hint acts; it is
 not backward compatible with v15 model proposals. Separate schema/entry admission
