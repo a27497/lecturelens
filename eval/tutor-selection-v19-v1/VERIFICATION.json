@@ -1,0 +1,582 @@
+{
+  "version": "tutor-selection-v19-v1",
+  "status": "OFFLINE_PROTOCOL_REPAIR_COMPLETE; A03_SEMANTICS_PARTIAL; LIVE_NOT_AUTHORIZED",
+  "base_sha": "fec5ccee0c889b862c527a9e8fa9c3ce7f546061",
+  "implementation_sha": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+  "freeze_sha": "fb290eebf21822d7ba6b7949428a10180ef24a69",
+  "actual_final_python_validation_head": "fb290eebf21822d7ba6b7949428a10180ef24a69",
+  "report_commit_resolution": "git log -1 --format=%H -- eval/tutor-selection-v19-v1/REPORT.md",
+  "candidate": "p8-tutor-selected-v19-development",
+  "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "checks": {
+    "v19-cleanup": {
+      "name": "v19-cleanup",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-cleanup",
+        ".data/tutor-selection-v19/cleanup_owned.py"
+      ],
+      "code": 0,
+      "seconds": 0.967
+    },
+    "v19-cross-service": {
+      "name": "v19-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+        "-Dtutor.phase.label=cross-service",
+        "-Dtest=TutorSelectedCrossServiceIT,TutorCompleteEvidenceTest,TutorControllerTest,TutorTransportTest,StudyAuthorityTest",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 45.674
+    },
+    "v19-entry-01": {
+      "name": "v19-entry-01",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-entry-01",
+        "scripts/dev/check_tutor_selected.py",
+        "--stage",
+        "frozen",
+        "--output",
+        ".data/tutor-selection-v19/entry-01"
+      ],
+      "code": 0,
+      "seconds": 21.468
+    },
+    "v19-final": {
+      "name": "v19-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-final",
+        "scripts/dev/check_tutor_selected.py",
+        "--output",
+        ".data/tutor-selection-v19/final"
+      ],
+      "code": 0,
+      "seconds": 33.307
+    },
+    "v19-python-compile": {
+      "name": "v19-python-compile",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "-m",
+        "py_compile",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+        "agent-service/tests/test_tutor_v19.py",
+        "scripts/dev/check_tutor_selected.py",
+        "scripts/dev/run_tutor_smoke_v19.py",
+        "scripts/dev/serve_tutor_selected_mock.py"
+      ],
+      "code": 0,
+      "seconds": 0.115
+    },
+    "v19-recovery": {
+      "name": "v19-recovery",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-recovery",
+        "scripts/dev/check_tutor_selected.py",
+        "--stage",
+        "fixture_is_executable or source_is_rejected or restart or token_budget",
+        "--output",
+        ".data/tutor-selection-v19/recovery"
+      ],
+      "code": 0,
+      "seconds": 5.228
+    },
+    "v19-runtime-01": {
+      "name": "v19-runtime-01",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-runtime-01",
+        "scripts/dev/check_tutor_selected.py",
+        "--output",
+        ".data/tutor-selection-v19/runtime-01"
+      ],
+      "code": 1,
+      "seconds": 14.851
+    },
+    "v19-runtime-02": {
+      "name": "v19-runtime-02",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-runtime-02",
+        "scripts/dev/check_tutor_selected.py",
+        "--output",
+        ".data/tutor-selection-v19/runtime-02"
+      ],
+      "code": 0,
+      "seconds": 16.204
+    },
+    "v19-runtime-final": {
+      "name": "v19-runtime-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-runtime-final",
+        "scripts/dev/check_tutor_selected.py",
+        "--stage",
+        "not frozen",
+        "--output",
+        ".data/tutor-selection-v19/runtime-final"
+      ],
+      "code": 0,
+      "seconds": 21.549
+    },
+    "v19-static-final": {
+      "name": "v19-static-final",
+      "command": [
+        "agent-service/.venv/bin/ruff",
+        "check",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+        "agent-service/tests/test_tutor_v19.py",
+        "scripts/dev/check_tutor_selected.py",
+        "scripts/dev/run_tutor_smoke_v19.py",
+        "scripts/dev/serve_tutor_selected_mock.py"
+      ],
+      "code": 0,
+      "seconds": 0.018
+    },
+    "v19-v18-compat": {
+      "name": "v19-v18-compat",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-selection-v19/network-v18-compat",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen and not invalid_grant",
+        "--output",
+        ".data/tutor-selection-v19/v18-compat"
+      ],
+      "code": 0,
+      "seconds": 20.323
+    },
+    "v19-vue-types": {
+      "name": "v19-vue-types",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "type-check"
+      ],
+      "code": 0,
+      "seconds": 12.241
+    },
+    "v19-vue": {
+      "name": "v19-vue",
+      "command": [
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "test:unit",
+        "--",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "src/components/task-detail/CourseTutorPanel.usable.test.ts"
+      ],
+      "code": 0,
+      "seconds": 2.792
+    }
+  },
+  "final_python_counts": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "41",
+      "time": "32.177",
+      "timestamp": "2026-11-07T19:02:13.780679+00:00",
+      "hostname": "samescale-dev-tw-01"
+    }
+  ],
+  "mock_entry_results": {
+    "entry-budget": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 102000,
+        "pending": 0,
+        "blocked": "REAL_EVAL_BUDGET_EXHAUSTED"
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-fabricated_id": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 2,
+      "ledger": {
+        "calls": 2,
+        "nano_usd": 8959500,
+        "pending": 0,
+        "blocked": "REAL_EVAL_CITATION_FABRICATED"
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-format_once": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 8,
+      "ledger": {
+        "calls": 8,
+        "nano_usd": 816000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-format_twice": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 3,
+      "ledger": {
+        "calls": 3,
+        "nano_usd": 306000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-historical-response-replay": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 8,
+      "ledger": {
+        "calls": 8,
+        "nano_usd": 4698000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-malformed": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 5773200,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-model_mismatch": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 102000,
+        "pending": 0,
+        "blocked": "REAL_EVAL_MODEL_MISMATCH"
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-none": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 6,
+      "ledger": {
+        "calls": 6,
+        "nano_usd": 612000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-span_once": {
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 9,
+      "ledger": {
+        "calls": 9,
+        "nano_usd": 918000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-span_twice": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 3,
+      "ledger": {
+        "calls": 3,
+        "nano_usd": 306000,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    },
+    "entry-unknown_usage": {
+      "completed": 0,
+      "failed": 1,
+      "skipped": 2,
+      "sent_requests": 1,
+      "ledger": {
+        "calls": 1,
+        "nano_usd": 5773200,
+        "pending": 0,
+        "blocked": null
+      },
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "quality": "NOT_RUN"
+    }
+  },
+  "review_metrics": {
+    "parent_files_verified": 22,
+    "historical_raw_files_verified": 32,
+    "claim_unchanged": true,
+    "wire": [
+      {
+        "file": "001-request.body",
+        "request_bytes": 2860,
+        "source_rows": 0,
+        "history_turns": 0,
+        "schema_names": [
+          "search_tutor_evidence"
+        ]
+      },
+      {
+        "file": "002-request.body",
+        "request_bytes": 12003,
+        "source_rows": 8,
+        "history_turns": 0,
+        "schema_names": [
+          "search_tutor_evidence",
+          "finish_tutor_turn"
+        ]
+      },
+      {
+        "file": "003-request.body",
+        "request_bytes": 14252,
+        "source_rows": 11,
+        "history_turns": 0,
+        "schema_names": [
+          "finish_tutor_turn"
+        ]
+      },
+      {
+        "file": "004-request.body",
+        "request_bytes": 16625,
+        "source_rows": 11,
+        "history_turns": 0,
+        "schema_names": [
+          "finish_tutor_turn"
+        ]
+      },
+      {
+        "file": "005-request.body",
+        "request_bytes": 5883,
+        "source_rows": 0,
+        "history_turns": 1,
+        "schema_names": [
+          "search_tutor_evidence"
+        ]
+      },
+      {
+        "file": "006-request.body",
+        "request_bytes": 15169,
+        "source_rows": 8,
+        "history_turns": 1,
+        "schema_names": [
+          "search_tutor_evidence",
+          "finish_tutor_turn"
+        ]
+      },
+      {
+        "file": "007-request.body",
+        "request_bytes": 6350,
+        "source_rows": 0,
+        "history_turns": 2,
+        "schema_names": [
+          "search_tutor_evidence"
+        ]
+      },
+      {
+        "file": "008-request.body",
+        "request_bytes": 16467,
+        "source_rows": 8,
+        "history_turns": 2,
+        "schema_names": [
+          "search_tutor_evidence",
+          "finish_tutor_turn"
+        ]
+      }
+    ],
+    "turns": [
+      {
+        "status": "completed",
+        "model_calls": 4,
+        "reserved_tokens": 61994,
+        "chars": 2721,
+        "feedback_chars": 0
+      },
+      {
+        "status": "completed",
+        "model_calls": 2,
+        "reserved_tokens": 29069,
+        "chars": 208,
+        "feedback_chars": 0
+      },
+      {
+        "status": "completed",
+        "model_calls": 2,
+        "reserved_tokens": 30932,
+        "chars": 1005,
+        "feedback_chars": 350
+      }
+    ],
+    "summary": {
+      "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+      "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+      "mode": "mock",
+      "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+      "expected": 3,
+      "completed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "sent_requests": 8,
+      "ledger": {
+        "calls": 8,
+        "nano_usd": 4698000,
+        "pending": 0,
+        "blocked": null
+      },
+      "global_stop": null,
+      "quality": "NOT_RUN",
+      "real_model_calls": 0,
+      "embedding_calls": 0,
+      "reviewer_calls": 0,
+      "cost_usd": "0",
+      "ledger_amounts": "SIMULATED_NOT_CHARGES",
+      "admission": null
+    },
+    "source_preservation": {
+      "exact_rows": 11,
+      "full_text_codepoints": 6881,
+      "every_character_preserved": true,
+      "old_request_sha256": "cde2d5cb865b4ecc569bd148da3369d7451ad717e6760c10469f8c06c4e3852b",
+      "new_request_sha256": "4b7a9cc24b6d8d60f312507ad89d62ce583567198aca5750811e059acc3f5a4c"
+    },
+    "request_reference_fields_absent": true
+  },
+  "real_model_calls": 0,
+  "embedding_calls": 0,
+  "reviewer_calls": 0,
+  "actual_cost_usd": "0",
+  "reviewer": "Codex; same author as implementation/questions/fixtures; nonblind AI self-review, not independent human",
+  "initial_failures": "runtime-01: four authored fixture selections exceeded inherited anchor caps or assumed a phrase occupied one unit. Test selectors corrected to matching code units/complete Markdown intervals; no cap or criterion relaxed. Full first logs retained.",
+  "remaining": {
+    "A03": "PARTIAL: exact source binding repaired; unsupported explanation still accepted in retained negative fixture",
+    "A12": "Finite hint acts retained; free solution and expression-comment carriers rejected; relevance/universal semantic assurance unproved"
+  },
+  "not_run": [
+    "real quality improvement",
+    "cost optimization",
+    "independent human agreement",
+    "SQL holdout",
+    "full16",
+    "expansion",
+    "learning effects",
+    "provider availability/current prices",
+    "supplier actual charges"
+  ],
+  "not_checked": [
+    "general semantic entailment/completeness",
+    "new subjects/unseen courses",
+    "OS-wide/native-client egress isolation",
+    "multi-worker stress beyond bounded restart fixtures",
+    "real browser and real-provider cancellation"
+  ],
+  "cleanup": {
+    "removed_exact_owned_container": "16acd164ccedb1701d0358e3d37ac910b19829dd3ee700c142253caf19221e86",
+    "verified_owner_label": "tutor-selection-v19",
+    "remaining_user_schemas": [
+      "public"
+    ],
+    "other_database_connections": 0,
+    "original_containers_preserved": 23,
+    "loopback_25841_closed": true,
+    "old_v18_pgdata_and_dump_untouched": true,
+    "evidence_retained": true
+  },
+  "private_evidence_root": ".data/tutor-selection-v19"
+}
