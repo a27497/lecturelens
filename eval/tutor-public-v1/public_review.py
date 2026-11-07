@@ -183,11 +183,26 @@ def score(key_path, imports, output):
         raters[name] = {key["mappings"][k]: v for k, v in values.items()}
         sources[name] = imported["annotation_source"]
     # No annotated Mock labels are promoted to real task or agreement metrics.
-    result = summarize(
-        run,
-        raters.get("A", {}),
-        raters.get("B", {}) if sources.get("A") == sources.get("B") == "HUMAN" else {},
-    )
+    result = summarize(run, raters.get("A", {}), raters.get("B", {}))
+    if sources.get("A") != "HUMAN" or sources.get("B") != "HUMAN":
+        from shared import agreement
+
+        # Keep the assigned overlap denominator even when no human pair exists.
+        result["independent_human_overlap_support_agreement"] = agreement(
+            [
+                (None, None)
+                for r in run["rows"]
+                if r["turn_key"] in raters.get("B", {})
+                and not r["script"]["expected_insufficient"]
+            ]
+        )
+    for field in (
+        "model_human_support_agreement",
+        "independent_human_overlap_support_agreement",
+    ):
+        result[field]["status"] = (
+            "PAIRED_SAMPLE_ONLY" if result[field]["comparable"] else "NOT_RUN"
+        )
     result.update(
         annotation_sources=sources,
         human_scores_status="NOT_RUN",

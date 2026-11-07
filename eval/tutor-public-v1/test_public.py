@@ -291,4 +291,7 @@ def test_census_blinding_overlap_reproducibility_and_empty_scores(tmp_path):
     assert result["execution"]["missing_result_turns"] == 60
     assert result["task_correctness"]["rate_assessed"] is None
     assert result["model_human_support_agreement"]["comparable"] == 0
+    overlap = result["independent_human_overlap_support_agreement"]
+    assert overlap["eligible"] == overlap["excluded"] == 12
+    assert overlap["comparable"] == 0 and overlap["status"] == "NOT_RUN"
     assert len(read_run(directory)["rows"]) == 60
