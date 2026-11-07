@@ -129,12 +129,32 @@ class BoundedTutorRuntime(TutorRuntime):
                     "response_state": "reserved",
                     "runtime_reserved_proxy": amount,
                     "fee_state": "external_ledger_or_unknown",
+                    "usage_state": "unknown",
+                    "usage": None,
+                    "charged_nano_usd": None,
                     "reservation_released": False,
                 },
             )
             remaining = min(20, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds())
             if remaining <= 0:
                 raise StudyError("TUTOR_DEADLINE")
+            try:
+                with self.store.connect() as conn:
+                    session, turn = self.store.rows(conn, turn_id)
+                    self.guard(session, turn)
+                    self.store.fence(conn, session)
+            except StudyError:
+                self.store.record_accounting(
+                    turn_id,
+                    index,
+                    {
+                        "response_state": "not_sent",
+                        "usage_state": "not_run",
+                        "fee_state": "not_dispatched",
+                        "charged_nano_usd": 0,
+                    },
+                )
+                raise
             channel = getattr(self.provider, "channel", None)
             before_calls = (
                 len(channel.turn_calls) if channel is not None and hasattr(channel, "turn_calls") else 0

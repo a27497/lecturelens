@@ -126,3 +126,35 @@ outside this phase.
 
 Stage4 final targeted regression:35 Python tests and24 Vue tests passed, zero
 failures/errors/skips. The earlier34-test Python and21-test Vue runs are retained.
+
+## Stage 5: frozen candidate, actual chain and final review
+
+The frozen candidate manifest binds twelve runtime/protocol/contract/entry files
+at SHA-256 `fe805deee6282e5cd0993b48d76d3500103a3933a36da3e2d5aab919b6955e30`.
+Final review added a predispatch guard, explicit prepaid-not-dispatched accounting
+and corresponding cancellation/recovery checks before that freeze. No core file
+changed after freezing or after the final regressions.
+
+Final verification:43 new Python checks,249 inherited Python mechanism/asset
+checks,25 historical replay diagnostics,35 Java checks including the actual
+Java↔Python HTTP/authority/PG path, and343 Vue checks; all passed without skips.
+Vue typechecking also passed. A separate consumed-development Mock16 run completed
+all16 positions with32 simulated requests and a reconciled mirrored ledger.
+None of those outcomes establishes real generation or semantic improvement.
+
+The prospective16 packet was authored after candidate freeze and has not run
+through the candidate. It has exact source quotes and a separate lock and empty
+rating template, but no independent human gold labels. The only future paid
+proposal and its prerequisites are in [FUTURE_VALIDATION.md](FUTURE_VALIDATION.md).
+Source/diff re-review, including unresolved semantic counterexamples and initial
+harness failures, is in [FINAL_REVIEW.md](FINAL_REVIEW.md).
+
+All108 original retained request bodies replay exactly, all48 scheduled outcomes
+and216 ledger events match, and2053 historical files verify unchanged. Retained
+parsed proposals are wrapped in reconstructed response envelopes: original raw
+response bytes remain unavailable. The phase container was removed after schema
+cleanup; all23 pre-existing running containers remain. A first cleanup comparison
+mistakenly compared short with full IDs; prefix-normalized verification corrected
+that check without touching any other container. Private evidence is retained in
+`.data/tutor-repair-phase-20261108/`; final commands and closure are in REPORT.md
+and VERIFICATION.json.

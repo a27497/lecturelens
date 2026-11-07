@@ -500,3 +500,153 @@ def test_reliability_mock_ledger_settlement_is_separate_from_runtime_reservation
     assert all(
         r["runtime_reserved_proxy"] > 0 and not r["reservation_released"] for r in result["accounting"]
     )
+
+
+def test_reliability_cancellation_before_dispatch_never_calls_provider(lab):
+    _, _, runtime, scope = lab
+    original = runtime.store.record_accounting
+
+    def cancel(turn_id, index, values, usage=None):
+        original(turn_id, index, values, usage)
+        if values.get("response_state") == "reserved":
+            runtime.command(Command(**scope, operation="CANCEL", client_turn_id="t1"))
+
+    runtime.store.record_accounting = cancel
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+    result = run(lab, p)
+    assert not p.requests and result["status"] == "cancelled"
+    assert result["accounting"][0]["response_state"] == "not_sent"
+    assert result["accounting"][0]["usage_state"] == "not_run"
+    assert result["reserved_tokens"] > 0 and not result["accounting"][0]["reservation_released"]
+
+
+def test_reliability_deadline_after_response_retains_known_usage(lab):
+    store, _, _, scope = lab
+
+    class Expired:
+        def decide(self, *args):
+            with store.connect() as conn:
+                conn.execute(
+                    "UPDATE tutor_turn SET deadline=now()-interval '1 second' WHERE session_id=%s",
+                    (scope["session_id"],),
+                )
+            return dict(
+                name="search_tutor_evidence",
+                arguments=dict(query="loop"),
+                usage=dict(prompt_tokens=12, completion_tokens=3),
+            )
+
+    result = run(lab, Expired())
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_DEADLINE"
+    assert result["usage"] == [dict(prompt_tokens=12, completion_tokens=3)] and result["answer"] is None
+
+
+def test_reliability_prepaid_format_repair_resumes_once_after_restart(lab):
+    store, _, runtime, scope = lab
+    original = runtime.record_observation
+
+    def stop_after_observation(*args):
+        result = original(*args)
+        if args[1]["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
+            raise RuntimeError("synthetic stop after prepaid repair commit")
+        return result
+
+    runtime.record_observation = stop_after_observation
+    p = Provider(
+        lambda b: dict(outcome="answered", blocks=[block(b, "x" * (300 if "rejected_blocks" in b else 301))])
+    )
+    result = run(lab, p)
+    assert len(p.requests) == 2
+    with store.connect() as conn:
+        conn.execute(
+            "UPDATE tutor_turn SET status='running',error_code=NULL WHERE turn_id=%s", (result["turn_id"],)
+        )
+    runtime.record_observation = original
+    runtime.execute(dict(turn_id=result["turn_id"], session_id=scope["session_id"]))
+    final = runtime.command(Command(**scope, operation="GET"))["turns"][-1]
+    assert final["status"] == "completed" and final["model_calls"] == 3 and len(p.requests) == 3
+    assert len(final["usage"]) == 3 and len(final["accounting"]) == 3
+
+
+def test_reliability_idempotent_read_replay_and_cross_owner_guard(lab):
+    from lecturelens_agent.study.store import StudyError
+
+    _, _, runtime, scope = lab
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b)]))
+    result = run(lab, p)
+    replay = runtime.command(Command(**scope, operation="TURN", client_turn_id="t1", text="Explain loops"))
+    assert replay["replayed"] and len(p.requests) == 2
+    assert replay["turns"][-1]["answer"] == result["answer"]
+    with pytest.raises(StudyError, match="REQUEST_KEY_CONFLICT"):
+        runtime.command(Command(**scope, operation="TURN", client_turn_id="t1", text="Changed"))
+    with pytest.raises(StudyError):
+        runtime.command(Command(**{**scope, "owner_id": 99}, operation="GET"))
+
+
+def test_semantic_prior_turn_sources_never_authorize_next_turn(lab):
+    _, authority, _, _ = lab
+    old_read = authority.read
+    rows = authority.rows(lab[3])
+    chosen = [rows[0]]
+
+    def read(scope, action="CHECK", **args):
+        if action == "SEARCH":
+            return {
+                **scope,
+                "evidence": [
+                    {k: row[k] for k in ("evidence_id", "text", "start_ms", "end_ms", "source_type")}
+                    for row in chosen
+                ],
+            }
+        return old_read(scope, action, **args)
+
+    authority.read = read
+    first = run(lab, Provider(lambda b: dict(outcome="answered", blocks=[block(b)])))
+    chosen[:] = [rows[1]]
+
+    def invalid(body):
+        value = block(body)
+        value["evidence_id"] = first["citations"][0]["evidence_id"]
+        return dict(outcome="answered", blocks=[value])
+
+    result = run(lab, Provider(invalid), key="t2")
+    assert result["status"] == "failed" and result["error_code"] == "TUTOR_CITATION_MISMATCH"
+    assert not result["citations"]
+
+
+def test_evidence_new_factory_rejects_real_mode_before_base_startup(monkeypatch):
+    from lecturelens_real_eval.tutor.bounded_app import create_app
+    from starlette.testclient import TestClient
+
+    monkeypatch.setenv("AGENT_LLM_MODE", "real")
+    with pytest.raises(RuntimeError, match="TUTOR_MOCK_ONLY"), TestClient(create_app()):
+        pass
+
+
+def test_evidence_new_store_rejects_legacy_public_namespace():
+    from lecturelens_agent.study.store import StudyError
+    from lecturelens_real_eval.tutor.bounded_store import BoundedStore
+
+    with pytest.raises(StudyError, match="TUTOR_V15_DEDICATED_SCHEMA_REQUIRED"):
+        BoundedStore(os.environ["AGENT_TEST_DATABASE_URL"]).initialize()
+
+
+def test_reliability_cancel_prepaid_repair_retains_not_dispatched_reservation(lab):
+    _, _, runtime, scope = lab
+    original = runtime.record_observation
+
+    def cancel_after_prepaid(*args):
+        result = original(*args)
+        if args[1]["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
+            runtime.command(Command(**scope, operation="CANCEL", client_turn_id="t1"))
+        return result
+
+    runtime.record_observation = cancel_after_prepaid
+    p = Provider(lambda b: dict(outcome="answered", blocks=[block(b, "x" * 301)]))
+    result = run(lab, p)
+    assert result["status"] == "cancelled" and len(p.requests) == 2
+    assert result["model_calls"] == 3 and len(result["accounting"]) == 3
+    prepaid = result["accounting"][-1]
+    assert prepaid["response_state"] == "prepaid_not_dispatched" and prepaid["usage_state"] == "not_run"
+    assert prepaid["charged_nano_usd"] == 0 and prepaid["runtime_reserved_proxy"] > 0
+    assert not prepaid["reservation_released"]

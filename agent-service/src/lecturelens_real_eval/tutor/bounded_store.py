@@ -16,7 +16,7 @@ def known_usage(usage):
 
 
 class BoundedStore(TutorStore):
-    def initialize(self):
+    def check_admission(self):
         with self.connect() as conn:
             schema = conn.execute("SELECT current_schema() AS s").fetchone()["s"]
             public_legacy = conn.execute(
@@ -24,14 +24,37 @@ class BoundedStore(TutorStore):
             ).fetchone()
             if not schema or schema == "public" or public_legacy:
                 raise StudyError("TUTOR_V15_DEDICATED_SCHEMA_REQUIRED")
+
+    def initialize(self):
+        self.check_admission()
         super().initialize()
 
     @staticmethod
     def checkpoint(conn, turn_id, state):
         from .bounded_runtime import IDENTITY
 
-        current = conn.execute("SELECT checkpoint FROM tutor_turn WHERE turn_id=%s", (turn_id,)).fetchone()
+        current = conn.execute(
+            "SELECT checkpoint,model_calls FROM tutor_turn WHERE turn_id=%s", (turn_id,)
+        ).fetchone()
         accounting = current["checkpoint"].get("call_accounting", []) if current else []
+        if (
+            current
+            and state.get("repair_request")
+            and not any(r["call_index"] == current["model_calls"] for r in accounting)
+        ):
+            accounting = [
+                *accounting,
+                {
+                    "call_index": current["model_calls"],
+                    "response_state": "prepaid_not_dispatched",
+                    "usage_state": "not_run",
+                    "usage": None,
+                    "runtime_reserved_proxy": state["repair_request"][2],
+                    "fee_state": "not_dispatched",
+                    "charged_nano_usd": 0,
+                    "reservation_released": False,
+                },
+            ]
         TutorStore.checkpoint(conn, turn_id, {**state, "candidate": IDENTITY, "call_accounting": accounting})
 
     def record_accounting(self, turn_id, index, values, usage=None):
@@ -54,7 +77,10 @@ class BoundedStore(TutorStore):
                         "UPDATE tutor_turn SET usage=usage || %s WHERE turn_id=%s", (Jsonb([parsed]), turn_id)
                     )
             elif old.get("usage_state") != "known":
-                row.update(usage_state="unknown", usage=None)
+                row.setdefault("usage_state", "unknown")
+                row.setdefault("usage", None)
+            else:
+                row.update(usage_state="known", usage=old["usage"])
             records[index] = row
             # Accounting may settle after CANCEL/deadline; only numeric telemetry is
             # retained. Publication still requires the independent authority guards.

@@ -1,0 +1,49 @@
+{
+  "candidate": "p8-tutor-bounded-v15-development",
+  "runtime_entrypoint": "lecturelens_real_eval.tutor.bounded_runtime:BoundedTutorRuntime",
+  "product_factory": "lecturelens_real_eval.tutor.bounded_app:create_app",
+  "parent_manifest_sha256": "180929dee65677f105b1d9c85705394b28b8dc90a0edef2e99abc140821420b3",
+  "default_registration": false,
+  "status": "FROZEN_OFFLINE_DEVELOPMENT_NOT_RELEASED",
+  "limits": {
+    "text_characters": 1600,
+    "evaluation_characters": 500,
+    "distinct_canonical_ids": 4,
+    "searches": 2,
+    "normal_calls": 4,
+    "prepaid_repair_max_calls": 5,
+    "session_calls": 60,
+    "turn_byte_proxy": 64000,
+    "session_byte_proxy": 640000,
+    "deadline_seconds": 20,
+    "answer_blocks": 4,
+    "answer_block_text": 300,
+    "evaluation_blocks": 2,
+    "evaluation_block_text": 160,
+    "model_output_tokens": 1200
+  },
+  "source_policy": "complete-v1",
+  "schema_requirement": "exclusive non-public schema; no frozen workers",
+  "known_limits": [
+    "source anchor is not entailment",
+    "Socratic cue heuristic is bypassable",
+    "full context can stop at existing capacity",
+    "old default path remains frozen"
+  ],
+  "real_quality": "NOT_RUN",
+  "paid_execution_authorized": false,
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_app.py": "8f6e4ea190248dce8c6d8226e4ba5534e042679848d6cba8f73a30cf6e4fdc83",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_mock.py": "2adb85fcfbe2f8f9b9050824d9a54e0efb7acda475573cdb140b00758d657d62",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_provider.py": "edf9c46279fe919cb29b378b216f0b4834d2beb04710d6e5585b29146fed4531",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_runtime.py": "5cecf126ce5d62508650d1c290eb5f972b06a3d357ae3e93a651ecbfb06994c8",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_store.py": "2882116961ee6965076ac6e4d4847f28c45141cdda4307db6071b26251c57f3b",
+    "agent-service/src/lecturelens_real_eval/tutor/complete_authority.py": "8f2a1c89650e50b6439276bc43ba1cb4c19f82d345d98f6f0281f195bdcd24bb",
+    "agent-service/src/lecturelens_real_eval/tutor/relevant_authority.py": "0ce064921387c4f62f402db0e3c42e25b26de9884fe4335ab1668af13a4c6f23",
+    "backend/src/main/java/com/example/courselingo/study/StudyEvidenceAuthority.java": "e9a3f641800cd7e0363da8f1a6aab769283243a0009729337fba1b7598236f55",
+    "frontend/src/components/task-detail/CourseTutorPanel.vue": "e5d34bf1e33da738e67748dd194a2fe544dba56fe14d9fc67f3fb66cf7a3650c",
+    "eval/tutor-repair-phase-v1/contract-v2.json": "ace501ecfb81a163bd0eb8fbba90e52be2bed30920c6d716cd0edc866c29eb48",
+    "scripts/dev/check_tutor_phase_identity.py": "1b5e80a459115824c1c0750e1a3fb737bfac4b12804d039af75f7b5c5a0183a1",
+    "scripts/dev/run_tutor_phase_mock.py": "9c20d6c16c55fd92b3a44f3577feec5e896cfa4b08d2194b8b6a1362533bbe0a"
+  }
+}

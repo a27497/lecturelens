@@ -1,0 +1,134 @@
+{
+  "version": "v15-prospective-rating-template-v1",
+  "instructions": "Unassigned source-based per-session review. Do not infer missing answers or upgrade uncertain labels. No independent human review has occurred.",
+  "rows": [
+    {
+      "turn_key": "v15-prospective-counter:1",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-counter:2",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-counter:3",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-counter:4",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:1",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:2",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:3",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-polynomial:4",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-portability:1",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-portability:2",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-portability:3",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-portability:4",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-lineends:1",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-lineends:2",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-lineends:3",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    },
+    {
+      "turn_key": "v15-prospective-lineends:4",
+      "task_correct": null,
+      "claims": [],
+      "citation_pairs": [],
+      "reviewer_id": null,
+      "status": "NOT_RUN_NO_CANDIDATE_OUTPUT"
+    }
+  ]
+}

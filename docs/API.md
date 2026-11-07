@@ -1566,6 +1566,14 @@ rating 严格为 Again/Hard/Good/Easy；客户端不提交时间。重复 key �
 
 ## P8 Tutor (experimental)
 
+The explicit [v15 development factory](TUTOR_BOUNDED_DEVELOPMENT.md) uses the same
+browser routes and canonical citation format. Its turns additionally expose
+`accounting` records: known numeric usage, explicit unknown/not-run usage state,
+runtime reservation proxy and optional correlated conservative ledger amounts.
+Missing usage is never an observed zero or a supplier invoice. Internal Evidence
+requests negotiate `text_policy=complete-v1`; CHECK must echo that policy before
+model admission. Legacy internal projections and default identity are unchanged.
+
 Available through the opt-in [Tutor service entry point](P8_TUTOR.md). All routes require the existing bearer authentication; browser-supplied owner/revision are ignored. Java obtains current course ownership/revision, checks it again after forwarding and signs `POST /internal/v1/tutor/command`. Python owns all conversation state in PG.
 
 | Browser endpoint | Body / behavior |

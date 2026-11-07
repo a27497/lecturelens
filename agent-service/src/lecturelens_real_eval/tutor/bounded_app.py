@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from .app import create_app as legacy_app
 from .app import require_mock
 from .bounded_runtime import BoundedTutorRuntime
+from .bounded_store import BoundedStore
 from .complete_authority import CompleteEvidenceAuthority
 from .store import TutorStore
 
@@ -33,6 +34,7 @@ def create_app(*, tutor=None, **kwargs):
         # Reject non-Mock admission before the base app can initialize other workers.
         if tutor is None:
             require_mock(os.environ.get("AGENT_LLM_MODE", "real"))
+            BoundedStore(os.environ["TUTOR_V15_DATABASE_URL"]).check_admission()
         async with original(app):
             yield
 

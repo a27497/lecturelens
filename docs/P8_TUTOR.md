@@ -1,5 +1,10 @@
 # P8 course Tutor — experimental, offline only
 
+The separate [bounded v15 development path](TUTOR_BOUNDED_DEVELOPMENT.md) is now
+implemented for offline validation. It does not replace this frozen/default
+runtime. The authenticated browser protocol is shared; its factory, Evidence
+negotiation, model tool contract and exclusive PG schema are explicit opt-ins.
+
 The learner opens **Tutor 对话** in a course workspace, submits a question, follows up in the same conversation, and opens inline citation chips to inspect the course source. Socratic mode asks a guiding question; the next completed reply includes evidence-grounded feedback. The product uses deterministic providers only. Separate v8 eval trials passed bounded known-course gates; v9 has offline verification only; P8 does not inherit AU or P7 quality results.
 
 ## Ownership and execution

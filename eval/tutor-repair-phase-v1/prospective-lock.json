@@ -1,0 +1,13 @@
+{
+  "version": "v15-prospective-materials-lock-v1",
+  "files": {
+    "prospective-materials.json": "094741e090688024cfb5e6120eb340f4902012977e3ddd4c885c0be614d1b81e"
+  },
+  "candidate_manifest_sha256": "fe805deee6282e5cd0993b48d76d3500103a3933a36da3e2d5aab919b6955e30",
+  "source_files": {
+    "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "eval/tutor-v14-fresh-v1/materials/carpentries-spreadsheets-new.md": "bee635840b85dfa2a78eaaa2bd4dbd0b03f4d0ba51beb3437d4afd58a5814b3e"
+  },
+  "actual_model_outputs": "NOT_RUN",
+  "human_agreement": "NOT_RUN"
+}
