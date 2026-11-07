@@ -59,3 +59,11 @@
 - [发布审批与 SIGKILL 恢复矩阵](approval-recovery-20261014/README.md)：默认关闭的学习者审批、持久预算/调用日志与真实 PostgreSQL 子进程恢复；确定性执行验证，不是教学质量评分。
 
 - [P8 Tutor](p8-tutor/README.md): 24 dialogues/80 turns across eight public lecture snapshots; deterministic multi-turn/Socratic/abstention mechanisms and separate Flash/Pro ledger channel. Offline only; real-model task quality NOT_RUN. Does not modify frozen P7/AU assets.
+
+## Tutor scale preparation (Mock only)
+
+[The additive Tutor scale kit](tutor-scale/README.md) freezes four original synthetic microcourses,
+64 sessions and 320 scheduled learner turns, with one course held out from product tuning. It reuses the
+P8 runtime/channel, adds full-result accounting and preregistered 100-turn blind review with independent
+overlap. Mock execution, scoring fixtures and empty annotation roundtrips establish mechanics only;
+real quality, real human agreement, billing and learning outcomes remain NOT_RUN.

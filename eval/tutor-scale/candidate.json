@@ -1,0 +1,22 @@
+{
+  "candidate": "tutor-scale-preparation-v1",
+  "dataset_version": "tutor-scale-synthetic-v2",
+  "data_kind": "SYNTHETIC_EVAL_ASSETS",
+  "base_sha": "300be51515867f7ece4f3a9224a484e825219ee0",
+  "historical_manifest_sha256": "370d61d64abf1921927ae7e5ba6e5cc6c1e887aeaa9f4ef792aef723e1117426",
+  "files": {
+    "eval/tutor-scale/README.md": "b6a8c0a15768ac2fa098f8d31ac2accecede9ef02f637d5fc096f1aa91017a82",
+    "eval/tutor-scale/author.py": "26e16ffb28d9422acff7ee3adf006d6b1de65de2d643d7a0f5f7e17853770c12",
+    "eval/tutor-scale/blind.py": "686ed8b2210c600cdc59ab9e5a9ea72c9748f5bb2382ff2d49e6488864fc5bbc",
+    "eval/tutor-scale/compose.yaml": "6e3b5b97a60b674d70382c7934b0bc821a98c0ef8e63b29c5958fb289fbb7bfa",
+    "eval/tutor-scale/dataset-lock.json": "68c3465b597218ee7c1a85b5842c11c42929744a4e9a03a68fe502a328608736",
+    "eval/tutor-scale/dataset.py": "0a3d6a79015b11d1ebcf99d43e4e7e199d2d5723feeda6c4ab29479c0a6a9054",
+    "eval/tutor-scale/freeze.py": "65d30e430b4091d8272b7d5acd2872e555593eb626e00f51859cbb9f0fa877e2",
+    "eval/tutor-scale/run.py": "7509c70310be0722f191593e88ef98e5d8af1893eb10c0973e05d7ac7eca0cf4",
+    "eval/tutor-scale/safe_exec.py": "ffa323eb334a23ec63985b316151223cd446e168800e8c6eaf47b364dcb45029",
+    "eval/tutor-scale/scoring.py": "5adfd99963455f7d8eef7fcbf6d4d517dfa508f8970f4eee6de69be89e53658f",
+    "eval/tutor-scale/test_tools.py": "48c2a0d95cdc2f337f99c245d3fa7199ceb7d3c57001fe95997d826a6622e125",
+    "eval/tutor-scale/verify.py": "d67a46651aa49976da9b536a38e18a0ab425fddbe6dcdcec60dbe2ac1da5aa33"
+  },
+  "note": "New evaluation tooling identity; historical P8 v9 and AU pins unchanged. Runtime modules remain pinned by original P8 verify_inputs(). No real quality result."
+}

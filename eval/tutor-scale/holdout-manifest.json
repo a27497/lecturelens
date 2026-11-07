@@ -1,0 +1,28 @@
+{
+  "version": "tutor-scale-synthetic-v2",
+  "policy": "COURSE_DISJOINT_FROZEN_NO_TUNING",
+  "course_ids": [
+    "energy"
+  ],
+  "dialogue_ids": [
+    "energy-01",
+    "energy-02",
+    "energy-03",
+    "energy-04",
+    "energy-05",
+    "energy-06",
+    "energy-07",
+    "energy-08",
+    "energy-09",
+    "energy-10",
+    "energy-11",
+    "energy-12",
+    "energy-13",
+    "energy-14",
+    "energy-15",
+    "energy-16"
+  ],
+  "dataset_sha256": "94faa52a9d243bc33338628a380e708e3eac4127dfd8236e4e89ca24b35749b3",
+  "snapshot_sha256": "cb723a9d28c5ea564909feb7fe322de5b9180b40e1bd9a073ed57546d4f11c93",
+  "note": "Withheld from product/prompt development. Public synthetic content; base-model exposure is unknown. Mock execution is mechanics only and does not consume semantic quality trials. After first real trial retain failures and never tune on these outcomes; use a fresh future holdout."
+}

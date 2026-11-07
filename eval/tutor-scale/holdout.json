@@ -1,0 +1,1414 @@
+{
+  "version": "tutor-scale-synthetic-v2",
+  "split": "holdout",
+  "dialogues": [
+    {
+      "dialogue_id": "energy-01",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "How is electrical power defined on this bench?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "How is electrical power defined on this bench?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "69ca6ee9634638011e989a9f4ce37813cb239d9ce375df4460fca4e9dc61b248"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/0",
+            "quote": "The bench defines electrical power as voltage times current. In its example twelve volts and two amperes yield twenty-four watts.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Using that example for ten seconds, how much energy is delivered?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "How is electrical power defined on this bench?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "69ca6ee9634638011e989a9f4ce37813cb239d9ce375df4460fca4e9dc61b248"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/0",
+            "quote": "The bench defines electrical power as voltage times current. In its example twelve volts and two amperes yield twenty-four watts.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Twenty-four watts means twenty-four joules regardless of duration?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "How is electrical power defined on this bench?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "69ca6ee9634638011e989a9f4ce37813cb239d9ce375df4460fca4e9dc61b248"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/0",
+            "quote": "The bench defines electrical power as voltage times current. In its example twelve volts and two amperes yield twenty-four watts.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is the measured voltage uncertainty?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "How is electrical power defined on this bench?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/0",
+            "quote": "The bench defines electrical power as voltage times current. In its example twelve volts and two amperes yield twenty-four watts.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Translate an ancient inscription.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "How is electrical power defined on this bench?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/0",
+            "quote": "The bench defines electrical power as voltage times current. In its example twelve volts and two amperes yield twenty-four watts.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-02",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What ratio defines efficiency?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What ratio defines efficiency?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "79f99a592efff37888732744787647b11e7dc365bb8ff40a5dfbdb23a9a9c833"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/1",
+            "quote": "The lesson defines efficiency as useful output energy divided by input energy. An example has eighty joules useful from one hundred joules input.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "For that example, what percentage is useful?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What ratio defines efficiency?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "79f99a592efff37888732744787647b11e7dc365bb8ff40a5dfbdb23a9a9c833"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/1",
+            "quote": "The lesson defines efficiency as useful output energy divided by input energy. An example has eighty joules useful from one hundred joules input.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "The example is one hundred twenty-five percent efficient?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What ratio defines efficiency?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "79f99a592efff37888732744787647b11e7dc365bb8ff40a5dfbdb23a9a9c833"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/1",
+            "quote": "The lesson defines efficiency as useful output energy divided by input energy. An example has eighty joules useful from one hundred joules input.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Where did the remaining energy physically go?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What ratio defines efficiency?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/1",
+            "quote": "The lesson defines efficiency as useful output energy divided by input energy. An example has eighty joules useful from one hundred joules input.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Determine a bird species from a feather.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What ratio defines efficiency?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/1",
+            "quote": "The lesson defines efficiency as useful output energy divided by input energy. An example has eighty joules useful from one hundred joules input.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-03",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What current relation holds for series resistors?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What current relation holds for series resistors?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "224fb48e05d8955cd1a721977595358717ad1c4fdf865d677759fb63b63a3001"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/2",
+            "quote": "Series resistors carry the same current. In this bench example two and three ohms in series total five ohms.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "For that pair, what is their combined resistance?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What current relation holds for series resistors?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "224fb48e05d8955cd1a721977595358717ad1c4fdf865d677759fb63b63a3001"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/2",
+            "quote": "Series resistors carry the same current. In this bench example two and three ohms in series total five ohms.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Series connection makes each resistor carry unrelated current?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What current relation holds for series resistors?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "224fb48e05d8955cd1a721977595358717ad1c4fdf865d677759fb63b63a3001"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/2",
+            "quote": "Series resistors carry the same current. In this bench example two and three ohms in series total five ohms.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What are their temperature coefficients?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What current relation holds for series resistors?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/2",
+            "quote": "Series resistors carry the same current. In this bench example two and three ohms in series total five ohms.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Explain a medieval succession war.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What current relation holds for series resistors?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/2",
+            "quote": "Series resistors carry the same current. In this bench example two and three ohms in series total five ohms.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-04",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What quantity is shared by parallel branches?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What quantity is shared by parallel branches?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "bc37b0c458161404cedaf81fb4da1a2051f26f724d0b28d73ed8129bca11765a"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/3",
+            "quote": "Parallel branches share the same voltage. The lesson does not state that their currents must be equal.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "One branch resistance changes; does shared voltage alone force equal currents?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What quantity is shared by parallel branches?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "bc37b0c458161404cedaf81fb4da1a2051f26f724d0b28d73ed8129bca11765a"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/3",
+            "quote": "Parallel branches share the same voltage. The lesson does not state that their currents must be equal.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Parallel connection guarantees equal branch currents?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What quantity is shared by parallel branches?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "bc37b0c458161404cedaf81fb4da1a2051f26f724d0b28d73ed8129bca11765a"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/3",
+            "quote": "Parallel branches share the same voltage. The lesson does not state that their currents must be equal.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What resistance does each actual branch have?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What quantity is shared by parallel branches?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/3",
+            "quote": "Parallel branches share the same voltage. The lesson does not state that their currents must be equal.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Give a stock purchase recommendation.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What quantity is shared by parallel branches?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/3",
+            "quote": "Parallel branches share the same voltage. The lesson does not state that their currents must be equal.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-05",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "How does this lesson distinguish capacity and energy units?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "How does this lesson distinguish capacity and energy units?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "329026a214fec245701a6160827260c497a2ac80242e119e7522a6734891e90b"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/4",
+            "quote": "The bench records battery capacity in ampere-hours and energy in watt-hours. Multiplying ampere-hours by nominal volts estimates watt-hours.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "A two ampere-hour pack is nominally five volts; what energy estimate follows?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "How does this lesson distinguish capacity and energy units?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "329026a214fec245701a6160827260c497a2ac80242e119e7522a6734891e90b"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/4",
+            "quote": "The bench records battery capacity in ampere-hours and energy in watt-hours. Multiplying ampere-hours by nominal volts estimates watt-hours.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Two ampere-hours always means two watt-hours?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "How does this lesson distinguish capacity and energy units?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "329026a214fec245701a6160827260c497a2ac80242e119e7522a6734891e90b"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/4",
+            "quote": "The bench records battery capacity in ampere-hours and energy in watt-hours. Multiplying ampere-hours by nominal volts estimates watt-hours.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is its measured discharge curve?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "How does this lesson distinguish capacity and energy units?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/4",
+            "quote": "The bench records battery capacity in ampere-hours and energy in watt-hours. Multiplying ampere-hours by nominal volts estimates watt-hours.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Explain a poem metaphor.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "How does this lesson distinguish capacity and energy units?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/4",
+            "quote": "The bench records battery capacity in ampere-hours and energy in watt-hours. Multiplying ampere-hours by nominal volts estimates watt-hours.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-06",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "How is temperature rise computed?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "How is temperature rise computed?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "63fcdf8e6905dfbb6a752e225db5dc9484dacef6ef3be673474cfa75e5a232ea"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/5",
+            "quote": "The thermal exercise defines temperature rise as final minus initial temperature. Heating from twenty to thirty degrees gives a ten-degree rise.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "For that heating example, what rise should be reported?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "How is temperature rise computed?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "63fcdf8e6905dfbb6a752e225db5dc9484dacef6ef3be673474cfa75e5a232ea"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/5",
+            "quote": "The thermal exercise defines temperature rise as final minus initial temperature. Heating from twenty to thirty degrees gives a ten-degree rise.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "The rise is thirty degrees because that is the final reading?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "How is temperature rise computed?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "63fcdf8e6905dfbb6a752e225db5dc9484dacef6ef3be673474cfa75e5a232ea"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/5",
+            "quote": "The thermal exercise defines temperature rise as final minus initial temperature. Heating from twenty to thirty degrees gives a ten-degree rise.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is the heater heat capacity?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "How is temperature rise computed?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/5",
+            "quote": "The thermal exercise defines temperature rise as final minus initial temperature. Heating from twenty to thirty degrees gives a ten-degree rise.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Design a relational database schema.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "How is temperature rise computed?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/5",
+            "quote": "The thermal exercise defines temperature rise as final minus initial temperature. Heating from twenty to thirty degrees gives a ten-degree rise.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-07",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "When are meters compared with a reference?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "When are meters compared with a reference?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "fb7378361b013aaa391c96058f0a072979e1fd48c6acd0e0e11183b3fb3b9f34"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/6",
+            "quote": "The bench compares meters against a reference before measurements. Failed comparison stops the measurement sequence.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "That comparison fails; should a new measurement be trusted?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "When are meters compared with a reference?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "fb7378361b013aaa391c96058f0a072979e1fd48c6acd0e0e11183b3fb3b9f34"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/6",
+            "quote": "The bench compares meters against a reference before measurements. Failed comparison stops the measurement sequence.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "A failed comparison can simply be ignored if readings look plausible?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "When are meters compared with a reference?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "fb7378361b013aaa391c96058f0a072979e1fd48c6acd0e0e11183b3fb3b9f34"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/6",
+            "quote": "The bench compares meters against a reference before measurements. Failed comparison stops the measurement sequence.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What comparison tolerance is specified?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "When are meters compared with a reference?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/6",
+            "quote": "The bench compares meters against a reference before measurements. Failed comparison stops the measurement sequence.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Describe a reef ecosystem.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "When are meters compared with a reference?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/6",
+            "quote": "The bench compares meters against a reference before measurements. Failed comparison stops the measurement sequence.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-08",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What determines average power?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What determines average power?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "9e194baacfc9565974d0932b1b820190d45534ab996baac78915d3c99c12ce1e"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/7",
+            "quote": "The lesson defines average power as energy divided by duration. Sixty joules delivered over three seconds averages twenty watts.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "If the same energy takes six seconds, what is the average?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What determines average power?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "9e194baacfc9565974d0932b1b820190d45534ab996baac78915d3c99c12ce1e"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/7",
+            "quote": "The lesson defines average power as energy divided by duration. Sixty joules delivered over three seconds averages twenty watts.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Doubling duration doubles average power for fixed energy?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What determines average power?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "9e194baacfc9565974d0932b1b820190d45534ab996baac78915d3c99c12ce1e"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/7",
+            "quote": "The lesson defines average power as energy divided by duration. Sixty joules delivered over three seconds averages twenty watts.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is the instantaneous peak power?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What determines average power?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/7",
+            "quote": "The lesson defines average power as energy divided by duration. Sixty joules delivered over three seconds averages twenty watts.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Explain manuscript provenance.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What determines average power?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/7",
+            "quote": "The lesson defines average power as energy divided by duration. Sixty joules delivered over three seconds averages twenty watts.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-09",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "Which states contribute to total energy?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "Which states contribute to total energy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ded2e79a02d14965e0194c5a55f48a0044d9e94348570c5374545557ded9cc87"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/8",
+            "quote": "The bench separates standby consumption from active consumption. Total energy includes energy consumed in both states.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "It spends half the day in standby; can that energy be omitted?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "Which states contribute to total energy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ded2e79a02d14965e0194c5a55f48a0044d9e94348570c5374545557ded9cc87"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/8",
+            "quote": "The bench separates standby consumption from active consumption. Total energy includes energy consumed in both states.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Only active energy matters to the total meter?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "Which states contribute to total energy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ded2e79a02d14965e0194c5a55f48a0044d9e94348570c5374545557ded9cc87"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/8",
+            "quote": "The bench separates standby consumption from active consumption. Total energy includes energy consumed in both states.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is the measured standby draw?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "Which states contribute to total energy?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/8",
+            "quote": "The bench separates standby consumption from active consumption. Total energy includes energy consumed in both states.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Derive a graph shortest-path algorithm.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "Which states contribute to total energy?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/8",
+            "quote": "The bench separates standby consumption from active consumption. Total energy includes energy consumed in both states.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-10",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "How does stored energy scale with voltage here?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "How does stored energy scale with voltage here?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "3c59a6d692a3fe72b8ff95b2782c6dc50c38e08d0ca5f58d528eb290e5d5e4f6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/9",
+            "quote": "The capacitor lesson states stored energy is one half capacitance times voltage squared. Doubling voltage at fixed capacitance quadruples energy.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "The same capacitor doubles voltage; how does energy change?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "How does stored energy scale with voltage here?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "3c59a6d692a3fe72b8ff95b2782c6dc50c38e08d0ca5f58d528eb290e5d5e4f6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/9",
+            "quote": "The capacitor lesson states stored energy is one half capacitance times voltage squared. Doubling voltage at fixed capacitance quadruples energy.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Doubling voltage only doubles its stored energy?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "How does stored energy scale with voltage here?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "3c59a6d692a3fe72b8ff95b2782c6dc50c38e08d0ca5f58d528eb290e5d5e4f6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/9",
+            "quote": "The capacitor lesson states stored energy is one half capacitance times voltage squared. Doubling voltage at fixed capacitance quadruples energy.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What leakage current does the actual capacitor have?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "How does stored energy scale with voltage here?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/9",
+            "quote": "The capacitor lesson states stored energy is one half capacitance times voltage squared. Doubling voltage at fixed capacitance quadruples energy.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Plan a medical treatment.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "How does stored energy scale with voltage here?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/9",
+            "quote": "The capacitor lesson states stored energy is one half capacitance times voltage squared. Doubling voltage at fixed capacitance quadruples energy.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-11",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What produces the lesson solar energy estimate?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What produces the lesson solar energy estimate?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f2d16d6af024048296dece917acb98710a3010106bc864c54aa78dda578dc243"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/10",
+            "quote": "The exercise estimates solar energy as average panel power times sunlight duration. A ten-watt average for four hours yields forty watt-hours.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "For that example, what if sunlight lasts two hours?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What produces the lesson solar energy estimate?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f2d16d6af024048296dece917acb98710a3010106bc864c54aa78dda578dc243"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/10",
+            "quote": "The exercise estimates solar energy as average panel power times sunlight duration. A ten-watt average for four hours yields forty watt-hours.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Four hours at ten watts yields four hundred watt-hours?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What produces the lesson solar energy estimate?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f2d16d6af024048296dece917acb98710a3010106bc864c54aa78dda578dc243"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/10",
+            "quote": "The exercise estimates solar energy as average panel power times sunlight duration. A ten-watt average for four hours yields forty watt-hours.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What irradiance was measured outdoors?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What produces the lesson solar energy estimate?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/10",
+            "quote": "The exercise estimates solar energy as average panel power times sunlight duration. A ten-watt average for four hours yields forty watt-hours.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Interpret an ancient legal charter.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What produces the lesson solar energy estimate?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/10",
+            "quote": "The exercise estimates solar energy as average panel power times sunlight duration. A ten-watt average for four hours yields forty watt-hours.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-12",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What protective role does the lesson assign a fuse?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What protective role does the lesson assign a fuse?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d2b7ae415d63ee665eee7a0d509fa7a8dcd2d2fdafd3951840c5da544266c9f2"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/11",
+            "quote": "A fuse opens a circuit after an overcurrent according to its rating. This lesson does not treat a fuse as a voltage regulator.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "After it opens, does the protected branch still conduct normally?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What protective role does the lesson assign a fuse?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d2b7ae415d63ee665eee7a0d509fa7a8dcd2d2fdafd3951840c5da544266c9f2"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/11",
+            "quote": "A fuse opens a circuit after an overcurrent according to its rating. This lesson does not treat a fuse as a voltage regulator.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "A fuse continuously regulates voltage to a fixed value?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What protective role does the lesson assign a fuse?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d2b7ae415d63ee665eee7a0d509fa7a8dcd2d2fdafd3951840c5da544266c9f2"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/11",
+            "quote": "A fuse opens a circuit after an overcurrent according to its rating. This lesson does not treat a fuse as a voltage regulator.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What exact trip time applies to this fuse?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What protective role does the lesson assign a fuse?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/11",
+            "quote": "A fuse opens a circuit after an overcurrent according to its rating. This lesson does not treat a fuse as a voltage regulator.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Predict a currency exchange rate.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What protective role does the lesson assign a fuse?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/11",
+            "quote": "A fuse opens a circuit after an overcurrent according to its rating. This lesson does not treat a fuse as a voltage regulator.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-13",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What terms form the signed balance?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What terms form the signed balance?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4c8ece53e24e48a4f9b9eed26766086970bfe14045c33062af50d7ec14708869"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/12",
+            "quote": "The bench reports a signed energy balance: input minus useful output minus measured loss. Zero balance means those recorded terms reconcile.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Input is one hundred, useful eighty and loss twenty; what is it?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What terms form the signed balance?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4c8ece53e24e48a4f9b9eed26766086970bfe14045c33062af50d7ec14708869"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/12",
+            "quote": "The bench reports a signed energy balance: input minus useful output minus measured loss. Zero balance means those recorded terms reconcile.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Zero balance proves every measurement is error-free?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What terms form the signed balance?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "4c8ece53e24e48a4f9b9eed26766086970bfe14045c33062af50d7ec14708869"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/12",
+            "quote": "The bench reports a signed energy balance: input minus useful output minus measured loss. Zero balance means those recorded terms reconcile.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What are the confidence bounds of those readings?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What terms form the signed balance?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/12",
+            "quote": "The bench reports a signed energy balance: input minus useful output minus measured loss. Zero balance means those recorded terms reconcile.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Explain a marine migration pattern.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What terms form the signed balance?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/12",
+            "quote": "The bench reports a signed energy balance: input minus useful output minus measured loss. Zero balance means those recorded terms reconcile.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-14",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "Do repeatable readings establish calibration accuracy?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "Do repeatable readings establish calibration accuracy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f019d0312d78841cbbf506b9ffa8919da07d623b6356bdf8bb07e1c996c4cdd4"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/13",
+            "quote": "The lesson distinguishes repeatability from calibration accuracy. Similar repeated readings may all share a systematic offset.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Three readings agree closely; could they still share an offset?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "Do repeatable readings establish calibration accuracy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f019d0312d78841cbbf506b9ffa8919da07d623b6356bdf8bb07e1c996c4cdd4"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/13",
+            "quote": "The lesson distinguishes repeatability from calibration accuracy. Similar repeated readings may all share a systematic offset.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Agreement among repeats proves there is no bias?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "Do repeatable readings establish calibration accuracy?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f019d0312d78841cbbf506b9ffa8919da07d623b6356bdf8bb07e1c996c4cdd4"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/13",
+            "quote": "The lesson distinguishes repeatability from calibration accuracy. Similar repeated readings may all share a systematic offset.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What offset did the instrument actually have?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "Do repeatable readings establish calibration accuracy?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/13",
+            "quote": "The lesson distinguishes repeatability from calibration accuracy. Similar repeated readings may all share a systematic offset.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Compose a judicial ruling.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "Do repeatable readings establish calibration accuracy?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/13",
+            "quote": "The lesson distinguishes repeatability from calibration accuracy. Similar repeated readings may all share a systematic offset.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-15",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "When must this discharge exercise stop?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "When must this discharge exercise stop?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "5c82edbc0b660fbf0c0b8f80b94ed8e31a07cafab0f12834294059e830dcfa3c"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/14",
+            "quote": "The discharge exercise sets a stop at the minimum permitted voltage. Continuing below that threshold invalidates the exercise record.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "It reaches that threshold early; should it continue for a round duration?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "When must this discharge exercise stop?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "5c82edbc0b660fbf0c0b8f80b94ed8e31a07cafab0f12834294059e830dcfa3c"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/14",
+            "quote": "The discharge exercise sets a stop at the minimum permitted voltage. Continuing below that threshold invalidates the exercise record.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "A round-number duration overrides the voltage stop?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "When must this discharge exercise stop?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "5c82edbc0b660fbf0c0b8f80b94ed8e31a07cafab0f12834294059e830dcfa3c"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/14",
+            "quote": "The discharge exercise sets a stop at the minimum permitted voltage. Continuing below that threshold invalidates the exercise record.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What is the numerical minimum voltage?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "When must this discharge exercise stop?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/14",
+            "quote": "The discharge exercise sets a stop at the minimum permitted voltage. Continuing below that threshold invalidates the exercise record.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Describe a species tagging protocol.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "When must this discharge exercise stop?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/14",
+            "quote": "The discharge exercise sets a stop at the minimum permitted voltage. Continuing below that threshold invalidates the exercise record.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "energy-16",
+      "course_id": "energy",
+      "lecture_id": "energy",
+      "turns": [
+        {
+          "text": "What can simulated bench readings establish?",
+          "category": "fact",
+          "context_followup": false,
+          "expected_topic": "What can simulated bench readings establish?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "a3ddead394e409ef9073fb235d979da4d973a02abf1507bc86f6dc356aaadcf6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/15",
+            "quote": "The bench labels simulated readings as simulated. They can test logging but cannot establish physical device performance.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "A simulated trace looks perfect; does it measure a physical device?",
+          "category": "followup",
+          "context_followup": true,
+          "expected_topic": "What can simulated bench readings establish?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "a3ddead394e409ef9073fb235d979da4d973a02abf1507bc86f6dc356aaadcf6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/15",
+            "quote": "The bench labels simulated readings as simulated. They can test logging but cannot establish physical device performance.",
+            "expected_behavior": "grounded_answer",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "Perfect simulation logs prove real hardware efficiency?",
+          "category": "false_premise",
+          "context_followup": true,
+          "expected_topic": "What can simulated bench readings establish?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "a3ddead394e409ef9073fb235d979da4d973a02abf1507bc86f6dc356aaadcf6"
+            ],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/15",
+            "quote": "The bench labels simulated readings as simulated. They can test logging but cannot establish physical device performance.",
+            "expected_behavior": "correct_false_premise",
+            "rubric": "Answer the specific question using the section facts; preserve conditions, units and prior referents; cite supporting assertions. For false premises explicitly correct the mistaken assertion."
+          }
+        },
+        {
+          "text": "What efficiency did the physical device achieve?",
+          "category": "insufficient",
+          "context_followup": false,
+          "expected_topic": "What can simulated bench readings establish?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/15",
+            "quote": "The bench labels simulated readings as simulated. They can test logging but cannot establish physical device performance.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        },
+        {
+          "text": "Give a personal financial plan.",
+          "category": "out_of_scope",
+          "context_followup": false,
+          "expected_topic": "What can simulated bench readings establish?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "locator": "eval/tutor-scale/snapshot.json#/lectures/energy/evidence/15",
+            "quote": "The bench labels simulated readings as simulated. They can test logging but cannot establish physical device performance.",
+            "expected_behavior": "clean_abstention",
+            "rubric": "Do not invent the requested parameter or give an outside-course answer; an exact clean abstention is acceptable."
+          }
+        }
+      ]
+    }
+  ]
+}

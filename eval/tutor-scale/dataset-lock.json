@@ -1,0 +1,10 @@
+{
+  "version": "tutor-scale-synthetic-v2",
+  "files": {
+    "author.py": "26e16ffb28d9422acff7ee3adf006d6b1de65de2d643d7a0f5f7e17853770c12",
+    "development.json": "030eec540c0a9868647f51dad1d8ea092704b6229d6882b2b1132817f5e7aaba",
+    "holdout.json": "94faa52a9d243bc33338628a380e708e3eac4127dfd8236e4e89ca24b35749b3",
+    "snapshot.json": "cb723a9d28c5ea564909feb7fe322de5b9180b40e1bd9a073ed57546d4f11c93",
+    "holdout-manifest.json": "87c6f470041aa91fcc5591eab66fc7210dc7cefc98758cf9d39a1d91e105a485"
+  }
+}
