@@ -6,11 +6,11 @@
   "parent_manifest_sha256": "8f430ba637bb13dfd415bf29d4785e116d44141d7d3c49946ede77cee45079cf",
   "files": {
     "agent-service/src/lecturelens_real_eval/tutor/grounded_runtime.py": "7cf704a1bf5b3e99afc15ed8a362f91d9c883ecf7edb151b8bac6608e5ec7ba6",
-    "agent-service/src/lecturelens_real_eval/tutor/observed_channel.py": "7029830b01b33e6515a4f58ccaa8518a78d3c2485e0c6946029359bb54629b8a",
+    "agent-service/src/lecturelens_real_eval/tutor/observed_channel.py": "94bfe677c69e87172174a70961dbe4920f5365087540738f3af89c1c553ea080",
     "eval/tutor-pilot-v1/adapter-lock.json": "f64b996e479b68b050d38976b15fc1098bca3e2144189850e6cbb20a64360a28",
     "eval/tutor-repair-v1/offline_audit.py": "cdd463e5f831c8bf426251f4338172360066fc07f4000b72f421939fa98d53a8",
     "eval/tutor-repair-v1/repair_check.py": "8866e3cb182864cfa380cbc1f0935ac01184d75f00a9318096a72d65edc09e51",
     "eval/tutor-repair-v1/repair_run.py": "a589371b73d12f33168a7da8daa0f9a26955777b00a48b8aafa006ed147d2dfc",
-    "eval/tutor-repair-v1/test_repair.py": "30a72442421664c223d732c9faf382d5ec7c388c1116fdd0a9263c601f85eba8"
+    "eval/tutor-repair-v1/test_repair.py": "fc039010a3d83faddd29e9fc6eee03ab9712382f0ffb362fe7c5cd4ba87a22c5"
   }
 }

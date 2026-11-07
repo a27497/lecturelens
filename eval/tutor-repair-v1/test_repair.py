@@ -302,6 +302,23 @@ def test_compressed_channel_and_pre_send_rejection_do_not_reuse_metadata(tmp_pat
     assert row["usage"] is row["returned_model"] is row["request_id"] is row["ledger_call_id"] is None
 
 
+def test_partial_decoded_chunks_are_not_buffered_past_the_sender_deadline_guard():
+    class Partial(httpx.SyncByteStream):
+        def __iter__(self):
+            yield b'{"model":'
+            pytest.fail("closing after the first chunk must not read more or complete telemetry")
+
+    transport = DecodedMetadataTransport(
+        httpx.MockTransport(lambda request: httpx.Response(200, stream=Partial()))
+    )
+    with httpx.Client(transport=transport) as client:
+        with client.stream("POST", "https://mock.invalid", content=b"MOCK") as response:
+            assert next(response.iter_bytes()) == b'{"model":'
+            assert transport.metadata["capture_status"] == "BODY_IN_PROGRESS"
+    assert transport.metadata["capture_status"] == "BODY_INCOMPLETE"
+    assert transport.metadata["usage"] is transport.metadata["returned_model"] is None
+
+
 @pytest.mark.parametrize(
     "fault", ["protocol", "usage_missing", "invalid_json", "oversize", "timeout", "http"]
 )

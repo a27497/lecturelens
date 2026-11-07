@@ -151,8 +151,11 @@ class DecodedMetadataTransport(httpx.BaseTransport):
         class Stream(httpx.SyncByteStream):
             def __iter__(self):
                 captured = bytearray()
+                owner.metadata["capture_status"] = "BODY_IN_PROGRESS"
                 try:
-                    for chunk in response.iter_bytes(chunk_size=8192):
+                    # Preserve decoded chunk delivery so Channel's elapsed-time guard still
+                    # runs per chunk; buffering small responses could delay that guard.
+                    for chunk in response.iter_bytes():
                         if len(captured) + len(chunk) > LIMIT:
                             owner.metadata["capture_status"] = "DECODED_BODY_LIMIT"
                             raise EvalError("REAL_EVAL_BODY_LIMIT")
@@ -165,11 +168,13 @@ class DecodedMetadataTransport(httpx.BaseTransport):
                     else:
                         owner.metadata.update(metadata(data, secret))
                 except Exception:  # noqa: BLE001 -- preserve sender error semantics, never log exception text
-                    if owner.metadata["capture_status"] == "BODY_NOT_READ":
+                    if owner.metadata["capture_status"] == "BODY_IN_PROGRESS":
                         owner.metadata["capture_status"] = "BODY_INCOMPLETE"
                     raise
 
             def close(self):
+                if owner.metadata["capture_status"] == "BODY_IN_PROGRESS":
+                    owner.metadata["capture_status"] = "BODY_INCOMPLETE"
                 response.close()
 
         headers = [

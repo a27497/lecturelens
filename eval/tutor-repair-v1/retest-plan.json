@@ -2,7 +2,7 @@
   "version": "tutor-repair-retest-v1",
   "execution_authorized": false,
   "original_plan_sha256": "27c3361d841412f950b9aac5ab08a0d14e40b4fb0bc60801be0c9d181e5180d7",
-  "candidate_manifest_sha256": "aa5b8d24b7902a2fdfecb32b4833ded02316baf4194d5ba81ca7263d09da1aed",
+  "candidate_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
   "sessions": [
     {
       "course_id": "carpentries-python",
