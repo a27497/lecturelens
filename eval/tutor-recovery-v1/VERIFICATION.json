@@ -1,0 +1,172 @@
+{
+  "status": "PASS_OFFLINE_EXECUTION_REGRESSION_NOT_MODEL_QUALITY",
+  "verification_code_sha": "8219686e9fbd34610e10f549b523329171c58bac",
+  "task_start_sha": "14a694ae65b82a2e54b6b708796b3a5ebc517fef",
+  "original_real_execution_sha": "06b5858024b5b22cded0573dca7963c5a73b3d19",
+  "candidate": "p8-tutor-repair-context-v12-development",
+  "candidate_manifest_sha256": "4540369887eb2d84f79ee5351a8e1c0c82af859be8ff8d364ce7faf262a3afb2",
+  "parent_manifest_sha256": "b7fe50df1854703cc05d4ad039dad3245cc62adc5d68c3af7b394f2407f0ec58",
+  "checks": {
+    "tests": 184,
+    "passed": 184,
+    "skipped": 0,
+    "failed": 0,
+    "new_recovery": 42,
+    "frozen_fresh_batch": 20,
+    "inherited_tutor": 122,
+    "supervisor": {
+      "name": "recovery-frozen",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-recovery-v1-20261107/network-frozen",
+        ".data/tutor-recovery-v1-20261107/run_frozen.py"
+      ],
+      "code": 0,
+      "seconds": 83.598
+    }
+  },
+  "raw_root": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens/.data/tutor-recovery-v1-20261107",
+  "raw_manifest_sha256": "368d539d92887909cf941a5754f2d7fb77e27f5e9b5152ec90445994d5c0878b",
+  "raw_files": 592,
+  "real_calls": {
+    "model": 0,
+    "embedding": 0,
+    "reviewer": 0
+  },
+  "root_cause": {
+    "original_files_unchanged": 2011,
+    "original_raw_manifest_files_unchanged": 62,
+    "original_pg_unchanged": [
+      {
+        "run_id": "repair-fresh-real16-A",
+        "ledger_events_equal": 34,
+        "sessions_equal": 2,
+        "turns_equal": 7
+      }
+    ],
+    "trace": [
+      {
+        "sequence": 15,
+        "request_sha256": "dc1af7faa9c3173f520c07355a09409be3d62af76765eb0338fd70f90bf17831",
+        "input_bytes": 5921,
+        "reserved_nano_usd": 3216300,
+        "settled_nano_usd": 503700,
+        "provider_usage": {
+          "completion_tokens": 52,
+          "prompt_tokens": 1471
+        },
+        "runtime_byte_proxy": 6992
+      },
+      {
+        "sequence": 16,
+        "request_sha256": "de958cfaeea8ad8584e456fd1f8e45746faaff03e7e83398739b61533aa6bd89",
+        "input_bytes": 15960,
+        "reserved_nano_usd": 6228000,
+        "settled_nano_usd": 1308600,
+        "provider_usage": {
+          "completion_tokens": 57,
+          "prompt_tokens": 4134
+        },
+        "runtime_byte_proxy": 17078
+      },
+      {
+        "sequence": 17,
+        "request_sha256": "e010ca82f0c12faf886f3dad3f88176575afab98834d83dbb7aadaccb4ae0bf2",
+        "input_bytes": 19891,
+        "reserved_nano_usd": 7407300,
+        "settled_nano_usd": 2200200,
+        "provider_usage": {
+          "completion_tokens": 515,
+          "prompt_tokens": 5274
+        },
+        "runtime_byte_proxy": 20983
+      }
+    ],
+    "limits": {
+      "global_user_usd_upper": "10.00",
+      "effective_local_usd": "0.70",
+      "global_calls": 80,
+      "part_A_calls": 40,
+      "part_A_local_nano_usd": 350000000,
+      "part_B_calls": 40,
+      "part_B_local_nano_usd": 350000000,
+      "part_B_started": false,
+      "session_max_calls": 60,
+      "session_used_calls": 5,
+      "session_max_byte_proxy": 640000,
+      "session_used_byte_proxy": 66864,
+      "turn_normal_call_limit": 4,
+      "turn_prepaid_repair_call_limit": 5,
+      "turn_used_calls": 3,
+      "turn_used_tool_calls": 2,
+      "turn_used_byte_proxy": 45053,
+      "turn_limit_byte_proxy": 64000,
+      "turn_remaining_byte_proxy": 18947,
+      "old_repair_required_byte_proxy": 23897,
+      "old_deficit_byte_proxy": 4950,
+      "new_repair_required_byte_proxy": 16422,
+      "new_total_byte_proxy": 61475,
+      "new_remaining_margin_byte_proxy": 2525
+    },
+    "original_ledger": {
+      "calls": 17,
+      "pending": 0,
+      "blocked": null,
+      "local_charged_nano_usd": 22652400,
+      "real_cost_change": "NOT_RUN"
+    },
+    "failure_classification": {
+      "accounting": "correct bounded pre-reservation; no refund or check bypass",
+      "payload_preparation": "avoidable repeated evidence context on a finish-format repair; optimized in additive v12",
+      "configuration": "different nested dimensions, not exhausted total USD/calls; old sheet explicitly allowed runtime bounds to stop earlier",
+      "batch_policy": "correct execution of frozen stop-all-on-any-failure contract; independent-session policy is a new offline protocol, never a retroactive relabelling"
+    },
+    "real_requests_this_task": 0
+  },
+  "original_quality": {
+    "delivery": {
+      "numerator": 3,
+      "denominator": 16
+    },
+    "conditional_completed": {
+      "numerator": 3,
+      "denominator": 6
+    },
+    "citation_scope": "Six completed published answers only; 29 assertions, 25 citation-requiring assertions, 21 substantive pairs. No published content for failed/missing turns. Expected-answer full coverage denominator remains 12.",
+    "citation_support": {
+      "numerator": 18,
+      "denominator": 21
+    },
+    "supported_claim_coverage": {
+      "numerator": 18,
+      "denominator": 25
+    },
+    "expected_answer_coverage": {
+      "numerator": 1,
+      "denominator": 12
+    },
+    "score_changes": false
+  },
+  "cleanup": {
+    "container": "/lecturelens-tutor-scale-prep-20261107-postgres-1",
+    "status": "exited",
+    "exit_code": 0,
+    "volume_retained": "lecturelens-tutor-scale-prep-20261107_tutor-scale-postgres",
+    "port_25841_closed": true,
+    "preexisting_containers_still_running": 23,
+    "real_model_calls": 0,
+    "embedding_calls": 0,
+    "reviewer_calls": 0
+  },
+  "not_run": [
+    "post_fix_real_quality",
+    "real_cost_change",
+    "independent_human_agreement",
+    "SQL_holdout",
+    "expansion_300",
+    "learning_effects",
+    "new_course_generalization",
+    "next_live_adapter_freeze_and_authorization"
+  ]
+}
