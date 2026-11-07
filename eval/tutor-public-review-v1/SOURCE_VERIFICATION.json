@@ -1,0 +1,71 @@
+{
+  "records": [
+    {
+      "course_id": "carpentries-python",
+      "checked_at": "2026-11-07T09:35:18.960688+00:00",
+      "revision": "eb18f246aee338b2a6169ba18d8c5ced7cf89f53",
+      "checks": [
+        {
+          "url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md",
+          "final_url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/02-numpy.md",
+          "sha256": "a0ca18db59b888dcfa6d00e5680465720e4a8c7feed3b369b2c92d053c592ad3",
+          "bytes": 25130,
+          "equals_manifest_and_local": true
+        },
+        {
+          "url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/LICENSE.md",
+          "final_url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/LICENSE.md",
+          "sha256": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+          "bytes": 3345,
+          "equals_manifest_and_local": true
+        }
+      ],
+      "course_specific_license_page": "https://swcarpentry.github.io/python-novice-inflammation/LICENSE.html"
+    },
+    {
+      "course_id": "carpentries-spreadsheets",
+      "checked_at": "2026-11-07T09:35:19.596676+00:00",
+      "revision": "78a54d7a7adcc961e83f463ba5392232e035cc6c",
+      "checks": [
+        {
+          "url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md",
+          "final_url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/episodes/02-common-mistakes.md",
+          "sha256": "617226dece8c7de38808688c7053272e3a32cca7a1a28fedf0d6d7cb04ae24f9",
+          "bytes": 17092,
+          "equals_manifest_and_local": true
+        },
+        {
+          "url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/LICENSE.md",
+          "final_url": "https://raw.githubusercontent.com/datacarpentry/spreadsheet-ecology-lesson/78a54d7a7adcc961e83f463ba5392232e035cc6c/LICENSE.md",
+          "sha256": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+          "bytes": 3328,
+          "equals_manifest_and_local": true
+        }
+      ],
+      "course_specific_license_page": "https://datacarpentry.github.io/spreadsheet-ecology-lesson/LICENSE.html"
+    },
+    {
+      "course_id": "carpentries-sql",
+      "checked_at": "2026-11-07T09:35:20.160527+00:00",
+      "revision": "0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee",
+      "checks": [
+        {
+          "url": "https://raw.githubusercontent.com/swcarpentry/sql-novice-survey/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md",
+          "final_url": "https://raw.githubusercontent.com/swcarpentry/sql-novice-survey/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md",
+          "sha256": "c60e7f76b5d8d253eb27aa0a0f8c6d17befb648350ad1aa2692714611b4ca19b",
+          "bytes": 9862,
+          "equals_manifest_and_local": true
+        },
+        {
+          "url": "https://raw.githubusercontent.com/swcarpentry/sql-novice-survey/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/LICENSE.md",
+          "final_url": "https://raw.githubusercontent.com/swcarpentry/sql-novice-survey/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/LICENSE.md",
+          "sha256": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+          "bytes": 3328,
+          "equals_manifest_and_local": true
+        }
+      ],
+      "course_specific_license_page": "https://swcarpentry.github.io/sql-novice-survey/LICENSE.html"
+    }
+  ],
+  "secondary_credit": "MANTRA original lines 326 retained; its own acknowledgements page confirms CC BY 4.0. No linked images/media or external article text fetched."
+}

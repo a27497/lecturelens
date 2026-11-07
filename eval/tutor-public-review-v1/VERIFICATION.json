@@ -1,0 +1,63 @@
+{
+  "checked_sha": "64c0f48f832073480a9d40ccd67178d7bdc58579",
+  "dataset_version": "tutor-public-v1",
+  "dataset_lock_sha256": "4645c31d7e3eff19aa534714613d3ead64c1a7fcefcccba463fdbe9ef77f4620",
+  "counts": {
+    "development": {
+      "courses": 2,
+      "sessions": 8,
+      "turns": 40
+    },
+    "holdout": {
+      "courses": 1,
+      "sessions": 4,
+      "turns": 20
+    }
+  },
+  "unique_turns": 60,
+  "quote_locations_checked": {
+    "development": 274,
+    "holdout": 100
+  },
+  "holdout_scope": "LICENSE_HASH_STRUCTURE_LOCATOR_MEMBERSHIP_ISOLATION_ONLY; NO_SEMANTIC_REVIEW_OR_CANDIDATE_EXECUTION",
+  "development_semantic_review_turns": 40,
+  "development_empty_annotation_recount_turns": 40,
+  "targeted_existing_tests": 2,
+  "targeted_existing_test_result": "2 passed in 0.63s",
+  "tutor_system_bracket_instruction_present": true,
+  "numpy_square_index_not_rejected_by_schema_or_citation_parser": true,
+  "protocol_rubric_conflict_turns": [
+    "python-01:3",
+    "python-02:1",
+    "python-02:3",
+    "python-04:4"
+  ],
+  "data_or_execution_implementation_modified": false,
+  "candidate_system_executed": false,
+  "database_started": false,
+  "frozen_files_unchanged": 42,
+  "pilot_manifest_created": false,
+  "conclusion": "OTHER_BLOCKER_PROTOCOL_RUBRIC_MISMATCH",
+  "real_quality": "NOT_RUN",
+  "human_agreement": "NOT_RUN",
+  "real_tokens_cost": "NOT_RUN",
+  "learning_effect": "NOT_RUN",
+  "audit_artifacts": {
+    ".data/tutor-public-review-v1-20261107/source-verification.json": {
+      "sha256": "aa0185b7c352a9572b0efa0dc6a86f41b104559b8633921bf3c7ca5f80670b55"
+    },
+    ".data/tutor-public-review-v1-20261107/frozen-input-hashes.json": {
+      "sha256": "fb33fb1d399bbdaa312db76c19da70d446386e2169ff3d173b363e0f9dc59754"
+    },
+    ".data/tutor-public-review-v1-20261107/development-unannotated-recount.json": {
+      "sha256": "084590b5e39fbfc0a48684305ce1798a41804dd142f65f2b243201167a871057"
+    },
+    ".data/tutor-public-review-v1-20261107/review_checks.py": {
+      "sha256": "9b56946a495d1460498aeb7dbd671e21e09a87661d0870eeac2650898b07a252"
+    },
+    ".data/tutor-public-review-v1-20261107/verification.json": {
+      "sha256": "d54fbb8b7a3988b39e9a4556eb29be4178df82fcf77039db7e90abe4c32b5864"
+    }
+  },
+  "review_input_sha256_count": 48
+}

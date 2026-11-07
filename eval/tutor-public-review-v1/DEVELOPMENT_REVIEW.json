@@ -1,0 +1,765 @@
+{
+  "schema": "tutor-public-development-source-review-v1",
+  "reviewed_sha": "64c0f48f832073480a9d40ccd67178d7bdc58579",
+  "no_candidate_outputs_semantically_scored": true,
+  "items": [
+    {
+      "turn_key": "python-01:1",
+      "course_id": "carpentries-python",
+      "task_type": "fact_and_procedure",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          23,
+          51
+        ],
+        [
+          90,
+          101
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Import adds numerical-array functionality; retaining loadtxt output requires assignment. Aliases allowed. Source supports the requested procedure.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-01:2",
+      "course_id": "carpentries-python",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          119,
+          158
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Container type does not identify element dtype; explicit float64 output refutes integer premise. Antecedent is the assigned data array.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-01:3",
+      "course_id": "carpentries-python",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          132,
+          136
+        ],
+        [
+          163,
+          219
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_CHECKED_PROTOCOL_CONFLICT_R1",
+      "review_note": "Orientation and zero-based (29,19) are correct and 16.0 is optional. Required element expression conflicts with Tutor SYSTEM indexing notation rule (R1).",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-01:4",
+      "course_id": "carpentries-python",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          31,
+          46
+        ],
+        [
+          149,
+          158
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "No local installation/version or compatibility matrix exists in the unit; clean refusal or limitation accepted. This is missing evidence, not an unknown factual answer to guess.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:1",
+      "course_id": "carpentries-python",
+      "task_type": "procedure",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          240,
+          260
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_CHECKED_PROTOCOL_CONFLICT_R1",
+      "review_note": "Exclusive slice bounds give 4 rows x 10 columns. Valid Python slicing in the reference conflicts with SYSTEM notation rule (R1).",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:2",
+      "course_id": "carpentries-python",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          257,
+          274
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Indices 5..9 give five rows; explicitly corrects inclusive-stop premise. No six-row interpretation is supported.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:3",
+      "course_id": "carpentries-python",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          163,
+          174
+        ],
+        [
+          276,
+          294
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_CHECKED_PROTOCOL_CONFLICT_R1",
+      "review_note": "Original 40-column array gives [:3,36:] and (3,4); negative final-four indexing is an allowed equivalent. Reference expression conflicts with SYSTEM (R1).",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:4",
+      "course_id": "carpentries-python",
+      "task_type": "worked_example",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          480,
+          508
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "oxygen splits into oxyg/en at exclusive index four. A deliberate switch to the published string example, not an accidental broken antecedent.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:5",
+      "course_id": "carpentries-python",
+      "task_type": "contextual_comparison",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        3,
+        4
+      ],
+      "source_ranges": [
+        [
+          571,
+          587
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Identical bounds select no values; empty string and (0,40) preserve distinct dimensions. Original array is explicit, not the previous small array.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-02:6",
+      "course_id": "carpentries-python",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        5
+      ],
+      "source_ranges": [
+        [
+          571,
+          587
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "No workstation specification or benchmark exists; exact milliseconds cannot follow from shape. Refusal does not replace a known answer.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-03:1",
+      "course_id": "carpentries-python",
+      "task_type": "procedure_and_interpretation",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          406,
+          465
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Reducing patient rows via axis=0 yields forty daily means, shape (40,); source prose and printed output agree.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-03:2",
+      "course_id": "carpentries-python",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          406,
+          435
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Change both function and reduced dimension: max(axis=1) yields sixty per-patient maxima. Prior daily means are not reused as patient results.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-03:3",
+      "course_id": "carpentries-python",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        2
+      ],
+      "source_ranges": [
+        [
+          413,
+          438
+        ],
+        [
+          456,
+          465
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Correctly separates reduced day axis from retained patient dimension. Reference explicitly rejects source line 438 imprecision; 1D printed shape governs.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-03:4",
+      "course_id": "carpentries-python",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "source_ranges": [
+        [
+          298,
+          307
+        ],
+        [
+          338,
+          356
+        ],
+        [
+          406,
+          465
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "No control/design/inferential procedure supplies a causal effect or exact p-value. Summary statistics alone do not license the requested inference.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-03:5",
+      "course_id": "carpentries-python",
+      "task_type": "out_of_scope",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        4
+      ],
+      "source_ranges": [
+        [
+          132,
+          136
+        ],
+        [
+          298,
+          307
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Programming measurements supply no personal clinical prescription. Clean refusal is appropriate; no medical recommendation reviewed or supplied.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-04:1",
+      "course_id": "carpentries-python",
+      "task_type": "worked_example",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          691,
+          728
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Adjacent next-minus-previous differences are 0,2,-2,4,-2,0; seven observations create six differences. Constructed arithmetic independently checked.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-04:2",
+      "course_id": "carpentries-python",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          763,
+          795
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Signed maxima can miss large drops; absolute differences measure magnitude. The specific earlier sequence has maximum magnitude four, so no nonexistent larger drop is asserted.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-04:3",
+      "course_id": "carpentries-python",
+      "task_type": "contextual_synthesis",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "source_ranges": [
+        [
+          730,
+          758
+        ],
+        [
+          786,
+          795
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "diff along days gives (60,39); absolute max along days leaves (60,). Formula and staged equivalents match source and context.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-04:4",
+      "course_id": "carpentries-python",
+      "task_type": "error_diagnosis",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          595,
+          631
+        ],
+        [
+          634,
+          659
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_CHECKED_PROTOCOL_CONFLICT_R1",
+      "review_note": "Integer column selection drops singleton dimension; slice-preserving hstack produces 3x2. Required valid slices conflict with SYSTEM notation rule (R1).",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "python-04:5",
+      "course_id": "carpentries-python",
+      "task_type": "out_of_scope",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          595,
+          598
+        ],
+        [
+          699,
+          701
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "No distributed GPU or hospital-security design in complete unit; request is outside scope, not an invitation to invent an infrastructure tutorial.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-01:1",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "fact_and_redesign",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          56,
+          73
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Two risks (inconsistent tabs and later recombination) and a day column follow source. No absolute prohibition on all workbook tabs.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-01:2",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          67,
+          73
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Repeated headers may enter analysis as observations; freezing the header solves readability without polluting the consolidated table.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-01:3",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_comparison",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          39,
+          54
+        ],
+        [
+          67,
+          73
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Side-by-side tables create false within-row associations. Required explanation is in prose; omitted image is not needed.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-01:4",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        3
+      ],
+      "source_ranges": [
+        [
+          39,
+          54
+        ],
+        [
+          56,
+          67
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Actual workbook was never provided. Four illustrative dates do not establish actual duplicate/misalignment counts.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-02:1",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          77,
+          91
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Observed zero differs from an unmeasured observation; reference allows documented software-appropriate missing representations.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-02:2",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          93,
+          108
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Unconfigured -999 can contaminate arithmetic. Boundary permits documented explicit handling, so it avoids an unjustified universal sentinel ban.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-02:3",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_synthesis",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "source_ranges": [
+        [
+          99,
+          112
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "R NA and a separate missing-reason field are both supported. Measurement, missing marker and reason remain separate.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-02:4",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "source_qualification",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        2,
+        3
+      ],
+      "source_ranges": [
+        [
+          88,
+          105
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Correctly challenges source overgeneralisation: later software-dependent interpretation limits the earlier always-null claim. No external API knowledge is required.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-02:5",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "out_of_scope",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          95,
+          112
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Null encoding does not teach hierarchical Bayesian treatment-effect estimation. Scope refusal is correctly distinguished from the preceding answerable critique.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:1",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "procedure",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          183,
+          209
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Explicit exclusion/quality fields preserve machine-readable meaning; neither red styling nor silent record deletion is required.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:2",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          201,
+          209
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Most analysis tools not seeing spreadsheet comments refutes the proposed comment-only fix. Boundary does not overclaim that comments are never useful.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:3",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          206,
+          209
+        ],
+        [
+          225,
+          227
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Keep numeric values and consistent units or an explicit unit column. Conversion is optional; the two given weights are not asserted equal.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:4",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_application",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        3
+      ],
+      "source_ranges": [
+        [
+          211,
+          217
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Separate count and sex while preserving both observations; two rows or equivalent tidy representation is supported by the one-fact-per-cell rule.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:5",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        4
+      ],
+      "source_ranges": [
+        [
+          193,
+          199
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Merged cells may obscure associations; reference requires restructuring rather than an unsupported reliability improvement.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-03:6",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "source_ranges": [
+        [
+          201,
+          209
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "No specimen evidence or actual taxonomic/count audit is supplied. Two suspect records are asserted by the learner, not independently established; refusal remains appropriate.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-04:1",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "procedure",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [],
+      "source_ranges": [
+        [
+          219,
+          239
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Descriptive parser-friendly name retains units. Existing boundary explicitly permits digits rather than copying source universal wording; source example Observation_01 confirms this.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-04:2",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "false_premise",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1
+      ],
+      "source_ranges": [
+        [
+          301,
+          320
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Metadata is necessary, but placing a legend among observations disrupts parsing; associated plain-text file is directly supported.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-04:3",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "contextual_synthesis",
+      "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        1,
+        2
+      ],
+      "source_ranges": [
+        [
+          303,
+          324
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Meanings/units/nulls and transformation algorithms, file relationships/formats/versions are supported; no extra schema standard is made mandatory.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-04:4",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "insufficient_evidence",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        3
+      ],
+      "source_ranges": [
+        [
+          305,
+          324
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Generic metadata advice supplies no team-specific growth_rate algorithm. Naming a field does not establish its missing formula.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    },
+    {
+      "turn_key": "sheets-04:5",
+      "course_id": "carpentries-spreadsheets",
+      "task_type": "out_of_scope",
+      "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+      "depends_on_turns": [
+        3
+      ],
+      "source_ranges": [
+        [
+          315,
+          324
+        ]
+      ],
+      "review_state": "SOURCE_REFERENCE_AND_CONTEXT_CHECKED",
+      "review_note": "Spreadsheet unit contains no join syntax or schema/key information. Only checks its own course boundary, not SQL holdout teaching content.",
+      "provenance": "CODEX_SECOND_PASS_NOT_INDEPENDENT_HUMAN_EXPERT_LABEL"
+    }
+  ]
+}
