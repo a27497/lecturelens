@@ -1,0 +1,1488 @@
+{
+  "version": "tutor-public-v1",
+  "split": "holdout",
+  "dialogues": [
+    {
+      "dialogue_id": "sql-01",
+      "course_id": "carpentries-sql",
+      "lecture_id": "carpentries-sql",
+      "turns": [
+        {
+          "text": "For this conversation use only the supplied unit \"Filtering (complete episode 3)\". Cite evidence for factual claims and say when this unit cannot answer. In Filtering, how do I show only the IDs of visits to DR-1, even though site is not a displayed column?",
+          "category": "procedure",
+          "task_type": "procedure",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "In Filtering, how do I show only the IDs of visits to DR-1, even though site is not a displayed column?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d5955987688cbb7ddd7bd130553c913ddd014e5f3457ee51081fcb9f7914aab6",
+              "91773dd18688cc0b6b207dc75a85b46dae5b1b68f500e3d8b29211c75be032b9",
+              "007f8615dfab051600b23ddadc9a1790249e3e97aa366263b37cf7cf676c06f4",
+              "b63ee5f02cb2f46ac3129faf72d8d532746ce321d7c0d8eb17436addd689c9a8",
+              "b844532a93926dbc2874745683547eb807f5e353fdea58abe78947a88336225e",
+              "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+              "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                20,
+                58
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "d5955987688cbb7ddd7bd130553c913ddd014e5f3457ee51081fcb9f7914aab6",
+                "quote": "One of the most powerful features of a database is\nthe ability to [filter](../learners/reference.md#filter) data,\ni.e.,\nto select only those records that match certain criteria.\nFor example,\nsuppose we want to see when a particular site was visited.\nWe can select these records from the `Visited` table\nby using a `WHERE` clause in our query:",
+                "line_start": 20,
+                "line_end": 27,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L20-L27"
+              },
+              {
+                "evidence_id": "91773dd18688cc0b6b207dc75a85b46dae5b1b68f500e3d8b29211c75be032b9",
+                "quote": "```sql\nSELECT * FROM Visited WHERE site = 'DR-1';\n```",
+                "line_start": 29,
+                "line_end": 31,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L29-L31"
+              },
+              {
+                "evidence_id": "007f8615dfab051600b23ddadc9a1790249e3e97aa366263b37cf7cf676c06f4",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | \n| 844    | DR-1   | 1932-03-22 | ",
+                "line_start": 33,
+                "line_end": 37,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L33-L37"
+              },
+              {
+                "evidence_id": "b63ee5f02cb2f46ac3129faf72d8d532746ce321d7c0d8eb17436addd689c9a8",
+                "quote": "The database manager executes this query in two stages.\nFirst,\nit checks at each row in the `Visited` table\nto see which ones satisfy the `WHERE`.\nIt then uses the column names following the `SELECT` keyword\nto determine which columns to display.",
+                "line_start": 39,
+                "line_end": 44,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L39-L44"
+              },
+              {
+                "evidence_id": "b844532a93926dbc2874745683547eb807f5e353fdea58abe78947a88336225e",
+                "quote": "This processing order means that\nwe can filter records using `WHERE`\nbased on values in columns that aren't then displayed:",
+                "line_start": 46,
+                "line_end": 48,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L46-L48"
+              },
+              {
+                "evidence_id": "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+                "quote": "```sql\nSELECT id FROM Visited WHERE site = 'DR-1';\n```",
+                "line_start": 50,
+                "line_end": 52,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L50-L52"
+              },
+              {
+                "evidence_id": "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f",
+                "quote": "| id     | \n| ------ |\n| 619    | \n| 622    | \n| 844    | ",
+                "line_start": 54,
+                "line_end": 58,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L54-L58"
+              }
+            ],
+            "reference_points": [
+              "SELECT id FROM Visited WHERE site = 'DR-1';",
+              "Filtering checks rows before selecting displayed columns; site need not be displayed."
+            ],
+            "allowed_answer_boundary": "Equivalent SQL formatting is fine; explain predicate versus displayed fields.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "SELECT id FROM Visited WHERE site = 'DR-1';; Filtering checks rows before selecting displayed columns; site need not be displayed. Boundary: Equivalent SQL formatting is fine; explain predicate versus displayed fields. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "I thought SELECT removes site first, so WHERE cannot inspect it. Is that what the episode's processing order means?",
+          "category": "false_premise",
+          "task_type": "false_premise",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "In Filtering, how do I show only the IDs of visits to DR-1, even though site is not a displayed column?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "b63ee5f02cb2f46ac3129faf72d8d532746ce321d7c0d8eb17436addd689c9a8",
+              "b844532a93926dbc2874745683547eb807f5e353fdea58abe78947a88336225e",
+              "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+              "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f"
+            ],
+            "evidence_role": "refutes_premise",
+            "source_ranges": [
+              [
+                39,
+                58
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "b63ee5f02cb2f46ac3129faf72d8d532746ce321d7c0d8eb17436addd689c9a8",
+                "quote": "The database manager executes this query in two stages.\nFirst,\nit checks at each row in the `Visited` table\nto see which ones satisfy the `WHERE`.\nIt then uses the column names following the `SELECT` keyword\nto determine which columns to display.",
+                "line_start": 39,
+                "line_end": 44,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L39-L44"
+              },
+              {
+                "evidence_id": "b844532a93926dbc2874745683547eb807f5e353fdea58abe78947a88336225e",
+                "quote": "This processing order means that\nwe can filter records using `WHERE`\nbased on values in columns that aren't then displayed:",
+                "line_start": 46,
+                "line_end": 48,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L46-L48"
+              },
+              {
+                "evidence_id": "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+                "quote": "```sql\nSELECT id FROM Visited WHERE site = 'DR-1';\n```",
+                "line_start": 50,
+                "line_end": 52,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L50-L52"
+              },
+              {
+                "evidence_id": "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f",
+                "quote": "| id     | \n| ------ |\n| 619    | \n| 622    | \n| 844    | ",
+                "line_start": 54,
+                "line_end": 58,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L54-L58"
+              }
+            ],
+            "reference_points": [
+              "The episode describes WHERE row filtering first, then choosing output columns.",
+              "The shown query is valid even though site is not displayed."
+            ],
+            "allowed_answer_boundary": "Correct the logical-order interpretation; do not turn the lesson's logical stages into a guaranteed physical query plan.",
+            "insufficiency_reason": null,
+            "expected_behavior": "correct_false_premise_with_evidence",
+            "rubric": "The episode describes WHERE row filtering first, then choosing output columns.; The shown query is valid even though site is not displayed. Boundary: Correct the logical-order interpretation; do not turn the lesson's logical stages into a guaranteed physical query plan. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Extend my ID-only DR-1 query to visits before 1930. Which IDs shown in the episode survive?",
+          "category": "contextual_application",
+          "task_type": "contextual_application",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            2
+          ],
+          "expected_topic": "In Filtering, how do I show only the IDs of visits to DR-1, even though site is not a displayed column?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+              "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f",
+              "90449ae5e4538a0080e9e736de61dc674ec53be33c97a296e3d3364c3f018ed6",
+              "58bdeb086108006468a1fbb9767c15114d580b8fb916d847795b9b358a9ec8e4",
+              "23e6f618989b2ad78b116cee9ed9fb66855f0c3e65b70786f300e7e30b0095f1"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                50,
+                58
+              ],
+              [
+                62,
+                73
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "d1018c6e76a47e2d6b83cb12b2839a90a6337b61192ee53639bb766b19c903b3",
+                "quote": "```sql\nSELECT id FROM Visited WHERE site = 'DR-1';\n```",
+                "line_start": 50,
+                "line_end": 52,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L50-L52"
+              },
+              {
+                "evidence_id": "7bf16af679c55e120284df68440de960a817dee1d306ce62eb7a49c7adfa146f",
+                "quote": "| id     | \n| ------ |\n| 619    | \n| 622    | \n| 844    | ",
+                "line_start": 54,
+                "line_end": 58,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L54-L58"
+              },
+              {
+                "evidence_id": "90449ae5e4538a0080e9e736de61dc674ec53be33c97a296e3d3364c3f018ed6",
+                "quote": "We can use many other Boolean operators to filter our data.\nFor example,\nwe can ask for all information from the DR-1 site collected before 1930:",
+                "line_start": 62,
+                "line_end": 64,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L62-L64"
+              },
+              {
+                "evidence_id": "58bdeb086108006468a1fbb9767c15114d580b8fb916d847795b9b358a9ec8e4",
+                "quote": "```sql\nSELECT * FROM Visited WHERE site = 'DR-1' AND dated < '1930-01-01';\n```",
+                "line_start": 66,
+                "line_end": 68,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L66-L68"
+              },
+              {
+                "evidence_id": "23e6f618989b2ad78b116cee9ed9fb66855f0c3e65b70786f300e7e30b0095f1",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | ",
+                "line_start": 70,
+                "line_end": 73,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L70-L73"
+              }
+            ],
+            "reference_points": [
+              "SELECT id FROM Visited WHERE site = 'DR-1' AND dated < '1930-01-01';",
+              "619 and 622 survive; 844 is in 1932."
+            ],
+            "allowed_answer_boundary": "Derivation combines the ID projection with the illustrated date condition. No unshown rows should be invented.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "SELECT id FROM Visited WHERE site = 'DR-1' AND dated < '1930-01-01';; 619 and 622 survive; 844 is in 1932. Boundary: Derivation combines the ID projection with the illustrated date condition. No unshown rows should be invented. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Does SQLite need a dedicated date type for that comparison, and which representations does the callout describe?",
+          "category": "contextual_explanation",
+          "task_type": "contextual_explanation",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            3
+          ],
+          "expected_topic": "Extend my ID-only DR-1 query to visits before 1930. Which IDs shown in the episode survive?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "8da304c842d0d00236b9191c8c2370c94a0dc58e5688495f0c3aef2cb01b9253",
+              "7e3c9fe5f5a56decc6023a306e0ac9ee62bd88a036b3bb893b535a8caaf46391"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                77,
+                96
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "8da304c842d0d00236b9191c8c2370c94a0dc58e5688495f0c3aef2cb01b9253",
+                "quote": "## Date Types",
+                "line_start": 77,
+                "line_end": 77,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L77-L77"
+              },
+              {
+                "evidence_id": "7e3c9fe5f5a56decc6023a306e0ac9ee62bd88a036b3bb893b535a8caaf46391",
+                "quote": "Most database managers have a special data type for dates.\nIn fact, many have two:\none for dates,\nsuch as \"May 31, 1971\",\nand one for durations,\nsuch as \"31 days\".\nSQLite doesn't:\ninstead,\nit stores dates as either text\n(in the ISO-8601 standard format \"YYYY-MM-DD HH:MM:SS.SSSS\"),\nreal numbers\n([Julian days](https://en.wikipedia.org/wiki/Julian_day), the number of days since November 24, 4714 BCE),\nor integers\n([Unix time](https://en.wikipedia.org/wiki/Unix_time), the number of seconds since midnight, January 1, 1970).\nIf this sounds complicated,\nit is,\nbut not nearly as complicated as figuring out\n[historical dates in Sweden](https://en.wikipedia.org/wiki/Swedish_calendar).",
+                "line_start": 79,
+                "line_end": 96,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L79-L96"
+              }
+            ],
+            "reference_points": [
+              "The callout says SQLite has no dedicated date type.",
+              "It describes ISO-8601 text, Julian-day real values and Unix-time integers."
+            ],
+            "allowed_answer_boundary": "Describe those alternatives without asserting mixed formats compare correctly or specifying an unavailable timezone policy.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "The callout says SQLite has no dedicated date type.; It describes ISO-8601 text, Julian-day real values and Unix-time integers. Boundary: Describe those alternatives without asserting mixed formats compare correctly or specifying an unavailable timezone policy. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Which timezone did the DR-1 expedition use for each of those dates?",
+          "category": "insufficient_evidence",
+          "task_type": "insufficient_evidence",
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            3,
+            4
+          ],
+          "expected_topic": "Extend my ID-only DR-1 query to visits before 1930. Which IDs shown in the episode survive?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                33,
+                37
+              ],
+              [
+                77,
+                96
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "007f8615dfab051600b23ddadc9a1790249e3e97aa366263b37cf7cf676c06f4",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | \n| 844    | DR-1   | 1932-03-22 | ",
+                "line_start": 33,
+                "line_end": 37,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L33-L37"
+              },
+              {
+                "evidence_id": "8da304c842d0d00236b9191c8c2370c94a0dc58e5688495f0c3aef2cb01b9253",
+                "quote": "## Date Types",
+                "line_start": 77,
+                "line_end": 77,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L77-L77"
+              },
+              {
+                "evidence_id": "7e3c9fe5f5a56decc6023a306e0ac9ee62bd88a036b3bb893b535a8caaf46391",
+                "quote": "Most database managers have a special data type for dates.\nIn fact, many have two:\none for dates,\nsuch as \"May 31, 1971\",\nand one for durations,\nsuch as \"31 days\".\nSQLite doesn't:\ninstead,\nit stores dates as either text\n(in the ISO-8601 standard format \"YYYY-MM-DD HH:MM:SS.SSSS\"),\nreal numbers\n([Julian days](https://en.wikipedia.org/wiki/Julian_day), the number of days since November 24, 4714 BCE),\nor integers\n([Unix time](https://en.wikipedia.org/wiki/Unix_time), the number of seconds since midnight, January 1, 1970).\nIf this sounds complicated,\nit is,\nbut not nearly as complicated as figuring out\n[historical dates in Sweden](https://en.wikipedia.org/wiki/Swedish_calendar).",
+                "line_start": 79,
+                "line_end": 96,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L79-L96"
+              }
+            ],
+            "reference_points": [
+              "The table has calendar dates and the callout has storage representations, with no timezone annotations."
+            ],
+            "allowed_answer_boundary": "Acknowledge absent provenance; do not infer UTC from the Unix-time description.",
+            "insufficiency_reason": "No expedition timezone or conversion policy is recorded in the supplied unit.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The table has calendar dates and the callout has storage representations, with no timezone annotations. Boundary: Acknowledge absent provenance; do not infer UTC from the Unix-time description. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Switch back to known information: what is the latest DR-1 date actually printed in this unit?",
+          "category": "contextual_recovery",
+          "task_type": "contextual_recovery",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            5
+          ],
+          "expected_topic": "Which timezone did the DR-1 expedition use for each of those dates?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "007f8615dfab051600b23ddadc9a1790249e3e97aa366263b37cf7cf676c06f4"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                33,
+                37
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "007f8615dfab051600b23ddadc9a1790249e3e97aa366263b37cf7cf676c06f4",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | \n| 844    | DR-1   | 1932-03-22 | ",
+                "line_start": 33,
+                "line_end": 37,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L33-L37"
+              }
+            ],
+            "reference_points": [
+              "The latest displayed DR-1 date is 1932-03-22, associated with id 844."
+            ],
+            "allowed_answer_boundary": "Limit the claim to displayed records, not all visits that ever occurred; no timezone needs inventing.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "The latest displayed DR-1 date is 1932-03-22, associated with id 844. Boundary: Limit the claim to displayed records, not all visits that ever occurred; no timezone needs inventing. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "sql-02",
+      "course_id": "carpentries-sql",
+      "lecture_id": "carpentries-sql",
+      "turns": [
+        {
+          "text": "For this conversation use only the supplied unit \"Filtering (complete episode 3)\". Cite evidence for factual claims and say when this unit cannot answer. I need salinity measurements by Lake or Roerich. Why is quant='sal' AND person='lake' OR person='roe' risky here?",
+          "category": "error_diagnosis",
+          "task_type": "error_diagnosis",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "I need salinity measurements by Lake or Roerich. Why is quant='sal' AND person='lake' OR person='roe' risky here?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "84b5af643e15f4bef0c59673fa6d9cbb257fa8ef896a8ef088081c2fda861e54",
+              "ab69cdea4f367bc6e5860f34bdde0115cde60e3c64cbc503e1e406412899e8e6",
+              "db945e4b6506b9734c95791affc0582d0dbaafc20cccc42742c15d4a02a4e553",
+              "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+              "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+              "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                141,
+                175
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "84b5af643e15f4bef0c59673fa6d9cbb257fa8ef896a8ef088081c2fda861e54",
+                "quote": "We can combine `AND` with `OR`,\nbut we need to be careful about which operator is executed first.\nIf we *don't* use parentheses,\nwe get this:",
+                "line_start": 141,
+                "line_end": 144,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L141-L144"
+              },
+              {
+                "evidence_id": "ab69cdea4f367bc6e5860f34bdde0115cde60e3c64cbc503e1e406412899e8e6",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND person = 'lake' OR person = 'roe';\n```",
+                "line_start": 146,
+                "line_end": 148,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L146-L148"
+              },
+              {
+                "evidence_id": "db945e4b6506b9734c95791affc0582d0dbaafc20cccc42742c15d4a02a4e553",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | \n| 844    | roe    | rad        | 11\\.25   | ",
+                "line_start": 150,
+                "line_end": 158,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L150-L158"
+              },
+              {
+                "evidence_id": "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+                "quote": "which is salinity measurements by Lake,\nand *any* measurement by Roerich.\nWe probably want this instead:",
+                "line_start": 160,
+                "line_end": 162,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L160-L162"
+              },
+              {
+                "evidence_id": "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND (person = 'lake' OR person = 'roe');\n```",
+                "line_start": 164,
+                "line_end": 166,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L164-L166"
+              },
+              {
+                "evidence_id": "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | ",
+                "line_start": 168,
+                "line_end": 175,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L168-L175"
+              }
+            ],
+            "reference_points": [
+              "The unparenthesized expression includes all Roerich measurements, not only salinity.",
+              "The displayed rad reading 11.25 at taken 844 is an unwanted Roerich row."
+            ],
+            "allowed_answer_boundary": "Explain the conjunction/disjunction grouping; the row example is useful but not mandatory if grouping is explicit.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "The unparenthesized expression includes all Roerich measurements, not only salinity.; The displayed rad reading 11.25 at taken 844 is an unwanted Roerich row. Boundary: Explain the conjunction/disjunction grouping; the row example is useful but not mandatory if grouping is explicit. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Repair that query while keeping both people, and tell me what happens to Roerich's rad row.",
+          "category": "contextual_repair",
+          "task_type": "contextual_repair",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "I need salinity measurements by Lake or Roerich. Why is quant='sal' AND person='lake' OR person='roe' risky here?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+              "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+              "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                160,
+                175
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+                "quote": "which is salinity measurements by Lake,\nand *any* measurement by Roerich.\nWe probably want this instead:",
+                "line_start": 160,
+                "line_end": 162,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L160-L162"
+              },
+              {
+                "evidence_id": "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND (person = 'lake' OR person = 'roe');\n```",
+                "line_start": 164,
+                "line_end": 166,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L164-L166"
+              },
+              {
+                "evidence_id": "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | ",
+                "line_start": 168,
+                "line_end": 175,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L168-L175"
+              }
+            ],
+            "reference_points": [
+              "Use quant='sal' AND (person='lake' OR person='roe'), or quant='sal' AND person IN ('lake','roe').",
+              "The rad row is excluded."
+            ],
+            "allowed_answer_boundary": "Equivalent predicates are acceptable; retain the salinity restriction for both names.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "Use quant='sal' AND (person='lake' OR person='roe'), or quant='sal' AND person IN ('lake','roe').; The rad row is excluded. Boundary: Equivalent predicates are acceptable; retain the salinity restriction for both names. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Would replacing that parenthesized name test with person IN ('lake','roe') change the intended selection?",
+          "category": "contextual_comparison",
+          "task_type": "contextual_comparison",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "Repair that query while keeping both people, and tell me what happens to Roerich's rad row.",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "ffbf67147f520fa1920c4ec073519fc8d48178e3176fb84d21989f65c1c770f0",
+              "78411560fd65cdc89d9a1c46e3ab8ecbb19ba3bb3bdd2158a23f95a0f0bb2937",
+              "a6c615f26d37bdfeb96bec3d915c652e28c5db3b28fe7aedc5bec003c9778c34",
+              "d71c5434a927a23a78e6c2de5d13a2c7c737fe11c162736ff209d2265a0375e1",
+              "29067f7143ee23edd1d426b377305d8fd326ca6f2cfd17600efd5965769b00be",
+              "409fc33c7ff207ba777f415ba7fd56fbe4004c1ce8c759965daed73d2780a285",
+              "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+              "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+              "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                101,
+                139
+              ],
+              [
+                160,
+                175
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "ffbf67147f520fa1920c4ec073519fc8d48178e3176fb84d21989f65c1c770f0",
+                "quote": "If we want to find out what measurements were taken by either Lake or Roerich,\nwe can combine the tests on their names using `OR`:",
+                "line_start": 101,
+                "line_end": 102,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L101-L102"
+              },
+              {
+                "evidence_id": "78411560fd65cdc89d9a1c46e3ab8ecbb19ba3bb3bdd2158a23f95a0f0bb2937",
+                "quote": "```sql\nSELECT * FROM Survey WHERE person = 'lake' OR person = 'roe';\n```",
+                "line_start": 104,
+                "line_end": 106,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L104-L106"
+              },
+              {
+                "evidence_id": "a6c615f26d37bdfeb96bec3d915c652e28c5db3b28fe7aedc5bec003c9778c34",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | rad        | 2\\.19    | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | lake   | temp       | \\-16.0   | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | rad        | 1\\.46    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | \n| 844    | roe    | rad        | 11\\.25   | ",
+                "line_start": 108,
+                "line_end": 119,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L108-L119"
+              },
+              {
+                "evidence_id": "d71c5434a927a23a78e6c2de5d13a2c7c737fe11c162736ff209d2265a0375e1",
+                "quote": "Alternatively,\nwe can use `IN` to see if a value is in a specific set:",
+                "line_start": 121,
+                "line_end": 122,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L121-L122"
+              },
+              {
+                "evidence_id": "29067f7143ee23edd1d426b377305d8fd326ca6f2cfd17600efd5965769b00be",
+                "quote": "```sql\nSELECT * FROM Survey WHERE person IN ('lake', 'roe');\n```",
+                "line_start": 124,
+                "line_end": 126,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L124-L126"
+              },
+              {
+                "evidence_id": "409fc33c7ff207ba777f415ba7fd56fbe4004c1ce8c759965daed73d2780a285",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | rad        | 2\\.19    | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | lake   | temp       | \\-16.0   | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | rad        | 1\\.46    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | \n| 844    | roe    | rad        | 11\\.25   | ",
+                "line_start": 128,
+                "line_end": 139,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L128-L139"
+              },
+              {
+                "evidence_id": "ae0aa67818867cc70216d01c91f9837cbafdede26b8fc31ec0aa7f16169cb0f8",
+                "quote": "which is salinity measurements by Lake,\nand *any* measurement by Roerich.\nWe probably want this instead:",
+                "line_start": 160,
+                "line_end": 162,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L160-L162"
+              },
+              {
+                "evidence_id": "39a9d6324fb167fe5fd25a94765e7da874f3283a5b95702f3dbaea51741688bd",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND (person = 'lake' OR person = 'roe');\n```",
+                "line_start": 164,
+                "line_end": 166,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L164-L166"
+              },
+              {
+                "evidence_id": "32e1848172055fc0a6b5e2cd085ec0bdbeaa669fe4f3656decf8adc4abead1ab",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | ",
+                "line_start": 168,
+                "line_end": 175,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L168-L175"
+              }
+            ],
+            "reference_points": [
+              "IN membership expresses the same two-name alternative here.",
+              "The outer quant='sal' restriction must remain."
+            ],
+            "allowed_answer_boundary": "Do not claim an optimizer speedup or a general NULL equivalence theorem; the unit's shown values suffice.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "IN membership expresses the same two-name alternative here.; The outer quant='sal' restriction must remain. Boundary: Do not claim an optimizer speedup or a general NULL equivalence theorem; the unit's shown values suffice. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Give the exact query-plan cost and runtime on our production database for each equivalent version.",
+          "category": "insufficient_evidence",
+          "task_type": "insufficient_evidence",
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2,
+            3
+          ],
+          "expected_topic": "Repair that query while keeping both people, and tell me what happens to Roerich's rad row.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                121,
+                139
+              ],
+              [
+                219,
+                238
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "d71c5434a927a23a78e6c2de5d13a2c7c737fe11c162736ff209d2265a0375e1",
+                "quote": "Alternatively,\nwe can use `IN` to see if a value is in a specific set:",
+                "line_start": 121,
+                "line_end": 122,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L121-L122"
+              },
+              {
+                "evidence_id": "29067f7143ee23edd1d426b377305d8fd326ca6f2cfd17600efd5965769b00be",
+                "quote": "```sql\nSELECT * FROM Survey WHERE person IN ('lake', 'roe');\n```",
+                "line_start": 124,
+                "line_end": 126,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L124-L126"
+              },
+              {
+                "evidence_id": "409fc33c7ff207ba777f415ba7fd56fbe4004c1ce8c759965daed73d2780a285",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 734    | lake   | sal        | 0\\.05    | \n| 751    | lake   | sal        | 0\\.1     | \n| 752    | lake   | rad        | 2\\.19    | \n| 752    | lake   | sal        | 0\\.09    | \n| 752    | lake   | temp       | \\-16.0   | \n| 752    | roe    | sal        | 41\\.6    | \n| 837    | lake   | rad        | 1\\.46    | \n| 837    | lake   | sal        | 0\\.21    | \n| 837    | roe    | sal        | 22\\.5    | \n| 844    | roe    | rad        | 11\\.25   | ",
+                "line_start": 128,
+                "line_end": 139,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L128-L139"
+              },
+              {
+                "evidence_id": "35129af141050f1caf515d4a7b72f37723a893052c60996d1d81e915fe5f9de7",
+                "quote": "## Growing Queries",
+                "line_start": 219,
+                "line_end": 219,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L219-L219"
+              },
+              {
+                "evidence_id": "101a1c803d69e7efd5d3dae9365baf1a3abe91c7978ea6fc152f2168cfa16bab",
+                "quote": "What we have just done is how most people \"grow\" their SQL queries.\nWe started with something simple that did part of what we wanted,\nthen added more clauses one by one,\ntesting their effects as we went.\nThis is a good strategy --- in fact,\nfor complex queries it's often the *only* strategy --- but\nit depends on quick turnaround,\nand on us recognizing the right answer when we get it.",
+                "line_start": 221,
+                "line_end": 228,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L221-L228"
+              },
+              {
+                "evidence_id": "4fdcbe481ee85260b08ba1e0158a88bc520b0308f74b0098f3b65d9b7b1ebebc",
+                "quote": "The best way to achieve a quick turnaround is often\nto put a subset of data in a temporary database\nand run our queries against that,\nor to fill a small database with synthesized records.\nFor example,\ninstead of trying our queries against an actual database of 20 million Australians,\nwe could run it against a sample of ten thousand,\nor write a small program to generate ten thousand random (but plausible) records\nand use that.",
+                "line_start": 230,
+                "line_end": 238,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L230-L238"
+              }
+            ],
+            "reference_points": [
+              "The unit provides query results and a testing strategy, not this database's plan, indexes or benchmark."
+            ],
+            "allowed_answer_boundary": "Decline exact costs/timings; do not guess that IN must be faster.",
+            "insufficiency_reason": "No production schema statistics, hardware, query plan or measurements are supplied, and production access is outside this evaluation.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The unit provides query results and a testing strategy, not this database's plan, indexes or benchmark. Boundary: Decline exact costs/timings; do not guess that IN must be faster. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "sql-03",
+      "course_id": "carpentries-sql",
+      "lecture_id": "carpentries-sql",
+      "turns": [
+        {
+          "text": "For this conversation use only the supplied unit \"Filtering (complete episode 3)\". Cite evidence for factual claims and say when this unit cannot answer. How does the Filtering episode select every visit whose site begins with DR, and what does the percent character mean?",
+          "category": "fact_and_procedure",
+          "task_type": "fact_and_procedure",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "How does the Filtering episode select every visit whose site begins with DR, and what does the percent character mean?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "73ad348c1504a3e24a64984352d95be6d6d1e540bc61da517b2c4a1ce044a2bd",
+              "20268189ff94eb3532fc3dbc523f4a7b37ee4bc7f0b6f947613e51ec7aecab0e",
+              "50cb53536185695cbac326df269bb0951f9d3c6bec1ed9c2768bb3aba50310a8"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                177,
+                195
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "73ad348c1504a3e24a64984352d95be6d6d1e540bc61da517b2c4a1ce044a2bd",
+                "quote": "We can also filter by partial matches.  For example, if we want to\nknow something just about the site names beginning with \"DR\" we can\nuse the `LIKE` keyword.  The percent symbol acts as a\n[wildcard](../learners/reference.md#wildcard), matching any characters in that\nplace.  It can be used at the beginning, middle, or end of the string:",
+                "line_start": 177,
+                "line_end": 181,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L177-L181"
+              },
+              {
+                "evidence_id": "20268189ff94eb3532fc3dbc523f4a7b37ee4bc7f0b6f947613e51ec7aecab0e",
+                "quote": "```sql\nSELECT * FROM Visited WHERE site LIKE 'DR%';\n```",
+                "line_start": 183,
+                "line_end": 185,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L183-L185"
+              },
+              {
+                "evidence_id": "50cb53536185695cbac326df269bb0951f9d3c6bec1ed9c2768bb3aba50310a8",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | \n| 734    | DR-3   | 1930-01-07 | \n| 735    | DR-3   | 1930-01-12 | \n| 751    | DR-3   | 1930-02-26 | \n| 752    | DR-3   |            | \n| 844    | DR-1   | 1932-03-22 | ",
+                "line_start": 187,
+                "line_end": 195,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L187-L195"
+              }
+            ],
+            "reference_points": [
+              "SELECT * FROM Visited WHERE site LIKE 'DR%';",
+              "The wildcard matches a sequence of characters; the pattern has the literal DR prefix."
+            ],
+            "allowed_answer_boundary": "Do not interpret % as a numeric modulo operator in this LIKE pattern.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "SELECT * FROM Visited WHERE site LIKE 'DR%';; The wildcard matches a sequence of characters; the pattern has the literal DR prefix. Boundary: Do not interpret % as a numeric modulo operator in this LIKE pattern. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Then 'a' LIKE '%a' must be false because percent requires at least one extra character, right?",
+          "category": "false_premise",
+          "task_type": "false_premise",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1
+          ],
+          "expected_topic": "How does the Filtering episode select every visit whose site begins with DR, and what does the percent character mean?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f2cd078d74656a35272a104b52266873636b855574f73fe233766370d2fcdf20",
+              "29785fd9b415e7edbc0a2886438a56118332abefeb72fe7c86ee8656561f1130",
+              "eb1b4ebfd0ca04fe7726925551f9f25006d0b9ececeb4dd252b6dbb1949a0925",
+              "4fe18ab97997ada1a59600a39f96deadedf580484fa47a44c774f15908b7fde7",
+              "fcec62173549f08f8b945740e0b054d9a2ca521a8718c45da657f2fddb48287a",
+              "9d7d88e62c2de215a3d73bc187a8660e71702d6d6c1610bbede0e5370d11fffa"
+            ],
+            "evidence_role": "refutes_premise",
+            "source_ranges": [
+              [
+                300,
+                318
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "f2cd078d74656a35272a104b52266873636b855574f73fe233766370d2fcdf20",
+                "quote": "## Matching Patterns",
+                "line_start": 300,
+                "line_end": 300,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L300-L300"
+              },
+              {
+                "evidence_id": "29785fd9b415e7edbc0a2886438a56118332abefeb72fe7c86ee8656561f1130",
+                "quote": "Which of these expressions are true?",
+                "line_start": 302,
+                "line_end": 302,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L302-L302"
+              },
+              {
+                "evidence_id": "eb1b4ebfd0ca04fe7726925551f9f25006d0b9ececeb4dd252b6dbb1949a0925",
+                "quote": "1. `'a' LIKE 'a'`\n2. `'a' LIKE '%a'`\n3. `'beta' LIKE '%a'`\n4. `'alpha' LIKE 'a%%'`\n5. `'alpha' LIKE 'a%p%'`",
+                "line_start": 304,
+                "line_end": 308,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L304-L308"
+              },
+              {
+                "evidence_id": "4fe18ab97997ada1a59600a39f96deadedf580484fa47a44c774f15908b7fde7",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 310,
+                "line_end": 310,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L310-L310"
+              },
+              {
+                "evidence_id": "fcec62173549f08f8b945740e0b054d9a2ca521a8718c45da657f2fddb48287a",
+                "quote": "## Solution",
+                "line_start": 312,
+                "line_end": 312,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L312-L312"
+              },
+              {
+                "evidence_id": "9d7d88e62c2de215a3d73bc187a8660e71702d6d6c1610bbede0e5370d11fffa",
+                "quote": "1. True because these are the same character.\n2. True because the wildcard can match *zero* or more characters.\n3. True because the `%` matches `bet` and the `a` matches the `a`.\n4. True because the first wildcard matches `lpha` and the second wildcard matches zero characters (or vice versa).\n5. True because the first wildcard matches `l` and the second wildcard matches `ha`.",
+                "line_start": 314,
+                "line_end": 318,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L314-L318"
+              }
+            ],
+            "reference_points": [
+              "It is true: the wildcard may match zero characters.",
+              "The final literal a matches the entire one-character string."
+            ],
+            "allowed_answer_boundary": "Explicitly correct the nonempty-wildcard assumption using the worked pattern solutions.",
+            "insufficiency_reason": null,
+            "expected_behavior": "correct_false_premise_with_evidence",
+            "rubric": "It is true: the wildcard may match zero characters.; The final literal a matches the entire one-character string. Boundary: Explicitly correct the nonempty-wildcard assumption using the worked pattern solutions. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Using that same rule, split the matches in 'alpha' LIKE 'a%p%' and explain why it is true.",
+          "category": "contextual_application",
+          "task_type": "contextual_application",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "Then 'a' LIKE '%a' must be false because percent requires at least one extra character, right?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "f2cd078d74656a35272a104b52266873636b855574f73fe233766370d2fcdf20",
+              "29785fd9b415e7edbc0a2886438a56118332abefeb72fe7c86ee8656561f1130",
+              "eb1b4ebfd0ca04fe7726925551f9f25006d0b9ececeb4dd252b6dbb1949a0925",
+              "4fe18ab97997ada1a59600a39f96deadedf580484fa47a44c774f15908b7fde7",
+              "fcec62173549f08f8b945740e0b054d9a2ca521a8718c45da657f2fddb48287a",
+              "9d7d88e62c2de215a3d73bc187a8660e71702d6d6c1610bbede0e5370d11fffa"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                300,
+                318
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "f2cd078d74656a35272a104b52266873636b855574f73fe233766370d2fcdf20",
+                "quote": "## Matching Patterns",
+                "line_start": 300,
+                "line_end": 300,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L300-L300"
+              },
+              {
+                "evidence_id": "29785fd9b415e7edbc0a2886438a56118332abefeb72fe7c86ee8656561f1130",
+                "quote": "Which of these expressions are true?",
+                "line_start": 302,
+                "line_end": 302,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L302-L302"
+              },
+              {
+                "evidence_id": "eb1b4ebfd0ca04fe7726925551f9f25006d0b9ececeb4dd252b6dbb1949a0925",
+                "quote": "1. `'a' LIKE 'a'`\n2. `'a' LIKE '%a'`\n3. `'beta' LIKE '%a'`\n4. `'alpha' LIKE 'a%%'`\n5. `'alpha' LIKE 'a%p%'`",
+                "line_start": 304,
+                "line_end": 308,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L304-L308"
+              },
+              {
+                "evidence_id": "4fe18ab97997ada1a59600a39f96deadedf580484fa47a44c774f15908b7fde7",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 310,
+                "line_end": 310,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L310-L310"
+              },
+              {
+                "evidence_id": "fcec62173549f08f8b945740e0b054d9a2ca521a8718c45da657f2fddb48287a",
+                "quote": "## Solution",
+                "line_start": 312,
+                "line_end": 312,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L312-L312"
+              },
+              {
+                "evidence_id": "9d7d88e62c2de215a3d73bc187a8660e71702d6d6c1610bbede0e5370d11fffa",
+                "quote": "1. True because these are the same character.\n2. True because the wildcard can match *zero* or more characters.\n3. True because the `%` matches `bet` and the `a` matches the `a`.\n4. True because the first wildcard matches `lpha` and the second wildcard matches zero characters (or vice versa).\n5. True because the first wildcard matches `l` and the second wildcard matches `ha`.",
+                "line_start": 314,
+                "line_end": 318,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L314-L318"
+              }
+            ],
+            "reference_points": [
+              "The initial a and the p are literals.",
+              "The first % can match l and the second ha."
+            ],
+            "allowed_answer_boundary": "Any correct decomposition consistent with literal order is acceptable; exact copied wording is unnecessary.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "The initial a and the p are literals.; The first % can match l and the second ha. Boundary: Any correct decomposition consistent with literal order is acceptable; exact copied wording is unnecessary. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Can the episode prove whether DR% matches a lowercase dr-3 under every SQL engine and collation?",
+          "category": "insufficient_evidence",
+          "task_type": "insufficient_evidence",
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            3
+          ],
+          "expected_topic": "How does the Filtering episode select every visit whose site begins with DR, and what does the percent character mean?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                177,
+                195
+              ],
+              [
+                300,
+                318
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "73ad348c1504a3e24a64984352d95be6d6d1e540bc61da517b2c4a1ce044a2bd",
+                "quote": "We can also filter by partial matches.  For example, if we want to\nknow something just about the site names beginning with \"DR\" we can\nuse the `LIKE` keyword.  The percent symbol acts as a\n[wildcard](../learners/reference.md#wildcard), matching any characters in that\nplace.  It can be used at the beginning, middle, or end of the string:",
+                "line_start": 177,
+                "line_end": 181,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L177-L181"
+              },
+              {
+                "evidence_id": "20268189ff94eb3532fc3dbc523f4a7b37ee4bc7f0b6f947613e51ec7aecab0e",
+                "quote": "```sql\nSELECT * FROM Visited WHERE site LIKE 'DR%';\n```",
+                "line_start": 183,
+                "line_end": 185,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L183-L185"
+              },
+              {
+                "evidence_id": "50cb53536185695cbac326df269bb0951f9d3c6bec1ed9c2768bb3aba50310a8",
+                "quote": "| id     | site   | dated      | \n| ------ | ------ | ---------- |\n| 619    | DR-1   | 1927-02-08 | \n| 622    | DR-1   | 1927-02-10 | \n| 734    | DR-3   | 1930-01-07 | \n| 735    | DR-3   | 1930-01-12 | \n| 751    | DR-3   | 1930-02-26 | \n| 752    | DR-3   |            | \n| 844    | DR-1   | 1932-03-22 | ",
+                "line_start": 187,
+                "line_end": 195,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L187-L195"
+              },
+              {
+                "evidence_id": "f2cd078d74656a35272a104b52266873636b855574f73fe233766370d2fcdf20",
+                "quote": "## Matching Patterns",
+                "line_start": 300,
+                "line_end": 300,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L300-L300"
+              },
+              {
+                "evidence_id": "29785fd9b415e7edbc0a2886438a56118332abefeb72fe7c86ee8656561f1130",
+                "quote": "Which of these expressions are true?",
+                "line_start": 302,
+                "line_end": 302,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L302-L302"
+              },
+              {
+                "evidence_id": "eb1b4ebfd0ca04fe7726925551f9f25006d0b9ececeb4dd252b6dbb1949a0925",
+                "quote": "1. `'a' LIKE 'a'`\n2. `'a' LIKE '%a'`\n3. `'beta' LIKE '%a'`\n4. `'alpha' LIKE 'a%%'`\n5. `'alpha' LIKE 'a%p%'`",
+                "line_start": 304,
+                "line_end": 308,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L304-L308"
+              },
+              {
+                "evidence_id": "4fe18ab97997ada1a59600a39f96deadedf580484fa47a44c774f15908b7fde7",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 310,
+                "line_end": 310,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L310-L310"
+              },
+              {
+                "evidence_id": "fcec62173549f08f8b945740e0b054d9a2ca521a8718c45da657f2fddb48287a",
+                "quote": "## Solution",
+                "line_start": 312,
+                "line_end": 312,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L312-L312"
+              },
+              {
+                "evidence_id": "9d7d88e62c2de215a3d73bc187a8660e71702d6d6c1610bbede0e5370d11fffa",
+                "quote": "1. True because these are the same character.\n2. True because the wildcard can match *zero* or more characters.\n3. True because the `%` matches `bet` and the `a` matches the `a`.\n4. True because the first wildcard matches `lpha` and the second wildcard matches zero characters (or vice versa).\n5. True because the first wildcard matches `l` and the second wildcard matches `ha`.",
+                "line_start": 314,
+                "line_end": 318,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L314-L318"
+              }
+            ],
+            "reference_points": [
+              "The examples illustrate wildcard matching but supply no cross-engine collation or case-sensitivity specification."
+            ],
+            "allowed_answer_boundary": "State the limit; do not universalize the displayed uppercase example or invent a database setting.",
+            "insufficiency_reason": "Engine/collation-specific case behaviour is not established by these examples.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The examples illustrate wildcard matching but supply no cross-engine collation or case-sensitivity specification. Boundary: State the limit; do not universalize the displayed uppercase example or invent a database setting. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Write a Kubernetes deployment manifest to host this SQL system with automatic failover.",
+          "category": "out_of_scope",
+          "task_type": "out_of_scope",
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Write a Kubernetes deployment manifest to host this SQL system with automatic failover.",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                219,
+                238
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "35129af141050f1caf515d4a7b72f37723a893052c60996d1d81e915fe5f9de7",
+                "quote": "## Growing Queries",
+                "line_start": 219,
+                "line_end": 219,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L219-L219"
+              },
+              {
+                "evidence_id": "101a1c803d69e7efd5d3dae9365baf1a3abe91c7978ea6fc152f2168cfa16bab",
+                "quote": "What we have just done is how most people \"grow\" their SQL queries.\nWe started with something simple that did part of what we wanted,\nthen added more clauses one by one,\ntesting their effects as we went.\nThis is a good strategy --- in fact,\nfor complex queries it's often the *only* strategy --- but\nit depends on quick turnaround,\nand on us recognizing the right answer when we get it.",
+                "line_start": 221,
+                "line_end": 228,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L221-L228"
+              },
+              {
+                "evidence_id": "4fdcbe481ee85260b08ba1e0158a88bc520b0308f74b0098f3b65d9b7b1ebebc",
+                "quote": "The best way to achieve a quick turnaround is often\nto put a subset of data in a temporary database\nand run our queries against that,\nor to fill a small database with synthesized records.\nFor example,\ninstead of trying our queries against an actual database of 20 million Australians,\nwe could run it against a sample of ten thousand,\nor write a small program to generate ten thousand random (but plausible) records\nand use that.",
+                "line_start": 230,
+                "line_end": 238,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L230-L238"
+              }
+            ],
+            "reference_points": [
+              "The course unit teaches query filtering and small test databases, not container orchestration or failover."
+            ],
+            "allowed_answer_boundary": "Decline the unsupported infrastructure request; no deployment YAML should be supplied as course-grounded content.",
+            "insufficiency_reason": "No cluster, storage, replication or deployment requirements appear in the unit.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "The course unit teaches query filtering and small test databases, not container orchestration or failover. Boundary: Decline the unsupported infrastructure request; no deployment YAML should be supplied as course-grounded content. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        }
+      ]
+    },
+    {
+      "dialogue_id": "sql-04",
+      "course_id": "carpentries-sql",
+      "lecture_id": "carpentries-sql",
+      "turns": [
+        {
+          "text": "For this conversation use only the supplied unit \"Filtering (complete episode 3)\". Cite evidence for factual claims and say when this unit cannot answer. I wrote (lat > -48) OR (lat < 48) for sites between those latitudes. Why does the course's South Pole example reveal a mistake?",
+          "category": "false_premise",
+          "task_type": "false_premise",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "I wrote (lat > -48) OR (lat < 48) for sites between those latitudes. Why does the course's South Pole example reveal a mistake?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "e95c0b5159edf982ff681460c3530c380adcba73c7f173ccd5975fac86cac8a8",
+              "066f6bfbffa2a2489991f34e389b98efeade09b880d77c3ffce2903a2843ff29",
+              "13455725199c412586a0b91e597f61139c3c58556909b301ba808d54bd2cba6c",
+              "729d3115c70bedc05fd7f03962f869d072da5affc9523fb9e9e6f723c9c6899d",
+              "acb343beff70ed30ef4b24d22e07f8d2bb426cc3686fbf61b8215b7633eba853",
+              "dcb57e5f674894fc53a8886e7d77456d51016415de70c7a459efeae56460b112",
+              "8f2c3a38560c7ad5670b9de43ee2e936378a301aa5a662ef3cd70a83c5e71472",
+              "d048e7bb5664d633ee506457af68aedf3496b7bc6ccf8dba6323ba6480bddb93"
+            ],
+            "evidence_role": "refutes_premise",
+            "source_ranges": [
+              [
+                245,
+                267
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "e95c0b5159edf982ff681460c3530c380adcba73c7f173ccd5975fac86cac8a8",
+                "quote": "## Fix This Query",
+                "line_start": 245,
+                "line_end": 245,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L245-L245"
+              },
+              {
+                "evidence_id": "066f6bfbffa2a2489991f34e389b98efeade09b880d77c3ffce2903a2843ff29",
+                "quote": "Suppose we want to select all sites that lie within 48 degrees of the equator.\nOur first query is:",
+                "line_start": 247,
+                "line_end": 248,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L247-L248"
+              },
+              {
+                "evidence_id": "13455725199c412586a0b91e597f61139c3c58556909b301ba808d54bd2cba6c",
+                "quote": "```sql\nSELECT * FROM Site WHERE (lat > -48) OR (lat < 48);\n```",
+                "line_start": 250,
+                "line_end": 252,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L250-L252"
+              },
+              {
+                "evidence_id": "729d3115c70bedc05fd7f03962f869d072da5affc9523fb9e9e6f723c9c6899d",
+                "quote": "Explain why this is wrong,\nand rewrite the query so that it is correct.",
+                "line_start": 254,
+                "line_end": 255,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L254-L255"
+              },
+              {
+                "evidence_id": "acb343beff70ed30ef4b24d22e07f8d2bb426cc3686fbf61b8215b7633eba853",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 257,
+                "line_end": 257,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L257-L257"
+              },
+              {
+                "evidence_id": "dcb57e5f674894fc53a8886e7d77456d51016415de70c7a459efeae56460b112",
+                "quote": "## Solution",
+                "line_start": 259,
+                "line_end": 259,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L259-L259"
+              },
+              {
+                "evidence_id": "8f2c3a38560c7ad5670b9de43ee2e936378a301aa5a662ef3cd70a83c5e71472",
+                "quote": "Because we used `OR`, a site on the South Pole for example will still meet\nthe second criteria and thus be included. Instead, we want to restrict this\nto sites that meet *both* criteria:",
+                "line_start": 261,
+                "line_end": 263,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L261-L263"
+              },
+              {
+                "evidence_id": "d048e7bb5664d633ee506457af68aedf3496b7bc6ccf8dba6323ba6480bddb93",
+                "quote": "```sql\nSELECT * FROM Site WHERE (lat > -48) AND (lat < 48);\n```",
+                "line_start": 265,
+                "line_end": 267,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L265-L267"
+              }
+            ],
+            "reference_points": [
+              "A latitude at the South Pole satisfies lat<48 even though it is outside the intended band.",
+              "Both bounds must hold, so use AND."
+            ],
+            "allowed_answer_boundary": "Accept another outside-band counterexample if its logic is correct. The source uses strict boundaries; do not silently change to inclusive bounds.",
+            "insufficiency_reason": null,
+            "expected_behavior": "correct_false_premise_with_evidence",
+            "rubric": "A latitude at the South Pole satisfies lat<48 even though it is outside the intended band.; Both bounds must hold, so use AND. Boundary: Accept another outside-band counterexample if its logic is correct. The source uses strict boundaries; do not silently change to inclusive bounds. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Now check salinity outside the stated normal range 0 to 1. Which condition and which outlier values are actually shown?",
+          "category": "procedure_and_evidence",
+          "task_type": "procedure_and_evidence",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "Now check salinity outside the stated normal range 0 to 1. Which condition and which outlier values are actually shown?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "6139a1bc7e9f3d403c03410e5b74cef25325e4887789a79154fcf47cf5cada02",
+              "371a6400dc3c5e9884533314c256f94d96b52ee22c3231fee99357e95072c9bd",
+              "9dc7500af8d2825828a1f4f0478d9ed73aaa2a56839eeecd3e785c9c5eeb38d3",
+              "7cfe5f3d99727cd1c6eae618c6edc29a1cb8cf4456e8252eb46adc956643eda2",
+              "ed8cfc56155bfce73d1fa85a8e768de1d82dc2ee62d1883beb656a03669504d2",
+              "89c85c9e37d897ad8947e2afb069be5d15b844923b04b7efca557656de306d1f"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                275,
+                292
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "6139a1bc7e9f3d403c03410e5b74cef25325e4887789a79154fcf47cf5cada02",
+                "quote": "## Finding Outliers",
+                "line_start": 275,
+                "line_end": 275,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L275-L275"
+              },
+              {
+                "evidence_id": "371a6400dc3c5e9884533314c256f94d96b52ee22c3231fee99357e95072c9bd",
+                "quote": "Normalized salinity readings are supposed to be between 0.0 and 1.0.\nWrite a query that selects all records from `Survey`\nwith salinity values outside this range.",
+                "line_start": 277,
+                "line_end": 279,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L277-L279"
+              },
+              {
+                "evidence_id": "9dc7500af8d2825828a1f4f0478d9ed73aaa2a56839eeecd3e785c9c5eeb38d3",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 281,
+                "line_end": 281,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L281-L281"
+              },
+              {
+                "evidence_id": "7cfe5f3d99727cd1c6eae618c6edc29a1cb8cf4456e8252eb46adc956643eda2",
+                "quote": "## Solution",
+                "line_start": 283,
+                "line_end": 283,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L283-L283"
+              },
+              {
+                "evidence_id": "ed8cfc56155bfce73d1fa85a8e768de1d82dc2ee62d1883beb656a03669504d2",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND ((reading > 1.0) OR (reading < 0.0));\n```",
+                "line_start": 285,
+                "line_end": 287,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L285-L287"
+              },
+              {
+                "evidence_id": "89c85c9e37d897ad8947e2afb069be5d15b844923b04b7efca557656de306d1f",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 752    | roe    | sal        | 41\\.6    | \n| 837    | roe    | sal        | 22\\.5    | ",
+                "line_start": 289,
+                "line_end": 292,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L289-L292"
+              }
+            ],
+            "reference_points": [
+              "quant='sal' AND (reading > 1.0 OR reading < 0.0).",
+              "The displayed outliers are 41.6 at taken 752 and 22.5 at taken 837, both roe."
+            ],
+            "allowed_answer_boundary": "0 and 1 are not outside the stated range; preserve quant restriction rather than flagging unrelated temperature/radiation values.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "quant='sal' AND (reading > 1.0 OR reading < 0.0).; The displayed outliers are 41.6 at taken 752 and 22.5 at taken 837, both roe. Boundary: 0 and 1 are not outside the stated range; preserve quant restriction rather than flagging unrelated temperature/radiation values. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Does that outlier query establish that Roerich falsified the readings, or why they are so large?",
+          "category": "insufficient_evidence",
+          "task_type": "insufficient_evidence",
+          "answerability": "INSUFFICIENT_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            2
+          ],
+          "expected_topic": "Now check salinity outside the stated normal range 0 to 1. Which condition and which outlier values are actually shown?",
+          "expected_insufficient": true,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [],
+            "evidence_role": "scope_anchor_not_proof_of_global_absence",
+            "source_ranges": [
+              [
+                275,
+                292
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "6139a1bc7e9f3d403c03410e5b74cef25325e4887789a79154fcf47cf5cada02",
+                "quote": "## Finding Outliers",
+                "line_start": 275,
+                "line_end": 275,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L275-L275"
+              },
+              {
+                "evidence_id": "371a6400dc3c5e9884533314c256f94d96b52ee22c3231fee99357e95072c9bd",
+                "quote": "Normalized salinity readings are supposed to be between 0.0 and 1.0.\nWrite a query that selects all records from `Survey`\nwith salinity values outside this range.",
+                "line_start": 277,
+                "line_end": 279,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L277-L279"
+              },
+              {
+                "evidence_id": "9dc7500af8d2825828a1f4f0478d9ed73aaa2a56839eeecd3e785c9c5eeb38d3",
+                "quote": ":::::::::::::::  solution",
+                "line_start": 281,
+                "line_end": 281,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L281-L281"
+              },
+              {
+                "evidence_id": "7cfe5f3d99727cd1c6eae618c6edc29a1cb8cf4456e8252eb46adc956643eda2",
+                "quote": "## Solution",
+                "line_start": 283,
+                "line_end": 283,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L283-L283"
+              },
+              {
+                "evidence_id": "ed8cfc56155bfce73d1fa85a8e768de1d82dc2ee62d1883beb656a03669504d2",
+                "quote": "```sql\nSELECT * FROM Survey WHERE quant = 'sal' AND ((reading > 1.0) OR (reading < 0.0));\n```",
+                "line_start": 285,
+                "line_end": 287,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L285-L287"
+              },
+              {
+                "evidence_id": "89c85c9e37d897ad8947e2afb069be5d15b844923b04b7efca557656de306d1f",
+                "quote": "| taken  | person | quant      | reading | \n| ------ | ------ | ---------- | ------- |\n| 752    | roe    | sal        | 41\\.6    | \n| 837    | roe    | sal        | 22\\.5    | ",
+                "line_start": 289,
+                "line_end": 292,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L289-L292"
+              }
+            ],
+            "reference_points": [
+              "It locates values outside a stated range but supplies no causal or intent evidence."
+            ],
+            "allowed_answer_boundary": "Reject the unsupported accusation/explanation; identifying outliers is not proving fraud or a unit conversion error.",
+            "insufficiency_reason": "The unit gives values and query logic, not field notes, calibration records or an investigation of their cause.",
+            "expected_behavior": "clean_course_bounded_abstention",
+            "rubric": "It locates values outside a stated range but supplies no causal or intent evidence. Boundary: Reject the unsupported accusation/explanation; identifying outliers is not proving fraud or a unit conversion error. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "A different report lists DISTINCT person, quant for Lake or Roerich. Is DISTINCT applied to entire original Survey rows, or to something else?",
+          "category": "source_interpretation",
+          "task_type": "source_interpretation",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": false,
+          "depends_on_turns": [],
+          "expected_topic": "A different report lists DISTINCT person, quant for Lake or Roerich. Is DISTINCT applied to entire original Survey rows, or to something else?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "32737f90d09a5c320659e92b9d6c6adef20aa4e2a131594d2ab866c392ae5242",
+              "e81cf7930f1ac58aac08e7576d55c433e21f74748a22e36d3c92ada3f4a4569c",
+              "773943a65e1073db0595273d7c2b75ab4ae13cc71e515ed17873b65d0d954e50",
+              "7b4cbd5d6d9177dbedc798db734ec979ac9a5e16634606d91b499a3bf065e61b"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                197,
+                215
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "32737f90d09a5c320659e92b9d6c6adef20aa4e2a131594d2ab866c392ae5242",
+                "quote": "Finally,\nwe can use `DISTINCT` with `WHERE`\nto give a second level of filtering:",
+                "line_start": 197,
+                "line_end": 199,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L197-L199"
+              },
+              {
+                "evidence_id": "e81cf7930f1ac58aac08e7576d55c433e21f74748a22e36d3c92ada3f4a4569c",
+                "quote": "```sql\nSELECT DISTINCT person, quant FROM Survey WHERE person = 'lake' OR person = 'roe';\n```",
+                "line_start": 201,
+                "line_end": 203,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L201-L203"
+              },
+              {
+                "evidence_id": "773943a65e1073db0595273d7c2b75ab4ae13cc71e515ed17873b65d0d954e50",
+                "quote": "| person | quant  | \n| ------ | ------ |\n| lake   | sal    | \n| lake   | rad    | \n| lake   | temp   | \n| roe    | sal    | \n| roe    | rad    | ",
+                "line_start": 205,
+                "line_end": 211,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L205-L211"
+              },
+              {
+                "evidence_id": "7b4cbd5d6d9177dbedc798db734ec979ac9a5e16634606d91b499a3bf065e61b",
+                "quote": "But remember:\n`DISTINCT` is applied to the values displayed in the chosen columns,\nnot to the entire rows as they are being processed.",
+                "line_start": 213,
+                "line_end": 215,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L213-L215"
+              }
+            ],
+            "reference_points": [
+              "DISTINCT applies to the chosen output column tuples, here (person,quant).",
+              "Rows differing only in unselected fields can collapse to the same output pair."
+            ],
+            "allowed_answer_boundary": "Use the displayed five pairs as optional illustration. Do not claim DISTINCT person,quant returns just two people.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "DISTINCT applies to the chosen output column tuples, here (person,quant).; Rows differing only in unselected fields can collapse to the same output pair. Boundary: Use the displayed five pairs as optional illustration. Do not claim DISTINCT person,quant returns just two people. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        },
+        {
+          "text": "Finally, how should I grow and test a complicated filter before trusting it on a huge dataset?",
+          "category": "synthesis",
+          "task_type": "synthesis",
+          "answerability": "ANSWERABLE_IN_SUPPLIED_UNIT",
+          "context_followup": true,
+          "depends_on_turns": [
+            1,
+            2,
+            4
+          ],
+          "expected_topic": "I wrote (lat > -48) OR (lat < 48) for sites between those latitudes. Why does the course's South Pole example reveal a mistake?",
+          "expected_insufficient": false,
+          "socratic": false,
+          "reference": {
+            "evidence_ids": [
+              "35129af141050f1caf515d4a7b72f37723a893052c60996d1d81e915fe5f9de7",
+              "101a1c803d69e7efd5d3dae9365baf1a3abe91c7978ea6fc152f2168cfa16bab",
+              "4fdcbe481ee85260b08ba1e0158a88bc520b0308f74b0098f3b65d9b7b1ebebc"
+            ],
+            "evidence_role": "supports_answer_or_derivation",
+            "source_ranges": [
+              [
+                219,
+                238
+              ]
+            ],
+            "quotes": [
+              {
+                "evidence_id": "35129af141050f1caf515d4a7b72f37723a893052c60996d1d81e915fe5f9de7",
+                "quote": "## Growing Queries",
+                "line_start": 219,
+                "line_end": 219,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L219-L219"
+              },
+              {
+                "evidence_id": "101a1c803d69e7efd5d3dae9365baf1a3abe91c7978ea6fc152f2168cfa16bab",
+                "quote": "What we have just done is how most people \"grow\" their SQL queries.\nWe started with something simple that did part of what we wanted,\nthen added more clauses one by one,\ntesting their effects as we went.\nThis is a good strategy --- in fact,\nfor complex queries it's often the *only* strategy --- but\nit depends on quick turnaround,\nand on us recognizing the right answer when we get it.",
+                "line_start": 221,
+                "line_end": 228,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L221-L228"
+              },
+              {
+                "evidence_id": "4fdcbe481ee85260b08ba1e0158a88bc520b0308f74b0098f3b65d9b7b1ebebc",
+                "quote": "The best way to achieve a quick turnaround is often\nto put a subset of data in a temporary database\nand run our queries against that,\nor to fill a small database with synthesized records.\nFor example,\ninstead of trying our queries against an actual database of 20 million Australians,\nwe could run it against a sample of ten thousand,\nor write a small program to generate ten thousand random (but plausible) records\nand use that.",
+                "line_start": 230,
+                "line_end": 238,
+                "locator": "https://github.com/swcarpentry/sql-novice-survey/blob/0d101a4cc2ce7638dfa18289b55f7ab47f44a3ee/episodes/03-filter.md#L230-L238"
+              }
+            ],
+            "reference_points": [
+              "Start simple, add clauses incrementally and test their effects against recognizable expected results.",
+              "Use a small temporary subset or plausible synthesized records for quick turnaround."
+            ],
+            "allowed_answer_boundary": "Explain that small tests help diagnose logic but do not prove production performance or universal correctness.",
+            "insufficiency_reason": null,
+            "expected_behavior": "grounded_answer",
+            "rubric": "Start simple, add clauses incrementally and test their effects against recognizable expected results.; Use a small temporary subset or plausible synthesized records for quick turnaround. Boundary: Explain that small tests help diagnose logic but do not prove production performance or universal correctness. Assess all material assertions and citations; preserve referents, assumptions and dimensions. Context consistency requires semantic review of prior turns, never string equality."
+          }
+        }
+      ]
+    }
+  ]
+}

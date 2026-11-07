@@ -1,0 +1,17 @@
+{
+  "version": "tutor-public-v1",
+  "policy": "COURSE_DISJOINT_EVALUATION_ONLY_NO_TUNING",
+  "split_sha256": "1eea49193925d5565bae62ce611d79871a1b78ad450c494b344ac4456bed9a3c",
+  "course_ids": [
+    "carpentries-sql"
+  ],
+  "dialogue_ids": [
+    "sql-01",
+    "sql-02",
+    "sql-03",
+    "sql-04"
+  ],
+  "holdout_sha256": "7e9224203878ef8927763d566f2cd7337fd1d45c682b69500cc098f903579911",
+  "snapshot_sha256": "529e02efbe24c7a3a54075191027edcfd0963f6505f68143bb7b3b2e3547aa4c",
+  "disclosure": "Codex authored/reviewed evaluation questions after split freeze. No product or prompt tuning. Base-model exposure unknown. No independent human expert labels or real trial outcomes."
+}

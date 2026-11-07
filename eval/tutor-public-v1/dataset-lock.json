@@ -1,0 +1,19 @@
+{
+  "version": "tutor-public-v1",
+  "files": {
+    "course-split.json": "1eea49193925d5565bae62ce611d79871a1b78ad450c494b344ac4456bed9a3c",
+    "course-split.sha256": "5132b0f2d52db78ed300a5b7ccefe93b4ce213ab93ed1fd5398db9400988d80f",
+    "sources.json": "720fb9fd986164b498eb72d931c54b53c949ce81b8c23cee9b03662cc387de14",
+    "author_public.py": "acf84e4c93b1c3ad30a2f53b5b81675f546a45f5bd9aef5f6113d8b0ff02c1e8",
+    "snapshot.json": "529e02efbe24c7a3a54075191027edcfd0963f6505f68143bb7b3b2e3547aa4c",
+    "development.json": "d36683b8d1702f161f1a88cec8029535798ea36dcbe94e44c4a4d62163c75178",
+    "holdout.json": "7e9224203878ef8927763d566f2cd7337fd1d45c682b69500cc098f903579911",
+    "holdout-manifest.json": "f90b468c8cd290b1d41718f93fa3c09c0ecf020e6d59db04784f8c2d4abfbbb8",
+    "materials/carpentries-python-LICENSE.md": "0c8fa42d7d7166e5b1127d93f847543dac03cabba94d5ab9f49b546e304098ff",
+    "materials/carpentries-python.md": "a0ca18db59b888dcfa6d00e5680465720e4a8c7feed3b369b2c92d053c592ad3",
+    "materials/carpentries-spreadsheets-LICENSE.md": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+    "materials/carpentries-spreadsheets.md": "617226dece8c7de38808688c7053272e3a32cca7a1a28fedf0d6d7cb04ae24f9",
+    "materials/carpentries-sql-LICENSE.md": "1b7f11e8511bea664a324ad90a38f1b19f844dc48a245dd1d7bbcd261689bb7a",
+    "materials/carpentries-sql.md": "c60e7f76b5d8d253eb27aa0a0f8c6d17befb648350ad1aa2692714611b4ca19b"
+  }
+}
