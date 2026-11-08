@@ -1,0 +1,18 @@
+{
+  "requested_model": "deepseek-flash",
+  "configuration_available_verified": true,
+  "input_nano_usd_per_token": 300,
+  "output_nano_usd_per_token": 1200,
+  "official_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "reviewed_utc": "2026-11-08T14:47:21.042412+00:00",
+  "no_cache_peak_rates_cover_current_prices": true,
+  "configuration_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+  "published_backend": "DeepSeek-V4.1-Flash-1017",
+  "nonthinking_required_tools_verified": true,
+  "public_document_sha256": {
+    "pricing": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "chat": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f"
+  },
+  "supplier_hard_cap_verified": false,
+  "supplier_billing": "UNKNOWN"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "22130884d07072e29b3aad4c74228ff9700add0ec27cce2102c2bb9d4736f661",
+  "image": "sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f",
+  "volume": "lecturelens-v19-smoke2227-20261108-data",
+  "run_id": "v19-smoke-20261108-2227-once",
+  "loopback": "127.0.0.1:25841",
+  "new_instance": true,
+  "existing_services_restarted": false
+}
