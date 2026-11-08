@@ -1,0 +1,12 @@
+{
+  "private_root": ".data/tutor-v19-live-20261108-preflight",
+  "files": {
+    "events.jsonl": "0f9a85b93ff6e05ef06b3436ea56bd3b64c5c24845cb14fe47e4b944d7fe5563",
+    "outcomes.json": "ffc3ba6200782ddb63e6de09d9813746d46ff1b806aa5165ebf92da1efd45eab",
+    "preflight.json": "7a8a6e3b49ed23343f93141043fdc414131c235c9054ba29c7cb1dfd30fe2a93",
+    "pricing.json": "fe8ae50e20a5bb6d072b007999b449f7c56036fae54ad0cef9d3350dbc3bda74",
+    "results.json": "0f42e6d52232acc16ff23504d9d9c0846a0f4ca5e923728e4b938d8a397e3a96"
+  },
+  "raw_wire_artifacts": "NONE; preflight stopped before dispatch",
+  "no_credential_file_included": true
+}

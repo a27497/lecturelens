@@ -1,0 +1,379 @@
+{
+  "preflight": {
+    "timestamp_utc": "2026-11-08T07:00:40.809995+00:00",
+    "preflight_sha": "059b56561aaa1aef1d05770302f26861390f2e88",
+    "planned_live_execution_sha": "059b56561aaa1aef1d05770302f26861390f2e88",
+    "actual_live_execution_sha": null,
+    "clean_at_start": true,
+    "candidate": "p8-tutor-selected-v19-development",
+    "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+    "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+    "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+    "manifest_path": "eval/tutor-selection-v19-v1/candidate.json",
+    "frozen_entry": "scripts/dev/run_tutor_smoke_v19.py",
+    "frozen_entries_checked": [
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+        "sha256": "c3552274015967595e17c28618baab1b6c5d6be38a9d4d64b7a9a7de762cdc94",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+        "sha256": "b7e7660e4dfee362ae0f9a52f8240c880f81adaf1d7be0a258c8c2cb257bac42",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+        "sha256": "42ec471877cbee52a66f6e0c1076c28f7c6a1b7d71b635b9d65eb26ebcff832e",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+        "sha256": "963797f456ea0b04ffb87f47f958b97723ee77c9a94853413295406cfff60748",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "agent-service/tests/test_tutor_v19.py",
+        "sha256": "930526bf2e8b8b6e38ca44f668d233b3fa0873f16ed82f6c5fa0cbe8d09544d7",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "backend/src/test/java/com/example/courselingo/qa/TutorSelectedCrossServiceIT.java",
+        "sha256": "ca36d81722bada4cf984b0a4786870e2d2b5c5870564bade88655895f0907c5c",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "docs/TUTOR_SELECTED_DEVELOPMENT.md",
+        "sha256": "a7d8afc353e02623ae85faf812eda988438e536d8426bf9c26bd82483069f521",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/CONTRACT.md",
+        "sha256": "75fb9e035c3dfea850e8c00fe03b6a70b082cdd8a7bbf287050dc82db4a9484e",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/SMOKE_PLAN.md",
+        "sha256": "9b8ea329d7d71f2457b357eb0c2d550011788ba4dcd3f20170420a3b697f24d3",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/authorization-template.json",
+        "sha256": "95ff07c90a7170d29933baff7c2ad86898fa14155603b3e9e67f0e99c43ebb91",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/pricing-template.json",
+        "sha256": "e5a3f4a2b0d131c184ae2e81923960c14cfbfd7bea9080ba21c6a7c8a47e0b9b",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/reference-review-pack.json",
+        "sha256": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-selection-v19-v1/sample-candidate.json",
+        "sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "scripts/dev/check_tutor_selected.py",
+        "sha256": "0d2a7ad84b03fba365f82cf35e8e67993a72e6d4ee6b17a3d45e7c434db6f04e",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "scripts/dev/run_tutor_smoke_v19.py",
+        "sha256": "91aabfcdbf14470d3ce2f577729c44ef6d24716cd745473df08feed84d7a1967",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "scripts/dev/serve_tutor_selected_mock.py",
+        "sha256": "91d45885e425af4f2695f1a0a7d6f95f661602bef44455f19f50cbd3ac3f8837",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-v14-fresh-v1/snapshot.json",
+        "sha256": "6e24e3fd92a0b59a7edb9c2d488c891e29fc29d1ece28cba24dcaee8ec3adfaa",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+        "sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "README.md",
+        "sha256": "75dad90a407763fa16cf417a3ddd68cf032b08c456bf3b6bf4ab0f90e478a19c",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/usable_app.py",
+        "sha256": "7013fc7d1e3274a03dc9cabb05b4b809cca65796c84b6d67cc893dc35253d298",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/usable_mock.py",
+        "sha256": "04d5e06ddc5679d5e183988a261506874ba16b86d32aff397f7ea7bae2144d73",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/usable_policy.py",
+        "sha256": "0dc5351fe3b73fa743212470c9f017f15748c4841d333a20eb1dbd4781f9efa8",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py",
+        "sha256": "55c28365c00c10bce84ad2129a70a89b160070b35010b5da492c5fcd9174871a",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/src/lecturelens_real_eval/tutor/usable_smoke.py",
+        "sha256": "e050d4d54d1663964af98145d1a71ba6ab56a2b0f5e319c215260ae2985e3b59",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "agent-service/tests/test_tutor_v18.py",
+        "sha256": "5d49a270450c46de3a691a37ad4b692231a4a71eb5bfcb47b420074b8611928a",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "backend/src/test/java/com/example/courselingo/qa/TutorUsableCrossServiceIT.java",
+        "sha256": "1c955d9c23af7619f46f46f787027f7ec7d8dff5ec15d77ce3719e0c5968a597",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "docs/TUTOR_USABLE_DEVELOPMENT.md",
+        "sha256": "d4f2bec10e2b66d8225b21ea5a8da6bd9d46fbeba82d42e268c21b9114da602b",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/CONTRACT.md",
+        "sha256": "3c9d4dba5952a6b6c6a75ed212d8e74b3b7034b1f1dbf2ea032f38966961ab6a",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/SMOKE_PLAN.md",
+        "sha256": "7bfa7b1a0680056effad49404eaaa2a94ec612287b2e61bf01497135384762c3",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/authorization-template.json",
+        "sha256": "d5afdf14e4e99664264966e24b0eb4cb92c931b00fa58a9d9bc9f1a2f03b5290",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/pricing-template.json",
+        "sha256": "e5a3f4a2b0d131c184ae2e81923960c14cfbfd7bea9080ba21c6a7c8a47e0b9b",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/reference-review-pack.json",
+        "sha256": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-usability-v18-v1/sample-candidate.json",
+        "sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "frontend/src/components/task-detail/CourseTutorPanel.usable.test.ts",
+        "sha256": "a5e7b9854f089f660af2b2ca7e3d1a8cfd33d97b1be69f521d7821609f86786c",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "scripts/dev/check_tutor_usable.py",
+        "sha256": "ca1f10b5de82ee9af25629d2c781b00230e5194397416defeff60d04d9c9e39a",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "scripts/dev/measure_tutor_usable.py",
+        "sha256": "b917cc6038c6b29308c3a0096f554e4804830bce21dcdfd4677e1ed4ef1444cc",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "scripts/dev/run_tutor_smoke_v18.py",
+        "sha256": "cd86155dffcb41b7ce8ee1a89ec481049e505d3fcccb71b193c696d9beb2e08c",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "scripts/dev/serve_tutor_usable_mock.py",
+        "sha256": "4d7e6c53ce923bbafff501b5b624af76f7bd7e3b9d33609d85548af1e03d2ce2",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-v14-fresh-v1/snapshot.json",
+        "sha256": "6e24e3fd92a0b59a7edb9c2d488c891e29fc29d1ece28cba24dcaee8ec3adfaa",
+        "status": "MATCH"
+      },
+      {
+        "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+        "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+        "sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "status": "MATCH"
+      }
+    ],
+    "source_commit_blobs_verified": 18,
+    "final_status": "BLOCKED_NO_DISPATCH",
+    "blocker": "PREFLIGHT_RUNTIME_KEY_NOT_CONFIGURED",
+    "blocker_origin": "Local preflight observation, not a model/runtime response",
+    "key_configured": false,
+    "credential_content_retained": false,
+    "credential_files_opened": false,
+    "real_model_requests": 0,
+    "embedding_requests": 0,
+    "reviewer_requests": 0,
+    "paid_receipts_materialized": false,
+    "one_use_claim_created": false,
+    "live_cli_invocations": 0,
+    "database_service_started": false,
+    "local_budget": {
+      "requests": 12,
+      "ordinary_decisions_per_turn": 3,
+      "shared_finish_corrections_per_turn": 1,
+      "output_tokens_per_request": 4096,
+      "answer_codepoints": 4096,
+      "evaluation_codepoints": 1024,
+      "concurrency": 1,
+      "transport_retries": 0,
+      "max_nano_usd": 300000000,
+      "worst_case_reserved_nano_usd": 294912000
+    },
+    "authorization_received": true,
+    "authorization_status": "CLOSED_AT_PREFLIGHT_STOP; no automatic resume or reuse",
+    "code_or_configuration_changed": false
+  },
+  "pricing": {
+    "reviewed_utc": "2026-11-08T07:00:40.809995+00:00",
+    "requested_model": "deepseek-flash",
+    "published_backend": "DeepSeek-V4.1-Flash-1017",
+    "official_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "configuration_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+    "input_nano_usd_per_token": 300,
+    "output_nano_usd_per_token": 1200,
+    "cache_hit_usd_per_million": {
+      "peak": "0.006",
+      "off_peak": "0.003"
+    },
+    "cache_miss_usd_per_million": {
+      "peak": "0.30",
+      "off_peak": "0.15"
+    },
+    "output_usd_per_million": {
+      "peak": "1.20",
+      "off_peak": "0.60"
+    },
+    "configuration_review": "deepseek-flash, non-thinking with required tools, temperature0, output4096 within documented cap. parallel_tool_calls=false is sent but undocumented/compliance unproved.",
+    "verification": "PUBLIC_DOCUMENTATION_ONLY; no provider/account/model/balance request",
+    "authorized_dispatch": false
+  },
+  "result": {
+    "verdict": "INCOMPLETE",
+    "reason": "PREFLIGHT_RUNTIME_KEY_NOT_CONFIGURED",
+    "scheduled": 3,
+    "completed": 0,
+    "failed_turns": 0,
+    "preflight_failures": 1,
+    "skipped": 3,
+    "missing_positions": 0,
+    "live_cli_invocations": 0,
+    "real_model_requests": 0,
+    "embedding_requests": 0,
+    "reviewer_requests": 0,
+    "usage": "NOT_OBSERVED_NO_REQUESTS",
+    "cache_usage": "NOT_OBSERVED_NO_REQUESTS",
+    "local_ledger": "NOT_CREATED_NO_DISPATCH",
+    "local_reserved_nano_usd": 0,
+    "local_settled_nano_usd": 0,
+    "local_outstanding_risk_nano_usd": 0,
+    "rate_based_estimate_usd": "0",
+    "supplier_actual_debit": "UNKNOWN_NOT_QUERIED",
+    "raw_request_bodies": "NOT_CREATED_NO_REQUEST",
+    "raw_response_bodies": "NOT_CREATED_NO_RESPONSE",
+    "review": "Codex same-author source/code preflight; no generated output or independent human blind review",
+    "outcomes": [
+      {
+        "turn_key": "v18-loop-teaching-smoke:1",
+        "status": "SKIPPED",
+        "reason": "PREFLIGHT_RUNTIME_KEY_NOT_CONFIGURED",
+        "semantic_correctness": "NOT_RUN",
+        "citation_support": "NOT_RUN",
+        "answer_codepoints": null,
+        "evaluation_codepoints": null,
+        "model_requests": 0,
+        "usage": null
+      },
+      {
+        "turn_key": "v18-loop-teaching-smoke:2",
+        "status": "SKIPPED",
+        "reason": "PREFLIGHT_RUNTIME_KEY_NOT_CONFIGURED",
+        "semantic_correctness": "NOT_RUN",
+        "citation_support": "NOT_RUN",
+        "answer_codepoints": null,
+        "evaluation_codepoints": null,
+        "model_requests": 0,
+        "usage": null
+      },
+      {
+        "turn_key": "v18-loop-teaching-smoke:3",
+        "status": "SKIPPED",
+        "reason": "PREFLIGHT_RUNTIME_KEY_NOT_CONFIGURED",
+        "semantic_correctness": "NOT_RUN",
+        "citation_support": "NOT_RUN",
+        "answer_codepoints": null,
+        "evaluation_codepoints": null,
+        "model_requests": 0,
+        "usage": null
+      }
+    ],
+    "not_run": [
+      "three-turn real generation/correctness/citation support",
+      "cost optimization",
+      "independent human agreement",
+      "SQL holdout",
+      "full16/expansion",
+      "learning effects"
+    ],
+    "cleanup": "NO_TEMPORARY_SERVICE_STARTED; no original service affected"
+  }
+}
