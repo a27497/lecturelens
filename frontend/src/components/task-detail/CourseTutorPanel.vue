@@ -20,7 +20,7 @@ const error = ref("");
 const blocked = ref(false);
 const pending = ref<{ client_turn_id: string; text: string; socratic: boolean }>();
 const activeTurn = computed(() => view.value?.turns.find(t => t.status === "queued" || t.status === "running"));
-const exhausted = computed(() => !!view.value && (view.value.session.model_calls >= view.value.session.max_calls || view.value.turns.length >= 40));
+const exhausted = computed(() => !!view.value && (view.value.session.model_calls >= view.value.session.max_calls || view.value.turns.length >= (view.value.session.max_turns ?? 40)));
 let epoch = 0;
 let readSequence = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -129,6 +129,7 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
     <header><div><p class="eyebrow">课程证据 · 多轮对话</p><h2 id="tutor-title">Tutor</h2></div>
       <button :disabled="busy || !!activeTurn || !!pending || blocked" @click="newConversation">新对话</button></header>
     <p class="boundary">实验性 Mock 演示，仅验证对话流程；教学质量尚未经过真实模型验收。</p>
+    <p v-if="view?.session.engine === 'light'" class="boundary">轻量 Tutor：每轮最多一次生成，最多六轮；完整保留本对话前提，超限或失败不自动重试。复杂问题请拆分提问。</p>
     <p v-if="loading" role="status">正在恢复对话…</p>
     <label v-if="sessions.length">已保存对话 <select :value="view?.session.session_id ?? ''" :disabled="busy || !!pending" @change="openSession(($event.target as HTMLSelectElement).value)"><option disabled value="">选择对话</option><option v-for="(s, i) in sessions" :key="s.session_id" :value="s.session_id">对话 {{ sessions.length - i }}</option></select></label>
     <p v-if="error" role="alert">{{ error }} <button v-if="!blocked" @click="view ? refresh() : restore()">重新读取</button></p>
@@ -142,7 +143,7 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
           <p v-if="turn.evaluation"><strong>对你的回复：</strong><template v-for="(part, i) in parts(turn.evaluation, turn.citations)" :key="i"><button v-if="part.citation" class="citation" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
           <details v-if="turn.citations.length"><summary>核对课程原文</summary><blockquote v-for="c in turn.citations" :key="c.evidence_id"><p>{{ c.text }}</p><button @click="seek(c)">定位出处 {{ formatMillisRange(c.start_ms, c.end_ms) }}</button></blockquote></details>
         </div>
-        <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已取消。' : '本轮未完成，未发布回答。可开启下一轮或新对话。' }}</p>
+        <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已取消。' : '本轮未完成，未发布回答。可开启下一轮或新对话。' }} <code v-if="turn.status === 'failed' && turn.error_code">{{ turn.error_code }}</code></p>
         <p v-else role="status">Tutor 正在查找课程证据… <button @click="cancel">取消</button></p>
       </li>
     </ol>

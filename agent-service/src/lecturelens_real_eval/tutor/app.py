@@ -14,6 +14,7 @@ from lecturelens_agent.study.authority import course_authority, signature
 from lecturelens_agent.study.store import StudyError
 
 from .contracts import Command
+from .light import LightTutorRuntime
 from .runtime import TutorRuntime
 from .store import TutorStore
 
@@ -39,8 +40,10 @@ def create_app(*, tutor=None, **kwargs):
             app.state.tutor = tutor
             if configured:
                 # No real product adapter is installed; eval has its own guarded factory.
-                app.state.tutor = TutorRuntime(
-                    TutorStore(os.environ["AGENT_DATABASE_URL"]),
+                engine = os.environ.get("TUTOR_ENGINE", "p8")
+                runtime = LightTutorRuntime if engine == "light" else TutorRuntime
+                app.state.tutor = runtime(
+                    TutorStore(os.environ["AGENT_DATABASE_URL"], engine=engine),
                     course_authority(
                         os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080"), app.state.secret
                     ),

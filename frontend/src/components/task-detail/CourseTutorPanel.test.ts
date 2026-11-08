@@ -129,3 +129,18 @@ describe("course Tutor", () => {
     expect(w.emitted("accessFailure")).toBeUndefined();
   });
 });
+
+// Lightweight candidate shares the authenticated UI and explicit stop states.
+describe("light Tutor", () => {
+  it("uses the server six-turn cap and shows its one-request boundary", async () => {
+    vi.mocked(getTutorSession).mockResolvedValue({ session: { ...session, engine: "light", max_turns: 6, max_calls: 6 }, turns: Array.from({ length: 6 }, (_, i) => ({ ...turn, turn_id: `t${i}` })) });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("每轮最多一次生成");
+    expect(w.find('button[type="submit"]').attributes("disabled")).toBeDefined();
+  });
+  it("shows a stopped generation without displaying its rejected body", async () => {
+    vi.mocked(getTutorSession).mockResolvedValue({ session: { ...session, engine: "light" }, turns: [{ ...turn, status: "failed", answer: "REJECTED", error_code: "TUTOR_SOURCE_ONLY" }] });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("TUTOR_SOURCE_ONLY"); expect(w.text()).not.toContain("REJECTED");
+  });
+});

@@ -1,5 +1,7 @@
 # P8 course Tutor — experimental, offline only
 
+An opt-in [lightweight teaching candidate](LIGHT_TUTOR.md) reuses the gateway, store and UI with one generation per turn. P8 remains the default; v19 is not merged.
+
 The learner opens **Tutor 对话** in a course workspace, submits a question, follows up in the same conversation, and opens inline citation chips to inspect the course source. Socratic mode asks a guiding question; the next completed reply includes evidence-grounded feedback. The product uses deterministic providers only. Separate v8 eval trials passed bounded known-course gates; v9 has offline verification only; P8 does not inherit AU or P7 quality results.
 
 ## Ownership and execution

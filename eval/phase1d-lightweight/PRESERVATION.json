@@ -1,0 +1,135 @@
+{
+  "other_worktrees_checked": 50,
+  "worktree_changes": [],
+  "original_running_containers": 23,
+  "same_running_container_set": true,
+  "original_container_state": [
+    {
+      "id": "1e4dcc9d4d93fb520b11b4de380a7449751a73106aada9b0fc73ec205c77387e",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.395434222Z"
+    },
+    {
+      "id": "ea370b0f88b4cce88269c93a727d905f8800e814d0b4439387b0d6093e6c791b",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.039308552Z"
+    },
+    {
+      "id": "812fad2a29498be9d06df2edf5eed9fa795813064c4e658928efaac20a74c6f5",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.284948752Z"
+    },
+    {
+      "id": "10ba665b511baecfb39d9dc93a7d23f866785960d286970191632e70f6465f3d",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.36771508Z"
+    },
+    {
+      "id": "fbee637986214da11ab9866cd355257a1c056171e11ca82adcc70c0323c0aaf4",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.101416115Z"
+    },
+    {
+      "id": "335c9d690ad760bea85d0d388c7afbf53af347c789f06c9ec7084ceb4701ad11",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.18884787Z"
+    },
+    {
+      "id": "3771ca083dac86a6e4d8dd1a479159f6bf9fddc4010181b1cdea095f6f9bcde0",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.210319294Z"
+    },
+    {
+      "id": "76f90625603cf0a08e77418c4a116956b141c1897befdbd86fe6fd48762e7000",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.222018253Z"
+    },
+    {
+      "id": "a3cb0b626f3b4f2059cc582272c4a05136432dd564b675d1c86bc4b44f2e63fd",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.308192603Z"
+    },
+    {
+      "id": "7427304fbde4870b8db0ceed97470fecfcb1a88b369c7bc1a277bd0178171571",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.394250406Z"
+    },
+    {
+      "id": "6afabb5134634b597f08356de4c5bacb13b571fc7000c21ffa607c8297ec05a8",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.300656141Z"
+    },
+    {
+      "id": "5c5f7803f0bfa954fcf78d2f9fa5e9d8a027d3a22db8eb5428691b95a7b84c13",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.199844717Z"
+    },
+    {
+      "id": "0d321477b9fc6e77952c9ff08549dc0a05676a790e2abeea86aeaab6b4f6c6a5",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.285744974Z"
+    },
+    {
+      "id": "00b0fe967476583ec562af9a83ea676040aae553aaf44a8bc9326944cf70d7e9",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.218039382Z"
+    },
+    {
+      "id": "5b35277b0c37df99160f9cc12cbf827d4dfb54ece701583fd49e16ccb847ea77",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.283888539Z"
+    },
+    {
+      "id": "6b99419c1f0d0bd9e16e166d9badde9b3690fc466d4837bed9fe7711732c3563",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.259478542Z"
+    },
+    {
+      "id": "a57e043f00bfb89679122e678cfb4e7dc58d6a6b40cb4cb0207540e4a0c08bfb",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.283858233Z"
+    },
+    {
+      "id": "7e853ac80b5d6aaf4b0cf4bd9fddaed6b06ab5a3e0edf1513e62e37bcd5e8070",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.319276791Z"
+    },
+    {
+      "id": "62e8a0fa12f2603b117332697023c2780bb241631ecc4d6000861a7f57375b84",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.043436134Z"
+    },
+    {
+      "id": "83e37205e1bea431b04d438275bcc08d3d1b4ae08fbb6de99afd725cc5f6156a",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.067477188Z"
+    },
+    {
+      "id": "3619f289c60a73b9687f5ea99739e8d49176acce8dc06abcc231eb0262e45a13",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.283697546Z"
+    },
+    {
+      "id": "e63a8344be25e56ff557d17a951194933d229fd23c148d44c1afe40c57aea26a",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.041169404Z"
+    },
+    {
+      "id": "7885eff7fe836e98a483b2f63f3b589f67031479edeca382c51262a1d7f2ff9d",
+      "running": true,
+      "started_at": "2026-11-08T06:34:34.308503251Z"
+    }
+  ],
+  "service_identity_unchanged": true,
+  "services": {
+    "lecturelens-live-agent.service": "MainPID=4931\nExecMainStartTimestamp=Sun 2026-11-08 06:34:41 UTC\nActiveState=active",
+    "lecturelens-live-backend.service": "MainPID=4932\nExecMainStartTimestamp=Sun 2026-11-08 06:34:41 UTC\nActiveState=active",
+    "lecturelens-live-model.service": "MainPID=4933\nExecMainStartTimestamp=Sun 2026-11-08 06:34:41 UTC\nActiveState=active",
+    "lecturelens-live-firewall.service": "MainPID=0\nExecMainStartTimestamp=Sun 2026-11-08 06:34:23 UTC\nActiveState=active"
+  },
+  "original_failure_zip_sha256": "832e20a6e066603b57a858a50ddbd2eda355757ba821e4119c6056339299b30d",
+  "raw_live_execution_files_matching_bundle": 34,
+  "original_databases": "No connection/write; task-owned loopback databases only",
+  "transient_limit": "Initial host memory pressure observed; original request latency was not sampled",
+  "owned_resources": "0e327098be2f lecturelens-phase1d-records-pg-20261108 Exited (0) 2 minutes ago\n9ff87bdbb6ce lecturelens-phase1d-demo-20261108-rocketmq-broker-1 Exited (137) 25 minutes ago\nccb8fd6274f7 lecturelens-phase1d-demo-20261108-minio-init-1 Exited (0) 41 minutes ago\n2916c4e54bfe lecturelens-phase1d-demo-20261108-redis-1 Exited (137) 25 minutes ago\n43a005c2616f lecturelens-phase1d-demo-20261108-mysql-1 Exited (0) 25 minutes ago\n7ba2ea2d7318 lecturelens-phase1d-demo-20261108-rocketmq-store-init-1 Exited (0) 41 minutes ago\n429d8286f82a lecturelens-phase1d-demo-20261108-rocketmq-namesrv-1 Exited (137) 25 minutes ago\n329fbac1b52e lecturelens-phase1d-demo-20261108-minio-1 Exited (0) 25 minutes ago\nbf0b5966b754 lecturelens-phase1d-pg-20261108 Exited (0) 9 minutes ago"
+}

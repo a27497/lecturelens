@@ -1587,3 +1587,5 @@ CREATE/TURN require course readiness. Read/list/cancel check access without requ
 ## P10 答错待回看
 
 `POST /api/tasks/{id}/study/command` 新增 `CHOICE_REVIEW`，无需 Session；`after` 是非负分页偏移（默认 0，上限 2147483647）。Java 从认证与课程事实取得 owner/revision 并在读取前后检查；Python 返回当前 owner/course/revision 跨 Session 的最新已提交选择题判分计数及错误列表。响应为 `{revision,correct_count,wrong_count,items,next_after}`，每页最多 20 项；每项包含 Session/Run/artifact/question 定位、公开题面与已提交 attempt/choice_result/citations。最新版本改答正确后退出错误列表。只读，无新 Run、表或模型调用；计数不是掌握程度。详见 [P10](P10_CHOICE_REVIEW.md)。
+
+轻量 Tutor 实验候选复用上述 Tutor endpoints，Session 新增 `engine` 与 `max_turns`；启用方式、一次生成及恢复/预算边界见 [LIGHT_TUTOR.md](LIGHT_TUTOR.md)。未启用真实模型，也不改变普通 Course QA API。

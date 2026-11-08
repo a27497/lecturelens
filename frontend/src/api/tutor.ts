@@ -5,7 +5,7 @@ import type { Citation } from "./study";
 
 export interface TutorSession {
   session_id: string; revision: number; status: "active" | "stale";
-  model_calls: number; max_calls: number;
+  model_calls: number; max_calls: number; max_turns?: number; engine?: "p8" | "light";
 }
 export interface TutorTurn {
   turn_id: string; client_turn_id: string; ordinal: number; learner_text: string; socratic: boolean;

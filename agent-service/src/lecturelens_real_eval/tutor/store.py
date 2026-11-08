@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS tutor_session (
  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS tutor_session_scope ON tutor_session(owner_id,course_id,created_at);
+ALTER TABLE tutor_session ADD COLUMN IF NOT EXISTS engine text NOT NULL DEFAULT 'p8';
+ALTER TABLE tutor_session ADD COLUMN IF NOT EXISTS max_turns integer NOT NULL DEFAULT 40;
 CREATE TABLE IF NOT EXISTS tutor_turn (
  turn_id text PRIMARY KEY, session_id text NOT NULL REFERENCES tutor_session ON DELETE CASCADE,
  client_turn_id text NOT NULL, ordinal integer NOT NULL, learner_text text NOT NULL,
@@ -36,6 +38,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS tutor_one_active_turn ON tutor_turn(session_id
 
 
 class TutorStore(StudyStore):
+    def __init__(self, dsn, *, engine="p8"):
+        super().__init__(dsn)
+        if engine not in {"p8", "light"}:
+            raise ValueError("Unknown Tutor engine")
+        self.engine = engine
+
     def initialize(self):
         with self.connect() as conn:
             conn.execute("SELECT pg_advisory_xact_lock(7812250)")
@@ -55,8 +63,8 @@ class TutorStore(StudyStore):
 
     def session(self, conn, command):
         row = conn.execute(
-            "SELECT * FROM tutor_session WHERE session_id=%s AND owner_id=%s AND course_id=%s FOR UPDATE",
-            (command.session_id, command.owner_id, command.course_id),
+            "SELECT * FROM tutor_session WHERE session_id=%s AND owner_id=%s AND course_id=%s AND engine=%s FOR UPDATE",
+            (command.session_id, command.owner_id, command.course_id, self.engine),
         ).fetchone()
         if not row:
             raise StudyError("TUTOR_SESSION_NOT_FOUND", 404)
@@ -81,12 +89,22 @@ class TutorStore(StudyStore):
                 sid = str(
                     uuid.uuid5(
                         uuid.NAMESPACE_URL,
-                        f"tutor:{command.owner_id}:{command.course_id}:{command.revision}:{command.request_key}",
+                        ("light-tutor:" if self.engine == "light" else "tutor:")
+                        + f"{command.owner_id}:{command.course_id}:{command.revision}:{command.request_key}",
                     )
                 )
                 conn.execute(
-                    "INSERT INTO tutor_session(session_id,owner_id,course_id,revision) VALUES (%s,%s,%s,%s) ON CONFLICT DO NOTHING",
-                    (sid, command.owner_id, command.course_id, command.revision),
+                    "INSERT INTO tutor_session(session_id,owner_id,course_id,revision,engine,max_turns,max_calls,max_tokens) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING",
+                    (
+                        sid,
+                        command.owner_id,
+                        command.course_id,
+                        command.revision,
+                        self.engine,
+                        6 if self.engine == "light" else 40,
+                        6 if self.engine == "light" else 60,
+                        384000 if self.engine == "light" else 640000,
+                    ),
                 )
                 return {
                     "session": self.public_session(
@@ -110,8 +128,8 @@ class TutorStore(StudyStore):
                     "sessions": [
                         self.public_session(row)
                         for row in conn.execute(
-                            "SELECT * FROM tutor_session WHERE owner_id=%s AND course_id=%s ORDER BY created_at DESC,session_id LIMIT 20",
-                            (command.owner_id, command.course_id),
+                            "SELECT * FROM tutor_session WHERE owner_id=%s AND course_id=%s AND engine=%s ORDER BY created_at DESC,session_id LIMIT 20",
+                            (command.owner_id, command.course_id, self.engine),
                         ).fetchall()
                     ]
                 }
@@ -152,7 +170,7 @@ class TutorStore(StudyStore):
                     "SELECT count(*) AS n FROM tutor_turn WHERE session_id=%s", (session["session_id"],)
                 ).fetchone()["n"]
                 if (
-                    count >= 40
+                    count >= session["max_turns"]
                     or session["model_calls"] >= session["max_calls"]
                     or session["reserved_tokens"] >= session["max_tokens"]
                 ):
@@ -189,7 +207,8 @@ class TutorStore(StudyStore):
     def candidates(self):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT t.turn_id,t.session_id FROM tutor_turn t JOIN tutor_session s USING(session_id) WHERE t.status IN ('queued','running') AND s.status='active' ORDER BY t.created_at LIMIT 20"
+                "SELECT t.turn_id,t.session_id FROM tutor_turn t JOIN tutor_session s USING(session_id) WHERE t.status IN ('queued','running') AND s.status='active' AND s.engine=%s ORDER BY t.created_at LIMIT 20",
+                (self.engine,),
             ).fetchall()
 
     def fail(self, turn_id, code, stale=False):
