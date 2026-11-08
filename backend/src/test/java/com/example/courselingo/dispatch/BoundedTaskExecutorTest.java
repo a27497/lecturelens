@@ -197,13 +197,18 @@ class BoundedTaskExecutorTest {
         ReflectionTestUtils.setField(executor, "delegate", inline);
         AtomicBoolean cancelled = new AtomicBoolean();
 
-        assertThatThrownBy(() -> executor.submitAndWait("task_inline", "req_inline", () -> {
-            cancelled.set(executor.cancel("task_inline"));
-            return "must-not-publish";
-        })).isInstanceOf(BusinessException.class);
+        try {
+            assertThatThrownBy(() -> executor.submitAndWait("task_inline", "req_inline", () -> {
+                cancelled.set(executor.cancel("task_inline"));
+                return "must-not-publish";
+            })).isInstanceOf(BusinessException.class);
 
-        assertThat(cancelled).isTrue();
-        assertThat(executor.cancel("task_inline")).isFalse();
+            assertThat(cancelled).isTrue();
+            assertThat(executor.cancel("task_inline")).isFalse();
+        } finally {
+            // Inline cancellation interrupts this test thread, not a real worker.
+            Thread.interrupted();
+        }
     }
 
     @Test
