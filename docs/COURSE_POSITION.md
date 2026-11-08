@@ -40,7 +40,7 @@ npm run test:browser -- --dist /isolated/pr1/dist \
   --chromium /path/to/chrome --output /isolated/pr1/browser-results
 ```
 
-`--chromium` is optional if a Playwright Chromium installation is available. `--baseline` records the same URL's initial player/workspace state against a baseline build. `--classic` exercises the original layout fallback. `--review` runs nine focused source-version and navigation-race scenarios. `--only` runs a matching named scenario for debugging. Keep generated media, screenshots and browser output out of Git.
+`--chromium` is optional if a Playwright Chromium installation is available. `--baseline` records the same URL's initial player/workspace state against a baseline build. `--classic` exercises the original layout fallback. `--review --continuous` runs nine focused source-version and navigation-race scenarios for the current B1 workspace, whose material reader remains visible after returning to learning. Use `--review --classic` for the classic layout. `--only` runs a matching named scenario for debugging. Keep generated media, screenshots and browser output out of Git.
 
 ## Release and rollback
 

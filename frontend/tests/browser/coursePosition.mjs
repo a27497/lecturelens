@@ -143,6 +143,11 @@ async function openArtifactEvidence() {
   const summary = page.getByText('查看课程证据', { exact: true });
   if (!(await summary.locator('..').evaluate(el => el.open))) await summary.click();
 }
+async function refreshCourse() {
+  const controls = page.locator('.course-controls');
+  if (await controls.evaluate(el => el.tagName === 'DETAILS' && !el.open)) await controls.locator(':scope > summary').click();
+  await controls.getByRole('button', { name: '刷新', exact: true }).click();
+}
 async function seek(seconds) { await video.evaluate((v, t) => { v.currentTime = t; }, seconds); await expect.poll(() => video.evaluate(v => v.seeking)).toBe(false); }
 try {
   if (args.models) {
@@ -164,6 +169,8 @@ try {
       await card.screenshot({ path: `${output}/model-usage.png` });
     });
     await check('trace displays independent frozen decision/review and replay without usage invention', async () => {
+      const execution = page.locator('.execution-details');
+      if (await execution.count() && !(await execution.evaluate(el => el.open))) await execution.locator(':scope > summary').click();
       await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
       const trace = page.getByRole('region', { name: 'Agent Trace' });
       await expect(trace.getByText('decision-frozen-a', { exact: false }).first()).toBeVisible();
@@ -216,6 +223,8 @@ try {
         learning.run.model_mode = i === historical.length - 1 ? 'mock' : 'real';
         await page.reload();
         await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+        const execution = page.locator('.execution-details');
+        if (await execution.count() && !(await execution.evaluate(el => el.open))) await execution.locator(':scope > summary').click();
         await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
         const trace = page.getByRole('region', { name: 'Agent Trace' });
         await expect(trace.getByText('单轮协议：未验证', { exact: false })).toHaveCount(2);
@@ -299,7 +308,7 @@ try {
       await page.evaluate(() => { const b = document.querySelectorAll('.timeline-row button'); for (const i of [3, 0, 2, 1, 3]) b[i].click(); });
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(5);
       await expect.poll(() => new URL(page.url()).searchParams.get('at')).toBe('5000');
-      await page.evaluate(() => { const b = [...document.querySelectorAll('.workspace-nav button')]; for (const name of ['学习助手', '课程内容', '课程问答', '课程内容', '课程问答']) b.find(x => x.textContent.trim() === name).click(); });
+      await page.evaluate(() => { const b = [...document.querySelectorAll('.workspace-nav button')]; for (const name of ['学习助手', '课程内容', '课程问答', '课程内容', '课程问答']) b.find(x => x.textContent.trim() === (name === '学习助手' ? '解释与练习' : name === '课程内容' ? '课程材料' : name) || x.textContent.trim() === name).click(); });
       await expect(page.locator('.workspace-nav [aria-current=page]')).toHaveText('课程问答');
       await expect.poll(() => new URL(page.url()).searchParams.get('view')).toBe('qa');
       await page.goBack(); await page.goForward();
@@ -312,7 +321,7 @@ try {
       await input.fill('Question for revision one'); await page.getByRole('button', { name: '提问', exact: true }).click();
       await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
       await input.fill('Unsubmitted follow-up'); sourceRevision = 2;
-      await page.getByRole('button', { name: '刷新', exact: true }).click();
+      await refreshCourse();
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(7);
       await page.locator('.evidence-item button').click();
       await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
@@ -356,7 +365,7 @@ try {
       await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
       const reads = verificationReads; verificationDelay = 600;
       await page.locator('.evidence-item button').click(); await expect.poll(() => verificationReads).toBeGreaterThan(reads);
-      sourceRevision = 2; await page.getByRole('button', { name: '刷新', exact: true }).click();
+      sourceRevision = 2; await refreshCourse();
       await new Promise(r => setTimeout(r, 800));
       expect(await video.evaluate(v => v.currentTime)).toBe(7); await expectReviewCancelled();
       verificationDelay = 0;
