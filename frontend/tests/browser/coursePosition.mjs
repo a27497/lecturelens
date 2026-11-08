@@ -120,10 +120,15 @@ if (args.classic) await page.addInitScript(() => {
 });
 const video = page.locator('video');
 const current = page.locator('.timeline-row[aria-current=true]');
-const nav = label => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', {
-  name: label === '学习助手' ? /^(学习助手|解释与练习)$/ : label === '课程内容' ? /^(课程内容|课程材料)$/ : label,
-  exact: true,
-});
+const nav = label => ({ click: async () => {
+  const menu = page.getByRole('navigation', { name: '课程内容导航' });
+  const button = menu.getByRole('button', {
+    name: label === '学习助手' ? /^(学习助手|解释与练习)$/ : label === '课程内容' ? /^(课程内容|课程材料)$/ : label,
+    exact: true, includeHidden: true,
+  });
+  if (!(await button.isVisible())) await menu.locator('.workspace-more > summary').click();
+  await button.click();
+} });
 const checks = [];
 async function check(name, run) { if (args.only && !name.includes(args.only)) return; await run(); checks.push(name); console.log(`PASS ${name}`); }
 async function expectReviewCancelled() {
