@@ -1,0 +1,123 @@
+{
+  "phase0_head": "17d78636cf97fcf55fe642b1ecc30c5e2ea48865",
+  "origin_main": "300be51515867f7ece4f3a9224a484e825219ee0",
+  "v19_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+  "preparation_code_commit": "debe6e4df2f8801125839b988507919232d57863",
+  "v19_candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+  "v19_packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "changed_source_paths": [
+    "agent-service/src/lecturelens_agent/study/acceptance_cost.py",
+    "agent-service/src/lecturelens_agent/study/phase0_agent_manifest.json",
+    "agent-service/src/lecturelens_agent/study/provider.py",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_app.py",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_mock.py",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_provider.py",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/bounded_store.py",
+    "agent-service/src/lecturelens_real_eval/tutor/claim_grounding_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/complete_authority.py",
+    "agent-service/src/lecturelens_real_eval/tutor/diagnostic_capture.py",
+    "agent-service/src/lecturelens_real_eval/tutor/draft_repair_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/grounded_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/guarded_app.py",
+    "agent-service/src/lecturelens_real_eval/tutor/guarded_diagnostic.py",
+    "agent-service/src/lecturelens_real_eval/tutor/guarded_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/observed_channel.py",
+    "agent-service/src/lecturelens_real_eval/tutor/python_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/relevant_authority.py",
+    "agent-service/src/lecturelens_real_eval/tutor/repair_context_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+    "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+    "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_app.py",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_mock.py",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_policy.py",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_smoke.py",
+    "agent-service/src/lecturelens_real_eval/tutor/verified_app.py",
+    "agent-service/src/lecturelens_real_eval/tutor/verified_diagnostic.py",
+    "agent-service/src/lecturelens_real_eval/tutor/verified_mock.py",
+    "agent-service/src/lecturelens_real_eval/tutor/verified_runtime.py",
+    "backend/src/main/java/com/example/courselingo/dispatch/ThreadPoolBoundedTaskExecutor.java",
+    "backend/src/main/java/com/example/courselingo/study/StudyEvidenceAuthority.java",
+    "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelLlmProvider.java",
+    "frontend/src/components/task-detail/CourseTutorPanel.usable.test.ts",
+    "frontend/src/components/task-detail/CourseTutorPanel.vue",
+    "scripts/dev/check_tutor_followup.py",
+    "scripts/dev/check_tutor_guarded.py",
+    "scripts/dev/check_tutor_phase.py",
+    "scripts/dev/check_tutor_phase_identity.py",
+    "scripts/dev/check_tutor_selected.py",
+    "scripts/dev/check_tutor_usable.py",
+    "scripts/dev/check_tutor_zero_cost_audit.py",
+    "scripts/dev/check_v14_assets.py",
+    "scripts/dev/check_v14_delivery_diagnosis.py",
+    "scripts/dev/measure_tutor_usable.py",
+    "scripts/dev/run_check.py",
+    "scripts/dev/run_tutor_diagnostic_v16.py",
+    "scripts/dev/run_tutor_diagnostic_v17.py",
+    "scripts/dev/run_tutor_phase_mock.py",
+    "scripts/dev/run_tutor_smoke_v18.py",
+    "scripts/dev/run_tutor_smoke_v19.py",
+    "scripts/dev/serve_tutor_guarded_mock.py",
+    "scripts/dev/serve_tutor_phase_mock.py",
+    "scripts/dev/serve_tutor_selected_mock.py",
+    "scripts/dev/serve_tutor_usable_mock.py",
+    "scripts/dev/serve_tutor_verified_mock.py",
+    "scripts/dev/test_tutor_zero_cost_audit.py",
+    "scripts/dev/test_v14_assets.py",
+    "scripts/dev/test_v14_delivery_diagnosis.py",
+    "scripts/dev/tests/process_fixture.py",
+    "scripts/dev/tests/test_run_check.py",
+    "scripts/dev/v14_delivery_diagnosis.py"
+  ],
+  "decision": "KEEP_V19_FROZEN_SEPARATE_NO_HISTORY_MERGE",
+  "phase0_gateway_complete_v1": false,
+  "v19_gateway_complete_v1": true,
+  "combined_phase0_v19_browser_acceptance": "NOT_RUN_INCOMPATIBLE_WITH_UNCHANGED_GATEWAY",
+  "v19_cli_uses_node": false,
+  "phase0_frontend_audit": {
+    "exit_code": 0,
+    "total": 0
+  },
+  "v19_frontend_audit": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 4,
+      "high": 1,
+      "critical": 0,
+      "total": 5
+    },
+    "packages": {
+      "editorconfig": {
+        "severity": "moderate",
+        "direct": false
+      },
+      "follow-redirects": {
+        "severity": "high",
+        "direct": false
+      },
+      "glob": {
+        "severity": "moderate",
+        "direct": false
+      },
+      "js-beautify": {
+        "severity": "moderate",
+        "direct": false
+      },
+      "minimatch": {
+        "severity": "moderate",
+        "direct": false
+      }
+    }
+  },
+  "phase0_remote_ci": "PENDING",
+  "historical_reports": {
+    "eval/tutor-v18-smoke-v1/REPORT.md": "f059cb696dc5704825debda18d8250e8ccc37c865d6947940718cc47e1d3fc1f",
+    "eval/tutor-v19-smoke-v1/REPORT.md": "330e92da37ed62b3c25139fa966c6aea225ad4a8e0f0c7445bf121a83bcfe420",
+    "eval/tutor-v19-closeout-phase1-v1/REPORT.md": "79811d892ac36d242a7df2b32a3e6e2bfbc4166dcc86a530b98449de6fef0630"
+  },
+  "original_v18_raw_response_directory_present": false
+}

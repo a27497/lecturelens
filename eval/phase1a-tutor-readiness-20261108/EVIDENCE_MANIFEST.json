@@ -1,0 +1,148 @@
+{
+  "preparation_code_commit": "debe6e4df2f8801125839b988507919232d57863",
+  "private_file_hashes": {
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/chat.public": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/credential-presence.json": "40600c3e16237d1ae985f62eaab684ad0e13a5f17bdd1d0e863417ac7b31f8d3",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/frozen-before.json": "f66ee7ac6a96d0ac813d9bd3d3a785d6ce1014c008b9d15c809ca29c8a249107",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/npm-global": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/npm-user": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/original-course.public": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/owned-pg-retained.txt": "31b7f9ddba4f21aea45ab595898e213433296fbb333eacc02e918beeb68c5281",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/preflight-delivery.json": "a4897ebcbc9b9a95b5d4f1dbcfcb6425693590b3c20e047e4d2295b10694318b",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/preflight.json": "41582c466b6c990b3039e08de5c9f43e9340446e7cc5e8a34b9966bab4d67bdf",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/preservation-before.json": "1877a3cdcdba1efdb9e0216f109a9ebee4c3b61c059ac5b6a810606a62dbc5fd",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/preservation-final.json": "309e07a8d07e8cbbb99c9bf0b936c6a0659f11ecf8c0e801bfb96f7b869f882e",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/pricing.public": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/public-sources.json": "a19652c71c81c8dfcc1d2166e53e35d0c1a5d3c2dd4bbe120e8135798b9428c6",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/python-for.public": "04a490a7698155aeddd4b49212532d38698a20c73856d9d4173faf4db978ad56",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/python-lists.public": "16b04ecaca87255b0d964ae268573166e15e68996939458462a430c3d3991fac",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/quality-tests.xml": "3e4f8ba896d49f010f1e50ee8164f7efd2873eff5210021d7d71a6b07d06c057",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/services-observed.json": "78e7e2007a370fd063a8ce774abfef8eb381f014bd918149bebd16a6bf3674a1",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/unresolved-mock-review.json": "c71721814b8becb8497b1089781b519a19a9ebc5efdb6a8464d337c149f08697",
+    "/home/dev/.codex/worktrees/phase1a-tutor-readiness-20261108/lecturelens/.data/phase1a/v19-audit-summary.json": "382c39d40ed29cda09851317beba53ca096dd2fe0209e00449d61ba71f6516c9"
+  },
+  "public_sources": {
+    "reviewed_utc": "2026-11-08T13:35:51.181909+00:00",
+    "records": [
+      {
+        "name": "pricing",
+        "url": "https://api-docs.deepseek.com/quick_start/pricing/",
+        "effective_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+        "http_status": 200,
+        "sha256": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+        "bytes": 27549,
+        "path": ".data/phase1a/pricing.public"
+      },
+      {
+        "name": "chat",
+        "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+        "effective_url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+        "http_status": 200,
+        "sha256": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f",
+        "bytes": 129498,
+        "path": ".data/phase1a/chat.public"
+      },
+      {
+        "name": "python-for",
+        "url": "https://docs.python.org/3/reference/compound_stmts.html#the-for-statement",
+        "effective_url": "https://docs.python.org/3/reference/compound_stmts.html#the-for-statement",
+        "http_status": 200,
+        "sha256": "04a490a7698155aeddd4b49212532d38698a20c73856d9d4173faf4db978ad56",
+        "bytes": 240760,
+        "path": ".data/phase1a/python-for.public"
+      },
+      {
+        "name": "python-lists",
+        "url": "https://docs.python.org/3/tutorial/introduction.html#lists",
+        "effective_url": "https://docs.python.org/3/tutorial/introduction.html#lists",
+        "http_status": 200,
+        "sha256": "16b04ecaca87255b0d964ae268573166e15e68996939458462a430c3d3991fac",
+        "bytes": 71957,
+        "path": ".data/phase1a/python-lists.public"
+      },
+      {
+        "name": "original-course",
+        "url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md",
+        "effective_url": "https://raw.githubusercontent.com/swcarpentry/python-novice-inflammation/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md",
+        "http_status": 200,
+        "sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+        "bytes": 10863,
+        "path": ".data/phase1a/original-course.public"
+      }
+    ],
+    "provider_api_calls": 0
+  },
+  "network_audit": {
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-acceptance-final/1721460.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-launch-default/1724658.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-launch-denied/1720477.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-offline/1686257.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-offline-final/1699671.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-preflight/1686307.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-preflight-delivery/1724579.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-preflight-final/1696414.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1a/network-v18/1699672.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/tutor-selection-v19/phase1a-cross-service/network-cross-service/1694788.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 95
+    }
+  },
+  "source_hashes": {
+    "eval/phase1a-tutor-readiness-20261108/quality_gate.py": "3eb761b2b07d765171be9bddc7219cf222e707465f94664d8ca466b750e0816e",
+    "eval/phase1a-tutor-readiness-20261108/launch.py": "c07bb618a391c0dacf198f23d84645f6cd5aedb2bbfda3442af3b2f99bc9b2cb",
+    "eval/phase1a-tutor-readiness-20261108/test_quality_gate.py": "146c48798d0da3d8f5243be320dc21bd0b67c129e3c14f7602455faa80258692",
+    "eval/phase1a-tutor-readiness-20261108/test_launch.py": "80fad2fa0e4de0d9d8f9371b41f9fd29c859492bc8088691917a99329541a485",
+    "eval/phase1a-tutor-readiness-20261108/prepare.py": "7528090cb704a5790424fc0c2060b9e10976b4b819bb89042252eb0505af8645",
+    "eval/phase1a-tutor-readiness-20261108/test_readiness.py": "8ecf39971d646727771776fe30c5f238ee9e9f4d545cc00504835c8ab7f6c7e3",
+    "eval/phase1a-tutor-readiness-20261108/offline_checks.py": "5b915b149b1d54bf9ad59596f9988f138821e934e504273c8ca5f0e55462370e"
+  },
+  "v19_execution_root": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+  "paid_model_calls": 0,
+  "embedding_calls": 0,
+  "paid_reviewer_calls": 0,
+  "native_live_cli_invocations": 0,
+  "actual_cost_for_these_calls_usd": "0",
+  "supplier_account_debit": "UNKNOWN_NOT_QUERIED",
+  "authorized_real_grant_created": false,
+  "quality": "NOT_RUN",
+  "independent_review": "UNRESOLVED",
+  "phase0_remote_ci": "PENDING",
+  "network_audit_limit": "Python audit events only, not OS packet capture; libpq C connections are not counted. SQL endpoints are separately constrained to the task-owned loopback acceptance database."
+}
