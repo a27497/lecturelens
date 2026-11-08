@@ -1,0 +1,84 @@
+{
+  "proposed_run_id": "v19-phase1b-20261108-b5c29c6364c04355",
+  "status": "CLOSED_AT_ZERO_COST_PREFLIGHT_NO_NATIVE_INVOCATION",
+  "user_authorization": "CONDITIONAL_ONE_ORIGINAL_SMOKE_WITHIN_USD_0_30_NO_EXCESS_RISK",
+  "authorized_dispatch_receipt_created": false,
+  "max_turns": 3,
+  "max_requests": 12,
+  "concurrency": 1,
+  "transport_retries": 0,
+  "max_output_tokens": 4096,
+  "max_local_nano_usd": 300000000,
+  "supplier_cost_risk_accepted": false,
+  "hard_cap_evidence": "NOT_AVAILABLE",
+  "paid_reviewer_calls": 0,
+  "embedding_calls": 0,
+  "actual_real_requests": 0,
+  "actual_native_live_cli_invocations": 0,
+  "actual_cost_for_these_requests_usd": "0",
+  "supplier_account_total_debit": "UNKNOWN_NOT_QUERIED",
+  "phase0_remote_ci": "PENDING",
+  "human_review": "HUMAN_NOT_RUN",
+  "execution": "BLOCKED",
+  "quality": "NOT_RUN",
+  "scheduled_positions": [
+    {
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "status": "SKIPPED",
+      "reason": "PREFLIGHT_BLOCKED_NO_REAL_REQUEST"
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:2",
+      "status": "SKIPPED",
+      "reason": "PREFLIGHT_BLOCKED_NO_REAL_REQUEST"
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:3",
+      "status": "SKIPPED",
+      "reason": "PREFLIGHT_BLOCKED_NO_REAL_REQUEST"
+    }
+  ],
+  "code_commit": "75c6a8772c4634c081c975cf524fe61cd86e9d27",
+  "phase1a_baseline": "de6b156567bc7a47f6aec6a2161f3b36a5537c5a",
+  "frozen_v19_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+  "preflight": {
+    "frozen": {
+      "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+      "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+      "ready_for_live": false,
+      "purpose": "THREE_TURN_DEVELOPMENT_SMOKE_NOT_FULL16_OR_HUMAN_ACCEPTANCE",
+      "blockers": [
+        "FRESH_PAID_GRANT",
+        "CURRENT_PRICING_AND_MODEL_PREFLIGHT"
+      ],
+      "real_calls": 0
+    },
+    "execution_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+    "execution_root": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+    "review_plan_sha256": "8cecbf905f54855f675ad23c48a417c1377f3d78fc06c020f9b1e7d24500ca25",
+    "human_review": "HUMAN_NOT_RUN",
+    "human_review_required_for_generation": false,
+    "runtime_key_present": false,
+    "credential_value_read": false,
+    "supplier_hard_cap": "UNVERIFIED",
+    "excess_supplier_risk_authorized": false,
+    "phase0_remote_ci": "PENDING",
+    "execution": "BLOCKED",
+    "quality": "NOT_RUN",
+    "real_requests": 0,
+    "blockers": [
+      "SUPPLIER_HARD_CAP_UNVERIFIED",
+      "NO_EXCESS_SUPPLIER_RISK_AUTHORIZATION",
+      "FRESH_SINGLE_USE_RECEIPTS_REQUIRED",
+      "RUNTIME_KEY_NOT_INJECTED"
+    ]
+  },
+  "quality_aggregation": {
+    "mechanical": "NOT_RUN",
+    "quality": "NOT_RUN",
+    "human_review": "HUMAN_NOT_RUN",
+    "expert_verified": false,
+    "release_or_expansion_authorized": false
+  }
+}

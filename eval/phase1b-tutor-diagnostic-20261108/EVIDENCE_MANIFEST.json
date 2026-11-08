@@ -1,0 +1,89 @@
+{
+  "code_commit": "75c6a8772c4634c081c975cf524fe61cd86e9d27",
+  "source_hashes": {
+    "eval/phase1b-tutor-diagnostic-20261108/test_workflow.py": "ffd4007fa4d8b801afd671f8509529174f472d9804a53d26ebe67dc38dff9d4a",
+    "eval/phase1b-tutor-diagnostic-20261108/admission.py": "b89bad1dc9e822fcbd919144804322320763d2af40f59c0028a2597d9b030f79",
+    "eval/phase1b-tutor-diagnostic-20261108/checks.py": "bc718e20fcdb6ce51fa3f0842806a05e23beedd65bb75bbac43a5b25b0c37b42",
+    "eval/phase1b-tutor-diagnostic-20261108/review.py": "47098b336e8def21cc4ce8d930dac17b511244cc641acc2a692f2dd61a649f09"
+  },
+  "private_evidence_hashes": {
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/credential-presence.json": "b6c685c8bceffc9a19900d1ff7c80ad4e4e027e103b9a517ed8fac0608213ef4",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/pricing.public": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/execution-decision.json": "cf8c0b323590598fccc3e5e45867e6750d908cd9acdf0bc5cb034f012a2eb9ed",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/packet-archive.json": "64993e7c24888025dfd63c38590c11d52c17797431dc838f4fe5123ed8f08094",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/preservation-final.json": "e6ae73539a4c5397d096e7f22d53fb7203d21b8fc1951236ae745c3e6d4934bb",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/balance-doc.public": "8d4c6d2b1de8fe0e1b6259ed8092213a4d4c4411db1fd063d389e6f866010623",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/limits-doc.public": "cb72cce4483114d79add16c30921aef79a3a979012e2837125a94ff8955798f4",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/preservation-before.json": "045d67bd6faa1eb3c09dcff2dc9e044faafc4d1d9baf49028455185f1585ba6e",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/chat.public": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/phase1b-external-ai-review-packet.zip": "5dcb204cd7961df1ad680550d9143e5c0416bceea62531ac64c8e3220d5e1872"
+  },
+  "packet_archive": {
+    "path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/phase1b/phase1b-external-ai-review-packet.zip",
+    "sha256": "5dcb204cd7961df1ad680550d9143e5c0416bceea62531ac64c8e3220d5e1872",
+    "bundle_id": "9fc248890029d6d2ac7d1e42a77196880af52d533b78364b32fd8fa4f979a573",
+    "generation": "NOT_RUN",
+    "human_review": "HUMAN_NOT_RUN",
+    "files": 11
+  },
+  "network_records": {
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-tests-complete/1845585.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-tests/1833538.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-final-export/1853868.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-preflight/1835020.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-final-tests/1853867.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-final-quality/1856923.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-final-preflight/1853866.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-tests-verified/1839259.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-export/1839330.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/phase1b/network-tests-final/1834886.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "network_boundary": "Python audit only, not OS packet capture. Zero-cost tests forbid credential reads and real HTTPTransport. No database was required or connected.",
+  "actual_real_provider_calls": 0,
+  "actual_paid_reviewer_calls": 0,
+  "actual_embedding_calls": 0,
+  "native_live_invocations": 0,
+  "phase0_remote_ci": "PENDING",
+  "human_review": "HUMAN_NOT_RUN",
+  "held_out_material_in_review_packet": false
+}
