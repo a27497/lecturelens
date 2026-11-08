@@ -1,0 +1,349 @@
+{
+  "code_commit": "af5f08ca8344c999fefd59917cb0a5dd23ddbf90",
+  "records": [
+    {
+      "name": "smoke2227-compile",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-compile/run.json",
+      "record_sha256": "d6b88261c9c7014b3443971be54bea5a52f133a2698136779791391734ba5b61",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:38:19.573427+00:00",
+      "runner_pid": 1951132,
+      "runner_start_ticks": 2904928,
+      "cwd": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens",
+      "executable": "python",
+      "argv_sha256": "c90fd0110a042966d842f8d4d31d44f70cd1bcdd89473d0279dcf5e2a6b5b89b",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-compile/output.log",
+      "disk_before": {
+        "used_bytes": 217825538048,
+        "available_bytes": 41064058880,
+        "allowed": true
+      },
+      "child_pid": 1951196,
+      "pgid": 1951196,
+      "child_start_ticks": 2904984,
+      "cleanup": {
+        "pgid": 1951196,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:38:19.735530+00:00",
+      "elapsed_seconds": 0.16213636199972825,
+      "disk_after": {
+        "used_bytes": 217825558528,
+        "available_bytes": 41064038400,
+        "allowed": true
+      },
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "smoke2227-export",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-export/run.json",
+      "record_sha256": "c9d03dc38008b069e6a9dd2712275dc856da4e7333ef2e091d25722163f0316c",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:37:38.576033+00:00",
+      "runner_pid": 1948556,
+      "runner_start_ticks": 2900875,
+      "cwd": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+      "executable": "python",
+      "argv_sha256": "9cd3aa9a812471bd6013693a49453940737ba08de03608ad010890c8e9acf785",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-export/output.log",
+      "disk_before": {
+        "used_bytes": 217824460800,
+        "available_bytes": 41065136128,
+        "allowed": true
+      },
+      "child_pid": 1948557,
+      "pgid": 1948557,
+      "child_start_ticks": 2900884,
+      "cleanup": {
+        "pgid": 1948557,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:37:40.347370+00:00",
+      "elapsed_seconds": 1.7713756439989083,
+      "disk_after": {
+        "used_bytes": 217824718848,
+        "available_bytes": 41064878080,
+        "allowed": true
+      },
+      "log_sha256": "d3bcd1a7774079dbc891e7235aa08c0cb423ccdf392083edcfd9f7690f4001cc"
+    },
+    {
+      "name": "smoke2227-final-tests",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-final-tests/run.json",
+      "record_sha256": "3c41293967dc506c037a9de7e7bdb806fac1dd64b5677f777816c782caf0a5ed",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:38:19.139139+00:00",
+      "runner_pid": 1951131,
+      "runner_start_ticks": 2904928,
+      "cwd": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+      "executable": "python",
+      "argv_sha256": "90548e22e222ca72cebcf9ad64b1c1032e508d0cd444aaa2ace482c4dc906a83",
+      "timeout_seconds": 300.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-final-tests/output.log",
+      "disk_before": {
+        "used_bytes": 217825464320,
+        "available_bytes": 41064132608,
+        "allowed": true
+      },
+      "child_pid": 1951155,
+      "pgid": 1951155,
+      "child_start_ticks": 2904940,
+      "cleanup": {
+        "pgid": 1951155,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:38:22.298274+00:00",
+      "elapsed_seconds": 3.15917042199726,
+      "disk_after": {
+        "used_bytes": 217827303424,
+        "available_bytes": 41062293504,
+        "allowed": true
+      },
+      "log_sha256": "1713af8bd54d8e9918a438fe0a2b12552fd8ff84c355c4317a56521f90a74c0e"
+    },
+    {
+      "name": "smoke2227-format",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-format/run.json",
+      "record_sha256": "7117750667ead055c80550b814c5e2250da140b700892e16bbe8ab0804ac135c",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:38:19.380983+00:00",
+      "runner_pid": 1951179,
+      "runner_start_ticks": 2904955,
+      "cwd": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens",
+      "executable": "ruff",
+      "argv_sha256": "d979a208bb527c44c5ccb80e6c89e9884fa2a01d6b14f29f0733329103438ce0",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-format/output.log",
+      "disk_before": {
+        "used_bytes": 217825488896,
+        "available_bytes": 41064108032,
+        "allowed": true
+      },
+      "child_pid": 1951185,
+      "pgid": 1951185,
+      "child_start_ticks": 2904964,
+      "cleanup": {
+        "pgid": 1951185,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:38:19.496671+00:00",
+      "elapsed_seconds": 0.11572659100056626,
+      "disk_after": {
+        "used_bytes": 217825533952,
+        "available_bytes": 41064062976,
+        "allowed": true
+      },
+      "log_sha256": "2ce9758b9f8abd876ec3e76c589e099e8b05377b1e7ea2331e81ee80f07bdff8"
+    },
+    {
+      "name": "smoke2227-lint",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-lint/run.json",
+      "record_sha256": "0d6ac15a23915c83a4ce68c9a309c9a94153df5838ba6a12d145645cfa01f627",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:38:19.134726+00:00",
+      "runner_pid": 1951138,
+      "runner_start_ticks": 2904931,
+      "cwd": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens",
+      "executable": "ruff",
+      "argv_sha256": "697290d25adbc8e29b44a06d31222056986100990ad7b9ca5da243153cb67784",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-lint/output.log",
+      "disk_before": {
+        "used_bytes": 217825456128,
+        "available_bytes": 41064140800,
+        "allowed": true
+      },
+      "child_pid": 1951154,
+      "pgid": 1951154,
+      "child_start_ticks": 2904940,
+      "cleanup": {
+        "pgid": 1951154,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:38:19.269969+00:00",
+      "elapsed_seconds": 0.13527972800147836,
+      "disk_after": {
+        "used_bytes": 217825484800,
+        "available_bytes": 41064112128,
+        "allowed": true
+      },
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "smoke2227-preflight",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-preflight/run.json",
+      "record_sha256": "5354d7998456218b2697741f556f37957fe80642c8676e652cb5b43e213103f3",
+      "status": "FAILED",
+      "started_at_utc": "2026-11-08T14:37:37.401247+00:00",
+      "runner_pid": 1948441,
+      "runner_start_ticks": 2900758,
+      "cwd": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+      "executable": "python",
+      "argv_sha256": "26eb87cf6f31848a853cf2d1d34af7a5ea96ac27d092624a30801c6e617f5589",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 2,
+      "exit_code": 2,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-preflight/output.log",
+      "disk_before": {
+        "used_bytes": 217824411648,
+        "available_bytes": 41065185280,
+        "allowed": true
+      },
+      "child_pid": 1948442,
+      "pgid": 1948442,
+      "child_start_ticks": 2900766,
+      "cleanup": {
+        "pgid": 1948442,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:37:39.251861+00:00",
+      "elapsed_seconds": 1.8506469429994468,
+      "disk_after": {
+        "used_bytes": 217824481280,
+        "available_bytes": 41065115648,
+        "allowed": true
+      },
+      "log_sha256": "5a1a1fa006cfc43cfca2e418f9c946ad02add264212d03a24d0a91922c882309"
+    },
+    {
+      "name": "smoke2227-quality-not-run",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-quality-not-run/run.json",
+      "record_sha256": "4cd2733811c832a971955ed9a1948324981473cba1cd5198d5ca0c27f0711b42",
+      "status": "FAILED",
+      "started_at_utc": "2026-11-08T14:39:07.241575+00:00",
+      "runner_pid": 1954432,
+      "runner_start_ticks": 2909735,
+      "cwd": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+      "executable": "python",
+      "argv_sha256": "280115575d1cb74ce06d2e86973e7c0ef6d84d1874e17ba6530dd20a97c2edc4",
+      "timeout_seconds": 120.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 2,
+      "exit_code": 2,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-quality-not-run/output.log",
+      "disk_before": {
+        "used_bytes": 217827946496,
+        "available_bytes": 41061650432,
+        "allowed": true
+      },
+      "child_pid": 1954437,
+      "pgid": 1954437,
+      "child_start_ticks": 2909751,
+      "cleanup": {
+        "pgid": 1954437,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:39:07.475069+00:00",
+      "elapsed_seconds": 0.2335309240006609,
+      "disk_after": {
+        "used_bytes": 217827975168,
+        "available_bytes": 41061621760,
+        "allowed": true
+      },
+      "log_sha256": "ecf1289b93ca0a293e75f2a1b7e42f94a77044e2f9a50cd98c16a54579439325"
+    },
+    {
+      "name": "smoke2227-risk-tests",
+      "record_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-risk-tests/run.json",
+      "record_sha256": "291c4e401a2452e2990c865a175faa69d1f314ff95f00861f83387d75cae6e5d",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-11-08T14:35:33.886638+00:00",
+      "runner_pid": 1940362,
+      "runner_start_ticks": 2888400,
+      "cwd": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+      "executable": "python",
+      "argv_sha256": "05e13f12e5b6da5632e1258a4523d16cbb2d0bd66f987075f4495ef5a0c26182",
+      "timeout_seconds": 300.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-risk-tests/output.log",
+      "disk_before": {
+        "used_bytes": 217819312128,
+        "available_bytes": 41070284800,
+        "allowed": true
+      },
+      "child_pid": 1940383,
+      "pgid": 1940383,
+      "child_start_ticks": 2888415,
+      "cleanup": {
+        "pgid": 1940383,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-11-08T14:35:37.360319+00:00",
+      "elapsed_seconds": 3.4737300310007413,
+      "disk_after": {
+        "used_bytes": 217820897280,
+        "available_bytes": 41068699648,
+        "allowed": true
+      },
+      "log_sha256": "cfc407aecf263b1aa9b345438ecec0bda174f14f280d0a156f6c86da5aa298ce"
+    }
+  ]
+}

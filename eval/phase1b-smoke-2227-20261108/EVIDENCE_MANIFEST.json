@@ -1,0 +1,71 @@
+{
+  "code_commit": "af5f08ca8344c999fefd59917cb0a5dd23ddbf90",
+  "user_authorization_sha256": "d08d552ebd0aace059f908d05490635d12ebb29f01262cc54f69b5be827000bf",
+  "source_hashes": {
+    "eval/phase1b-tutor-diagnostic-20261108/admission.py": "4af08b52409d27154a8dc6c0f14bfd951745930503ce30550ee37ef0c463b2c6",
+    "eval/phase1b-tutor-diagnostic-20261108/checks.py": "3ee98e94d4543888aff81784aa6efe5322f7ece1354c8417a578c51472ce5f2d",
+    "eval/phase1b-tutor-diagnostic-20261108/risk_once.py": "589605d19abfb26fad87ad21b68e43de381473c734b5dda99629156bdb272e90",
+    "eval/phase1b-tutor-diagnostic-20261108/test_risk_once.py": "eb453361b74b96a01b961a5b038227bfcb4a814ffb56329dc76c456c660012bf"
+  },
+  "private_evidence_hashes": {
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/credential-presence.json": "ecf8895ed3447058fcba398f514df8920a845ca42a2d3acf4c4f90cd8584d23b",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/pricing.public": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/archive.json": "4e8ac5722edf161ef37fb3c703021bcd03c16b952470be3c8e6c2bf69a7a21bd",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/preservation-final.json": "a5b83f12ddc2123f96e3c4477ca2b09c28a18d31215605a2886b435ce2738290",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/v19-smoke-2227-review-NOT_RUN.zip": "bde7a6cfe8d9e25ef0fb860fc5aa0d358dce2fe31fe09f5a06c7dd6df76b4ddf",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/preservation-before.json": "f88b1c4cb2b8ba905fa152ee02a617d49834bf2414f546380cafd4e340fb23a0",
+    "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/chat.public": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f"
+  },
+  "review_packet_manifest": {
+    "review_tool_sha256": "47098b336e8def21cc4ce8d930dac17b511244cc641acc2a692f2dd61a649f09",
+    "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+    "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+    "execution_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+    "human_review": "HUMAN_NOT_RUN",
+    "generation": "NOT_RUN",
+    "files": {
+      "candidate.json": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+      "original-packet.json": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "original-reference-review.json": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+      "course.md": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "course-evidence.json": "778d3a370d98960b42283a25acd8f48206532e059d6e6ba1779c7042ee3506d5",
+      "review-plan.json": "8cecbf905f54855f675ad23c48a417c1377f3d78fc06c020f9b1e7d24500ca25",
+      "REVIEW_PROMPT.md": "b0e39a8d1f076d5bb8bbf362b3935f3448c4efa13d28b9b729a7af76e5b28b6b",
+      "outcomes.json": "a089749b715df759f1b2c1e50a13665655937b1948b3c06153d7db2691d33c64",
+      "deterministic.json": "aecd57d5ac42bc3d95e68f485527bc24a2e4ae8c5dc35627a509e4ecd32aa335"
+    },
+    "bundle_id": "9fc248890029d6d2ac7d1e42a77196880af52d533b78364b32fd8fa4f979a573"
+  },
+  "network_records": {
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/smoke2227/network-preflight/1948442.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/smoke2227/network-final-tests/1951155.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/smoke2227/network-risk-tests/1940383.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/smoke2227/network-quality/1954437.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    },
+    "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108/.data/smoke2227/network-export/1948557.json": {
+      "database_connections": 0,
+      "denied_connections": 0,
+      "loopback_test_connections": 0
+    }
+  },
+  "network_limit": "Python socket audit only, not OS packet capture. Model transport is forbidden by tests. No database was connected.",
+  "real_requests": 0,
+  "native_live_invocations": 0,
+  "generation": "NOT_RUN",
+  "phase0_remote_ci": "PENDING"
+}
