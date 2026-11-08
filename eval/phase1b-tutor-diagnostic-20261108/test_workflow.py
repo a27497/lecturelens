@@ -388,3 +388,53 @@ def test_deterministic_checks_do_not_judge_citation_semantics_or_execute_model_c
     assert result["citation_semantics"].startswith("UNRESOLVED")
     assert result["generated_code_semantics"].startswith("UNRESOLVED")
     assert result["reference_oracle"]["final_value"] == 4
+
+
+def test_source_mapping_uses_frozen_grouping_and_preserves_original_snapshot():
+    from lecturelens_real_eval.tutor.claim_grounding_runtime import LessonAuthority
+
+    root = Path("/home/dev/.codex/worktrees/phase1a-v19-runner-20261108")
+    snapshot = json.loads((root / "eval/tutor-v14-fresh-v1/snapshot.json").read_bytes())
+    packet = json.loads(
+        (root / "eval/tutor-selection-v19-v1/sample-candidate.json").read_bytes()
+    )
+    course = packet["sessions"][0]["course_id"]
+    before = copy.deepcopy(snapshot)
+    canonical = review.canonical_course(snapshot, course)
+    assert canonical == LessonAuthority(snapshot).snapshot["lectures"][course]
+    assert snapshot == before
+    originals = {e["evidence_id"] for e in snapshot["lectures"][course]["evidence"]}
+    assert {e["evidence_id"] for e in canonical["evidence"]} != originals
+    assert all(
+        set(e["member_evidence_ids"]) <= originals for e in canonical["evidence"]
+    )
+    snapshot["lectures"][course]["split"] = "holdout"
+    with pytest.raises(ValueError, match="ONLY_ORIGINAL_EXPOSED"):
+        review.canonical_course(snapshot, course)
+
+
+@pytest.mark.parametrize("alteration", [None, "foreign_id", "changed_text"])
+def test_source_binding_still_requires_exact_id_and_text(alteration):
+    citation = {"evidence_id": "canonical", "text": "Frozen canonical source."}
+    if alteration == "foreign_id":
+        citation["evidence_id"] = "foreign"
+    elif alteration == "changed_text":
+        citation["text"] += " Added model claim."
+    outcomes = [
+        {
+            "turn_key": review.TURN_KEYS[0],
+            "status": "completed",
+            "answer": "draft",
+            "citations": [citation],
+        }
+    ]
+    result = review.deterministic(
+        outcomes,
+        {},
+        [{"evidence_id": "canonical", "text": "Frozen canonical source."}],
+        [],
+        [],
+        [],
+    )
+    assert result["checks"]["source_binding"] is (alteration is None)
+    assert result["mechanical"] == "FAIL"  # Mapping cannot erase incomplete execution.

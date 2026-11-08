@@ -1,0 +1,110 @@
+{
+  "checks": [
+    {
+      "check": "native_live_cli",
+      "exit_code": 1,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/terminal-handoff/live-terminal.log",
+      "evidence_sha256": "9e816241537e18046cf6dbcdbf70848273f82722115ce150eb85438fa6347c74"
+    },
+    {
+      "check": "initial_real_review_export",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/review-export.log",
+      "evidence_sha256": "efd706a9c1cfe3074f47ac2a5400ee436faa515994b1e82f2547569e4521dad7"
+    },
+    {
+      "check": "initial_quality_aggregate",
+      "exit_code": 2,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/quality-aggregate.json",
+      "evidence_sha256": "4782ba0662f6b6374e841a116e04571bc96e6e2699541447c3c075dcd0ffbdff"
+    },
+    {
+      "check": "initial_outer_tests",
+      "exit_code": 1,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/source-mapping-tests.log",
+      "evidence_sha256": "10486cdeb54daa4242a20b9e811ab09539316cb5fda87f1052a6dc729af7cdcf"
+    },
+    {
+      "check": "isolated_outer_tests_112",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/isolated-source-tests.log",
+      "evidence_sha256": "835cbda95c319bc178324cf6f84735f754f55913e3cf05fd3cbc3684b8efe9c2"
+    },
+    {
+      "check": "offline_failure_probe",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/failure-analysis.log",
+      "evidence_sha256": "ee2af628da68e090351f517a10c86398b042d5fac9053ea272fea6c0c0155be3"
+    },
+    {
+      "check": "canonical_real_review_export",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/canonical-review-export.log",
+      "evidence_sha256": "304c6e6cb1690825a82ea4b5a0d2c3427ea5423f447b4d5d93f623fbf8a9b0a9"
+    },
+    {
+      "check": "canonical_quality_aggregate",
+      "exit_code": 2,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/canonical-quality-aggregate.json",
+      "evidence_sha256": "4782ba0662f6b6374e841a116e04571bc96e6e2699541447c3c075dcd0ffbdff"
+    },
+    {
+      "check": "database_pg_jsonl_readonly_reconciliation",
+      "exit_code": 0,
+      "events": 18,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/database-reconciliation.json"
+    },
+    {
+      "check": "own_live_schema_dump",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/schema-dump.json"
+    },
+    {
+      "check": "stop_only_new_database",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/new-database-stopped.json"
+    },
+    {
+      "check": "zip_hash_and_consumed_authorization_readonly",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/review-bundle-verification.json"
+    },
+    {
+      "check": "ruff_lint_python_project_rules",
+      "exit_code": 0,
+      "configuration": "agent-service/pyproject.toml"
+    },
+    {
+      "check": "ruff_format_existing_outer_88_column_style",
+      "exit_code": 0,
+      "configuration": "agent-service/pyproject.toml with --line-length 88"
+    },
+    {
+      "check": "in_memory_compile_changed_python",
+      "exit_code": 0
+    },
+    {
+      "check": "preservation",
+      "exit_code": 0,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/closeout/preservation.json"
+    },
+    {
+      "check": "earlier_long_supervisor_disk_gate",
+      "exit_code": 88,
+      "evidence_path": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/dev-checks/smoke2227-terminal-tests/run.json",
+      "resolution": "No gate modification; short bounded checks only, no existing asset deletion."
+    }
+  ],
+  "test_result": "112 passed, 0 skipped",
+  "initial_test_failure": "106 passed, 3 failed because three synthetic positives consulted the now-consumed actual Run ID; isolate test record paths, preserve real claims, and add three strict consumed-slot negatives.",
+  "format_trial": "A trial with 100-column Python formatting conflicted with existing 88-column standalone eval files; final format uses existing 88-column style. Initial no-config lint also rejected existing noqa; final lint explicitly uses the project rules.",
+  "not_run": [
+    "GitHub CI (PENDING; no push)",
+    "independent AI semantic review",
+    "human/expert review",
+    "supplier invoice query",
+    "Java/Vue/browser/product integration rerun (no runtime or UI change)",
+    "any additional model/reviewer/embedding call",
+    "full16 or Phase 2"
+  ]
+}

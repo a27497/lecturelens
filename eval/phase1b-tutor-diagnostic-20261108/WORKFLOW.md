@@ -1,4 +1,6 @@
-当前一次性补充授权：用户已经明确接受固定 `v19-smoke-20261108-2227-once` 的剩余供应商账单风险，外层失效为 2026-11-08 19:00 UTC。原文和完整范围在 `../phase1b-smoke-2227-20261108/USER_AUTHORIZATION.json`，其 byte hash 固定在 `risk_once.py`。这不是账户硬限证明，也不是有效 live grant；不能用于其他 Run ID、模型、路径或更高本地预算。
+当前状态：固定 `v19-smoke-20261108-2227-once` 已完成唯一一次真实执行并消费授权，9 请求、2 completed／1 failed，EXECUTION=FAIL、QUALITY=UNRESOLVED；不得重复启动或续期。原始失败保留，见 [本次真实执行收尾报告](../phase1b-smoke-2227-20261108/LIVE_REPORT.md)。以下准备阶段记录用于追溯，不代表授权仍可使用。
+
+准备阶段的一次性补充授权：用户已经明确接受固定 `v19-smoke-20261108-2227-once` 的剩余供应商账单风险，外层失效为 2026-11-08 19:00 UTC。原文和完整范围在 `../phase1b-smoke-2227-20261108/USER_AUTHORIZATION.json`，其 byte hash 固定在 `risk_once.py`。这不是账户硬限证明，也不是有效 live grant；不能用于其他 Run ID、模型、路径或更高本地预算。
 
 `admission.py` 保留原硬限路径，新增精确风险路径：回执必须绑定完整原文、原授权 hash、固定 v19 HEAD／candidate／packet、全部额度、唯一执行路径、准备代码最终 clean HEAD、issue/expiry 时间和原 review plan。回执与原 native grant 必须一致；grant 最多 15 分钟且不超过外层期限，至少保留 185 秒才可交接。原 live_admission 和预算逻辑继续运行，不因风险接受被跳过。旧的 `risk_accepted=true` 仍不是通用授权。
 

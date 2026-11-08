@@ -42,6 +42,20 @@ def oracle():
     }
 
 
+def canonical_course(snapshot, course):
+    # Frozen v19 groups source passages and derives their IDs before retrieval.
+    # Reuse that exact read-only transform, never IDs/text copied from responses.
+    # Only this packet's development course enters the derived review material.
+    from lecturelens_real_eval.tutor.claim_grounding_runtime import LessonAuthority
+
+    original = snapshot["lectures"][course]
+    if original["split"] != "development":
+        raise ValueError("ONLY_ORIGINAL_EXPOSED_DEVELOPMENT_COURSE")
+    return LessonAuthority({"lectures": {course: original}}).snapshot["lectures"][
+        course
+    ]
+
+
 def deterministic(outcomes, summary, evidence, calls, ledger, requests):
     checks = {}
     checks["ordered_positions"] = [r.get("turn_key") for r in outcomes] == TURN_KEYS
@@ -170,9 +184,7 @@ def export(root, destination, execution=None):
     packet = json.loads((base / "sample-candidate.json").read_bytes())
     snapshot = json.loads((root / "eval/tutor-v14-fresh-v1/snapshot.json").read_bytes())
     course = packet["sessions"][0]["course_id"]
-    selected = snapshot["lectures"][course]
-    if selected["split"] != "development":
-        raise ValueError("ONLY_ORIGINAL_EXPOSED_DEVELOPMENT_COURSE")
+    selected = canonical_course(snapshot, course)
     outputs = [
         {
             "turn_key": k,
@@ -193,6 +205,23 @@ def export(root, destination, execution=None):
             root / "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md"
         ).read_bytes(),
         "course-evidence.json": encode(selected),
+        "course-evidence-original.json": encode(snapshot["lectures"][course]),
+        "evidence-mapping.json": encode(
+            {
+                "transform": "FROZEN_V19_LessonAuthority_SOURCE_ONLY",
+                "execution_head": state["execution_head"],
+                "original_sha256": sha(encode(snapshot["lectures"][course])),
+                "canonical_sha256": sha(encode(selected)),
+                "mapping": [
+                    {
+                        "evidence_id": row["evidence_id"],
+                        "member_evidence_ids": row["member_evidence_ids"],
+                        "content_hash": row["content_hash"],
+                    }
+                    for row in selected["evidence"]
+                ],
+            }
+        ),
         "review-plan.json": Path(__file__).with_name("review-plan.json").read_bytes(),
         "REVIEW_PROMPT.md": Path(__file__).with_name("REVIEW_PROMPT.md").read_bytes(),
     }

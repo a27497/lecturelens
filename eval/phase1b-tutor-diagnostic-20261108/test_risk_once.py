@@ -4,6 +4,7 @@ import copy
 import json
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import admission
 import pytest
@@ -13,6 +14,21 @@ from test_workflow import (
 )
 
 NOW = datetime(2026, 11, 8, 15, tzinfo=timezone.utc)
+
+
+@pytest.fixture(autouse=True)
+def isolated_fixed_run_records(tmp_path, monkeypatch):
+    # Unit receipts retain the exact frozen scope, but replay state is synthetic.
+    # A consumed real claim must neither break unit positives nor be removed.
+    original = risk_once.record_paths
+    fixed = Path(risk_once.authority()["execution_root"])
+
+    def records(root):
+        if Path(root) == fixed:
+            return original(tmp_path / "synthetic-fixed-run")
+        return original(root)
+
+    monkeypatch.setattr(risk_once, "record_paths", records)
 
 
 def receipts():
@@ -110,6 +126,16 @@ def test_existing_claim_start_or_output_stops_even_without_native_claim(
         risk_once.available(tmp_path)
 
 
+@pytest.mark.parametrize("position", [0, 1, 2])
+def test_valid_risk_receipt_cannot_bypass_consumed_slot(position):
+    data, grant = receipts()
+    marker = risk_once.record_paths(data["execution_root"])[position]
+    marker.parent.mkdir(parents=True)
+    marker.write_bytes(b"SYNTHETIC CONSUMED SLOT")
+    with pytest.raises(ValueError, match="ALREADY_CLAIMED_STARTED_OR_OBSERVED"):
+        risk_once.validate(data, grant, "a" * 40, NOW)
+
+
 def test_only_one_concurrent_outer_handoff_can_consume_start(tmp_path, monkeypatch):
     monkeypatch.setattr(risk_once, "utcnow", lambda: NOW)
     _, grant = receipts()
@@ -205,7 +231,7 @@ def test_explicit_risk_path_hands_off_original_cli_with_bounded_timeout(
     executed = []
     admission.handoff(
         data["execution_root"],
-        risk_once.record_paths(data["execution_root"])[2],
+        Path(data["execution_root"]) / ".data" / ("synthetic-handoff-" + tmp_path.name),
         auth,
         auth,
         receipt,
