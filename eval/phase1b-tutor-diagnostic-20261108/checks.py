@@ -22,6 +22,7 @@ raise SystemExit(
         [
             "-q",
             str(base / "test_workflow.py"),
+            str(base / "test_risk_once.py"),
             str(base.parent / "phase1a-tutor-readiness-20261108/test_quality_gate.py"),
             str(base.parent / "phase1a-tutor-readiness-20261108/test_launch.py"),
             str(base.parent / "phase1a-tutor-readiness-20261108/test_readiness.py")

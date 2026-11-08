@@ -9,6 +9,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import risk_once
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "eval/phase1a-tutor-readiness-20261108"))
 from prepare import inspect  # noqa: E402
@@ -58,11 +60,15 @@ def review_plan(path):
 
 
 def cost_assurance(receipt, grant):
-    # This phase has no new permission for excess supplier charges. A legacy
-    # boolean risk-acceptance field cannot substitute for verified hard-cap facts.
+    # An exact, recorded user authorization is a separate path from account
+    # enforcement. Neither path treats a lone risk-acceptance boolean as consent.
     if not receipt:
         raise ValueError("SUPPLIER_HARD_CAP_UNVERIFIED_NO_EXCESS_RISK_AUTHORIZATION")
     data = load(receipt)
+    if data.get("kind") == risk_once.KIND:
+        if grant.get("cost_assurance_sha256") != digest(receipt):
+            raise ValueError("FIXED_RUN_RISK_RECEIPT_HASH_MISMATCH")
+        return risk_once.validate(data, grant, preparation_head())
     try:
         valid = (
             grant["cost_assurance_sha256"] == digest(receipt)
@@ -119,6 +125,7 @@ def database_ready():
 def preflight(root, plan=POLICY):
     state = inspect(root)
     review_plan(plan)
+    consent = risk_once.status(root)
     return {
         "frozen": state["frozen"],
         "execution_head": state["execution_head"],
@@ -129,16 +136,16 @@ def preflight(root, plan=POLICY):
         "runtime_key_present": "AGENT_LLM_API_KEY" in os.environ,
         "credential_value_read": False,
         "supplier_hard_cap": "UNVERIFIED",
-        "excess_supplier_risk_authorized": False,
+        "excess_supplier_risk_authorized": consent["risk_accepted_for_fixed_run_only"],
+        "fixed_run_authorization": consent,
         "phase0_remote_ci": "PENDING",
         "execution": "BLOCKED",
         "quality": "NOT_RUN",
         "real_requests": 0,
         "blockers": [
-            "SUPPLIER_HARD_CAP_UNVERIFIED",
-            "NO_EXCESS_SUPPLIER_RISK_AUTHORIZATION",
             "FRESH_SINGLE_USE_RECEIPTS_REQUIRED",
         ]
+        + ([] if consent["valid_now"] else ["FIXED_USER_AUTHORIZATION_EXPIRED"])
         + ([] if "AGENT_LLM_API_KEY" in os.environ else ["RUNTIME_KEY_NOT_INJECTED"]),
     }
 
@@ -151,7 +158,7 @@ def handoff(
     grant = load(authorization)
     # Billing protection is deliberately evaluated before credentials, database,
     # one-use claim and native CLI execution. No blanket 'accepted=true' bypass.
-    cost_assurance(assurance, grant)
+    cost = cost_assurance(assurance, grant)
     if "AGENT_LLM_API_KEY" not in os.environ:
         raise ValueError("RUNTIME_KEY_NOT_INJECTED_NO_CLAIM_OR_RESERVATION")
     root, output = Path(root).resolve(), Path(output).resolve()
@@ -175,21 +182,35 @@ def handoff(
     live_admission(state["frozen"], authorization, pricing)
     database_ready()
     python = root / "agent-service/.venv/bin/python"
-    execute(
+    argv = [
         str(python),
-        [
-            str(python),
-            str(root / "scripts/dev/run_tutor_smoke_v19.py"),
-            "--mode",
-            "live",
-            "--output",
-            str(output),
-            "--authorization",
-            str(Path(authorization).resolve()),
-            "--pricing",
-            str(Path(pricing).resolve()),
-        ],
-    )
+        str(root / "scripts/dev/run_tutor_smoke_v19.py"),
+        "--mode",
+        "live",
+        "--output",
+        str(output),
+        "--authorization",
+        str(Path(authorization).resolve()),
+        "--pricing",
+        str(Path(pricing).resolve()),
+    ]
+    if cost["kind"] == risk_once.KIND:
+        # No grant renewal is performed. Leave an exclusive, durable record even
+        # if exec fails; the native CLI still creates its original own claim.
+        risk_once.validate(cost, grant, preparation_head())
+        risk_once.begin_handoff(root, grant, authorization, pricing, assurance)
+        execute(
+            "/usr/bin/timeout",
+            [
+                "/usr/bin/timeout",
+                "--signal=TERM",
+                "--kill-after=2s",
+                str(risk_once.WALL_SECONDS) + "s",
+                *argv,
+            ],
+        )
+    else:
+        execute(str(python), argv)
 
 
 def main():
