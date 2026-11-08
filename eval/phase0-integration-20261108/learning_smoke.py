@@ -8,6 +8,7 @@ No teaching quality or new learning capability is asserted here.
 import argparse
 import hashlib
 import importlib.util
+import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -22,7 +23,7 @@ class Phase0Smoke(BASE.Smoke):
     def preflight(self):
         super().preflight()
         # Exercise the existing opt-in feedback protocol only in this new mock stack.
-        self.env["AGENT_FEEDBACK_ENABLED"] = "true"
+        self.env["STUDY_FEEDBACK_ENABLED"] = "true"
         self.result["phase0_feedback_test_only"] = True
         self.result["phase0_runner_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
@@ -36,7 +37,9 @@ class Phase0Smoke(BASE.Smoke):
     def finish_run(self, run_id):
         def read():
             result = self.read_run(run_id)
-            assert result["run"]["status"] not in ("failed", "cancelled", "budget_exceeded"), result["run"]
+            assert result["run"]["status"] not in ("failed", "cancelled", "budget_exceeded"), (
+                f"Study status={result['run']['status']} code={result['run'].get('error_code')}"
+            )
             return result
 
         return self.wait(read, lambda row: row["run"]["status"] == "succeeded", 100, "Study Run succeeded")
@@ -44,7 +47,43 @@ class Phase0Smoke(BASE.Smoke):
     def flashcards(self):
         super().flashcards()
         with self.stage("phase0-learning-flow"):
-            self.learning_flow()
+            self.result["phase0_observations"] = []
+            try:
+                self.learning_flow()
+            except (AssertionError, KeyError, StopIteration) as error:
+                frame = traceback.extract_tb(error.__traceback__)[-1]
+                self.result["phase0_failure_location"] = {"line": frame.lineno, "type": type(error).__name__}
+                raise AssertionError(
+                    f"Phase 0 learning check at line {frame.lineno}: {type(error).__name__}"
+                ) from None
+
+    def study_command(self, operation, **body):
+        result = super().study_command(operation, **body)
+        if "phase0_observations" in self.result:
+            run, artifact = result.get("run") or {}, result.get("artifact") or {}
+            attempt, feedback, note = (
+                result.get("attempt") or {},
+                result.get("feedback") or {},
+                result.get("note") or {},
+            )
+            self.result["phase0_observations"].append(
+                {
+                    "operation": operation,
+                    "status": run.get("status"),
+                    "error_code": run.get("error_code"),
+                    "feedback_enabled": result.get("feedback_enabled"),
+                    "questions": len(artifact.get("questions", [])),
+                    "attempt_version": attempt.get("version"),
+                    "feedback_answer_version": feedback.get("answer_version"),
+                    "feedback_mode": (feedback.get("content") or {}).get("mode"),
+                    "note_version": note.get("version"),
+                    "choice_correct": (attempt.get("choice_result") or {}).get("is_correct"),
+                    "wrong_count": result.get("wrong_count"),
+                    "correct_count": result.get("correct_count"),
+                }
+            )
+            self.save()
+        return result
 
     def learning_flow(self):
         session = self.study_session
