@@ -1,0 +1,47 @@
+{
+  "PHASE1_C_STATUS": "PARTIAL",
+  "ROOT_CAUSE": "PARTIAL",
+  "OFFLINE_REGRESSION": "PASS",
+  "REAL_MODEL_QUALITY": "NOT_RUN",
+  "NEXT_RECOMMENDATION": "SIMPLIFY_TUTOR",
+  "candidate_identity": "phase1c-tutor-repair-development",
+  "runtime_base_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+  "failure_evidence_commit": "b550fc8a762fa20e75ca029198f0eea35e860f87",
+  "historical_real_trial": "FAIL_UNCHANGED",
+  "historical_model_calls": 9,
+  "historical_local_cost_usd": "0.011272800",
+  "historical_supplier_billing": "UNKNOWN",
+  "new_model_calls": 0,
+  "new_embedding_calls": 0,
+  "new_reviewer_calls": 0,
+  "new_model_cost_usd": "0",
+  "old_authorization_consumed": true,
+  "new_live_entry_or_authorization": false,
+  "tests": {
+    "passed": 197,
+    "skipped": 0,
+    "exit_code": 0
+  },
+  "original_proxy": {
+    "ordinary": 53839,
+    "repair": 25954,
+    "total": 79793
+  },
+  "candidate_historical_proxy": {
+    "ordinary": 47630,
+    "repair": 21725,
+    "total": 69355
+  },
+  "unchanged_proxy_cap": 64000,
+  "historical_repair_still_exceeds_cap": true,
+  "semantic_effect_of_prompt_changes": "UNPROVEN",
+  "mechanical_root_causes": [
+    "Source-only completed publication",
+    "Generic hint without learner focus",
+    "No exact capacity observation supplied",
+    "Repeated source/draft context and cumulative reservation cap"
+  ],
+  "missing_learner_history_hypothesis": "RULED_OUT_FOR_THIS_TRIAL",
+  "phase0_ci": "PENDING",
+  "expert_verified": false
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "HISTORICAL_FAILURE_AND_REQUEST_CONSTRUCTION_ONLY",
+  "real_model_quality": "NOT_RUN",
+  "new_provider_requests": 0,
+  "database_connections": 0,
+  "identity": "phase1c-tutor-repair-development",
+  "implementation_source_sha256": "d45242bccf8853b7b136947a910fd97d3aef4c2122b1ca6586f51f8adef43141",
+  "archive_sha256": "832e20a6e066603b57a858a50ddbd2eda355757ba821e4119c6056339299b30d",
+  "original_summary": {
+    "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+    "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+    "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+    "mode": "live",
+    "source_scope": "DEVELOPMENT_EXPOSED_KNOWN_COURSE",
+    "expected": 3,
+    "completed": 2,
+    "failed": 1,
+    "skipped": 0,
+    "sent_requests": 9,
+    "ledger": {
+      "calls": 9,
+      "nano_usd": 11272800,
+      "pending": 0,
+      "blocked": null
+    },
+    "global_stop": "TUTOR_REPAIR_BUDGET_UNAVAILABLE",
+    "quality": "NOT_RUN",
+    "real_model_calls": 9,
+    "embedding_calls": 0,
+    "reviewer_calls": 0,
+    "cost_usd": "UNKNOWN_SUPPLIER_INVOICE",
+    "ledger_amounts": "CONSERVATIVE_LOCAL_NOT_INVOICE",
+    "admission": {
+      "run_id": "v19-smoke-20261108-2227-once",
+      "git_head": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+      "authorization_sha256": "0a79c6ecc9391ee33ebf939322c0c8048ec859f6c644cf21fade07044c8022bd",
+      "pricing_receipt_sha256": "a32593406554a2bbb8394ae76eefeb4c671783da2d78f481174bd7209c24608d"
+    }
+  },
+  "first_turn_original_block_kinds": [
+    "source",
+    "source",
+    "source",
+    "source"
+  ],
+  "second_turn_original_hint_intent": "locate_rule",
+  "second_turn_repair_observations": [
+    {
+      "tool": "finish_tutor_turn",
+      "error": "TUTOR_FINISH_REPAIR_REQUIRED",
+      "message": "SPAN_CAPACITY: selected389 code points; limit240. Select a smaller complete supporting interval; do not omit required conditions/content."
+    }
+  ],
+  "earlier_learner_text_preserved": true,
+  "original_source_only_answer_codepoints": 2680,
+  "current_history_answer_codepoints": 63,
+  "ordinary_request_proxies": [
+    8005,
+    18965,
+    20660
+  ],
+  "ordinary_proxy_total": 47630,
+  "repair_request_proxy": 21725,
+  "total_with_repair": 69355,
+  "original_committed_turn_proxy": 53839,
+  "unchanged_turn_proxy_cap": 64000,
+  "would_fit_repair": false,
+  "first_feedback_anchor_codepoints": 655,
+  "unchanged_feedback_anchor_cap": 400,
+  "historical_failure_relabelled": false
+}

@@ -138,6 +138,9 @@ class UsableTutorRuntime(VerifiedTutorRuntime):
         super().__init__(store, authority, provider or UsableMock())
         self.store = UsableStore(store.dsn)
 
+    def render_hint(self, hint, turn, state):
+        return HINT_ACTS[hint["intent"]]
+
     def request(self, session, turn, state, history):
         messages, schemas, _ = BoundedTutorRuntime.request(self, session, turn, state, history)
         messages[0]["content"] = SYSTEM
@@ -220,7 +223,11 @@ class UsableTutorRuntime(VerifiedTutorRuntime):
             else:
                 hint = proposal["hint"]
                 blocks = [
-                    dict(kind="explanation", text=HINT_ACTS[hint["intent"]], evidence_id=hint["evidence_id"])
+                    dict(
+                        kind="explanation",
+                        text=self.render_hint(hint, turn, state),
+                        evidence_id=hint["evidence_id"],
+                    )
                 ]
                 if history and history[-1]["outcome"] == "socratic_prompt":
                     feedback = [

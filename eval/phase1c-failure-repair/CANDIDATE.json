@@ -1,0 +1,16 @@
+{
+  "identity": "phase1c-tutor-repair-development",
+  "code_base": "2ecf4d52af1084bad405e98a6e78027bf4c5ab5d",
+  "failure_evidence_commit": "b550fc8a762fa20e75ca029198f0eea35e860f87",
+  "real_model_quality": "NOT_RUN",
+  "dispatch_authorized": false,
+  "live_entry": "NONE_OLD_FROZEN_ENTRY_REJECTS_MODIFIED_SOURCE",
+  "files": {
+    "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py": "d45242bccf8853b7b136947a910fd97d3aef4c2122b1ca6586f51f8adef43141",
+    "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py": "d9ad1919cb47a014242f0b5e22fd1e1d2e1d6023a1df173b26f8832ac4cf2425",
+    "agent-service/tests/test_tutor_phase1c.py": "a065b8e70a891cfaaaa2d87dab08cfa7690a528e7f037047738f66230f1a09e9",
+    "eval/phase1c-failure-repair/run_offline.py": "e68d4d6064acdc9636ecb5a548595723f165053641b29b973b71df021d092758",
+    "eval/phase1c-failure-repair/analyze_failure.py": "ceba11de7e8b2bc029a3a65632cbc563e902cad5587a13718c7281704b49e175",
+    "docs/TUTOR_SELECTED_DEVELOPMENT.md": "607677bd89c46800735495039bc11bae42fc8f63a2ff78471ff2f7e58da3ec8e"
+  }
+}

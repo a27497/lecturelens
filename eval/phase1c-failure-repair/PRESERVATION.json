@@ -1,0 +1,15 @@
+{
+  "recorded_utc": "2026-11-08T15:40:27.316347+00:00",
+  "protected_worktrees_unchanged": 49,
+  "original_live_containers_unchanged": 23,
+  "original_live_units_unchanged": 4,
+  "frozen_eval_files_unchanged": 1943,
+  "original_phase1b_evidence_paths_verified": 127,
+  "original_failure_zip_unchanged": true,
+  "new_database_stopped": true,
+  "new_database_volume_retained": true,
+  "new_runtime_real_requests": 0,
+  "existing_services_restarted": 0,
+  "production_database_connections": 0,
+  "phase0_remote_ci": "PENDING"
+}

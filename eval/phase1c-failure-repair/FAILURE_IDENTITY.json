@@ -1,0 +1,9 @@
+{
+  "source_zip": "/home/dev/.codex/worktrees/phase1b-tutor-diagnostic-20261108/lecturelens/.data/smoke-2227/v19-smoke-2227-REAL-review.zip",
+  "source_zip_sha256": "832e20a6e066603b57a858a50ddbd2eda355757ba821e4119c6056339299b30d",
+  "original_bundle_id": "f4939cafb5c7798287dfeaf8f80804b84f8c4d8f38feedf920721c586d56cc74",
+  "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "historical_failed_status_preserved": true,
+  "private_copy_mode": "0400"
+}
