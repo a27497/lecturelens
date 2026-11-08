@@ -1,0 +1,44 @@
+{
+  "reviewed_utc": "2026-11-08T14:08:45.434378+00:00",
+  "public_sources": [
+    {
+      "name": "pricing",
+      "url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "http_status": 200,
+      "sha256": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+      "bytes": 27549
+    },
+    {
+      "name": "chat",
+      "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "http_status": 200,
+      "sha256": "b43ca950bd04ae7f6f537b42e6cb729f543d942dcd848ec43ad4e9bfe059fe1f",
+      "bytes": 129498
+    },
+    {
+      "name": "balance-doc",
+      "url": "https://api-docs.deepseek.com/api/get-user-balance/",
+      "http_status": 200,
+      "sha256": "8d4c6d2b1de8fe0e1b6259ed8092213a4d4c4411db1fd063d389e6f866010623",
+      "bytes": 27354
+    },
+    {
+      "name": "limits-doc",
+      "url": "https://api-docs.deepseek.com/quick_start/rate_limit/",
+      "http_status": 200,
+      "sha256": "cb72cce4483114d79add16c30921aef79a3a979012e2837125a94ff8955798f4",
+      "bytes": 39529
+    }
+  ],
+  "model": "deepseek-flash",
+  "published_alias_backend": "DeepSeek-V4.1-Flash-1017",
+  "peak_input_cache_miss_usd_per_million": "0.30",
+  "peak_output_usd_per_million": "1.20",
+  "local_max_reservation_nano_usd": 294912000,
+  "local_cap_nano_usd": 300000000,
+  "account_hard_cap": "UNVERIFIED_NO_ACCOUNT_ACCESS",
+  "risk_beyond_0_30_authorized": false,
+  "dispatch_receipt": false,
+  "provider_account_or_balance_API_calls": 0,
+  "conclusion": "Public prices, balance availability and concurrency limits do not verify a run-specific account liability ceiling."
+}

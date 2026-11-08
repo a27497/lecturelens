@@ -1,0 +1,17 @@
+{
+  "kind": "VERIFIED_SUPPLIER_ACCOUNT_HARD_CAP",
+  "verified": false,
+  "run_id": null,
+  "execution_root": "/home/dev/.codex/worktrees/phase1a-v19-runner-20261108",
+  "model": "deepseek-flash",
+  "currency": "USD",
+  "maximum_additional_liability_nano_usd": null,
+  "inflight_and_delayed_billing_covered": false,
+  "shared_account_activity_covered": false,
+  "automatic_topups_and_credit_disabled": false,
+  "verified_by": null,
+  "verified_utc": null,
+  "redacted_evidence_file": null,
+  "redacted_evidence_sha256": null,
+  "note": "UNVERIFIED template only. Public prices, balance, alerts, a local budget or this JSON do not establish supplier enforcement. Never fill verified=true without reviewing actual account-level evidence."
+}

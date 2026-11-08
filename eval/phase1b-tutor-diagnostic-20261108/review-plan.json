@@ -1,0 +1,10 @@
+{
+  "version": "PHASE1B_LAYERED_DEVELOPMENT_ONLY",
+  "deterministic_checks": true,
+  "ai_review": "EXTERNAL_AI_PACKET_NO_AUTOMATIC_PAID_REVIEW",
+  "human_review": "HUMAN_NOT_RUN",
+  "unresolved_blocks_quality_pass": true,
+  "all_original_required_points": true,
+  "same_implementation_session_cannot_cross_review": true,
+  "automatic_expansion": false
+}
