@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,11 +56,17 @@ public class ThreadPoolBoundedTaskExecutor implements BoundedTaskExecutor {
             throw new BusinessException(ErrorCode.TASK_EXECUTOR_SHUTDOWN);
         }
 
-        Future<T> future;
+        FutureTask<T> future = new FutureTask<>(TracingContextHolder.wrapCurrent(callable));
+        // A worker may start inside execute(). Publish its cancellation handle first,
+        // and never let another submission replace a still-active task's handle.
+        if (activeTasks.putIfAbsent(taskId, future) != null) {
+            throw new BusinessException(ErrorCode.TASK_EXECUTOR_BUSY);
+        }
         try {
-            future = delegate.submit(TracingContextHolder.wrapCurrent(callable));
-            activeTasks.put(taskId, future);
+            delegate.execute(future);
         } catch (RejectedExecutionException exception) {
+            activeTasks.remove(taskId, future);
+            future.cancel(false);
             throw new BusinessException(ErrorCode.TASK_EXECUTOR_BUSY);
         }
 
