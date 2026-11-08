@@ -1,0 +1,115 @@
+{
+  "status": "UNRESOLVED_NO_REAL_OUTPUT_OR_INDEPENDENT_REVIEW",
+  "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+  "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+  "outcomes_sha256": null,
+  "reviewer": {
+    "name": null,
+    "implementation_contributor": null,
+    "independence_attested_by": null
+  },
+  "turns": [
+    {
+      "turn_key": "v18-loop-teaching-smoke:1",
+      "points": [
+        {
+          "id": "1.1",
+          "requirement": "A loop applies its body once per element without a separate indexed print for each item.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "1.2",
+          "requirement": "Under the explicitly changed start2/two-name example:2 then3 then4, final4; do not substitute the original zero/three-name trace.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "1.3",
+          "requirement": "Valid commented Python with names list, length initially2, increment inside loop, final print outside. Preserve brackets and indentation.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "1.4",
+          "requirement": "Outside print occurs once after loop; inside print occurs per visit (3,4 in this variation).",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "1.5",
+          "requirement": "names[0] is Ada, names[1] is Grace under the supplied list; distinguish this derivation from the original source and from claimed execution.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        }
+      ],
+      "claims": []
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:2",
+      "points": [
+        {
+          "id": "2.1",
+          "requirement": "One question directs attention to indentation/body boundary and the location of final print.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "2.2",
+          "requirement": "Do not give final4, intermediate values, complete code or full solution in answer/feedback.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "2.3",
+          "requirement": "Relevant current-turn citation; full source remains inspectable and may contain solutions.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        }
+      ],
+      "claims": []
+    },
+    {
+      "turn_key": "v18-loop-teaching-smoke:3",
+      "points": [
+        {
+          "id": "3.1",
+          "requirement": "Use actual earlier changed input:initial2, Ada/Grace, two increments ending4.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "3.2",
+          "requirement": "Explain the current learner errors:one increment per visit, not once total; unindented final print outside, not inside.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "3.3",
+          "requirement": "Include specific feedback comparing the learner reply with source evidence, without inventing a grade or permanent mastery.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        },
+        {
+          "id": "3.4",
+          "requirement": "Answer and feedback retain relevant bound citations and source conditions; no unsupported execution assertion.",
+          "status": "UNRESOLVED",
+          "reason": "",
+          "evidence": []
+        }
+      ],
+      "claims": []
+    }
+  ]
+}

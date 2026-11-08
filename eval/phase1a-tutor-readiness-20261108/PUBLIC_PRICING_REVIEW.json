@@ -1,0 +1,31 @@
+{
+  "reviewed_utc": "2026-11-08T13:34:34.473361+00:00",
+  "requested_model": "deepseek-flash",
+  "published_backend": "DeepSeek-V4.1-Flash-1017",
+  "alias_immutable": false,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "public_peak_usd_per_million": {
+    "input_cache_miss": "0.30",
+    "input_cache_hit": "0.006",
+    "output": "1.20"
+  },
+  "public_off_peak_usd_per_million": {
+    "input_cache_miss": "0.15",
+    "input_cache_hit": "0.003",
+    "output": "0.60"
+  },
+  "local_nano_usd_per_token": {
+    "input": 300,
+    "output": 1200
+  },
+  "local_reservation_worst_nano_usd": 294912000,
+  "local_cap_nano_usd": 300000000,
+  "supplier_invoice_hard_cap": "UNVERIFIED",
+  "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "configuration_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+  "account_or_model_API_called": false,
+  "authorized": false,
+  "dispatch_receipt": false,
+  "freshness_before_future_dispatch_seconds": 86400,
+  "warning": "Public review only; deliberately not accepted as a live dispatch receipt."
+}
