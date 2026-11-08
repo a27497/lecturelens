@@ -1,0 +1,17 @@
+{
+  "requested_model": "deepseek-flash",
+  "configuration_available_verified": true,
+  "input_nano_usd_per_token": 300,
+  "output_nano_usd_per_token": 1200,
+  "official_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "api_configuration_source": "https://api-docs.deepseek.com/api/create-chat-completion/",
+  "reviewed_utc": "2026-11-08T06:49:40+00:00",
+  "reviewed_local": "2026-11-08T14:49:40+08:00",
+  "no_cache_peak_rates_cover_current_prices": true,
+  "published_alias_backend": "DeepSeek-V4.1-Flash-1017",
+  "verification_method": "Official public documentation only; no account/model/balance/provider API request.",
+  "parallel_tool_calls": "false is sent; not listed on current Chat API page, not a guaranteed provider behavior. Existing channel validates all returned proposals, executes first only, counts dropped calls and never requests them again.",
+  "supplier_actual_charges": "UNKNOWN",
+  "authorization": "ABSENT; this receipt is not a grant",
+  "freshness": "Must be rechecked if older than24h before a separately authorized dispatch."
+}

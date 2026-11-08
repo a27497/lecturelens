@@ -1,0 +1,1176 @@
+{
+  "status": "ISOLATED_RECOVERY_AND_OFFLINE_PROTOCOL_ACCEPTANCE_PASS; REAL_GENERATION_NOT_RUN",
+  "initial": {
+    "initial_sha": "d1eb5053b5c40fc4ed879d516845880031353ab8",
+    "detached": true,
+    "initial_index_and_worktree_clean": true,
+    "new_worktree": "/home/dev/.codex/worktrees/tutor-v19-closeout-20261108",
+    "old_worktree": "/home/dev/.codex/worktrees/tutor-scale-prep/lecturelens",
+    "admin": "/home/dev/projects/lecturelens/.git/worktrees/tutor-v19-closeout-20261108",
+    "commondir": "/home/dev/projects/lecturelens/.git",
+    "reverse_link_matches": true,
+    "old_git_pointer_sha256": "63024ac62ffb92248189173d3410cd89b1bffd7ab6a4b59d8304b5a5725f28c0",
+    "old_staging_state": "UNKNOWN; original per-worktree index absent",
+    "original_branch_head": "d1eb5053b5c40fc4ed879d516845880031353ab8"
+  },
+  "binding": {
+    "candidate": "p8-tutor-selected-v19-development",
+    "candidate_manifest": "eval/tutor-selection-v19-v1/candidate.json",
+    "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+    "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+    "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+    "initial_validation_head": "d1eb5053b5c40fc4ed879d516845880031353ab8",
+    "closeout_test_commit": "50e3d408472f0a0a013cc159830c3f79f7961f9c",
+    "test_file": "agent-service/tests/test_tutor_v19_closeout.py",
+    "test_sha256": "1bc427a8dde8c852a7cdc5c999a3a2eca9df0c5442fcaa7861ff97f979aaad57",
+    "paid_authorized": false,
+    "approved_git_head": null,
+    "approval_requirement": "Bind final clean HEAD, candidate/packet hashes and original v19 scope after fresh explicit user approval. No old grant is valid.",
+    "entry": "scripts/dev/run_tutor_smoke_v19.py",
+    "default_mode": "verify",
+    "live_dispatch_executed": false,
+    "max_model_requests": 12,
+    "ordinary_decisions_per_turn": 3,
+    "shared_finish_corrections_per_turn": 1,
+    "max_output_tokens": 4096,
+    "max_nano_usd": 300000000,
+    "concurrency": 1,
+    "transport_retries": 0,
+    "reviewer_calls": 0,
+    "embedding_calls": 0
+  },
+  "frozen_checks": [
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+      "sha256": "c3552274015967595e17c28618baab1b6c5d6be38a9d4d64b7a9a7de762cdc94",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+      "sha256": "b7e7660e4dfee362ae0f9a52f8240c880f81adaf1d7be0a258c8c2cb257bac42",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+      "sha256": "42ec471877cbee52a66f6e0c1076c28f7c6a1b7d71b635b9d65eb26ebcff832e",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+      "sha256": "963797f456ea0b04ffb87f47f958b97723ee77c9a94853413295406cfff60748",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "agent-service/tests/test_tutor_v19.py",
+      "sha256": "930526bf2e8b8b6e38ca44f668d233b3fa0873f16ed82f6c5fa0cbe8d09544d7",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "backend/src/test/java/com/example/courselingo/qa/TutorSelectedCrossServiceIT.java",
+      "sha256": "ca36d81722bada4cf984b0a4786870e2d2b5c5870564bade88655895f0907c5c",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "docs/TUTOR_SELECTED_DEVELOPMENT.md",
+      "sha256": "a7d8afc353e02623ae85faf812eda988438e536d8426bf9c26bd82483069f521",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/CONTRACT.md",
+      "sha256": "75fb9e035c3dfea850e8c00fe03b6a70b082cdd8a7bbf287050dc82db4a9484e",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/SMOKE_PLAN.md",
+      "sha256": "9b8ea329d7d71f2457b357eb0c2d550011788ba4dcd3f20170420a3b697f24d3",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/authorization-template.json",
+      "sha256": "95ff07c90a7170d29933baff7c2ad86898fa14155603b3e9e67f0e99c43ebb91",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/pricing-template.json",
+      "sha256": "e5a3f4a2b0d131c184ae2e81923960c14cfbfd7bea9080ba21c6a7c8a47e0b9b",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/reference-review-pack.json",
+      "sha256": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-selection-v19-v1/sample-candidate.json",
+      "sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "scripts/dev/check_tutor_selected.py",
+      "sha256": "0d2a7ad84b03fba365f82cf35e8e67993a72e6d4ee6b17a3d45e7c434db6f04e",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "scripts/dev/run_tutor_smoke_v19.py",
+      "sha256": "91aabfcdbf14470d3ce2f577729c44ef6d24716cd745473df08feed84d7a1967",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "scripts/dev/serve_tutor_selected_mock.py",
+      "sha256": "91d45885e425af4f2695f1a0a7d6f95f661602bef44455f19f50cbd3ac3f8837",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-v14-fresh-v1/snapshot.json",
+      "sha256": "6e24e3fd92a0b59a7edb9c2d488c891e29fc29d1ece28cba24dcaee8ec3adfaa",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-selection-v19-v1/candidate.json",
+      "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "README.md",
+      "sha256": "75dad90a407763fa16cf417a3ddd68cf032b08c456bf3b6bf4ab0f90e478a19c",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/usable_app.py",
+      "sha256": "7013fc7d1e3274a03dc9cabb05b4b809cca65796c84b6d67cc893dc35253d298",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/usable_mock.py",
+      "sha256": "04d5e06ddc5679d5e183988a261506874ba16b86d32aff397f7ea7bae2144d73",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/usable_policy.py",
+      "sha256": "0dc5351fe3b73fa743212470c9f017f15748c4841d333a20eb1dbd4781f9efa8",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/usable_runtime.py",
+      "sha256": "55c28365c00c10bce84ad2129a70a89b160070b35010b5da492c5fcd9174871a",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/src/lecturelens_real_eval/tutor/usable_smoke.py",
+      "sha256": "e050d4d54d1663964af98145d1a71ba6ab56a2b0f5e319c215260ae2985e3b59",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "agent-service/tests/test_tutor_v18.py",
+      "sha256": "5d49a270450c46de3a691a37ad4b692231a4a71eb5bfcb47b420074b8611928a",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "backend/src/test/java/com/example/courselingo/qa/TutorUsableCrossServiceIT.java",
+      "sha256": "1c955d9c23af7619f46f46f787027f7ec7d8dff5ec15d77ce3719e0c5968a597",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "docs/TUTOR_USABLE_DEVELOPMENT.md",
+      "sha256": "d4f2bec10e2b66d8225b21ea5a8da6bd9d46fbeba82d42e268c21b9114da602b",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/CONTRACT.md",
+      "sha256": "3c9d4dba5952a6b6c6a75ed212d8e74b3b7034b1f1dbf2ea032f38966961ab6a",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/SMOKE_PLAN.md",
+      "sha256": "7bfa7b1a0680056effad49404eaaa2a94ec612287b2e61bf01497135384762c3",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/authorization-template.json",
+      "sha256": "d5afdf14e4e99664264966e24b0eb4cb92c931b00fa58a9d9bc9f1a2f03b5290",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/pricing-template.json",
+      "sha256": "e5a3f4a2b0d131c184ae2e81923960c14cfbfd7bea9080ba21c6a7c8a47e0b9b",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/reference-review-pack.json",
+      "sha256": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-usability-v18-v1/sample-candidate.json",
+      "sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "frontend/src/components/task-detail/CourseTutorPanel.usable.test.ts",
+      "sha256": "a5e7b9854f089f660af2b2ca7e3d1a8cfd33d97b1be69f521d7821609f86786c",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "scripts/dev/check_tutor_usable.py",
+      "sha256": "ca1f10b5de82ee9af25629d2c781b00230e5194397416defeff60d04d9c9e39a",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "scripts/dev/measure_tutor_usable.py",
+      "sha256": "b917cc6038c6b29308c3a0096f554e4804830bce21dcdfd4677e1ed4ef1444cc",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "scripts/dev/run_tutor_smoke_v18.py",
+      "sha256": "cd86155dffcb41b7ce8ee1a89ec481049e505d3fcccb71b193c696d9beb2e08c",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "scripts/dev/serve_tutor_usable_mock.py",
+      "sha256": "4d7e6c53ce923bbafff501b5b624af76f7bd7e3b9d33609d85548af1e03d2ce2",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-v14-fresh-v1/snapshot.json",
+      "sha256": "6e24e3fd92a0b59a7edb9c2d488c891e29fc29d1ece28cba24dcaee8ec3adfaa",
+      "status": "MATCH"
+    },
+    {
+      "manifest": "eval/tutor-usability-v18-v1/candidate.json",
+      "path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "status": "MATCH"
+    }
+  ],
+  "checks": {
+    "closeout-cleanup": {
+      "name": "closeout-cleanup",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-closeout-phase1-v1/network-cleanup",
+        ".data/tutor-closeout-phase1-v1/cleanup_owned.py"
+      ],
+      "code": 0,
+      "seconds": 2.365
+    },
+    "closeout-compile": {
+      "name": "closeout-compile",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "-m",
+        "py_compile",
+        "agent-service/tests/test_tutor_v19_closeout.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py"
+      ],
+      "code": 0,
+      "seconds": 0.173
+    },
+    "closeout-cross-service": {
+      "name": "closeout-cross-service",
+      "command": [
+        "mvn",
+        "-o",
+        "-s",
+        ".data/tutor-closeout-phase1-v1/maven-settings.xml",
+        "-f",
+        "backend/pom.xml",
+        "-Dtutor.phase.root=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108",
+        "-Dtutor.phase.label=closeout-cross-service",
+        "-Dtest=TutorSelectedCrossServiceIT,TutorCompleteEvidenceTest,TutorControllerTest,TutorTransportTest,StudyAuthorityTest",
+        "test"
+      ],
+      "code": 0,
+      "seconds": 104.164
+    },
+    "closeout-node-env-02": {
+      "name": "closeout-node-env-02",
+      "command": [
+        "env",
+        "-i",
+        "PATH=/opt/node/bin:/usr/bin:/bin",
+        "HOME=/home/dev",
+        "USER=dev",
+        "LANG=C.UTF-8",
+        "NPM_CONFIG_USERCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-user.config",
+        "NPM_CONFIG_GLOBALCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-global.config",
+        "npm",
+        "--prefix",
+        "frontend",
+        "ci",
+        "--offline",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "code": 0,
+      "seconds": 14.219
+    },
+    "closeout-node-env": {
+      "name": "closeout-node-env",
+      "command": [
+        "env",
+        "-i",
+        "PATH=/opt/node/bin:/usr/bin:/bin",
+        "HOME=/home/dev",
+        "USER=dev",
+        "LANG=C.UTF-8",
+        "NPM_CONFIG_USERCONFIG=/dev/null",
+        "NPM_CONFIG_GLOBALCONFIG=/dev/null",
+        "npm",
+        "--prefix",
+        "frontend",
+        "ci",
+        "--offline",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "code": 1,
+      "seconds": 0.374
+    },
+    "closeout-python-env": {
+      "name": "closeout-python-env",
+      "command": [
+        "env",
+        "-i",
+        "PATH=/home/dev/.local/bin:/opt/node/bin:/usr/bin:/bin",
+        "HOME=/home/dev",
+        "USER=dev",
+        "LANG=C.UTF-8",
+        "UV_PYTHON_DOWNLOADS=never",
+        "uv",
+        "sync",
+        "--offline",
+        "--frozen",
+        "--project",
+        "agent-service",
+        "--no-install-project"
+      ],
+      "code": 0,
+      "seconds": 0.988
+    },
+    "closeout-static": {
+      "name": "closeout-static",
+      "command": [
+        "agent-service/.venv/bin/ruff",
+        "check",
+        "agent-service/tests/test_tutor_v19_closeout.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_runtime.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_mock.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_app.py",
+        "agent-service/src/lecturelens_real_eval/tutor/selection_smoke.py",
+        "scripts/dev/check_tutor_selected.py",
+        "scripts/dev/run_tutor_smoke_v19.py",
+        "scripts/dev/serve_tutor_selected_mock.py"
+      ],
+      "code": 0,
+      "seconds": 0.128
+    },
+    "closeout-teaching": {
+      "name": "closeout-teaching",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-closeout-phase1-v1/network-teaching",
+        ".data/tutor-closeout-phase1-v1/check_teaching.py"
+      ],
+      "code": 0,
+      "seconds": 17.38
+    },
+    "closeout-types": {
+      "name": "closeout-types",
+      "command": [
+        "env",
+        "-i",
+        "PATH=/opt/node/bin:/usr/bin:/bin",
+        "HOME=/home/dev",
+        "USER=dev",
+        "LANG=C.UTF-8",
+        "NPM_CONFIG_USERCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-user.config",
+        "NPM_CONFIG_GLOBALCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-global.config",
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "type-check"
+      ],
+      "code": 0,
+      "seconds": 40.148
+    },
+    "closeout-v18-compat": {
+      "name": "closeout-v18-compat",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-closeout-phase1-v1/network-v18-compat",
+        "scripts/dev/check_tutor_usable.py",
+        "--stage",
+        "not frozen and not invalid_grant",
+        "--output",
+        ".data/tutor-closeout-phase1-v1/v18-compat"
+      ],
+      "code": 0,
+      "seconds": 62.584
+    },
+    "closeout-v19-final": {
+      "name": "closeout-v19-final",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-closeout-phase1-v1/network-v19-final",
+        "scripts/dev/check_tutor_selected.py",
+        "--stage",
+        "not historical and not replays_original_response_bodies",
+        "--output",
+        ".data/tutor-closeout-phase1-v1/v19-final"
+      ],
+      "code": 0,
+      "seconds": 103.912
+    },
+    "closeout-v19": {
+      "name": "closeout-v19",
+      "command": [
+        "agent-service/.venv/bin/python",
+        "eval/tutor-scale/safe_exec.py",
+        ".data/tutor-closeout-phase1-v1/network-v19",
+        "scripts/dev/check_tutor_selected.py",
+        "--stage",
+        "not historical",
+        "--output",
+        ".data/tutor-closeout-phase1-v1/v19"
+      ],
+      "code": 1,
+      "seconds": 53.517
+    },
+    "closeout-vue": {
+      "name": "closeout-vue",
+      "command": [
+        "env",
+        "-i",
+        "PATH=/opt/node/bin:/usr/bin:/bin",
+        "HOME=/home/dev",
+        "USER=dev",
+        "LANG=C.UTF-8",
+        "NPM_CONFIG_USERCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-user.config",
+        "NPM_CONFIG_GLOBALCONFIG=/home/dev/.codex/worktrees/tutor-v19-closeout-20261108/.data/tutor-closeout-phase1-v1/npm-global.config",
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "test:unit",
+        "--",
+        "src/components/task-detail/CourseTutorPanel.test.ts",
+        "src/components/task-detail/CourseTutorPanel.usable.test.ts"
+      ],
+      "code": 0,
+      "seconds": 5.506
+    }
+  },
+  "pytest": {
+    "v19-final": {
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "teaching": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "v18-compat": {
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "not_run_replays": [
+    "test_historical_three_raw_responses_then_authored_fourth_correction",
+    "test_frozen_http_entry_replays_original_response_bodies_then_authored_correction"
+  ],
+  "replay_reason": "Retained raw v18 response bodies unavailable in old and new directories. Not reconstructed, fetched, fabricated or relabelled. Earlier reported replay is historical evidence only.",
+  "initial_failures": [
+    "First npm bootstrap double-loaded /dev/null as user/global config; distinct empty config files fixed setup only.",
+    "First v19 selection excluded only historical in test name; HTTP replay name did not match, giving39 pass/1 missing-artifact fail/1 deselected. Explicitly excluding both unavailable replays gives39 pass/2 deselected. Original failure retained."
+  ],
+  "protocol_proof": {
+    "candidate": "p8-tutor-selected-v19-development",
+    "source_fields": {
+      "kind": {
+        "const": "source",
+        "type": "string"
+      },
+      "span": {
+        "$ref": "#/$defs/Span"
+      }
+    },
+    "explanation_fields": {
+      "kind": {
+        "const": "explanation",
+        "type": "string"
+      },
+      "span": {
+        "$ref": "#/$defs/Span"
+      },
+      "text": {
+        "maxLength": 900,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "feedback_fields": {
+      "learner_quote": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      },
+      "span": {
+        "$ref": "#/$defs/Span"
+      },
+      "text": {
+        "maxLength": 384,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "first_model_response_block_kinds": [
+      "explanation",
+      "explanation",
+      "explanation",
+      "explanation"
+    ],
+    "wire_requests_contain_reference_points_or_scoring": false,
+    "fixtures": "AUTHORED_HTTP_RESPONSE_BODIES_NOT_REAL_GENERATION",
+    "cases": {
+      "teaching-http-None-None": {
+        "summary": {
+          "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+          "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+          "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+          "mode": "mock",
+          "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+          "expected": 3,
+          "completed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "sent_requests": 7,
+          "ledger": {
+            "calls": 7,
+            "nano_usd": 714000,
+            "pending": 0,
+            "blocked": null
+          },
+          "global_stop": null,
+          "quality": "NOT_RUN",
+          "real_model_calls": 0,
+          "embedding_calls": 0,
+          "reviewer_calls": 0,
+          "cost_usd": "0",
+          "ledger_amounts": "SIMULATED_NOT_CHARGES",
+          "admission": null
+        },
+        "wire": [
+          {
+            "file": "001-request.body",
+            "bytes": 2860,
+            "history": 0,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "002-request.body",
+            "bytes": 12513,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "003-request.body",
+            "bytes": 12379,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "004-request.body",
+            "bytes": 5883,
+            "history": 1,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "005-request.body",
+            "bytes": 14857,
+            "history": 1,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "006-request.body",
+            "bytes": 6388,
+            "history": 2,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "007-request.body",
+            "bytes": 16393,
+            "history": 2,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          }
+        ],
+        "turns": [
+          {
+            "status": "completed",
+            "calls": 3,
+            "reserved_proxy": 39919,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 28757,
+            "answer_codepoints": 246,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 30896,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 349
+          }
+        ]
+      },
+      "teaching-http-format-None": {
+        "summary": {
+          "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+          "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+          "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+          "mode": "mock",
+          "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+          "expected": 3,
+          "completed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "sent_requests": 8,
+          "ledger": {
+            "calls": 8,
+            "nano_usd": 816000,
+            "pending": 0,
+            "blocked": null
+          },
+          "global_stop": null,
+          "quality": "NOT_RUN",
+          "real_model_calls": 0,
+          "embedding_calls": 0,
+          "reviewer_calls": 0,
+          "cost_usd": "0",
+          "ledger_amounts": "SIMULATED_NOT_CHARGES",
+          "admission": null
+        },
+        "wire": [
+          {
+            "file": "001-request.body",
+            "bytes": 2860,
+            "history": 0,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "002-request.body",
+            "bytes": 12513,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "003-request.body",
+            "bytes": 12379,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "004-request.body",
+            "bytes": 16211,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "005-request.body",
+            "bytes": 5883,
+            "history": 1,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "006-request.body",
+            "bytes": 14857,
+            "history": 1,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "007-request.body",
+            "bytes": 6388,
+            "history": 2,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "008-request.body",
+            "bytes": 16393,
+            "history": 2,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          }
+        ],
+        "turns": [
+          {
+            "status": "completed",
+            "calls": 4,
+            "reserved_proxy": 60217,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 28757,
+            "answer_codepoints": 246,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 30896,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 349
+          }
+        ]
+      },
+      "teaching-http-format-span": {
+        "summary": {
+          "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+          "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+          "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+          "mode": "mock",
+          "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+          "expected": 3,
+          "completed": 0,
+          "failed": 1,
+          "skipped": 2,
+          "sent_requests": 4,
+          "ledger": {
+            "calls": 4,
+            "nano_usd": 408000,
+            "pending": 0,
+            "blocked": null
+          },
+          "global_stop": "TUTOR_SHARED_FINISH_CORRECTION_INVALID",
+          "quality": "NOT_RUN",
+          "real_model_calls": 0,
+          "embedding_calls": 0,
+          "reviewer_calls": 0,
+          "cost_usd": "0",
+          "ledger_amounts": "SIMULATED_NOT_CHARGES",
+          "admission": null
+        },
+        "wire": [
+          {
+            "file": "001-request.body",
+            "bytes": 2860,
+            "history": 0,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "002-request.body",
+            "bytes": 12513,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "003-request.body",
+            "bytes": 12379,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "004-request.body",
+            "bytes": 16211,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          }
+        ],
+        "turns": [
+          {
+            "status": "failed",
+            "calls": 4,
+            "reserved_proxy": 60217,
+            "answer_codepoints": 0,
+            "feedback_codepoints": 0
+          }
+        ]
+      },
+      "teaching-http-span-None": {
+        "summary": {
+          "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+          "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+          "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+          "mode": "mock",
+          "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+          "expected": 3,
+          "completed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "sent_requests": 8,
+          "ledger": {
+            "calls": 8,
+            "nano_usd": 816000,
+            "pending": 0,
+            "blocked": null
+          },
+          "global_stop": null,
+          "quality": "NOT_RUN",
+          "real_model_calls": 0,
+          "embedding_calls": 0,
+          "reviewer_calls": 0,
+          "cost_usd": "0",
+          "ledger_amounts": "SIMULATED_NOT_CHARGES",
+          "admission": null
+        },
+        "wire": [
+          {
+            "file": "001-request.body",
+            "bytes": 2860,
+            "history": 0,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "002-request.body",
+            "bytes": 12513,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "003-request.body",
+            "bytes": 12379,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "004-request.body",
+            "bytes": 15675,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "005-request.body",
+            "bytes": 5883,
+            "history": 1,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "006-request.body",
+            "bytes": 14857,
+            "history": 1,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "007-request.body",
+            "bytes": 6388,
+            "history": 2,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "008-request.body",
+            "bytes": 16393,
+            "history": 2,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          }
+        ],
+        "turns": [
+          {
+            "status": "completed",
+            "calls": 4,
+            "reserved_proxy": 59681,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 28757,
+            "answer_codepoints": 246,
+            "feedback_codepoints": 0
+          },
+          {
+            "status": "completed",
+            "calls": 2,
+            "reserved_proxy": 30896,
+            "answer_codepoints": 2721,
+            "feedback_codepoints": 349
+          }
+        ]
+      },
+      "teaching-http-span-format": {
+        "summary": {
+          "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+          "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+          "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+          "mode": "mock",
+          "source_scope": "FROZEN_DEVELOPMENT_SMOKE_PACKET_MOCK_MECHANICS_NOT_QUALITY",
+          "expected": 3,
+          "completed": 0,
+          "failed": 1,
+          "skipped": 2,
+          "sent_requests": 4,
+          "ledger": {
+            "calls": 4,
+            "nano_usd": 408000,
+            "pending": 0,
+            "blocked": null
+          },
+          "global_stop": "TUTOR_SHARED_FINISH_CORRECTION_INVALID",
+          "quality": "NOT_RUN",
+          "real_model_calls": 0,
+          "embedding_calls": 0,
+          "reviewer_calls": 0,
+          "cost_usd": "0",
+          "ledger_amounts": "SIMULATED_NOT_CHARGES",
+          "admission": null
+        },
+        "wire": [
+          {
+            "file": "001-request.body",
+            "bytes": 2860,
+            "history": 0,
+            "source_rows": 0,
+            "schemas": [
+              "search_tutor_evidence"
+            ]
+          },
+          {
+            "file": "002-request.body",
+            "bytes": 12513,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "search_tutor_evidence",
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "003-request.body",
+            "bytes": 12379,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          },
+          {
+            "file": "004-request.body",
+            "bytes": 15675,
+            "history": 0,
+            "source_rows": 8,
+            "schemas": [
+              "finish_tutor_turn"
+            ]
+          }
+        ],
+        "turns": [
+          {
+            "status": "failed",
+            "calls": 4,
+            "reserved_proxy": 59681,
+            "answer_codepoints": 0,
+            "feedback_codepoints": 0
+          }
+        ]
+      }
+    }
+  },
+  "java": {
+    "passed": 24,
+    "skipped": 0,
+    "actual_chain": "Java authenticated gateway/real Evidence reads/HTTP/new ASGI factory/isolated PG; synthetic identity, retrieval and model; two sessions, replay, cancellation, owner404, revision409"
+  },
+  "vue": {
+    "passed": 18,
+    "type_check_exit": 0
+  },
+  "real_model_calls": 0,
+  "embedding_calls": 0,
+  "reviewer_calls": 0,
+  "cost_usd": "0",
+  "product_behavior_changed": false,
+  "default_identity_changed": false,
+  "reviewer": "Codex; same author as implementation/development fixtures, nonblind AI source review; not independent human",
+  "residual_risks": [
+    "A03: a real selected source can accompany an unsupported explanation; retained negative case accepted.",
+    "Finite Socratic acts do not prove relevance or universal semantic safety.",
+    "Actual model completeness/semantic correctness/account availability/supplier bill unknown."
+  ],
+  "not_run": [
+    "real quality improvement",
+    "cost optimization",
+    "independent human agreement",
+    "SQL holdout",
+    "full16",
+    "expansion",
+    "learning effects",
+    "historical original-response replay in this phase"
+  ],
+  "cleanup": {
+    "removed_exact_owned_container": "a05ad8c0d2398064baf982271560b22dc92474852620cb4c6bf8c60d7c9fba4d",
+    "label": "tutor-closeout-phase1-v1",
+    "remaining_schemas": [
+      "public"
+    ],
+    "other_database_connections": 0,
+    "original_containers_preserved": 159,
+    "port25841_closed": true,
+    "both_worktrees_preserved": true,
+    "evidence_retained": true
+  },
+  "post_test_default_verification": {
+    "actual_head": "50e3d408472f0a0a013cc159830c3f79f7961f9c",
+    "result": {
+      "candidate_sha256": "16a094317ba06b3c1932280c7dbb15a07d47200dc74ed8e08e25465e10549ae9",
+      "packet_sha256": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e",
+      "code_commit": "ae222cc76ec41aed78072713a9371eaff6000b2e",
+      "ready_for_live": false,
+      "purpose": "THREE_TURN_DEVELOPMENT_SMOKE_NOT_FULL16_OR_HUMAN_ACCEPTANCE",
+      "blockers": [
+        "FRESH_PAID_GRANT",
+        "CURRENT_PRICING_AND_MODEL_PREFLIGHT"
+      ],
+      "real_calls": 0
+    }
+  },
+  "all_new_changes": "One new test file plus closeout documents/evidence only; no runtime/default/frozen asset edits."
+}
