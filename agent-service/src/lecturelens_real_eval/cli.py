@@ -18,7 +18,7 @@ MAX_REVIEW_BYTES = 256 * 1024
 
 
 class CLIError(Exception):
-    pass
+    exit_code = 2
 
 
 def json_file(path):
@@ -152,6 +152,8 @@ def add_review(directory, adapter, args):
 
 def launch(root, adapter, args):
     # Live admission occurs before allocating a run or accessing the provider credential.
+    if args.dev_ssh and not (args.live and args.batch):
+        raise CLIError("E3_DEV_SSH_REQUIRES_LIVE_BATCH")
     context = adapter.live_admission(root, args) if args.live else None
     source = root / "scripts/dev/run_check.py"
     supervisor = args.check_supervisor or source
@@ -166,6 +168,8 @@ def launch(root, adapter, args):
             "experiment": args.experiment,
             "operation": args.action,
             "mode": "live" if args.live else "offline",
+            "operator_mode": "dev-ssh" if args.dev_ssh else "systemd" if args.live else "offline",
+            "collection": "batch" if args.batch else "sequential",
             "started_at_utc": datetime.now(timezone.utc).isoformat(),
             "runner_pid": os.getpid() if args.live else None,
             "runner_start_ticks": process_identity(os.getpid()) if args.live else None,
@@ -178,11 +182,14 @@ def launch(root, adapter, args):
         try:
             code = adapter.execute(root, directory, args.action, options, context)
             return code
+        except KeyboardInterrupt:
+            code = 130
+            return code
         finally:
             write_json_once(
                 directory / "terminal.json",
                 {
-                    "status": "SUCCEEDED" if code == 0 else "FAILED",
+                    "status": "CANCELLED" if code == 130 else "SUCCEEDED" if code == 0 else "FAILED",
                     "exit_code": code,
                     "finished_at_utc": datetime.now(timezone.utc).isoformat(),
                 },
@@ -239,12 +246,15 @@ def main(argv=None):
             command.add_argument("experiment", choices=EXPERIMENTS)
             command.add_argument("--run-id", type=run_id)
             if name in {"preflight", "run"}:
-                command.set_defaults(live=False)
+                command.set_defaults(live=False, dev_ssh=False, batch=False, confirmed_price_id=None)
                 command.add_argument("--check-supervisor", type=Path)
                 command.add_argument("--assets", type=Path, help="experiment input paths in JSON")
                 command.add_argument("--review-wait", type=int, default=600, metavar="0..1200")
                 if name == "run":
                     command.add_argument("--live", action="store_true")
+                    command.add_argument("--dev-ssh", action="store_true")
+                    command.add_argument("--batch", action="store_true")
+                    command.add_argument("--confirmed-price-id")
             if name == "review":
                 command.add_argument("--case", required=True, type=run_id)
                 command.add_argument("--decision", required=True, type=Path)
@@ -263,7 +273,7 @@ def main(argv=None):
         return 0
     except (CLIError, OSError, subprocess.CalledProcessError) as error:
         print(f"ll: {error if isinstance(error, CLIError) else type(error).__name__}", file=sys.stderr)
-        return 2
+        return error.exit_code if isinstance(error, CLIError) else 2
 
 
 if __name__ == "__main__":

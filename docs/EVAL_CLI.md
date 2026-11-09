@@ -26,6 +26,20 @@ uv run --project agent-service ll eval report e3
 
 每次运行在 `.data/ll-eval/<experiment>/<run-id>/` 写独立记录。相同运行 ID 拒绝复用。冻结历史保留在其原始路径。离线命令使用 [已有监督器](LOCAL_CHECK_EXECUTION.md) 及其超时、清理、日志和退出码；运行中返回的退出码为空。根文件系统超过现有磁盘阈值时会返回 `88`。离线测试可通过 `--check-supervisor` 指定字节相同的监督器副本，记录中仍会应用该副本的磁盘检查。真实模式拒绝监督器覆盖。
 
+## 开发机一次性交互试验
+
+已获本阶段授权的操作者可在现有开发机的独立 OpenSSH 登录终端中，亲自启动一次 E3 批量采集。使用普通前台 SSH shell，保持标准输入、输出和错误输出连接到该终端。启动命令如下。
+
+```bash
+/home/dev/.codex/worktrees/phase1e-tutor-provider-20261109/lecturelens/agent-service/.venv/bin/ll --workspace /home/dev/.codex/worktrees/phase1e-tutor-provider-20261109/lecturelens eval run e3 --live --dev-ssh --batch --confirmed-price-id deepseek-flash-peak-usd-2026-11-09
+```
+
+入口检查真实 SSH 登录终端、冻结价格确认、干净 checkout、授权期限、未消费的阶段锚点及原监督器磁盘门禁。课程检索预检通过后，终端先提示输入 `E3 USD10` 确认阶段和供应商计费风险，再提示隐藏输入 DeepSeek API Key。此时只输入密钥本身。CLI 从终端读取后通过匿名管道交给专用 worker。worker 的启动输出不落日志，密钥无命令行、环境或文件来源。取消、SSH 挂断或 launcher 消失时终止 worker。此路径依赖操作者控制终端，同机 root 或特权自动化仍可检查内存或终端，密钥也不能保证在 Python 内存中立即擦除。原 systemd 隔离方式继续可用。
+
+磁盘门禁返回 `88` 时，真实运行停在提示密钥和写入锚点之前。准备栈之后和批量采集的每个位置前还会复查。使用 `Ctrl-C` 结束采集，已结算记录和未知责任继续保留。不要恢复旧数据库快照来重新启动。
+
+`--batch` 按原顺序采集 10 个冻结位置。已发布且账本结算、证据检查均通过的回合记为 `QUALITY_PENDING`，随即保存私有评审包。执行、协议、来源、磁盘、过期、取消和未知费用故障会停止后续提交。采集成功状态为 `COLLECTION_COMPLETE`。该状态记录采集结果，教学质量仍待独立评审。显式 `--batch` 也支持离线 Mock HTTP 机械验证。 [DeepSeek 定价](https://api-docs.deepseek.com/quick_start/pricing/)
+
 ## 受控执行主机上的一次性凭据配置
 
 当前开发机的 Codex 账号拥有免密 sudo 和 Docker 权限，能够越过服务账号的隔离。长期供应商凭据应配置在独立执行主机，或在撤销开发账号所有等效 root 权限并重新核验隔离之后配置。另一个 Linux UID、`chmod 0600` 或 systemd 加密凭据无法防止具有 root 权限的主体读取运行中的密钥。独立执行主机应限制开发账号对 sudo、root 组、Docker/LXD socket、service unit、代码、venv、资产及阶段状态的访问。 [systemd Credentials](https://github.com/systemd/systemd/blob/main/docs/CREDENTIALS.md)
@@ -81,7 +95,7 @@ unit 的实际入口为 `ll eval run e3 --live`。它先校验专用 UID、syste
 ll eval review e3 --run-id RUN_ID --case loop-1 --decision /private/two-decisions.json
 ```
 
-导入校验包摘要、两份独立身份和评分项，原子保存原始意见。运行时继续使用冻结的通过规则。CLI 默认最多等待每回合 600 秒，可用 `--review-wait` 调整至 0–1200 秒，并受授权失效时间约束。缺少一致通过时按原 E3 规则停止。逾期导入可留证，终态运行保持终态。CLI 不调用评审模型。开发集复测仍走 [既有 E3 复测程序](../eval/phase1e3-tutor/README.md)，使用同一阶段数据库和外置标记；统一入口当前接管首次试验。
+导入校验包摘要、两份独立身份和评分项，原子保存原始意见。运行时继续使用冻结的通过规则。顺序评审模式默认最多等待每回合 600 秒，可用 `--review-wait` 调整至 0–1200 秒，并受授权失效时间约束。缺少一致通过时按原 E3 规则停止。逾期导入可留证，终态运行保持终态。CLI 不调用评审模型。开发集复测仍走 [既有 E3 复测程序](../eval/phase1e3-tutor/README.md)，使用同一阶段数据库和外置标记；统一入口当前接管首次试验。
 
 ## 后续实验复用
 

@@ -8,9 +8,11 @@ import os
 import pwd
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,6 +20,8 @@ from pathlib import Path
 from lecturelens_real_eval.cli import CLIError, json_file
 from lecturelens_real_eval.tutor.flash_phase import CASES, DATASET, PHASE_BUDGET, PHASE_EXPIRY, PHASE_REQUESTS
 from lecturelens_real_eval.tutor.flash_provider import PRICE_ID, RESERVE_NANO_USD
+
+from .e3_terminal import check_disk, read_operator_key, require_ssh_tty
 
 OFFLINE_TIMEOUT = 540
 SERVICE_USER = "ll-eval"
@@ -34,7 +38,7 @@ DEFAULT_ASSETS = {
 
 @dataclass(frozen=True)
 class Admission:
-    directory: Path
+    directory: Path | None
     approval_id: str
     expires_at: datetime
     java_jar_sha256: str
@@ -55,7 +59,7 @@ def options(root, args):
         paths[name] = str(path)
     if not 0 <= args.review_wait <= 1200:
         raise CLIError("E3_INVALID_REVIEW_WAIT")
-    return paths | {"review_wait": args.review_wait}
+    return paths | {"review_wait": args.review_wait, "batch": args.batch}
 
 
 def private_file(directory, name, limit, *, read):
@@ -153,11 +157,26 @@ def git(root, *args):
 
 
 def live_admission(root, args):
+    if args.dev_ssh:
+        require_ssh_tty()
+        if datetime.now(timezone.utc) >= PHASE_EXPIRY:
+            raise CLIError("E3_AUTHORIZATION_INVALID_OR_EXPIRED")
+        if args.confirmed_price_id != PRICE_ID:
+            raise CLIError("E3_FROZEN_PRICE_CONFIRMATION_REQUIRED")
+        check_checkout(root)
+        check_disk(root)
+        assets = options(root, args)
+        return Admission(
+            None,
+            uuid.uuid4().hex,
+            PHASE_EXPIRY,
+            digest_file(Path(assets["java_jar"])),
+            git(root, "rev-parse", "HEAD"),
+        )
     directory = service_directory()
     if root.stat().st_uid != 0 or root.stat().st_mode & 0o022:
         raise CLIError("E3_LIVE_WORKSPACE_MUST_BE_ADMIN_CONTROLLED")
-    if git(root, "status", "--porcelain") or (root / ".data/phase1e3/live-anchor.json").exists():
-        raise CLIError("E3_LIVE_DIRTY_CHECKOUT_OR_CONSUMED_PHASE")
+    check_checkout(root)
     commit = git(root, "rev-parse", "HEAD")
     raw = private_file(directory, AUTHORIZATION, 8192, read=True)
     approval, expires, jar_sha = parse_authorization(raw, commit, datetime.now(timezone.utc))
@@ -166,6 +185,12 @@ def live_admission(root, args):
         raise CLIError("E3_JAVA_ARTIFACT_MISMATCH")
     private_file(directory, PROVIDER_KEY, 1024, read=False)
     return Admission(directory, approval, expires, jar_sha, commit)
+
+
+def check_checkout(root):
+    anchor = root / ".data/phase1e3/live-anchor.json"
+    if git(root, "status", "--porcelain") or os.path.lexists(anchor):
+        raise CLIError("E3_LIVE_DIRTY_CHECKOUT_OR_CONSUMED_PHASE")
 
 
 def digest_file(path):
@@ -195,6 +220,40 @@ def load_harness(root):
     return module
 
 
+def evaluate_batch(smoke, before_turn):
+    """Collect in frozen order, deferring semantic review while enforcing execution gates."""
+    positions = iter(smoke.receipt.case_ids)
+    for plan in smoke.receipt.grant.sessions:
+        endpoint = f"/api/tasks/{plan.course_id}/tutor/sessions"
+        session = smoke.api("POST", endpoint, {"request_key": plan.request_key})["session"]
+        path = endpoint + "/" + session["session_id"]
+        for turn in plan.turns:
+            key = next(positions)
+            case, _ = smoke.cases[key]
+            assert (case["question"], case["socratic"]) == (turn.text, turn.socratic)
+            assert smoke.scopes[key]["course_id"] == plan.course_id
+            before_turn()
+            smoke.api("POST", path + "/turns", {"client_turn_id": key, **turn.model_dump()})
+            reply = smoke.wait(
+                lambda path=path: smoke.api("GET", path)["turns"][-1],
+                lambda row: row["status"] in {"completed", "failed", "cancelled"},
+                30,
+                "E3 terminal " + key,
+            )
+            smoke.record()
+            smoke.save()
+            diagnostic = smoke.result["positions"][key]
+            if (
+                reply["status"] != "completed"
+                or reply["model_calls"] != 1
+                or smoke.result["phase_usage"]["unsettled_nano_usd"]
+                or diagnostic["semantic_quality"] != "QUALITY_PENDING"
+            ):
+                return "STOPPED_EXECUTION_OR_RETRIEVAL"
+    # The frozen lifecycle accepts COMPLETE as a successful execution exit.
+    return "COMPLETE"
+
+
 def execute(root, directory, operation, assets, context):
     harness = load_harness(root)
     instance = f"ll-e3-{directory.name}"
@@ -208,8 +267,27 @@ def execute(root, directory, operation, assets, context):
         **{key: Path(value) if key in DEFAULT_ASSETS else value for key, value in assets.items()},
     )
     prepare_only = operation == "preflight"
+    developer = context is not None and context.directory is None
 
     class ManagedE3(harness.Smoke):
+        def require_dispatch_disk(self):
+            if developer:
+                try:
+                    check_disk(root)
+                except CLIError as error:
+                    self.result["local_refusal_exit_code"] = error.exit_code
+                    raise
+
+        def spawn(self, command, name, cwd=root, env=None):
+            if name == "e3-worker" and self.args.batch and not self.args.live:
+                command = [
+                    "lecturelens_real_eval.experiments.e3_worker:batch_mock_app"
+                    if item == "e3_fake:create_app"
+                    else item
+                    for item in command
+                ]
+            return super().spawn(command, name, cwd, env)
+
         def stage(self, name):
             if prepare_only and name == "audited-initial-path":
                 name = "offline-egress-check"
@@ -246,13 +324,99 @@ def execute(root, directory, operation, assets, context):
             if context:
                 if self.result["head"] != context.commit_sha or git(root, "status", "--porcelain"):
                     raise CLIError("E3_CANDIDATE_CHANGED_BEFORE_DISPATCH")
+                if developer:
+                    self.require_dispatch_disk()
+                    check_checkout(root)
+                    if datetime.now(timezone.utc) >= context.expires_at:
+                        raise CLIError("E3_AUTHORIZATION_INVALID_OR_EXPIRED")
+                    try:
+                        key = read_operator_key()
+                    except CLIError as error:
+                        self.result["local_refusal_exit_code"] = error.exit_code
+                        raise
+                    self.require_dispatch_disk()
+                    check_checkout(root)
+                    if datetime.now(timezone.utc) >= context.expires_at:
+                        raise CLIError("E3_AUTHORIZATION_INVALID_OR_EXPIRED")
+                    self.result["approval_id"] = context.approval_id
+                    return self.start_pipe_worker(key)
                 key = provider_key(context)
             return super().start_e3(key)
+
+        def start_pipe_worker(self, key):
+            harness.LIVE_ANCHOR.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            receipt_path = self.create_receipt()
+            env = self.env | {
+                "TUTOR_FLASH_EXPERIMENT": "phase1e3",
+                "AGENT_LLM_MODE": "real",
+                "STUDY_AGENT_ENABLED": "false",
+                "TUTOR_E3_RECEIPT_FILE": str(receipt_path),
+                "TUTOR_E3_COMMIT_SHA": self.receipt.commit_sha,
+                "TUTOR_E3_ANCHOR_FILE": str(harness.LIVE_ANCHOR),
+                "LECTURELENS_E3_KEY_INJECTED": "phase1e3",
+                "TUTOR_E3_LAUNCHER_PID": str(os.getpid()),
+            }
+            env.pop("TUTOR_FLASH_API_KEY", None)
+            env["PYTHONPATH"] = os.pathsep.join(
+                part
+                for part in env["PYTHONPATH"].split(os.pathsep)
+                if part != str(self.out / "network-guard")
+            )
+            self.worker = subprocess.Popen(
+                [
+                    sys.executable,
+                    "-m",
+                    "uvicorn",
+                    "lecturelens_real_eval.experiments.e3_worker:pipe_app",
+                    "--factory",
+                    "--host",
+                    "127.0.0.1",
+                    "--port",
+                    str(self.result["ports"]["AGENT_HTTP_PORT"]),
+                ],
+                cwd=root / "agent-service",
+                env=env,
+                stdin=subprocess.PIPE,
+                bufsize=0,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            # The inherited lifecycle stops self.worker in finally. The credential
+            # never enters its logs, argv or environment.
+            with self.worker.stdin as pipe:
+                if pipe.write(key.encode("ascii")) != len(key):
+                    raise CLIError("E3_KEY_PIPE_INCOMPLETE")
+            del key
+
+        def record(self):
+            super().record()
+            if not self.args.batch:
+                return
+            from review_packet import make_packet
+
+            for key, position in self.result["positions"].items():
+                if not isinstance(position, dict):
+                    continue
+                if position["semantic_quality"] != "INDEPENDENT_REVIEW_REQUIRED":
+                    position["semantic_quality"] = "UNRESOLVED"
+                    continue
+                position["semantic_quality"] = "QUALITY_PENDING"
+                directory = self.out / "review-packets"
+                directory.mkdir(mode=0o700, exist_ok=True)
+                path = directory / f"{key}.json"
+                if not path.exists():
+                    packet = make_packet(self.cases[key][0], self.journal[key], self.reference_outputs)
+                    harness.write_json(path, packet)
 
         def evaluate(self):
             if prepare_only:
                 self.result.update(generation_requests=0, review_requests=0, offline_mock_requests=0)
                 return "OFFLINE_PASS"
+            if self.args.batch:
+                if developer:
+                    self.health(self.worker, self.agent_base, "/healthz")
+                return evaluate_batch(self, self.require_dispatch_disk)
             return super().evaluate()
 
         def zero_models(self):
@@ -265,13 +429,29 @@ def execute(root, directory, operation, assets, context):
                 super().zero_models()
 
     smoke = ManagedE3(args)
-    if context:
+    if context and not developer:
         smoke.result["approval_id"] = context.approval_id
-    code = smoke.execute_e3("synthetic-phase1e-http")
+    if args.batch:
+        smoke.result["collection"] = "batch"
+    previous = None
+    if developer:
+
+        def hangup(*_):
+            raise KeyboardInterrupt
+
+        previous = signal.signal(signal.SIGHUP, hangup)
+    try:
+        code = smoke.execute_e3("synthetic-phase1e-http")
+    finally:
+        if previous is not None:
+            signal.signal(signal.SIGHUP, previous)
     if prepare_only and code == 0:
         smoke.result["status"] = "PREFLIGHT_PASS"
         smoke.save()
-    return code
+    elif args.batch and code == 0:
+        smoke.result["status"] = "COLLECTION_COMPLETE"
+        smoke.save()
+    return smoke.result.get("local_refusal_exit_code", code)
 
 
 def validate_reviews(packet, reviews):

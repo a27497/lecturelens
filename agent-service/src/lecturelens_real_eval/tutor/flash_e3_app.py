@@ -18,7 +18,7 @@ def create_app():
     return experiment_app()
 
 
-def experiment_app(*, offline_transport=None):
+def experiment_app(*, offline_transport=None, api_key=None):
     mode = "offline-fake" if offline_transport is not None else "real"
     if (
         os.environ.get("TUTOR_FLASH_EXPERIMENT") != "phase1e3"
@@ -56,7 +56,9 @@ def experiment_app(*, offline_transport=None):
     if len(secret.encode()) < 32:
         raise RuntimeError("AGENT_SERVICE_SECRET must contain at least 32 bytes")
     provider = FlashProvider(
-        os.environ.get("TUTOR_FLASH_API_KEY", ""), transport=offline_transport, observer=store.observe
+        os.environ.get("TUTOR_FLASH_API_KEY", "") if api_key is None else api_key,
+        transport=offline_transport,
+        observer=store.observe,
     )
     authority = EvidenceAuthority(os.environ["AGENT_JAVA_BASE_URL"], secret)
     return tutor_app(tutor=FlashTutorRuntime(store, authority, provider), secret=secret)
