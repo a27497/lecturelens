@@ -87,6 +87,8 @@ def experiment_app(*, offline_transport=None):
         raise RuntimeError("TUTOR_FLASH_GRANT_REQUIRED") from None
     if grant.mode != ("offline-fake" if offline_transport is not None else "real"):
         raise RuntimeError("TUTOR_FLASH_GRANT_MODE_MISMATCH")
+    if offline_transport is None:
+        raise RuntimeError("TUTOR_FLASH_E3_FACTORY_REQUIRED")
     secret = os.environ.get("AGENT_SERVICE_SECRET", "")
     if len(secret.encode()) < 32:
         raise RuntimeError("AGENT_SERVICE_SECRET must contain at least 32 bytes")

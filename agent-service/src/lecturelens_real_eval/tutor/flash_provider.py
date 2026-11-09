@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import json
 import re
+import time
 from dataclasses import dataclass
 
 import httpx
@@ -137,17 +138,26 @@ def parse(body):
 
 
 class FlashProvider:
-    def __init__(self, api_key, *, transport=None):
+    def __init__(self, api_key, *, transport=None, observer=None):
         if not api_key or not re.fullmatch(r"[!-~]{1,512}", api_key):
             raise RuntimeError("TUTOR_FLASH_KEY_REQUIRED")
         self._key = api_key
         self._transport = transport
+        self._observer = observer
 
     @property
     def offline(self):
         return self._transport is not None
 
     def complete(self, body, timeout):
+        if self._observer is not None:
+            if self._key.encode() in body:
+                raise StudyError("TUTOR_FLASH_SECRET_IN_REQUEST")
+            deadline = time.monotonic() + timeout
+            self._observer(body)
+            timeout = deadline - time.monotonic()
+            if timeout <= 0:
+                raise StudyError("TUTOR_FLASH_TIMEOUT")
         return asyncio.run(self._complete(body, timeout))
 
     async def _complete(self, body, timeout):
@@ -156,6 +166,8 @@ class FlashProvider:
             "Content-Type": "application/json",
             "Accept-Encoding": "identity",
         }
+        buffer = bytearray()
+        status, complete = None, False
         try:
             async with (
                 asyncio.timeout(timeout),
@@ -164,21 +176,35 @@ class FlashProvider:
                 ) as client,
                 client.stream("POST", URL, content=body, headers=headers) as response,
             ):
-                if response.status_code != 200:
-                    code = {
-                        429: "TUTOR_FLASH_RATE_LIMITED",
-                        503: "TUTOR_FLASH_UNAVAILABLE",
-                    }.get(response.status_code, "TUTOR_FLASH_HTTP_FAILURE")
-                    raise StudyError(code)
+                status = response.status_code
+                if status != 200 and self._observer is None:
+                    raise self.http_error(status)
                 if response.headers.get("Content-Encoding", "identity").lower() != "identity":
                     raise StudyError("TUTOR_FLASH_UNEXPECTED_ENCODING")
-                buffer = bytearray()
                 async for chunk in response.aiter_bytes():
                     if len(buffer) + len(chunk) > 128 * 1024:
                         raise StudyError("TUTOR_FLASH_RESPONSE_LIMIT")
                     buffer.extend(chunk)
+                complete = True
+                if status != 200:
+                    raise self.http_error(status)
         except (TimeoutError, httpx.TimeoutException):
             raise StudyError("TUTOR_FLASH_TIMEOUT") from None
         except httpx.RequestError:
             raise StudyError("TUTOR_UNKNOWN_MODEL_OUTCOME") from None
+        finally:
+            if self._observer is not None:
+                if self._key.encode() in buffer:
+                    self._observer(body, b"", status, False)
+                    raise StudyError("TUTOR_FLASH_SECRET_IN_RESPONSE")
+                self._observer(body, bytes(buffer), status, complete)
         return parse(buffer)
+
+    @staticmethod
+    def http_error(status):
+        return StudyError(
+            {
+                429: "TUTOR_FLASH_RATE_LIMITED",
+                503: "TUTOR_FLASH_UNAVAILABLE",
+            }.get(status, "TUTOR_FLASH_HTTP_FAILURE")
+        )
