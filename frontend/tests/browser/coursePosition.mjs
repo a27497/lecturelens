@@ -21,7 +21,8 @@ const feedback = { feedback_id: 'feedback', attempt_id: 'answer-1', answer_versi
 const feedbackRun = { run_id: 'feedback-run', status: 'succeeded', attempt_id: attempt.attempt_id, question_index: 0, answer_version: 1, feedback };
 const learning = { run: { run_id: 'run', session_id: 'session', goal: 'Restored learning question', status: 'succeeded', model_mode: 'mock', model_calls: 0, tool_calls: 0, error_code: null },
   artifact: { artifact_id: 'artifact', title: 'Fixture practice', explanation: 'A saved explanation.', evidence_ids: [citation.evidence_id], questions: [{ question: 'When does the loop stop?', evidence_ids: [citation.evidence_id] }], citations: [citation], revision: 1, mode: 'mock' },
-  attempts: [attempt], feedback_enabled: true, feedback_runs: [feedbackRun] };
+  attempts: [attempt], feedback_enabled: true, feedback_runs: [feedbackRun],
+  practice_results: [{ question_index: 0, attempt, feedback_run: feedbackRun, latest_feedback_status: 'succeeded', latest_feedback_answer_version: 1 }] };
 function task(id) { return { taskId: id, status: 'SUCCEEDED', progressPercent: 100, currentStage: 'DONE', targetLanguage: 'zh-CN', startedAt: '2026-10-01T00:00:00Z', finishedAt: '2026-10-01T00:00:12Z' }; }
 const modelSelection = (id, version, model, origin = 'CREATED') => ({ snapshotId: id, configVersion: version, origin, recordedAt: '2026-10-01 00:00:00', routes: [{ feature: 'COURSE_QA', source: 'DATABASE', model }] });
 let modelDelay = 0, modelDenied = false, modelReads = 0;
@@ -83,7 +84,8 @@ const server = createServer(async (req, res) => {
         else if (command.operation === 'EVENTS' && args.models) data = { events: [{ sequence: 1, event_type: 'model_started', payload: { purpose: 'decision', model_selection: { model: 'decision-frozen-a', version: 3 } } }, { sequence: 2, event_type: 'model_replayed', payload: { purpose: 'review', model_selection: { model: 'review-frozen-b', version: 0 } } }] };
         else if (command.operation === 'RUNS') data = { runs: [learning.run] };
         else { forbidden.push(command.operation); res.writeHead(500); res.end(); return; }
-      } else if ((path.endsWith('/qa') || path.endsWith('/qa/scoped'))) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
+      } else if (path.endsWith('/qa/history')) data = { items: [], nextCursor: null };
+      else if ((path.endsWith('/qa') || path.endsWith('/qa/scoped'))) data = { answer: 'Fixture Tutor answer', evidence: [{ sourceType: 'SUBTITLE', sourceId: '7', evidenceId: sourceRevision === 1 ? citation.evidence_id : 'canonical-r2', revision: sourceRevision, startTimeMillis: 2000, endTimeMillis: 3000, timeText: '00:00:02 - 00:00:03', snippet: sourceRevision === 1 ? citation.text : 'REVISED unrelated original', translatedSnippet: '', confidence: 1 }], usage: null };
       else if (path === '/api/public/runtime-configuration') data = { demoMode: false };
       else if (path === '/api/me') data = { id: 1, email: 'fixture@example.invalid', role: 'USER' };
       else if (/^\/api\/tasks\/[^/]+$/.test(path)) data = task(id);
@@ -118,7 +120,15 @@ if (args.classic) await page.addInitScript(() => {
 });
 const video = page.locator('video');
 const current = page.locator('.timeline-row[aria-current=true]');
-const nav = label => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', { name: label, exact: true });
+const nav = label => ({ click: async () => {
+  const menu = page.getByRole('navigation', { name: '课程内容导航' });
+  const button = menu.getByRole('button', {
+    name: label === '学习助手' ? /^(学习助手|解释与练习)$/ : label === '课程内容' ? /^(课程内容|课程材料)$/ : label,
+    exact: true, includeHidden: true,
+  });
+  if (!(await button.isVisible())) await menu.locator('.workspace-more > summary').click();
+  await button.click();
+} });
 const checks = [];
 async function check(name, run) { if (args.only && !name.includes(args.only)) return; await run(); checks.push(name); console.log(`PASS ${name}`); }
 async function expectReviewCancelled() {
@@ -126,6 +136,17 @@ async function expectReviewCancelled() {
     await expect(page.locator('.evidence-reading__return')).toBeHidden();
     await expect(page.locator('.evidence-reading')).toBeVisible();
   } else await expect(page.locator('.evidence-reading')).toBeHidden();
+}
+async function openArtifactEvidence() {
+  const explanation = page.locator('.artifact-explanation');
+  if (await explanation.count() && !(await explanation.evaluate(el => el.open))) await explanation.locator(':scope > summary').click();
+  const summary = page.getByText('查看课程证据', { exact: true });
+  if (!(await summary.locator('..').evaluate(el => el.open))) await summary.click();
+}
+async function refreshCourse() {
+  const controls = page.locator('.course-controls');
+  if (await controls.evaluate(el => el.tagName === 'DETAILS' && !el.open)) await controls.locator(':scope > summary').click();
+  await controls.getByRole('button', { name: '刷新', exact: true }).click();
 }
 async function seek(seconds) { await video.evaluate((v, t) => { v.currentTime = t; }, seconds); await expect.poll(() => video.evaluate(v => v.seeking)).toBe(false); }
 try {
@@ -148,6 +169,8 @@ try {
       await card.screenshot({ path: `${output}/model-usage.png` });
     });
     await check('trace displays independent frozen decision/review and replay without usage invention', async () => {
+      const execution = page.locator('.execution-details');
+      if (await execution.count() && !(await execution.evaluate(el => el.open))) await execution.locator(':scope > summary').click();
       await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
       const trace = page.getByRole('region', { name: 'Agent Trace' });
       await expect(trace.getByText('decision-frozen-a', { exact: false }).first()).toBeVisible();
@@ -200,6 +223,8 @@ try {
         learning.run.model_mode = i === historical.length - 1 ? 'mock' : 'real';
         await page.reload();
         await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
+        const execution = page.locator('.execution-details');
+        if (await execution.count() && !(await execution.evaluate(el => el.open))) await execution.locator(':scope > summary').click();
         await page.getByRole('button', { name: 'View Trace · 查看执行链路' }).click();
         const trace = page.getByRole('region', { name: 'Agent Trace' });
         await expect(trace.getByText('单轮协议：未验证', { exact: false })).toHaveCount(2);
@@ -219,7 +244,7 @@ try {
     await expect(video).toHaveJSProperty('paused', false);
     await video.evaluate(v => v.pause());
     await nav('学习助手').click();
-    await page.locator('.study-artifact > details summary').click(); await page.locator('.citation button').click();
+    await openArtifactEvidence(); await page.locator('.citation button').click();
     console.log(JSON.stringify({ baseline: true, ...initial, currentRowsAfterSeek, transcriptVisibleAfterCitation: await page.locator('.timeline-view').count(), citationStartedPlayback: await video.evaluate(v => !v.paused) }));
     await video.evaluate(v => v.pause());
     await page.screenshot({ path: `${output}/baseline.png`, fullPage: true });
@@ -283,7 +308,7 @@ try {
       await page.evaluate(() => { const b = document.querySelectorAll('.timeline-row button'); for (const i of [3, 0, 2, 1, 3]) b[i].click(); });
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(5);
       await expect.poll(() => new URL(page.url()).searchParams.get('at')).toBe('5000');
-      await page.evaluate(() => { const b = [...document.querySelectorAll('.workspace-nav button')]; for (const name of ['学习助手', '课程内容', '课程问答', '课程内容', '课程问答']) b.find(x => x.textContent.trim() === name).click(); });
+      await page.evaluate(() => { const b = [...document.querySelectorAll('.workspace-nav button')]; for (const name of ['学习助手', '课程内容', '课程问答', '课程内容', '课程问答']) b.find(x => x.textContent.trim() === (name === '学习助手' ? '解释与练习' : name === '课程内容' ? '课程材料' : name) || x.textContent.trim() === name).click(); });
       await expect(page.locator('.workspace-nav [aria-current=page]')).toHaveText('课程问答');
       await expect.poll(() => new URL(page.url()).searchParams.get('view')).toBe('qa');
       await page.goBack(); await page.goForward();
@@ -296,7 +321,7 @@ try {
       await input.fill('Question for revision one'); await page.getByRole('button', { name: '提问', exact: true }).click();
       await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
       await input.fill('Unsubmitted follow-up'); sourceRevision = 2;
-      await page.getByRole('button', { name: '刷新', exact: true }).click();
+      await refreshCourse();
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(7);
       await page.locator('.evidence-item button').click();
       await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
@@ -314,7 +339,7 @@ try {
       await page.getByRole('button', { name: '回看这段课程证据', exact: true }).click();
       await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
       await expect(answer).toHaveValue('Unsaved answer revision');
-      await page.locator('.study-artifact > details summary').click(); await page.locator('.citation button').click();
+      await openArtifactEvidence(); await page.locator('.citation button').click();
       await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
       await expect(page.locator('.evidence-reading')).toBeHidden();
     });
@@ -340,7 +365,7 @@ try {
       await expect(page.getByText('Fixture Tutor answer', { exact: true })).toBeVisible();
       const reads = verificationReads; verificationDelay = 600;
       await page.locator('.evidence-item button').click(); await expect.poll(() => verificationReads).toBeGreaterThan(reads);
-      sourceRevision = 2; await page.getByRole('button', { name: '刷新', exact: true }).click();
+      sourceRevision = 2; await refreshCourse();
       await new Promise(r => setTimeout(r, 800));
       expect(await video.evaluate(v => v.currentTime)).toBe(7); await expectReviewCancelled();
       verificationDelay = 0;
@@ -420,7 +445,8 @@ try {
     await check('practice feedback citation preserves goal, saved answer, draft and feedback identity', async () => {
       await nav('学习助手').click();
       await expect(page.getByText('Fixture practice', { exact: true })).toBeVisible();
-      const goal = page.locator('.agent-panel textarea').first();
+      await page.locator('.new-study-goal > summary').click();
+      const goal = page.getByRole('textbox', { name: '学习目标', exact: true });
       await goal.fill('Unsubmitted learning goal');
       const answer = page.getByRole('textbox', { name: '第 1 题作答' });
       await expect(answer).toHaveValue('Saved answer'); await answer.fill('Unsaved answer revision');
@@ -428,7 +454,7 @@ try {
       const note = page.getByRole('textbox', { name: '反馈核对意见' });
       await note.fill('Unsaved feedback note');
       const beforeCommands = commands.length;
-      await page.locator('.study-artifact > details summary').click();
+      await openArtifactEvidence();
       await page.locator('.citation button').click();
       await expect(goal).toHaveValue('Unsubmitted learning goal');
       await expect(answer).toHaveValue('Unsaved answer revision');
@@ -469,7 +495,8 @@ try {
       // Use the SPA router through native history/popstate to retain the same mounted page.
       tokenDelay = 700;
       await page.evaluate(() => { history.pushState({}, '', '/tasks/other?view=agent'); window.dispatchEvent(new PopStateEvent('popstate')); });
-      await expect(page.locator('.agent-panel textarea').first()).toHaveValue('Restored learning question');
+      await page.locator('.new-study-goal > summary').click();
+      await expect(page.getByRole('textbox', { name: '学习目标', exact: true })).toHaveValue('Restored learning question');
       await page.evaluate(() => { history.pushState({}, '', '/tasks/empty?view=content&text=timeline'); window.dispatchEvent(new PopStateEvent('popstate')); });
       await expect(page.getByText('本课程没有可定位的字幕片段', { exact: true })).toBeVisible();
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(0);
