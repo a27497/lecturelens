@@ -187,10 +187,12 @@ def live_admission(root, args):
     return Admission(directory, approval, expires, jar_sha, commit)
 
 
-def check_checkout(root):
+def check_checkout(root, commit=None):
     anchor = root / ".data/phase1e3/live-anchor.json"
     if git(root, "status", "--porcelain") or os.path.lexists(anchor):
         raise CLIError("E3_LIVE_DIRTY_CHECKOUT_OR_CONSUMED_PHASE")
+    if commit is not None and git(root, "rev-parse", "HEAD") != commit:
+        raise CLIError("E3_CANDIDATE_CHANGED_BEFORE_DISPATCH")
 
 
 def digest_file(path):
@@ -322,11 +324,11 @@ def execute(root, directory, operation, assets, context):
             if prepare_only:
                 return
             if context:
-                if self.result["head"] != context.commit_sha or git(root, "status", "--porcelain"):
+                if self.result["head"] != context.commit_sha:
                     raise CLIError("E3_CANDIDATE_CHANGED_BEFORE_DISPATCH")
+                check_checkout(root, context.commit_sha)
                 if developer:
                     self.require_dispatch_disk()
-                    check_checkout(root)
                     if datetime.now(timezone.utc) >= context.expires_at:
                         raise CLIError("E3_AUTHORIZATION_INVALID_OR_EXPIRED")
                     try:
@@ -335,7 +337,7 @@ def execute(root, directory, operation, assets, context):
                         self.result["local_refusal_exit_code"] = error.exit_code
                         raise
                     self.require_dispatch_disk()
-                    check_checkout(root)
+                    check_checkout(root, context.commit_sha)
                     if datetime.now(timezone.utc) >= context.expires_at:
                         raise CLIError("E3_AUTHORIZATION_INVALID_OR_EXPIRED")
                     self.result["approval_id"] = context.approval_id

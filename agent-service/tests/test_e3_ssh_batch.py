@@ -206,3 +206,9 @@ def test_batch_stops_at_first_failure_with_pg_and_mock_http(phase, failure):  # 
     assert smoke.result["phase_usage"]["unsettled_nano_usd"] == (
         RESERVE_NANO_USD if failure == "unknown" else 0
     )
+
+
+def test_clean_checkout_switch_is_refused_before_dispatch(tmp_path, monkeypatch):
+    monkeypatch.setattr(e3, "git", lambda _root, operation, *_: "" if operation == "status" else "a" * 40)
+    with pytest.raises(cli.CLIError, match="CANDIDATE_CHANGED_BEFORE_DISPATCH"):
+        e3.check_checkout(tmp_path, "b" * 40)
