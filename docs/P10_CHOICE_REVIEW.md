@@ -20,6 +20,8 @@ Python/PostgreSQL 将 `study_attempt` 经 artifact、Run 连接到 `study_sessio
 
 ## 身份与验证边界
 
-当前开发身份为 `p10-choice-review-442bb2af75c77ed1`，由 `p10_agent_manifest.json` 登记 63 模块。原 P9 清单保持原字节，并新增 `verify_p9_agent`；P7、P3 和更早 FROZEN 清单不变。只读源码夹具恢复 P9 的 contracts/store，再沿原夹具链重建 P7/FROZEN；正例、篡改和冒充均有机制测试。登记不继承历史质量结论，也不允许真实 Provider 调用。
+P10 合入时的开发身份为 `p10-choice-review-442bb2af75c77ed1`，由 `p10_agent_manifest.json` 登记 63 模块。原 P9 清单保持原字节，并新增 `verify_p9_agent`；P7、P3 和更早 FROZEN 清单不变。只读源码夹具恢复 P9 的 contracts/store，再沿原夹具链重建 P7/FROZEN；正例、篡改和冒充均有机制测试。登记不继承历史质量结论，也不允许真实 Provider 调用。
 
 本阶段不提供掌握度、跨课程记忆、同 Session 自适应后续出题、开放题自动评分或真实模型内容质量结论。Tutor、闪卡、继续练习、P9 保存/判分/隐私语义保持独立。机制检查、变异和真实 loopback 浏览器验收入口见 [P10 本地验证](../eval/p10-review/README.md)；未执行的检查必须标记 NOT_RUN。
+
+Phase 0 集成候选使用独立源码身份；P10 清单保持原字节，不继承为新候选的质量结论。见 [Phase 0 验收报告](../eval/phase0-integration-20261108/REPORT.md)。
