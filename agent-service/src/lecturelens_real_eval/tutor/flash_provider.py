@@ -179,7 +179,7 @@ def parse(body, *, text_reply=False):
     except (ValueError, TypeError, RecursionError):
         error = "TUTOR_PROTOCOL_FAILURE" if text_reply else "TUTOR_FLASH_INVALID_JSON"
         return Completion(*result, error=error, **raw)
-    return Completion(*result, reply=reply)
+    return Completion(*result, reply=reply, raw_content=content if text_reply else None)
 
 
 class FlashProvider:

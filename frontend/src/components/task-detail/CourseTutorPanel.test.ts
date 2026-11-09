@@ -32,6 +32,14 @@ describe("course Tutor", () => {
     expect(w.text()).toContain("BFS explores levels");
     expect(createTutorSession).not.toHaveBeenCalled(); expect(submitTutorTurn).not.toHaveBeenCalled();
   });
+  it("discloses DeepSeek inputs before the first trial question", async () => {
+    vi.mocked(listTutorSessions).mockResolvedValue({ sessions: [], revision: 7, provider_mode: "deepseek-flash" });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("提问、对话上下文和检索到的课程片段将发送给 DeepSeek");
+    expect(w.text()).toContain("最多 3 次");
+    expect(w.text()).not.toContain("实验性 Mock 演示");
+    expect(submitTutorTurn).not.toHaveBeenCalled();
+  });
   it("inline citation and source actions retain authoritative id and revision", async () => {
     const w = open(); await flushPromises(); await click(w, "[e1]");
     expect(w.emitted("seek")).toEqual([[1000, { evidenceId: "e1", revision: 7 }]]);

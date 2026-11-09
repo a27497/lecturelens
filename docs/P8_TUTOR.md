@@ -35,7 +35,7 @@ A revision change marks sessions stale and fails queued/running turns; stale his
 
 ## Integration and rollback
 
-The frozen `lecturelens_agent` package, package metadata, AU/P7 manifests and offline CostPolicy remain unchanged. Tutor uses a new subpackage of the already packaged `lecturelens_real_eval` namespace to preserve P7's metadata hash; the product modules do not import the paid eval channel. The new opt-in ASGI entry point `lecturelens_real_eval.tutor.app:create_app` wraps the original application, preserving its retrieval, Study Agent and model routes. Tutor is disabled unless `TUTOR_ENABLED=true`; the product factory also requires `AGENT_LLM_MODE=mock`. It never installs a real provider. Java's existing `STUDY_AGENT_ENABLED` controls gateway access.
+The frozen `lecturelens_agent` package, package metadata, AU/P7 manifests and offline CostPolicy remain unchanged. Tutor uses a new subpackage of the already packaged `lecturelens_real_eval` namespace to preserve P7's metadata hash; the P8 engine does not use the paid eval channel. The new opt-in ASGI entry point `lecturelens_real_eval.tutor.app:create_app` wraps the original application, preserving its retrieval, Study Agent and model routes. Tutor is disabled unless `TUTOR_ENABLED=true`; the product factory also requires `AGENT_LLM_MODE=mock`. The P8 engine uses Mock. A separately authorized [DeepSeek trial](LIGHT_TUTOR_TRIAL.md) is available only on the Light engine. Java's existing `STUDY_AGENT_ENABLED` controls gateway access.
 
 Start the Python service from `agent-service/`, with the normal service configuration plus the two explicit mock settings:
 

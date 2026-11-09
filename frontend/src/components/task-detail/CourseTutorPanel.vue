@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from "vue";
 import { cancelTutorTurn, createTutorSession, getTutorSession, listTutorSessions, submitTutorTurn } from "../../api/tutor";
-import type { TutorSession, TutorView } from "../../api/tutor";
+import type { TutorProviderMode, TutorSession, TutorView } from "../../api/tutor";
 import type { Citation } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import { randomUuid } from "../../utils/randomUuid";
@@ -12,6 +12,7 @@ const props = defineProps<{ taskId: string }>();
 const emit = defineEmits<{ seek: [milliseconds: number, context: EvidenceSeekContext]; accessFailure: [] }>();
 const view = ref<TutorView | null>(null);
 const sessions = ref<TutorSession[]>([]);
+const providerMode = ref<TutorProviderMode>();
 const draft = ref("");
 const socratic = ref(false);
 const busy = ref(false);
@@ -41,6 +42,7 @@ function fail(reason: unknown) {
 function apply(result: TutorView) {
   ++readSequence;
   view.value = result;
+  providerMode.value = result.provider_mode;
   clearTimeout(timer);
   if (activeTurn.value && visible) timer = setTimeout(() => void refresh(), 700);
 }
@@ -59,6 +61,7 @@ async function restore() {
   try {
     const result = await listTutorSessions(props.taskId);
     if (version !== epoch) return;
+    providerMode.value = result.provider_mode;
     sessions.value = result.sessions.filter(s => s.status === "active" && s.revision === result.revision);
     if (sessions.value[0]) {
       const data = await getTutorSession(props.taskId, sessions.value[0].session_id);
@@ -116,7 +119,7 @@ function seek(c: Citation) {
   if (view.value) emit("seek", c.start_ms, { evidenceId: c.evidence_id, revision: view.value.session.revision });
 }
 watch(() => props.taskId, () => {
-  view.value = null; sessions.value = []; pending.value = undefined; draft.value = ""; busy.value = false;
+  view.value = null; sessions.value = []; providerMode.value = undefined; pending.value = undefined; draft.value = ""; busy.value = false;
   blocked.value = false; createKey = randomUuid(); void restore();
 }, { immediate: true });
 onActivated(() => { visible = true; void refresh(); });
@@ -128,7 +131,8 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
   <section class="tutor" aria-labelledby="tutor-title">
     <header><div><p class="eyebrow">课程证据 · 多轮对话</p><h2 id="tutor-title">Tutor</h2></div>
       <button :disabled="busy || !!activeTurn || !!pending || blocked" @click="newConversation">新对话</button></header>
-    <p class="boundary">实验性 Mock 演示，仅验证对话流程；教学质量尚未经过真实模型验收。</p>
+    <p v-if="providerMode === 'deepseek-flash'" class="boundary">DeepSeek 试学：提问、对话上下文和检索到的课程片段将发送给 DeepSeek。此试学共可生成最多 3 次，教学质量待评审。</p>
+    <p v-else class="boundary">实验性 Mock 演示，仅验证对话流程；教学质量尚未经过真实模型验收。</p>
     <p v-if="view?.session.engine === 'light'" class="boundary">轻量 Tutor：每轮最多一次生成，最多六轮；完整保留本对话前提，超限或失败不自动重试。复杂问题请拆分提问。</p>
     <p v-if="loading" role="status">正在恢复对话…</p>
     <label v-if="sessions.length">已保存对话 <select :value="view?.session.session_id ?? ''" :disabled="busy || !!pending" @change="openSession(($event.target as HTMLSelectElement).value)"><option disabled value="">选择对话</option><option v-for="(s, i) in sessions" :key="s.session_id" :value="s.session_id">对话 {{ sessions.length - i }}</option></select></label>

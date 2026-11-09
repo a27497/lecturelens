@@ -26,7 +26,7 @@ def require_mock(mode):
         raise RuntimeError("TUTOR_MOCK_ONLY")
 
 
-def create_app(*, tutor=None, **kwargs):
+def create_app(*, tutor=None, trial_transport=None, **kwargs):
     app = base_app(**kwargs)
     original = app.router.lifespan_context
 
@@ -34,13 +34,31 @@ def create_app(*, tutor=None, **kwargs):
     async def lifespan(app):
         configured = tutor is None and os.environ.get("TUTOR_ENABLED", "false").lower() == "true"
         # Reject before the base lifespan can initialize or start any provider worker.
+        trial = None
         if configured:
             require_mock(os.environ.get("AGENT_LLM_MODE", "real"))
+            engine = os.environ.get("TUTOR_ENGINE", "p8")
+            provider = os.environ.get("TUTOR_PROVIDER", "mock")
+            if provider == "deepseek-flash" and engine == "light":
+                from .trial import create_trial
+
+                secret = kwargs.get("secret")
+                if secret is None:
+                    secret = os.environ.get("AGENT_SERVICE_SECRET", "")
+                if len(secret.encode()) < 32:
+                    raise RuntimeError("AGENT_SERVICE_SECRET must contain at least 32 bytes")
+                trial = create_trial(
+                    os.environ["AGENT_DATABASE_URL"],
+                    course_authority(os.environ["AGENT_JAVA_BASE_URL"], secret),
+                    transport=trial_transport,
+                )
+                # Reject the wrong target before the base app can run any DDL there.
+                await run_in_threadpool(trial.initialize)
+            elif provider != "mock" or trial_transport is not None:
+                raise RuntimeError("TUTOR_PROVIDER_CONFIGURATION_INVALID")
         async with original(app):
-            app.state.tutor = tutor
-            if configured:
-                # No real product adapter is installed; eval has its own guarded factory.
-                engine = os.environ.get("TUTOR_ENGINE", "p8")
+            app.state.tutor = trial if trial is not None else tutor
+            if configured and trial is None:
                 runtime = LightTutorRuntime if engine == "light" else TutorRuntime
                 app.state.tutor = runtime(
                     TutorStore(os.environ["AGENT_DATABASE_URL"], engine=engine),
@@ -49,7 +67,8 @@ def create_app(*, tutor=None, **kwargs):
                     ),
                 )
             if app.state.tutor:
-                await run_in_threadpool(app.state.tutor.initialize)
+                if trial is None:
+                    await run_in_threadpool(app.state.tutor.initialize)
                 app.state.tutor.start()
             try:
                 yield

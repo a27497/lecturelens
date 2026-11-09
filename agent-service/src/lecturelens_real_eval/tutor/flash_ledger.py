@@ -68,8 +68,8 @@ class AuthorizedSession(Contract):
         return self.owner_id, self.course_id, self.revision
 
 
-class Grant(Contract):
-    version: Literal["lecturelens-phase1e-flash-v1"]
+class FlashAuthorization(Contract):
+    version: str
     grant_id: Annotated[str, Field(pattern=r"^[0-9a-f]{32}$")]
     mode: Literal["real", "offline-fake"]
     target_id: Annotated[str, Field(pattern=r"^[0-9a-f-]{36}$")]
@@ -83,14 +83,24 @@ class Grant(Contract):
     accepts_supplier_risk: bool
     request_limit: Annotated[int, Field(ge=1, le=MAX_TRIAL_REQUESTS)]
     budget_nano_usd: Annotated[int, Field(ge=1, le=MAX_TRIAL_NANO_USD)]
+
+    @model_validator(mode="after")
+    def valid_window(self):
+        if not self.accepts_supplier_risk or not timedelta(0) < self.expires_at - self.issued_at <= timedelta(
+            hours=24
+        ):
+            raise ValueError("Inconsistent trial authorization")
+        return self
+
+
+class Grant(FlashAuthorization):
+    version: Literal["lecturelens-phase1e-flash-v1"]
     sessions: Annotated[list[AuthorizedSession], Field(min_length=1, max_length=MAX_TRIAL_REQUESTS)]
 
     @model_validator(mode="after")
     def consistent(self):
         if (
-            not self.accepts_supplier_risk
-            or not timedelta(0) < self.expires_at - self.issued_at <= timedelta(hours=24)
-            or len({(*session.scope, session.request_key) for session in self.sessions}) != len(self.sessions)
+            len({(*session.scope, session.request_key) for session in self.sessions}) != len(self.sessions)
             or sum(len(session.turns) for session in self.sessions) != self.request_limit
         ):
             raise ValueError("Inconsistent trial authorization")
@@ -108,25 +118,13 @@ def build_digest():
     return digest(b"".join(bytes.fromhex(digest(path.read_bytes())) for path in files))
 
 
-class FlashStore(TutorStore):
-    def __init__(self, dsn, grant):
+class FlashLedgerStore(TutorStore):
+    def __init__(self, dsn, grant, *, experiment):
         if grant.build_sha256 != build_digest():
             raise StudyError("TUTOR_FLASH_BUILD_CHANGED")
-        super().__init__(dsn, engine="light", experiment=grant.grant_id)
+        super().__init__(dsn, engine="light", experiment=experiment)
         self.grant = grant
         self.grant_hash = digest(grant.model_dump_json().encode())
-        offset = 0
-        self.sessions = {}
-        for plan in grant.sessions:
-            command = Command(
-                owner_id=plan.owner_id,
-                course_id=plan.course_id,
-                revision=plan.revision,
-                request_key=plan.request_key,
-                operation="CREATE",
-            )
-            self.sessions[self.session_id(command)] = (plan, offset)
-            offset += len(plan.turns)
 
     def initialize(self):
         g = self.grant
@@ -175,44 +173,7 @@ class FlashStore(TutorStore):
         self.authorize_command(command)
         return super().command(command)
 
-    def authorize_command(self, command):
-        scope = command.owner_id, command.course_id, command.revision
-        session_id = self.session_id(command) if command.operation == "CREATE" else command.session_id
-        if command.operation == "LIST":
-            allowed = any(scope == plan.scope for plan, _ in self.sessions.values())
-        else:
-            allowed = session_id in self.sessions and scope == self.sessions[session_id][0].scope
-        if not allowed:
-            raise StudyError("TUTOR_FLASH_SCOPE_DENIED", 404)
-
-    def slot(self, session_id, ordinal, text, socratic):
-        entry = self.sessions.get(session_id)
-        if entry is None:
-            raise StudyError("TUTOR_FLASH_SCOPE_DENIED", 404)
-        plan, offset = entry
-        if not 1 <= ordinal <= len(plan.turns):
-            raise StudyError("TUTOR_FLASH_TASK_DENIED", 403)
-        expected = plan.turns[ordinal - 1]
-        if (text, socratic) != (expected.text, expected.socratic):
-            raise StudyError("TUTOR_FLASH_TASK_DENIED", 403)
-        return offset + ordinal
-
-    def before_enqueue(self, conn, command, session, ordinal):
-        self.slot(session["session_id"], ordinal, command.text, command.socratic)
-        if (
-            ordinal > 1
-            and not conn.execute(
-                "SELECT 1 FROM tutor_turn WHERE session_id=%s AND ordinal=%s AND status='completed'",
-                (session["session_id"], ordinal - 1),
-            ).fetchone()
-        ):
-            raise StudyError("TUTOR_FLASH_PREVIOUS_TURN_FAILED")
-
-    def reserve(self, conn, session, turn, state, request_sha256):
-        slot = self.slot(session["session_id"], turn["ordinal"], turn["learner_text"], turn["socratic"])
-        plan, _ = self.sessions[session["session_id"]]
-        if any(digest(row["text"].encode()) not in plan.evidence_sha256 for row in state["evidence"]):
-            raise StudyError("TUTOR_FLASH_EVIDENCE_NOT_APPROVED", 403)
+    def reserve_slot(self, conn, turn, state, request_sha256, *, slot=None):
         trial = self.lock_trial(conn)
         if trial["stop_code"]:
             raise StudyError("TUTOR_FLASH_TRIAL_STOPPED", 403)
@@ -226,6 +187,8 @@ class FlashStore(TutorStore):
         if turn["deadline"] <= now:
             raise StudyError("TUTOR_DEADLINE")
         calls = conn.execute("SELECT slot,charged_nano_usd,published_at FROM tutor_flash_call").fetchall()
+        if slot is None:
+            slot = max((row["slot"] for row in calls), default=0) + 1
         if any(row["slot"] == slot for row in calls):
             raise StudyError("TUTOR_FLASH_SLOT_USED", 403)
         if any(row["charged_nano_usd"] is None for row in calls):
@@ -307,3 +270,60 @@ class FlashStore(TutorStore):
                     (code, turn_id),
                 )
         super().fail(turn_id, code, stale)
+
+
+class FlashStore(FlashLedgerStore):
+    def __init__(self, dsn, grant):
+        super().__init__(dsn, grant, experiment=grant.grant_id)
+        offset = 0
+        self.sessions = {}
+        for plan in grant.sessions:
+            command = Command(
+                owner_id=plan.owner_id,
+                course_id=plan.course_id,
+                revision=plan.revision,
+                request_key=plan.request_key,
+                operation="CREATE",
+            )
+            self.sessions[self.session_id(command)] = (plan, offset)
+            offset += len(plan.turns)
+
+    def authorize_command(self, command):
+        scope = command.owner_id, command.course_id, command.revision
+        session_id = self.session_id(command) if command.operation == "CREATE" else command.session_id
+        if command.operation == "LIST":
+            allowed = any(scope == plan.scope for plan, _ in self.sessions.values())
+        else:
+            allowed = session_id in self.sessions and scope == self.sessions[session_id][0].scope
+        if not allowed:
+            raise StudyError("TUTOR_FLASH_SCOPE_DENIED", 404)
+
+    def slot(self, session_id, ordinal, text, socratic):
+        entry = self.sessions.get(session_id)
+        if entry is None:
+            raise StudyError("TUTOR_FLASH_SCOPE_DENIED", 404)
+        plan, offset = entry
+        if not 1 <= ordinal <= len(plan.turns):
+            raise StudyError("TUTOR_FLASH_TASK_DENIED", 403)
+        expected = plan.turns[ordinal - 1]
+        if (text, socratic) != (expected.text, expected.socratic):
+            raise StudyError("TUTOR_FLASH_TASK_DENIED", 403)
+        return offset + ordinal
+
+    def before_enqueue(self, conn, command, session, ordinal):
+        self.slot(session["session_id"], ordinal, command.text, command.socratic)
+        if (
+            ordinal > 1
+            and not conn.execute(
+                "SELECT 1 FROM tutor_turn WHERE session_id=%s AND ordinal=%s AND status='completed'",
+                (session["session_id"], ordinal - 1),
+            ).fetchone()
+        ):
+            raise StudyError("TUTOR_FLASH_PREVIOUS_TURN_FAILED")
+
+    def reserve(self, conn, session, turn, state, request_sha256):
+        slot = self.slot(session["session_id"], turn["ordinal"], turn["learner_text"], turn["socratic"])
+        plan, _ = self.sessions[session["session_id"]]
+        if any(digest(row["text"].encode()) not in plan.evidence_sha256 for row in state["evidence"]):
+            raise StudyError("TUTOR_FLASH_EVIDENCE_NOT_APPROVED", 403)
+        self.reserve_slot(conn, turn, state, request_sha256, slot=slot)

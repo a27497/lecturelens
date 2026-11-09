@@ -2,7 +2,7 @@
 
 The existing course workspace's **Tutor 对话** supports a saved, bounded teaching dialogue. Python owns context, retrieval orchestration, generation and PostgreSQL state; Java remains the authenticated gateway and authoritative course/Evidence owner. Course QA, Study Agent, practice, reviews and flashcards retain their existing paths.
 
-Opt in with the existing Tutor ASGI factory and `TUTOR_ENABLED=true AGENT_LLM_MODE=mock TUTOR_ENGINE=light`. The default engine remains P8. The ordinary Tutor factory admits only Mock mode. The default Mock explicitly labels itself as a workflow example; it does not provide real teaching. Authored acceptance replies are confined to `eval/phase1d-lightweight/mock_app.py`.
+Opt in with the existing Tutor ASGI factory and `TUTOR_ENABLED=true AGENT_LLM_MODE=mock TUTOR_ENGINE=light`. The default engine remains P8. The ordinary Tutor factory defaults to Mock and supports a separately authorized [DeepSeek Flash user trial](LIGHT_TUTOR_TRIAL.md) for one account and one course revision. The default Mock explicitly labels itself as a workflow example; it does not provide real teaching. Authored acceptance replies are confined to `eval/phase1d-lightweight/mock_app.py`.
 
 Each turn performs at most two deterministic authority searches (current-question and initial/recent-topic retrieval hints, each at most 500 characters), re-READs all observed IDs and makes **at most one generation request**. The complete current question and complete dialogue are passed separately; retrieval hints are not the learner context. The simple response is `{outcome, text, focus}`: explanation or one targeted guiding question, inline citations, and a short literal learner phrase only for Socratic mode. No model tool planning, source-span blocks, calculator, automatic reviewer or repair loop is used.
 
@@ -22,4 +22,4 @@ An operator-approved receipt binds a single trial to its isolated database, buil
 
 Phase 0 GitHub CI remains **PENDING**. Phase 1-E uses offline Mock HTTP and frozen references; actual provider behavior and teaching quality require a separate trial. See [Phase 1-D evidence](../eval/phase1d-lightweight/REPORT.md), [Phase 1-E evaluation](../eval/phase1e-tutor/RUBRIC.md) and [E3 admission](../eval/phase1e-tutor/E3.md).
 
-The [Phase 1-E3 runner](../eval/phase1e3-tutor/README.md) is the live experiment entry. It adds cumulative admission across the first frozen trial and one separately identified development retest, plus private wire evidence and independent review handoff.
+The historical [Phase 1-E3 runner](../eval/phase1e3-tutor/README.md) is separate from the normal-user trial. It adds cumulative admission across the first frozen trial and one separately identified development retest, plus private wire evidence and independent review handoff.

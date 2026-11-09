@@ -52,9 +52,13 @@ class FlashTutorRuntime(LightTutorRuntime):
         result = self.provider.complete(body, min(timeout, remaining_grant))
         # Billing can settle even when a cancelled turn can no longer publish.
         error = self.store.settle(turn["turn_id"], digest(body), result)
+        self.audit_completion(state, result)
         if error:
             return {"flash_error": error, "usage": result.usage or {}, "raw_content": result.raw_content}
         return {**result.reply, "usage": result.usage}
+
+    def audit_completion(self, state, result):
+        pass
 
     def publish(self, turn_id, state):
         if error := state["response"].get("flash_error"):
