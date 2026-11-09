@@ -1,6 +1,6 @@
 # Phase 1-E3 isolated acceptance
 
-The [E1/E2 candidate](../phase1e-tutor/CANDIDATE.json), [dataset](../phase1e-tutor/dataset.json) and [rubric](../phase1e-tutor/RUBRIC.md) stay frozen. The initial E3 trial used the frozen JSON wire and stopped on a protocol failure. The [loop-1 repair report](LOOP_1_REPAIR.md) records the original result, the plain-text retest candidate, and the current retest admission status. [Independent AI review](REVIEW.md) specifies the development-only cross-review route.
+The [E1/E2 candidate](../phase1e-tutor/CANDIDATE.json), [dataset](../phase1e-tutor/dataset.json) and [rubric](../phase1e-tutor/RUBRIC.md) stay frozen. The initial E3 trial used the frozen JSON wire and stopped on a protocol failure. The [loop-1 repair report](LOOP_1_REPAIR.md) records the original result and the plain-text retest candidate. The [preserved-stack audit](RETEST_ADMISSION.md) records the current retest admission status. [Independent AI review](REVIEW.md) specifies the development-only cross-review route.
 
 ## Execution
 
