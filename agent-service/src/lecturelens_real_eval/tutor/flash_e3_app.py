@@ -59,6 +59,7 @@ def experiment_app(*, offline_transport=None, api_key=None):
         os.environ.get("TUTOR_FLASH_API_KEY", "") if api_key is None else api_key,
         transport=offline_transport,
         observer=store.observe,
+        text_reply=receipt.kind == "retest",
     )
     authority = EvidenceAuthority(os.environ["AGENT_JAVA_BASE_URL"], secret)
     return tutor_app(tutor=FlashTutorRuntime(store, authority, provider), secret=secret)

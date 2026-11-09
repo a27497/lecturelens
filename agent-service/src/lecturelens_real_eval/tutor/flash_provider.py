@@ -11,7 +11,8 @@ import httpx
 
 from lecturelens_agent.study.store import StudyError
 
-from .light import Reply
+from .contracts import ABSTENTION
+from .light import GROUNDING, REPLY_LIMITS, TEACHING, Reply
 
 MODEL = "deepseek-flash"
 MODEL_VERSION = "DeepSeek-V4.1-Flash-1017"
@@ -30,17 +31,36 @@ JSON_INSTRUCTION = (
 )
 
 
+TEXT_SYSTEM = (
+    TEACHING
+    + GROUNDING
+    + REPLY_LIMITS
+    + """Use exactly one of these plain-text forms. Write the status at the start of the first line.
+When socratic is false and you can teach the topic, write answered on the first line and the teaching text next.
+When socratic is true and you can guide the learner, write socratic_prompt on the first line, a literal phrase
+from the current learner question (up to 120 characters) on the second line, and the guiding question including
+that phrase from the third line onward.
+If the course evidence is insufficient to teach the requested topic, write only insufficient_evidence.
+Keep the teaching text within 1600 characters and use at most four distinct citations.
+Write code, Markdown and line breaks directly in the teaching text.
+"""
+)
+
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def payload(messages):
+def payload(messages, *, text_reply=False):
     system, user = messages
     return json.dumps(
         {
             "model": MODEL,
-            "messages": [{**system, "content": system["content"] + JSON_INSTRUCTION}, user],
-            "response_format": {"type": "json_object"},
+            "messages": [
+                {**system, "content": TEXT_SYSTEM if text_reply else system["content"] + JSON_INSTRUCTION},
+                user,
+            ],
+            "response_format": {"type": "text" if text_reply else "json_object"},
             "thinking": {"type": "disabled"},
             "temperature": 0.2,
             "max_tokens": OUTPUT_TOKENS,
@@ -89,7 +109,25 @@ def unique_object(pairs):
     return result
 
 
-def parse(body):
+def parse_text(content):
+    if not isinstance(content, str):
+        raise ValueError("Expected text")
+    if content in {"insufficient_evidence", "insufficient_evidence\n", "insufficient_evidence\r\n"}:
+        return Reply(outcome="insufficient_evidence", text=ABSTENTION)
+    outcome, _, text = content.partition("\n")
+    outcome = outcome.removesuffix("\r")
+    focus = ""
+    if outcome == "socratic_prompt":
+        focus, _, text = text.partition("\n")
+        focus = focus.removesuffix("\r")
+        if not focus or focus != focus.strip():
+            raise ValueError("Expected a focus line")
+    if outcome not in {"answered", "socratic_prompt"} or not text.strip() or ABSTENTION in text:
+        raise ValueError("Invalid teaching frame")
+    return Reply(outcome=outcome, text=text, focus=focus)
+
+
+def parse(body, *, text_reply=False):
     response_hash = digest(body)
     try:
         envelope = json.loads(body, object_pairs_hook=unique_object)
@@ -127,27 +165,38 @@ def parse(body):
     if usage["completion_tokens"] == 0:
         return Completion(None, response_hash, fingerprint, provider_id, error="TUTOR_FLASH_USAGE_UNKNOWN")
     try:
-        reply = Reply.model_validate(json.loads(content, object_pairs_hook=unique_object)).model_dump()
+        if text_reply and message.get("refusal"):
+            raise ValueError("Provider refusal")
+        reply = (
+            parse_text(content)
+            if text_reply
+            else Reply.model_validate(json.loads(content, object_pairs_hook=unique_object))
+        ).model_dump()
         for key in ("text", "focus"):
             reply[key].encode("utf-8")
             if "\x00" in reply[key]:
                 raise ValueError("Invalid JSONB text")
     except (ValueError, TypeError, RecursionError):
-        return Completion(*result, error="TUTOR_FLASH_INVALID_JSON", **raw)
+        error = "TUTOR_PROTOCOL_FAILURE" if text_reply else "TUTOR_FLASH_INVALID_JSON"
+        return Completion(*result, error=error, **raw)
     return Completion(*result, reply=reply)
 
 
 class FlashProvider:
-    def __init__(self, api_key, *, transport=None, observer=None):
+    def __init__(self, api_key, *, transport=None, observer=None, text_reply=False):
         if not api_key or not re.fullmatch(r"[!-~]{1,512}", api_key):
             raise RuntimeError("TUTOR_FLASH_KEY_REQUIRED")
         self._key = api_key
         self._transport = transport
         self._observer = observer
+        self._text_reply = text_reply
 
     @property
     def offline(self):
         return self._transport is not None
+
+    def request_body(self, messages):
+        return payload(messages, text_reply=self._text_reply)
 
     def complete(self, body, timeout):
         if self._observer is not None:
@@ -198,7 +247,7 @@ class FlashProvider:
                     self._observer(body, b"", status, False)
                     raise StudyError("TUTOR_FLASH_SECRET_IN_RESPONSE")
                 self._observer(body, bytes(buffer), status, complete)
-        return parse(buffer)
+        return parse(buffer, text_reply=self._text_reply)
 
     @staticmethod
     def http_error(status):

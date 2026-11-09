@@ -11,7 +11,7 @@ from lecturelens_agent.study.store import StudyError
 
 from .app import create_app as tutor_app
 from .flash_ledger import FlashStore, Grant
-from .flash_provider import OUTPUT_TOKENS, FlashProvider, digest, payload
+from .flash_provider import OUTPUT_TOKENS, FlashProvider, digest
 from .light import LightTutorRuntime
 
 
@@ -38,14 +38,14 @@ class FlashTutorRuntime(LightTutorRuntime):
             raise StudyError("TUTOR_FLASH_EXECUTION_FAILURE") from None
 
     def reserve_generation(self, conn, session, turn, state):
-        body = payload(state["messages"])
+        body = self.provider.request_body(state["messages"])
         # Runtime context bound and supplier billing bound are independent.
         state["reservation"] = max(state["reservation"], len(body) + OUTPUT_TOKENS)
         super().reserve_generation(conn, session, turn, state)
         self.store.reserve(conn, session, turn, state, digest(body))
 
     def generate(self, turn, state, timeout):
-        body = payload(state["messages"])
+        body = self.provider.request_body(state["messages"])
         remaining_grant = (self.store.grant.expires_at - datetime.now(timezone.utc)).total_seconds()
         if remaining_grant <= 0:
             raise StudyError("TUTOR_FLASH_GRANT_EXPIRED")
