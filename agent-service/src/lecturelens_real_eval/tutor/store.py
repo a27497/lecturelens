@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS tutor_session (
 );
 CREATE INDEX IF NOT EXISTS tutor_session_scope ON tutor_session(owner_id,course_id,created_at);
 ALTER TABLE tutor_session ADD COLUMN IF NOT EXISTS engine text NOT NULL DEFAULT 'p8';
+ALTER TABLE tutor_session ADD COLUMN IF NOT EXISTS experiment text NOT NULL DEFAULT '';
 ALTER TABLE tutor_session ADD COLUMN IF NOT EXISTS max_turns integer NOT NULL DEFAULT 40;
 CREATE TABLE IF NOT EXISTS tutor_turn (
  turn_id text PRIMARY KEY, session_id text NOT NULL REFERENCES tutor_session ON DELETE CASCADE,
@@ -38,11 +39,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS tutor_one_active_turn ON tutor_turn(session_id
 
 
 class TutorStore(StudyStore):
-    def __init__(self, dsn, *, engine="p8"):
+    def __init__(self, dsn, *, engine="p8", experiment=""):
         super().__init__(dsn)
         if engine not in {"p8", "light"}:
             raise ValueError("Unknown Tutor engine")
         self.engine = engine
+        self.experiment = experiment
 
     def initialize(self):
         with self.connect() as conn:
@@ -63,8 +65,8 @@ class TutorStore(StudyStore):
 
     def session(self, conn, command):
         row = conn.execute(
-            "SELECT * FROM tutor_session WHERE session_id=%s AND owner_id=%s AND course_id=%s AND engine=%s FOR UPDATE",
-            (command.session_id, command.owner_id, command.course_id, self.engine),
+            "SELECT * FROM tutor_session WHERE session_id=%s AND owner_id=%s AND course_id=%s AND engine=%s AND experiment=%s FOR UPDATE",
+            (command.session_id, command.owner_id, command.course_id, self.engine, self.experiment),
         ).fetchone()
         if not row:
             raise StudyError("TUTOR_SESSION_NOT_FOUND", 404)
@@ -86,21 +88,16 @@ class TutorStore(StudyStore):
         with self.connect() as conn:
             self.fence(conn, command.model_dump())
             if command.operation == "CREATE":
-                sid = str(
-                    uuid.uuid5(
-                        uuid.NAMESPACE_URL,
-                        ("light-tutor:" if self.engine == "light" else "tutor:")
-                        + f"{command.owner_id}:{command.course_id}:{command.revision}:{command.request_key}",
-                    )
-                )
+                sid = self.session_id(command)
                 conn.execute(
-                    "INSERT INTO tutor_session(session_id,owner_id,course_id,revision,engine,max_turns,max_calls,max_tokens) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING",
+                    "INSERT INTO tutor_session(session_id,owner_id,course_id,revision,engine,experiment,max_turns,max_calls,max_tokens) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING",
                     (
                         sid,
                         command.owner_id,
                         command.course_id,
                         command.revision,
                         self.engine,
+                        self.experiment,
                         6 if self.engine == "light" else 40,
                         6 if self.engine == "light" else 60,
                         384000 if self.engine == "light" else 640000,
@@ -128,8 +125,8 @@ class TutorStore(StudyStore):
                     "sessions": [
                         self.public_session(row)
                         for row in conn.execute(
-                            "SELECT * FROM tutor_session WHERE owner_id=%s AND course_id=%s AND engine=%s ORDER BY created_at DESC,session_id LIMIT 20",
-                            (command.owner_id, command.course_id, self.engine),
+                            "SELECT * FROM tutor_session WHERE owner_id=%s AND course_id=%s AND engine=%s AND experiment=%s ORDER BY created_at DESC,session_id LIMIT 20",
+                            (command.owner_id, command.course_id, self.engine, self.experiment),
                         ).fetchall()
                     ]
                 }
@@ -175,6 +172,7 @@ class TutorStore(StudyStore):
                     or session["reserved_tokens"] >= session["max_tokens"]
                 ):
                     raise StudyError("TUTOR_SESSION_BUDGET")
+                self.before_enqueue(conn, command, session, count + 1)
                 conn.execute(
                     "INSERT INTO tutor_turn(turn_id,session_id,client_turn_id,ordinal,learner_text,socratic) VALUES (%s,%s,%s,%s,%s,%s)",
                     (
@@ -190,6 +188,20 @@ class TutorStore(StudyStore):
         if error:
             raise error
 
+    def session_id(self, command):
+        prefix = "light-tutor:" if self.engine == "light" else "tutor:"
+        if self.experiment:
+            prefix += "experiment:" + self.experiment + ":"
+        return str(
+            uuid.uuid5(
+                uuid.NAMESPACE_URL,
+                prefix + f"{command.owner_id}:{command.course_id}:{command.revision}:{command.request_key}",
+            )
+        )
+
+    def before_enqueue(self, conn, command, session, ordinal):
+        pass
+
     def view(self, conn, session):
         rows = conn.execute(
             "SELECT * FROM tutor_turn WHERE session_id=%s ORDER BY ordinal", (session["session_id"],)
@@ -198,7 +210,7 @@ class TutorStore(StudyStore):
 
     @staticmethod
     def public_session(row):
-        return {k: v for k, v in row.items() if k not in {"summary", "summary_through"}}
+        return {k: v for k, v in row.items() if k not in {"summary", "summary_through", "experiment"}}
 
     @staticmethod
     def public_turn(row):
@@ -207,8 +219,8 @@ class TutorStore(StudyStore):
     def candidates(self):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT t.turn_id,t.session_id FROM tutor_turn t JOIN tutor_session s USING(session_id) WHERE t.status IN ('queued','running') AND s.status='active' AND s.engine=%s ORDER BY t.created_at LIMIT 20",
-                (self.engine,),
+                "SELECT t.turn_id,t.session_id FROM tutor_turn t JOIN tutor_session s USING(session_id) WHERE t.status IN ('queued','running') AND s.status='active' AND s.engine=%s AND s.experiment=%s ORDER BY t.created_at LIMIT 20",
+                (self.engine, self.experiment),
             ).fetchall()
 
     def fail(self, turn_id, code, stale=False):

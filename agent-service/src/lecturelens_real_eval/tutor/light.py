@@ -1,8 +1,4 @@
-"""One-shot course teaching, reusing the Tutor journal and Java authority.
-
-No real adapter is installed. A future adapter needs a separately authorized
-cost/usage ledger; this development factory remains strictly mock-only.
-"""
+"""One-shot course teaching on the Tutor journal and Java authority."""
 
 import json
 import re
@@ -82,6 +78,17 @@ class LightTutorRuntime(TutorRuntime):
             raise ValueError("LIGHT_TUTOR_STORE_REQUIRED")
         super().__init__(store, authority, provider or MockLightTutor())
 
+    output_reserve = 1200
+
+    def reserve_generation(self, conn, session, turn, state):
+        self.reserve_call(conn, session, turn, state["reservation"])
+
+    def generate(self, turn, state, timeout):
+        try:
+            return self.provider.complete(state["messages"], state["schema"], timeout)
+        except Exception:  # noqa: BLE001 -- a dispatch exception never authorizes a resend
+            raise StudyError("TUTOR_UNKNOWN_MODEL_OUTCOME") from None
+
     def context(self, conn, session, turn):
         # Six submitted turns bound the entire dialogue; no lossy summaries or
         # omitted learner premises. Failed turns are explicitly unpublished.
@@ -117,7 +124,7 @@ class LightTutorRuntime(TutorRuntime):
         schema = Reply.model_json_schema()
         # Same conservative UTF-8 byte proxy and output reserve as P8; never
         # silently trim dialogue/evidence to make a reservation pass.
-        amount = len(json.dumps([messages, schema], ensure_ascii=False).encode()) + 1200
+        amount = len(json.dumps([messages, schema], ensure_ascii=False).encode()) + self.output_reserve
         return dict(
             phase="prepared",
             selected=selected,
@@ -139,7 +146,7 @@ class LightTutorRuntime(TutorRuntime):
             session, turn = self.store.rows(conn, turn_id)
             if turn["status"] not in {"queued", "running"}:
                 return
-            if session["engine"] != "light":
+            if session["engine"] != "light" or session["experiment"] != self.store.experiment:
                 raise StudyError("TUTOR_SESSION_NOT_FOUND", 404)
             self.guard(session, turn)
             self.store.fence(conn, session)
@@ -168,15 +175,12 @@ class LightTutorRuntime(TutorRuntime):
                     self.store.fence(conn, session)
                     if turn["model_calls"]:
                         raise StudyError("TUTOR_UNKNOWN_MODEL_OUTCOME")
-                    self.reserve_call(conn, session, turn, state["reservation"])
+                    self.reserve_generation(conn, session, turn, state)
                     self.store.checkpoint(conn, turn_id, {**state, "phase": "reserved"})
                 remaining = min(20, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds())
                 if remaining <= 0:
                     raise StudyError("TUTOR_DEADLINE")
-                try:
-                    response = self.provider.complete(state["messages"], state["schema"], remaining)
-                except Exception:  # noqa: BLE001 -- a dispatch exception never authorizes a resend
-                    raise StudyError("TUTOR_UNKNOWN_MODEL_OUTCOME") from None
+                response = self.generate(turn, state, remaining)
             else:
                 response = {"outcome": "insufficient_evidence", "text": ABSTENTION, "focus": "", "usage": {}}
             state = {**state, "phase": "received", "response": response}
@@ -192,6 +196,9 @@ class LightTutorRuntime(TutorRuntime):
                         (Jsonb([usage]) if turn["model_calls"] else Jsonb([]), turn_id),
                     )
         self.publish(turn_id, state)
+
+    def publication_committed(self, conn, turn_id):
+        pass
 
     def publish(self, turn_id, state):
         response = state["response"]
@@ -251,3 +258,4 @@ class LightTutorRuntime(TutorRuntime):
                 ),
             )
             self.store.checkpoint(conn, turn_id, {**state, "phase": "done"})
+            self.publication_committed(conn, turn_id)
