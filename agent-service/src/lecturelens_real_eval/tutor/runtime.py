@@ -10,23 +10,30 @@ from psycopg.types.json import Jsonb
 from lecturelens_agent.study.store import StudyError
 
 from .citations import assembled_citation_ids
-from .contracts import ABSTENTION, TOOLS, Finish, validate_proposal
+from .contracts import (
+    ABSTENTION,
+    ANSWER_MAX_CHARS,
+    EVALUATION_MAX_CHARS,
+    TOOLS,
+    TURN_DEADLINE_SECONDS,
+    Finish,
+    validate_proposal,
+)
 
 MAX_SEARCH_CALLS = 2
+# No new size/count repair is issued. These codes are still recognized so committed
+# checkpoints from earlier builds replay with their original one-repair accounting.
 FORMAT_REPAIRS = {
     "TUTOR_FINISH_REPAIR_REQUIRED",
-    "TUTOR_FINISH_LIMIT_EXCEEDED",  # Legacy committed size repair.
-    "TUTOR_CITATION_MISMATCH",  # Legacy committed observed-id format repair only.
+    "TUTOR_FINISH_LIMIT_EXCEEDED",
+    "TUTOR_CITATION_MISMATCH",
 }
 SOCRATIC_REPAIRS = {"TUTOR_SOCRATIC_REPAIR_REQUIRED"}
 REPAIRS = FORMAT_REPAIRS | SOCRATIC_REPAIRS
 
 FINISH_LIMITS = (
-    "Finish limits: cite at most 4 distinct evidence ids across text and evaluation; prefer 2–3. "
-    "Only cite ids observed in any search this turn; prior turns do not authorize citations. "
-    "Target text ≤1200 characters, well under the hard limit of 1600 characters; "
-    "evaluation at most 500 characters. Do not write math symbols or variables in square brackets; "
-    "use parentheses instead."
+    "Cite inline as [evidence_id], only ids observed in any search this turn; "
+    "prior turns do not authorize citations."
 )
 
 SYSTEM = (
@@ -35,16 +42,15 @@ Use conversation history to resolve pronouns/ellipsis and evaluate a reply to yo
 First select search_tutor_evidence with a contextual query; observe results before deciding to search again or finish.
 Only make course-supported claims. Cite each claim inline as [evidence_id] using ids observed in any search this turn.
 Evidence contains the ordered union of this turn's search observations; history does not authorize citations.
-The text/evaluation may cite at most 4 distinct evidence ids inline as [id]; no separate evidence_ids field.
+Cite inline as [id] in text/evaluation; there is no separate evidence_ids field.
 At most two searches per turn; then finish with answered, socratic_prompt or insufficient_evidence.
-Reserve square brackets for citations; use parentheses for math/indexing.
 If evidence is insufficient, finish with insufficient_evidence, no citations and no substantive claims.
-In Socratic mode use outcome=socratic_prompt with a grounded guiding question containing ? or ？, not the full answer. Outside Socratic mode use answered. Abstention rules are unchanged.
+In Socratic mode use outcome=socratic_prompt with a grounded guiding question containing ? or ？, not the full answer. Outside Socratic mode use answered.
 When the previous turn was socratic_prompt, a non-empty evaluation of the learner's reply is REQUIRED on the next supported finish, grounded in cited evidence.
 """
     + FINISH_LIMITS
     + """
-One finish-format repair chance (excess distinct inline ids or size limits together) and one separate Socratic outcome/question repair chance are allowed per turn. After a repair observation, resubmit finish_tutor_turn only; a second violation of the same kind fails the turn.
+One Socratic outcome/question repair chance is allowed per turn. After a repair observation, resubmit finish_tutor_turn only; a second violation fails the turn.
 Do not claim automatic grading or mastery. Tools and budgets are bounded.
 For insufficient_evidence use exactly: """
     + ABSTENTION
@@ -82,7 +88,6 @@ class MockTutor:
                 if hint
                 else e["text"][:650]
             )
-            text = text.replace("[", "(").replace("]", ")")
             previous = data["history"][-1] if data["history"] else None
             args = {
                 "outcome": "socratic_prompt" if hint else "answered",
@@ -232,13 +237,15 @@ class TutorRuntime:
     def tool_limit(state):
         return 5 if state.get("repair_call") else 4
 
-    @staticmethod
-    def reserve_call(conn, session, turn, amount, *, repair=False):
-        # Only a prepaid finish repair can use the fifth slot. All token/session caps
-        # stay unchanged; unavailable capacity fails BEFORE a repair is committed.
+    # Per-turn conservative UTF-8 byte reservation; engines may override.
+    turn_reservation_limit = 64000
+
+    def reserve_call(self, conn, session, turn, amount, *, repair=False):
+        # Only a prepaid repair can use the fifth slot; unavailable capacity fails
+        # BEFORE the repair is committed.
         if (
             turn["model_calls"] >= (5 if repair else 4)
-            or turn["reserved_tokens"] + amount > 64000
+            or turn["reserved_tokens"] + amount > self.turn_reservation_limit
             or session["model_calls"] >= session["max_calls"]
             or session["reserved_tokens"] + amount > session["max_tokens"]
         ):
@@ -297,8 +304,8 @@ class TutorRuntime:
                 self.guard(session, turn)
                 if turn["deadline"] is None:
                     turn = conn.execute(
-                        "UPDATE tutor_turn SET status='running',deadline=now()+interval '20 seconds' WHERE turn_id=%s RETURNING *",
-                        (turn_id,),
+                        "UPDATE tutor_turn SET status='running',deadline=now()+make_interval(secs => %s) WHERE turn_id=%s RETURNING *",
+                        (TURN_DEADLINE_SECONDS, turn_id),
                     ).fetchone()
                 state = turn["checkpoint"]
                 history = self.context(conn, session, turn)
@@ -324,7 +331,9 @@ class TutorRuntime:
                     self.reserve_call(conn, session, turn, amount)
                 self.store.checkpoint(conn, turn_id, {**state, "phase": "reserved"})
             # Reservation is durable before egress. No retries, including after a restart.
-            remaining = min(20, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds())
+            remaining = min(
+                TURN_DEADLINE_SECONDS, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds()
+            )
             if remaining <= 0:
                 raise StudyError("TUTOR_DEADLINE")
             response = self.provider.decide(messages, schemas, remaining)
@@ -389,52 +398,15 @@ class TutorRuntime:
         else:
             ids = assembled_citation_ids(args["text"], args["evaluation"])
             args["evidence_ids"] = ids
-            # Authority precedes every repair, including candidates beyond the first four.
+            # Every cited id must come from this turn's authorized search observations.
             if not set(ids) <= set(state["selected"]):
                 raise StudyError("TUTOR_CITATION_MISMATCH")
             rows = self.read_evidence(session, ids)
             by_id = {row["evidence_id"]: row for row in rows}
             citations = [by_id[eid] for eid in ids]
-            size_violations = {
-                key: {"actual": len(args[key]), "limit": limit}
-                for key, limit in (("evidence_ids", 4), ("evaluation", 500), ("text", 1600))
-                if len(args[key]) > limit
-            }
-            if size_violations:
-                if self.repaired(state, FORMAT_REPAIRS):
-                    raise StudyError("TUTOR_FINISH_FORMAT_INVALID")
-                details = dict(
-                    distinct_ids=len(ids),
-                    evidence_ids=ids,
-                    excess_ids=ids[4:],
-                    keep_ids=ids[:4],
-                    remove_ids=ids[4:],
-                    size_violations=size_violations,
-                )
-                length_guidance = " ".join(
-                    f"{key} has {violation['actual']} characters; required maximum {violation['limit']} characters. "
-                    f"Rewrite {key} to ≤{1200 if key == 'text' else 500} characters "
-                    f"(hard limit {violation['limit']})."
-                    for key, violation in size_violations.items()
-                    if key != "evidence_ids"
-                )
-                next_state = self.reject(
-                    state,
-                    name,
-                    "TUTOR_FINISH_REPAIR_REQUIRED",
-                    json.dumps(details, sort_keys=True)
-                    + "; keep_ids are the first 4 distinct ids in appearance order (or all ids if fewer). "
-                    "All cited ids must be ids observed in any search this turn; prior turns do not count. "
-                    "Delete every inline [id] for remove_ids from both text and evaluation. "
-                    "Delete claims relying only on remove_ids, or re-attribute to a kept id only if that evidence supports them. "
-                    "Do not introduce new ids. The text/evaluation may cite at most 4 distinct evidence ids; "
-                    "target text ≤1200 characters (hard limit 1600); evaluation ≤ 500 characters. "
-                    + length_guidance
-                    + " resubmit finish_tutor_turn only; one format repair chance per turn. "
-                    "A second format violation fails TUTOR_FINISH_FORMAT_INVALID.",
-                )
-                next_state["observations"][-1].update(details)
-                return self.record_observation(turn_id, next_state)
+            # Oversized output fails directly; no extra paid call is spent shrinking it.
+            if len(args["text"]) > ANSWER_MAX_CHARS or len(args["evaluation"]) > EVALUATION_MAX_CHARS:
+                raise StudyError("TUTOR_FINISH_FORMAT_INVALID")
             # Only controller-assembled metadata plus unchanged model content may pass publication.
             args = Finish.model_validate(args).model_dump()
             if args["outcome"] == "insufficient_evidence":
@@ -460,7 +432,7 @@ class TutorRuntime:
                         if turn["socratic"]
                         else "Non-Socratic mode requires outcome=answered; do not use socratic_prompt. "
                     )
-                    + "Abstention rules are unchanged. Resubmit finish_tutor_turn; one Socratic repair chance per turn.",
+                    + "Resubmit finish_tutor_turn; one Socratic repair chance per turn.",
                 )
             elif history and history[-1]["outcome"] == "socratic_prompt" and not args["evaluation"].strip():
                 next_state = self.reject(

@@ -100,7 +100,8 @@ class TutorStore(StudyStore):
                         self.experiment,
                         6 if self.engine == "light" else 40,
                         6 if self.engine == "light" else 60,
-                        384000 if self.engine == "light" else 640000,
+                        # Six turns at the light per-turn reservation limit (400,000).
+                        2_400_000 if self.engine == "light" else 640000,
                     ),
                 )
                 return {
