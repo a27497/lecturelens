@@ -26,7 +26,7 @@ RESERVE_NANO_USD = CONTEXT_BOUND * RATES["prompt_cache_miss_tokens"] + (
     OUTPUT_TOKENS * RATES["completion_tokens"]
 )
 JSON_INSTRUCTION = (
-    '\nUse a JSON object, for example {"outcome":"answered","text":"Explanation [example_id]","focus":""}. '
+    '\nUse a JSON object, for example {"outcome":"answered","text":"Explanation [example_id]"}. '
     "The example id is illustrative. Use actual current Evidence ids."
 )
 
@@ -37,11 +37,9 @@ TEXT_SYSTEM = (
     + REPLY_LIMITS
     + """Use exactly one of these plain-text forms. Write the status at the start of the first line.
 When socratic is false and you can teach the topic, write answered on the first line and the teaching text next.
-When socratic is true and you can guide the learner, write socratic_prompt on the first line, a literal phrase
-from the current learner question (up to 120 characters) on the second line, and the guiding question including
-that phrase from the third line onward.
+When socratic is true and you can guide the learner, write socratic_prompt on the first line and the guiding
+question, including ? or ？, from the second line onward.
 If the course evidence is insufficient to teach the requested topic, write only insufficient_evidence.
-Keep the teaching text within 1600 characters and use at most four distinct citations.
 Write code, Markdown and line breaks directly in the teaching text.
 """
 )
@@ -116,15 +114,9 @@ def parse_text(content):
         return Reply(outcome="insufficient_evidence", text=ABSTENTION)
     outcome, _, text = content.partition("\n")
     outcome = outcome.removesuffix("\r")
-    focus = ""
-    if outcome == "socratic_prompt":
-        focus, _, text = text.partition("\n")
-        focus = focus.removesuffix("\r")
-        if not focus or focus != focus.strip():
-            raise ValueError("Expected a focus line")
     if outcome not in {"answered", "socratic_prompt"} or not text.strip() or ABSTENTION in text:
         raise ValueError("Invalid teaching frame")
-    return Reply(outcome=outcome, text=text, focus=focus)
+    return Reply(outcome=outcome, text=text)
 
 
 def parse(body, *, text_reply=False):

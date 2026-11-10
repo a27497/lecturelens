@@ -11,7 +11,7 @@ def historical_eval_inputs(tmp_path_factory):
     tests = Path(__file__).resolve().parent
     checkout = tests.parents[1]
     inputs = tmp_path_factory.mktemp("historical-eval-inputs")
-    # The archive contains the three frozen source inputs changed by E3, from
+    # The archive contains frozen source inputs changed by E3 and Tutor, from
     # 300be51515867f7ece4f3a9224a484e825219ee0. The real runners still verify
     # their unmodified manifests against their own checkout.
     with tarfile.open(tests / "fixtures/p7-p8-prior-source.tar.gz") as archive:

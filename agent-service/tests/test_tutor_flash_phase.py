@@ -13,7 +13,7 @@ from test_tutor_flash import CHARGE, QUESTION, Fake, envelope
 
 from lecturelens_agent.study.store import StudyError
 from lecturelens_real_eval.tutor import flash_e3_app, flash_phase
-from lecturelens_real_eval.tutor.contracts import ABSTENTION
+from lecturelens_real_eval.tutor.contracts import ABSTENTION, ANSWER_MAX_CHARS
 from lecturelens_real_eval.tutor.flash_app import FlashTutorRuntime
 from lecturelens_real_eval.tutor.flash_ledger import Grant, build_digest
 from lecturelens_real_eval.tutor.flash_phase import (
@@ -269,7 +269,7 @@ with open("file.txt") as f:
         ),
         pytest.param(
             "sql",
-            "socratic_prompt\r\nLEFT JOIN\r\n" + SQL_HINT,
+            "socratic_prompt\r\n" + SQL_HINT,
             "stop",
             "socratic_prompt",
             SQL_HINT,
@@ -311,12 +311,12 @@ with open("file.txt") as f:
         ),
         pytest.param(
             "sql",
-            "socratic_prompt\nINNER JOIN\nWould INNER JOIN include it? [e1]",
+            "socratic_prompt\nINNER JOIN would include it [e1].",
             "stop",
             "failed",
             None,
             "TUTOR_FOCUS_REQUIRED",
-            id="wrong-focus",
+            id="socratic-without-question",
         ),
         pytest.param(
             "python",
@@ -329,12 +329,12 @@ with open("file.txt") as f:
         ),
         pytest.param(
             "python",
-            "answered\n" + "x" * 1596 + " [e1]",
+            "answered\n" + "x" * (ANSWER_MAX_CHARS - 4) + " [e1]",
             "stop",
             "failed",
             None,
             "TUTOR_PROTOCOL_FAILURE",
-            id="1601-characters",
+            id="over-answer-max",
         ),
         pytest.param(
             "python",
