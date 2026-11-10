@@ -311,13 +311,21 @@ def test_engine_owner_course_and_version_boundaries(lab):
         command(lab, "GET", revision=2)
 
 
-def test_frozen_real_failure_unchanged_and_not_relabelled():
-    path = Path(os.environ["PHASE1D_FAILURE_ZIP"])
+@pytest.fixture
+def historical_review_zip():
+    configured = os.environ.get("PHASE1D_FAILURE_ZIP")
+    if not configured:
+        pytest.skip("Private historical review archive is only available to the offline audit")
+    path = Path(configured)
     assert (
         hashlib.sha256(path.read_bytes()).hexdigest()
         == "832e20a6e066603b57a858a50ddbd2eda355757ba821e4119c6056339299b30d"
     )
-    with zipfile.ZipFile(path) as archive:
+    return path
+
+
+def test_frozen_real_failure_unchanged_and_not_relabelled(historical_review_zip):
+    with zipfile.ZipFile(historical_review_zip) as archive:
         outcomes = json.loads(archive.read("outcomes.json"))
         assert [r["status"] for r in outcomes] == ["completed", "completed", "failed"]
         assert "Ada" not in outcomes[0]["answer"] and "Grace" not in outcomes[0]["answer"]
@@ -336,19 +344,44 @@ def test_citation_existence_does_not_prove_semantic_support(lab):
     assert source_only("BFS levels give shortest path distances in edges. [e1]", result["citations"])
 
 
-def test_original_real_questions_and_authored_three_turns_fit_one_request_each(lab):
-    with zipfile.ZipFile(os.environ["PHASE1D_FAILURE_ZIP"]) as archive:
+def test_original_real_questions_and_authored_three_turns_fit_one_request_each(historical_review_zip, lab):
+    with zipfile.ZipFile(historical_review_zip) as archive:
         original = json.loads(archive.read("outcomes.json"))
         evidence = json.loads(archive.read("course-evidence.json"))["evidence"]
     ids = list(dict.fromkeys(c["evidence_id"] for row in original[:2] for c in row["citations"]))
     rows = [e for e in evidence if e["evidence_id"] in ids]
+    check_authored_loop_turns(lab, original, rows)
+
+
+def test_synthetic_loop_questions_and_authored_three_turns_fit_one_request_each(lab):
+    prompts = [
+        dict(
+            learner_text="Show Ada and Grace in a for loop, starting at 2. Trace the counter, show the code and explain list indices.",
+            socratic=False,
+        ),
+        dict(learner_text="Guide me on where the final print should go.", socratic=True),
+        dict(learner_text="I count one update. What did I miss in my example?", socratic=False),
+    ]
+    rows = [
+        dict(
+            evidence_id="e1",
+            text="A for loop visits each list item once. A statement inside the loop runs on each iteration; a statement after it runs once. List indices start at zero.",
+            start_ms=1000,
+            end_ms=2000,
+            source_type="SUBTITLE",
+        )
+    ]
+    check_authored_loop_turns(lab, prompts, rows)
+
+
+def check_authored_loop_turns(lab, prompts, rows):
     original_read = lab[1].read
 
     def read(scope, action="CHECK", **kw):
         result = original_read(scope, action, **kw)
         if action != "CHECK":
-            wanted = kw.get("evidence_ids", ids)
-            result["evidence"] = [e for e in rows if e["evidence_id"] in wanted]
+            wanted = kw.get("evidence_ids")
+            result["evidence"] = rows if wanted is None else [e for e in rows if e["evidence_id"] in wanted]
         return result
 
     lab[1].read = read
@@ -358,17 +391,17 @@ def test_original_real_questions_and_authored_three_turns_fit_one_request_each(l
         f"For the final print, which indentation level runs once after all iterations? [{eid}]",
         f"You counted only one update, but your list has two elements: starting at 2, the counter becomes 3 after Ada and 4 after Grace. The final print belongs outside for one final 4; inside would print 3 and 4. This applies the course rule to your variation [{eid}].",
     ]
-    for i, item in enumerate(original):
+    for i, item in enumerate(prompts):
         lab[2].provider.hook = lambda d, i=i: dict(
             outcome="socratic_prompt" if i == 1 else "answered",
             text=answers[i],
             focus="final print" if i == 1 else "",
         )
-        result = run(lab, key=f"historical-task-{i}", text=item["learner_text"], socratic=item["socratic"])
+        result = run(lab, key=f"loop-turn-{i}", text=item["learner_text"], socratic=item["socratic"])
         assert result["status"] == "completed" and result["answer"] == answers[i]
         assert result["model_calls"] == 1 and result["reserved_tokens"] < 64000
         data = lab[2].provider.requests[-1]
-        assert [h["learner_text"] for h in data["dialogue"]] == [h["learner_text"] for h in original[:i]]
+        assert [h["learner_text"] for h in data["dialogue"]] == [h["learner_text"] for h in prompts[:i]]
     # These authored replies are mechanism examples, never new model outputs.
     assert len(lab[2].provider.requests) == 3
 
