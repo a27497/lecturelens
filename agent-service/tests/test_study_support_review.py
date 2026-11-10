@@ -264,8 +264,8 @@ def test_runtime_reserves_wire_budget_and_keeps_review_observations_private(setu
             body["candidate"]["kind"], body.get("rubric_policy"), body["review_mode"], context=body
         )
         expected = (
-            len(json.dumps(wire, ensure_ascii=False).encode())
-            + len(json.dumps([schema]).encode())
+            len(json.dumps(wire, ensure_ascii=False, separators=(",", ":")).encode())
+            + len(json.dumps([schema], ensure_ascii=False, separators=(",", ":")).encode())
             + output_tokens(body["review_mode"])
         )
         with store.connect() as conn:

@@ -24,6 +24,7 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 - 内部 HMAC 绑定 audience、方法、实际路径、时间戳和原始请求体。每次工具或生成上下文前后重新检查 Java 当前权限与版本；Java 不可用时拒绝使用缓存证据。
 - 默认 Run 上限为 6 次模型调用、8 次工具预算扣减（逻辑工具及额外只读重试共享）、64,000 保守 token 预留、90 秒 deadline。调用前持久扣减，deadline 从首次领取开始计时并包含停机时间；provider 实际 usage 单独记录。
 - Session 使用专用 autocommit 连接上的 PostgreSQL advisory lock 保护 checkpoint 写入，不持有跨模型请求的业务事务。仍持锁的慢 worker 不被其他 worker 接管。
+- 出题决策的证据正文合计限制为 6,000 UTF-8 字节，优先保留方法来源和显式补读锚点，其余标记为预览；权威来源与独立候选复核保持原有完整边界。重叠搜索可在来源指纹和主题一致时复用可回答的方法观察，预算拒绝记录具体资源原因。[预算修复机制证据](../eval/study-budget-p0-20261020/README.md)（未部署，真实模型质量待验收）。
 - 未发布工作区在 Run 内复用一个事务工作连接，每个 Store 操作仍单独提交/回滚；模型和工具 I/O 期间无事务、行锁或状态缓存。Session advisory lock 与 checkpoint saver 保留独立连接。[串行延迟与故障复核](../eval/tool-resilience-latency-20261014/README.md)
 - 创建请求通过 `request_key` 幂等，同一 key 更换内容会冲突。工具结果按 `run_id + call_id` 唯一，每 Run 最多一个学习产物；副作用已提交而 checkpoint 未保存时，恢复回读工具结果，不重复保存。
 - 模型响应尚未 checkpoint 时崩溃可能导致外部请求重发，不承诺 provider 恰好调用一次。恢复保留原预算、deadline 和模型配置。

@@ -5,7 +5,7 @@ import json
 
 from psycopg.types.json import Jsonb
 
-from .store import StudyError
+from .store import StudyError, reservation_error
 from .telemetry import _span
 
 
@@ -149,15 +149,13 @@ def legacy_observation(store, conn, run_id, key, fingerprint, metadata, detail):
         return {"response": response, "error": error}, stored
     # A legacy charge with no started event has no reliable logical identity.
     row = conn.execute(
-        "SELECT model_calls,(SELECT count(*) FROM study_event WHERE run_id=%s "
+        "SELECT model_calls,tool_calls,reserved_tokens,(SELECT count(*) FROM study_event WHERE run_id=%s "
         "AND event_type='model_started') AS starts FROM study_run WHERE run_id=%s",
         (run_id, run_id),
     ).fetchone()
     if row["model_calls"] > row["starts"]:
         if row["model_calls"] >= 6:
-            from .store import BudgetExceeded
-
-            raise BudgetExceeded()
+            raise reservation_error(row, "model")
         return stopped(store, conn, run_id, key, "MODEL_OUTCOME_UNKNOWN", metadata)
     return None
 
@@ -185,10 +183,16 @@ def begin(store, run_id, token, key, tokens, metadata, detail):
             legacy = legacy_observation(store, conn, run_id, key, fingerprint, metadata, detail)
             if legacy:
                 return legacy
-        if run["model_calls"] >= 6 or run["reserved_tokens"] + tokens > 64000:
-            from .store import BudgetExceeded
-
-            raise BudgetExceeded()
+        error = reservation_error(
+            run,
+            "model",
+            tokens,
+            operation_key=key,
+            **{k: metadata[k] for k in ("purpose", "review_stage", "reservation") if k in metadata},
+            **{k: detail[k] for k in ("node", "checkpoint_id") if k in detail},
+        )
+        if error:
+            raise error
         metadata = {**metadata, "attempt": run["model_calls"] + 1, "operation_key": key}
         conn.execute(
             "UPDATE study_run SET model_calls=model_calls+1,reserved_tokens=reserved_tokens+%s "
