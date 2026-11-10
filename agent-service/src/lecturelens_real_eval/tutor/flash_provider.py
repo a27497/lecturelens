@@ -164,7 +164,7 @@ def parse(body, *, text_reply=False):
             if text_reply
             else Reply.model_validate(json.loads(content, object_pairs_hook=unique_object))
         ).model_dump()
-        for key in ("text",):
+        for key in ("text", "focus"):
             reply[key].encode("utf-8")
             if "\x00" in reply[key]:
                 raise ValueError("Invalid JSONB text")

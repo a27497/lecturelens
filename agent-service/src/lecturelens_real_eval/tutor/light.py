@@ -45,8 +45,8 @@ SYSTEM = (
 class Reply(Contract):
     outcome: Literal["answered", "socratic_prompt", "insufficient_evidence"]
     text: Annotated[str, Field(min_length=1, max_length=ANSWER_MAX_CHARS)]
-    # Legacy field: accepted so committed checkpoints still validate; never enforced.
-    focus: str = ""
+    # Legacy wire/checkpoint field; publication no longer requires a matching phrase.
+    focus: Annotated[str, Field(max_length=120)] = ""
 
 
 # Short exact restatements ("yes", a one-line definition) are legitimate answers.

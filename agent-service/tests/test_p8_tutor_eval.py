@@ -13,6 +13,7 @@ from psycopg import sql
 from psycopg.conninfo import make_conninfo
 
 from lecturelens_real_eval import tutor_runner
+from lecturelens_real_eval.tutor.contracts import EVALUATION_MAX_CHARS
 from lecturelens_real_eval.tutor_channel import Channel, EvalError, Ledger, TutorPolicy, encode
 from lecturelens_real_eval.tutor_runner import (
     DATA,
@@ -257,7 +258,7 @@ def test_dialogue_filter_rejects_empty_unknown_or_duplicate_ids(ids):
 
 
 @pytest.mark.parametrize("fault", ["evaluation", "limit_ids", "limit_evaluation", "limit_text", "socratic"])
-def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(isolated, fault):
+def test_focused_eval_applies_current_finish_rules(isolated, fault):
     dsn, directory = isolated
     fake = fake_transport()
     observations = []
@@ -305,17 +306,22 @@ def test_focused_fake_transport_repairs_finish_and_never_claims_full_acceptance(
     assert result["dialogues"] == 1 and result["turns"] == result["reviewed_turns"] == 3
     assert result["metrics"]["protocol_failure_rate"] == 0
     assert result["metrics"]["socratic_compliance_rate"] == 1
-    expected = (
-        "TUTOR_FINISH_REPAIR_REQUIRED"
-        if fault.startswith("limit_") or fault == "citation"
-        else "TUTOR_SOCRATIC_REPAIR_REQUIRED"
-        if fault == "socratic"
-        else "TUTOR_EVALUATION_REQUIRED"
-    )
-    assert observations and all(o["error"] == expected for o in observations)
     dialogue = json.loads((directory / "focus/dialogues.jsonl").read_text())
     assert all(t["status"] == "completed" for t in dialogue["turns"])
-    assert len(dialogue["turns"][-1]["proposals"]) == 3  # search, rejected finish, repair
+    if fault.startswith("limit_"):
+        assert not observations
+        assert all(len(turn["proposals"]) == 2 for turn in dialogue["turns"])
+        first = dialogue["turns"][0]
+        if fault == "limit_ids":
+            assert len(first["citations"]) > 4
+        elif fault == "limit_evaluation":
+            assert len(first["evaluation"]) > 500
+        else:
+            assert len(first["answer"]) > 1600
+    else:
+        expected = "TUTOR_SOCRATIC_REPAIR_REQUIRED" if fault == "socratic" else "TUTOR_EVALUATION_REQUIRED"
+        assert observations and all(o["error"] == expected for o in observations)
+        assert len(dialogue["turns"][-1]["proposals"]) == 3  # search, rejected finish, repair
     for turn in dialogue["turns"]:
         repaired = turn["proposals"][-1]["arguments"]
         assert turn["answer"] == repaired["text"]
@@ -572,7 +578,7 @@ def test_oversized_finish_checks_every_id_even_in_dropped_calls(isolated, locati
     assert len(provider.proposals) == (2 if location == "dropped_after_bad_schema" else 1)
 
 
-@pytest.mark.parametrize("fault", ["second_limit", "non_limit_schema"])
+@pytest.mark.parametrize("fault", ["over_limit", "non_limit_schema"])
 def test_focused_schema_failure_remains_failed_turn_and_protocol_metric(isolated, fault):
     dsn, directory = isolated
     fake = fake_transport()
@@ -586,7 +592,7 @@ def test_focused_schema_failure_remains_failed_turn_and_protocol_metric(isolated
         function = wire["choices"][0]["message"]["tool_calls"][0]["function"]
         if function["name"] == "finish_tutor_turn":
             args = json.loads(function["arguments"])
-            args["evaluation"] = "E" * 501
+            args["evaluation"] = "E" * (EVALUATION_MAX_CHARS + 1)
             if fault == "non_limit_schema":
                 args["outcome"] = "bad"
             function["arguments"] = json.dumps(args)
@@ -605,11 +611,11 @@ def test_focused_schema_failure_remains_failed_turn_and_protocol_metric(isolated
     assert result["verdict"] == "PARTIAL" and result["fatal"] is None
     assert result["metrics"]["protocol_failure_rate"] == 1
     dialogue = json.loads((directory / "failed-schema/dialogues.jsonl").read_text())
-    code = "TUTOR_FINISH_FORMAT_INVALID" if fault == "second_limit" else "REAL_EVAL_PROTOCOL_FAILURE"
+    code = "TUTOR_FINISH_FORMAT_INVALID" if fault == "over_limit" else "REAL_EVAL_PROTOCOL_FAILURE"
     assert len(dialogue["turns"]) == 3
     for turn in dialogue["turns"]:
         assert turn["error_code"] == code and turn["answer"] is None and not turn["citations"]
-        assert turn["model_calls"] == (3 if fault == "second_limit" else 2)
+        assert turn["model_calls"] == 2
 
 
 def test_over_abstain_metric_counts_only_completed_unexpected_abstentions_and_is_report_only():

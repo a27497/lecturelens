@@ -141,7 +141,7 @@ def test_paraphrased_socratic_question_publishes_without_literal_focus(lab):
     assert result["status"] == "completed" and result["outcome"] == "socratic_prompt"
 
 
-def test_long_answer_with_many_citations_publishes(lab):
+def test_long_answer_publishes_without_truncation(lab):
     text = "Step by step [e1].\n" + "for item in items:\n    count += 1\n" * 120
     lab[2].provider.text = text
     result = run(lab)
@@ -149,7 +149,10 @@ def test_long_answer_with_many_citations_publishes(lab):
 
 
 def test_short_exact_restatement_is_not_source_only(lab):
-    lab[2].provider.text = "BFS visits one level at a time. [e1]"
+    row = lab[1].read(lab[3], "READ")["evidence"][0]
+    short = row["text"].split(" distances", 1)[0]
+    assert short in row["text"]
+    lab[2].provider.text = f"{short} [e1]"
     result = run(lab)
     assert result["status"] == "completed"
 
