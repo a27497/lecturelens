@@ -15,6 +15,7 @@ from psycopg import sql
 from psycopg.conninfo import make_conninfo
 
 from lecturelens_agent.study.acceptance_cost import CostDenied, CostPolicy, verify_development_agent
+from lecturelens_real_eval import runner
 from lecturelens_real_eval.channel import Channel, EvalChatProvider, EvalError, Ledger, RealPolicy, encode
 from lecturelens_real_eval.runner import (
     DATA,
@@ -32,7 +33,7 @@ MESSAGES = [{"role": "user", "content": "test"}]
 
 
 @pytest.fixture(autouse=True)
-def offline(monkeypatch):
+def offline(monkeypatch, historical_eval_inputs):
     original = socket.socket.connect
 
     def local(sock, address):
@@ -43,6 +44,7 @@ def offline(monkeypatch):
     monkeypatch.setattr(socket.socket, "connect", local)
     monkeypatch.delenv("LECTURELENS_REAL_EVAL", raising=False)
     monkeypatch.delenv("AGENT_LLM_API_KEY", raising=False)
+    monkeypatch.setattr(runner, "ROOT", historical_eval_inputs)
 
 
 @pytest.fixture

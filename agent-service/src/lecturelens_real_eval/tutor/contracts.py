@@ -5,6 +5,14 @@ from pydantic import Field, model_validator
 from lecturelens_agent.contracts import Contract, Identifier
 from lecturelens_agent.study.contracts import StudyScope
 
+# Storage/UI sanity bounds, not teaching budgets. OUTPUT_TOKENS (4,096) is the
+# real generation bound; a provider-truncated reply fails rather than publishes.
+ANSWER_MAX_CHARS = 12000
+EVALUATION_MAX_CHARS = 4000
+# Non-streaming 4,096-token generation needs more than the old 20-second E3 trial
+# window. Shutdown still joins briefly; an in-flight call becomes UNKNOWN_MODEL_OUTCOME.
+TURN_DEADLINE_SECONDS = 90
+
 
 class Command(StudyScope):
     operation: Literal["CREATE", "LIST", "GET", "TURN", "CANCEL"]
@@ -33,21 +41,22 @@ class Search(Contract):
 
 class Finish(Contract):
     outcome: Literal["answered", "socratic_prompt", "insufficient_evidence"]
-    text: Annotated[str, Field(min_length=1, max_length=1600)]
-    evidence_ids: Annotated[list[Identifier], Field(max_length=4)]
-    evaluation: Annotated[str, Field(max_length=500)] = ""
+    text: Annotated[str, Field(min_length=1, max_length=ANSWER_MAX_CHARS)]
+    # Citable ids are already bounded by this turn's selected search observations.
+    evidence_ids: list[Identifier]
+    evaluation: Annotated[str, Field(max_length=EVALUATION_MAX_CHARS)] = ""
 
 
 class FinishInput(Contract):
     """Model-facing schema; citation metadata belongs to the controller."""
 
     outcome: Literal["answered", "socratic_prompt", "insufficient_evidence"]
-    text: Annotated[str, Field(min_length=1, max_length=1600)]
-    evaluation: Annotated[str, Field(max_length=500)] = ""
+    text: Annotated[str, Field(min_length=1, max_length=ANSWER_MAX_CHARS)]
+    evaluation: Annotated[str, Field(max_length=EVALUATION_MAX_CHARS)] = ""
 
 
 class FinishProposal(FinishInput):
-    """Defer publication size limits so the durable format repair can run."""
+    """Defer size validation so an oversized proposal fails as a format error, not a protocol error."""
 
     text: Annotated[str, Field(min_length=1)]
     evaluation: str = ""

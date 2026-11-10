@@ -5,12 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class BoundedTaskExecutorTest {
 
@@ -100,6 +103,8 @@ class BoundedTaskExecutorTest {
         release.countDown();
         first.join(1000);
         queued.join(1000);
+        // Rejection must release the registry entry as well as the queue slot.
+        executor.execute("task_rejected", "req_retry", () -> { });
     }
 
     @Test
@@ -177,6 +182,56 @@ class BoundedTaskExecutorTest {
             .isInstanceOf(BusinessException.class)
             .extracting("errorCode")
             .isEqualTo(ErrorCode.TASK_EXECUTOR_TIMEOUT);
+    }
+
+    @Test
+    void cancellationHandleIsPublishedBeforeExecutionCanStart() {
+        executor = newExecutor(1, 1, 1, 30);
+        var original = (ThreadPoolExecutor) ReflectionTestUtils.getField(executor, "delegate");
+        original.shutdown();
+        // Inline execution forces the worker to run before submit/execute returns.
+        // It reproduces the cancellation window without sleeps or scheduler luck.
+        var inline = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1)) {
+            @Override public void execute(Runnable task) { task.run(); }
+        };
+        ReflectionTestUtils.setField(executor, "delegate", inline);
+        AtomicBoolean cancelled = new AtomicBoolean();
+
+        try {
+            assertThatThrownBy(() -> executor.submitAndWait("task_inline", "req_inline", () -> {
+                cancelled.set(executor.cancel("task_inline"));
+                return "must-not-publish";
+            })).isInstanceOf(BusinessException.class);
+
+            assertThat(cancelled).isTrue();
+            assertThat(executor.cancel("task_inline")).isFalse();
+        } finally {
+            // Inline cancellation interrupts this test thread, not a real worker.
+            Thread.interrupted();
+        }
+    }
+
+    @Test
+    void duplicateTaskCannotReplaceAnActiveCancellationHandle() throws Exception {
+        executor = newExecutor(1, 1, 1, 30);
+        CountDownLatch started = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        Thread caller = new Thread(() -> executor.execute("task_duplicate", "req_first", () -> {
+            started.countDown();
+            await(release);
+        }));
+        caller.start();
+        try {
+            assertThat(started.await(2, TimeUnit.SECONDS)).isTrue();
+            assertThatThrownBy(() -> executor.execute("task_duplicate", "req_second", () -> { }))
+                .isInstanceOf(BusinessException.class)
+                .extracting("errorCode").isEqualTo(ErrorCode.TASK_EXECUTOR_BUSY);
+        } finally {
+            release.countDown();
+            caller.join(2_000L);
+        }
+        assertThat(caller.isAlive()).isFalse();
+        executor.execute("task_duplicate", "req_after_completion", () -> { });
     }
 
     @Test

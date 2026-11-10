@@ -47,6 +47,8 @@ jobs:
               conn.execute("CREATE DATABASE lecturelens_agent_acceptance")
               conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
           PY
+      - name: Verify local check process cleanup without services or providers
+        run: python3 -m unittest discover -s scripts/dev/tests -p 'test_*.py' -v
       - name: Lint and test with real pgvector, deterministic test embeddings
         working-directory: agent-service
         run: |

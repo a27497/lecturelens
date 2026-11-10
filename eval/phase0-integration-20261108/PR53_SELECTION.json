@@ -1,0 +1,729 @@
+{
+  "baseline": "300be51515867f7ece4f3a9224a484e825219ee0",
+  "source_head": "b35be79801d9a4480abff8522b52efb23718eda0",
+  "merge_base": "56bc07ac3f5f57bb71592047baf12befc90e0448",
+  "method": "Review original fork delta and current-main tree differences; apply selected file patches, never whole branch/history. Later main learning features and authority hardening are retained.",
+  "commits": [
+    {
+      "source_commit": "892e0bdd6e292a66d50e9808f61d04c68968d297",
+      "subject": "P0-1：加入只读工具容错并修复健康路径连接开销",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 7930da4 / bd14213",
+      "code_path_count": 9,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/course_mcp/client.py",
+        "agent-service/src/lecturelens_agent/course_mcp/contracts.py",
+        "agent-service/src/lecturelens_agent/study/connections.py",
+        "agent-service/src/lecturelens_agent/study/resilience.py",
+        "agent-service/src/lecturelens_agent/study/trace.py",
+        "agent-service/tests/test_course_mcp.py",
+        "agent-service/tests/test_study_connections.py",
+        "agent-service/tests/test_study_linear.py",
+        "scripts/eval/replay-study-quality.py"
+      ]
+    },
+    {
+      "source_commit": "206e74b8806ef06207df94012d5aa2fd9284a9aa",
+      "subject": "P0-2：统一持久运行指标并补齐工具请求口径与数据库对照",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 7930da4 / bd14213",
+      "code_path_count": 3,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/study/metrics_report.py",
+        "agent-service/tests/test_study_metrics_report.py",
+        "scripts/eval/report-study-metrics.py"
+      ]
+    },
+    {
+      "source_commit": "904d568b30f31344250d8053a36a59e871edbbb2",
+      "subject": "P1-1：冻结课程检索评测 v2 并报告置信区间与失败分桶",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 7930da4 / bd14213",
+      "code_path_count": 4,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/benchmark_v2/__init__.py",
+        "agent-service/src/lecturelens_agent/benchmark_v2/run.py",
+        "agent-service/src/lecturelens_agent/benchmark_v2/statistics.py",
+        "agent-service/tests/test_benchmark_v2.py"
+      ]
+    },
+    {
+      "source_commit": "a0790ba91972b28338035886127be87b506fb581",
+      "subject": "P1-2：加入发布审批断点并补齐强杀恢复矩阵与验收证据",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 7930da4 / bd14213",
+      "code_path_count": 23,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/study/approval.py",
+        "agent-service/src/lecturelens_agent/study/call_journal.py",
+        "agent-service/src/lecturelens_agent/study/contracts.py",
+        "agent-service/src/lecturelens_agent/study/failures.py",
+        "agent-service/src/lecturelens_agent/study/feedback.py",
+        "agent-service/src/lecturelens_agent/study/feedback_store.py",
+        "agent-service/src/lecturelens_agent/study/runtime.py",
+        "agent-service/src/lecturelens_agent/study/store.py",
+        "agent-service/src/lecturelens_agent/study/telemetry.py",
+        "agent-service/tests/test_study_approval.py",
+        "agent-service/tests/test_study_resilience.py",
+        "agent-service/tests/test_study_support_review.py"
+      ]
+    },
+    {
+      "source_commit": "455d94484015e6b6899100ba8f27ae0bde86645a",
+      "subject": "维护：忽略评测 work 目录和 pstats 性能记录",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "fd8ece82a3eef8d0c71cf63aa49ce2b211e843d3",
+      "subject": "P1-3：建立五课双次转写链路基线与离线验算",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "91fcb319fc39ca906a1ebd8dcbb61be5f65f0947",
+      "subject": "P1-4①：建立管理员权限与系统模型加密存储基础",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: f87d4be / bd14213 + b2601da",
+      "code_path_count": 31,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/auth/dto/CurrentUserResponse.java",
+        "backend/src/main/java/com/example/courselingo/auth/dto/LoginResponse.java",
+        "backend/src/main/java/com/example/courselingo/auth/dto/RegisterRequest.java",
+        "backend/src/main/java/com/example/courselingo/auth/entity/UserAccount.java",
+        "backend/src/main/java/com/example/courselingo/auth/entity/UserRole.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/AccessTokenClaims.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/AdminAuthorizationService.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/AuthLoginServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/AuthRegistrationServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/CurrentUserServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/JwtAccessTokenService.java",
+        "backend/src/main/java/com/example/courselingo/auth/service/RefreshTokenServiceImpl.java"
+      ]
+    },
+    {
+      "source_commit": "55ef3b8e07697f28e82e6d5046851a6c7ad0614d",
+      "subject": "P1-4②：接入文本与视觉功能绑定及版本快照",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 56d6a79 / bd14213 + b2601da",
+      "code_path_count": 52,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmProviderFailureClassifier.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmRequest.java",
+        "backend/src/main/java/com/example/courselingo/chapter/service/CourseChapterServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/common/error/ErrorCode.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/GenerateLearningPackageCommand.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackagePromptFactory.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageValidators.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/ValidatedLearningPackageCommand.java",
+        "backend/src/main/java/com/example/courselingo/modelrouting/AiModelRoute.java",
+        "backend/src/main/java/com/example/courselingo/modelrouting/AiModelRoutedLlmRequestFactory.java",
+        "backend/src/main/java/com/example/courselingo/modelrouting/ModelRoutingConfiguration.java"
+      ]
+    },
+    {
+      "source_commit": "40f3a8b17527061731cdfb507f9173083f7fc858",
+      "subject": "P1-4③：按任务冻结配置切换 ASR 供应商",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: d326b7f / bd14213 + b2601da",
+      "code_path_count": 19,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrAdapterFactories.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrAdapterFactory.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrCallFailure.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrConfigurationSnapshot.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrProviderSelection.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/BailianAsrProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/SiliconFlowAsrProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/SpeechToTextProvider.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelAsrProvider.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelEnvironment.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelHttpClient.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRegistry.java"
+      ]
+    },
+    {
+      "source_commit": "13f8fc03d61d608157be1b7c3c0b5d474536acfd",
+      "subject": "P1-4④：增加管理员模型页面与有界连通性测试并汇总验收",
+      "decision": "ALREADY_IN_MAIN",
+      "reason": "Retain current main implementation and its later scope/security fixes; main lineage: 9655ac9 / bd14213 + b2601da",
+      "code_path_count": 24,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelEndpoints.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelOperationsController.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelProbeService.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRegistry.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelStatusService.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelVisionProvider.java",
+        "backend/src/main/resources/application.yml",
+        "backend/src/main/resources/system-model-probe/NOTICE.md",
+        "backend/src/main/resources/system-model-probe/tone.wav",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelProbeMySqlTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelProbeTransportTest.java"
+      ]
+    },
+    {
+      "source_commit": "ceb03219eab4ee909418d3859ea32976a0e0bfa4",
+      "subject": "docs: record system model deployment and rollback verification",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "63186ed30d8ff2674bafeb9552b03c2911dd0ab2",
+      "subject": "eval: verify DeepSeek full-text routing snapshots and rollback",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "64e722c29a7da1213334fdf76d1d0b112cd3cf1f",
+      "subject": "eval: measure DeepSeek full-text baseline and preserve failures",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "bc2e6cc79f1a3311b90cc4d407f75d2e20048275",
+      "subject": "Record private translation validation diagnostics and failed call usage",
+      "decision": "DEFERRED",
+      "reason": "Retain coupled pipeline/operational code and its original evidence together on PR #53. It has not been accepted for the current main learning flow; no blanket evidence-only or mainline acceptance claim.",
+      "code_path_count": 10,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnostics.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationPromptFactory.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelChatClient.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelLlmProvider.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration.java",
+        "backend/src/main/resources/db/migration/V26__translation_call_diagnostic.sql",
+        "backend/src/test/java/com/example/courselingo/subtitle/SubtitleTranslationServiceTest.java",
+        "backend/src/test/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnosticsTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelTranslationObservationTest.java"
+      ]
+    },
+    {
+      "source_commit": "a7ad19aebfdf5b56f5212512737c83da414a9339",
+      "subject": "Seal DeepSeek reproduction evidence after upload temporary path recheck",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "98b0cd4d1798ee74acce15098fd9b34d6e81ea95",
+      "subject": "fix(translation): freeze policies and bound DeepSeek output recovery",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 23,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmProviderFailureClassifier.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/OpenAiCompatibleLlmProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/TranslationFailure.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/TranslationResponseDecoder.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationTokenBudget.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationPromptFactory.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelChatClient.java"
+      ]
+    },
+    {
+      "source_commit": "7f9f915902ab868d00e1ada050d14f63534572f1",
+      "subject": "feat(pipeline): segment speech on silence and preserve aligned timing provenance",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 31,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrTextNormalizer.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/SpeechToTextProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/TranscribedSegment.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/TranscriptTimingSource.java",
+        "backend/src/main/java/com/example/courselingo/media/AudioChunk.java",
+        "backend/src/main/java/com/example/courselingo/media/FfmpegProcessExecutor.java",
+        "backend/src/main/java/com/example/courselingo/media/ProcessBuilderFfmpegProcessExecutor.java",
+        "backend/src/main/java/com/example/courselingo/media/SilenceAudioChunkPlanner.java",
+        "backend/src/main/java/com/example/courselingo/media/SilenceSegmentationPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/domain/SubtitleSegment.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/dto/AlignedParagraphView.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/dto/TaskFullTextResultView.java"
+      ]
+    },
+    {
+      "source_commit": "0d64acd6e888b11cabc4fdcf54701e2f5067f7b1",
+      "subject": "feat(translation): batch by token budget and persist adaptive concurrency",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 15,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/AdaptiveTranslationController.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationAimdPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchPlanner.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationProviderLimiter.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationSchedulerEvents.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+        "backend/src/main/resources/application.yml",
+        "backend/src/main/resources/db/migration/V29__translation_scheduler_observation.sql"
+      ]
+    },
+    {
+      "source_commit": "ebb2c89e80d8577ecc696ff95a42658cae2e397d",
+      "subject": "feat(pipeline): persist translation checkpoints and fence recovery epochs",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 43,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/common/error/ErrorCode.java",
+        "backend/src/main/java/com/example/courselingo/mq/AnalysisTaskMessage.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationCheckpointStore.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationRecoveryPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationSchedulerEvents.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SaveTranscriptionSegmentsCommand.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleSegmentPersistenceServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelExecutionService.java"
+      ]
+    },
+    {
+      "source_commit": "a2c607f925483d436937835bea8e1a2b3ee766f2",
+      "subject": "feat(pipeline): persist physical model usage and frozen cost estimates",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 44,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrAdapterFactories.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/JavaHttpBailianAsrTransport.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/JavaHttpSiliconFlowAsrClient.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/SpeechToTextRequest.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/JavaHttpOpenAiCompatibleLlmClient.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmUsage.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/ModelCallObserver.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/ModelCallScope.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/ObservedModelCall.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/OpenAiCompatibleLlmProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/TranslationResponseDecoder.java",
+        "backend/src/main/java/com/example/courselingo/ai/record/dto/FailAiCallRecordCommand.java"
+      ]
+    },
+    {
+      "source_commit": "4542af2af122d7229e73637ebed498264ba755d2",
+      "subject": "fix(mq): retain checkpoint protocol and epoch in transport payload",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 2,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/mq/RocketMqAnalysisTaskMessageProducer.java",
+        "backend/src/test/java/com/example/courselingo/mq/RocketMqAnalysisTaskMessageProducerTest.java"
+      ]
+    },
+    {
+      "source_commit": "31bae65c58f3da685933840ee9c8faf0d7c7e322",
+      "subject": "eval: seal P2-1b baselines and ASR-blocked recovery evidence",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "eda25688503e97f70fd952c953c8a99f12d1f06a",
+      "subject": "docs(eval): record P2-1c context findings and ASR access denial",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "aea84c417dfb1c24d737c7edbf95da4b18234727",
+      "subject": "fix(learning): bound package context with map reduce and preserve P2-1c evidence",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 7,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/llm/OpenAiCompatibleLlmProvider.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageContextGuard.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageProperties.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageServiceImpl.java",
+        "backend/src/main/resources/application.yml",
+        "backend/src/test/java/com/example/courselingo/ai/llm/OpenAiCompatibleLlmProviderTest.java",
+        "backend/src/test/java/com/example/courselingo/learning/service/LearningPackageContextGuardTest.java"
+      ]
+    },
+    {
+      "source_commit": "22e1f1612fdc2f524dcc9d1a425f9cf23ff24fe3",
+      "subject": "docs(eval): design P2-1c pipeline fixes and acceptance gates",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "db19213482afba73b3e072eb89a33786ad2786d0",
+      "subject": "fix(learning): classify context overflow and add source-only package evidence",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 15,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmProviderFailureClassifier.java",
+        "backend/src/main/java/com/example/courselingo/common/error/ErrorCode.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/GenerateLearningPackageCommand.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageContextException.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageContextGuard.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackagePromptFactory.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageSourceSection.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/LearningPackageValidators.java",
+        "backend/src/main/java/com/example/courselingo/learning/service/ValidatedLearningPackageCommand.java",
+        "backend/src/main/java/com/example/courselingo/task/runner/LlmFailureDiagnostic.java",
+        "backend/src/test/java/com/example/courselingo/ai/llm/LlmProviderFailureClassifierTest.java"
+      ]
+    },
+    {
+      "source_commit": "901811e4efa065f060cc784c5a3a3dce17a7e684",
+      "subject": "test(eval): pass P2-1c stage 1 on independent MySQL and retain failures",
+      "decision": "DEFERRED",
+      "reason": "Retain coupled pipeline/operational code and its original evidence together on PR #53. It has not been accepted for the current main learning flow; no blanket evidence-only or mainline acceptance claim.",
+      "code_path_count": 2,
+      "principal_code_paths": [
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelMySqlFixture.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelMySqlIntegrationTest.java"
+      ]
+    },
+    {
+      "source_commit": "c9af23473fb953d6dad9226b569abd0a8caddf90",
+      "subject": "feat(pipeline): persist adaptive ASR and cache with merged audio provenance",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 32,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrCallFailure.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrPipelinePolicy.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/AsrProviderException.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/BailianAsrProvider.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/BailianAsrTransport.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/JavaHttpBailianAsrTransport.java",
+        "backend/src/main/java/com/example/courselingo/ai/asr/TranscribedSegment.java",
+        "backend/src/main/java/com/example/courselingo/media/FfmpegAudioExtractorImpl.java",
+        "backend/src/main/java/com/example/courselingo/media/SilenceAudioChunkPlanner.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranscriptParagraphService.java"
+      ]
+    },
+    {
+      "source_commit": "dcc4dda753afd89fafcc2375eaf3cd942dba4b02",
+      "subject": "feat(pipeline): freeze source-only materials and gate unqualified overlap",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 11,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PreparationFlowPolicy.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+        "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfiguration.java",
+        "backend/src/main/java/com/example/courselingo/task/runner/GenerateLearningPackageStep.java",
+        "backend/src/main/resources/application.yml",
+        "backend/src/test/java/com/example/courselingo/subtitle/pipeline/PreparationFlowPolicyTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/PreparationFlowMySqlTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/PreparationOverlapProbe.java",
+        "backend/src/test/java/com/example/courselingo/task/runner/GenerateLearningPackageStepTest.java"
+      ]
+    },
+    {
+      "source_commit": "9b688c35a758a6dead2cc7eab1b4eb6e95c34323",
+      "subject": "test(eval): record full regressions and freeze local P2-1c candidate",
+      "decision": "DEFERRED",
+      "reason": "Retain coupled pipeline/operational code and its original evidence together on PR #53. It has not been accepted for the current main learning flow; no blanket evidence-only or mainline acceptance claim.",
+      "code_path_count": 1,
+      "principal_code_paths": [
+        "backend/src/test/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfigurationTest.java"
+      ]
+    },
+    {
+      "source_commit": "896a4b1964681a29455a76cb79e993edb7ecf319",
+      "subject": "test(eval): pass full Python suite on isolated PostgreSQL and close regression gate",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "98252437a65791907f6490f79f97ef1796be30d6",
+      "subject": "docs(eval): record controlled startup blocked by missing credential directive",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "b82bebf6b15e33b25e7ffcb822133f97481e6073",
+      "subject": "fix(dev): bound local check cancellation and reap owned descendants",
+      "decision": "SELECTED_FILES",
+      "reason": "Selected supervisor, synthetic cleanup tests, execution guide and CI check; historical process evidence stays on PR #53.",
+      "code_path_count": 3,
+      "principal_code_paths": [
+        "scripts/dev/run_check.py",
+        "scripts/dev/tests/process_fixture.py",
+        "scripts/dev/tests/test_run_check.py"
+      ]
+    },
+    {
+      "source_commit": "47de0cc187e05693ff1146d81e932e73e7710d0d",
+      "subject": "fix: preserve translation truncation diagnosis and bounded recovery",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 10,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/ai/llm/LlmStageException.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/TranslationFailure.java",
+        "backend/src/main/java/com/example/courselingo/ai/llm/TranslationResponseDecoder.java",
+        "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelChatClient.java",
+        "backend/src/test/java/com/example/courselingo/subtitle/SubtitleTranslationServiceTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelLegacyTranslationTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelRuntimeMySqlTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelTranslationObservationTest.java",
+        "backend/src/test/java/com/example/courselingo/task/runner/TranslateSubtitleSegmentsStepTest.java"
+      ]
+    },
+    {
+      "source_commit": "47d8dafafecbfcdb0e76cf7bb1201f25f5e8995f",
+      "subject": "test: verify translation truncation and persistent limits on MySQL",
+      "decision": "DEFERRED",
+      "reason": "Coupled media/translation/context/recovery/usage pipeline expansion requires its own migration and acceptance work. It is not a dependency of the existing main Study learning flow in Phase 0.",
+      "code_path_count": 3,
+      "principal_code_paths": [
+        "backend/src/test/java/com/example/courselingo/systemmodel/LegacyTranslationMySqlTest.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/TranslationCheckpointMySqlTest.java",
+        "backend/src/test/java/com/example/courselingo/task/runner/SyntheticTranscriptStep.java"
+      ]
+    },
+    {
+      "source_commit": "ad244a43754412e69eb3b8c6b0324eb56f0c9cdd",
+      "subject": "docs: identify P2-1c system model environment-file authorization boundary",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "d4cb00d539e108592ff212c5c051e47cd39d6153",
+      "subject": "docs: record remaining isolated launcher configuration boundary",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "b36af06bc7adf4a275e8eca23c51aae4f9375dab",
+      "subject": "eval: stop controlled P2-1c startup at Redis isolation gate",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "53fd50a7603a1d5e01708fb1ba3d2941da2e7132",
+      "subject": "eval: document Redis15 read-only authentication boundary",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "ba2a7e9458f87aed550d14ff099a5de849c0735a",
+      "subject": "eval: diagnose authenticated Redis15 historical task occupancy",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "c8c9714d68eacf20823b5030962fb8ca25e37447",
+      "subject": "eval: prepare isolated Redis environment for frozen P2-1c",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "b45902034d70f551ddc9fab447168944a91f0c60",
+      "subject": "eval: record P2-1c initialization failure after Redis and identity gates",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "4be8593fbec5ea87ec900aff4714ff7432692b63",
+      "subject": "eval: isolate frozen P2-1c startup failure to Flyway initialization",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "9b9928e5ab76d48482852eb61e5983ba1964e2fc",
+      "subject": "docs(eval): diagnose isolated V32 migration failure and gate fresh-schema repair",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "47759ac27dd9e5d1ba47b952cadb7d14684d8cad",
+      "subject": "chore(eval): preserve isolated MySQL startup failure and collation diagnosis",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "0ea420503b1e6dfa54e568e9d3ba84cc83da9dbd",
+      "subject": "chore(eval): freeze P2-1c after second isolated startup failure",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "1080d02b90981806de1c89c5e5b58d26dc4ad363",
+      "subject": "docs: design P2-2a existing-course learning loop and feedback rollout",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "347d147824479d159c75aae7edece57998dac613",
+      "subject": "feat(study): label citation ranges and seek to passage starts",
+      "decision": "RETAIN_MAIN",
+      "reason": "Current main already labels citation time ranges and uses guarded source-version navigation; do not replace it with older branch UI.",
+      "code_path_count": 4,
+      "principal_code_paths": [
+        "frontend/src/components/task-detail/CourseAgentPanel.test.ts",
+        "frontend/src/components/task-detail/CourseAgentPanel.vue",
+        "frontend/src/components/task-detail/PracticeFeedbackPanel.test.ts",
+        "frontend/src/components/task-detail/PracticeFeedbackPanel.vue"
+      ]
+    },
+    {
+      "source_commit": "a6181be27f3037f638d5834b3bfc9027dd16bc2e",
+      "subject": "feat(study): default feedback on with explicit opt-out",
+      "decision": "DEFERRED",
+      "reason": "Default-on feedback is a rollout/product decision outside baseline stabilization; preserve main defaults and deployment configuration.",
+      "code_path_count": 2,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/study/feedback_store.py",
+        "agent-service/tests/test_study_feedback.py"
+      ]
+    },
+    {
+      "source_commit": "593db9c3883a70be900784fe71d017e0224e0109",
+      "subject": "docs: record P2-2a preflight and unreleased feedback rollout checks",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "f2e1a7f8f33a409b846913ae9a766e428fe71eec",
+      "subject": "docs: prepare P2-2a manual live acceptance checklist",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "e90264c2ab574b9c8e8f258a7e4147bf5b0992b7",
+      "subject": "docs: record blocked P2-2a live acceptance without task creation",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "d1e812f3558dd4112b89cf385c9c5f01bc8eadeb",
+      "subject": "docs: verify P2-2a ingestion and preserve blocked G1 acceptance",
+      "decision": "PRESERVE_ON_SOURCE",
+      "reason": "Historical or environment-specific evidence is retained unchanged on PR #53; no copied success claims or frozen reruns.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "3e08632a089aa31566badc17111d89f5328b903e",
+      "subject": "fix: omit disabled approval flag from study start requests",
+      "decision": "DEFERRED",
+      "reason": "Legacy gateway rollout workaround. Current main scoped/unscoped gateways accept explicit false; no current defect requires changing START serialization.",
+      "code_path_count": 2,
+      "principal_code_paths": [
+        "frontend/src/components/task-detail/CourseAgentPanel.test.ts",
+        "frontend/src/components/task-detail/CourseAgentPanel.vue"
+      ]
+    },
+    {
+      "source_commit": "040af03bc5441f55c18e86b996d77fd68dd55e28",
+      "subject": "fix(deploy): freeze Agent contract and record TLS renewal",
+      "decision": "DEFERRED",
+      "reason": "Deployment/TLS/Windows verification belongs to its original environment and frozen evidence; Phase 0 does not deploy or change production contracts.",
+      "code_path_count": 3,
+      "principal_code_paths": [
+        "scripts/deploy/run_frozen_agent.py",
+        "scripts/deploy/tests/test_run_frozen_agent.py",
+        "scripts/deploy/verify-study-protocol.browser.js"
+      ]
+    },
+    {
+      "source_commit": "0330a6559caf02a1a54db6591d8fc9f84c1e6425",
+      "subject": "docs: record Windows trust verification and pending browser checks",
+      "decision": "DEFERRED",
+      "reason": "Deployment/TLS/Windows verification belongs to its original environment and frozen evidence; Phase 0 does not deploy or change production contracts.",
+      "code_path_count": 0,
+      "principal_code_paths": []
+    },
+    {
+      "source_commit": "37605e62fbb2da8e54c88d1699feb05c32ebea5c",
+      "subject": "fix(system-model): allow unknown diagnostic model before routing",
+      "decision": "SELECTED_FILES",
+      "reason": "Selected routed-model diagnostics null override and regression tests.",
+      "code_path_count": 2,
+      "principal_code_paths": [
+        "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelLlmProvider.java",
+        "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelDiagnosticsTest.java"
+      ]
+    },
+    {
+      "source_commit": "b35be79801d9a4480abff8522b52efb23718eda0",
+      "subject": "fix(study): disable thinking for official DeepSeek tool calls",
+      "decision": "SELECTED_FILES",
+      "reason": "Selected provider.py compatibility and its regression tests only; operational scripts/evidence stay on PR #53.",
+      "code_path_count": 5,
+      "principal_code_paths": [
+        "agent-service/src/lecturelens_agent/study/provider.py",
+        "agent-service/tests/test_study_deepseek.py",
+        "scripts/deploy/check_demo_cache.py",
+        "scripts/deploy/observe-demo-playback.browser.js",
+        "scripts/deploy/rebuild-demo-timeline.browser.js"
+      ]
+    }
+  ]
+}

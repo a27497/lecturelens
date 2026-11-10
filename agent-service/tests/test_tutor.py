@@ -571,8 +571,8 @@ def test_stale_session_fails_queued_turn_and_hides_summary_in_list(lab):
         assert row["status"] == "failed" and row["error_code"] == "TUTOR_SESSION_STALE"
 
 
-def install_finish_limit_provider(lab, monkeypatch, fault, *, repeat=False):
-    """Expose eight authoritative observations and keep every oversized id visible."""
+def install_eight_observations(lab, monkeypatch):
+    """Expose eight authoritative observations; the provider cites all of them."""
     read = lab[1].read
 
     def many(scope, action="CHECK", **args):
@@ -586,117 +586,71 @@ def install_finish_limit_provider(lab, monkeypatch, fault, *, repeat=False):
 
     monkeypatch.setattr(lab[1], "read", many)
     decide = lab[2].provider.decide
-    repaired = []
 
-    def oversized(messages, *args):
+    def cite_all(messages, *args):
         response = decide(messages, *args)
-        observations = json.loads(messages[-1]["content"])["observations"]
         if response["name"] == "finish_tutor_turn":
-            if len(observations) == 1 or repeat:
-                args = response["arguments"]
-                if fault in {"ids", "combined"}:
-                    args.update(evidence_ids=[f"e{i}" for i in range(1, 9)])
-                    args["text"] = "Original " + " ".join(f"[{eid}]" for eid in args["evidence_ids"])
-                if fault in {"evaluation", "combined"}:
-                    args["evaluation"] = "E" * 501
-                if fault in {"text", "combined"}:
-                    args["text"] += "T" * 1601
-            else:
-                observation = observations[-1]
-                assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-                assert all(
-                    s in observation["message"]
-                    for s in ("4 distinct", "500", "1600", "resubmit finish_tutor_turn")
-                )
-                # Deliberately choose the LAST observed ids: truncating the first proposal
-                # cannot accidentally satisfy the publication assertion.
-                response["arguments"].update(
-                    evidence_ids=["e8", "e6"],
-                    text="Repaired claim [e8] [e6]",
-                    evaluation="Repaired evaluation [e6]",
-                )
-                repaired.append(response["arguments"].copy())
+            response["arguments"]["text"] = "Original " + " ".join(f"[e{i}]" for i in range(1, 9))
         return response
 
-    lab[2].provider.decide = oversized
-    return oversized, repaired
+    lab[2].provider.decide = cite_all
+    return cite_all
 
 
-@pytest.mark.parametrize("fault", ["ids", "evaluation", "text", "combined"])
-def test_finish_limit_observation_then_unchanged_repair_publishes(lab, monkeypatch, fault):
-    if fault == "evaluation":
-        run(lab, socratic=True)
-    _, repaired = install_finish_limit_provider(lab, monkeypatch, fault)
-    result = run(lab, "limits")
-    assert result["status"] == "completed" and result["model_calls"] == result["tool_calls"] == 3
-    assert result["answer"] == repaired[0]["text"]
-    assert result["evaluation"] == repaired[0]["evaluation"]
-    assert {c["evidence_id"] for c in result["citations"]} == set(repaired[0]["evidence_ids"])
+@pytest.mark.parametrize("fault", ["ids", "evaluation", "text"])
+def test_finish_publishes_many_citations_and_fails_oversize_without_repair(lab, monkeypatch, fault):
+    from lecturelens_real_eval.tutor.contracts import ANSWER_MAX_CHARS, EVALUATION_MAX_CHARS
+
+    install_eight_observations(lab, monkeypatch)
+    decide = MockTutor().decide
+    ids = [f"e{i}" for i in range(1, 9)]
+
+    def proposal(*args):
+        response = decide(*args)
+        if response["name"] == "finish_tutor_turn":
+            args = response["arguments"]
+            args["text"] = "Claim " + " ".join(f"[{eid}]" for eid in ids)
+            if fault == "text":
+                args["text"] += "T" * ANSWER_MAX_CHARS
+            elif fault == "evaluation":
+                args["evaluation"] = "E" * (EVALUATION_MAX_CHARS + 1)
+        return response
+
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    assert result["model_calls"] == 2
     with lab[0].connect() as conn:
-        row = conn.execute("SELECT checkpoint FROM tutor_turn ORDER BY ordinal DESC LIMIT 1").fetchone()
-    errors = [o["error"] for o in row["checkpoint"]["observations"] if "error" in o]
-    assert errors == ["TUTOR_FINISH_REPAIR_REQUIRED"]
-
-
-@pytest.mark.parametrize("restart", [False, True])
-def test_second_finish_limit_violation_is_fatal_even_after_restart(lab, monkeypatch, restart):
-    provider, _ = install_finish_limit_provider(lab, monkeypatch, "ids", repeat=True)
-    submit(lab)
-    if restart:
-        act = lab[2].act
-
-        def pause(*args):
-            done = act(*args)
-            if args[1]["response"]["name"] == "finish_tutor_turn":
-                assert done is False
-                raise KeyboardInterrupt()
-            return done
-
-        monkeypatch.setattr(lab[2], "act", pause)
-        with pytest.raises(KeyboardInterrupt):
-            lab[2].execute(lab[0].candidates()[0])
-        with lab[0].connect() as conn:
-            row = conn.execute("SELECT * FROM tutor_turn").fetchone()
-        assert row["tool_calls"] == 2 and row["model_calls"] == 3
-        assert row["checkpoint"]["phase"] == "ready" and row["answer"] is None
-        assert row["checkpoint"]["observations"][-1]["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-        restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
-        restored.provider.decide = provider
-        restored.execute(lab[0].candidates()[0])
+        row = conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()
+    assert not [o for o in row["checkpoint"]["observations"] if "error" in o]
+    if fault == "ids":
+        assert result["status"] == "completed"
+        assert [c["evidence_id"] for c in result["citations"]] == ids
     else:
-        lab[2].execute(lab[0].candidates()[0])
-    result = command(lab, "GET")["turns"][-1]
-    assert result["status"] == "failed" and result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID"
-    assert result["answer"] is None and not result["citations"]
-    assert result["model_calls"] == 3 and result["tool_calls"] == 2
+        assert result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID"
+        assert result["answer"] is None and not result["citations"]
 
 
-def test_finish_limit_repair_after_restart_does_not_replay_rejected_tool(lab, monkeypatch):
-    provider, repaired = install_finish_limit_provider(lab, monkeypatch, "ids")
-    record = lab[2].record_observation
+def test_long_code_answer_publishes_unchanged(lab):
+    decide = MockTutor().decide
+    code = "for i in range(len(nums)):\n    total += nums[i]\n"
+    text = "Explanation [e1]\n" + code * 80
 
-    def pause(turn_id, state):
-        result = record(turn_id, state)
-        if state["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
-            assert result is False
-            raise KeyboardInterrupt()
-        return result
+    def proposal(*args):
+        response = decide(*args)
+        if response["name"] == "finish_tutor_turn":
+            response["arguments"]["text"] = text
+        return response
 
-    monkeypatch.setattr(lab[2], "record_observation", pause)
-    submit(lab)
-    with pytest.raises(KeyboardInterrupt):
-        lab[2].execute(lab[0].candidates()[0])
-    restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
-    restored.provider.decide = provider
-    restored.execute(lab[0].candidates()[0])
-    result = command(lab, "GET")["turns"][-1]
-    assert result["status"] == "completed" and result["answer"] == repaired[0]["text"]
-    assert result["model_calls"] == result["tool_calls"] == 3 and len(lab[1].searches) == 1
+    lab[2].provider.decide = proposal
+    result = run(lab)
+    assert len(text) > 3000
+    assert result["status"] == "completed" and result["answer"] == text
+    assert [c["evidence_id"] for c in result["citations"]] == ["e1"]
 
 
 @pytest.mark.parametrize("fault", ["unobserved", "authority_missing", "non_limit_schema"])
 def test_finish_limit_does_not_hide_authority_or_other_schema_failure(lab, monkeypatch, fault):
-    provider, _ = install_finish_limit_provider(lab, monkeypatch, "ids")
+    provider = install_eight_observations(lab, monkeypatch)
 
     def invalid(*args):
         response = provider(*args)
@@ -716,95 +670,9 @@ def test_finish_limit_does_not_hide_authority_or_other_schema_failure(lab, monke
     assert result["model_calls"] == 2 and result["tool_calls"] == 1
 
 
-def test_finish_limit_repair_preserves_deadline(lab, monkeypatch):
-    install_finish_limit_provider(lab, monkeypatch, "ids")
-    record = lab[2].record_observation
-
-    def exhaust(turn_id, state):
-        result = record(turn_id, state)
-        if state["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
-            with lab[0].connect() as conn:
-                conn.execute(
-                    "UPDATE tutor_turn SET deadline=now()-interval '1 second' WHERE turn_id=%s",
-                    (turn_id,),
-                )
-        return result
-
-    monkeypatch.setattr(lab[2], "record_observation", exhaust)
-    result = run(lab)
-    assert result["error_code"] == "TUTOR_DEADLINE"
-    assert result["answer"] is None and not result["citations"]
-
-
-@pytest.mark.parametrize("combined", [False, True])
-def test_excess_citations_repair_lists_order_and_every_excess_id(lab, monkeypatch, combined):
-    install_finish_limit_provider(lab, monkeypatch, "ids")
-    decide = MockTutor().decide
-    repairs = []
-    ids = ["e8", "e2", "e7", "e4", "e1", "e6"]
-
-    def proposal(messages, schemas, timeout):
-        data = json.loads(messages[-1]["content"])
-        response = decide(messages, schemas, timeout)
-        if response["name"] != "finish_tutor_turn":
-            return response
-        args = response["arguments"]
-        if len(data["observations"]) == 1:
-            args.update(
-                text="Claim " + " ".join(f"[{i}]" for i in ids[:5]),
-                evaluation="Again [e8] then [e6]",
-                evidence_ids=["ignored"],
-            )
-            if combined:
-                args["text"] += "T" * 1601
-                args["evaluation"] += "E" * 501
-        else:
-            assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
-            observation = data["observations"][-1]
-            assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-            assert observation["distinct_ids"] == 6
-            assert observation["evidence_ids"] == ids
-            assert observation["excess_ids"] == ids[4:]
-            assert observation["keep_ids"] == ids[:4]
-            assert observation["remove_ids"] == ids[4:]
-            assert observation["size_violations"]["evidence_ids"] == {"actual": 6, "limit": 4}
-            assert set(observation["size_violations"]) == (
-                {"evidence_ids", "text", "evaluation"} if combined else {"evidence_ids"}
-            )
-            assert all(i in observation["message"] for i in ids)
-            assert "at most 4 distinct evidence ids" in observation["message"]
-            assert all(
-                s in observation["message"]
-                for s in (
-                    "Delete every inline [id] for remove_ids from both text and evaluation",
-                    "Delete claims relying only on remove_ids",
-                    "only if that evidence supports them",
-                    "Do not introduce new ids",
-                    "≤1200",
-                    "500 characters",
-                    "TUTOR_FINISH_FORMAT_INVALID",
-                )
-            )
-            if combined:
-                for key, target in (("text", 1200), ("evaluation", 500)):
-                    violation = observation["size_violations"][key]
-                    assert f"{key} has {violation['actual']} characters" in observation["message"]
-                    assert f"required maximum {violation['limit']} characters" in observation["message"]
-                    assert f"Rewrite {key} to ≤{target} characters" in observation["message"]
-            repairs.append(observation)
-            args.update(text="New claim [e7]", evidence_ids=["ignored"], evaluation="")
-        return response
-
-    lab[2].provider.decide = proposal
-    result = run(lab)
-    assert result["status"] == "completed" and result["answer"] == "New claim [e7]"
-    assert [c["evidence_id"] for c in result["citations"]] == ["e7"]
-    assert result["model_calls"] == result["tool_calls"] == 3 and len(repairs) == 1
-
-
 @pytest.mark.parametrize("declared", [["wrong"], ["e1", "e2", "e3", "e7", "e8"], None, 42])
 def test_controller_publishes_extracted_order_dedupes_and_ignores_declarations(lab, monkeypatch, declared):
-    install_finish_limit_provider(lab, monkeypatch, "ids")
+    install_eight_observations(lab, monkeypatch)
     decide = MockTutor().decide
 
     def proposal(*args):
@@ -824,28 +692,25 @@ def test_controller_publishes_extracted_order_dedupes_and_ignores_declarations(l
 @pytest.mark.parametrize(
     "legacy", ["TUTOR_FINISH_REPAIR_REQUIRED", "TUTOR_FINISH_LIMIT_EXCEEDED", "TUTOR_CITATION_MISMATCH"]
 )
-def test_unified_format_counter_counts_legacy_journal_after_restart(lab, monkeypatch, legacy):
+@pytest.mark.parametrize("oversized", [False, True])
+def test_legacy_format_repair_journal_still_restricts_replay_to_finish(lab, monkeypatch, legacy, oversized):
+    """Checkpoints committed by earlier builds keep their finish-only repair semantics."""
     from psycopg.types.json import Jsonb
 
-    decide = MockTutor().decide
+    from lecturelens_real_eval.tutor.contracts import ANSWER_MAX_CHARS
 
-    def invalid(messages, *args):
-        response = decide(messages, *args)
-        if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "[e1] " + "T" * 1601
-        return response
-
-    lab[2].provider.decide = invalid
     record = lab[2].record_observation
 
     def pause(turn_id, state):
         done = record(turn_id, state)
-        if state["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
+        if state["observations"][-1]["tool"] == "search_tutor_evidence":
             with lab[0].connect() as conn:
                 checkpoint = conn.execute(
                     "SELECT checkpoint FROM tutor_turn WHERE turn_id=%s", (turn_id,)
                 ).fetchone()["checkpoint"]
-                checkpoint["observations"][-1]["error"] = legacy
+                checkpoint["observations"].append(
+                    {"tool": "finish_tutor_turn", "error": legacy, "message": "legacy"}
+                )
                 conn.execute(
                     "UPDATE tutor_turn SET checkpoint=%s WHERE turn_id=%s", (Jsonb(checkpoint), turn_id)
                 )
@@ -857,11 +722,24 @@ def test_unified_format_counter_counts_legacy_journal_after_restart(lab, monkeyp
     with pytest.raises(KeyboardInterrupt):
         lab[2].execute(lab[0].candidates()[0])
     restored = TutorRuntime(TutorStore(lab[0].dsn), lab[1])
-    restored.provider.decide = invalid
+    decide = restored.provider.decide
+    offered = []
+
+    def proposal(messages, schemas, timeout):
+        offered.append([s["function"]["name"] for s in schemas])
+        response = decide(messages, schemas, timeout)
+        if oversized:
+            response["arguments"]["text"] = "[e1] " + "T" * ANSWER_MAX_CHARS
+        return response
+
+    restored.provider.decide = proposal
     restored.execute(lab[0].candidates()[0])
     result = command(lab, "GET")["turns"][-1]
-    assert result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID" and result["answer"] is None
-    assert result["model_calls"] == 3 and result["tool_calls"] == 2
+    assert offered == [["finish_tutor_turn"]]
+    if oversized:
+        assert result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID" and result["answer"] is None
+    else:
+        assert result["status"] == "completed" and result["citations"]
 
 
 @pytest.mark.parametrize("socratic,fault", [(True, "outcome"), (True, "question"), (False, "outcome")])
@@ -913,10 +791,7 @@ def test_socratic_one_shot_repair_and_restart(lab, monkeypatch, socratic, fault,
     assert result["model_calls"] == 3
 
 
-@pytest.mark.parametrize(
-    "repairs", [["format"], ["socratic"], ["format", "socratic"], ["socratic", "format"]]
-)
-def test_two_searches_then_repairs_have_prepaid_finish_only_budget(lab, repairs):
+def test_two_searches_then_socratic_repair_has_prepaid_finish_only_budget(lab):
     decide = MockTutor().decide
     calls = []
 
@@ -933,18 +808,14 @@ def test_two_searches_then_repairs_have_prepaid_finish_only_budget(lab, repairs)
             assert row["model_calls"] == len(calls)
             assert row["tool_calls"] == len(calls) - 1
         response = decide(messages, schemas, timeout)
-        index = len(calls) - 3
-        if index < len(repairs):
-            if repairs[index] == "format":
-                response["arguments"]["text"] = "[e1]? " + "T" * 1601
-            else:
-                response["arguments"]["outcome"] = "answered"
+        if len(calls) == 3:
+            response["arguments"]["outcome"] = "answered"
         return response
 
     lab[2].provider.decide = proposal
     result = run(lab, socratic=True)
     assert result["status"] == "completed" and result["error_code"] is None
-    assert result["model_calls"] == result["tool_calls"] == 3 + len(repairs)
+    assert result["model_calls"] == result["tool_calls"] == 4
     assert len(lab[1].searches) == 2 and result["outcome"] == "socratic_prompt"
     with lab[0].connect() as conn:
         row = conn.execute("SELECT * FROM tutor_turn").fetchone()
@@ -952,34 +823,42 @@ def test_two_searches_then_repairs_have_prepaid_finish_only_budget(lab, repairs)
     assert row["model_calls"] <= 5 and row["reserved_tokens"] <= 64000
     assert session["model_calls"] == row["model_calls"]
     assert session["reserved_tokens"] == row["reserved_tokens"]
-    assert len([o for o in row["checkpoint"]["observations"] if "error" in o]) == len(repairs)
+    assert len([o for o in row["checkpoint"]["observations"] if "error" in o]) == 1
+
+
+def socratic_violation(decide):
+    def proposal(*args):
+        response = decide(*args)
+        if response["name"] == "finish_tutor_turn":
+            response["arguments"]["outcome"] = "answered"
+        return response
+
+    return proposal
 
 
 def test_repair_call_rejects_search_without_authority_search(lab):
     decide = MockTutor().decide
+    violate = socratic_violation(decide)
 
     def proposal(messages, schemas, timeout):
         data = json.loads(messages[-1]["content"])
         if len(data["observations"]) >= 2:
             assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
             return {"name": "search_tutor_evidence", "arguments": {"query": "ignored"}}
-        response = decide(messages, schemas, timeout)
-        if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "[e1] " + "T" * 1601
-        return response
+        return violate(messages, schemas, timeout)
 
     lab[2].provider.decide = proposal
-    result = run(lab)
+    result = run(lab, socratic=True)
     assert result["error_code"] == "TUTOR_PROTOCOL_FAILURE" and result["model_calls"] == 3
     assert len(lab[1].searches) == 1
 
 
 @pytest.mark.parametrize("cap", ["session_calls", "session_tokens", "turn_tokens"])
 def test_unavailable_repair_capacity_fails_before_issuing_observation(lab, cap):
-    decide = MockTutor().decide
+    violate = socratic_violation(MockTutor().decide)
 
     def proposal(*args):
-        response = decide(*args)
+        response = violate(*args)
         if response["name"] == "finish_tutor_turn":
             with lab[0].connect() as conn:
                 if cap == "session_calls":
@@ -988,11 +867,10 @@ def test_unavailable_repair_capacity_fails_before_issuing_observation(lab, cap):
                     conn.execute("UPDATE tutor_session SET max_tokens=reserved_tokens")
                 else:
                     conn.execute("UPDATE tutor_turn SET reserved_tokens=64000")
-            response["arguments"]["text"] = "[e1] " + "T" * 1601
         return response
 
     lab[2].provider.decide = proposal
-    result = run(lab)
+    result = run(lab, socratic=True)
     assert result["error_code"] == "TUTOR_REPAIR_BUDGET_UNAVAILABLE"
     with lab[0].connect() as conn:
         row = conn.execute("SELECT * FROM tutor_turn").fetchone()
@@ -1002,30 +880,27 @@ def test_unavailable_repair_capacity_fails_before_issuing_observation(lab, cap):
 
 @pytest.mark.parametrize("stop", ["unknown", "cancel", "authority"])
 def test_prepaid_repair_keeps_unknown_cancellation_and_authority_fences(lab, monkeypatch, stop):
-    decide = MockTutor().decide
+    violate = socratic_violation(MockTutor().decide)
     calls = []
 
     def proposal(messages, schemas, timeout):
         calls.append(json.loads(messages[-1]["content"]))
         if len(calls) == 3:
             raise KeyboardInterrupt()
-        response = decide(messages, schemas, timeout)
-        if response["name"] == "finish_tutor_turn":
-            response["arguments"]["text"] = "[e1] " + "T" * 1601
-        return response
+        return violate(messages, schemas, timeout)
 
     lab[2].provider.decide = proposal
     record = lab[2].record_observation
 
     def pause(turn_id, state):
         result = record(turn_id, state)
-        if state["observations"][-1].get("error") == "TUTOR_FINISH_REPAIR_REQUIRED":
+        if state["observations"][-1].get("error") == "TUTOR_SOCRATIC_REPAIR_REQUIRED":
             raise KeyboardInterrupt()
         return result
 
     if stop != "unknown":
         monkeypatch.setattr(lab[2], "record_observation", pause)
-    submit(lab)
+    submit(lab, socratic=True)
     with pytest.raises(KeyboardInterrupt):
         lab[2].execute(lab[0].candidates()[0])
     if stop == "cancel":
@@ -1077,9 +952,8 @@ FINISH_V8_CASES = json.loads((Path(__file__).parent / "fixtures/p8_finish_v8.jso
 
 
 @pytest.mark.parametrize("case", FINISH_V8_CASES, ids=lambda c: c["case"])
-@pytest.mark.parametrize("repair_fault", ["valid", "ids", "text", "evaluation"])
-def test_v8_failed_first_finish_replay(lab, monkeypatch, case, repair_fault):
-    """Replay observed ID order/lengths through durable validation, not task quality."""
+def test_v8_failed_first_finish_now_publishes_on_first_proposal(lab, monkeypatch, case):
+    """Historical v8 first proposals failed only the old 1600/4 caps; replay mechanics, not quality."""
     from lecturelens_real_eval.tutor.citations import assembled_citation_ids
     from lecturelens_real_eval.tutor.runtime import FINISH_LIMITS
 
@@ -1105,8 +979,6 @@ def test_v8_failed_first_finish_replay(lab, monkeypatch, case, repair_fault):
         first[key] = content + "T" * (case[key + "_chars"] - len(content))
     assert assembled_citation_ids(first["text"], first["evaluation"]) == ids
     decide = MockTutor().decide
-    repairs = []
-    submitted = []
 
     def proposal(messages, schemas, timeout):
         data = json.loads(messages[-1]["content"])
@@ -1115,52 +987,13 @@ def test_v8_failed_first_finish_replay(lab, monkeypatch, case, repair_fault):
                 assert schema["function"]["description"] == FINISH_LIMITS
         if not data["observations"]:
             return decide(messages, schemas, timeout)
-        if len(data["observations"]) == 1:
-            return {"name": "finish_tutor_turn", "arguments": first.copy()}
-        assert [s["function"]["name"] for s in schemas] == ["finish_tutor_turn"]
-        observation = data["observations"][-1]
-        assert observation["error"] == "TUTOR_FINISH_REPAIR_REQUIRED"
-        assert observation["keep_ids"] == ids[:4]
-        assert observation["remove_ids"] == ids[4:]
-        assert "≤1200" in observation["message"]
-        if case["text_chars"] > 1600:
-            assert f"text has {case['text_chars']} characters" in observation["message"]
-            assert "required maximum 1600 characters" in observation["message"]
-        repairs.append(observation)
-        # Reorder kept citations and rewrite the claim: publication must match this
-        # resubmission exactly, rather than a controller edit of the first proposal.
-        kept = list(reversed(observation["keep_ids"]))
-        repaired = {
-            "outcome": "answered",
-            "text": "BFS levels give shortest path distances in edges. " + " ".join(f"[{i}]" for i in kept),
-            "evaluation": f"Compare with the course statement [{kept[0]}].",
-        }
-        if repair_fault == "ids":
-            repaired["text"] += f" [{observation['remove_ids'][0]}]"
-        elif repair_fault == "text":
-            repaired["text"] += "T" * (1601 - len(repaired["text"]))
-        elif repair_fault == "evaluation":
-            repaired["evaluation"] += "E" * (501 - len(repaired["evaluation"]))
-        submitted.append(repaired.copy())
-        return {"name": "finish_tutor_turn", "arguments": repaired}
+        return {"name": "finish_tutor_turn", "arguments": first.copy()}
 
     lab[2].provider.decide = proposal
     result = run(lab, socratic=case["socratic"])
-    assert len(repairs) == len(submitted) == 1
-    assert result["model_calls"] == 3
-    with lab[0].connect() as conn:
-        journal = conn.execute("SELECT checkpoint FROM tutor_turn").fetchone()["checkpoint"]
-    assert [o["error"] for o in journal["observations"] if "error" in o] == ["TUTOR_FINISH_REPAIR_REQUIRED"]
-    if repair_fault == "valid":
-        assert result["status"] == "completed" and result["error_code"] is None
-        assert result["answer"] == submitted[0]["text"]
-        assert result["evaluation"] == submitted[0]["evaluation"]
-        assert result["citations"] == lab[2].read_evidence(
-            lab[3], assembled_citation_ids(submitted[0]["text"], submitted[0]["evaluation"])
-        )  # Authoritative READ and publication both follow requested inline order.
-    else:
-        assert result["status"] == "failed" and result["error_code"] == "TUTOR_FINISH_FORMAT_INVALID"
-        assert result["answer"] is None and not result["citations"]
+    assert result["status"] == "completed" and result["model_calls"] == 2
+    assert result["answer"] == first["text"]
+    assert [c["evidence_id"] for c in result["citations"]] == ids
 
 
 def install_search_batches(lab, monkeypatch, batches, *, text_size=50):
@@ -1301,7 +1134,7 @@ def test_citable_union_natural_bound_and_unchanged_reservation_cap(lab, monkeypa
         assert reads[-2:] == batches
 
 
-def test_citable_union_repair_keeps_first_search_ids_and_full_prompt(lab, monkeypatch):
+def test_citable_union_publishes_six_ids_across_both_searches(lab, monkeypatch):
     batches = [["e5", "e1", "e2"], ["e3", "e4", "e6"]]
     install_search_batches(lab, monkeypatch, batches)
     union = ["e5", "e1", "e2", "e3", "e4", "e6"]
@@ -1309,22 +1142,13 @@ def test_citable_union_repair_keeps_first_search_ids_and_full_prompt(lab, monkey
 
     def proposal(messages, schemas, timeout):
         data = json.loads(messages[-1]["content"])
-        count = len(data["observations"])
-        if count < 2:
-            return {"name": "search_tutor_evidence", "arguments": {"query": "repair"}}
+        if len(data["observations"]) < 2:
+            return {"name": "search_tutor_evidence", "arguments": {"query": "union"}}
         assert [e["evidence_id"] for e in data["evidence"]] == union
-        if count == 2:
-            text = "Claim " + " ".join(f"[{eid}]" for eid in proposed)
-        else:
-            repair = data["observations"][-1]
-            assert repair["keep_ids"] == proposed[:4]
-            assert repair["remove_ids"] == proposed[4:]
-            assert "ids observed in any search this turn" in repair["message"]
-            text = "Repaired [e5] [e1]"
+        text = "Claim " + " ".join(f"[{eid}]" for eid in proposed)
         return {"name": "finish_tutor_turn", "arguments": {"outcome": "answered", "text": text}}
 
     lab[2].provider.decide = proposal
     result = run(lab)
-    assert result["status"] == "completed" and result["answer"] == "Repaired [e5] [e1]"
-    assert result["model_calls"] == result["tool_calls"] == 4
-    assert [c["evidence_id"] for c in result["citations"]] == ["e5", "e1"]
+    assert result["status"] == "completed" and result["model_calls"] == result["tool_calls"] == 3
+    assert [c["evidence_id"] for c in result["citations"]] == proposed
