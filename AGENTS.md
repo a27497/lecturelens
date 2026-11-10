@@ -22,6 +22,7 @@ LectureLens is a course-grounded Study Agent project, currently experimental. Th
 
 - For Agent runtime changes, use meaningful Python tests and a separate PostgreSQL test database. Skipped database tests are not a complete pass. Follow the linked L2 documents for real-provider evaluation.
 - Run checks appropriate to the changed layer; documentation-only edits do not require starting the service stack.
+- For long local development checks, use `scripts/dev/run_check.py` and [the process execution guide](docs/LOCAL_CHECK_EXECUTION.md). Cancel the new supervisor and wait for its terminal record; do not suspend a sudo child or use broad process-name matching. Keep frozen evaluation runners and evidence unchanged.
 - Keep README, architecture and deployment instructions consistent with actual code. State implemented, experimental and planned capabilities separately. Current quality limitations remain visible when presenting the project as a Study Agent.
 - Preserve existing uncommitted work. Keep provider credentials, downloaded media and private evaluation records out of Git.
 

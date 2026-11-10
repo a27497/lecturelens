@@ -27,6 +27,12 @@ public final class SystemModelLlmProvider implements LlmProvider {
     }
 
     @Override
+    public String modelNameForDiagnostics() {
+        // The model belongs to the request's frozen route; null denotes unknown before routing.
+        return null;
+    }
+
+    @Override
     public LlmResult generate(LlmRequest request) {
         long started = System.nanoTime();
         String outcome = "FAILED", category = "UNKNOWN";
