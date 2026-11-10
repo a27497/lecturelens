@@ -21,6 +21,8 @@ from .contracts import (
 )
 
 MAX_SEARCH_CALLS = 2
+# The historical P8 channel accepts at most 20 seconds per request.
+P8_CALL_TIMEOUT_SECONDS = 20
 # No new size/count repair is issued. These codes are still recognized so committed
 # checkpoints from earlier builds replay with their original one-repair accounting.
 FORMAT_REPAIRS = {
@@ -332,7 +334,7 @@ class TutorRuntime:
                 self.store.checkpoint(conn, turn_id, {**state, "phase": "reserved"})
             # Reservation is durable before egress. No retries, including after a restart.
             remaining = min(
-                TURN_DEADLINE_SECONDS, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds()
+                P8_CALL_TIMEOUT_SECONDS, (turn["deadline"] - datetime.now(timezone.utc)).total_seconds()
             )
             if remaining <= 0:
                 raise StudyError("TUTOR_DEADLINE")
