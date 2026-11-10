@@ -32,6 +32,14 @@ describe("course Tutor", () => {
     expect(w.text()).toContain("BFS explores levels");
     expect(createTutorSession).not.toHaveBeenCalled(); expect(submitTutorTurn).not.toHaveBeenCalled();
   });
+  it("discloses DeepSeek inputs before the first trial question", async () => {
+    vi.mocked(listTutorSessions).mockResolvedValue({ sessions: [], revision: 7, provider_mode: "deepseek-flash" });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("提问、对话上下文和检索到的课程片段将发送给 DeepSeek");
+    expect(w.text()).toContain("最多 3 次");
+    expect(w.text()).not.toContain("实验性 Mock 演示");
+    expect(submitTutorTurn).not.toHaveBeenCalled();
+  });
   it("inline citation and source actions retain authoritative id and revision", async () => {
     const w = open(); await flushPromises(); await click(w, "[e1]");
     expect(w.emitted("seek")).toEqual([[1000, { evidenceId: "e1", revision: 7 }]]);
@@ -127,5 +135,20 @@ describe("course Tutor", () => {
     await w.find("textarea").setValue("why"); await w.find("form").trigger("submit"); await flushPromises();
     expect(w.text()).toContain("BFS explores levels"); expect(w.text()).not.toContain("重试同一条消息");
     expect(w.emitted("accessFailure")).toBeUndefined();
+  });
+});
+
+// Lightweight candidate shares the authenticated UI and explicit stop states.
+describe("light Tutor", () => {
+  it("uses the server six-turn cap and shows its one-request boundary", async () => {
+    vi.mocked(getTutorSession).mockResolvedValue({ session: { ...session, engine: "light", max_turns: 6, max_calls: 6 }, turns: Array.from({ length: 6 }, (_, i) => ({ ...turn, turn_id: `t${i}` })) });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("每轮最多一次生成");
+    expect(w.find('button[type="submit"]').attributes("disabled")).toBeDefined();
+  });
+  it("shows a stopped generation without displaying its rejected body", async () => {
+    vi.mocked(getTutorSession).mockResolvedValue({ session: { ...session, engine: "light" }, turns: [{ ...turn, status: "failed", answer: "REJECTED", error_code: "TUTOR_SOURCE_ONLY" }] });
+    const w = open(); await flushPromises();
+    expect(w.text()).toContain("TUTOR_SOURCE_ONLY"); expect(w.text()).not.toContain("REJECTED");
   });
 });

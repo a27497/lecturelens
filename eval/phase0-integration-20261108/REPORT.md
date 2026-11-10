@@ -31,3 +31,10 @@ It exercises Tutor recovery and cancellation, flashcards, saved practice and
 feedback, choice review and owner isolation. It enables the existing feedback
 switch in its test stack only. These checks measure execution and protocol
 behavior. Real-model teaching quality was outside this integration's scope.
+
+## Original Phase 0 acceptance
+
+The [original Phase 0 report](https://github.com/a27497/lecturelens/blob/17d78636cf97fcf55fe642b1ecc30c5e2ea48865/eval/phase0-integration-20261108/REPORT.md)
+records the historical checks, unsuccessful attempts, and scope of acceptance.
+The accompanying [check records](CHECKS.json) and [selection decisions](PR53_SELECTION.json)
+are retained in this directory.

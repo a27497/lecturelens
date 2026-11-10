@@ -12,6 +12,7 @@ import pytest
 from psycopg import sql
 from psycopg.conninfo import make_conninfo
 
+from lecturelens_real_eval import tutor_runner
 from lecturelens_real_eval.tutor_channel import Channel, EvalError, Ledger, TutorPolicy, encode
 from lecturelens_real_eval.tutor_runner import (
     DATA,
@@ -31,6 +32,11 @@ REVIEW = [
     {"type": "function", "function": {"name": "review_tutor_turn", "parameters": Review.model_json_schema()}}
 ]
 MESSAGES = [{"role": "user", "content": "private learner text"}]
+
+
+@pytest.fixture(autouse=True)
+def use_historical_eval_inputs(monkeypatch, historical_eval_inputs):
+    monkeypatch.setattr(tutor_runner, "ROOT", historical_eval_inputs)
 
 
 @pytest.fixture
@@ -208,8 +214,6 @@ def test_frozen_scripts_absence_and_threshold_hashes():
 
 
 def test_modified_frozen_input_refuses_before_egress(monkeypatch, tmp_path):
-    from lecturelens_real_eval import tutor_runner
-
     source = json.loads((DATA / "frozen.json").read_text())
     source["files"]["eval/p8-tutor/thresholds.json"] = "0" * 64
     (tmp_path / "frozen.json").write_text(json.dumps(source))

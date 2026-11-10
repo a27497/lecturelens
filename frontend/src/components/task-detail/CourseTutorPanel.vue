@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from "vue";
 import { cancelTutorTurn, createTutorSession, getTutorSession, listTutorSessions, submitTutorTurn } from "../../api/tutor";
-import type { TutorSession, TutorView } from "../../api/tutor";
+import type { TutorProviderMode, TutorSession, TutorView } from "../../api/tutor";
 import type { Citation } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import { randomUuid } from "../../utils/randomUuid";
@@ -12,6 +12,7 @@ const props = defineProps<{ taskId: string }>();
 const emit = defineEmits<{ seek: [milliseconds: number, context: EvidenceSeekContext]; accessFailure: [] }>();
 const view = ref<TutorView | null>(null);
 const sessions = ref<TutorSession[]>([]);
+const providerMode = ref<TutorProviderMode>();
 const draft = ref("");
 const socratic = ref(false);
 const busy = ref(false);
@@ -20,7 +21,7 @@ const error = ref("");
 const blocked = ref(false);
 const pending = ref<{ client_turn_id: string; text: string; socratic: boolean }>();
 const activeTurn = computed(() => view.value?.turns.find(t => t.status === "queued" || t.status === "running"));
-const exhausted = computed(() => !!view.value && (view.value.session.model_calls >= view.value.session.max_calls || view.value.turns.length >= 40));
+const exhausted = computed(() => !!view.value && (view.value.session.model_calls >= view.value.session.max_calls || view.value.turns.length >= (view.value.session.max_turns ?? 40)));
 let epoch = 0;
 let readSequence = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -41,6 +42,7 @@ function fail(reason: unknown) {
 function apply(result: TutorView) {
   ++readSequence;
   view.value = result;
+  providerMode.value = result.provider_mode;
   clearTimeout(timer);
   if (activeTurn.value && visible) timer = setTimeout(() => void refresh(), 700);
 }
@@ -59,6 +61,7 @@ async function restore() {
   try {
     const result = await listTutorSessions(props.taskId);
     if (version !== epoch) return;
+    providerMode.value = result.provider_mode;
     sessions.value = result.sessions.filter(s => s.status === "active" && s.revision === result.revision);
     if (sessions.value[0]) {
       const data = await getTutorSession(props.taskId, sessions.value[0].session_id);
@@ -116,7 +119,7 @@ function seek(c: Citation) {
   if (view.value) emit("seek", c.start_ms, { evidenceId: c.evidence_id, revision: view.value.session.revision });
 }
 watch(() => props.taskId, () => {
-  view.value = null; sessions.value = []; pending.value = undefined; draft.value = ""; busy.value = false;
+  view.value = null; sessions.value = []; providerMode.value = undefined; pending.value = undefined; draft.value = ""; busy.value = false;
   blocked.value = false; createKey = randomUuid(); void restore();
 }, { immediate: true });
 onActivated(() => { visible = true; void refresh(); });
@@ -128,7 +131,9 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
   <section class="tutor" aria-labelledby="tutor-title">
     <header><div><p class="eyebrow">课程证据 · 多轮对话</p><h2 id="tutor-title">Tutor</h2></div>
       <button :disabled="busy || !!activeTurn || !!pending || blocked" @click="newConversation">新对话</button></header>
-    <p class="boundary">实验性 Mock 演示，仅验证对话流程；教学质量尚未经过真实模型验收。</p>
+    <p v-if="providerMode === 'deepseek-flash'" class="boundary">DeepSeek 试学：提问、对话上下文和检索到的课程片段将发送给 DeepSeek。此试学共可生成最多 3 次，教学质量待评审。</p>
+    <p v-else class="boundary">实验性 Mock 演示，仅验证对话流程；教学质量尚未经过真实模型验收。</p>
+    <p v-if="view?.session.engine === 'light'" class="boundary">轻量 Tutor：每轮最多一次生成，最多六轮；完整保留本对话前提，超限或失败不自动重试。复杂问题请拆分提问。</p>
     <p v-if="loading" role="status">正在恢复对话…</p>
     <label v-if="sessions.length">已保存对话 <select :value="view?.session.session_id ?? ''" :disabled="busy || !!pending" @change="openSession(($event.target as HTMLSelectElement).value)"><option disabled value="">选择对话</option><option v-for="(s, i) in sessions" :key="s.session_id" :value="s.session_id">对话 {{ sessions.length - i }}</option></select></label>
     <p v-if="error" role="alert">{{ error }} <button v-if="!blocked" @click="view ? refresh() : restore()">重新读取</button></p>
@@ -142,7 +147,7 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
           <p v-if="turn.evaluation"><strong>对你的回复：</strong><template v-for="(part, i) in parts(turn.evaluation, turn.citations)" :key="i"><button v-if="part.citation" class="citation" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
           <details v-if="turn.citations.length"><summary>核对课程原文</summary><blockquote v-for="c in turn.citations" :key="c.evidence_id"><p>{{ c.text }}</p><button @click="seek(c)">定位出处 {{ formatMillisRange(c.start_ms, c.end_ms) }}</button></blockquote></details>
         </div>
-        <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已取消。' : '本轮未完成，未发布回答。可开启下一轮或新对话。' }}</p>
+        <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已取消。' : '本轮未完成，未发布回答。可开启下一轮或新对话。' }} <code v-if="turn.status === 'failed' && turn.error_code">{{ turn.error_code }}</code></p>
         <p v-else role="status">Tutor 正在查找课程证据… <button @click="cancel">取消</button></p>
       </li>
     </ol>

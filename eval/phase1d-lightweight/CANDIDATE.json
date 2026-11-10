@@ -1,0 +1,30 @@
+{
+  "base_sha": "17d78636cf97fcf55fe642b1ecc30c5e2ea48865",
+  "branch": "codex/phase1d-lightweight-tutor-20261108",
+  "engine": "light",
+  "real_provider_enabled": false,
+  "phase0_github_ci": "PENDING",
+  "limits": {
+    "model_requests_per_turn": 1,
+    "submitted_turns_per_session": 6,
+    "concurrency_per_session": 1,
+    "automatic_retries": 0,
+    "repairs": 0,
+    "reservation_proxy_per_turn": 64000,
+    "reservation_proxy_per_session": 384000,
+    "output_token_reserve": 1200,
+    "answer_characters": 1600,
+    "citations": 4,
+    "deadline_seconds": 20,
+    "retrieval_queries": 2,
+    "evidence_ids": 16
+  },
+  "modules_sha256": {
+    "agent-service/src/lecturelens_real_eval/tutor/light.py": "bcc39ae62c28b27b511afd63b08ba4fe205b85201b1f8c1b182c0266a489e693",
+    "agent-service/src/lecturelens_real_eval/tutor/store.py": "e030316d8abbf31ba9c17129ae8daf2310653ce9200ebc3b5d2046b513b56c62",
+    "agent-service/src/lecturelens_real_eval/tutor/app.py": "41b1bc980c8c071a152ae0b21ae6bc4bbf36a9c920f73f2e6ac421fce6ec8ac5",
+    "frontend/src/api/tutor.ts": "a1faa0349d29a4e9c2422b84aee527a73cea63afb0bb4bfe464809393e49c235",
+    "frontend/src/components/task-detail/CourseTutorPanel.vue": "21a8060278da7ffb3aa030611cf39fefec591f0e673074669498d992881ba3f2"
+  },
+  "identity_note": "Independent light-tutor UUID name prefix; P8 UUID input unchanged"
+}

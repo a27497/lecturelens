@@ -1,0 +1,236 @@
+{
+  "phase0_github_ci": "PENDING",
+  "records": [
+    {
+      "name": "phase1d-cross-browser-b",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 142.79443639099918,
+      "argv_sha256": "542ee813aa378bdd8bf01eb3f79d33719e16a2a9cee2b388e395c4a4511aebf1",
+      "log_sha256": "323103924db881b0283496a86f84823cd984113a1314be3a53892d775ecf1575",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-b/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-c",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 146.69491795200156,
+      "argv_sha256": "e8728cb536ebd920abece4cfcc00d82d672daf53d1f991d065a4eeda604afeb1",
+      "log_sha256": "65e30d6862144fec9a1820a9f49b019e50cbefe4f77b970590466fce7148b018",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-c/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-d",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 136.72372984600224,
+      "argv_sha256": "6ae63e29272d9228cbdef2a59b1f823c21cdabad5b00b0f13132e94324c4f3b2",
+      "log_sha256": "f46f7e50826858f201e7a7c7da196c3e3ba9642191abb99a01650f9a0507a537",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-d/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-e",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 116.21918695799832,
+      "argv_sha256": "9cda609f041f3a9b2c8f3851bcafd6f7c28aee5dde35d337cc91765769c5c270",
+      "log_sha256": "1e9155a667b8f899f3b713b78a7f5cf32ce275a3760d7cc04b678169157f1ba3",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-e/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-f",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 121.72426896699471,
+      "argv_sha256": "b48548315537323c34c1a2c675aedaf9051e8f886812a0b3864bef51eaa54f47",
+      "log_sha256": "a29cc546e3bf62a155cac6a2d8f81febb27753d0086f43b54e2a942851a7094a",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-f/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-first",
+      "status": "TIMED_OUT",
+      "child_returncode": 1,
+      "exit_code": 124,
+      "elapsed_seconds": 965.8330562580013,
+      "argv_sha256": "21edbb18f8e8560834c664a043e9b6f3f0803747516be30fd88e602ed811c03c",
+      "log_sha256": "34c0077a8d4763d5fedce28dac34c9637eafc6b16e61735b3f10eae284e22e99",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-first/run.json"
+    },
+    {
+      "name": "phase1d-cross-browser-g",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 145.66897248200257,
+      "argv_sha256": "f4b8e34b14bde92ee067e46ebab70a3323afc3c30ef826d9607812986fdab6c8",
+      "log_sha256": "dd7f6b6cc6a42f38b28b03b6150627bc5be8d77521e1ad1dc93e30b6f924a674",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-cross-browser-g/run.json"
+    },
+    {
+      "name": "phase1d-engine-final",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 103.99442517800344,
+      "argv_sha256": "a4f524476824226c71b8c772b9771d8acd5a3e36f44e9e663dadefbea8ebde46",
+      "log_sha256": "a2d331d436a75d2c4c1f30f267bada0785131ce417310e7a04f7a889ecb95800",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-engine-final/run.json"
+    },
+    {
+      "name": "phase1d-engine-identity-red",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 1.1785555700043915,
+      "argv_sha256": "fcf6487cd93a002083ab969db134633871a8a9940e0f14fe93cafd6f15ca29ab",
+      "log_sha256": "f301a43523fec34c2a9457aa2615f622c93247f484e8326ab9acb701d08bb280",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-engine-identity-red/run.json"
+    },
+    {
+      "name": "phase1d-frontend-build",
+      "status": "TIMED_OUT",
+      "child_returncode": -9,
+      "exit_code": 124,
+      "elapsed_seconds": 921.4174616980017,
+      "argv_sha256": "4d06bcf3b463893c44963b2822505625ae8da51142d63d259fe55e476cfbde3c",
+      "log_sha256": "77e81c68be2419698a86fb1c81ddb924f0eabd7e544106b6c22c4563777d995f",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-frontend-build/run.json"
+    },
+    {
+      "name": "phase1d-frontend-build-serial",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 19.340605992001656,
+      "argv_sha256": "4d06bcf3b463893c44963b2822505625ae8da51142d63d259fe55e476cfbde3c",
+      "log_sha256": "3554073f4ca7ac4e3a010a3eeb032147accf44c41a625e39e8c4295479107d94",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-frontend-build-serial/run.json"
+    },
+    {
+      "name": "phase1d-frontend-serial",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 79.97404162500607,
+      "argv_sha256": "b2a740176cf49c56022c5637d8b399102c4b9a01e671b82d16d36df5d37a1883",
+      "log_sha256": "a1ed57c6acfb0e7c3b989bb155699f535cf5429ba4b7445a1c6b1ca5cbed0702",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-frontend-serial/run.json"
+    },
+    {
+      "name": "phase1d-frontend-unit",
+      "status": "TIMED_OUT",
+      "child_returncode": -9,
+      "exit_code": 124,
+      "elapsed_seconds": 968.209659842003,
+      "argv_sha256": "e97a55292c0e10afdbfbf01cf59f36a83f7182d6706f50201f1d09617e272b59",
+      "log_sha256": "31ba420734e1f1e1dc641243cb7b2fc4bad11c79cbe88955328399d1ac1abe52",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-frontend-unit/run.json"
+    },
+    {
+      "name": "phase1d-java-gateway",
+      "status": "TIMED_OUT",
+      "child_returncode": -9,
+      "exit_code": 124,
+      "elapsed_seconds": 918.3376971010002,
+      "argv_sha256": "7a30308233ea2c6c1d8457b9b1fa357ae94b8647988695e9f6aae05f41c71425",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-java-gateway/run.json"
+    },
+    {
+      "name": "phase1d-java-serial",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 50.8906748340014,
+      "argv_sha256": "4f676735d00b3c172ba6385d2e7318b70bc1012a444cedd6db9d1d8a110a7148",
+      "log_sha256": "ea6e897b3e5439620dd3e44fec91534d9e82a7169a8240fe26939653927e469e",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-java-serial/run.json"
+    },
+    {
+      "name": "phase1d-light-final",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 13.11580628399679,
+      "argv_sha256": "f420de26fb892e2e44e203de37667d17f5bb28b03320faf6e12d2c07a9374337",
+      "log_sha256": "bf9ae9e3e8d84ded2b463cbce570c289989f08857bc0e43c26fc666d55174ced",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-light-final/run.json"
+    },
+    {
+      "name": "phase1d-mock-factory-gate",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 5.2171989690032206,
+      "argv_sha256": "3f4c82feaa8d9a65ad0f8f763d42ec52400ada9feda9475596d57275897559c4",
+      "log_sha256": "81ac35c7cc07e6bfbd5a82aec192d844848d4b087008ad7c90c4ff7413ee781b",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-mock-factory-gate/run.json"
+    },
+    {
+      "name": "phase1d-offline-audited",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 14.722958081001707,
+      "argv_sha256": "36a5eb3ed29ab93c19ba8028e2fe3af0f78a2c8bfabaf4077111a23367c0bfd0",
+      "log_sha256": "654e3550f2ed208a759c2a97c1019bbf42f20072bbd5fe4d50a2e94447bc3e23",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-offline-audited/run.json"
+    },
+    {
+      "name": "phase1d-python-final",
+      "status": "TIMED_OUT",
+      "child_returncode": -9,
+      "exit_code": 124,
+      "elapsed_seconds": 969.0302956529995,
+      "argv_sha256": "c29fce94ab0e3736239ebfb7a9c972f32b8875628097b607e417fa49f1c19747",
+      "log_sha256": "f4e8f0dcbe65877f5b96a002f94389d042a967540a9f9606f2e17f49cf4e3e90",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-python-final/run.json"
+    },
+    {
+      "name": "phase1d-python-first",
+      "status": "FAILED",
+      "child_returncode": 1,
+      "exit_code": 1,
+      "elapsed_seconds": 91.82017011100106,
+      "argv_sha256": "27a1446396c30e070673a654710fea7221cba91597008f50b912609bed57d090",
+      "log_sha256": "7b28ab2ddd0f769b24966133da9683ab04bf24f3456f66037dc91c8d0e6c9b00",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-python-first/run.json"
+    },
+    {
+      "name": "phase1d-python-serial",
+      "status": "SUCCEEDED",
+      "child_returncode": 0,
+      "exit_code": 0,
+      "elapsed_seconds": 90.89578665499721,
+      "argv_sha256": "aa46ac6150633b14364f5eb7d880dfb805f6cd19b334f5a18117d7e81cc529ea",
+      "log_sha256": "f2f81c95e109d216cb3cde68c4a0bde6652dfacfcaf07fd07c6a8126c063a115",
+      "process_cleanup_complete": true,
+      "evidence_path": ".data/phase1d/evidence/dev-checks/phase1d-python-serial/run.json"
+    }
+  ]
+}

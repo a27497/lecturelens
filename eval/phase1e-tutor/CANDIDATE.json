@@ -1,0 +1,15 @@
+{
+  "candidate": "phase1e-tutor-flash",
+  "phase1d_parent": "8ac7933b39dc03ec996e7e9ac61ad1d4e4d8e6d3",
+  "phase0_baseline": "17d78636cf97fcf55fe642b1ecc30c5e2ea48865",
+  "build_sha256": "01cbdfbf05ad439b6cdd31c31e0f5c1f33487d175e17d2f9b36764509772fa8e",
+  "dataset_sha256": "8d6db2bae205f262a86a6d4d3d42c59f953828b9751df04b3a5dcbbfd96eb4cf",
+  "freeze_manifest_sha256": "335011db23ec8a29560b0bb6a5fef22aaa81ad2b2e86cf84f7356d1946a08126",
+  "integration_sha256": "bd22739fef9792a7c084ef7b4c07e2119409814d9d1263090f10a3726058d942",
+  "model": "deepseek-flash",
+  "listed_model_version": "DeepSeek-V4.1-Flash-1017",
+  "price_snapshot": "deepseek-flash-peak-usd-2026-11-09",
+  "completion_token_limit": 4096,
+  "per_request_reservation_nano_usd": 319488000,
+  "real_trial_receipt": "NOT_CREATED"
+}
