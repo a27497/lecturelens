@@ -19,12 +19,20 @@
     "vue-router": "5.1.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.7",
     "@vue/test-utils": "^2.4.11",
-    "happy-dom": "^20.11.1",
+    "happy-dom": "21.0.4",
     "typescript": "5.9.3",
-    "vitest": "^4.1.10",
-    "vue-tsc": "3.3.5",
-    "vite": "8.1.0",
-    "@vitejs/plugin-vue": "6.0.7"
+    "vite": "8.1.6",
+    "vitest": "4.1.12",
+    "vue-tsc": "3.3.5"
+  },
+  "overrides": {
+    "js-beautify": {
+      "glob": "14.0.4",
+      "editorconfig": {
+        "minimatch": "11.0.5"
+      }
+    }
   }
 }
