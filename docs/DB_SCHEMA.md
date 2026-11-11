@@ -138,6 +138,7 @@ MinIO 正式引用完整性统计只计入 `upload_session.status = STORED` 的�
 | started_at | DATETIME(3) | 开始时间，允许为空 |
 | finished_at | DATETIME(3) | 结束时间，允许为空 |
 | deleted_at | DATETIME(3) | 用户逻辑删除时间；`NULL` 表示未删除 |
+| learning_ready_at | DATETIME(3) | V33：本次运行字幕入库、提前开放学习的时间；每次进入 `RUNNING` 时清空，`NULL` 时仅 `SUCCEEDED` 可学习，见[字幕就绪即可学习](SUBTITLES_READY_LEARNING.md) |
 | created_at | DATETIME(3) | 创建时间，默认 `CURRENT_TIMESTAMP(3)` |
 | updated_at | DATETIME(3) | 更新时间，默认 `CURRENT_TIMESTAMP(3)`，更新时自动刷新 |
 
@@ -654,3 +655,7 @@ The isolated evaluation ledger separately creates `p8_tutor_real_run` and `p8_tu
 `study_run.practice_format` defaults to `open`; `choice` snapshots the explicit Mock generation format and is immutable. Choice runs use `queued_choice_v1` / `running_choice_v1`; the additive active-Run index covers all practice, feedback and card states.
 
 `study_attempt.selected_option_id` and `choice_result` are nullable for legacy/open answers and paired for choice submissions. The JSON result stores deterministic equality judgment, the correct option ID and version-bound Evidence citations. Selection, judgment and event commit in one transaction; the existing unique request/version keys and deletion cascade still apply. DDL is in `study/attempts.py`, `study/store.py` and `study/choice.py`, applied under the existing migration advisory lock. No MySQL/Flyway change. See [P9](P9_EVIDENCE_CHOICE.md).
+
+## task_stage_outcome（V33）
+
+字幕就绪后在后台完成的各阶段（`TRANSLATION`、`LEARNING_PACKAGE`、`ARTIFACTS`）各自的结果：`status` 为 `SUCCEEDED`/`FAILED`，`error_code` 为有界、不含敏感信息的错误码（≤64 字符）。主键 `(task_id, stage)`，随 `analysis_task` 级联删除；每次运行开始时清空本任务的旧结果。某阶段失败只影响对应功能，不再把整门课程标记为 `FAILED`。语义见[字幕就绪即可学习](SUBTITLES_READY_LEARNING.md)。
