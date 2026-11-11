@@ -172,6 +172,14 @@ public class TaskResultServiceImpl implements TaskResultService {
         );
     }
 
+    private com.example.courselingo.task.service.LearningAvailability learningAvailability;
+
+    /** Independent outcomes of background stages; absent in narrow unit tests. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureLearningAvailability(com.example.courselingo.task.service.LearningAvailability value) {
+        learningAvailability = value;
+    }
+
     @Override
     public TaskResultResponse getResult(String taskId, String authorizationHeader) {
         CurrentUserResponse currentUser = currentUserService.currentUser(authorizationHeader);
@@ -197,7 +205,19 @@ public class TaskResultServiceImpl implements TaskResultService {
             .map(TaskResultServiceImpl::toAiCallRecord)
             .toList());
         appendHistoricalVisionRecord(resultAiCalls, aiCalls, normalizedTaskId, userId);
+        var outcomes = learningAvailability == null
+            ? java.util.Map.<String, com.example.courselingo.task.service.LearningAvailability.Outcome>of()
+            : learningAvailability.outcomes(normalizedTaskId, userId);
         TranslationStatus translationStatus = translationStatus(task, fullText, translations, aiCalls);
+        if (translationStatus != TranslationStatus.SUCCEEDED && failed(outcomes, com.example.courselingo.task.service.LearningAvailability.TRANSLATION)) {
+            translationStatus = TranslationStatus.FAILED;
+        }
+        var learningPackage = learningPackageQueryService.getByTaskAndLanguage(normalizedTaskId, userId, targetLanguage)
+            .map(this::toLearningPackage)
+            .orElse(null);
+        var artifacts = artifactFileQueryService.listByTaskId(normalizedTaskId, userId).stream()
+            .map(TaskResultServiceImpl::toArtifact)
+            .toList();
         return new TaskResultResponse(
             normalizedTaskId,
             targetLanguage,
@@ -212,16 +232,43 @@ public class TaskResultServiceImpl implements TaskResultService {
             translations.stream()
                 .map(TaskResultServiceImpl::toTranslation)
                 .toList(),
-            learningPackageQueryService.getByTaskAndLanguage(normalizedTaskId, userId, targetLanguage)
-                .map(this::toLearningPackage)
-                .orElse(null),
-            artifactFileQueryService.listByTaskId(normalizedTaskId, userId).stream()
-                .map(TaskResultServiceImpl::toArtifact)
-                .toList(),
+            learningPackage,
+            artifacts,
             keyframes(normalizedTaskId, userId),
             videoSegments(normalizedTaskId, userId),
-            List.copyOf(resultAiCalls)
+            List.copyOf(resultAiCalls),
+            backgroundStatus(task, learningPackage != null, outcomes,
+                com.example.courselingo.task.service.LearningAvailability.LEARNING_PACKAGE, "GENERATE_LEARNING_PACKAGE"),
+            backgroundStatus(task, !artifacts.isEmpty(), outcomes,
+                com.example.courselingo.task.service.LearningAvailability.ARTIFACTS, "GENERATE_ARTIFACTS")
         );
+    }
+
+    private static boolean failed(java.util.Map<String, com.example.courselingo.task.service.LearningAvailability.Outcome> outcomes, String stage) {
+        var outcome = outcomes.get(stage);
+        return outcome != null && com.example.courselingo.task.service.LearningAvailability.FAILED.equals(outcome.status());
+    }
+
+    /** A recorded background failure affects only its own feature; otherwise derive from the course status. */
+    private static com.example.courselingo.result.dto.BackgroundStageStatus backgroundStatus(
+        AnalysisTask task,
+        boolean produced,
+        java.util.Map<String, com.example.courselingo.task.service.LearningAvailability.Outcome> outcomes,
+        String stage,
+        String pipelineStage
+    ) {
+        if (produced) return com.example.courselingo.result.dto.BackgroundStageStatus.SUCCEEDED;
+        if (failed(outcomes, stage)) return com.example.courselingo.result.dto.BackgroundStageStatus.FAILED;
+        String status = task.getStatus() == null ? "" : task.getStatus();
+        return switch (status) {
+            case "CANCELED" -> com.example.courselingo.result.dto.BackgroundStageStatus.CANCELED;
+            case "FAILED" -> pipelineStage.equals(task.getCurrentStage())
+                ? com.example.courselingo.result.dto.BackgroundStageStatus.FAILED
+                : com.example.courselingo.result.dto.BackgroundStageStatus.NOT_STARTED;
+            case "CREATED", "QUEUED", "RUNNING", "RETRYING" -> com.example.courselingo.result.dto.BackgroundStageStatus.RUNNING;
+            case "SUCCEEDED" -> com.example.courselingo.result.dto.BackgroundStageStatus.SKIPPED;
+            default -> com.example.courselingo.result.dto.BackgroundStageStatus.NOT_STARTED;
+        };
     }
 
     private static TranslationStatus translationStatus(

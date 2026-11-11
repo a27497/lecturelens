@@ -133,7 +133,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
         com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies,
         com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner,
         com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints,
-        com.example.courselingo.task.usage.PipelineUsageLedger ledger
+        com.example.courselingo.task.usage.PipelineUsageLedger ledger,
+        org.springframework.beans.factory.ObjectProvider<com.example.courselingo.task.service.LearningAvailability> learningAvailability
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -200,7 +201,8 @@ public class AnalysisTaskWorkExecutorConfiguration {
             analysisTaskMapper,
             progressSnapshotService,
             Clock.systemUTC()
-        ), workspace, evidenceLifecycleService).withCheckpoints(checkpoints);
+        ), workspace, evidenceLifecycleService).withCheckpoints(checkpoints)
+            .withLearningAvailability(learningAvailability.getIfAvailable());
     }
 
     @Bean

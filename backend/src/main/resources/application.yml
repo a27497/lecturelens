@@ -51,6 +51,10 @@ management:
 
 courselingo:
   pipeline:
+    # Subtitles-ready learning: open study/Q&A/Agent once subtitles are stored; translation, learning
+    # package and download files then finish in the background with independent outcomes.
+    early-learning:
+      enabled: ${PIPELINE_EARLY_LEARNING_ENABLED:false}
     translation-v2:
       enabled: ${PIPELINE_TRANSLATION_V2_ENABLED:false}
       output-min: ${PIPELINE_TRANSLATION_OUTPUT_MIN:512}

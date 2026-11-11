@@ -17,10 +17,18 @@ public class GenerationFence {
     private final JdbcTemplate jdbc;
     private final TransactionTemplate transaction;
 
+    private org.springframework.beans.factory.ObjectProvider<LearnableSourcePublication> learnablePublication;
+
     public GenerationFence(JdbcTemplate jdbc, PlatformTransactionManager manager) {
         this.jdbc = jdbc;
         transaction = new TransactionTemplate(manager);
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
+
+    /** Resolved lazily: the publisher reads evidence, whose service depends on this fence. */
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    public void configureLearnablePublication(org.springframework.beans.factory.ObjectProvider<LearnableSourcePublication> value) {
+        learnablePublication = value;
     }
 
     public Ticket begin(String taskId, Long userId, String scope) {
@@ -68,6 +76,9 @@ public class GenerationFence {
             throw new IllegalStateException("Source replacement requires a transaction");
         }
         lockActive(taskId, userId);
+        var publication = learnablePublication == null ? null : learnablePublication.getIfAvailable();
+        // A learnable running course keeps its revision for additive derived sources (decided at commit).
+        if (publication != null && publication.deferIfLearnable(taskId, userId)) return;
         jdbc.update("UPDATE analysis_task SET content_revision=content_revision+1 WHERE id=? AND user_id=?", taskId, userId);
         com.example.courselingo.evidence.EvidenceChangeLog.append(jdbc, taskId, userId, null, "INVALIDATE");
     }

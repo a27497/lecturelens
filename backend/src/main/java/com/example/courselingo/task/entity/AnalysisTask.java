@@ -60,6 +60,10 @@ public class AnalysisTask {
     @TableField("updated_at")
     private LocalDateTime updatedAt;
 
+    /** Set when the current run published subtitles and opened learning early; NULL otherwise. */
+    @TableField("learning_ready_at")
+    private LocalDateTime learningReadyAt;
+
     public String getId() {
         return id;
     }
@@ -194,5 +198,13 @@ public class AnalysisTask {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getLearningReadyAt() {
+        return learningReadyAt;
+    }
+
+    public void setLearningReadyAt(LocalDateTime learningReadyAt) {
+        this.learningReadyAt = learningReadyAt;
     }
 }

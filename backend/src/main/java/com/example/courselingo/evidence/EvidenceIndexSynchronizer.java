@@ -54,7 +54,8 @@ public class EvidenceIndexSynchronizer {
                 SELECT s.task_id,s.user_id,s.desired_sequence,t.content_revision,s.attempts
                 FROM evidence_index_sync s JOIN analysis_task t ON t.id=s.task_id AND t.user_id=s.user_id
                 WHERE s.available_at<=CURRENT_TIMESTAMP AND (s.claim_until IS NULL OR s.claim_until<CURRENT_TIMESTAMP)
-                """ + (deleted ? " AND t.deleted_at IS NOT NULL " : " AND t.deleted_at IS NULL AND t.status='SUCCEEDED' ") + """
+                """ + (deleted ? " AND t.deleted_at IS NOT NULL "
+                    : " AND t.deleted_at IS NULL AND " + com.example.courselingo.task.service.LearningAvailability.learnableSql("t") + " ") + """
                 ORDER BY s.available_at,s.task_id LIMIT 1 FOR UPDATE
                 """);
             if (rows.isEmpty()) return null;
@@ -134,6 +135,17 @@ public class EvidenceIndexSynchronizer {
     }
 
     public record IndexStatus(String status, long revision, Long indexedRevision, String indexVersion,
-                              int attempts, String lastError, String updatedAt) { }
+                              int attempts, String lastError, String updatedAt) {
+        /**
+         * Whether study may search now. Besides an exactly current index, a same-revision index that is
+         * only catching up with evidence added in place (background translation or visual evidence) stays
+         * usable: it already covers every evidence item of this revision that a session could have cited.
+         */
+        public boolean servable() {
+            if ("READY".equals(status)) return true;
+            return java.util.Set.of("PENDING", "INDEXING", "FAILED").contains(status)
+                && indexedRevision != null && indexedRevision == revision;
+        }
+    }
     private record Work(String taskId, Long ownerId, long sequence, long revision, int attempts, String claimId, boolean deleted) { }
 }
