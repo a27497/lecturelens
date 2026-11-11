@@ -145,6 +145,70 @@ class LearningPackageServiceTest {
     }
 
     @Test
+    void longCourseThatWouldOverflow8192IsGeneratedByChapterThenAssembled() {
+        java.util.List<SubtitleSegment> sources = new ArrayList<>();
+        java.util.List<SubtitleTranslationSegment> translations = new ArrayList<>();
+        String sourceBody = "probability independence conditional density ".repeat(120);
+        String translatedBody = "概率 独立性 条件密度 ".repeat(120);
+        for (int i = 0; i < 8; i++) {
+            sources.add(sourceSegment(i, i * 60_000L, (i + 1) * 60_000L, "cue " + i + " " + sourceBody));
+            translations.add(translationSegment(i, i * 60_000L, (i + 1) * 60_000L, "译文 " + i + " " + translatedBody));
+        }
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(sources);
+        when(translationMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN")).thenReturn(translations);
+        when(learningPackageMapper.insert(any(LearningPackage.class))).thenReturn(1);
+        fakeLlmProvider.nextContent = shortCourseJson();
+
+        int saved = learningPackageService.generateLearningPackage(command());
+
+        assertThat(saved).isEqualTo(1);
+        assertThat(fakeLlmProvider.requests).hasSizeGreaterThan(1);
+        assertThat(fakeLlmProvider.requests).anyMatch(request -> "MAP".equals(request.metadata().get("learningPhase")));
+        assertThat(fakeLlmProvider.requests.getLast().metadata()).containsEntry("learningPhase", "FINAL");
+        long estimatedDirect = fakeLlmProvider.requests.stream()
+            .mapToLong(request -> ((Number) request.metadata().getOrDefault("learningEstimatedInputTokens", 0)).longValue())
+            .max().orElse(0);
+        assertThat(estimatedDirect).isPositive();
+        for (LlmRequest request : fakeLlmProvider.requests) {
+            long input = ((Number) request.metadata().get("learningEstimatedInputTokens")).longValue();
+            long limit = ((Number) request.metadata().get("learningInputTokenLimit")).longValue();
+            int output = request.maxTokens() == null ? 4096 : request.maxTokens();
+            assertThat(input).isLessThanOrEqualTo(limit);
+            assertThat(input + output + 256).isLessThanOrEqualTo(8192);
+        }
+        var members = fakeLlmProvider.requests.stream()
+            .filter(request -> "MAP".equals(request.metadata().get("learningPhase")))
+            .flatMap(request -> ((java.util.List<?>) request.metadata().get("learningSectionSources")).stream())
+            .map(com.example.courselingo.learning.service.LearningPackageSourceSection.class::cast)
+            .flatMap(section -> section.memberIndexes().stream())
+            .distinct().sorted().toList();
+        assertThat(members).containsExactly(0, 1, 2, 3, 4, 5, 6, 7);
+        verify(learningPackageMapper).insert(any(LearningPackage.class));
+    }
+
+    @Test
+    void failedChapterDoesNotSaveAPartialLearningPackage() {
+        java.util.List<SubtitleSegment> sources = new ArrayList<>();
+        java.util.List<SubtitleTranslationSegment> translations = new ArrayList<>();
+        String body = "evidence that must not be dropped silently ".repeat(120);
+        for (int i = 0; i < 8; i++) {
+            sources.add(sourceSegment(i, i * 60_000L, (i + 1) * 60_000L, "cue " + i + " " + body));
+            translations.add(translationSegment(i, i * 60_000L, (i + 1) * 60_000L, "译文 " + i + " " + body));
+        }
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(sources);
+        when(translationMapper.selectByTaskIdUserIdAndTargetLanguage("task_1", 42L, "zh-CN")).thenReturn(translations);
+        fakeLlmProvider.failAfterMaps = 1;
+
+        assertThatThrownBy(() -> learningPackageService.generateLearningPackage(command()))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.AI_PROVIDER_FAILED);
+        verify(learningPackageMapper, never()).insert(any(LearningPackage.class));
+        assertThat(fakeLlmProvider.requests).anyMatch(request -> "MAP".equals(request.metadata().get("learningPhase")));
+        assertThat(fakeLlmProvider.requests).noneMatch(request -> "FINAL".equals(request.metadata().get("learningPhase")));
+    }
+
+    @Test
     void generateAppliesLearningPackageRoute() {
         learningPackageService = new LearningPackageServiceImpl(
             sourceMapper,
@@ -609,6 +673,12 @@ class LearningPackageServiceTest {
             """;
     }
 
+    private static String shortCourseJson() {
+        return """
+            {"title":"概率基础课","summary":"本课系统介绍概率、独立性与条件密度的基本定义，说明这些概念如何用于后续推理，并帮助学生把课堂证据整理成可复习的要点、术语和练习问题。","keyPoints":[{"index":1,"text":"概率描述事件发生的可能性"},{"index":2,"text":"独立性表示事件互不影响"},{"index":3,"text":"条件密度用于在已知条件下更新判断"}],"glossary":[{"term":"probability","definition":"事件发生的可能性","translation":"概率"},{"term":"independence","definition":"事件互不影响","translation":"独立性"},{"term":"conditional density","definition":"在已知条件下的密度","translation":"条件密度"}],"qa":[{"question":"什么是独立性？","answer":"事件互不影响。"},{"question":"条件密度有什么用？","answer":"在已知条件下更新判断。"}]}
+            """;
+    }
+
     private static void assertValidationFailure(ThrowingCallable callable) {
         assertThatThrownBy(callable::call)
             .isInstanceOf(BusinessException.class)
@@ -671,6 +741,8 @@ class LearningPackageServiceTest {
         private final Deque<String> queuedContents = new ArrayDeque<>();
         private String nextContent = okJson();
         private String providerName = "fake";
+        private int failAfterMaps = -1;
+        private int mapCount;
 
         void enqueueContent(String... contents) {
             queuedContents.addAll(java.util.List.of(contents));
@@ -679,6 +751,17 @@ class LearningPackageServiceTest {
         @Override
         public LlmResult generate(LlmRequest request) {
             requests.add(request);
+            String phase = String.valueOf(request.metadata().get("learningPhase"));
+            if ("MAP".equals(phase) || "REDUCE".equals(phase)) {
+                mapCount += "MAP".equals(phase) ? 1 : 0;
+                if (failAfterMaps >= 0 && "MAP".equals(phase) && mapCount > failAfterMaps) {
+                    return new LlmResult(providerName, "fake-model", "{\"wrong\":\"schema\"}", "stop", null, Duration.ofMillis(1), Map.of());
+                }
+                return new LlmResult(
+                    providerName, "fake-model", "{\"notes\":\"本章保留概率与条件分布的关键定义\"}", "stop",
+                    null, Duration.ofMillis(1), Map.of()
+                );
+            }
             String content = queuedContents.isEmpty() ? nextContent : queuedContents.removeFirst();
             return new LlmResult(providerName, "fake-model", content, "stop", null, Duration.ofMillis(1), Map.of());
         }

@@ -73,6 +73,36 @@ class LearningPackagePromptFactoryTest {
     }
 
     @Test
+    void translatedAndFullTextPromptsAttachChapterWindowsAndKeepCueText() {
+        List<SubtitleSegment> sources = IntStream.range(0, 5).mapToObj(index -> source(index, index * 60_000L)).toList();
+        List<SubtitleTranslationSegment> translations = IntStream.range(0, 5)
+            .mapToObj(index -> translation(index, index * 60_000L)).toList();
+        var properties = new LearningPackageProperties();
+
+        var translated = LearningPackagePromptFactory.build(
+            command(), sources, translations, List.of(), Duration.ofSeconds(30), properties
+        );
+        assertThat(translated.metadata()).containsEntry("learningChapterCount", 2);
+        @SuppressWarnings("unchecked")
+        List<LearningPackageSourceSection> chapters =
+            (List<LearningPackageSourceSection>) translated.metadata().get("learningSourceSections");
+        assertThat(chapters).hasSize(2);
+        assertThat(chapters.get(0).memberIndexes()).containsExactly(0, 1, 2, 3);
+        assertThat(chapters.get(1).memberIndexes()).containsExactly(4);
+        assertThat(translated.messages().get(1).content())
+            .contains("Chapter 1 [0,240000) ms:", "Chapter 2 [240000,300000) ms:")
+            .contains("\"sourceText\":\"source 0\"", "\"translatedText\":\"translation 4\"", "\"index\":4");
+
+        var fullText = LearningPackagePromptFactory.buildFromFullText(
+            command(), "full source", "full translation", sources, translations, List.of(),
+            Duration.ofSeconds(30), properties
+        );
+        assertThat(fullText.metadata()).containsEntry("promptSource", "fullText").containsEntry("learningChapterCount", 2);
+        assertThat(fullText.messages().get(1).content())
+            .contains("Chapter 1 [", "\"sourceText\":\"source 0\"", "\"translatedText\":\"translation 0\"");
+    }
+
+    @Test
     void promptUsesTheSameConfiguredCourseTierAsValidation() {
         LearningPackageProperties properties = new LearningPackageProperties();
         properties.setLongCourseMinutes(12);
@@ -106,11 +136,19 @@ class LearningPackagePromptFactoryTest {
     }
 
     private static SubtitleSegment source() {
+        return source(0, 0L, "source", 1_000L);
+    }
+
+    private static SubtitleSegment source(int index, long startMillis) {
+        return source(index, startMillis, "source " + index, startMillis + 60_000L);
+    }
+
+    private static SubtitleSegment source(int index, long startMillis, String text, long endMillis) {
         SubtitleSegment segment = new SubtitleSegment();
-        segment.setSegmentIndex(0);
-        segment.setStartMillis(0L);
-        segment.setEndMillis(1_000L);
-        segment.setText("source");
+        segment.setSegmentIndex(index);
+        segment.setStartMillis(startMillis);
+        segment.setEndMillis(endMillis);
+        segment.setText(text);
         return segment;
     }
 
@@ -120,6 +158,15 @@ class LearningPackagePromptFactoryTest {
         segment.setStartMillis(0L);
         segment.setEndMillis(1_000L);
         segment.setTranslatedText("translation");
+        return segment;
+    }
+
+    private static SubtitleTranslationSegment translation(int index, long startMillis) {
+        SubtitleTranslationSegment segment = new SubtitleTranslationSegment();
+        segment.setSegmentIndex(index);
+        segment.setStartMillis(startMillis);
+        segment.setEndMillis(startMillis + 60_000L);
+        segment.setTranslatedText("translation " + index);
         return segment;
     }
 }

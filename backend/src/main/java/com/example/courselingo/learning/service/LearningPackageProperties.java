@@ -23,6 +23,7 @@ public class LearningPackageProperties {
     private int maxModelRequests = 64;
     private int maxReduceLevels = 6;
     private Duration generationTimeout = Duration.ofMinutes(15);
+    private int segmentWindowSeconds = 240;
     private java.util.Map<String, Integer> modelContextLimits = java.util.Map.of();
 
     public LearningPackageProperties() {
@@ -55,6 +56,8 @@ public class LearningPackageProperties {
     public void setMaxModelRequests(int value) { maxModelRequests = positive(value, "maxModelRequests"); }
     public int maxReduceLevels() { return maxReduceLevels; }
     public void setMaxReduceLevels(int value) { maxReduceLevels = positive(value, "maxReduceLevels"); }
+    public int segmentWindowSeconds() { return segmentWindowSeconds; }
+    public void setSegmentWindowSeconds(int value) { segmentWindowSeconds = Math.max(60, Math.min(value, 600)); }
     public Duration generationTimeout() { return generationTimeout; }
     public void setGenerationTimeout(Duration value) {
         if (value == null || value.isZero() || value.isNegative()) throw new IllegalArgumentException("generationTimeout must be positive");

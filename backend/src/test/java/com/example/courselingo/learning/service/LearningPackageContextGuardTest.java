@@ -178,6 +178,73 @@ class LearningPackageContextGuardTest {
             .containsEntry(AiModelRoutedLlmRequestFactory.METADATA_MODEL_NAME, "deepseek-flash");
     }
 
+    @Test void requestThatWouldOverflow8192IsMappedThenAssembledWithinTheSameLimit() {
+        String evidence = "Probability, independence and conditional density. ".repeat(400);
+        var original = request(evidence);
+        long direct = LearningPackageContextGuard.estimate(original);
+        assertThat(direct).isGreaterThanOrEqualTo(15689);
+        var result = guard().generate(original);
+        var maps = calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).toList();
+        assertThat(maps).isNotEmpty();
+        assertThat(calls.getLast().metadata()).containsEntry("learningPhase", "FINAL");
+        StringBuilder rebuilt = new StringBuilder();
+        for (var map : maps) rebuilt.append(section(map));
+        assertThat(rebuilt.toString()).isEqualTo("Source transcript:\n" + evidence);
+        assertThat(calls).allSatisfy(r -> {
+            long input = LearningPackageContextGuard.estimate(r);
+            int output = r.maxTokens() == null ? 4096 : r.maxTokens();
+            assertThat(input).isLessThanOrEqualTo(((Number) r.metadata().get("learningInputTokenLimit")).longValue());
+            assertThat(input + output + properties.contextReserve()).isLessThanOrEqualTo(8192);
+        });
+        assertThat(result.content()).contains("final");
+    }
+
+    @Test void failedChapterDoesNotDropRemainingEvidenceOrPublishPartialNotes() {
+        var guard = guard(r -> calls.size() == 1
+            ? "{\"notes\":\"第一章要点\"}"
+            : "{\"wrong\":\"schema\"}");
+        assertThatThrownBy(() -> guard.generate(request("Long course.\n".repeat(2000))))
+            .hasMessageContaining("notes are invalid");
+        var maps = calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).toList();
+        assertThat(maps).hasSize(2);
+        assertThat(calls).noneMatch(r -> "FINAL".equals(r.metadata().get("learningPhase")));
+    }
+
+    @Test void translatedChaptersStayTogetherInMapCallsWhenTheyFit() {
+        var sources = new ArrayList<com.example.courselingo.subtitle.domain.SubtitleSegment>();
+        var translations = new ArrayList<com.example.courselingo.subtitle.domain.SubtitleTranslationSegment>();
+        for (int i = 0; i < 8; i++) {
+            var source = new com.example.courselingo.subtitle.domain.SubtitleSegment();
+            source.setSegmentIndex(i);
+            source.setStartMillis(i * 60_000L);
+            source.setEndMillis((i + 1) * 60_000L);
+            source.setText("Original concept " + i + " " + "evidence. ".repeat(80));
+            sources.add(source);
+            var translation = new com.example.courselingo.subtitle.domain.SubtitleTranslationSegment();
+            translation.setSegmentIndex(i);
+            translation.setStartMillis(source.getStartMillis());
+            translation.setEndMillis(source.getEndMillis());
+            translation.setTranslatedText("译文概念 " + i + " " + "依据。".repeat(80));
+            translations.add(translation);
+        }
+        var command = new ValidatedLearningPackageCommand("task", 42L, "en", "zh-CN", "request", execution, false);
+        var request = LearningPackagePromptFactory.build(command, sources, translations, Duration.ofSeconds(180));
+        assertThat(request.metadata()).containsKey("learningSourceSections");
+        assertThat((int) request.metadata().get("learningChapterCount")).isEqualTo(2);
+        long direct = LearningPackageContextGuard.estimate(request);
+        assertThat(direct).isGreaterThan(properties.contextLimit("local") * 70L / 100);
+        guard().generate(request);
+        var maps = calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).toList();
+        assertThat(maps).isNotEmpty();
+        var members = maps.stream().flatMap(r -> ((List<?>) r.metadata().get("learningSectionSources")).stream())
+            .map(LearningPackageSourceSection.class::cast)
+            .flatMap(section -> section.memberIndexes().stream())
+            .distinct().sorted().toList();
+        assertThat(members).containsExactlyElementsOf(java.util.stream.IntStream.range(0, 8).boxed().toList());
+        assertThat(calls.getLast().metadata()).containsEntry("learningPhase", "FINAL");
+        assertThat(calls.getLast().messages().get(1).content()).contains("ordered section notes");
+    }
+
     private String section(LlmRequest request) { return request.messages().getLast().content().split("\nUntrusted section evidence:\n", 2)[1]; }
 
     @Test void impossibleContextHasIndependentSafeCodeAndZeroPhysicalCalls() {
@@ -226,9 +293,10 @@ class LearningPackageContextGuardTest {
         assertThat(maps).isNotEmpty();
         var identities = maps.stream().flatMap(r -> ((List<?>) r.metadata().get("learningSectionSources")).stream())
             .map(LearningPackageSourceSection.class::cast).toList();
-        assertThat(identities.stream().map(LearningPackageSourceSection::segmentIndex).distinct()).containsExactlyElementsOf(
-            java.util.stream.IntStream.range(0, 12).boxed().toList());
+        assertThat(identities.stream().flatMap(section -> section.memberIndexes().stream()).distinct())
+            .containsExactlyElementsOf(java.util.stream.IntStream.range(0, 12).boxed().toList());
         assertThat(identities).allSatisfy(s -> assertThat(s.contentHash()).hasSize(64));
+        assertThat(identities.stream().map(LearningPackageSourceSection::segmentIndex).distinct().count()).isLessThan(12);
         long mapped = maps.size();
         guard.generate(LearningPackagePromptFactory.buildRetry(command, sources, List.of(), Duration.ofSeconds(180)));
         assertThat(calls.stream().filter(r -> "MAP".equals(r.metadata().get("learningPhase"))).count()).isEqualTo(mapped);
