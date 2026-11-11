@@ -72,6 +72,7 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 
 - **Trace / Replay：** `python -m lecturelens_agent.study.trace_cli` 导出私有 Trace、启动授权的新 Run Replay 和比较结果；需要运维数据库访问及 Java 用户登录，读取前后重新授权。[用法与真实失败](../eval/agent-trace-phase-b/README.md)
 - **持久记录指标：** `python -m lecturelens_agent.study.metrics_report --records FILE.jsonl --output-dir NEW_DIR` 或 `--database` 只读汇总 Run 终态、工具结局、模型用量与延迟；每项附样本量/UTC 范围，未记录金额和节点耗时标不可得。[统一口径与命令](../docs/STUDY_METRICS.md)
+- **并发通道：** 检索与建索引分开准入，不同 Session 的 Run 并行、同一 Session 串行，可选服务端事件流默认关闭。[配置与取舍](../docs/AGENT_CONCURRENCY.md)
 - **只读容错：** CHECK/SEARCH/READ/WINDOW 的超时和依赖不可用最多重试两次，退避 50/100ms；每次重试持久扣减上述工具预算。参数、响应、权属/版本错误直接拒绝，持续依赖故障明确失败，不生成无证据产物。公开 Trace 记录失败类别、重试、退避与终止；写入不自动重试。[故障注入与基线](../eval/tool-resilience-20261014/README.md)
 - **Course MCP：** `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用官方 SDK stdio Client/Server；默认 `internal`。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
 - **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
@@ -82,4 +83,4 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 
 ### Experimental P8 Tutor
 
-`lecturelens_real_eval.tutor.app:create_app --factory` is an optional ASGI entry point retaining the original service routes. Set `TUTOR_ENABLED=true` with `AGENT_LLM_MODE=mock` to initialize `tutor_session/tutor_turn` and its bounded worker; real product mode is rejected. Java's Study gateway must also be enabled. See [P8 integration and rollback](../docs/P8_TUTOR.md) and [isolated offline tests/eval](../eval/p8-tutor/README.md). Historical frozen manifests remain unchanged. The Phase 0 provider compatibility fix has a separate development identity; see [Phase 0 integration](../eval/phase0-integration-20261108/REPORT.md).
+`lecturelens_real_eval.tutor.app:create_app --factory` is an optional ASGI entry point retaining the original service routes. Set `TUTOR_ENABLED=true` with `AGENT_LLM_MODE=mock` to initialize `tutor_session/tutor_turn` and its bounded worker; real product mode is rejected. Java's Study gateway must also be enabled. See [P8 integration and rollback](../docs/P8_TUTOR.md) and [isolated offline tests/eval](../eval/p8-tutor/README.md). Historical frozen manifests remain unchanged. The Phase 0 provider compatibility fix has a separate, now historical identity; see [Phase 0 integration](../eval/phase0-integration-20261108/REPORT.md). The current development identity is the Step 6 parallel-lanes runtime; see [Agent concurrency](../docs/AGENT_CONCURRENCY.md).
