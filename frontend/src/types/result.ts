@@ -145,6 +145,9 @@ export interface ResultAiCallRecord {
   createdAt: string;
 }
 
+/** Status of a feature that completes after subtitles (learning package, download files). */
+export type BackgroundStageStatus = "NOT_STARTED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "SKIPPED" | "CANCELED";
+
 export interface TaskResultResponse {
   taskId: string;
   targetLanguage: string;
@@ -160,4 +163,6 @@ export interface TaskResultResponse {
   keyframes: ResultKeyframe[];
   videoSegments: ResultVideoSegment[];
   aiCallRecords: ResultAiCallRecord[];
+  learningPackageStatus?: BackgroundStageStatus;
+  artifactsStatus?: BackgroundStageStatus;
 }

@@ -67,6 +67,23 @@ export const useTaskResultStore = defineStore("taskResult", {
       }
     },
 
+    /**
+     * Background refresh for a course that is already learnable: keeps the current result on screen
+     * (no empty flash, reading position kept) and ignores transient failures.
+     */
+    async refresh(taskId: string) {
+      const normalizedTaskId = taskId.trim();
+      if (!normalizedTaskId || this.taskId !== normalizedTaskId || this.loading) return;
+      this.requestVersion += 1;
+      const currentVersion = this.requestVersion;
+      try {
+        const result = await fetchTaskResult(normalizedTaskId);
+        if (!this.isStale(currentVersion) && result) this.result = result;
+      } catch {
+        // The next stage change or completion reloads again.
+      }
+    },
+
     acceptVerified(taskId: string, result: TaskResultResponse) {
       if (this.taskId !== taskId || result.taskId !== taskId) return;
       // Supersede older result loads that could otherwise replace the verified snapshot.

@@ -3,6 +3,11 @@ import { formatApiTimestamp } from "../../utils/time";
 
 export type CourseWorkspace = "tutor" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
 
+/** Mirrors the backend rule: SUCCEEDED, or RUNNING once this run's subtitles opened learning. */
+export function courseLearnable(status?: string | null, learningReady?: boolean | null): boolean {
+  return status === "SUCCEEDED" || (status === "RUNNING" && learningReady === true);
+}
+
 export function courseStageText(stage: string, status?: TaskEventPayload["status"]): string {
   if (status === "CANCELED") {
     return "已取消";

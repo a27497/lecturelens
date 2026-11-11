@@ -195,6 +195,33 @@ it("shows preparation before querying the study gateway for a processing course"
   wrapper.unmount();
 });
 
+it("opens learning on a running course once its subtitles are ready and keeps the session when it finishes", async () => {
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: false }, global: { stubs } });
+  await flushPromises();
+  expect(studyStatus).not.toHaveBeenCalled();
+  expect(wrapper.text()).toContain("课程内容尚未处理完成");
+  await wrapper.setProps({ learningReady: true }); await flushPromises();
+  expect(studyStatus).toHaveBeenCalledTimes(1);
+  expect(wrapper.text()).not.toContain("课程内容尚未处理完成");
+  // Background stages finishing must not reset an open study session.
+  await wrapper.setProps({ status: "SUCCEEDED" }); await flushPromises();
+  expect(studyStatus).toHaveBeenCalledTimes(1);
+  wrapper.unmount();
+});
+
+it("stays usable while the index catches up on the same revision after a late translation", async () => {
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "PENDING", revision: 1, indexedRevision: 1 } as never);
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: true }, global: { stubs } });
+  await flushPromises();
+  expect(wrapper.text()).not.toContain("课程资料正在准备");
+  wrapper.unmount();
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "PENDING", revision: 2, indexedRevision: 1 } as never);
+  const stale = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: true }, global: { stubs } });
+  await flushPromises();
+  expect(stale.text()).toContain("课程资料正在准备");
+  stale.unmount();
+});
+
 it("opens a saved older run from learning history", async () => {
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
     if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };

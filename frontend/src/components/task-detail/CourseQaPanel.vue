@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import CourseModelUsagePanel from "./CourseModelUsagePanel.vue";
 import { askCourseQa, readCourseQaHistory, getEvidenceIndexStatus, toReadableCourseQaError } from "../../api/qa";
+import { evidenceIndexServable } from "./indexReadiness";
 import type { EvidenceIndexStatus } from "../../api/qa";
 import type { CourseQaEvidenceItem, CourseQaResponse, CourseQaHistoryItem } from "../../types/qa";
 import { formatMillisRange } from "../../utils/time";
@@ -66,8 +67,9 @@ const errorMessage = ref("");
 const response = ref<CourseQaResponse | null>(null);
 const requestVersion = ref(0);
 const indexStatus = ref<EvidenceIndexStatus["status"] | "UNKNOWN">("UNKNOWN");
-const indexReady = computed(() => ["DISABLED", "READY"].includes(indexStatus.value));
-const indexMessage = computed(() => ({
+const indexServable = ref(false);
+const indexReady = computed(() => ["DISABLED", "READY"].includes(indexStatus.value) || indexServable.value);
+const indexMessage = computed(() => indexStatus.value !== "READY" && indexServable.value ? "课程资料正在补充（如译文），现在即可提问。" : ({
   UNKNOWN: "正在检查课程资料状态…", DISABLED: "", READY: "课程资料已就绪，可以提问。",
   PENDING: "课程资料等待更新，完成后即可提问。", INDEXING: "正在准备课程资料，完成后即可提问。",
   FAILED: "课程资料更新暂时失败，系统会自动重试。",
@@ -86,15 +88,16 @@ watch(() => props.taskId, (taskId, _previous, onCleanup) => {
   historyGeneration++; historyLoading.value = false; history.value = []; historyCursor.value = null; historyError.value = "";
   void loadHistory(false, true);
   indexStatus.value = "UNKNOWN";
+  indexServable.value = false;
   let active = true;
   let timer: ReturnType<typeof setTimeout> | undefined;
   onCleanup(() => { active = false; clearTimeout(timer); });
   async function poll() {
     try {
       const status = await getEvidenceIndexStatus(taskId);
-      if (active) indexStatus.value = status.status;
+      if (active) { indexStatus.value = status.status; indexServable.value = evidenceIndexServable(status); }
     } catch (failure) {
-      if (active) { indexStatus.value = "UNKNOWN"; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); }
+      if (active) { indexStatus.value = "UNKNOWN"; indexServable.value = false; if (mayHaveLostCourseAccess(failure)) emit("accessFailure"); }
     }
     if (active) timer = setTimeout(poll, indexReady.value ? 30_000 : 3_000);
   }
