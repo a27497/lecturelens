@@ -77,7 +77,6 @@ final class SystemModelChatClient {
         if (request.responseFormat() == LlmResponseFormat.JSON_OBJECT)
             body.put("response_format", Map.of("type", "json_object"));
         OpenAiCompatibleRequestOptionsAdapter.apply(body, route.model());
-        com.example.courselingo.ai.llm.TranslationResponseDecoder.applyOptions(body,route.baseUrl(),route.model(),request);
         String payload;
         try {
             payload = json.writeValueAsString(body);
@@ -141,6 +140,8 @@ final class SystemModelChatClient {
                 observedReason = "ENVELOPE_JSON_INVALID";
                 var root = json.readTree(response.body());
                 observedRoot = root;
+                LlmOutputGuard.rejectTruncated(root, status);
+                LlmOutputGuard.rejectEmpty(root, status);
                 observedReason = "CONTENT_FIELD_INVALID";
                 var content = root.path("choices").path(0).path("message").path("content");
                 if (!content.isTextual() || content.asText().isBlank()) {
@@ -156,7 +157,6 @@ final class SystemModelChatClient {
                     }
                 }
                 observedReason = "PASSED";
-                var usage = root.path("usage");
                 var metadata = new LinkedHashMap<String, Object>();
                 metadata.put("systemModel.snapshotId", request.execution().snapshotId());
                 metadata.put("systemModel.configVersion", request.execution().configVersion());
@@ -170,10 +170,7 @@ final class SystemModelChatClient {
                         route.model(),
                         content.asText(),
                         root.path("choices").path(0).path("finish_reason").asText(),
-                        new LlmUsage(
-                                integer(usage, "prompt_tokens"),
-                                integer(usage, "completion_tokens"),
-                                integer(usage, "total_tokens")),
+                        LlmUsage.parse(root),
                         Duration.ofNanos(System.nanoTime() - start),
                         metadata);
             } catch (com.example.courselingo.ai.llm.TranslationFailure safe) {

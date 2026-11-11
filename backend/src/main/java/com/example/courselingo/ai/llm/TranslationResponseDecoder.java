@@ -2,7 +2,6 @@ package com.example.courselingo.ai.llm;
 
 import com.example.courselingo.ai.llm.*;
 import com.fasterxml.jackson.databind.*;
-import java.net.URI;
 import java.util.*;
 import static com.example.courselingo.ai.llm.TranslationFailure.Reason.*;
 
@@ -13,10 +12,6 @@ public final class TranslationResponseDecoder {
     public static boolean enabled(LlmRequest request) {
         return Boolean.TRUE.equals(request.metadata().get("translationV2"))
             && "TRANSLATION_FULL_TEXT".equals(request.metadata().get("modelRouting.stage"));
-    }
-    public static void applyOptions(Map<String, Object> body, String baseUrl, String model, LlmRequest request) {
-        if (enabled(request) && "api.deepseek.com".equalsIgnoreCase(URI.create(baseUrl).getHost())
-            && "deepseek-flash".equals(model)) body.put("thinking", Map.of("type", "disabled"));
     }
     public static LlmResult decode(OpenAiCompatibleClientResponse response, String model, Map<String, Object> metadata) {
         return decode(response, model, metadata, true);
@@ -39,7 +34,7 @@ public final class TranslationResponseDecoder {
         if (root == null || !root.isObject()) throw new TranslationFailure(FORMAT_INVALID, status, usage, null, 0,TranslationFailure.Check.ENVELOPE_JSON_INVALID);
         var choice = root.path("choices").path(0);
         String finish = choice.path("finish_reason").asText("");
-        if ("length".equals(finish)) throw new TranslationFailure(TRUNCATED, status, usage, finish, 0,TranslationFailure.Check.OUTPUT_TRUNCATED);
+        LlmOutputGuard.rejectTruncated(root, status);
         var content = choice.path("message").path("content");
         if (content.isMissingNode()) throw new TranslationFailure(FORMAT_INVALID,status,usage,finish,0,TranslationFailure.Check.CONTENT_MISSING);
         if (content.isNull() || content.isTextual() && content.asText().isBlank())

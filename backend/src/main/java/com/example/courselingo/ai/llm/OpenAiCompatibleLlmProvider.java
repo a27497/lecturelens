@@ -163,8 +163,6 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             body.put("response_format", Map.of("type", "json_object"));
         }
         OpenAiCompatibleRequestOptionsAdapter.apply(body, settings.model());
-        com.example.courselingo.ai.llm.TranslationResponseDecoder.applyOptions(
-            body, settings.uri().toString(), settings.model(), request);
         body.put("stream", false);
         try {
             return objectMapper.writeValueAsString(body);
@@ -193,7 +191,14 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         int retryCount
     ) {
         OpenAiCompatibleChatCompletionResponse payload;
+        com.fasterxml.jackson.databind.JsonNode root;
         try {
+            root = objectMapper.readTree(response.body());
+            if (root != null) {
+                LlmOutputGuard.rejectTruncated(root, response.statusCode());
+                if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(settings.model()))
+                    LlmOutputGuard.rejectEmpty(root, response.statusCode());
+            }
             payload = objectMapper.readValue(response.body(), OpenAiCompatibleChatCompletionResponse.class);
         } catch (JsonProcessingException exception) {
             throw responseException(
@@ -241,8 +246,6 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                 content
             );
         }
-        OpenAiCompatibleChatCompletionResponse.Usage usage = payload.usage();
-
         Map<String, Object> metadata = new HashMap<>();
         traceId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
         metadata.put("providerRetryCount", Math.max(0, retryCount));
@@ -252,9 +255,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             textOrDefault(payload.model(), settings.model()),
             content,
             choice.finishReason(),
-            usage == null
-                ? new LlmUsage(null, null, null)
-                : new LlmUsage(usage.promptTokens(), usage.completionTokens(), usage.totalTokens()),
+            LlmUsage.parse(root),
             response.duration(),
             metadata
         );

@@ -85,7 +85,7 @@ class SystemModelLegacyTranslationTest {
         var payload = JSON.readTree(sent.getFirst().body());
         assertThat(payload.path("response_format").path("type").asText()).isEqualTo("json_object");
         assertThat(payload.path("max_tokens").asInt()).isEqualTo(6000);
-        assertThat(payload.has("thinking")).isFalse();
+        assertThat(payload.path("thinking").path("type").asText()).isEqualTo("disabled");
     }
 
     @Test
@@ -164,7 +164,7 @@ class SystemModelLegacyTranslationTest {
     }
 
     @Test
-    void unrelatedFeatureAndHttpRetryClassificationStayUnchanged() {
+    void otherFeaturesAlsoRejectTruncationWhileHttpRetryClassificationStaysUnchanged() {
         var calls = new AtomicInteger();
         var client = new SystemModelChatClient(r -> { calls.incrementAndGet(); return reply(429, "{\"error\":\"synthetic-limit\"}"); }, SystemModelTranslationV2Test.urls());
         assertThatThrownBy(() -> client.generate(request(), route(), "synthetic-key"))
@@ -176,7 +176,8 @@ class SystemModelLegacyTranslationTest {
         var other = new SystemModelChatClient(r -> reply(200, bodyUnchecked("length", "")), SystemModelTranslationV2Test.urls());
         assertThatThrownBy(() -> other.generate(SystemModelTranslationV2Test.request("COURSE_QA", false),
             SystemModelTranslationV2Test.route("COURSE_QA"), "synthetic-key"))
-            .isInstanceOf(SystemModelCallFailure.class);
+            .isInstanceOfSatisfying(TranslationFailure.class,
+                failure -> assertThat(failure.reason()).isEqualTo(TranslationFailure.Reason.TRUNCATED));
     }
 
     private static LlmRequest request() { return SystemModelTranslationV2Test.request("TRANSLATION_FULL_TEXT", false); }

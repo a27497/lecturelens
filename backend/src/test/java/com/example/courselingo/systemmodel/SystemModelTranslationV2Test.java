@@ -36,7 +36,7 @@ class SystemModelTranslationV2Test {
                 assertThat(e.getMessage()).doesNotContain("synthetic-key","reasoning",response);
             });
     }
-    @Test void onlyV2FullTextAddsThinkingAndKeepsFinalUrlAndRouteCap() throws Exception {
+    @Test void allSupportedDeepSeekStagesDisableThinkingAndKeepFinalUrlAndRouteCap() throws Exception {
         var sent=new ArrayList<OpenAiCompatibleChatCompletionRequest>(); String response=body("stop","{\"segments\":[]}");
         var client=new SystemModelChatClient(r->{sent.add(r);return new OpenAiCompatibleClientResponse(200,response,Map.of(),Duration.ZERO);},urls());
         for(var feature:List.of("TRANSLATION_FULL_TEXT","SUBTITLE_TRANSLATION","COURSE_QA"))
@@ -45,7 +45,7 @@ class SystemModelTranslationV2Test {
         assertThat(json.readTree(sent.get(0).body()).path("thinking").path("type").asText()).isEqualTo("disabled");
         assertThat(json.readTree(sent.get(0).body()).path("max_tokens").asInt()).isEqualTo(6000);
         assertThat(sent.get(0).uri().toString()).isEqualTo("https://api.deepseek.com/chat/completions");
-        for(int i=1;i<3;i++) assertThat(json.readTree(sent.get(i).body()).has("thinking")).isFalse();
+        for(int i=1;i<3;i++) assertThat(json.readTree(sent.get(i).body()).path("thinking").path("type").asText()).isEqualTo("disabled");
     }
     @ParameterizedTest @CsvSource({"401,AUTHENTICATION","404,MODEL_NOT_FOUND","429,RATE_LIMITED","500,UPSTREAM_5XX","408,TIMEOUT","400,INVALID_REQUEST"})
     void v2MakesExactlyOnePhysicalAttemptAndNeverEchoesProviderErrors(int status,String expected) {
