@@ -1,0 +1,24 @@
+[Unit]
+Description=LectureLens E3 operator-triggered acceptance
+After=network-online.target docker.service
+AssertPathIsDirectory=/srv/lecturelens/.data/phase1e3
+
+[Service]
+Type=exec
+User=ll-eval
+Group=ll-eval
+WorkingDirectory=/srv/lecturelens
+Environment=GIT_OPTIONAL_LOCKS=0
+LoadCredentialEncrypted=deepseek-api-key:/etc/credstore.encrypted/lecturelens-deepseek-api-key
+LoadCredential=e3-authorization:/etc/lecturelens/e3-authorization.json
+ExecStart=/srv/lecturelens/agent-service/.venv/bin/ll eval run e3 --live --assets /etc/lecturelens/e3-assets.json
+PrivateMounts=yes
+ProtectSystem=strict
+ReadWritePaths=/srv/lecturelens/.data /srv/lecturelens/.demo
+NoNewPrivileges=yes
+UMask=0077
+LimitCORE=0
+Restart=no
+RuntimeMaxSec=3h15min
+TimeoutStopSec=90s
+KillMode=mixed

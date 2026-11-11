@@ -1,0 +1,22 @@
+{
+  "candidate_sha256": "62829c97b7b9f185de7ac608f45ddc1d0d421bc82393e7f1d7a6158f0972a7f8",
+  "reviewer": "synthetic-example-not-an-actual-quality-trial",
+  "judgments": [
+    {
+      "item_id": "card-1",
+      "verdict": "supported",
+      "reason": "Synthetic demonstration of an independently supplied label.",
+      "quotes": [
+        {
+          "evidence_id": "e1",
+          "text": "halves the remaining interval"
+        }
+      ]
+    },
+    {
+      "item_id": "bad-card-2",
+      "verdict": "unsupported",
+      "reason": "The cited text does not establish unordered-list applicability."
+    }
+  ]
+}

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { createTimeIndex } from "../utils/timeIndex";
+import type { SeekRequest } from "./task-detail/courseLocation";
 import { parseVttCues } from "../utils/vtt";
 import { formatApiTimestamp } from "../utils/time";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 
 const props = defineProps<{
+  compact?: boolean;
+  inactive?: boolean;
+  seekRequest?: SeekRequest;
   title: string;
   description: string;
   playbackUrl: string;
@@ -20,7 +25,9 @@ const props = defineProps<{
   subtitleMessage?: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
+  position: [milliseconds: number];
+  manualSeek: [];
   refresh: [];
 }>();
 
@@ -29,12 +36,12 @@ const videoErrorMessage = ref("");
 const videoRef = ref<HTMLVideoElement | null>(null);
 const pendingSeekSeconds = ref<number | null>(null);
 const subtitleCues = computed(() => parseVttCues(props.subtitleText || ""));
-const activeSubtitleText = computed(() => {
-  const cue = subtitleCues.value.find(
-    (item) => currentTime.value >= item.start && currentTime.value <= item.end,
-  );
-  return cue?.text ?? "";
-});
+const subtitleIndex = computed(() => createTimeIndex(subtitleCues.value, cue => cue.start, cue => cue.end));
+const activeSubtitleText = computed(() => subtitleIndex.value(currentTime.value)?.text ?? "");
+let lastReport = -Infinity;
+let resumeAfterReload = false;
+let hasPosition = false;
+let programmedSeekTarget: number | null = null;
 const resolvedSubtitleLabel = computed(() => props.subtitleLabel || "原视频自带字幕");
 const resolvedSubtitleStatus = computed<SubtitleStatus>(() => props.subtitleStatus || "none");
 const subtitleStatusText = computed(() => {
@@ -57,28 +64,74 @@ const subtitleStatusText = computed(() => {
   }
 });
 
-watch(
-  () => props.playbackUrl,
-  () => {
-    currentTime.value = 0;
-    videoErrorMessage.value = "";
-  },
-);
+watch(() => props.playbackUrl, () => {
+  // A refreshed token creates a new media element. Keep its coordinate and explicit play intent.
+  if (videoRef.value) resumeAfterReload = !props.inactive && !videoRef.value.paused && !videoRef.value.ended;
+  if (pendingSeekSeconds.value === null && hasPosition) pendingSeekSeconds.value = currentTime.value;
+  videoErrorMessage.value = "";
+});
+watch(() => props.seekRequest, request => {
+  if (request) seekTo(request.milliseconds / 1000);
+}, { immediate: true });
+// v-show/CSS keep the media instance alive. Hidden controls must never leave audio running.
+watch(() => props.inactive, inactive => { if (inactive) pausePlayback(); }, { flush: "sync" });
+onBeforeUnmount(pausePlayback);
+
+function pausePlayback() {
+  resumeAfterReload = false;
+  videoRef.value?.pause();
+}
+function guardPlayback() {
+  // A pending play() or refreshed source can finish after the workspace became hidden.
+  if (props.inactive) pausePlayback();
+}
+
+function reportPosition(force = false) {
+  const now = performance.now();
+  if (!force && now - lastReport < 250) return;
+  lastReport = now;
+  emit("position", Math.round(currentTime.value * 1000));
+}
 
 function updateCurrentTime(event: Event) {
-  currentTime.value = (event.currentTarget as HTMLVideoElement).currentTime;
+  // Ignore pre-seek events from newly loaded metadata and detached media elements.
+  if (event.currentTarget !== videoRef.value || pendingSeekSeconds.value !== null) return;
+  const seconds = (event.currentTarget as HTMLVideoElement).currentTime;
+  if (!Number.isFinite(seconds) || seconds < 0) return;
+  currentTime.value = seconds;
+  hasPosition = true;
+  reportPosition(event.type !== "timeupdate");
 }
 
 function seekTo(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) return;
   pendingSeekSeconds.value = seconds;
-  if (videoRef.value && videoRef.value.readyState > 0) applyPendingSeek();
+  if (props.playbackUrl && videoRef.value && videoRef.value.readyState > 0) applyPendingSeek();
 }
 
 function handleLoadedMetadata(event: Event) {
   videoErrorMessage.value = "";
+  if (pendingSeekSeconds.value !== null) applyPendingSeek();
+  else updateCurrentTime(event);
+  if (resumeAfterReload && !props.inactive && videoRef.value) {
+    resumeAfterReload = false;
+    void videoRef.value.play().catch(() => undefined);
+  }
+}
+
+function handleSeeking(event: Event) {
+  if (!videoRef.value || event.currentTarget !== videoRef.value || pendingSeekSeconds.value !== null) return;
+  const seconds = videoRef.value.currentTime;
+  // Native controls can swallow input events. Distinguish their seeks from our own restoration/navigation.
+  if (programmedSeekTarget !== null && Math.abs(seconds - programmedSeekTarget) < 0.001) return;
+  programmedSeekTarget = null;
+  emit("manualSeek");
+}
+
+function handleSeeked(event: Event) {
+  if (event.currentTarget !== videoRef.value) return;
+  programmedSeekTarget = null;
   updateCurrentTime(event);
-  applyPendingSeek();
 }
 
 function clearVideoError() {
@@ -104,10 +157,15 @@ function handleVideoError(event: Event) {
 
 function applyPendingSeek() {
   if (!videoRef.value || pendingSeekSeconds.value === null) return;
-  videoRef.value.currentTime = pendingSeekSeconds.value;
+  const duration = videoRef.value.duration;
+  const target = Number.isFinite(duration) ? Math.min(pendingSeekSeconds.value, Math.max(0, duration)) : pendingSeekSeconds.value;
+  programmedSeekTarget = target;
+  try { videoRef.value.currentTime = target; }
+  catch { programmedSeekTarget = null; return; } // Metadata can precede a seekable resource; canplay retries the same request.
   pendingSeekSeconds.value = null;
-  const playResult = videoRef.value.play();
-  if (playResult) void playResult.catch(() => undefined);
+  currentTime.value = target;
+  hasPosition = true;
+  reportPosition(true);
 }
 
 defineExpose({
@@ -120,7 +178,7 @@ defineExpose({
     <div class="video-card__header">
       <div>
         <h2>{{ title }}</h2>
-        <p>{{ description }}</p>
+        <p v-if="!compact">{{ description }}</p>
       </div>
       <el-button :loading="loading" @click="$emit('refresh')">刷新播放链接</el-button>
     </div>
@@ -152,10 +210,14 @@ defineExpose({
       controls
       preload="metadata"
       @loadedmetadata="handleLoadedMetadata"
-      @canplay="clearVideoError"
+      @play="guardPlayback"
+      @canplay="clearVideoError(); applyPendingSeek()"
       @error="handleVideoError"
-      @seeked="updateCurrentTime"
+      @seeking="handleSeeking"
+      @seeked="handleSeeked"
       @timeupdate="updateCurrentTime"
+      @pause="updateCurrentTime"
+      @ended="updateCurrentTime"
     >
         <track
           v-if="subtitleTrackUrl"
@@ -166,11 +228,13 @@ defineExpose({
           default
         />
       </video>
-      <div v-if="activeSubtitleText" class="video-card__subtitle-overlay" aria-live="polite">
+      <div v-if="activeSubtitleText" class="video-card__subtitle-overlay">
         {{ activeSubtitleText }}
       </div>
     </div>
 
+    <component :is="compact ? 'details' : 'div'" class="video-card__metadata">
+      <summary v-if="compact">播放与字幕信息</summary>
     <p
       class="video-card__subtitle"
       :class="`video-card__subtitle--${resolvedSubtitleStatus}`"
@@ -181,10 +245,13 @@ defineExpose({
     <p v-if="expiresAt" class="video-card__expiry">
       播放链接有效期至 {{ formatApiTimestamp(expiresAt) }}
     </p>
+    </component>
   </section>
 </template>
 
 <style scoped>
+.video-card__metadata { font-size: 13px; color: var(--color-ink-soft); }
+.video-card__metadata summary { cursor: pointer; padding-block: 4px; }
 .video-card {
   display: grid;
   gap: 14px;

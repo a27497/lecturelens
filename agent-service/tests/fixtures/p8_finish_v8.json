@@ -1,0 +1,150 @@
+{
+  "source_run": "p8-ctx-v7-retry-full-20261027",
+  "description": "Length/strict-ID projections of the eight failed first finishes; no learner text or raw model prose. Synthetic padding replays format validation only.",
+  "cases": [
+    {
+      "case": "algorithms-l1-3-turn-3",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1318,
+      "text_ids": [
+        "v2-algorithms-l1-p01-e00",
+        "v2-algorithms-l1-p03-e00",
+        "v2-algorithms-l1-p03-e01",
+        "v2-algorithms-l1-p06-e00",
+        "v2-algorithms-l1-p02-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": [
+        "[u]",
+        "[v]"
+      ]
+    },
+    {
+      "case": "algorithms-l3-1-turn-3",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1278,
+      "text_ids": [
+        "v2-algorithms-l3-p05-e00",
+        "v2-algorithms-l3-p04-e00",
+        "v2-algorithms-l3-p04-e01",
+        "v2-algorithms-l3-p01-e01",
+        "v2-algorithms-l3-p02-e00",
+        "v2-algorithms-l3-p03-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": [
+        "[A]",
+        "[v]",
+        "[u]"
+      ]
+    },
+    {
+      "case": "algorithms-l3-3-turn-2",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1557,
+      "text_ids": [
+        "v2-algorithms-l3-p01-e01",
+        "v2-algorithms-l3-p02-e00",
+        "v2-algorithms-l3-p03-e00",
+        "v2-algorithms-l3-p04-e00",
+        "v2-algorithms-l3-p05-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": [
+        "[v]",
+        "[u]"
+      ]
+    },
+    {
+      "case": "quantum-l1-1-turn-2",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1358,
+      "text_ids": [
+        "v2-quantum-l1-p08-e04",
+        "v2-quantum-l1-p09-e00",
+        "v2-quantum-l1-p08-e05",
+        "v2-quantum-l1-p09-e02",
+        "v2-quantum-l1-p09-e03",
+        "v2-quantum-l1-p08-e03"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": []
+    },
+    {
+      "case": "quantum-l1-1-turn-3",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1404,
+      "text_ids": [
+        "v2-quantum-l1-p08-e03",
+        "v2-quantum-l1-p08-e04",
+        "v2-quantum-l1-p09-e00",
+        "v2-quantum-l1-p09-e02",
+        "v2-quantum-l1-p09-e03",
+        "v2-quantum-l1-p08-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": []
+    },
+    {
+      "case": "quantum-l1-3-turn-2",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1744,
+      "text_ids": [
+        "v2-quantum-l1-p07-e01",
+        "v2-quantum-l1-p07-e02",
+        "v2-quantum-l1-p07-e03",
+        "v2-quantum-l1-p07-e04",
+        "v2-quantum-l1-p06-e01"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": []
+    },
+    {
+      "case": "quantum-l2-1-turn-1",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1348,
+      "text_ids": [
+        "v2-quantum-l2-p01-e00",
+        "v2-quantum-l2-p02-e00",
+        "v2-quantum-l2-p04-e02",
+        "v2-quantum-l2-p04-e00",
+        "v2-quantum-l2-p04-e03",
+        "v2-quantum-l2-p02-e01",
+        "v2-quantum-l2-p05-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": []
+    },
+    {
+      "case": "quantum-l2-3-turn-1",
+      "socratic": false,
+      "outcome": "answered",
+      "text_chars": 1273,
+      "text_ids": [
+        "v2-quantum-l2-p01-e00",
+        "v2-quantum-l2-p02-e00",
+        "v2-quantum-l2-p04-e02",
+        "v2-quantum-l2-p04-e03",
+        "v2-quantum-l2-p06-e00",
+        "v2-quantum-l2-p07-e00"
+      ],
+      "evaluation_chars": 0,
+      "evaluation_ids": [],
+      "math_tokens": []
+    }
+  ]
+}

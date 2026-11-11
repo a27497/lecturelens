@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f
+    environment:
+      POSTGRES_USER: p7
+      POSTGRES_PASSWORD: p7-local-only
+      POSTGRES_DB: lecturelens_agent_acceptance
+    ports:
+      - "127.0.0.1:25711:5432"
+    volumes:
+      - p7-real-postgres:/var/lib/postgresql/data
+volumes:
+  p7-real-postgres:

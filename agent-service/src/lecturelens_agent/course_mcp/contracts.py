@@ -4,6 +4,7 @@ from pydantic import Field, model_validator
 
 from ..contracts import Contract, Identifier
 from ..study.contracts import StudyScope
+from ..study.learning_scope import LearningScope
 
 
 class JavaProof(Contract):
@@ -12,10 +13,12 @@ class JavaProof(Contract):
 
 
 class CourseRequest(StudyScope):
+    learning_scope: LearningScope | None = None
     authorization: JavaProof
 
 
 class SearchRequest(CourseRequest):
+    expand_to_course: Annotated[bool, Field(strict=True)] = False
     query: Annotated[str, Field(min_length=1, max_length=500)]
     start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
     end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
@@ -52,6 +55,7 @@ class CourseEvidence(Contract):
 
 
 class CourseResult(StudyScope):
+    learning_scope: LearningScope | None = None
     evidence: Annotated[list[CourseEvidence], Field(max_length=8)]
 
 

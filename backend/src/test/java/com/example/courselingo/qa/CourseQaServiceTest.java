@@ -111,6 +111,22 @@ class CourseQaServiceTest {
     }
 
     @Test
+    void invalidScopeIsRejectedBeforeConfigFreezeRetrievalOrModelCall() {
+        var models = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelExecutionService.class);
+        service.configureSystemModels(models);
+        var scope = new com.example.courselingo.evidence.LearningScope(1, "segments", "strict", 99, List.of("foreign"));
+        when(currentUserService.currentUser("Bearer demo")).thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
+        when(evidenceRetriever.validateScope("task_1", 42L, scope))
+            .thenThrow(new BusinessException(ErrorCode.COMMON_BAD_REQUEST));
+        assertThatThrownBy(() -> service.ask("task_1", "Bearer demo", new CourseQaAskRequest("hello", scope)))
+            .isInstanceOf(BusinessException.class);
+        org.mockito.Mockito.verifyNoInteractions(models, rateLimitService, aiCallRecordService);
+        verify(evidenceRetriever, never()).retrieve(any(), any(), any(), any(), any());
+        assertThat(llmProvider.requests).isEmpty();
+    }
+
+    @Test
     void askReturnsInsufficientEvidenceWithoutCallingLlm() {
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
@@ -137,6 +153,26 @@ class CourseQaServiceTest {
         ArgumentCaptor<CourseQaRecord> recordCaptor = ArgumentCaptor.forClass(CourseQaRecord.class);
         verify(recordMapper).insert(recordCaptor.capture());
         assertThat(recordCaptor.getValue().getEvidenceJson()).isEqualTo("[]");
+        assertThat(recordCaptor.getValue().getInvocationState()).isEqualTo("SKIPPED_NO_EVIDENCE");
+        assertThat(recordCaptor.getValue().getAiCallRecordId()).isNull();
+    }
+
+    @Test
+    void strictScopeWithoutHitsNeverCallsModelOrWholeCourseRetriever() {
+        var scope = new com.example.courselingo.evidence.LearningScope(1, "segments", "strict", 1, List.of("selected"));
+        when(currentUserService.currentUser("Bearer demo")).thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
+        when(evidenceRetriever.validateScope("task_1", 42L, scope)).thenReturn(scope);
+        when(rateLimitService.checkAndConsume(42L)).thenReturn(CourseQaRateLimitResult.allowed(10, 9));
+        when(evidenceRetriever.retrieve("task_1", 42L, "zh-CN", "unknown", scope)).thenReturn(List.of());
+        when(recordMapper.insert(any(CourseQaRecord.class))).thenAnswer(call -> { call.getArgument(0, CourseQaRecord.class).setId(101L); return 1; });
+        var response = service.ask("task_1", "Bearer demo", new CourseQaAskRequest("unknown", scope));
+        assertThat(response.answer()).contains("所选");
+        assertThat(response.learning_scope()).isEqualTo(scope);
+        assertThat(response.evidence()).isEmpty();
+        assertThat(llmProvider.requests).isEmpty();
+        verify(evidenceRetriever, never()).retrieve(any(), any(), any(), any());
+        verify(aiCallRecordService, never()).startCall(any(StartAiCallRecordCommand.class));
     }
 
     @Test
@@ -193,6 +229,10 @@ class CourseQaServiceTest {
 
     @Test
     void askCallsLlmRecordsQaAndAiCall() {
+        var models = org.mockito.Mockito.mock(com.example.courselingo.systemmodel.SystemModelExecutionService.class);
+        var frozen = new com.example.courselingo.systemmodel.SystemModelExecutionRef("exact-qa-snapshot", 7L, "task_1", 42L);
+        when(models.operation("task_1", 42L, "COURSE_QA")).thenReturn(frozen);
+        service.configureSystemModels(models);
         when(currentUserService.currentUser("Bearer demo"))
             .thenReturn(new CurrentUserResponse(42L, "u@example.com", "ACTIVE"));
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 42L)).thenReturn(task());
@@ -215,6 +255,12 @@ class CourseQaServiceTest {
         assertThat(llmProvider.requests).hasSize(1);
         assertThat(llmProvider.requests.getFirst().metadata()).containsEntry("stage", "COURSE_QA");
         verify(aiCallRecordService).completeCall(any(CompleteAiCallRecordCommand.class));
+        var stored = ArgumentCaptor.forClass(CourseQaRecord.class);
+        verify(recordMapper).insert(stored.capture());
+        assertThat(stored.getValue().getExecutionSnapshotId()).isEqualTo("exact-qa-snapshot");
+        assertThat(stored.getValue().getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+        assertThat(stored.getValue().getAiCallRecordId()).isEqualTo(startedCall().id());
+        assertThat(llmProvider.requests.getFirst().execution()).isSameAs(frozen);
     }
 
     @Test
@@ -319,6 +365,12 @@ class CourseQaServiceTest {
             .isEqualTo(ErrorCode.AI_PROVIDER_FAILED);
 
         verify(aiCallRecordService).failCall(any(FailAiCallRecordCommand.class));
+        var stored = ArgumentCaptor.forClass(CourseQaRecord.class);
+        verify(recordMapper).insert(stored.capture());
+        assertThat(stored.getValue().getStatus()).isEqualTo("FAILED");
+        assertThat(stored.getValue().getInvocationState()).isEqualTo("RESPONSE_RECEIVED");
+        assertThat(stored.getValue().getModel()).isEqualTo("fake-model");
+        assertThat(stored.getValue().getTotalTokens()).isEqualTo(30);
     }
 
     private static AnalysisTask task() {

@@ -20,7 +20,24 @@ final class SystemModelMySqlFixture implements AutoCloseable {
     final JdbcTemplate jdbc;
     final DataSourceTransactionManager transactions;
 
+    static int version(java.nio.file.Path migration) {
+        String name = migration.getFileName().toString();
+        return Integer.parseInt(name.substring(1, name.indexOf("__")));
+    }
+
+    /** Highest checked-in versioned migration; repeatable migrations must not move it. */
+    static String latestVersion() throws java.io.IOException {
+        try (var files = java.nio.file.Files.list(java.nio.file.Path.of("src/main/resources/db/migration"))) {
+            return String.valueOf(files.filter(p -> p.getFileName().toString().startsWith("V"))
+                    .mapToInt(SystemModelMySqlFixture::version).max().orElseThrow());
+        }
+    }
+
     SystemModelMySqlFixture() throws Exception {
+        this("classpath:db/migration");
+    }
+
+    SystemModelMySqlFixture(String... locations) throws Exception {
         var uri = URI.create(base.substring(5));
         if (!java.util.Set.of("localhost", "127.0.0.1").contains(uri.getHost())
                 || !uri.getPath().endsWith("_test"))
@@ -37,7 +54,7 @@ final class SystemModelMySqlFixture implements AutoCloseable {
         dataSource = new DriverManagerDataSource(url, username, password);
         jdbc = new JdbcTemplate(dataSource);
         transactions = new DataSourceTransactionManager(dataSource);
-        Flyway.configure().dataSource(dataSource).load().migrate();
+        Flyway.configure().dataSource(dataSource).locations(locations).load().migrate();
     }
 
     long user() {

@@ -93,7 +93,7 @@ function hasUsageNumber(value: number | null): boolean {
     <div class="course-chapters-panel__header">
       <div>
         <h3>课程章节</h3>
-        <p class="result-help">根据课程内容生成章节。章节只会在你点击按钮后生成。</p>
+        <p class="result-help">章节只在点击生成后更新。时间入口为视频定位，不代表已验证的 Evidence 引用。</p>
       </div>
       <div class="course-chapters-panel__actions">
         <el-button :loading="loading" :disabled="generating" @click="loadChapters">刷新</el-button>
@@ -139,7 +139,7 @@ function hasUsageNumber(value: number | null): boolean {
             <span>证据 {{ chapter.evidence.length }} 段</span>
           </div>
           <el-button class="course-chapter-item__seek" size="small" plain @click="seekToChapter(chapter)">
-            跳到视频
+            定位章节视频
           </el-button>
         </div>
       </article>

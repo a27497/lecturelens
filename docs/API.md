@@ -1552,3 +1552,40 @@ items 为统一 CourseEvidence，包含来源 ID 和引用链、task/course ID�
 反馈工具按阶段提供：首次只读题目证据，之后不再提供重复读取同一题证据的动作；可选补读窗口仅在剩余调用多于2次时提供，最后保留决策和复核各一次。最新复核结果单独保留在决策上下文中，补读窗口不会遮蔽待处理的问题。持久预算仍是最终约束，工具可用性不保证语义修订成功。
 
 当前 `evidence_guidance_v5` 在首次读取证据时，先由复核用途模型只看题干和来源，形成独立的 `course_basis`（覆盖性、解释、来源ID）。该私有观察与读工具结果一并落盘，供后续决策和复核核查；不暴露学生作答、草稿或参考答案给此步骤，不把生成的依据当作权威答案，也不替代每条反馈的真实引用。正常路径4次模型调用，一次修订可在6次内完成；补读会占用同一预算。历史v4反馈继续可读，旧worker需排空后再升级。
+
+## P7 证据闪卡与自评复习（实验性，仅 Mock）
+
+继续走 `/api/tasks/{taskId}/study/command`，Java 注入并前后校验 owner/course/current revision。
+`GENERATE_CARDS(session_id,request_key,goal?)` 创建有界闪卡 Run；现有 READ/EVENTS/CANCEL 管理该 Run。
+`DUE_CARDS` 无需 Session，返回最多50张已到期 cards（card_id/deck_id/front/back/citations/revision/version/due_at），
+以及 due_count/total_count/reviewed_today/next_due_at/server_now/day_timezone/generation。
+`READ_CARD(card_id)` 返回当前卡；`REVIEW_CARD(card_id,request_key,expected_version,rating)` 返回不可变 review/replayed。
+rating 严格为 Again/Hard/Good/Easy；客户端不提交时间。重复 key 的完整相同请求返回原日志；版本、正文或未到期冲突为409；越权/旧快照卡为404。
+读和评分不调用模型；只读不创建 Session/Run。评分为学习者自评，不是自动判分。
+真实生成入口拒绝 FLASHCARDS_MOCK_ONLY；详情见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+## P8 Tutor (experimental)
+
+Available through the opt-in [Tutor service entry point](P8_TUTOR.md). All routes require the existing bearer authentication; browser-supplied owner/revision are ignored. Java obtains current course ownership/revision, checks it again after forwarding and signs `POST /internal/v1/tutor/command`. Python owns all conversation state in PG.
+
+| Browser endpoint | Body / behavior |
+| --- | --- |
+| `POST /api/tasks/{id}/tutor/sessions` | `{request_key}`; idempotent create; returns `session` |
+| `GET /api/tasks/{id}/tutor/sessions` | Returns up to 20 `sessions`, newest first; stale metadata may appear |
+| `GET /api/tasks/{id}/tutor/sessions/{sessionId}` | Returns `session, turns` in ordinal order; stale session conflicts |
+| `POST /api/tasks/{id}/tutor/sessions/{sessionId}/turns` | `{client_turn_id,text,socratic}`; nonempty text ≤2,000 characters; returns queued view; same ID/body replays |
+| `POST /api/tasks/{id}/tutor/sessions/{sessionId}/turns/{clientTurnId}/cancel` | Cancels queued/running work; terminal replay does not modify it |
+
+CREATE/TURN require course readiness. Read/list/cancel check access without requiring the retrieval index to be ready. A turn has status `queued/running/completed/failed/cancelled`; completed outcome is `answered/socratic_prompt/insufficient_evidence`, while failed/cancelled turns have outcome `failed` and no published answer. Completed turns include `answer`, optional `evaluation`, canonical `citations`, usage and counters. Source/checkpoint data for rejected proposals is not public. `TUTOR_SESSION_STALE`, request-key conflict, busy and budget limits return 409; inaccessible sessions return 404. The current product provider is Mock only; a separate frozen eval channel is not a product deployment.
+
+## P9 课程证据选择题（Mock）
+
+`START` 可选 `practice_format: "choice"`，缺省保持开放题；带学习范围仍使用 `scoped-command`。仅 mock 且不要求发布审批时接受。`READ` 中选择题包含 `kind: "choice"`、`options: [{id,text}]`，不包含正确项身份；`ANSWERS` 也不能提前揭示选择题 key。
+
+`SAVE_ATTEMPT` 对选择题传 `selected_option_id`，不传 `answer_text`；开放题仍传非空文本，不传选项。空、非法或混合正文被拒绝，不写对错记录。服务器保存选项文字及 `choice_result: {is_correct,correct_option_id,citations}`，同事务产生作答版本，重试/并发/所有权/版本规则沿用现有协议。正确项和可定位引用仅随已提交的结果返回，READ 和历史可恢复。开放题没有 `choice_result`；新反馈请求默认仍关闭。字段和边界详见 [P9](P9_EVIDENCE_CHOICE.md)。
+
+## P10 答错待回看
+
+`POST /api/tasks/{id}/study/command` 新增 `CHOICE_REVIEW`，无需 Session；`after` 是非负分页偏移（默认 0，上限 2147483647）。Java 从认证与课程事实取得 owner/revision 并在读取前后检查；Python 返回当前 owner/course/revision 跨 Session 的最新已提交选择题判分计数及错误列表。响应为 `{revision,correct_count,wrong_count,items,next_after}`，每页最多 20 项；每项包含 Session/Run/artifact/question 定位、公开题面与已提交 attempt/choice_result/citations。最新版本改答正确后退出错误列表。只读，无新 Run、表或模型调用；计数不是掌握程度。详见 [P10](P10_CHOICE_REVIEW.md)。
+
+轻量 Tutor 实验候选复用上述 Tutor endpoints，Session 新增 `engine` 与 `max_turns`；启用方式、一次生成及恢复/预算边界见 [LIGHT_TUTOR.md](LIGHT_TUTOR.md)。普通入口使用 Mock。DeepSeek Flash 仅可通过独立、默认关闭的实验入口运行。

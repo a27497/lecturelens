@@ -9,6 +9,8 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from .failures import failure_category
+from .learning_scope import ACTIVE_SQL, public_status, stored_status
+from .model_evidence import single_turn_evidence
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS study_session (
@@ -27,6 +29,10 @@ CREATE TABLE IF NOT EXISTS study_run (
 CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_run ON study_run(session_id)
     WHERE status IN ('queued','running','awaiting_approval');
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS model_config jsonb;
+ALTER TABLE study_run ADD COLUMN IF NOT EXISTS learning_scope jsonb;
+ALTER TABLE study_run ADD COLUMN IF NOT EXISTS practice_format text NOT NULL DEFAULT 'open';
+CREATE UNIQUE INDEX IF NOT EXISTS study_one_active_scope_run ON study_run(session_id)
+    WHERE status IN ('queued','running','awaiting_approval','queued_scoped_v1','running_scoped_v1','awaiting_approval_scoped_v1');
 CREATE TABLE IF NOT EXISTS study_event (
     run_id text NOT NULL REFERENCES study_run ON DELETE CASCADE, sequence bigint NOT NULL,
     event_type text NOT NULL, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(),
@@ -102,6 +108,15 @@ class StudyStore:
             from .approval import SCHEMA as APPROVAL_SCHEMA
 
             conn.execute(APPROVAL_SCHEMA)
+            from .learning_scope import SCHEMA as SCOPE_SCHEMA
+
+            conn.execute(SCOPE_SCHEMA)
+            from .flashcards import SCHEMA as CARD_SCHEMA
+
+            conn.execute(CARD_SCHEMA)
+            from .choice import SCHEMA as CHOICE_SCHEMA
+
+            conn.execute(CHOICE_SCHEMA)
 
     @staticmethod
     def _session(conn, command):
@@ -138,31 +153,53 @@ class StudyStore:
                     (command.owner_id, command.course_id, command.revision),
                 ).fetchall()
                 return {"sessions": rows, "mode": mode}
+            if command.operation in {"DUE_CARDS", "READ_CARD", "REVIEW_CARD"}:
+                from .flashcards import card_command
+
+                return card_command(self, conn, command)
+            if command.operation == "CHOICE_REVIEW":
+                from .choice_review import choice_review
+
+                return choice_review(conn, command)
             self._session(conn, command)
             if command.operation == "RUNS":
                 rows = conn.execute(
-                    "SELECT run_id,goal,status,created_at FROM study_run WHERE session_id=%s AND task_kind='practice' "
+                    "SELECT run_id,goal,status,created_at,learning_scope FROM study_run WHERE session_id=%s AND task_kind='practice' "
                     "ORDER BY created_at DESC LIMIT 20",
                     (command.session_id,),
                 ).fetchall()
-                return {"runs": rows}
-            if command.operation == "START":
+                return {"runs": [row | {"status": public_status(row["status"])} for row in rows]}
+            if command.operation in {"START", "GENERATE_CARDS"}:
+                cards = command.operation == "GENERATE_CARDS"
+                if cards and (mode != "mock" or command.approval_required):
+                    raise StudyError("FLASHCARDS_MOCK_ONLY")
+                task_kind = "flashcards" if cards else "practice"
+                practice_format = command.practice_format or "open"
+                if practice_format == "choice" and (mode != "mock" or command.approval_required):
+                    raise StudyError("CHOICE_MOCK_ONLY_WITHOUT_APPROVAL")
+                if cards and command.goal is None:
+                    command = command.model_copy(update={"goal": "从课程证据生成简短闪卡"})
                 if not command.goal or not command.goal.strip() or not command.request_key:
                     raise StudyError("GOAL_AND_REQUEST_KEY_REQUIRED", 422)
+                frozen_scope = (
+                    command.learning_scope.model_dump() if command.learning_scope is not None else None
+                )
                 prior = conn.execute(
                     "SELECT * FROM study_run WHERE session_id=%s AND request_key=%s",
                     (command.session_id, command.request_key),
                 ).fetchone()
                 if prior:
                     if (
-                        prior["goal"] != command.goal
-                        or prior["task_kind"] != "practice"
+                        prior.get("learning_scope") != frozen_scope
+                        or prior["goal"] != command.goal
+                        or prior["task_kind"] != task_kind
+                        or prior["practice_format"] != practice_format
                         or prior["approval_required"] != command.approval_required
                     ):
                         raise StudyError("REQUEST_KEY_CONFLICT")
                     return self._view(conn, prior)
                 if conn.execute(
-                    "SELECT 1 FROM study_run WHERE session_id=%s AND status IN ('queued','running','awaiting_approval')",
+                    f"SELECT 1 FROM study_run WHERE session_id=%s AND status IN ({ACTIVE_SQL})",
                     (command.session_id,),
                 ).fetchone():
                     raise StudyError("SESSION_BUSY")
@@ -171,8 +208,8 @@ class StudyStore:
                     self.model_resolver(command.owner_id) if mode == "real" and self.model_resolver else None
                 )
                 row = conn.execute(
-                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
+                    """INSERT INTO study_run(run_id,session_id,request_key,goal,model_mode,model_config,approval_required,learning_scope,status,task_kind,practice_format)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
                     (
                         run_id,
                         command.session_id,
@@ -181,6 +218,17 @@ class StudyStore:
                         mode,
                         Jsonb(config) if config else None,
                         command.approval_required,
+                        Jsonb(frozen_scope) if frozen_scope is not None else None,
+                        stored_status(
+                            {
+                                "learning_scope": frozen_scope,
+                                "task_kind": task_kind,
+                                "practice_format": practice_format,
+                            },
+                            "queued",
+                        ),
+                        task_kind,
+                        practice_format,
                     ),
                 ).fetchone()
                 self._event(conn, run_id, "run_queued", {})
@@ -206,6 +254,16 @@ class StudyStore:
                 run = conn.execute("SELECT * FROM study_run WHERE run_id=%s", (run["run_id"],)).fetchone()
                 return self._view(conn, run)
             if command.operation == "START_FEEDBACK":
+                question = conn.execute(
+                    "SELECT content FROM study_artifact WHERE artifact_id=%s AND run_id=%s",
+                    (command.artifact_id, run["run_id"]),
+                ).fetchone()
+                if (
+                    question
+                    and command.question_index < len(question["content"]["questions"])
+                    and question["content"]["questions"][command.question_index].get("kind") == "choice"
+                ):
+                    raise StudyError("CHOICE_USES_PROGRAM_JUDGMENT", 422)
                 from .feedback_store import start_feedback
 
                 return start_feedback(self, conn, run, command, mode)
@@ -229,7 +287,14 @@ class StudyStore:
                 ).fetchone()
                 if not artifact:
                     raise StudyError("ARTIFACT_NOT_READY")
-                return {"questions": artifact["content"]["questions"]}
+                from .choice import public_question
+
+                return {
+                    "questions": [
+                        public_question(q) if q.get("kind") == "choice" else q
+                        for q in artifact["content"]["questions"]
+                    ]
+                }
             if command.operation == "EVENTS":
                 rows = conn.execute(
                     "SELECT sequence,event_type,payload FROM study_event WHERE run_id=%s AND sequence>%s "
@@ -240,7 +305,7 @@ class StudyStore:
                 # Preserve sequence/cursor semantics; private diagnostics never enter SSE.
                 for event in rows:
                     event["payload"] = {k: v for k, v in event["payload"].items() if k != "_trace"}
-                return {"events": rows, "status": run["status"]}
+                return {"events": rows, "status": public_status(run["status"])}
             return self._view(conn, run)
 
     @staticmethod
@@ -248,6 +313,7 @@ class StudyStore:
         from .approval import approval_view
         from .attempts import current_attempts
         from .feedback_store import enabled, feedback_runs, feedback_view
+        from .results import practice_results
 
         artifact = (
             conn.execute(
@@ -259,9 +325,10 @@ class StudyStore:
         public = None
         if artifact:
             public = {**artifact["content"], "artifact_id": artifact["artifact_id"]}
-            public["questions"] = [
-                {"question": q["question"], "evidence_ids": q["evidence_ids"]} for q in public["questions"]
-            ]
+            from .choice import public_question
+
+            public["questions"] = [public_question(q) for q in public["questions"]]
+        attempts = current_attempts(conn, artifact["artifact_id"]) if artifact else []
         return {
             "run": {
                 k: row[k]
@@ -279,18 +346,31 @@ class StudyStore:
                     "created_at",
                     "finished_at",
                     "task_kind",
+                    "practice_format",
                     "approval_required",
                 )
             }
             | {
+                "status": public_status(row["status"]),
+                "learning_scope": row.get("learning_scope"),
                 "model_selection": {
                     role: {key: config[key] for key in ("connection_id", "name", "version", "model")}
+                    | {
+                        "single_turn_evidence": single_turn_evidence(
+                            config.get("single_turn_evidence"), config.get("version")
+                        )
+                    }
                     for role, config in (row.get("model_config") or {}).items()
-                }
+                },
             },
             "approval": approval_view(conn, row),
             "artifact": public,
-            "attempts": current_attempts(conn, artifact["artifact_id"]) if artifact else [],
+            "attempts": attempts,
+            "practice_results": practice_results(
+                conn, artifact["artifact_id"], len(public["questions"]), attempts
+            )
+            if artifact
+            else [],
             "feedback_enabled": enabled(),
             "feedback": feedback_view(conn, row["run_id"]) if row["task_kind"] == "feedback" else None,
             "feedback_runs": feedback_runs(conn, artifact["artifact_id"]) if artifact else [],
@@ -313,8 +393,9 @@ class StudyStore:
             rows = conn.execute(
                 """SELECT r.goal,a.artifact_id,a.content FROM study_run r
                 JOIN study_artifact a USING(run_id) WHERE r.session_id=%s AND r.run_id<>%s
-                AND r.status='succeeded' ORDER BY r.created_at DESC LIMIT 2""",
-                (session_id, run_id),
+                AND r.status='succeeded' AND r.learning_scope IS NOT DISTINCT FROM
+                    (SELECT learning_scope FROM study_run WHERE run_id=%s) ORDER BY r.created_at DESC LIMIT 2""",
+                (session_id, run_id, run_id),
             ).fetchall()
             return [
                 {
@@ -330,7 +411,7 @@ class StudyStore:
     def candidates(self):
         with self.connect() as conn:
             return conn.execute("""SELECT r.*,s.owner_id,s.course_id,s.revision FROM study_run r JOIN study_session s USING(session_id)
-                WHERE r.status IN ('queued','running') ORDER BY r.created_at LIMIT 20""").fetchall()
+                WHERE r.status IN ('queued','running','queued_scoped_v1','running_scoped_v1','queued_cards_v1','running_cards_v1','queued_choice_v1','running_choice_v1') ORDER BY r.created_at LIMIT 20""").fetchall()
 
     @contextmanager
     def execution_lock(self, session_id):
@@ -350,19 +431,21 @@ class StudyStore:
     def claim(self, run_id, token, seconds):
         with self.connect() as conn:
             row = conn.execute("SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (run_id,)).fetchone()
-            if not row or row["status"] in TERMINAL or row["status"] == "awaiting_approval":
+            if not row or row["status"] in TERMINAL or public_status(row["status"]) == "awaiting_approval":
                 raise RunStopped()
             conn.execute(
-                """UPDATE study_run SET status='running',worker_token=%s,
+                """UPDATE study_run SET status=%s,worker_token=%s,
                 deadline=COALESCE(deadline,now()+(COALESCE(approval_seconds,%s) * interval '1 second')) WHERE run_id=%s""",
-                (token, seconds, run_id),
+                (stored_status(row, "running"), token, seconds, run_id),
             )
-            self._event(conn, run_id, "run_started" if row["status"] == "queued" else "run_resumed", {})
+            self._event(
+                conn, run_id, "run_started" if public_status(row["status"]) == "queued" else "run_resumed", {}
+            )
 
     @staticmethod
     def _active(conn, run_id, token):
         row = conn.execute("SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (run_id,)).fetchone()
-        if not row or row["status"] != "running" or row["worker_token"] != token:
+        if not row or public_status(row["status"]) != "running" or row["worker_token"] != token:
             raise RunStopped()
         if row["deadline"] and datetime.now(timezone.utc) >= row["deadline"]:
             raise BudgetExceeded()
@@ -464,7 +547,9 @@ class StudyStore:
             self._active(conn, run_id, token)
             self._event(conn, run_id, name, payload)
 
-    def save_tool(self, run_id, token, call_id, name, arguments, result, artifact=None, feedback=None):
+    def save_tool(
+        self, run_id, token, call_id, name, arguments, result, artifact=None, feedback=None, cards=None
+    ):
         with self.connect() as conn:
             run = self._active(conn, run_id, token)
             prior = conn.execute(
@@ -502,6 +587,13 @@ class StudyStore:
                 self._event(conn, run_id, "artifact_created", public)
                 # Keep accepted checks available for private audit and checkpoint recovery too.
                 result = {**result, **public}
+            if cards is not None:
+                from .flashcards import publish
+
+                result = {**result, "deck_id": publish(conn, run, cards)}
+                self._event(
+                    conn, run_id, "deck_created", {"deck_id": result["deck_id"], "card_count": len(cards)}
+                )
             if feedback is not None:
                 from .feedback_store import save_feedback
 
@@ -535,7 +627,7 @@ class StudyStore:
     def finish(self, run_id, token, status, error=None):
         with self.connect() as conn:
             row = conn.execute("SELECT * FROM study_run WHERE run_id=%s FOR UPDATE", (run_id,)).fetchone()
-            if row and row["status"] == "running" and row["worker_token"] == token:
+            if row and public_status(row["status"]) == "running" and row["worker_token"] == token:
                 if status == "succeeded" and row["deadline"] <= datetime.now(timezone.utc):
                     status, error = "budget_exceeded", "DEADLINE_EXCEEDED"
                 self._finish(conn, run_id, status, error)

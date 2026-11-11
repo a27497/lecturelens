@@ -1,5 +1,7 @@
 <div align="center">
 
+未发布工作区新增 [P9 课程证据选择题](docs/P9_EVIDENCE_CHOICE.md)：Mock 原文识别题提交后按私有答案键程序判分；开放题不自动判分；[P10 答错待回看](docs/P10_CHOICE_REVIEW.md) 按当前课程版本汇总跨会话的最新已提交错误选择题，不提供掌握度或能力分数。
+
 # LectureLens
 
 ### 把课程视频，变成可以追问的学习过程
@@ -17,6 +19,8 @@
 
 <sub>课程工作区 · 基于合成测试数据的真实产品界面。下面展示已保存真实模型结果在原生界面中的呈现。</sub>
 
+前端默认采用 B1 材料与学习并置工作区：登录进入“我的课程”，继续已保存练习，按答案版本获取反馈并回看来源。经典课程 URL 仍兼容；安全的隔离预览与验证见 [B1 工作区说明](docs/B1_WORKSPACE.md)。
+
 </div>
 
 ## 为什么做 LectureLens？
@@ -30,6 +34,10 @@ LectureLens 将**视频、课程内容与学习交互放在同一个工作区**�
 ### 01 · 视频变成可阅读的课程
 
 上传课程录屏、讲座或网课视频，系统处理媒体内容并组织字幕、中文译文、课程学习材料和时间线。可以一边观看视频，一边按时间阅读和定位内容。
+
+PR1 已在 main 实现视频与原文时间轴双向定位、暂停/恢复跟随，以及保留学习输入的证据回看；尚未部署，行为与验证边界见[课程定位说明](docs/COURSE_POSITION.md)。
+
+PR2 候选增加课程问答与 Study Agent 共用的结构化学习范围，并在服务端检索、工具调用和 Run 持久化中约束证据。候选尚未部署，协议、兼容性与发布条件见 [Learning scope](docs/LEARNING_SCOPE.md)。
 
 <img src="docs/images/lecturelens-course-reading.webp" alt="LectureLens 课程阅读工作区" width="900">
 
@@ -70,7 +78,9 @@ LectureLens 将**视频、课程内容与学习交互放在同一个工作区**�
 
 **一条学习路径：**
 
-`上传视频 → 阅读课程 → 提出问题 → 查看 Evidence → 完成练习 → 获取反馈 → 回看 Trace`
+`上传视频 → 阅读课程 → 向 Tutor 提问 → 发起解释与练习 → 保存作答 → 核对反馈与来源 → 修订并继续学习`
+
+[连续学习工作区](docs/LEARNING_WORKSPACE.md)把视频、原文和当前任务组织在同一课程页面，保留独立的普通 QA 与 Study Agent 入口；服务端已保存记录、网址位置与本页未提交草稿采用不同的恢复方式。
 
 ## 技术实现
 
@@ -118,16 +128,22 @@ cp .env.agent.example .env.agent.local
 
 以上仅用于准备配置文件，不等于完成启动。后续请按 [部署指南](docs/DEPLOYMENT.md) 配置服务、密钥、模型和课程处理管线；不应将示例凭据用于实际部署。
 
-[系统模型管理](docs/SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本/视觉的独立功能绑定、不可变配置版本和任务快照，默认关闭；ASR 已支持按任务快照运行时切换，管理员页面位于 `/admin/settings/models`，支持仅点击触发的有界连通性测试。现有 Python 个人模型管理保持独立。
+[系统模型管理](docs/SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本/视觉的独立功能绑定、不可变配置版本和任务快照，默认关闭；ASR 已支持按任务快照运行时切换，管理员页面位于 `/admin/settings/models`，支持仅点击触发的有界连通性测试。现有 Python 个人模型管理保持独立。课程页提供[只读模型使用记录](docs/MODEL_USAGE.md)，区分当前配置、冻结选择与调用事实；兼容性和课程质量证据分别展示。
 
 [部署说明](docs/DEPLOYMENT.md) · [API 文档](docs/API.md) · [Agent 服务](agent-service/README.md) · [更多产品截图](docs/PRODUCT_GALLERY.md)
 
 ## 项目范围
 
-本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆、自动复习调度尚未交付。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。维护环境的 Agent 契约修复与真实模型质量验收分别记录，当前部署身份及未验证项见[部署说明](docs/DEPLOYMENT.md#study-agent-候选部署与回滚)。
+本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆尚未交付；证据闪卡与 FSRS 自评复习调度已实验性实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 说明](docs/P7_EVIDENCE_FLASHCARDS.md)；独立[真实评测通道](eval/p7-real/README.md)已实现，仅完成离线验证，真实请求为 0。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。维护环境的 Agent 契约修复与真实模型质量验收分别记录，当前部署身份及未验证项见[部署说明](docs/DEPLOYMENT.md#study-agent-候选部署与回滚)。
 
 ## License & credits
 
 代码使用 [MIT License](LICENSE)。
 
 产品截图中的历史课程片段来自 Ana Bell 的 [MIT OpenCourseWare 6.0001, Lecture 3](https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/resources/lecture-3-string-manipulation-guess-and-check-approximations-bisection/)，按 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 用于非商业展示；MIT 不为本项目背书。图片与课程内容不因代码采用 MIT License 而改变原有授权。
+
+P8 course Tutor is an **experimental, mock-only** course workspace panel with saved multi-turn conversations, inline Evidence citations, explicit insufficient-evidence outcomes and Socratic prompts/reply feedback. Python/PostgreSQL own its state; Java is the authenticated gateway. The opt-in entry point and limits are in [P8 Tutor](docs/P8_TUTOR.md). The [24-dialogue evaluation harness](eval/p8-tutor/README.md) records two v8 live PASS results on known public courses; earlier FAIL/PARTIAL trials remain unchanged. Candidate `p8-tutor-20261027-v9` makes citable evidence the ordered union of all searches in the current turn, excluding prior-turn citations. The [v9 report](eval/p8-tutor/REPORT.md#offline-per-turn-union-citable-evidence-v9) separates offline protocol verification from v8 live results; v9 real-model quality is NOT_RUN, and unseen-course generalization remains unverified. AU/P7 frozen behavior and online configuration remain unchanged.
+
+未发布实验候选：[轻量课程 Tutor](docs/LIGHT_TUTOR.md)，复用课程对话入口，每轮最多一次生成、最多六轮；默认使用 Mock。正常登录后的 [DeepSeek Flash 试学](docs/LIGHT_TUTOR_TRIAL.md) 为单用户、单课程的离线验证候选，需要独立费用授权，真实教学质量 NOT_RUN。
+
+实验准备、离线运行和证据查询使用 [LectureLens CLI](docs/EVAL_CLI.md)，首个接入实验为 E3。

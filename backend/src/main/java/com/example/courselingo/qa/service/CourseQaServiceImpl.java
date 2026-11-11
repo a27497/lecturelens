@@ -184,6 +184,7 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
+        var learningScope=evidenceRetriever.validateScope(normalizedTaskId,currentUser.userId(),request.learning_scope());
         var execution =
                 systemModels == null
                         ? null
@@ -195,21 +196,21 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (!rateLimit.allowed()) {
             throw new BusinessException(ErrorCode.TASK_RATE_LIMITED, "Course QA rate limit exceeded");
         }
-        List<CourseQaEvidenceItem> evidence = evidenceSanitizer.sanitize(evidenceRetriever.retrieve(
-            normalizedTaskId,
-            currentUser.userId(),
-            task.getTargetLanguage(),
-            question
-        )).stream()
+        List<CourseQaEvidenceItem> evidence = evidenceSanitizer.sanitize(learningScope==null ? evidenceRetriever.retrieve(
+            normalizedTaskId, currentUser.userId(), task.getTargetLanguage(), question
+        ) : evidenceRetriever.retrieve(normalizedTaskId,currentUser.userId(),task.getTargetLanguage(),question,learningScope)).stream()
             .distinct()
             .limit(properties.getMaxEvidenceItems())
             .toList();
         if (evidence.isEmpty()) {
+            String insufficient=learningScope!=null && learningScope.kind().equals("segments") && learningScope.policy().equals("strict")
+                ? "所选片段内没有足够证据，未检索范围外内容。" : CourseQaMessages.INSUFFICIENT_EVIDENCE;
             CourseQaRecord record = saveRecord(ticket,
+                execution, "SKIPPED_NO_EVIDENCE", null,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
-                CourseQaMessages.INSUFFICIENT_EVIDENCE,
+                insufficient,
                 evidence,
                 "SUCCEEDED",
                 null,
@@ -219,13 +220,14 @@ public class CourseQaServiceImpl implements CourseQaService {
             );
             return new CourseQaResponse(
                 String.valueOf(record.getId()),
-                CourseQaMessages.INSUFFICIENT_EVIDENCE,
+                insufficient,
                 List.of(),
-                null
+                null, learningScope
             );
         }
         if (llmProvider == null) {
             saveRecord(ticket,
+                execution, "NOT_STARTED", null,
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -242,6 +244,8 @@ public class CourseQaServiceImpl implements CourseQaService {
 
         AiCallRecordView started = startAiCall(normalizedTaskId, currentUser.userId(), evidence.size());
         long startedNanos = System.nanoTime();
+        String invocationState = "NOT_STARTED";
+        CourseQaUsage observedUsage = null;
         try {
             var prepared = CourseQaPromptFactory.prepare(
                 question,
@@ -267,12 +271,16 @@ public class CourseQaServiceImpl implements CourseQaService {
             LlmRequest routed = routedRequestFactory == null
                 ? requestForProvider
                 : routedRequestFactory.apply(AiModelStage.COURSE_QA, requestForProvider);
+            invocationState = "DISPATCHED";
             LlmResult result = LlmStructuredOutputExecutor.execute(llmProvider, routed);
+            invocationState = "RESPONSE_RECEIVED";
+            observedUsage = usage(result);
             CourseQaResponseParser.ParsedCourseQaResponse parsed = parser.parse(result.content(), visibleEvidence.size());
             List<CourseQaEvidenceItem> cited = evidenceSanitizer.sanitize(citedEvidence(visibleEvidence, parsed.citedEvidenceIndexes()));
             String answer = cited.isEmpty() ? CourseQaMessages.INSUFFICIENT_EVIDENCE : parsed.answer();
-            CourseQaUsage usage = usage(result);
+            CourseQaUsage usage = observedUsage;
             CourseQaRecord record = saveRecord(ticket,
+                execution, invocationState, started == null ? null : started.id(),
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
@@ -294,18 +302,19 @@ public class CourseQaServiceImpl implements CourseQaService {
                 result.duration().toMillis(),
                 elapsedMillis(startedNanos)
             );
-            return new CourseQaResponse(String.valueOf(record.getId()), answer, cited, usage);
+            return new CourseQaResponse(String.valueOf(record.getId()), answer, cited, usage, learningScope);
         } catch (RuntimeException exception) {
             LlmStageException safeFailure = toStageFailure(exception);
             failAiCall(started, normalizedTaskId, currentUser.userId(), safeFailure, elapsedMillis(startedNanos));
             saveRecord(ticket,
+                execution, invocationState, started == null ? null : started.id(),
                 normalizedTaskId,
                 currentUser.userId(),
                 question,
                 CourseQaMessages.INSUFFICIENT_EVIDENCE,
                 evidence,
                 "FAILED",
-                null,
+                observedUsage,
                 safeFailure.apiDetails().errorCode(),
                 safeFailure.safeDiagnosticSummary(),
                 null
@@ -342,6 +351,9 @@ public class CourseQaServiceImpl implements CourseQaService {
 
     private CourseQaRecord saveRecord(
         GenerationFence.Ticket ticket,
+        com.example.courselingo.systemmodel.SystemModelExecutionRef execution,
+        String invocationState,
+        Long callRecordId,
         String taskId,
         Long userId,
         String question,
@@ -355,6 +367,9 @@ public class CourseQaServiceImpl implements CourseQaService {
     ) {
         List<CourseQaEvidenceItem> safeEvidence = evidenceSanitizer.sanitize(evidence);
         CourseQaRecord record = new CourseQaRecord();
+        record.setExecutionSnapshotId(execution == null ? null : execution.snapshotId());
+        record.setInvocationState(invocationState);
+        record.setAiCallRecordId(callRecordId);
         record.setTaskId(taskId);
         record.setUserId(userId);
         record.setQuestion(question);
@@ -386,13 +401,16 @@ public class CourseQaServiceImpl implements CourseQaService {
         if (aiCallRecordService == null) {
             return null;
         }
+        // The router has no model identity before dispatch. Keep it unknown in the
+        // local call ledger; the frozen selection and returned model are separate facts.
+        String diagnosticModel = llmProvider.modelNameForDiagnostics();
         return aiCallRecordService.startCall(new StartAiCallRecordCommand(
             taskId,
             userId,
             AiCallType.LLM,
             AiCallStage.COURSE_QA,
             safeProviderName(),
-            llmProvider.modelNameForDiagnostics(),
+            diagnosticModel == null || diagnosticModel.isBlank() ? null : diagnosticModel,
             null,
             inputUnits
         ));

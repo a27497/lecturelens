@@ -59,6 +59,19 @@ class CourseQaControllerTest {
     }
 
     @Test
+    void scopedRouteRequiresScopeAndLegacyRouteRejectsScopedPayloads() throws Exception {
+        String body="{\"question\":\"Explain selection\",\"learning_scope\":{\"version\":1,\"kind\":\"segments\",\"policy\":\"strict\",\"revision\":1,\"evidence_ids\":[\"selected\"]}}";
+        mockMvc.perform(post("/api/tasks/course/qa/scoped").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk());
+        var capture=org.mockito.ArgumentCaptor.forClass(CourseQaAskRequest.class);
+        verify(courseQaService).ask(Mockito.eq("course"),Mockito.isNull(),capture.capture());
+        org.assertj.core.api.Assertions.assertThat(capture.getValue().learning_scope().evidence_ids()).containsExactly("selected");
+        Mockito.clearInvocations(courseQaService);
+        mockMvc.perform(post("/api/tasks/course/qa").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/tasks/course/qa/scoped").contentType(MediaType.APPLICATION_JSON).content("{\"question\":\"Explain\"}")).andExpect(status().isBadRequest());
+        Mockito.verifyNoInteractions(courseQaService);
+    }
+
+    @Test
     void askReturnsAnswerEvidenceAndUsageWithoutSensitiveFields() throws Exception {
         CourseQaResponse response = new CourseQaResponse(
             "101",

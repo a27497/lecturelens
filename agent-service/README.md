@@ -7,7 +7,7 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 - Python 保存 Session/Run、checkpoint、解释与练习、不可变作答版本、反馈和用户核对记录；PostgreSQL 同时保存派生 Evidence 索引。
 - Java/MySQL 负责账号、课程与媒体事实、Evidence 权属/revision/删除检查和浏览器网关。Python 不读写 MySQL，不接收浏览器自报身份或用户 JWT。
 - Java 后台推送 Evidence 清单与差量，Python 使用固定版本的本地 ONNX Embedding 建索引；学习请求只消费已就绪索引，不触发全文索引。
-- 普通课程 QA 与媒体准备保持独立路径。自动评分、长期学习记忆和复习调度尚未交付。
+- 普通课程 QA 与媒体准备保持独立路径。开放题自动评分与长期学习记忆尚未交付；[P9](../docs/P9_EVIDENCE_CHOICE.md) 新增未发布的 Mock 选择题程序判分，按私有答案键保存逐题结果；[P10](../docs/P10_CHOICE_REVIEW.md) 只读汇总同 owner/course/revision 的最新已提交错误选择题，不新增模型调用或长期记忆；证据闪卡与 FSRS 自评调度实验性已实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 设计](../docs/P7_EVIDENCE_FLASHCARDS.md)。
 
 详细约束见[项目契约](../docs/AGENT_PRODUCT_CONTRACT.md)和[Evidence 同步](../docs/L1_EVIDENCE_SYNC.md)。
 
@@ -17,9 +17,9 @@ Python/FastAPI + LangGraph + PostgreSQL/pgvector，负责课程学习任务的�
 
 执行循环是 **model → tool → observation → 下一次决策或停止**。模型通过标准 `tool_calls` 选择检索、相邻证据补读、有界计算、练习草稿或证据不足报告；草稿经过目标条件、字段引用、答案一致性与课程方法范围复核，最多提交两份候选。程序保存解释、练习与私有答案，或保存证据不足产物。受限 Python AST 工具没有导入、I/O、循环或任意方法执行能力；计算正确不等于课程支持。
 
-作答保存为不可变版本。反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。P2-2a **拟默认开启，未发布**：本地候选在未设置 `STUDY_FEEDBACK_ENABLED` 时默认 true，示例模板同步；线上配置未改，真实浏览器及用户人工审阅尚未完成。课程所有者保存作答后主动请求反馈，不自动调用模型、不对其他用户开放课程，也不作为成绩。见[工具与执行协议](../docs/L2_STUDY_AGENT.md)、[复核机制](../docs/L2_QUALITY_REVIEW.md)及[学习交互](../docs/L3_LEARNING_FLOW.md)。
+作答保存为不可变版本。反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。`STUDY_FEEDBACK_ENABLED` 未设置时默认关闭；示例模板显式设置为 true。真实浏览器及用户人工审阅尚未完成。课程所有者保存作答后主动请求反馈，不自动调用模型、不对其他用户开放课程，也不作为成绩。见[工具与执行协议](../docs/L2_STUDY_AGENT.md)、[复核机制](../docs/L2_QUALITY_REVIEW.md)及[学习交互](../docs/L3_LEARNING_FLOW.md)。
 
-显式设置 `STUDY_FEEDBACK_ENABLED=false` 可关闭新反馈，已有作答、反馈及核对记录仍可读取，作答修改和核对意见仍可保存；失败或取消不影响已保存答案，不把旧反馈视作新版反馈。该开关只限制新请求，不会取消在途 Run；修改启动环境通常需要重新加载 Agent，不能承诺热切换。任何服务操作须另行授权，未通过真实验收前不部署默认开启；Java/Python 的 Study 总开关、权限与模型路由保持独立。
+显式设置 `STUDY_FEEDBACK_ENABLED=false` 可关闭新反馈，已有作答、反馈及核对记录仍可读取，作答修改和核对意见仍可保存；失败或取消不影响已保存答案，不把旧反馈视作新版反馈。该开关只限制新请求，不会取消在途 Run；修改启动环境通常需要重新加载 Agent，不能承诺热切换。任何服务操作须另行授权；Java/Python 的 Study 总开关、权限与模型路由保持独立。
 
 ## 授权、停止与恢复
 
@@ -79,3 +79,7 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
 
 可选发布审批默认关闭：浏览器勾选或 START/START_FEEDBACK 使用 `approval_required=true`。审批与调用日志恢复语义见 [审批与崩溃恢复](../docs/STUDY_APPROVAL_RECOVERY.md)，逐点强制终止实测见 [报告](../eval/approval-recovery-20261014/README.md)。
+
+### Experimental P8 Tutor
+
+`lecturelens_real_eval.tutor.app:create_app --factory` is an optional ASGI entry point retaining the original service routes. Set `TUTOR_ENABLED=true` with `AGENT_LLM_MODE=mock` to initialize `tutor_session/tutor_turn` and its bounded worker; real product mode is rejected. Java's Study gateway must also be enabled. See [P8 integration and rollback](../docs/P8_TUTOR.md) and [isolated offline tests/eval](../eval/p8-tutor/README.md). Historical frozen manifests remain unchanged. The Phase 0 provider compatibility fix has a separate development identity; see [Phase 0 integration](../eval/phase0-integration-20261108/REPORT.md).

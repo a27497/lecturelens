@@ -3,6 +3,7 @@ from typing import Annotated, Literal
 from pydantic import Field, model_validator
 
 from ..contracts import Contract, Identifier
+from .learning_scope import LearningScope
 from .linear import LinearRequest, LinearSelectionArgs
 from .strings import StringProgramPlan, render_string_program
 
@@ -15,8 +16,13 @@ class StudyScope(Contract):
 
 class StudyCommand(StudyScope):
     operation: Literal[
+        "GENERATE_CARDS",
+        "DUE_CARDS",
+        "READ_CARD",
+        "REVIEW_CARD",
         "CREATE_SESSION",
         "LIST",
+        "CHOICE_REVIEW",
         "RUNS",
         "START",
         "READ",
@@ -30,6 +36,8 @@ class StudyCommand(StudyScope):
         "FEEDBACK_NOTES",
         "DECIDE_APPROVAL",
     ]
+    card_id: Identifier | None = None
+    rating: Literal["Again", "Hard", "Good", "Easy"] | None = None
     session_id: Identifier | None = None
     run_id: Identifier | None = None
     request_key: Identifier | None = None
@@ -37,6 +45,8 @@ class StudyCommand(StudyScope):
     after: Annotated[int, Field(ge=0)] = 0
     artifact_id: Identifier | None = None
     question_index: Annotated[int, Field(ge=0, le=1, strict=True)] | None = None
+    practice_format: Literal["open", "choice"] | None = None
+    selected_option_id: Identifier | None = None
     answer_text: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
     expected_version: Annotated[int, Field(ge=0, strict=True)] | None = None
     before_version: Annotated[int, Field(ge=1, strict=True)] | None = None
@@ -44,18 +54,46 @@ class StudyCommand(StudyScope):
     feedback_id: Identifier | None = None
     note_text: Annotated[str, Field(min_length=1, max_length=2000)] | None = None
     disposition: Literal["disputed", "acknowledged"] | None = None
+    learning_scope: LearningScope | None = None
     approval_required: Annotated[bool, Field(strict=True)] = False
     approval_decision: Literal["approve", "edit", "reject"] | None = None
     approval_edit: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
 
     @model_validator(mode="after")
     def attempt_scope(self):
+        if self.operation == "CHOICE_REVIEW" and self.after > 2**31 - 1:
+            raise ValueError("Review page offset is too large")
+        if self.practice_format is not None and self.operation != "START":
+            raise ValueError("Practice format belongs to a new practice Run")
+        if self.selected_option_id is not None and self.operation != "SAVE_ATTEMPT":
+            raise ValueError("An option selection belongs to a saved attempt")
+        if self.operation == "GENERATE_CARDS" and (not self.session_id or not self.request_key):
+            raise ValueError("Card generation requires a Session and request key")
+        if self.operation in {"READ_CARD", "REVIEW_CARD"} and not self.card_id:
+            raise ValueError("Explicit card required")
+        if self.operation == "REVIEW_CARD" and (
+            not self.request_key or not self.rating or self.expected_version is None
+        ):
+            raise ValueError("Review requires rating, request key and expected version")
+        if self.learning_scope is not None and (
+            self.operation != "START" or self.learning_scope.revision != self.revision
+        ):
+            raise ValueError("Learning scope belongs to a new Run and the current revision")
         if self.operation in {"SAVE_ATTEMPT", "ATTEMPT_HISTORY", "START_FEEDBACK"}:
             if not all((self.session_id, self.run_id, self.artifact_id)) or self.question_index is None:
                 raise ValueError("An attempt requires an explicit artifact and question")
         if self.operation == "SAVE_ATTEMPT":
-            if not self.request_key or self.expected_version is None or not (self.answer_text or "").strip():
-                raise ValueError("An attempt requires nonempty text, a request key and an expected version")
+            text = bool((self.answer_text or "").strip())
+            selection = self.selected_option_id is not None
+            if (
+                not self.request_key
+                or self.expected_version is None
+                or text == selection
+                or (selection and self.answer_text is not None)
+            ):
+                raise ValueError(
+                    "An attempt requires exactly one nonempty text or option, request key and version"
+                )
         if self.operation == "START_FEEDBACK" and not all((self.attempt_id, self.request_key)):
             raise ValueError("Feedback requires a saved answer and a request key")
         if self.operation in {"SAVE_FEEDBACK_NOTE", "FEEDBACK_NOTES"}:
@@ -78,6 +116,13 @@ class StudyCommand(StudyScope):
 
 
 class SearchArgs(Contract):
+    expand_to_course: Annotated[
+        bool,
+        Field(
+            strict=True,
+            description="Only when the learner allowed course expansion; otherwise rejected by authority.",
+        ),
+    ] = False
     linear_request: Annotated[
         LinearRequest | None,
         Field(

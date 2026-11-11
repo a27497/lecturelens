@@ -6,6 +6,7 @@ import uuid
 from langgraph.types import interrupt
 from psycopg.types.json import Jsonb
 
+from .learning_scope import public_status, stored_status
 from .store import RunStopped, StudyError
 
 SCHEMA = """
@@ -56,7 +57,7 @@ def approval_view(conn, run):
     ).fetchone()
     if not row:
         return None
-    if run["status"] == "awaiting_approval":
+    if public_status(run["status"]) == "awaiting_approval":
         # Answers, scoring points and review diagnostics remain private even in previews.
         draft = copy.deepcopy(row.pop("draft"))
         if row["kind"] == "practice":
@@ -80,7 +81,7 @@ def decide(store, conn, run, command):
         ):
             raise StudyError("APPROVAL_DECISION_CONFLICT")
         return
-    if run["status"] != "awaiting_approval":
+    if public_status(run["status"]) != "awaiting_approval":
         raise StudyError("APPROVAL_NOT_WAITING")
     conn.execute(
         "UPDATE study_approval SET decision=%s,request_key=%s,edited_text=%s,decided_by=%s,decided_at=now() "
@@ -105,21 +106,24 @@ def decide(store, conn, run, command):
         },
     )
     # Approval is durable before resuming; the worker rechecks Java revision/deletion.
-    conn.execute("UPDATE study_run SET status='queued',worker_token=NULL WHERE run_id=%s", (run["run_id"],))
+    conn.execute(
+        "UPDATE study_run SET status=%s,worker_token=NULL WHERE run_id=%s",
+        (stored_status(run, "queued"), run["run_id"]),
+    )
 
 
 def pause(store, run_id, token):
     with store.connect() as conn:
-        store._active(conn, run_id, token)
+        run = store._active(conn, run_id, token)
         row = conn.execute("SELECT * FROM study_approval WHERE run_id=%s", (run_id,)).fetchone()
         if not row:
             raise StudyError("APPROVAL_DRAFT_MISSING")
         if row["decision"]:
             return row
         conn.execute(
-            "UPDATE study_run SET status='awaiting_approval',approval_seconds="
+            "UPDATE study_run SET status=%s,approval_seconds="
             "GREATEST(0,extract(epoch FROM deadline-now())),deadline=NULL WHERE run_id=%s",
-            (run_id,),
+            (stored_status(run, "awaiting_approval"), run_id),
         )
         store._event(conn, run_id, "approval_waiting", {"kind": row["kind"]})
         return row

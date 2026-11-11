@@ -10,3 +10,5 @@ These versioned migrations define the application schema. Enable Flyway for all 
 - V25 adds USER/ADMIN roles and system model configuration foundations. Its version/audit immutability triggers require trigger-creation privileges; it does not switch AI providers. See [system model management](../../../../../../docs/SYSTEM_MODEL_MANAGEMENT.md).
 
 V22/V23 introduce durable task boundaries and immutable evidence. Stop old workers before upgrading. V22 marks pre-upgrade in-flight tasks FAILED (`TASK_UPGRADE_INTERRUPTED`); retry creates a new task ID. Completed courses are preserved. See [the execution record](../../../../../../docs/C0_C3_EXECUTION.md).
+
+- `R__course_qa_model_usage.sql` adds nullable exact QA execution/call references and dispatch state without advancing the V25 watermark. Pending PR #35 owns V26–V31. Preserve the repeatable filename/content after release; never repair history or enable outOfOrder to integrate it. Both integration orders are tested with pinned test-only #35 fixtures. See [model usage migration contract](../../../../../../docs/MODEL_USAGE.md#mysql-迁移与回滚).

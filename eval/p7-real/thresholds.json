@@ -1,0 +1,15 @@
+{
+  "citation_valid_rate": 1.0,
+  "source_supported_rate": 0.9,
+  "correct_stop_rate": 1.0,
+  "protocol_failure_rate": 0.05,
+  "p95_generation_latency_s": 20,
+  "max_calls": 120,
+  "max_usd": 1.0,
+  "task_count": 24,
+  "negative_count": 2,
+  "sample_seed": 20261027,
+  "unclear_is_failure": true,
+  "missing_citation": "stop_entire_round_FAIL",
+  "conclusion": "all gates PASS; unmet gate without citation fabrication PARTIAL; fabricated citation or channel/ledger error FAIL"
+}

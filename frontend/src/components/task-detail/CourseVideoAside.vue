@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import type { SeekRequest } from "./courseLocation";
 import VideoPlaybackCard from "../VideoPlaybackCard.vue";
 import type { TaskEventPayload, TaskConnectionStatus, TaskDetailResponse } from "../../types/task";
 import { formatDurationBetween } from "../../utils/time";
@@ -10,6 +11,9 @@ type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported
 type VideoPlaybackExpose = { seekTo: (seconds: number) => void };
 
 const props = defineProps<{
+  compact?: boolean;
+  inactive?: boolean;
+  seekRequest?: SeekRequest;
   task: TaskEventPayload | null;
   taskDetail: TaskDetailResponse | null;
   connectionStatus: TaskConnectionStatus;
@@ -26,7 +30,7 @@ const props = defineProps<{
   subtitleMessage: string;
 }>();
 
-defineEmits<{ refreshVideo: [] }>();
+defineEmits<{ refreshVideo: []; position: [milliseconds: number]; manualSeek: [] }>();
 
 const playbackRef = ref<VideoPlaybackExpose | null>(null);
 const progress = computed(() => props.task?.progressPercent ?? props.taskDetail?.progressPercent ?? 0);
@@ -46,6 +50,11 @@ defineExpose({ seekTo });
   <aside class="course-video-aside" aria-label="课程视频和处理状态">
     <VideoPlaybackCard
       ref="playbackRef"
+      :compact="compact"
+      :inactive="inactive"
+      :seek-request="seekRequest"
+      @position="$emit('position', $event)"
+      @manual-seek="$emit('manualSeek')"
       title="课程视频"
       description="播放上传的原始视频。"
       :playback-url="playbackUrl"
@@ -61,7 +70,7 @@ defineExpose({ seekTo });
       @refresh="$emit('refreshVideo')"
     />
 
-    <section class="course-status" aria-labelledby="course-status-title">
+    <section v-if="!compact || !isSucceeded" class="course-status" aria-labelledby="course-status-title">
       <div class="course-status__heading">
         <div>
           <span>处理状态</span>
@@ -94,7 +103,7 @@ defineExpose({ seekTo });
       <p v-if="connectionError" class="course-status__error" role="alert">{{ connectionError }}</p>
     </section>
 
-    <details class="course-details">
+    <details v-if="!compact" class="course-details">
       <summary>课程信息</summary>
       <dl>
         <div><dt>任务 ID</dt><dd>{{ taskDetail?.taskId || task?.taskId || "暂无" }}</dd></div>

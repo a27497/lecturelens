@@ -9,7 +9,7 @@ const attempt: StudyAttempt = { attempt_id: "answer-1", artifact_id: "artifact",
 const feedback: StudyFeedback = { feedback_id: "feedback", attempt_id: "answer-1", answer_version: 1, question_index: 0, answer_text: "my answer", note: null, content: { kind: "guidance", mode: "real", observations: [{ learner_quote: "my answer", observation: "Explain the stopping condition.", next_step: "Read this passage.", evidence_id: "e1", evidence_quote: "A stopping condition is required." }], citations: [{ evidence_id: "e1", text: "A stopping condition is required.", start_ms: 5000, end_ms: 6000, source_type: "SUBTITLE" }] } };
 const initial: StudyFeedbackRun = { run_id: "feedback-run", status: "succeeded", error_code: null, attempt_id: "answer-1", answer_version: 1, question_index: 0, feedback };
 const run: StudyRun = { run_id: "feedback-run", session_id: "session", status: "running", goal: "Feedback", model_mode: "real", model_calls: 1, tool_calls: 1, error_code: null };
-const props = { taskId: "course", sessionId: "session", runId: "practice", artifactId: "artifact", questionIndex: 0, enabled: true, attempt };
+const props = { sourceRevision: 1, taskId: "course", sessionId: "session", runId: "practice", artifactId: "artifact", questionIndex: 0, enabled: true, attempt };
 const stubs = {
   "el-input": { props: ["modelValue", "disabled"], emits: ["update:modelValue"], template: `<textarea :disabled="disabled" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />` },
   "el-button": { props: ["disabled"], template: `<button :disabled="disabled"><slot /></button>` },
@@ -24,7 +24,7 @@ it("opens every supporting passage of a compound feedback observation", async ()
   const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, feedback: multiple } }, global: { stubs } });
   await wrapper.findAll("button").find(b => b.text() === "回看课程证据 1 · 00:00:05 - 00:00:06 · 片段起点")!.trigger("click");
   await wrapper.findAll("button").find(b => b.text() === "回看课程证据 2 · 00:00:09 - 00:00:10 · 片段起点")!.trigger("click");
-  expect(wrapper.emitted("seek")).toEqual([[5000], [9000]]);
+  expect(wrapper.emitted("seek")).toEqual([[5000, { evidenceId: "e1", revision: 1 }], [9000, { evidenceId: "e2", revision: 1 }]]);
   wrapper.unmount();
 });
 
@@ -45,7 +45,7 @@ it("restores an active feedback run and displays the completed result after poll
   expect(studyCommand).toHaveBeenCalledWith("course", { operation: "READ", session_id: "session", run_id: "feedback-run" });
   expect(wrapper.text()).toContain("Explain the stopping condition.");
   await wrapper.findAll("button").find(b => b.text() === "回看这段课程证据 · 00:00:05 - 00:00:06 · 片段起点")!.trigger("click");
-  expect(wrapper.emitted("seek")).toEqual([[5000]]);
+  expect(wrapper.emitted("seek")).toEqual([[5000, { evidenceId: "e1", revision: 1 }]]);
   wrapper.unmount();
 });
 
@@ -129,4 +129,67 @@ it("stops polling when the course is deleted", async () => {
   expect(studyCommand).toHaveBeenCalledTimes(1);
   expect(wrapper.text()).toContain("请重新打开课程");
   wrapper.unmount();
+});
+
+it("opens recorded sources for abstaining feedback without claiming answer assessment", async () => {
+  const abstained = structuredClone(feedback);
+  abstained.content = { kind: "insufficient_evidence", mode: "mock", reason: "No semantic assessment.", citations: abstained.content.citations };
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, feedback: abstained } }, global: { stubs } });
+  expect(wrapper.text()).toContain("反馈使用的课程材料（不代表已判断作答）");
+  expect(wrapper.find(".feedback-observation").exists()).toBe(false);
+  await wrapper.findAll("button").find(b => b.text() === "回看这段课程证据")!.trigger("click");
+  expect(wrapper.emitted("seek")).toEqual([[5000, { evidenceId: "e1", revision: 1 }]]);
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("keeps old feedback readable while a dirty answer prevents inference on the unsaved version", async () => {
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, answerDirty: true, initial }, global: { stubs } });
+  const button = wrapper.findAll('button').find(b => b.text() === '重新获取证据反馈')!;
+  expect(button.attributes('disabled')).toBeDefined();
+  expect(wrapper.text()).toContain('请先保存本页修改');
+  expect(wrapper.text()).toContain('第 1 版作答的证据反馈');
+  await wrapper.findAll('button').find(b => b.text() === '回看这段课程证据 · 00:00:05 - 00:00:06 · 片段起点')!.trigger('click');
+  expect(wrapper.emitted('seek')).toEqual([[5000, { evidenceId: 'e1', revision: 1 }]]);
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("cancelling a feedback-history switch keeps the selected version and unsaved note", async () => {
+  const older = { ...initial, run_id: 'older-feedback' };
+  Object.defineProperty(window, 'confirm', { configurable: true, value: vi.fn(() => false) });
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial, history: [initial, older] }, global: { stubs } });
+  await wrapper.get('textarea').setValue('unsubmitted correction');
+  const select = wrapper.get<HTMLSelectElement>('.feedback-history select');
+  await select.setValue('older-feedback'); await flushPromises();
+  expect(window.confirm).toHaveBeenCalledOnce();
+  expect(select.element.value).toBe(initial.run_id);
+  expect(wrapper.get<HTMLTextAreaElement>('textarea').element.value).toBe('unsubmitted correction');
+  expect(studyCommand).not.toHaveBeenCalled();
+  wrapper.unmount();
+});
+
+it("ignores an older same-feedback read after a newer explicit open observes another tab's note", async () => {
+  let finish!: (value: StudyResponse) => void;
+  vi.mocked(studyCommand).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: structuredClone(initial), history: [structuredClone(initial)] }, global: { stubs } });
+  const panel = wrapper.vm as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> };
+  const oldRead = panel.showFeedback(initial);
+  const updated = structuredClone(feedback);
+  updated.note = { note_id: "latest", version: 2, disposition: "acknowledged", note_text: "latest other tab note", created_at: "2026-10-26" };
+  vi.mocked(studyCommand).mockResolvedValueOnce({ run: { ...run, status: "succeeded" }, feedback: updated });
+  await panel.showFeedback(initial); await flushPromises();
+  finish({ run: { ...run, status: "succeeded" }, feedback: structuredClone(feedback) }); await oldRead; await flushPromises();
+  expect(wrapper.get(".feedback-note").text()).toContain("latest other tab note"); wrapper.unmount();
+});
+it("a late poll cannot restore running status after cancellation", async () => {
+  let finish!: (value: StudyResponse) => void;
+  vi.mocked(studyCommand).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  const wrapper = mount(PracticeFeedbackPanel, { props: { ...props, initial: { ...initial, status: "running", feedback: null } }, global: { stubs } });
+  await vi.advanceTimersByTimeAsync(1500);
+  vi.mocked(studyCommand).mockResolvedValueOnce({ run: { ...run, status: "cancelled" } });
+  await wrapper.findAll("button").find(b => b.text() === "取消反馈")!.trigger("click"); await flushPromises();
+  finish({ run }); await flushPromises();
+  expect(wrapper.text()).toContain("反馈已取消"); await vi.advanceTimersByTimeAsync(5000);
+  expect(studyCommand).toHaveBeenCalledTimes(2); wrapper.unmount();
 });

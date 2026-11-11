@@ -1,16 +1,20 @@
+import type { LearningScope } from "./learningScope";
 import { authHeader } from "./authToken";
 import { http } from "./http";
 import type { ApiResponse } from "../types/task";
 
 export type RunStatus = "queued" | "running" | "awaiting_approval" | "succeeded" | "failed" | "cancelled" | "budget_exceeded";
 export interface StudyRun {
+  learning_scope?: LearningScope | null;
   run_id: string; session_id: string; goal: string; request_key?: string; status: RunStatus;
   approval_required?: boolean;
   model_mode: "real" | "mock"; model_calls: number; tool_calls: number; error_code: string | null;
-  model_selection?: Record<string, { name: string; model: string; version: number }>;
+  created_at?: string;
+  model_selection?: Record<string, { connection_id?: string | null; name: string; model: string; version: number;
+    single_turn_evidence?: { ok: boolean; code: string | null; checked_at: number; version: number } | null }>;
 }
 export interface Citation { evidence_id: string; text: string; start_ms: number; end_ms: number; source_type: string }
-export interface PracticeQuestion { question: string; evidence_ids: string[]; answer?: string; rubric?: string }
+export interface PracticeQuestion { kind?: "choice"; options?: { id: string; text: string }[]; question: string; evidence_ids: string[]; answer?: string; rubric?: string }
 export interface StudyArtifact {
   kind?: "practice" | "insufficient_evidence"; artifact_id: string; title: string; explanation: string; evidence_ids: string[];
   human_edited?: boolean; edited_by?: number;
@@ -23,15 +27,17 @@ export interface StudyApproval {
 }
 export interface StudyResponse {
   approval?: StudyApproval | null;
-  session_id?: string; mode?: string; events?: StudyEvent[];
+  session_id?: string; revision?: number; mode?: string; events?: StudyEvent[];
   sessions?: { session_id: string; revision: number; created_at?: string }[];
   runs?: { run_id: string; goal: string; status: RunStatus; created_at: string }[];
   run?: StudyRun | null; artifact?: StudyArtifact | null; questions?: PracticeQuestion[];
+  practice_results?: PracticeResult[];
   attempt?: StudyAttempt; attempts?: StudyAttempt[]; next_before_version?: number | null;
   feedback_enabled?: boolean; feedback?: StudyFeedback | null; feedback_runs?: StudyFeedbackRun[];
   note?: FeedbackNote; notes?: FeedbackNote[];
 }
 export interface StudyAttempt {
+  selected_option_id?: string; choice_result?: { is_correct: boolean; correct_option_id: string; citations: Citation[] };
   attempt_id: string; artifact_id: string; question_index: number; version: number;
   answer_text: string; created_at: string;
 }
@@ -50,7 +56,10 @@ export interface StudyFeedbackRun {
 }
 export interface StudyEvent { sequence: number; event_type: string; payload: { [key: string]: unknown; tool?: string; status?: RunStatus; error_code?: string; accepted?: boolean } }
 export interface StudyCommand {
+  learning_scope?: LearningScope;
   approval_required?: boolean; approval_decision?: "approve" | "edit" | "reject"; approval_edit?: string;
+  card_id?: string; rating?: "Again" | "Hard" | "Good" | "Easy";
+  practice_format?: "open" | "choice"; selected_option_id?: string;
   operation: string; after?: number; session_id?: string; run_id?: string; goal?: string; request_key?: string;
   artifact_id?: string; question_index?: number; answer_text?: string; expected_version?: number; before_version?: number;
   attempt_id?: string; feedback_id?: string; note_text?: string; disposition?: "disputed" | "acknowledged";
@@ -61,7 +70,10 @@ export async function studyStatus(taskId: string): Promise<{ enabled: boolean; r
   return result.data.data;
 }
 export async function studyCommand(taskId: string, command: StudyCommand): Promise<StudyResponse> {
-  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/command`, command, { headers: authHeader() });
+  // Capability reads and writes can reach different gateway versions during rollout.
+  // Never fall back to the legacy route after a scoped request fails.
+  const route = command.learning_scope ? "scoped-command" : "command";
+  const result = await http.post<ApiResponse<StudyResponse>>(`/api/tasks/${encodeURIComponent(taskId)}/study/${route}`, command, { headers: authHeader() });
   return result.data.data;
 }
 
@@ -99,4 +111,33 @@ export async function studyEvents(taskId: string, sessionId: string, runId: stri
       }
     }
   } finally { reader.releaseLock(); }
+}
+
+export interface PracticeResult {
+  question_index: number; attempt: StudyAttempt | null; feedback_run: StudyFeedbackRun | null;
+  latest_feedback_status: RunStatus | null; latest_feedback_answer_version?: number | null;
+}
+
+export interface EvidenceCard {
+  card_id: string; deck_id: string; front: string; back: string; citations: Citation[];
+  revision: number; version: number; due_at: string;
+}
+export interface DueCards {
+  cards: EvidenceCard[]; due_count: number; total_count: number; reviewed_today: number;
+  next_due_at: string | null; generation: StudyRun | null; server_now: string; day_timezone: "UTC";
+}
+export async function dueCards(taskId: string): Promise<DueCards> {
+  return await studyCommand(taskId, { operation: "DUE_CARDS" }) as unknown as DueCards;
+}
+
+export interface ChoiceReviewItem {
+  session_id: string; run_id: string; artifact_id: string; question_index: number;
+  question: PracticeQuestion; attempt: StudyAttempt;
+}
+export interface ChoiceReview {
+  revision: number; correct_count: number; wrong_count: number;
+  items: ChoiceReviewItem[]; next_after: number | null;
+}
+export async function choiceReview(taskId: string, after = 0): Promise<ChoiceReview> {
+  return await studyCommand(taskId, { operation: "CHOICE_REVIEW", after }) as unknown as ChoiceReview;
 }

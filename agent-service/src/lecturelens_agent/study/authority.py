@@ -8,10 +8,12 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from .learning_scope import check_scope_response, inject_scope
 from .store import StudyError
 
 AUDIENCE = "lecturelens-study-v1"
 AUTHORITY_PATH = "/internal/v1/study/evidence"
+SCOPED_AUTHORITY_PATH = "/internal/v1/study/scoped-evidence"
 COMMAND_PATH = "/internal/v1/study/command"
 
 
@@ -25,11 +27,16 @@ def request_body(payload):
     return json.dumps(payload, ensure_ascii=False, sort_keys=True).encode()
 
 
+def authority_path(payload):
+    # A legacy authority must reject the route before parsing away a scope field.
+    return SCOPED_AUTHORITY_PATH if payload.get("learning_scope") is not None else AUTHORITY_PATH
+
+
 def forward_signed(url, payload, timestamp, signed):
     """Same Java endpoint and scope check for direct and MCP transports."""
     with httpx.Client(timeout=10, follow_redirects=False, trust_env=False) as client:
         response = client.post(
-            url.rstrip("/") + AUTHORITY_PATH,
+            url.rstrip("/") + authority_path(payload),
             content=request_body(payload),
             headers={
                 "Content-Type": "application/json",
@@ -43,6 +50,7 @@ def forward_signed(url, payload, timestamp, signed):
     result = response.json()["data"]
     if any(result.get(k) != payload[k] for k in ("owner_id", "course_id", "revision")):
         raise StudyError("EVIDENCE_SCOPE_MISMATCH")
+    check_scope_response(payload, result)
     return result
 
 
@@ -76,10 +84,11 @@ class EvidenceAuthority:
             "action": action,
             **arguments,
         }
+        payload = inject_scope(scope, payload)
         body = request_body(payload)
         timestamp = str(int(time.time()))
         return forward_signed(
-            self.url, payload, timestamp, signature(self.secret, timestamp, body, AUTHORITY_PATH)
+            self.url, payload, timestamp, signature(self.secret, timestamp, body, authority_path(payload))
         )
 
 

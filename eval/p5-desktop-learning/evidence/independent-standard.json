@@ -1,0 +1,27 @@
+{
+  "authorship": "Self-authored synthetic course, no third-party content. Standard fixed before fixture output.",
+  "quality_boundary": "Human-checkable arithmetic and textual entailment only; no student learning or model quality claim.",
+  "Q1": {
+    "question": "怎样进行 retrieval practice？",
+    "required": [
+      "不看原文先回忆",
+      "对照原文",
+      "发现错误后订正"
+    ]
+  },
+  "Q2": {
+    "question": "82 与 64 的组均值能否说明每个人提高了18分？",
+    "required": [
+      "均值之差18",
+      "不能推出每个人提高18",
+      "不能仅凭均值推断因果"
+    ]
+  },
+  "Q3": {
+    "question": "课程能否预测某学生下个月的准确分数？",
+    "required": [
+      "不能",
+      "缺少个体预测证据"
+    ]
+  }
+}

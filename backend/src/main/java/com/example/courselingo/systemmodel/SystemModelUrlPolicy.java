@@ -66,10 +66,21 @@ public class SystemModelUrlPolicy {
     }
 
     public void checkDestination(URI uri) {
+        if (uri == null || uri.getHost() == null
+                || !("http".equals(uri.getScheme()) || "https".equals(uri.getScheme()))
+                || uri.getRawUserInfo() != null || uri.getRawQuery() != null
+                || uri.getRawFragment() != null || uri.getPort() == 0 || uri.getPort() > 65535)
+            throw forbidden();
+        publicAddresses(uri.getHost());
+    }
+
+    // The HTTP transport must connect to these checked addresses, not resolve the host again.
+    InetAddress[] publicAddresses(String host) {
         try {
-            InetAddress[] addresses = resolver.resolve(uri.getHost());
+            InetAddress[] addresses = resolver.resolve(host);
             if (addresses.length == 0) throw forbidden();
             for (InetAddress address : addresses) if (!publicAddress(address)) throw forbidden();
+            return addresses;
         } catch (Exception ignored) {
             throw forbidden();
         }
@@ -92,12 +103,15 @@ public class SystemModelUrlPolicy {
                     && !(a == 169 && c == 254)
                     && !(a == 172 && c >= 16 && c <= 31)
                     && !(a == 192 && (c == 168 || c == 0))
+                    && !(a == 192 && c == 88 && d == 99)
                     && !(a == 198 && (c == 18 || c == 19 || (c == 51 && d == 100)))
                     && !(a == 203 && c == 0 && d == 113);
         }
         // IPv6 global unicast only; reject ULA, mapped/translation, documentation and local ranges.
         return b.length == 16
                 && (b[0] & 0xe0) == 0x20
+                && !((b[0] & 255) == 0x20 && (b[1] & 255) == 2)
+                && !((b[0] & 255) == 0x20 && (b[1] & 255) == 1 && (b[2] & 255) <= 1)
                 && !((b[0] & 255) == 0x20
                         && (b[1] & 255) == 1
                         && (b[2] & 255) == 0x0d

@@ -136,13 +136,22 @@ def test_feedback_is_separate_from_answer_and_is_recovered_with_parent_practice(
     assert "stopping condition" not in json.dumps(events)
 
 
-@pytest.mark.parametrize("configured", [None, "true", "TrUe"])
-def test_feedback_defaults_on_and_requires_a_saved_answer(practice, monkeypatch, configured):
+def test_feedback_is_disabled_by_default_and_cannot_invent_an_answer(practice, monkeypatch):
     store, scope = practice
-    if configured is None:
-        monkeypatch.delenv("STUDY_FEEDBACK_ENABLED", raising=False)
-    else:
-        monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", configured)
+    monkeypatch.delenv("STUDY_FEEDBACK_ENABLED", raising=False)
+    assert store.command(StudyCommand(**scope, operation="READ"), "mock")["feedback_enabled"] is False
+    command = StudyCommand(**scope, operation="START_FEEDBACK", request_key="missing", attempt_id="not-saved")
+    with pytest.raises(StudyError, match="FEEDBACK_DISABLED"):
+        store.command(command, "mock")
+    monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", "true")
+    with pytest.raises(StudyError, match="ATTEMPT_NOT_FOUND"):
+        store.command(command, "mock")
+
+
+@pytest.mark.parametrize("configured", ["true", "TrUe"])
+def test_explicitly_enabled_feedback_requires_a_saved_answer(practice, monkeypatch, configured):
+    store, scope = practice
+    monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", configured)
     assert store.command(StudyCommand(**scope, operation="READ"), "mock")["feedback_enabled"] is True
     command = StudyCommand(**scope, operation="START_FEEDBACK", request_key="missing", attempt_id="not-saved")
     with pytest.raises(StudyError, match="ATTEMPT_NOT_FOUND"):
@@ -656,3 +665,54 @@ def test_feedback_and_corrections_are_owner_and_revision_scoped(feedback, change
             "mock",
         )
     assert error.value.status == 404
+
+
+def test_practice_results_read_saved_versions_notes_and_old_feedback_without_writes(feedback):
+    store, scope, runtime, _, attempt, _, run, _ = feedback
+    runtime.execute(run)
+    command = StudyCommand(**scope, operation="READ")
+    first = store.command(command, "mock")
+    result = first["practice_results"][0]
+    assert result["attempt"]["attempt_id"] == attempt["attempt_id"]
+    assert result["feedback_run"]["feedback"]["answer_version"] == 1
+    assert result["feedback_run"]["feedback"]["note"] is None
+    note = store.command(
+        StudyCommand(
+            **(scope | {"run_id": run["run_id"]}),
+            operation="SAVE_FEEDBACK_NOTE",
+            feedback_id=result["feedback_run"]["feedback"]["feedback_id"],
+            request_key="summary-note",
+            expected_version=0,
+            disposition="acknowledged",
+            note_text="Checked the course source.",
+        ),
+        "mock",
+    )["note"]
+    second = test_study_attempts.save((store, scope), "v2-summary", 1, "Revised saved answer")
+    # More recent cancelled requests must not hide a completed older-version feedback result.
+    for index in range(21):
+        pending = store.command(
+            StudyCommand(
+                **scope,
+                operation="START_FEEDBACK",
+                request_key=f"summary-cancel-{index}",
+                attempt_id=second["attempt_id"],
+            ),
+            "mock",
+        )
+        store.command(
+            StudyCommand(**(scope | {"run_id": pending["run"]["run_id"]}), operation="CANCEL"), "mock"
+        )
+    assert all(row["feedback"] is None for row in store.command(command, "mock")["feedback_runs"])
+    with store.connect() as conn:
+        before = conn.execute("SELECT count(*) AS n FROM study_run").fetchone()["n"]
+    for _ in range(2):
+        results = store.command(command, "mock")["practice_results"]
+        assert results[0]["attempt"]["attempt_id"] == second["attempt_id"]
+        assert results[0]["feedback_run"]["attempt_id"] == attempt["attempt_id"]
+        assert results[0]["feedback_run"]["feedback"]["note"] == note
+        assert results[0]["latest_feedback_answer_version"] == 2
+        assert results[0]["latest_feedback_status"] == "cancelled"
+        assert results[1]["attempt"] is None
+    with store.connect() as conn:
+        assert conn.execute("SELECT count(*) AS n FROM study_run").fetchone()["n"] == before

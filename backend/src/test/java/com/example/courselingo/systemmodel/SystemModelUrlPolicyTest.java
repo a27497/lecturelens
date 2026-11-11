@@ -57,7 +57,7 @@ class SystemModelUrlPolicyTest {
                 "fe80::1",
                 "fc00::1",
                 "::ffff:127.0.0.1",
-                "2001:db8::1"
+                "2001:db8::1", "2002:7f00:1::1", "2001::1", "192.88.99.1"
             })
     void rejectsEveryNonPublicAddressEvenInMixedDnsAnswers(String ip) throws Exception {
         var mixed =

@@ -82,7 +82,7 @@ export function authHeader(): { Authorization: string } {
   };
 }
 
-export function saveAuthTokens(accessToken: string, refreshToken: string, email: string, nextPath = "/upload") {
+export function saveAuthTokens(accessToken: string, refreshToken: string, email: string, nextPath = "/tasks") {
   if (!checkAuthSession()) throw new AccessTokenMissingError();
   window.localStorage.setItem(ACCESS_TOKEN_KEYS[0], accessToken);
   window.localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);

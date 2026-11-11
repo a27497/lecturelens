@@ -1,0 +1,100 @@
+{
+  "kind": "MOCK_ONLY_NOT_QUALITY",
+  "checks": [
+    "initial read creates no Run",
+    "explicit generation and flip with citations",
+    "two-tab stale rating conflict preserves one review",
+    "reload restores server progress without generation",
+    "canonical source navigation at both desktop sizes"
+  ],
+  "generationMs": 1936.30468,
+  "commands": [
+    "DUE_CARDS",
+    "CREATE_SESSION",
+    "GENERATE_CARDS",
+    "DUE_CARDS",
+    "DUE_CARDS",
+    "DUE_CARDS",
+    "REVIEW_CARD",
+    "DUE_CARDS",
+    "REVIEW_CARD",
+    "DUE_CARDS",
+    "DUE_CARDS"
+  ],
+  "durations": [
+    {
+      "operation": "DUE_CARDS",
+      "ms": 83.7099340000002
+    },
+    {
+      "operation": "CREATE_SESSION",
+      "ms": 20.580606999999873
+    },
+    {
+      "operation": "GENERATE_CARDS",
+      "ms": 26.61603500000001
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 26.636154999999917
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 22.224696000000222
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 35.2157930000003
+    },
+    {
+      "operation": "REVIEW_CARD",
+      "ms": 36.12510300000031
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 39.37005300000055
+    },
+    {
+      "operation": "REVIEW_CARD",
+      "ms": 27.89522500000021
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 23.81855600000017
+    },
+    {
+      "operation": "DUE_CARDS",
+      "ms": 26.373114999999416
+    }
+  ],
+  "errors": [],
+  "forbidden": [],
+  "api": "real Python HMAC API + real PostgreSQL",
+  "fixtures": "Java authentication/course; generated local H.264 media",
+  "viewports": [
+    "1440x900",
+    "1280x800"
+  ],
+  "backend_runs": [
+    {
+      "run_id": "8061fe92-97f6-4f90-b2bd-571c2d08c76c",
+      "run_ms": "463.305000",
+      "model_calls": 2,
+      "tool_calls": 2
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".data/p7/browser-1793043259653/1280x800-review.png",
+      "sha256": "6d88d6c54364d3f1341ddd81a0e2af93d65db45493bd1a17ec0a01f29e0c0ce3"
+    },
+    {
+      "path": ".data/p7/browser-1793043259653/1440x900-flipped.png",
+      "sha256": "a761c315310caf0ac83f5b564efb6c998129a8bbbe699f77cdb2a096f2f65c42"
+    },
+    {
+      "path": ".data/p7/browser-1793043259653/results.json",
+      "sha256": "327de717618833e0b30bec2ac85c4b7c0e327d9e8ed40f9de87ef94eb338f0f6"
+    }
+  ]
+}

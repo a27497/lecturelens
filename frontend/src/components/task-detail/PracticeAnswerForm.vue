@@ -3,12 +3,13 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { studyCommand } from "../../api/study";
 import type { StudyAttempt, StudyCommand } from "../../api/study";
 import { randomUuid } from "../../utils/randomUuid";
+import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 
 const props = defineProps<{
   taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number;
   attempt?: StudyAttempt;
 }>();
-const emit = defineEmits<{ saved: [attempt: StudyAttempt] }>();
+const emit = defineEmits<{ saved: [attempt: StudyAttempt]; draftChange: [dirty: boolean]; accessFailure: [] }>();
 const text = ref("");
 const latest = ref<StudyAttempt>();
 const saving = ref(false);
@@ -19,6 +20,7 @@ const message = ref("");
 let generation = 0;
 let pending: StudyCommand | null = null;
 const dirty = computed(() => text.value !== (latest.value?.answer_text ?? ""));
+watch(dirty, value => emit("draftChange", value), { immediate: true });
 const canSave = computed(() => dirty.value && text.value.trim().length > 0 && text.value.length <= 4000 && !saving.value);
 const scope = () => ({ session_id: props.sessionId, run_id: props.runId, artifact_id: props.artifactId, question_index: props.questionIndex });
 
@@ -28,8 +30,10 @@ watch(() => [props.taskId, props.sessionId, props.runId, props.artifactId, props
 }, { immediate: true });
 watch(() => props.attempt, value => {
   if (!value || (latest.value && value.version <= latest.value.version)) return;
-  if (!dirty.value) text.value = value.answer_text;
-  latest.value = value;
+  const hasDraft = dirty.value;
+  if (!hasDraft) text.value = value.answer_text;
+  latest.value = value; pending = null; history.value = null;
+  message.value = hasDraft ? `服务器已保存第 ${value.version} 版作答；本页未保存文字已保留，请核对后再保存。` : "";
 });
 onBeforeUnmount(() => { generation++; });
 
@@ -50,8 +54,9 @@ async function save() {
   try {
     const result = await studyCommand(task, command);
     if (current === generation && result.attempt) accept(result.attempt);
-  } catch {
+  } catch (failure) {
     if (current !== generation) return;
+    if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
     message.value = "保存未确认，你的文字仍在本页。请重试保存。";
     try {
       const result = await studyCommand(task, { ...scope(), operation: "READ" });
@@ -77,16 +82,22 @@ async function showHistory(more = false) {
     if (current !== generation) return;
     history.value = [...(more ? history.value ?? [] : []), ...result.attempts ?? []];
     nextBefore.value = result.next_before_version ?? null;
-  } catch { if (current === generation) message.value = "修改记录暂不可用，请重试。"; }
+  } catch (failure) {
+    if (current === generation) {
+      message.value = "修改记录暂不可用，请重试。";
+      if (mayHaveLostCourseAccess(failure)) emit("accessFailure");
+    }
+  }
   finally { if (current === generation) loadingHistory.value = false; }
 }
+defineExpose({ showHistory });
 </script>
 
 <template>
   <div class="practice-answer">
     <el-input v-model="text" type="textarea" :rows="3" maxlength="4000" :disabled="saving" placeholder="写下你的理解，然后保存作答。" :aria-label="`第 ${questionIndex + 1} 题作答`" />
     <div class="answer-actions">
-      <el-button :disabled="!canSave" :loading="saving" @click="save">保存作答</el-button>
+      <el-button type="primary" :disabled="!canSave" :loading="saving" @click="save">保存作答</el-button>
       <span role="status">{{ dirty ? '有尚未保存的修改' : latest ? `已保存第 ${latest.version} 版` : '尚未作答' }}</span>
       <el-button v-if="latest" text :loading="loadingHistory" @click="showHistory()">修改记录</el-button>
     </div>

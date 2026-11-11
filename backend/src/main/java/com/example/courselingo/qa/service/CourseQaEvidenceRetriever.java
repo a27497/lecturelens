@@ -1,5 +1,8 @@
 package com.example.courselingo.qa.service;
 
+import com.example.courselingo.evidence.LearningScope;
+import com.example.courselingo.common.error.ErrorCode;
+import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.fusion.VideoSegment;
 import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.qa.dto.CourseQaEvidenceItem;
@@ -134,12 +137,33 @@ public class CourseQaEvidenceRetriever {
         return semanticallyDistinct(ranked.stream().map(Candidate::item).toList(), limit);
     }
 
+    public LearningScope validateScope(String taskId, Long userId, LearningScope scope) {
+        if (scope==null) return null;
+        if (canonicalEvidence==null) throw new BusinessException(ErrorCode.RETRIEVAL_UNAVAILABLE);
+        long revision=canonicalEvidence.ensureSnapshot(taskId,userId);
+        return LearningScope.validate(scope,revision,canonicalEvidence.current(taskId,userId));
+    }
+
+    public List<CourseQaEvidenceItem> retrieve(String taskId, Long userId, String language, String question, LearningScope scope) {
+        if(scope==null) return retrieve(taskId,userId,language,question);
+        var hits=retrieveCanonical(taskId,userId,language,question,scope,false);
+        return hits.isEmpty() && scope.permitsExpansion() ? retrieveCanonical(taskId,userId,language,question,scope,true) : hits;
+    }
+
     private List<CourseQaEvidenceItem> retrieveCanonical(String taskId, Long userId, String language, String question) {
+        return retrieveCanonical(taskId,userId,language,question,null,false);
+    }
+
+    private List<CourseQaEvidenceItem> retrieveCanonical(String taskId, Long userId, String language, String question, LearningScope scope, boolean expanded) {
+        if(scope!=null) scope=validateScope(taskId,userId,scope);
+        final var selectedScope=scope;
+
         List<String> tokens = queryTermExtractor.extract(question);
         Optional<TimeWindow> window = parseTimeWindow(question);
         boolean overview = window.isEmpty() && isOverviewQuestion(question);
         var current = canonicalEvidence.current(taskId, userId).stream()
             .filter(com.example.courselingo.evidence.CourseEvidence::retrievable)
+            .filter(item -> selectedScope==null || expanded || selectedScope.contains(item.evidenceId()))
             .filter(item -> !"SUBTITLE_TRANSLATION".equals(item.sourceType()) || Objects.equals(language, item.language()))
             .toList();
         if (denseClient != null && denseClient.enabled() && !overview && !current.isEmpty()) {

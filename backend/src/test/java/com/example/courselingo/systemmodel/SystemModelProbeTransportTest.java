@@ -103,7 +103,7 @@ class SystemModelProbeTransportTest {
                 new SystemModelProbeService(
                         registry,
                         urls,
-                        new SystemModelHttpClient(SystemModelProbeService.RESPONSE_LIMIT_BYTES),
+                        SystemModelHttpTestSupport.loopbackClient(SystemModelProbeService.RESPONSE_LIMIT_BYTES),
                         origin,
                         mode.equals("slow") ? Duration.ofMillis(150) : Duration.ofSeconds(3),
                         2)) {

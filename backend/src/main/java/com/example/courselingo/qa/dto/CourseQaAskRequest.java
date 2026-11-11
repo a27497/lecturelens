@@ -1,4 +1,7 @@
 package com.example.courselingo.qa.dto;
 
-public record CourseQaAskRequest(String question) {
+import com.example.courselingo.evidence.LearningScope;
+
+public record CourseQaAskRequest(String question, LearningScope learning_scope) {
+    public CourseQaAskRequest(String question) { this(question, null); }
 }

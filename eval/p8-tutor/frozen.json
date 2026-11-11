@@ -1,0 +1,24 @@
+{
+  "candidate": "p8-tutor-20261027-v9",
+  "source": "eval/retrieval-v2/corpus.json",
+  "files": {
+    "agent-service/src/lecturelens_real_eval/channel.py": "e80766bb315a899aa77fb4d4c7e198e0d62874e4bb117adf2fafa936eb09cc91",
+    "agent-service/src/lecturelens_real_eval/runner.py": "e3d5aeddbd94a3840edf089476201b66547d2fd79f1fa6b52f8907abc5b65e37",
+    "agent-service/src/lecturelens_real_eval/tutor/__init__.py": "abdef7a0e3567f340882e4a6fa14fb6d57a153a8ccd582c7d63a1a3b6644b149",
+    "agent-service/src/lecturelens_real_eval/tutor/app.py": "d4ff5f96cfe9e676828418f54a8a7836da8af9f487f6ff978718517f5aae85e9",
+    "agent-service/src/lecturelens_real_eval/tutor/citations.py": "67bca55155794b9b1beb0d105d22df77f48078bdca89a3848f74e9b38adf52cc",
+    "agent-service/src/lecturelens_real_eval/tutor/contracts.py": "f3e7c3c5369cf3fde1306ef609021d0e0a664a38792fde84d756ea3c10b654fb",
+    "agent-service/src/lecturelens_real_eval/tutor/runtime.py": "15517a73dec2ad4ee06bb5d5eb83248e75055ba534aef7302ad5ed2aa763c3dc",
+    "agent-service/src/lecturelens_real_eval/tutor/store.py": "0851a265833fd3d3c0ee16a8096caa4aa96b7af7c8b82c60ebb81e05dc87a19e",
+    "agent-service/src/lecturelens_real_eval/tutor_channel.py": "6620a4a3fee710827bd4dc51b109d07654968c000a610db8acaee2ccac46b193",
+    "agent-service/src/lecturelens_real_eval/tutor_runner.py": "d936ef4e99f203f697c56988d54e22f21625c80297611b9e0c9a067ee8dfd582",
+    "eval/p7-real/snapshot.json": "a3334f992261fbd8f144e783b25fcf3cfde37201fb5f28e8403564a931d44ef5",
+    "eval/p8-tutor/compose.yaml": "6b548a72f6c08eed46ca3bf2f9268cb74ecbd47dc66dbfa5a9f63f5c22da7b5f",
+    "eval/p8-tutor/dialogues.json": "7a4965570a55720917b462640dd17b00eac99e890191c4ccdc3d05bfa840b512",
+    "eval/p8-tutor/run.py": "c51dd8cffb581dba3c333906b75ec70457194401b57a601337a7d17f65521f98",
+    "eval/p8-tutor/sample.py": "04cc28ceb3958410f3bf51d83a5878c6896e554bfbc176f8ade69de505ce736e",
+    "eval/p8-tutor/thresholds.json": "21d48ea5acd1fd63660fecd5ea03012aa5920ef048e0ff65430b68285be5b5da",
+    "eval/retrieval-v2/corpus.json": "ae78ef07ce91fcc6dbf15959857e55dbdf032675dbee5fe847d302f11e15f09b",
+    "eval/p8-tutor/run-repair-mutations.py": "418045896152ba0dfb43057eb1846bbc37fe754606c8d5797c6d60f5b36772d4"
+  }
+}

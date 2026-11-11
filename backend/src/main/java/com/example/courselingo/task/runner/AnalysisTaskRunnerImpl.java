@@ -38,6 +38,13 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
         this.systemModels = systemModels;
     }
 
+    private com.example.courselingo.systemmodel.SystemModelDisabledTaskGuard disabledModels;
+
+    @Autowired(required = false)
+    public void configureDisabledModels(com.example.courselingo.systemmodel.SystemModelDisabledTaskGuard guard) {
+        this.disabledModels = guard;
+    }
+
     private com.example.courselingo.task.service.TaskExecutionLease executionLease;
 
     @Autowired
@@ -119,6 +126,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             logRunnerBoundary("runner_run_requested", message, "start");
             try {
                 AnalysisTask task = loadAndValidate(message);
+                if (systemModels == null && disabledModels != null)
+                    disabledModels.requireLegacyTask(message.taskId());
                 AnalysisTaskStatus status = AnalysisTaskStatus.fromDatabaseValue(task.getStatus());
                 if (status != AnalysisTaskStatus.QUEUED) {
                     throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
@@ -159,6 +168,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             try {
                 logRunnerBoundary("runner_retry_requested", message, "start");
                 AnalysisTask task = loadAndValidate(message);
+                if (systemModels == null && disabledModels != null)
+                    disabledModels.requireLegacyTask(message.taskId());
                 AnalysisTaskStatus status = AnalysisTaskStatus.fromDatabaseValue(task.getStatus());
                 if (status != AnalysisTaskStatus.RETRYING && !(message.protocol()==2 && status==AnalysisTaskStatus.QUEUED)) {
                     throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);

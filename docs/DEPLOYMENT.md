@@ -10,6 +10,10 @@ LectureLens 不提供作者托管的后端、共享账号或共享 API Key。MyS
 
 [系统模型管理](SYSTEM_MODEL_MANAGEMENT.md)已接入 Java 文本、视觉和 ASR，默认 `SYSTEM_MODEL_CONFIG_ENABLED=false`；未启用时仍走原模型路径。启用需要 `FLYWAY_ENABLED=true` 及进程环境中的 `SYSTEM_MODEL_MASTER_KEY`（Base64 编码的随机 32 字节），缺失主密钥在启动时明确失败。V25 的历史账号默认 USER，首个管理员通过离线 CLI 指定；ASR 绑定支持热切换，管理员页面为 `/admin/settings/models`，仅管理员可见且后端逐接口授权。手动连通性测试默认禁止，部署者可用 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS` 指定精确 origin 白名单；仍禁止私有地址、代理和重定向，固定 10 秒 / 每实例两并发 / 64 KiB 响应上限。现有 LangChain4j 路径保持默认关闭；系统层启用时要求关闭它，绑定使用直接 Chat Completions 适配器。
 
+V25 must be applied before this Java binary serves authenticated traffic, including when `SYSTEM_MODEL_CONFIG_ENABLED=false`, because account queries include the new role column. Verify the migration and retain the additive schema on rollback. Follow the [integration rollout and snapshot guard constraints](SYSTEM_MODEL_MANAGEMENT.md#integration-with-structured-learning-scope); earlier workers must be stopped before snapshot-bearing traffic resumes.
+
+模型使用记录还需要先应用 `R__course_qa_model_usage.sql`，系统配置关闭时也需要。它增加三个可空 QA 关联字段，保留 V25 水位以兼容待整合 #35 的 V26–V31；不要用 outOfOrder 或修改既有迁移替代。回滚保留增量字段与历史记录，见[迁移与回滚约束](MODEL_USAGE.md#mysql-迁移与回滚)。
+
 系统层启用后，启动会把当前部署默认及加密凭据写为不可变版本；新任务创建时冻结版本，运行中的任务继续原版本。多实例应提供相同主密钥和部署默认。切换回未启用系统层的旧 worker 前应先排空已冻结任务，不让旧 worker 忽略新快照；现有无快照任务首次接管标记 ADOPTED。普通配置保存不需要重启。历史及执行查询不会返回版本原文或密文；本次实现仅在隔离测试环境验收，没有修改线上配置。
 
 ## 环境要求
@@ -171,6 +175,10 @@ docker compose --env-file .env ps
 
 Compose 配置见 [`compose.yaml`](../compose.yaml)。它会启动 MySQL、Redis、MinIO、RocketMQ NameServer 和 RocketMQ Broker/Proxy，并初始化 MinIO bucket。确认容器状态正常后再启动后端。
 
+自管 MySQL 在启用 binlog、由非 SUPER 账号执行迁移时，需要设置 `log_bin_trust_function_creators=ON`，或由具备所需权限的账号执行 V25。
+V25 创建配置版本和审计保护触发器；缺少该设置或权限会报 `HY000/1419`。Compose 已设置该实例参数，binlog 保持开启。
+该参数放宽实例内触发器/函数创建的 binlog 权限检查，不授予应用账号 SUPER；迁移账号仍需相应的数据库级 DDL/触发器权限。
+
 当前固定 MinIO vendor 镜像的匿名获取问题仍未修复，普通部署配置保留原始镜像 pin。CI 的无 Key Mock E2E 显式加载 [`compose.ci-minio.yml`](../compose.ci-minio.yml)，通过 [`Dockerfile.ci`](../infra/minio/Dockerfile.ci) 从与原镜像 release 对应的同一 commit 的官方源码构建；源码归档 SHA256、Go 工具链和基础镜像 digest 均固定，不声称与 vendor binary byte-identical。该 CI 路径已在 fresh GitHub hosted runner 上通过完整 Mock E2E；远端结果和验证边界见 [CI 后续记录](REPOSITORY_CLOSEOUT.md#2026-10-07-successor-ci-only-minio-source-build)。
 
 ## 10. Windows PowerShell 启动后端
@@ -311,7 +319,7 @@ docker compose --env-file .env down
 1. 记录当前 Java/Python 启动源、环境文件、模型路由哈希和数据库备份。
 2. 使用 agent-service/uv.lock 的锁定依赖，并确认独立 PostgreSQL/pgvector 可用；Agent 配置示例见 ../.env.agent.example 和 ../agent-service/README.md。
    未发布工作区每个执行中的 Run 保留一个事务工作连接，外部 I/O 时处于 idle；另有独立 Session advisory lock 和 checkpoint saver 连接。该连接复用不持有跨外部调用的事务，不改变预算或取消围栏；连接容量应包含这些同时存活的连接。
-3. 明确启用的学习功能开关。仓库后续候选的 `STUDY_FEEDBACK_ENABLED` 默认值已改为 true；维护环境固定提交本身默认 false，本轮通过启动器显式启用。其他部署不要把默认值变化当成发布授权；真实浏览器学习与人工质量验收仍须分别完成。
+3. 明确启用的学习功能开关。`STUDY_FEEDBACK_ENABLED` 的代码默认值为 false；`.env.agent.example` 和维护环境的启动器显式设置为 true。显式开启不等于发布授权；真实浏览器学习与人工质量验收仍须分别完成。
 4. 只切换到已经冻结并验收的源码身份，不以工作区临时状态替代冻结候选。
 5. 发布后先验证课程权属、Evidence revision、模型路由、取消/恢复和删除路径，再扩大流量。
 
@@ -322,3 +330,14 @@ docker compose --env-file .env down
 回滚时停止新学习 Run，恢复原 Python 启动源和模型路由；Java/MySQL 的课程权威事实不迁移到 Python。PostgreSQL 中的 Agent 派生状态按已发布版本的兼容策略保留或清理，不通过手工改表伪造成功状态。原始运行预算与权限边界不得因发布或回滚而放宽。
 
 早期 AU 验收使用的隔离 8084/8094/8095/5184 与测试 Redis 16381 已关闭；开发数据库和私有回放记录保留用于审计。当时线上配置未变；当前维护部署身份以本节开头及最新部署记录为准。
+
+## P7 离线闪卡候选（本轮不部署）
+
+闪卡/FSRS 仅在当前 worktree 以 Mock 验证；没有修改任何线上配置。新增 PostgreSQL 表与队列 fence
+由 Python 初始化，Java 不执行迁移。读/评分可消费已有有效卡片，生成在 real 模式被明确拒绝。
+不要将 P7 新状态改成旧 worker 能消费的状态。后续发布与真实 Provider 适配需独立审查和授权；
+隔离启动与检查命令见 [P7 报告](../eval/p7-flashcards/REPORT.md) 和 [设计](P7_EVIDENCE_FLASHCARDS.md)。
+
+### P8 Tutor（可选实验，未部署）
+
+原默认启动命令不自动启用 Tutor。离线 Mock 调试使用 `lecturelens_real_eval.tutor.app:create_app --factory` 作为 ASGI 入口，并设置 `TUTOR_ENABLED=true`、`AGENT_LLM_MODE=mock`；网关沿用 Java `STUDY_AGENT_ENABLED` 与既有签名/课程权限配置。正常用户的 [Light Tutor 试学](LIGHT_TUTOR_TRIAL.md) 只在独立实例通过专用收据开启。新增 PG 表通过初始化幂等 DDL 创建，Java/MySQL 无迁移。完整配置、预算、停止与回滚见 [P8 Tutor](P8_TUTOR.md)。

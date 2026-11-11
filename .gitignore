@@ -73,3 +73,7 @@ work/
 # OS
 .DS_Store
 Thumbs.db
+
+# Reconstructed frozen evaluation records; byte-identical parts are tracked.
+/eval/approval-recovery-20261014/matrix-first/raw.jsonl
+/eval/approval-recovery-20261014/matrix-final/raw.jsonl

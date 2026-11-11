@@ -1,4 +1,6 @@
+import type { LearningScope } from "../api/learningScope";
 export interface CourseQaAskRequest {
+  learning_scope?: LearningScope;
   question: string;
 }
 
@@ -25,8 +27,16 @@ export interface CourseQaUsage {
 }
 
 export interface CourseQaResponse {
+  learning_scope?: LearningScope | null;
   recordId: string;
   answer: string;
   evidence: CourseQaEvidenceItem[];
   usage: CourseQaUsage | null;
 }
+
+export interface CourseQaHistoryItem {
+  recordId: string; question: string; answer: string; status: "SUCCEEDED" | "FAILED";
+  createdAt: string | null; evidence: CourseQaEvidenceItem[];
+  sourceStatus: "current" | "partial" | "unavailable" | "none";
+}
+export interface CourseQaHistoryPage { items: CourseQaHistoryItem[]; nextCursor: string | null }

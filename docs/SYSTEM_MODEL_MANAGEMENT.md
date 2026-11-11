@@ -18,6 +18,8 @@
 
 ## 启用与版本冻结
 
+V25 is a prerequisite for this Java binary even with model management disabled: authentication reads `user_account.role`. Disabling management does not make a V24 business schema compatible. The pipeline guard also requires the snapshot table before executing tasks, including in disabled mode.
+
 显式设置 `SYSTEM_MODEL_CONFIG_ENABLED=true`、`FLYWAY_ENABLED=true` 并向进程提供有效的 `SYSTEM_MODEL_MASTER_KEY`。主密钥缺失在启动期间报错，不等待第一次加解密。关闭该层时，不要求新增主密钥，不查询配置表，也不改变原 provider 选择。
 
 首次启用时，服务把当前 YAML/环境默认及其加密凭据捕获为不可变版本。以后默认变化也生成新版本；多实例应使用相同主密钥和部署默认。当前表是管理索引，完整版本是执行依据，两者与变更审计在同一事务更新。
@@ -46,7 +48,7 @@
 - 合格内嵌字幕仍优先使用，不创建 ASR 适配器、不要求 ASR 密钥。真实 ASR 结果及合并元数据记录 `systemModelSnapshotId/systemModelConfigVersion/systemModelSource`；可通过管理执行查询按任务核对，日志仅记录标识、类别、状态与耗时。
 - 第②提交已存在的执行快照没有 ASR 路由，不能推断当时未冻结的凭据，遇到外部 ASR 明确返回快照无效。升级前应排空这些任务；没有执行快照的旧任务继续按 ADOPTED 规则冻结。本次未进行部署或线上任务迁移。
 
-数据库绑定共用禁止重定向/代理、3 秒连接与 2 MiB 响应上限的有界传输；原环境默认继续原传输兼容行为。模型/认证、429、超时、无效 JSON、地址与响应上限失败不回退其他供应商。第三阶段使用实际适配器组装请求并替换 HTTP 发送验证机制，不代表真实识别质量；验收记录见 [第③阶段 VERIFY](../eval/system-model-management/phase3/VERIFY.md)。
+数据库绑定共用禁止重定向/HTTP 或 SOCKS 代理、3 秒连接与 2 MiB 响应上限的有界传输；实际套接字只使用经公开地址检查的 DNS 结果，字面 IP 同样检查，Host/SNI/证书校验保留原主机名，避免校验后再次解析造成 DNS 重绑定。传输复用项目已使用的 OkHttp 4.12.0，显式禁止隐式连接重试；原环境默认继续原传输兼容行为。模型/认证、429、超时、无效 JSON、地址与响应上限失败不回退其他供应商。第三阶段使用实际适配器组装请求并替换 HTTP 发送验证机制，不代表真实识别质量；验收记录见 [第③阶段 VERIFY](../eval/system-model-management/phase3/VERIFY.md)。
 
 ## 管理员页面
 
@@ -121,7 +123,7 @@ bash scripts/admin/system-model-admin.sh revoke --user-id 123
 主动连通性测试只有管理员点击后发送，读取 `expectedVersion/modelId` 指定的已保存数据库配置，不接收临时地址、密钥或任意音频；当前版本不匹配返回 409。测试不改变绑定、配置版本、审计或任务快照，也不保存测试记录表。结果仅有通过状态、固定错误类别、耗时、版本、模型 ID 及最终地址，不返回原始错误、正文、转写或凭据。
 
 - 部署设置 `SYSTEM_MODEL_PROBE_ALLOWED_ORIGINS`（逗号分隔的精确 HTTP(S) origin），默认空即禁止测试。白名单区分协议、域名和端口，不允许 path、查询、fragment 或 userinfo；默认端口规范化。示例：`https://api.deepseek.com,https://api.siliconflow.cn`。名单由部署者管理，页面不能修改。
-- 命中 origin 后仍检查 DNS 的全部 IP，禁止私有、回环、链路本地等地址；白名单不能绕过地址策略。传输禁用重定向和环境/JVM 代理，不固定连接 IP，DNS 重绑定窗口仍是已知限制。
+- 命中 origin 后仍检查 DNS 的全部 IP，禁止私有、回环、链路本地等地址；白名单不能绕过地址策略。Transport disables redirects and JVM HTTP/SOCKS proxies. Each database/probe connection consumes the checked public DNS addresses, retains the original hostname for TLS, and rejects literal private IPs; it does not perform an independent unchecked lookup. Address validation consumes the request deadline, and expiry prevents an external send.
 - 测试整次等待最多 10 秒，连接最多 3 秒，响应最多 64 KiB（含慢响应体），每实例最多两个请求，不排队、不自动重试。超时后若 worker 尚未退出仍占用并发名额，避免取消绕过限制；限额不是跨实例全局限流。
 - OPENAI_CHAT 只发一条短消息、32 个输出 token，并强制 `response_format: {type: json_object}`；使用严格 JSON 对象校验，拒绝重复字段及尾随内容。该测试不验证工具调用、视觉输入或教学质量。
 - ASR 使用仓库 MIT 授权的固定一秒合成音频，[夹具及复现说明](../backend/src/main/resources/system-model-probe/NOTICE.md)，不含真人或下载媒体。空转写可通过，只验证请求及响应协议，不验证识别质量。
@@ -144,3 +146,16 @@ bash ./mvnw -B test
 ```
 
 测试自行创建随机名称的 `lecturelens_p14_*` 数据库，分别验证空库迁移和 V24→V25 升级，结束后只删除自己创建的数据库。不会迁移或清理现有业务库。分阶段结果和原始日志索引记录于 `eval/system-model-management/`；整体汇总见 [VERIFY.md](../eval/system-model-management/VERIFY.md)。
+
+
+## Integration with structured learning scope
+
+The integration baseline includes PR1 and PR2. Scoped QA validates owner/course/revision and canonical selection before freezing an operation; retrieval still filters the authorized scope before ranking. The scoped QA/Study/Evidence routes, signed path and no-fallback contract remain unchanged. Model routing does not grant Evidence access. Python user connections, PostgreSQL scope states and Run/checkpoint snapshots are unchanged.
+
+When management is disabled and Flyway initializes the database, the integration binary refuses startup if a pinned pipeline remains active. With Flyway disabled it preserves the default database-free startup, but actual execution still fails closed when the database is unavailable. It also rejects run/retry of any pipeline with an existing system snapshot before claiming or changing task state. Legacy tasks without a snapshot retain their original path. The execution check requires a reachable configured business database, but no model master key. Missing tables, denied SELECT, hidden metadata and connection failures all fail closed; schema damage cannot authorize a fallback to environment defaults.
+
+This guard is absent from earlier binaries. Do not run old and scope-aware/system-snapshot workers on the same task queue during activation or rollback. Stop task ingress and dispatch, drain/cancel active work, stop all old Java consumers, back up and migrate the independent MySQL schema, then start compatible Java gateways/workers before reopening traffic. Preserve PR2's Java → Python → frontend release order; this integration does not change Python. Rollback requires the same quiescence barrier; retain system configuration versions, encryption keys, execution snapshots, MySQL migrations and PostgreSQL scope/checkpoint fences. Never delete or rewrite snapshots to make an old worker resume a new task. A completed pinned task needs a compatible enabled version for later pipeline retry.
+
+Readiness of these mechanisms is not authorization to deploy. PR1/PR2 media, production authentication, long-course/device and recovery gates remain required. QA record-to-snapshot presentation and four-level model diagnostics remain separate PR3 work.
+
+Database vision calls share a single total deadline and attempt cap across the legacy adapter's status/error retry paths. ASR destination DNS validation runs inside the protected transport's request deadline, rather than before a fresh deadline is started. These bounds do not change trusted ENV adapter behavior.

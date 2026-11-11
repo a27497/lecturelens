@@ -20,7 +20,7 @@ class SystemModelHttpClientTest {
     @BeforeEach
     void setup() throws Exception {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-        client = new SystemModelHttpClient(128);
+        client = SystemModelHttpTestSupport.loopbackClient(128);
     }
 
     @AfterEach
@@ -37,6 +37,20 @@ class SystemModelHttpClientTest {
                 "application/json",
                 "{}",
                 Duration.ofMillis(millis));
+    }
+
+    @Test
+    void serviceUnavailableDoesNotCauseAnUnbudgetedLibraryRetry() {
+        var calls = new AtomicInteger();
+        server.createContext("/busy", exchange -> {
+            calls.incrementAndGet(); exchange.getResponseHeaders().set("Retry-After", "0");
+            exchange.sendResponseHeaders(503, 2); exchange.getResponseBody().write("{}".getBytes()); exchange.close();
+        });
+        server.start();
+        var response = client.complete(request("/busy", 3000));
+        assertThat(response.statusCode()).isEqualTo(503);
+        assertThat(calls.get()).isEqualTo(1);
+        assertThat(response.headers().entrySet()).anyMatch(e -> e.getKey().equalsIgnoreCase("Retry-After") && e.getValue().equals(java.util.List.of("0")));
     }
 
     @Test
@@ -142,7 +156,7 @@ class SystemModelHttpClientTest {
                 });
         try {
             client.close();
-            client = new SystemModelHttpClient(128);
+            client = SystemModelHttpTestSupport.loopbackClient(128);
             server.createContext(
                     "/ok",
                     exchange -> {

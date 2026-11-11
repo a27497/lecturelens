@@ -159,5 +159,7 @@ public class CourseEvidenceService {
         try { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8))); }
         catch (java.security.NoSuchAlgorithmException e) { throw new IllegalStateException(e); }
     }
-    public record Page(long revision, boolean stale, List<CourseEvidence> items, String nextCursor) { }
+    public record Page(long revision, boolean stale, List<CourseEvidence> items, String nextCursor, int learningScopeVersion) {
+        public Page(long revision, boolean stale, List<CourseEvidence> items, String nextCursor) { this(revision,stale,items,nextCursor,1); }
+    }
 }

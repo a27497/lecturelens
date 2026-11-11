@@ -32,7 +32,7 @@ For a useful report, include the affected feature, expected behavior, actual beh
 - Refresh tokens are stored as hashes and are rotated during refresh.
 - Owner scope is enforced with the current user resolved on the server side from the Bearer access token.
 - Upload, task, result, artifact, and AI call record access must not trust client-provided `userId`, `ownerId`, query parameters, request bodies, or spoofed owner headers.
-- Current security hardening does not introduce full RBAC or a production multi-tenant authorization system.
+- System model management adds USER/ADMIN authorization with a fresh account check on every management request. This is not general-purpose RBAC or a production multi-tenant authorization system.
 
 ## Data Protection Boundaries
 

@@ -1,0 +1,457 @@
+{
+  "version": "phase1e-tutor-teaching-v1",
+  "sources": {
+    "sql": {
+      "split": "development",
+      "repo": "datacarpentry/sql-ecology-lesson",
+      "commit": "21aa6db422979046693ed77a94f69d4698477af2",
+      "path": "episodes/02-sql-aggregation.md",
+      "url": "https://github.com/datacarpentry/sql-ecology-lesson/blob/21aa6db422979046693ed77a94f69d4698477af2/episodes/02-sql-aggregation.md",
+      "license_url": "https://github.com/datacarpentry/sql-ecology-lesson/blob/21aa6db422979046693ed77a94f69d4698477af2/LICENSE.md",
+      "license": "CC BY 4.0, Copyright (c) The Carpentries; verbatim selections",
+      "upstream_sha256": "6953808b06aba8eed57a40db7e6c5d7f3fdb8d3efd2f65d3d750ed98d434b3e5",
+      "evidence": {
+        "sql-group": {
+          "lines": [
+            82,
+            92
+          ],
+          "text": "Now, let's see how many individuals were counted in each species. We do this\nusing a `GROUP BY` clause\n\n```sql\nSELECT species_id, COUNT(*)\nFROM surveys\nGROUP BY species_id;\n```\n\n`GROUP BY` tells SQL what field or fields we want to use to aggregate the data.\nIf we want to group by multiple fields, we give `GROUP BY` a comma separated list.",
+          "sha256": "64f7d5dfca0d20dd8b457d8857e7c10b88a96eb72a1e257a1d1ec5dbe8ae5e63"
+        },
+        "sql-avg": {
+          "lines": [
+            283,
+            293
+          ],
+          "text": "## What About NULL?\n\nFrom the last example, there should only be five records.  If you look at the `weight` column, it's\neasy to see what the average weight would be. If we use SQL to find the\naverage weight, SQL behaves like we would hope, ignoring the NULL values:\n\n```sql\nSELECT AVG(weight)\nFROM summer_2000\nWHERE species_id = 'PE';\n```",
+          "sha256": "2fb6602abfd60169c7ea0aede49a96402c99777c1c7e8e2a29a41458f65d64e8"
+        },
+        "sql-count": {
+          "lines": [
+            295,
+            317
+          ],
+          "text": "But if we try to be extra clever, and find the average ourselves,\nwe might get tripped up:\n\n```sql\nSELECT SUM(weight), COUNT(*), SUM(weight)/COUNT(*)\nFROM summer_2000\nWHERE species_id = 'PE';\n```\n\nHere the `COUNT` function includes all five records (even those with NULL\nvalues), but the `SUM` only includes the three records with data in the\n`weight` field, giving us an incorrect average. However,\nour strategy *will* work if we modify the `COUNT` function slightly:\n\n```sql\nSELECT SUM(weight), COUNT(weight), SUM(weight)/COUNT(weight)\nFROM summer_2000\nWHERE species_id = 'PE';\n```\n\nWhen we count the weight field specifically, SQL ignores the records with data\nmissing in that field.  So here is one example where NULLs can be tricky:\n`COUNT(*)` and `COUNT(field)` can return different values.",
+          "sha256": "0ebe24fcd802ecaccfb498f22ab9ed34dc9fd32dff859a76b89b0276f1116340"
+        },
+        "sql-filter": {
+          "lines": [
+            319,
+            325
+          ],
+          "text": "Another case is when we use a \"negative\" query.  Let's count all the\nnon-female animals:\n\n```sql\nSELECT COUNT(*)\nFROM summer_2000\nWHERE sex != 'F';",
+          "sha256": "8a37943d51d10a11466d9951a02d7899ab8cbedfc73dc7e21d4ae9d7f378c47c"
+        }
+      }
+    },
+    "shell": {
+      "split": "holdout",
+      "repo": "swcarpentry/shell-novice",
+      "commit": "b91d85b848405a4a2fe0a297d8cedb71d68ab9bd",
+      "path": "episodes/04-pipefilter.md",
+      "url": "https://github.com/swcarpentry/shell-novice/blob/b91d85b848405a4a2fe0a297d8cedb71d68ab9bd/episodes/04-pipefilter.md",
+      "license_url": "https://github.com/swcarpentry/shell-novice/blob/b91d85b848405a4a2fe0a297d8cedb71d68ab9bd/LICENSE.md",
+      "license": "CC BY 4.0, Copyright (c) The Carpentries; verbatim selections",
+      "upstream_sha256": "e11ed86159f30626728afd0679f97d16ae08c0ba0981783e5ba5d7b1d02d93cf",
+      "evidence": {
+        "shell-wc": {
+          "lines": [
+            71,
+            88
+          ],
+          "text": "Note that `wc *.pdb` also shows the total number of all lines in the last line of the output.\n\nIf we run `wc -l` instead of just `wc`,\nthe output shows only the number of lines per file:\n\n```bash\n$ wc -l *.pdb\n```\n\n```output\n  20  cubane.pdb\n  12  ethane.pdb\n   9  methane.pdb\n  30  octane.pdb\n  21  pentane.pdb\n  15  propane.pdb\n 107  total\n```",
+          "sha256": "0877853fdff78e18cce47b74afed51f98cdc4e7dcdc81132db6d819f06039999"
+        },
+        "shell-sort": {
+          "lines": [
+            186,
+            216
+          ],
+          "text": "## What Does `sort -n` Do?\n\nThe file `shell-lesson-data/exercise-data/numbers.txt` contains the following lines:\n\n```source\n10\n2\n19\n22\n6\n```\n\nIf we run `sort` on this file, the output is:\n\n```output\n10\n19\n2\n22\n6\n```\n\nIf we run `sort -n` on the same file, we get this instead:\n\n```output\n2\n6\n10\n19\n22\n```",
+          "sha256": "9c7b9600053b6dc2cbb17f96ea206f8f0799b3a681bd853e0093532a3ce072ce"
+        },
+        "shell-pipe": {
+          "lines": [
+            380,
+            400
+          ],
+          "text": "In our example of finding the file with the fewest lines,\nwe are using two intermediate files `lengths.txt` and `sorted-lengths.txt` to store output.\nThis is a confusing way to work because\neven once you understand what `wc`, `sort`, and `head` do,\nthose intermediate files make it hard to follow what's going on.\nWe can make it easier to understand by running `sort` and `head` together:\n\n```bash\n$ sort -n lengths.txt | head -n 1\n```\n\n```output\n  9  methane.pdb\n```\n\nThe vertical bar, `|`, between the two commands is called a **pipe**.\nIt tells the shell that we want to use\nthe output of the command on the left\nas the input to the command on the right.\n\nThis has removed the need for the `sorted-lengths.txt` file.",
+          "sha256": "0e6f8788cf0b72cf058888d626390b9d577acf95f5b039834c0ced8a4c497295"
+        },
+        "shell-chain": {
+          "lines": [
+            402,
+            433
+          ],
+          "text": "## Combining multiple commands\n\nNothing prevents us from chaining pipes consecutively.\nWe can for example send the output of `wc` directly to `sort`,\nand then send the resulting output to `head`.\nThis removes the need for any intermediate files.\n\nWe'll start by using a pipe to send the output of `wc` to `sort`:\n\n```bash\n$ wc -l *.pdb | sort -n\n```\n\n```output\n   9 methane.pdb\n  12 ethane.pdb\n  15 propane.pdb\n  20 cubane.pdb\n  21 pentane.pdb\n  30 octane.pdb\n 107 total\n```\n\nWe can then send that output through another pipe, to `head`, so that the full pipeline becomes:\n\n```bash\n$ wc -l *.pdb | sort -n | head -n 1\n```\n\n```output\n   9  methane.pdb\n```",
+          "sha256": "f17c4fcc34350c381f8b250e338f2a4f41f8c0a6c15cd8aa02ba7435b99e982c"
+        }
+      }
+    },
+    "git": {
+      "split": "holdout",
+      "repo": "swcarpentry/git-novice",
+      "commit": "d361fe95d067fbdd86bd2c862d4b11b0df34ce02",
+      "path": "episodes/04-changes.md",
+      "url": "https://github.com/swcarpentry/git-novice/blob/d361fe95d067fbdd86bd2c862d4b11b0df34ce02/episodes/04-changes.md",
+      "license_url": "https://github.com/swcarpentry/git-novice/blob/d361fe95d067fbdd86bd2c862d4b11b0df34ce02/LICENSE.md",
+      "license": "CC BY 4.0, Copyright (c) The Carpentries; verbatim selections",
+      "upstream_sha256": "1e4bc2322063094fdcc42f8e3aaefe33f1b240996ee8da20e4618ef50dff1035",
+      "evidence": {
+        "git-stage": {
+          "lines": [
+            371,
+            385
+          ],
+          "text": "To allow for this,\nGit has a special *staging area*\nwhere it keeps track of things that have been added to\nthe current [changeset](../learners/reference.md#changeset)\nbut not yet committed.\n\n:::::::::::::::::::::::::::::::::::::::::  callout\n\n## Staging Area\n\nIf you think of Git as taking snapshots of changes over the life of a project,\n`git add` specifies *what* will go in a snapshot\n(putting things in the staging area),\nand `git commit` then *actually takes* the snapshot, and\nmakes a permanent record of it (as a commit).",
+          "sha256": "037b572e608727bde74aabffef1770399c18bd8cb658b5075ef55dba1968e263"
+        },
+        "git-worktree-diff": {
+          "lines": [
+            443,
+            453
+          ],
+          "text": "we've replaced one line (shown with a `-` in the first column) with a new line\n(shown with a `+` in the first column).\nNow let's put that change in the staging area\nand see what `git diff` reports:\n\n```bash\n$ git add guacamole.md\n$ git diff\n```\n\nThere is no output. Without any arguments, `git diff` compares the working directory and the staging area. After `git add`, the two versions are identical and there is nothing to show.",
+          "sha256": "6e0c36162e41005352f2e4ea44effcb88ce4a7e100c62877c8777137e22265eb"
+        },
+        "git-staged-diff": {
+          "lines": [
+            455,
+            476
+          ],
+          "text": "However, if we do this:\n\n```bash\n$ git diff --staged\n```\n\n```output\ndiff --git a/guacamole.md b/guacamole.md\nindex 315bf3a..b36abfd 100644\n--- a/guacamole.md\n+++ b/guacamole.md\n@@ -1,6 +1,6 @@\n # Guacamole\n ## Ingredients\n * avocado\n-* lemon\n+* lime\n * salt\n ## Instructions\n```\n\nwe can see that by adding the `--staged` argument to the command we are now comparing what’s in the staged area to the last committed change.",
+          "sha256": "7c8feb37bdd0af5026af26f1cdee126e224adff91950008dd6271085b591d72a"
+        },
+        "git-keypoints": {
+          "lines": [
+            855,
+            860
+          ],
+          "text": "\n- `git status` shows the status of a repository.\n- Files can be stored in a project's working directory (which users see), the staging area (where the next commit is being built up) and the local repository (where commits are permanently recorded).\n- `git add` puts files in the staging area.\n- `git commit` saves the staged content as a new commit in the local repository.\n- Write a commit message that accurately describes your changes.",
+          "sha256": "035d9e85972f674523e442a10777407013146696ec4c42bb815659b74df641cb"
+        }
+      }
+    },
+    "loop": {
+      "split": "exposed_development",
+      "evidence": {
+        "loop-iteration": {
+          "archive_evidence_id": "a8aba2c5ce282d526066551ae3dd65a34a0e7a9a00ff6b5633f66c34c1fc2fb6",
+          "sha256": "3a09cd28f10b9059a403e2d63096cab304d869d5faa2777818ad0e06c2c70b61",
+          "source_lines": [
+            119,
+            149
+          ],
+          "source_url": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L119-L149"
+        },
+        "loop-counter": {
+          "archive_evidence_id": "4c5cfe65b0d6822117044e97dd3ea7d0728025a2a31904285400fda0b02e1d32",
+          "sha256": "573a85502748de72448605d2a7dd11b108d7d28e74a2193f7262ad02e09cc6b8",
+          "source_lines": [
+            189,
+            217
+          ],
+          "source_url": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L189-L217"
+        },
+        "loop-index": {
+          "archive_evidence_id": "521428bec042cf1f1e8a4a943c762ed73f35d610e64623f9af245a13b6317f7f",
+          "sha256": "71cf250537a45b604af737f588d772cafa0a6e955285c4591f58f7cf6b099f07",
+          "source_lines": [
+            33,
+            61
+          ],
+          "source_url": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L33-L61"
+        },
+        "loop-indent": {
+          "archive_evidence_id": "a552d28a101b51e954f6365fb091e6648b17fd37476bec0a09d58a3999bcd880",
+          "sha256": "ed3358d1eee05cee45f28e5f404f94624757d8dd4ff658d3677753938ced2a17",
+          "source_lines": [
+            151,
+            156
+          ],
+          "source_url": "https://github.com/swcarpentry/python-novice-inflammation/blob/eb18f246aee338b2a6169ba18d8c5ced7cf89f53/episodes/05-loop.md#L151-L156"
+        }
+      },
+      "source_path": "eval/tutor-v14-fresh-v1/materials/carpentries-python-new.md",
+      "source_sha256": "59ad81e33ec8881f3a8bafb8f220ec5b9bea8af6e9caee7fbdefffaa703ffc53",
+      "archive_sha256": "832e20a6e066603b57a858a50ddbd2eda355757ba821e4119c6056339299b30d",
+      "archive_members_sha256": {
+        "original-reference-review.json": "b29bb0f52178df557d8a6584a1f55a3e443512d81616c1c41700986b5518e7af",
+        "outcomes.json": "88dbfb0557f12c3b0f38f8188661161905da1f5d241c0d01e3ba103c4536655c",
+        "course-evidence.json": "90756606452c7de5625528fb2ca7bd630c6ae5e27072517d6a8e5cd070178d03",
+        "original-packet.json": "ade24dceaf2bf50421b88373b68ebb65ba776c0d83754cab350fc06f558ba60e"
+      }
+    }
+  },
+  "dialogues": [
+    {
+      "id": "loop-dev",
+      "source": "loop",
+      "turns": [
+        {
+          "id": "loop-1",
+          "question": "Explain the supplied loop lesson to a beginner in four connected parts: why a loop replaces repeated indexed print statements; trace an explicit variation starting length at 2 and visiting Ada then Grace; show that variation as commented Python code and explain inside versus outside printing; explain names[0] and names[1] under this list. State the assumptions and distinguish the changed-example derivation from the original course output. Keep all requested parts and cite their sources.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "loop-iteration"
+            ],
+            [
+              "loop-counter"
+            ],
+            [
+              "loop-index"
+            ],
+            [
+              "loop-indent"
+            ]
+          ],
+          "required_checks": [
+            "A loop applies its body once per element without a separate indexed print for each item.",
+            "Under the explicitly changed start2/two-name example:2 then3 then4, final4; do not substitute the original zero/three-name trace.",
+            "Valid commented Python with names list, length initially2, increment inside loop, final print outside. Preserve brackets and indentation.",
+            "Outside print occurs once after loop; inside print occurs per visit (3,4 in this variation).",
+            "names[0] is Ada, names[1] is Grace under the supplied list; distinguish this derivation from the original source and from claimed execution."
+          ],
+          "historical": {
+            "turn_key": "v18-loop-teaching-smoke:1",
+            "status": "completed",
+            "error_code": null,
+            "finding": "Completed, but omitted the learner’s changed inputs, trace, executable example and indexing."
+          }
+        },
+        {
+          "id": "loop-2",
+          "question": "Keep helping with that changed counting example. Ask me one guiding question about whether the final print is inside or outside the loop; do not give the trace or final value.",
+          "socratic": true,
+          "expected_outcome": "socratic_prompt",
+          "required_evidence": [
+            [
+              "loop-counter"
+            ],
+            [
+              "loop-indent"
+            ]
+          ],
+          "required_checks": [
+            "One question directs attention to indentation/body boundary and the location of final print.",
+            "Do not give final4, intermediate values, complete code or full solution in answer/feedback.",
+            "Relevant current-turn citation; full source remains inspectable and may contain solutions."
+          ],
+          "historical": {
+            "turn_key": "v18-loop-teaching-smoke:2",
+            "status": "completed",
+            "error_code": null,
+            "finding": "Completed, but gave generic guidance and missed the requested final-print focus."
+          }
+        },
+        {
+          "id": "loop-3",
+          "question": "I think the final counter is3 because it changes only once, and the last print runs inside the loop. Correct both points and explain the changed trace.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "loop-iteration"
+            ],
+            [
+              "loop-counter"
+            ],
+            [
+              "loop-indent"
+            ]
+          ],
+          "required_checks": [
+            "Use actual earlier changed input:initial2, Ada/Grace, two increments ending4.",
+            "Explain the current learner errors:one increment per visit, not once total; unindented final print outside, not inside.",
+            "Include specific feedback comparing the learner reply with source evidence, without inventing a grade or permanent mastery.",
+            "Answer and feedback retain relevant bound citations and source conditions; no unsupported execution assertion."
+          ],
+          "historical": {
+            "turn_key": "v18-loop-teaching-smoke:3",
+            "status": "failed",
+            "error_code": "TUTOR_REPAIR_BUDGET_UNAVAILABLE",
+            "finding": "Failed before publication with TUTOR_REPAIR_BUDGET_UNAVAILABLE; semantic quality is unobserved."
+          }
+        }
+      ]
+    },
+    {
+      "id": "sql-dev",
+      "source": "sql",
+      "turns": [
+        {
+          "id": "sql-1",
+          "question": "In SQLite, surveys(species_id, weight) has rows (A, 10), (A, NULL), (A, 20), (B, 8). Write one query returning species_id, total rows, measured rows and average weight for each species. Show both output rows and explain why dividing SUM(weight) by COUNT(*) gives the wrong result for A.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "sql-group"
+            ],
+            [
+              "sql-avg"
+            ],
+            [
+              "sql-count"
+            ]
+          ],
+          "required_checks": [
+            "Executable query uses GROUP BY species_id, COUNT(*), COUNT(weight), AVG(weight).",
+            "Rows (A, 3, 2, 15.0) and (B, 1, 1, 8.0); equivalent numeric formatting and row order accepted.",
+            "A has measured sum 30; denominator 3 would give 10, whereas ignoring NULL gives 30/2 = 15."
+          ]
+        },
+        {
+          "id": "sql-2",
+          "question": "Replace just the NULL weight in A with 0. Keep all other rows and the same query. What changes in A and what stays the same in B? Does SUM(weight)/COUNT(*) still differ from AVG(weight) for A?",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "sql-count"
+            ]
+          ],
+          "required_checks": [
+            "Use updated A values [10,0,20]; zero is measured, so A is now (A, 3, 3, 10.0).",
+            "B remains (B, 1, 1, 8.0). The two expressions agree for updated A because the denominators match."
+          ]
+        },
+        {
+          "id": "sql-3",
+          "question": "For an equivalent A group with weights 10, NULL, 20 again, a classmate cites the aggregation lesson and says COUNT(weight) includes all three rows because the row exists. Check the claim and use the lesson to justify the correct denominator.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "sql-count"
+            ]
+          ],
+          "required_checks": [
+            "Reject the classmate claim: COUNT(weight) is 2 and COUNT(*) is 3. The NULL value does not erase the row.",
+            "Cite the NULL/count comparison, rather than a real passage that merely uses COUNT(*) in a GROUP BY."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shell-holdout",
+      "source": "shell",
+      "turns": [
+        {
+          "id": "shell-1",
+          "question": "My newline-terminated alpha.txt, beta.txt and gamma.txt have 12, 2 and 10 lines respectively. Give one shell pipeline using wc, sort and head that prints the shortest file row. Predict the selected count and filename and explain the two pipes and why numeric order is needed.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "shell-wc"
+            ],
+            [
+              "shell-sort"
+            ],
+            [
+              "shell-pipe"
+            ]
+          ],
+          "required_checks": [
+            "Executable pipeline using explicit input files or the supplied *.txt set, wc -l, sort -n and head -n 1.",
+            "Selected count is 2 and filename beta.txt; whitespace variation allowed. The total row is larger for these inputs.",
+            "Explain stdout-to-stdin at both pipes and numeric ordering versus text ordering of the digit strings."
+          ]
+        },
+        {
+          "id": "shell-2",
+          "question": "I changed beta.txt to 20 lines and kept the other files. What does the same pipeline select now? Explain why the wc total row still cannot win in this example.",
+          "socratic": false,
+          "expected_outcome": "answered",
+          "required_evidence": [
+            [
+              "shell-wc"
+            ],
+            [
+              "shell-chain"
+            ]
+          ],
+          "required_checks": [
+            "Keep alpha=12, gamma=10, replace beta=20. Select 10 gamma.txt.",
+            "Total 42 exceeds each individual count, so numeric sorting cannot put it first under these specific inputs."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "git-holdout",
+      "source": "git",
+      "turns": [
+        {
+          "id": "git-1",
+          "question": "I changed an already tracked file, ran git add, then edited the same file again without staging. I am confused about which change is staged. Ask me one guiding question about which change is staged, without answering it or giving the commands.",
+          "socratic": true,
+          "expected_outcome": "socratic_prompt",
+          "required_evidence": [
+            [
+              "git-stage"
+            ],
+            [
+              "git-worktree-diff"
+            ],
+            [
+              "git-staged-diff"
+            ]
+          ],
+          "required_checks": [
+            "Ask exactly one targeted reasoning question about the staging snapshot and order of actions.",
+            "Include a literal learner focus in the question. Do not reveal the answer or provide inspection commands."
+          ]
+        },
+        {
+          "id": "git-2",
+          "question": "From this Tracking Changes packet alone, tell me the exact author email and timestamp of my next commit. I have supplied neither identity configuration nor commit time.",
+          "socratic": false,
+          "expected_outcome": "insufficient_evidence",
+          "required_evidence": [],
+          "required_checks": [
+            "Use the exact insufficient-evidence outcome and abstention; no invented metadata or unsupported attribution.",
+            "No citation or focus in abstention. In this bounded packet, staging facts do not establish an identity or future clock time."
+          ]
+        }
+      ]
+    }
+  ],
+  "review_controls": [
+    {
+      "id": "unsupported-real-citation",
+      "case": "sql-3",
+      "evidence": [
+        "sql-group",
+        "sql-count"
+      ],
+      "candidate_template": "COUNT(weight) includes all three rows because the row exists. [{sql-group}]",
+      "expected_retrieval": "FULL",
+      "expected_mechanics": "VALID_CITATION_ID",
+      "expected_semantics": "FAIL",
+      "reason": "The cited GROUP BY excerpt uses COUNT(*). The delivered NULL excerpt contradicts the conclusion."
+    },
+    {
+      "id": "retrieval-miss-same-claim",
+      "case": "sql-3",
+      "evidence": [
+        "sql-group"
+      ],
+      "expected_retrieval": "MISS",
+      "expected_semantics": "NOT_ATTRIBUTABLE_TO_MODEL_WITH_COMPLETE_EVIDENCE"
+    },
+    {
+      "id": "irrelevant-grounded-absence",
+      "case": "git-2",
+      "evidence": [
+        "git-stage"
+      ],
+      "expected_retrieval": "EXPECTED_GAP",
+      "expected_semantics": "REVIEW_EXACT_ABSTENTION_IF_GENERATED"
+    }
+  ]
+}

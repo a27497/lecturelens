@@ -1,0 +1,332 @@
+[
+  {
+    "name": "browser-p7-final",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 1,
+    "seconds": 1.117,
+    "log_sha256": "8ecceb4eda668be8c984d7129accc3174b2c91486d07eef68468e60dca270f71"
+  },
+  {
+    "name": "browser-p7-fixtures-fixed",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 0,
+    "seconds": 13.552,
+    "log_sha256": "808c9a64ae1e49778a20f411970af13bb320b8995cff61b2ca1c2545792756b2"
+  },
+  {
+    "name": "browser-p7-protocol-fixed",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 1,
+    "seconds": 14.202,
+    "log_sha256": "ad0111e17154b98133255129aba58c80d99a9d55c5476002af0b630eb76aede7"
+  },
+  {
+    "name": "browser-p7-reviewed",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 0,
+    "seconds": 15.886,
+    "log_sha256": "8da43d3bbef8bbef5961d69961496991289bb8c872f6c707238c1df926ac8c8a"
+  },
+  {
+    "name": "browser-p7-viewports",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 0,
+    "seconds": 13.974,
+    "log_sha256": "e4305b613474b6b39c64d912d89588c21bd058fd4af514ad0184406f8e247313"
+  },
+  {
+    "name": "browser-p7",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "python",
+      "../eval/p7-flashcards/browser_flow.py"
+    ],
+    "code": 1,
+    "seconds": 8.847,
+    "log_sha256": "88b5bffa1ca1fb6d27901bc4d7e2875b409f5cf770275c34ace312948a79bb1a"
+  },
+  {
+    "name": "frontend-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build",
+      "--",
+      "--outDir",
+      "../.data/p7/dist"
+    ],
+    "code": 0,
+    "seconds": 19.484,
+    "log_sha256": "1ab3ac83d86a1d34b9d623bb2330d40ca09721edb8918e7caef302d91d763a3c"
+  },
+  {
+    "name": "frontend-final-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build",
+      "--",
+      "--outDir",
+      "../.data/p7/dist",
+      "--emptyOutDir"
+    ],
+    "code": 0,
+    "seconds": 13.865,
+    "log_sha256": "e411f2fab2d00c8eb7b8b38ebb86aad5801573afedae8bf03ae2058950954245"
+  },
+  {
+    "name": "frontend-final-tests",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:unit"
+    ],
+    "code": 0,
+    "seconds": 28.235,
+    "log_sha256": "b14caa093c4f6cd1c1f5d074fa242901997af595e08a984de74e3bfcd3364f14"
+  },
+  {
+    "name": "frontend-install",
+    "command": [
+      "bash",
+      "-c",
+      "export PATH=/opt/node/bin:$PATH; cd frontend; npm ci --ignore-scripts"
+    ],
+    "code": 0,
+    "seconds": 13.833,
+    "log_sha256": "e9e3ff58720ff26413ec0f1ad5b7cd8e058376578e825b74bcd69abfcde333cd"
+  },
+  {
+    "name": "frontend-reviewed-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build",
+      "--",
+      "--outDir",
+      "../.data/p7/dist",
+      "--emptyOutDir"
+    ],
+    "code": 0,
+    "seconds": 13.883,
+    "log_sha256": "fc29896881af2b2b0e1869cc4cbd333c8391c0fd6ccea140101c483aaf81e61c"
+  },
+  {
+    "name": "frontend-tests",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:unit"
+    ],
+    "code": 0,
+    "seconds": 30.407,
+    "log_sha256": "5150ced37de4f2589529cfe458baf4ca62835368bad02a9b6420861c7e6c3843"
+  },
+  {
+    "name": "frontend-types",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "type-check"
+    ],
+    "code": 0,
+    "seconds": 9.644,
+    "log_sha256": "a211efbdbb34f6577e7b4cd19fff1cba9f3065ded2559d1b670d7f876c34fb8a"
+  },
+  {
+    "name": "java-p7",
+    "command": [
+      "mvn",
+      "-q",
+      "-f",
+      "backend/pom.xml",
+      "-Dtest=StudyControllerTest,StudyAuthorityTest",
+      "test"
+    ],
+    "code": 0,
+    "seconds": 27.423,
+    "log_sha256": "ffb1aec28a088b86d008d9e9649496e1301247ba9daa41b4f89eb7bb2c55b016"
+  },
+  {
+    "name": "java-study",
+    "command": [
+      "mvn",
+      "-f",
+      "backend/pom.xml",
+      "-Dtest=StudyControllerTest,StudyAuthorityTest",
+      "test"
+    ],
+    "code": 0,
+    "seconds": 34.361,
+    "log_sha256": "20dfe7e14f3da0dfc4524a7629ae8101b7e4469f68006d016e805a29924bffff"
+  },
+  {
+    "name": "python-cost-p7",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q",
+      "tests/test_acceptance_cost.py"
+    ],
+    "code": 0,
+    "seconds": 43.546,
+    "log_sha256": "57f4bd71e2f2eea6e0ad9ffcfe2941964ad84239c16283b131196f5413f0f623"
+  },
+  {
+    "name": "python-diagnose",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "tests/test_acceptance_cost.py",
+      "-xq"
+    ],
+    "code": 1,
+    "seconds": 1.721,
+    "log_sha256": "5ab43d1f6b2e42e676f59a865a975d2ab5ee8090c7f3146281b589970ce50b38"
+  },
+  {
+    "name": "python-full-isolated",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q"
+    ],
+    "code": 124,
+    "seconds": 59.594,
+    "log_sha256": "fb115bdb4eee83b39a7aab639164b7dd18bd85308723d02693e43901cbb892b6"
+  },
+  {
+    "name": "python-full-p7",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q"
+    ],
+    "code": 0,
+    "seconds": 271.595,
+    "log_sha256": "8b591f4331b4033fab7565e6ab6aeeaaaf0522f41ae4655c3a56abdbc5f95a90"
+  },
+  {
+    "name": "python-full",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q"
+    ],
+    "code": 124,
+    "seconds": 33.965,
+    "log_sha256": "c087bd91118d61813eff0338d29e240a95373f5cb4ee071fa412a3a1ad2f0b3f"
+  },
+  {
+    "name": "python-p7-fixed",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q",
+      "tests/test_scheduling.py",
+      "tests/test_flashcards.py"
+    ],
+    "code": 1,
+    "seconds": 14.959,
+    "log_sha256": "f4db01bfa97b72c1d9ed6e93b6f1929f892f8bb8512494306d3d20e6d7858cd8"
+  },
+  {
+    "name": "python-p7",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q",
+      "tests/test_scheduling.py",
+      "tests/test_flashcards.py"
+    ],
+    "code": 1,
+    "seconds": 3.48,
+    "log_sha256": "5b9062e7868494675d589c04f609fd87ab0c8de2813539e28af4bebd9a36445c"
+  },
+  {
+    "name": "python-smoke",
+    "command": [
+      "uv",
+      "run",
+      "--directory",
+      "agent-service",
+      "pytest",
+      "-q",
+      "tests/test_study.py"
+    ],
+    "code": 0,
+    "seconds": 53.58,
+    "log_sha256": "32a1af99e2f9f563fe779db95936cbb25275e70ede6a8482cd01db9d850b223c"
+  }
+]

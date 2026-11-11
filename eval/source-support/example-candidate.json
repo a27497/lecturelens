@@ -1,0 +1,29 @@
+{
+  "data_kind": "MOCK",
+  "course_id": "mock-binary-search",
+  "revision": 1,
+  "items": [
+    {
+      "item_id": "card-1",
+      "claim": "Question: What changes? Answer: The remaining interval is halved.",
+      "evidence_ids": [
+        "e1"
+      ]
+    },
+    {
+      "item_id": "bad-card-2",
+      "claim": "Binary search works on any unordered list.",
+      "evidence_ids": [
+        "e1"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "course_id": "mock-binary-search",
+      "revision": 1,
+      "text": "Binary search halves the remaining interval."
+    }
+  ]
+}

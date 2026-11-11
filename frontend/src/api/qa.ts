@@ -16,7 +16,7 @@ function unwrap<T>(response: ApiResponse<T>): T {
 
 export async function askCourseQa(taskId: string, request: CourseQaAskRequest): Promise<CourseQaResponse> {
   const response = await http.post<ApiResponse<CourseQaResponse>>(
-    `/api/tasks/${encodeURIComponent(taskId)}/qa`,
+    `/api/tasks/${encodeURIComponent(taskId)}/qa${request.learning_scope ? "/scoped" : ""}`,
     request,
     { headers: authHeader(), timeout: COURSE_QA_REQUEST_TIMEOUT_MS },
   );
@@ -45,4 +45,12 @@ export async function getEvidenceIndexStatus(taskId: string): Promise<EvidenceIn
     `/api/tasks/${encodeURIComponent(taskId)}/evidence/index-status`, { headers: authHeader() },
   );
   return unwrap(response.data);
+}
+
+export async function readCourseQaHistory(taskId: string, before?: string): Promise<import("../types/qa").CourseQaHistoryPage> {
+  const result = await http.get<ApiResponse<import("../types/qa").CourseQaHistoryPage>>(
+    `/api/tasks/${encodeURIComponent(taskId)}/qa/history`,
+    { headers: authHeader(), params: { limit: 20, ...(before ? { before } : {}) } },
+  );
+  return result.data.data;
 }

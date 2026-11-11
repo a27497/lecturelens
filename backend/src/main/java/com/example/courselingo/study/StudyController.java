@@ -4,6 +4,7 @@ import com.example.courselingo.auth.service.CurrentUserService;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.response.ApiResponse;
+import com.example.courselingo.evidence.LearningScope;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,16 +36,29 @@ public class StudyController {
 
     @PostMapping("/api/tasks/{taskId}/study/command")
     public ApiResponse<JsonNode> command(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,false);
+    }
+
+    @PostMapping("/api/tasks/{taskId}/study/scoped-command")
+    public ApiResponse<JsonNode> scopedCommand(@PathVariable String taskId,@RequestHeader(value="Authorization",required=false) String auth,@RequestBody Command command) {
+        return submit(taskId,auth,command,true);
+    }
+
+    private ApiResponse<JsonNode> submit(String taskId,String auth,Command command,boolean scoped) {
         enabled();
         long owner=users.currentUser(auth).userId();
+        // Old gateways ignore unknown JSON fields. A distinct route makes mixed-version
+        // requests fail before an old gateway can turn a scoped task into a legacy Run.
+        if (command==null || (scoped ? command.learning_scope()==null || !"START".equals(command.operation()) : command.learning_scope()!=null))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(invoke(taskId,owner,command));
     }
 
     private JsonNode invoke(String taskId,long owner,Command command) {
-        if(command==null || command.operation()==null || !Set.of("CREATE_SESSION","LIST","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
+        if(command==null || command.operation()==null || !Set.of("GENERATE_CARDS","DUE_CARDS","READ_CARD","REVIEW_CARD","CREATE_SESSION","LIST","CHOICE_REVIEW","RUNS","START","READ","CANCEL","EVENTS","ANSWERS","SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK","SAVE_FEEDBACK_NOTE","FEEDBACK_NOTES","DECIDE_APPROVAL").contains(command.operation())
                 || (command.goal()!=null && (command.goal().isBlank() || command.goal().length()>1000))
-                || command.after()<0) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id())) {
+                || command.after()<0 || ("CHOICE_REVIEW".equals(command.operation()) && command.after()>Integer.MAX_VALUE)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        for(String id:Arrays.asList(command.session_id(),command.run_id(),command.request_key(),command.artifact_id(),command.attempt_id(),command.feedback_id(),command.card_id(),command.selected_option_id())) {
             if(id!=null && (id.isBlank() || id.length()>128)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         }
         if (Set.of("SAVE_ATTEMPT","ATTEMPT_HISTORY","START_FEEDBACK").contains(command.operation()) &&
@@ -52,8 +66,12 @@ public class StudyController {
                  command.question_index()==null || command.question_index()<0 || command.question_index()>1))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.operation().equals("SAVE_ATTEMPT") && (command.request_key()==null ||
-                command.expected_version()==null || command.expected_version()<0 || command.answer_text()==null ||
-                command.answer_text().isBlank() || command.answer_text().length()>4000))
+                command.expected_version()==null || command.expected_version()<0 ||
+                (command.selected_option_id()==null ? command.answer_text()==null || command.answer_text().isBlank() || command.answer_text().length()>4000 : command.answer_text()!=null)))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (command.practice_format()!=null && (!command.operation().equals("START") || !Set.of("open","choice").contains(command.practice_format())))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (command.selected_option_id()!=null && !command.operation().equals("SAVE_ATTEMPT"))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.before_version()!=null && command.before_version()<1) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         if (command.operation().equals("START_FEEDBACK") && (command.request_key()==null || command.attempt_id()==null))
@@ -71,8 +89,18 @@ public class StudyController {
                  (command.approval_decision().equals("edit") != (command.approval_edit()!=null)) ||
                  (command.approval_edit()!=null && (command.approval_edit().isBlank() || command.approval_edit().length()>4000))))
             throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        long revision=authority.current(taskId,owner,Set.of("CREATE_SESSION","START","ANSWERS","SAVE_ATTEMPT","START_FEEDBACK","DECIDE_APPROVAL").contains(command.operation()));
+        if (command.operation().equals("GENERATE_CARDS") && (command.session_id()==null || command.request_key()==null))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (Set.of("READ_CARD","REVIEW_CARD").contains(command.operation()) && command.card_id()==null)
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        if (command.operation().equals("REVIEW_CARD") && (command.request_key()==null || command.expected_version()==null ||
+                command.expected_version()<0 || command.rating()==null || !Set.of("Again","Hard","Good","Easy").contains(command.rating())))
+            throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        long revision=authority.current(taskId,owner,Set.of("GENERATE_CARDS","CREATE_SESSION","START","ANSWERS","SAVE_ATTEMPT","START_FEEDBACK","DECIDE_APPROVAL").contains(command.operation()));
+        if (command.learning_scope()!=null && !command.operation().equals("START")) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+        var learningScope=authority.validateScope(taskId,owner,revision,command.learning_scope());
         Map<String,Object> payload=new LinkedHashMap<>();
+        if(learningScope!=null) payload.put("learning_scope",learningScope);
         payload.put("owner_id",owner); payload.put("course_id",taskId); payload.put("revision",revision); payload.put("operation",command.operation());
         if(command.session_id()!=null) payload.put("session_id",command.session_id());
         if(command.run_id()!=null) payload.put("run_id",command.run_id());
@@ -81,6 +109,8 @@ public class StudyController {
         if(command.artifact_id()!=null) payload.put("artifact_id",command.artifact_id());
         if(command.question_index()!=null) payload.put("question_index",command.question_index());
         if(command.answer_text()!=null) payload.put("answer_text",command.answer_text());
+        if(command.selected_option_id()!=null) payload.put("selected_option_id",command.selected_option_id());
+        if(command.practice_format()!=null) payload.put("practice_format",command.practice_format());
         if(command.expected_version()!=null) payload.put("expected_version",command.expected_version());
         if(command.before_version()!=null) payload.put("before_version",command.before_version());
         if(command.attempt_id()!=null) payload.put("attempt_id",command.attempt_id());
@@ -90,6 +120,8 @@ public class StudyController {
         if(command.approval_required()!=null) payload.put("approval_required",command.approval_required());
         if(command.approval_decision()!=null) payload.put("approval_decision",command.approval_decision());
         if(command.approval_edit()!=null) payload.put("approval_edit",command.approval_edit());
+        if(command.card_id()!=null) payload.put("card_id",command.card_id());
+        if(command.rating()!=null) payload.put("rating",command.rating());
         payload.put("after",command.after());
         var result=transport.command(payload);
         if(authority.current(taskId,owner,false)!=revision) throw new BusinessException(ErrorCode.STUDY_CONFLICT);
@@ -134,19 +166,53 @@ public class StudyController {
 
     @PostMapping("/internal/v1/study/evidence")
     public ApiResponse<Map<String,Object>> evidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,false);
+    }
+
+    @PostMapping("/internal/v1/study/scoped-evidence")
+    public ApiResponse<Map<String,Object>> scopedEvidence(HttpServletRequest request) throws Exception {
+        return readEvidence(request,true);
+    }
+
+    private ApiResponse<Map<String,Object>> readEvidence(HttpServletRequest request,boolean scoped) throws Exception {
         enabled();
         byte[] body=request.getInputStream().readNBytes(65537);
         if(body.length>65536) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
-        transport.verify("/internal/v1/study/evidence",request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
+        String path=scoped ? "/internal/v1/study/scoped-evidence" : "/internal/v1/study/evidence";
+        transport.verify(path,request.getHeader("X-LectureLens-Timestamp"),request.getHeader("X-LectureLens-Signature"),body);
         StudyEvidenceAuthority.Request payload;
         try { payload=json.readValue(body,StudyEvidenceAuthority.Request.class); }
         catch(Exception e) { throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST); }
+        if (scoped != (payload.learning_scope()!=null)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
         return ApiResponse.success(authority.execute(payload));
     }
     public record Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                           String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                           String attempt_id,String feedback_id,String note_text,String disposition,
-                          Boolean approval_required,String approval_decision,String approval_edit) {
+                          Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope,
+                          String card_id,String rating,String practice_format,String selected_option_id) {
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition,
+                       Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope,
+                       String card_id,String rating) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,approval_required,approval_decision,approval_edit,learning_scope,card_id,rating,null,null);
+        }
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition,
+                       Boolean approval_required,String approval_decision,String approval_edit,LearningScope learning_scope) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,approval_required,approval_decision,approval_edit,learning_scope,null,null);
+        }
+        public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
+                       String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
+                       String attempt_id,String feedback_id,String note_text,String disposition,
+                       Boolean approval_required,String approval_decision,String approval_edit) {
+            this(operation,session_id,run_id,request_key,goal,after,artifact_id,question_index,answer_text,expected_version,before_version,
+                attempt_id,feedback_id,note_text,disposition,approval_required,approval_decision,approval_edit,null);
+        }
         public Command(String operation,String session_id,String run_id,String request_key,String goal,long after,
                        String artifact_id,Integer question_index,String answer_text,Integer expected_version,Integer before_version,
                        String attempt_id,String feedback_id,String note_text,String disposition) {

@@ -5,6 +5,13 @@ import json
 import httpx
 import pytest
 
+from lecturelens_agent.study.acceptance_cost import (
+    DEVELOPMENT_AGENT,
+    P10_AGENT,
+    CostDenied,
+    verify_development_agent,
+    verify_p10_agent,
+)
 from lecturelens_agent.study.provider import ChatProvider
 
 TOOL = {
@@ -82,3 +89,11 @@ def test_profile_does_not_change_other_providers_or_models(monkeypatch, url, mod
 
     transport(monkeypatch, handler)
     ChatProvider(base_url=url, model=model, api_key="")._request([], [TOOL], 10, 900)
+
+
+def test_phase0_provider_change_cannot_claim_historical_p10_identity():
+    assert DEVELOPMENT_AGENT.startswith("phase0-integration-")
+    assert P10_AGENT == "p10-choice-review-442bb2af75c77ed1"
+    assert verify_development_agent() == 63
+    with pytest.raises(CostDenied, match="COST_AGENT_IDENTITY_CHANGED"):
+        verify_p10_agent()

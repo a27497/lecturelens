@@ -1,60 +1,63 @@
 package com.example.courselingo.systemmodel;
 
 import com.example.courselingo.ai.llm.*;
+import com.example.courselingo.common.exception.BusinessException;
+import okhttp3.*;
 
-import java.io.ByteArrayOutputStream;
 import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Flow;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/** Bounded database-route transport; deployment-owned ENV adapters retain their legacy semantics. */
 public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, AutoCloseable {
-    private final HttpClient http;
+    private final OkHttpClient http;
+    private final SystemModelUrlPolicy addresses;
     private final int responseLimit;
     private ModelCallObserver observer=ModelCallObserver.NOOP;
     public SystemModelHttpClient observed(ModelCallObserver observer){this.observer=observer;return this;}
 
     public SystemModelHttpClient(int responseLimit) {
-        this.responseLimit = responseLimit;
-        this.http =
-                HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(3))
-                        .followRedirects(HttpClient.Redirect.NEVER)
-                        .proxy(
-                                new ProxySelector() {
-                                    @Override
-                                    public List<Proxy> select(URI uri) {
-                                        return List.of(Proxy.NO_PROXY);
-                                    }
+        this(responseLimit, new SystemModelUrlPolicy());
+    }
 
-                                    @Override
-                                    public void connectFailed(
-                                            URI uri,
-                                            SocketAddress address,
-                                            java.io.IOException failure) {}
-                                })
-                        .build();
+    SystemModelHttpClient(int responseLimit, SystemModelUrlPolicy addresses) {
+        this.responseLimit = responseLimit;
+        this.addresses = addresses;
+        this.http = new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .readTimeout(Duration.ZERO)
+                .writeTimeout(Duration.ZERO)
+                .proxy(Proxy.NO_PROXY)
+                // Socket() can still consult the JVM SOCKS selector even with an HTTP NO_PROXY.
+                .socketFactory(new DirectSockets())
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .retryOnConnectionFailure(false)
+                .addNetworkInterceptor(chain -> {
+                    var response = chain.proceed(chain.request());
+                    chain.request().tag(WireHeaders.class).value = response.headers();
+                    // OkHttp can repeat a 503/Retry-After:0 even with connection retries off.
+                    // Preserve the original headers for our caller; only its bounded policy retries.
+                    return response.code() == 503
+                            ? response.newBuilder().removeHeader("Retry-After").build() : response;
+                })
+                // Preserve the original hostname for Host, SNI and certificate verification.
+                // The resolver returns the checked IPs consumed by the actual socket.
+                .dns(host -> Arrays.asList(addresses.publicAddresses(host)))
+                .protocols(List.of(Protocol.HTTP_1_1))
+                .connectionPool(new ConnectionPool(0, 1, TimeUnit.SECONDS))
+                .build();
     }
 
     @Override
     public OpenAiCompatibleClientResponse complete(OpenAiCompatibleChatCompletionRequest request) {
-        return post(
-                request.uri(),
-                request.headers(),
-                request.contentType(),
-                request.body().getBytes(StandardCharsets.UTF_8),
-                request.timeout());
+        return post(request.uri(), request.headers(), request.contentType(),
+                request.body().getBytes(StandardCharsets.UTF_8), request.timeout());
     }
 
     public OpenAiCompatibleClientResponse post(
@@ -67,108 +70,72 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
     }
     private OpenAiCompatibleClientResponse postOnce(URI uri,java.util.Map<String,String> headers,String contentType,byte[] body,Duration timeout) {
         long start = System.nanoTime();
-        CompletableFuture<HttpResponse<byte[]>> pending = null;
         try {
-            var builder =
-                    HttpRequest.newBuilder(uri)
-                            .timeout(timeout)
-                            .header("Content-Type", contentType);
+            // Literal IP hosts bypass OkHttp's DNS callback, so validate them here as well.
+            addresses.checkDestination(uri);
+            var original = new WireHeaders();
+            var builder = new Request.Builder().url(uri.toString())
+                    .tag(WireHeaders.class, original)
+                    .post(RequestBody.create(body, MediaType.get(contentType)))
+                    .header("Accept-Encoding", "identity");
             headers.forEach(builder::header);
-            var httpRequest = builder.POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
-            pending = http.sendAsync(httpRequest, ignored -> new LimitedBody(responseLimit));
-            var response = pending.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-            if (response.statusCode() >= 300 && response.statusCode() < 400)
-                throw failure("REDIRECT_FORBIDDEN", LlmProviderFailureCategory.INVALID_REQUEST);
-            if (response.headers()
-                    .firstValue("Content-Encoding")
-                    .filter(v -> !v.equalsIgnoreCase("identity"))
-                    .isPresent())
-                throw failure("ENCODING_UNSUPPORTED", LlmProviderFailureCategory.OUTPUT_INVALID);
-            return new OpenAiCompatibleClientResponse(
-                    response.statusCode(),
-                    new String(response.body(), StandardCharsets.UTF_8),
-                    response.headers().map(),
-                    Duration.ofNanos(System.nanoTime() - start));
-        } catch (SystemModelCallFailure safe) {
+            var call = http.newCall(builder.build());
+            // Preflight consumes the same deadline; expiry must prevent the external send.
+            long remaining = timeout.toNanos() - (System.nanoTime() - start);
+            if (remaining <= 0) throw failure("TIMEOUT", LlmProviderFailureCategory.TIMEOUT);
+            call.timeout().timeout(remaining, TimeUnit.NANOSECONDS);
+            try (var response = call.execute()) {
+                if (response.code() >= 300 && response.code() < 400)
+                    throw failure("REDIRECT_FORBIDDEN", LlmProviderFailureCategory.INVALID_REQUEST);
+                String encoding = response.header("Content-Encoding");
+                if (encoding != null && !encoding.equalsIgnoreCase("identity"))
+                    throw failure("ENCODING_UNSUPPORTED", LlmProviderFailureCategory.OUTPUT_INVALID);
+                byte[] bytes = response.body() == null ? new byte[0]
+                        : response.body().byteStream().readNBytes(responseLimit + 1);
+                if (bytes.length > responseLimit)
+                    throw failure("RESPONSE_TOO_LARGE", LlmProviderFailureCategory.OUTPUT_INVALID);
+                return new OpenAiCompatibleClientResponse(response.code(),
+                        new String(bytes, StandardCharsets.UTF_8), original.value.toMultimap(),
+                        Duration.ofNanos(System.nanoTime() - start));
+            }
+        } catch (SystemModelCallFailure | BusinessException safe) {
             throw safe;
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-            throw failure("CANCELLED", LlmProviderFailureCategory.NETWORK);
-        } catch (Exception failure) {
-            if (failure instanceof java.util.concurrent.TimeoutException
-                    || failure.getCause() instanceof java.net.http.HttpTimeoutException)
-                throw failure("TIMEOUT", LlmProviderFailureCategory.TIMEOUT);
-            Throwable current = failure;
-            for (int depth = 0; current != null && depth < 8; depth++, current = current.getCause())
-                if (current instanceof SystemModelCallFailure safe) throw safe;
+        } catch (java.io.InterruptedIOException timeoutFailure) {
+            if (Thread.currentThread().isInterrupted())
+                throw failure("CANCELLED", LlmProviderFailureCategory.NETWORK);
+            throw failure("TIMEOUT", LlmProviderFailureCategory.TIMEOUT);
+        } catch (Exception ignored) {
             throw failure("NETWORK", LlmProviderFailureCategory.NETWORK);
-        } finally {
-            if (pending != null && !pending.isDone()) pending.cancel(true);
         }
     }
+
+    private static final class WireHeaders { Headers value; }
 
     @Override
     public void close() {
-        http.shutdownNow();
+        http.dispatcher().cancelAll();
+        http.dispatcher().executorService().shutdownNow();
+        http.connectionPool().evictAll();
     }
 
-    private static SystemModelCallFailure failure(
-            String category, LlmProviderFailureCategory failure) {
-        return new SystemModelCallFailure(
-                category,
-                failure,
-                null,
-                failure == LlmProviderFailureCategory.TIMEOUT
-                        || failure == LlmProviderFailureCategory.NETWORK);
+    private static SystemModelCallFailure failure(String category, LlmProviderFailureCategory type) {
+        return new SystemModelCallFailure(category, type, null,
+                type == LlmProviderFailureCategory.TIMEOUT || type == LlmProviderFailureCategory.NETWORK);
     }
 
-    private static final class LimitedBody implements HttpResponse.BodySubscriber<byte[]> {
-        private final int limit;
-        private final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        private final CompletableFuture<byte[]> result = new CompletableFuture<>();
-        private Flow.Subscription subscription;
-
-        LimitedBody(int limit) {
-            this.limit = limit;
+    private static final class DirectSockets extends javax.net.SocketFactory {
+        @Override public java.net.Socket createSocket() { return new java.net.Socket(Proxy.NO_PROXY); }
+        @Override public java.net.Socket createSocket(String host, int port) throws java.io.IOException {
+            throw new java.net.SocketException("Unconnected sockets required");
         }
-
-        @Override
-        public CompletionStage<byte[]> getBody() {
-            return result;
+        @Override public java.net.Socket createSocket(String host, int port, java.net.InetAddress local, int localPort) throws java.io.IOException {
+            throw new java.net.SocketException("Unconnected sockets required");
         }
-
-        @Override
-        public void onSubscribe(Flow.Subscription subscription) {
-            this.subscription = subscription;
-            subscription.request(1);
+        @Override public java.net.Socket createSocket(java.net.InetAddress host, int port) throws java.io.IOException {
+            throw new java.net.SocketException("Unconnected sockets required");
         }
-
-        @Override
-        public void onNext(List<ByteBuffer> chunks) {
-            for (var chunk : chunks) {
-                if (chunk.remaining() > limit - bytes.size()) {
-                    subscription.cancel();
-                    result.completeExceptionally(
-                            failure(
-                                    "RESPONSE_TOO_LARGE",
-                                    LlmProviderFailureCategory.OUTPUT_INVALID));
-                    return;
-                }
-                byte[] part = new byte[chunk.remaining()];
-                chunk.get(part);
-                bytes.writeBytes(part);
-            }
-            subscription.request(1);
-        }
-
-        @Override
-        public void onError(Throwable ignored) {
-            result.completeExceptionally(failure("NETWORK", LlmProviderFailureCategory.NETWORK));
-        }
-
-        @Override
-        public void onComplete() {
-            result.complete(bytes.toByteArray());
+        @Override public java.net.Socket createSocket(java.net.InetAddress host, int port, java.net.InetAddress local, int localPort) throws java.io.IOException {
+            throw new java.net.SocketException("Unconnected sockets required");
         }
     }
 }

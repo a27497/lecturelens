@@ -1,0 +1,9 @@
+{
+  "outcome": "answered",
+  "text": "An adjacency list stores, for each vertex u ∈ V, a list of u's neighbors — i.e., Adj[u] = {v ∈ V | (u, v) ∈ E}; for directed graphs these are just the outgoing edges [v2-algorithms-l1-p03-e00]. Concretely it's an array Adj of |V| linked lists [v2-algorithms-l1-p03-e00], and in Python it's often a dictionary of list/set values where a vertex can be any hashable object (e.g., int, tuple) [v2-algorithms-l1-p03-e01].\n\nSpace is Θ(V + E) [v2-algorithms-l1-p03-e01]. A nice advantage is that you can keep multiple graphs on the same vertices [v2-algorithms-l1-p03-e01].\n\nVariations mentioned: an object-oriented form where each vertex object has u.neighbors = list of neighbors [v2-algorithms-l1-p04-e00], and incidence lists where edges are objects and u.edges lists outgoing edges, which lets you store edge data without hashing [v2-algorithms-l1-p04-e00]. For implicit graphs, Adj(u) can instead be a function computed on the fly (e.g., Rubik's Cube), requiring \"zero\" space [v2-algorithms-l1-p03-e01].",
+  "evidence_ids": [
+    "v2-algorithms-l1-p03-e00",
+    "v2-algorithms-l1-p03-e01",
+    "v2-algorithms-l1-p04-e00"
+  ]
+}

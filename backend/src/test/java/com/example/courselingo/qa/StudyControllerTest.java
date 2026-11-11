@@ -11,6 +11,125 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class StudyControllerTest {
+    @Test void flashcardCommandsUseAuthenticatedRevisionAndReadsNeedNoReadyIndex() throws Exception {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);
+        when(authority.current(eq("course"),eq(42L),anyBoolean())).thenReturn(7L);
+        var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var review=json.readValue("{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Good\",\"request_key\":\"key\",\"expected_version\":0}", StudyController.Command.class);
+        controller.command("course","Bearer owner",review);
+        var captured=org.mockito.ArgumentCaptor.forClass(Map.class);verify(transport).command(captured.capture());
+        assertThat(captured.getValue()).containsEntry("owner_id",42L).containsEntry("course_id","course")
+            .containsEntry("revision",7L).containsEntry("card_id","card").containsEntry("rating","Good");
+        verify(authority,times(2)).current("course",42L,false);
+        verify(authority,never()).current("course",42L,true);
+        clearInvocations(transport,authority);
+        controller.command("course","Bearer owner",new StudyController.Command("DUE_CARDS",null,null,null,null,0));
+        verify(authority,times(2)).current("course",42L,false);
+        clearInvocations(transport,authority);
+        controller.command("course","Bearer owner",new StudyController.Command("GENERATE_CARDS","session",null,"generate",null,0));
+        verify(authority).current("course",42L,true);
+    }
+
+    @Test void flashcardInvalidRatingAndMissingScopeNeverReachAgent() throws Exception {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        var controller=new StudyController(users,properties,authority,transport,json);
+        for (var body:java.util.List.of(
+            "{\"operation\":\"GENERATE_CARDS\"}",
+            "{\"operation\":\"READ_CARD\"}",
+            "{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Other\",\"request_key\":\"key\",\"expected_version\":0}",
+            "{\"operation\":\"REVIEW_CARD\",\"card_id\":\"card\",\"rating\":\"Good\",\"expected_version\":0}")) {
+            var command=json.readValue(body,StudyController.Command.class);
+            assertThatThrownBy(()->controller.command("course","Bearer owner",command))
+                .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        }
+        verifyNoInteractions(transport,authority);
+    }
+
+    @Test void flashcardDeletionOrRevisionRaceHidesResponse() {
+        var users=mock(CurrentUserService.class);
+        when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);var transport=mock(StudyTransport.class);var json=new ObjectMapper();
+        when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var controller=new StudyController(users,properties,authority,transport,json);
+        var due=new StudyController.Command("DUE_CARDS",null,null,null,null,0);
+        when(authority.current("course",42L,false)).thenReturn(7L,8L);
+        assertThatThrownBy(()->controller.command("course","Bearer owner",due))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        when(authority.current("course",42L,false)).thenThrow(new com.example.courselingo.common.exception.BusinessException(
+            com.example.courselingo.common.error.ErrorCode.TASK_NOT_FOUND));
+        clearInvocations(transport);
+        assertThatThrownBy(()->controller.command("course","Bearer owner",due))
+            .isInstanceOf(com.example.courselingo.common.exception.BusinessException.class);
+        verifyNoInteractions(transport);
+    }
+
+    @Test void scopedWireRouteRequiresStartAndScopeAndNeverDowngradesToLegacy() throws Exception {
+        var users=mock(CurrentUserService.class);when(users.currentUser(any())).thenReturn(new CurrentUserResponse(42L,"owner@test.invalid","ACTIVE"));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        var authority=mock(StudyEvidenceAuthority.class);when(authority.current(eq("course"),eq(42L),anyBoolean())).thenReturn(7L);
+        when(authority.validateScope(eq("course"),eq(42L),eq(7L),any())).thenAnswer(call->call.getArgument(3));
+        var transport=mock(StudyTransport.class);var json=new ObjectMapper();when(transport.command(anyMap())).thenReturn(json.createObjectNode());
+        var mvc=org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup(new StudyController(users,properties,authority,transport,json))
+            .setControllerAdvice(new com.example.courselingo.common.web.GlobalExceptionHandler()).build();
+        String scoped="{\"operation\":\"START\",\"session_id\":\"session\",\"request_key\":\"key\",\"goal\":\"Explain selection\",\"learning_scope\":{\"version\":1,\"kind\":\"segments\",\"policy\":\"strict\",\"revision\":7,\"evidence_ids\":[\"selected\"]}}";
+        var post=org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/tasks/course/study/scoped-command");
+        mvc.perform(post.contentType(org.springframework.http.MediaType.APPLICATION_JSON).content(scoped))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk());
+        var captured=org.mockito.ArgumentCaptor.forClass(Map.class);verify(transport).command(captured.capture());
+        assertThat(captured.getValue()).containsKey("learning_scope").containsEntry("owner_id",42L);
+        clearInvocations(transport);
+        for(var invalid:java.util.List.of(
+            new String[]{"command",scoped},
+            new String[]{"scoped-command","{\"operation\":\"START\",\"goal\":\"Explain\"}"},
+            new String[]{"scoped-command",scoped.replace("START","READ")})) {
+            mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/tasks/course/study/"+invalid[0])
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON).content(invalid[1]))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isBadRequest());
+        }
+        verifyNoInteractions(transport);
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/tasks/course/study/command")
+            .contentType(org.springframework.http.MediaType.APPLICATION_JSON).content("{\"operation\":\"START\",\"session_id\":\"session\",\"goal\":\"Legacy course task\",\"request_key\":\"legacy\"}"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk());
+        verify(transport).command(captured.capture());assertThat(captured.getValue()).doesNotContainKey("learning_scope");
+    }
+
+    @Test void scopedAuthorityRouteBindsSignatureAndRejectsDowngradeEnvelopes() throws Exception {
+        var config=new com.example.courselingo.qa.service.DenseRetrievalProperties();config.setServiceSecret("test-scoped-authority-secret-32-bytes-only");
+        var json=new ObjectMapper();var authority=mock(StudyEvidenceAuthority.class);
+        when(authority.execute(any())).thenReturn(Map.of("evidence",java.util.List.of()));
+        var properties=new StudyProperties();properties.setEnabled(true);
+        try(var transport=new StudyTransport(config,json)) {
+            var mvc=org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup(new StudyController(mock(CurrentUserService.class),properties,authority,transport,json))
+                .setControllerAdvice(new com.example.courselingo.common.web.GlobalExceptionHandler()).build();
+            byte[] scoped=json.writeValueAsBytes(Map.of("owner_id",42,"course_id","course","revision",7,"action","CHECK",
+                "learning_scope",new com.example.courselingo.evidence.LearningScope(1,"segments","strict",7,java.util.List.of("selected"))));
+            byte[] legacy=json.writeValueAsBytes(Map.of("owner_id",42,"course_id","course","revision",7,"action","CHECK"));
+            String scopedPath="/internal/v1/study/scoped-evidence",legacyPath="/internal/v1/study/evidence";
+            String timestamp=Long.toString(java.time.Instant.now().getEpochSecond());
+            for(var entry:java.util.List.of(
+                new Object[]{scopedPath,scoped,scopedPath,200},
+                new Object[]{legacyPath,legacy,legacyPath,200},
+                new Object[]{legacyPath,scoped,legacyPath,400},
+                new Object[]{scopedPath,legacy,scopedPath,400},
+                new Object[]{scopedPath,scoped,legacyPath,401})) {
+                mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post((String)entry[0])
+                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON).content((byte[])entry[1])
+                    .header("X-LectureLens-Timestamp",timestamp).header("X-LectureLens-Signature",transport.signature((String)entry[2],timestamp,(byte[])entry[1])))
+                    .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().is((Integer)entry[3]));
+            }
+            verify(authority,times(2)).execute(any());
+        }
+    }
+
     @Test void approvalRequiresOwnedReadyCourseAndExplicitDecisionScope() {
         var users=mock(CurrentUserService.class);
         var current=mock(CurrentUserResponse.class);

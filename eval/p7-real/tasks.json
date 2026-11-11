@@ -1,0 +1,174 @@
+{
+  "version": "p7-real-20261027-v1",
+  "boundary": "New flashcard goals; public known retrieval corpus, not unseen-course generalization. AU strings/linear goals excluded. P6 task records not identifiable in this repository; no claim of independent holdout.",
+  "tasks": [
+    {
+      "task_id": "algorithms-l1-1",
+      "lecture_id": "algorithms-l1",
+      "kind": "definition",
+      "goal": "Define a graph G=(V,E) and the adjacency list representation. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l1-2",
+      "lecture_id": "algorithms-l1",
+      "kind": "condition",
+      "goal": "State the conditions under which BFS levels give shortest path distances measured in edges. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l1-3",
+      "lecture_id": "algorithms-l1",
+      "kind": "confusion",
+      "goal": "Distinguish directed and undirected edge representation in adjacency lists. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l2-1",
+      "lecture_id": "algorithms-l2",
+      "kind": "definition",
+      "goal": "Define a DFS back edge using the ancestor relationship. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l2-2",
+      "lecture_id": "algorithms-l2",
+      "kind": "condition",
+      "goal": "State the condition on a directed graph for topological sorting to apply. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l2-3",
+      "lecture_id": "algorithms-l2",
+      "kind": "confusion",
+      "goal": "Distinguish DFS tree edges, back edges, forward edges and cross edges. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l3-1",
+      "lecture_id": "algorithms-l3",
+      "kind": "definition",
+      "goal": "Define edge relaxation and the maintained distance upper bound. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l3-2",
+      "lecture_id": "algorithms-l3",
+      "kind": "condition",
+      "goal": "State the edge-weight restriction required by Dijkstra and contrast it with DAG shortest paths. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "algorithms-l3-3",
+      "lecture_id": "algorithms-l3",
+      "kind": "confusion",
+      "goal": "Explain the neutron-star equation of state used to compute a pulsar maximum mass from nuclear density. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": true
+    },
+    {
+      "task_id": "probability-l1-1",
+      "lecture_id": "probability-l1",
+      "kind": "definition",
+      "goal": "Define a sample space and an event. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l1-2",
+      "lecture_id": "probability-l1",
+      "kind": "condition",
+      "goal": "State the equal-likelihood condition for the discrete uniform probability law. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l1-3",
+      "lecture_id": "probability-l1",
+      "kind": "confusion",
+      "goal": "Distinguish disjoint events from collectively exhaustive events. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l2-1",
+      "lecture_id": "probability-l2",
+      "kind": "definition",
+      "goal": "Define conditional probability P(A|B). Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l2-2",
+      "lecture_id": "probability-l2",
+      "kind": "condition",
+      "goal": "State when the conditional probability ratio is defined and its denominator condition. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l2-3",
+      "lecture_id": "probability-l2",
+      "kind": "confusion",
+      "goal": "Distinguish P(A|B) from P(B|A) in Bayesian inference. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l3-1",
+      "lecture_id": "probability-l3",
+      "kind": "definition",
+      "goal": "Define independence of two events using their probabilities. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l3-2",
+      "lecture_id": "probability-l3",
+      "kind": "condition",
+      "goal": "State the subset conditions required for independence of a collection of events. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "probability-l3-3",
+      "lecture_id": "probability-l3",
+      "kind": "confusion",
+      "goal": "Distinguish independence from conditional independence and explain how conditioning can change it. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l1-1",
+      "lecture_id": "quantum-l1",
+      "kind": "definition",
+      "goal": "Define a superposition of two polarization states. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l1-2",
+      "lecture_id": "quantum-l1",
+      "kind": "condition",
+      "goal": "State the normalization condition for the complex coefficients of a photon polarization state. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l1-3",
+      "lecture_id": "quantum-l1",
+      "kind": "confusion",
+      "goal": "Distinguish an entangled state from a factorized two-particle state. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l2-1",
+      "lecture_id": "quantum-l2",
+      "kind": "definition",
+      "goal": "Define a balanced beam splitter in terms of reflection and transmission probabilities. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l2-2",
+      "lecture_id": "quantum-l2",
+      "kind": "condition",
+      "goal": "State which detector outcome identifies an operational Elitzur-Vaidman bomb without an explosion. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": false
+    },
+    {
+      "task_id": "quantum-l2-3",
+      "lecture_id": "quantum-l2",
+      "kind": "confusion",
+      "goal": "Explain the neutron-star equation of state used to compute a pulsar maximum mass from nuclear density. Create 1-3 concise English flashcards using only evidence from this lecture; stop if unsupported.",
+      "expected_stop": true
+    }
+  ]
+}
