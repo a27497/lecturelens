@@ -14,7 +14,7 @@ public class AsrChunkingProperties {
     private DataSize maxAudioFileSize = DataSize.ofMegabytes(5);
     private DataSize maxChunkFileSize = DataSize.ofMegabytes(4);
     private int maxChunks = 180;
-    private int concurrency = 2;
+    private int concurrency = 4;
     private int maxConcurrency = 4;
     private ChunkRetryProperties chunkRetry = new ChunkRetryProperties();
 

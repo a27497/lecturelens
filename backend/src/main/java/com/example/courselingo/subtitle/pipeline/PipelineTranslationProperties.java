@@ -22,7 +22,7 @@ public class PipelineTranslationProperties {
     public Asr getAsr() { return asr; }
     public void setAsr(Asr value) { asr = value; }
     public static class Asr {
-        private boolean enabled, mergeEnabled, cacheEnabled;
+        private boolean enabled=false, mergeEnabled=true, cacheEnabled;
         private int initial=2, maximum=4, successStreak=3, requestsPerSecond=10, cacheMaxEntries=256;
         private long cooldownMillis=1000, mergeMinMillis=60000, mergeTargetMillis=90000, mergeMaxMillis=120000, cacheTtlSeconds=86400;
         public boolean isEnabled(){return enabled;} public void setEnabled(boolean v){enabled=v;}
@@ -105,10 +105,13 @@ public class PipelineTranslationProperties {
     public TranslationPolicy freezePipeline(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {
         var p=freezeAdaptive(requestTimeout,totalTimeout,segments,chars,sampleRate,channels,concurrency,maxClipBytes,maxAsrAttempts,retryBackoff);
-        if(!checkpointEnabled)return p;
-        return new TranslationPolicy("translation-v2.5",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
-            p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),p.maxDepth(),p.maxAttempts(),p.maxCalls(),p.tokenBudget(),
-            p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),p.aimd(),new TranslationRecoveryPolicy(maxRecoveries),"catalog-20261016");
+        if(checkpointEnabled) {
+            p=new TranslationPolicy("translation-v2.5",p.tokenCounter(),p.requestTimeoutMillis(),p.totalTimeoutMillis(),p.outputMin(),p.outputMax(),
+                p.outputRatio(),p.outputSlack(),p.safetyFactor(),p.contextReserve(),p.contextLimit(),p.maxDepth(),p.maxAttempts(),p.maxCalls(),p.tokenBudget(),
+                p.batchMaxSegments(),p.batchMaxInputChars(),p.silence(),p.aimd(),new TranslationRecoveryPolicy(maxRecoveries),"catalog-20261016");
+        }
+        if(!asr.isMergeEnabled()) return p;
+        return p.withClipMerge(new com.example.courselingo.media.AudioClipMergePolicy(asr.getMergeMinMillis(),asr.getMergeTargetMillis(),asr.getMergeMaxMillis()));
     }
     private TranslationPolicy freezeAdaptive(Duration requestTimeout,Duration totalTimeout,int segments,int chars,
             int sampleRate,int channels,int concurrency,long maxClipBytes,int maxAsrAttempts,java.util.List<Long> retryBackoff) {

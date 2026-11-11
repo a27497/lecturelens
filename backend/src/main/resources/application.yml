@@ -78,7 +78,7 @@ courselingo:
         success-streak: ${PIPELINE_ASR_SUCCESS_STREAK:3}
         requests-per-second: ${PIPELINE_ASR_REQUESTS_PER_SECOND:10}
         cooldown-millis: ${PIPELINE_ASR_COOLDOWN_MILLIS:1000}
-        merge-enabled: ${PIPELINE_ASR_MERGE_ENABLED:false}
+        merge-enabled: ${PIPELINE_ASR_MERGE_ENABLED:true}
         merge-min-millis: ${PIPELINE_ASR_MERGE_MIN_MILLIS:60000}
         merge-target-millis: ${PIPELINE_ASR_MERGE_TARGET_MILLIS:90000}
         merge-max-millis: ${PIPELINE_ASR_MERGE_MAX_MILLIS:120000}
@@ -412,7 +412,7 @@ courselingo:
         max-audio-file-size: ${ASR_MAX_AUDIO_FILE_SIZE:${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}}
         max-chunk-file-size: ${ASR_CHUNK_MAX_FILE_SIZE:4MB}
         max-chunks: ${ASR_CHUNK_MAX_CHUNKS:180}
-        concurrency: ${ASR_CHUNK_CONCURRENCY:2}
+        concurrency: ${ASR_CHUNK_CONCURRENCY:4}
         max-concurrency: ${ASR_CHUNK_MAX_CONCURRENCY:4}
       transcript:
         strategy: ${COURSELINGO_ASR_TRANSCRIPT_STRATEGY:EMBEDDED_SUBTITLE_FIRST}

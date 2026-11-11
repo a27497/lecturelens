@@ -30,11 +30,11 @@ public class SilenceAudioChunkPlanner {
     }
 
     public Plan plan(Path audio,long duration,Path directory,SilenceSegmentationPolicy policy,long providerMaxBytes) {
-        return plan(audio,duration,directory,policy,providerMaxBytes,null);
+        return plan(audio,duration,directory,policy,providerMaxBytes,(AudioClipMergePolicy)null);
     }
 
     public Plan plan(Path audio,long duration,Path directory,SilenceSegmentationPolicy policy,long providerMaxBytes,
-            com.example.courselingo.ai.asr.AsrPipelinePolicy options) {
+            AudioClipMergePolicy merge) {
         properties.validate();
         if(duration<=0 || !Files.isRegularFile(audio)) throw failure("Invalid audio for silence planning");
         var command=List.of(properties.executable(),"-hide_banner","-nostdin","-i",audio.toAbsolutePath().toString(),
@@ -43,26 +43,30 @@ public class SilenceAudioChunkPlanner {
         if(result.stderr().contains("[OUTPUT_TRUNCATED]")) throw failure("Silence observations exceeded capture limit");
         var silences=parse(result.stderr(),duration);
         var original = partition(duration,silences,directory,policy,Math.min(providerMaxBytes,policy.maxClipBytes()));
-        return options != null && options.mergeEnabled() ? merge(original,directory,policy,options) : original;
+        return applyMerge(original,directory,policy,merge);
     }
 
-    static Plan merge(Plan original,Path directory,SilenceSegmentationPolicy audio,
-            com.example.courselingo.ai.asr.AsrPipelinePolicy options) {
+    static Plan applyMerge(Plan original,Path directory,SilenceSegmentationPolicy audio,AudioClipMergePolicy options) {
+        return options == null ? original : merge(original,directory,audio,options);
+    }
+
+    static Plan merge(Plan original,Path directory,SilenceSegmentationPolicy audio,AudioClipMergePolicy options) {
+        if(options==null)throw failure("Missing audio clip merge policy");
         long fileMaxMillis = (original.maxClipBytes()-4096)*1000/((long)audio.sampleRate()*audio.channels()*2);
-        long maximum = Math.min(fileMaxMillis,options.mergeMaxMillis());
+        long maximum = Math.min(fileMaxMillis,options.maxMillis());
         var chunks = new ArrayList<AudioChunk>();
         var sources = new LinkedHashMap<Integer,List<SourceRange>>();
         for (int at=0; at<original.chunks().size();) {
             var first=original.chunks().get(at++);
             long start=first.offsetMillis(),end=first.endMillis();
             var ranges=new ArrayList<SourceRange>(original.sources().get(first.index()));
-            while (at<original.chunks().size() && end-start<options.mergeTargetMillis()) {
+            while (at<original.chunks().size() && end-start<options.targetMillis()) {
                 var next=original.chunks().get(at);
                 if(next.endMillis()-start>maximum) break;
                 end=next.endMillis();ranges.addAll(original.sources().get(next.index()));at++;
             }
             if(end-start>maximum)throw failure("Merged clip exceeds provider limit");
-            String reason=end-start<options.mergeMinMillis() ? (fileMaxMillis<options.mergeMinMillis()?"FILE_SIZE_LIMIT":
+            String reason=end-start<options.minMillis() ? (fileMaxMillis<options.minMillis()?"FILE_SIZE_LIMIT":
                 at==original.chunks().size()?"TRAILING_FRAGMENT":"LONG_SILENCE_GAP") : ranges.size()>1?"MERGED_ADJACENT":first.timingReason();
             int index=chunks.size();
             chunks.add(new AudioChunk(index,start,directory.resolve("merged-"+index+".wav"),end,first.timingSource(),reason));

@@ -17,7 +17,9 @@ public record TranslationPolicy(
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
     com.example.courselingo.ai.asr.AsrPipelinePolicy asr,
     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-    PreparationFlowPolicy flow
+    PreparationFlowPolicy flow,
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    com.example.courselingo.media.AudioClipMergePolicy clipMerge
 ) {
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
@@ -25,7 +27,7 @@ public record TranslationPolicy(
         com.example.courselingo.media.SilenceSegmentationPolicy silence,TranslationAimdPolicy aimd,TranslationRecoveryPolicy recovery,String priceSet,
         com.example.courselingo.ai.asr.AsrPipelinePolicy asr) {
         this(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,outputRatio,outputSlack,safetyFactor,
-            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,null);
+            contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,null,null);
     }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,
         int outputMin,int outputMax,double outputRatio,int outputSlack,double safetyFactor,int contextReserve,
@@ -37,17 +39,28 @@ public record TranslationPolicy(
     public TranslationPolicy withAsr(com.example.courselingo.ai.asr.AsrPipelinePolicy value) {
         return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
             outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
-            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,value,flow);
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,value,flow,clipMerge);
     }
     public TranslationPolicy withFlow(PreparationFlowPolicy value) {
         return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
             outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
-            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,value);
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,value,clipMerge);
+    }
+    public TranslationPolicy withClipMerge(com.example.courselingo.media.AudioClipMergePolicy value) {
+        return new TranslationPolicy(engineVersion,tokenCounter,requestTimeoutMillis,totalTimeoutMillis,outputMin,outputMax,
+            outputRatio,outputSlack,safetyFactor,contextReserve,contextLimit,maxDepth,maxAttempts,maxCalls,tokenBudget,
+            batchMaxSegments,batchMaxInputChars,silence,aimd,recovery,priceSet,asr,flow,value);
+    }
+    /** Merge bounds for silence planning when the switch is on; adaptive ASR can override by disabling merge. */
+    public com.example.courselingo.media.AudioClipMergePolicy audioClipMerge() {
+        if (asr != null) return com.example.courselingo.media.AudioClipMergePolicy.from(asr);
+        return clipMerge;
     }
     public com.example.courselingo.media.SilenceSegmentationPolicy paragraphSilence() {
-        if(asr==null || !asr.mergeEnabled())return silence;
+        var merge=audioClipMerge();
+        if(merge==null)return silence;
         return new com.example.courselingo.media.SilenceSegmentationPolicy(silence.noiseDb(),silence.pauseMillis(),
-            asr.mergeMinMillis(),asr.mergeTargetMillis(),asr.mergeMaxMillis(),silence.maxClips(),silence.sampleRate(),silence.channels(),
+            merge.minMillis(),merge.targetMillis(),merge.maxMillis(),silence.maxClips(),silence.sampleRate(),silence.channels(),
             silence.asrConcurrency(),silence.maxClipBytes(),silence.asrMaxAttempts(),silence.retryBackoffMillis());
     }
     public TranslationPolicy(String engineVersion,String tokenCounter,long requestTimeoutMillis,long totalTimeoutMillis,

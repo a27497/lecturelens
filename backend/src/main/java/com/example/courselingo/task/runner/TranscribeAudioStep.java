@@ -427,8 +427,9 @@ final class TranscribeAudioStep implements PipelineAnalysisTaskStep {
         Path directory=workspace.asrChunksOutputDirectory(context);
         var frozen=pipelinePolicies.find(context.taskId(),context.userId()).orElseThrow();
         var options=frozen.policy().asr();
-        var plan=options==null?silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes()):
-            silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes(),options);
+        var merge=frozen.policy().audioClipMerge();
+        var plan=merge==null?silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes()):
+            silencePlanner.plan(audio.audioFile(),duration,directory,policy,pinned.maxAudioFileSizeBytes(),merge);
         if(options!=null && asrStore==null)throw new IllegalStateException("ASR execution store is unavailable");
         var session=options==null?null:asrStore.open(frozen,context.requestId(),context.taskContext().executionEpoch(),plan,
             AdaptiveAsrController.audioHash(audio.audioFile()));
