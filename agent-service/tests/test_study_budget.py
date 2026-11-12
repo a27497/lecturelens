@@ -8,13 +8,19 @@ from test_study_goals import goal_verdict
 
 from lecturelens_agent.study import call_journal
 from lecturelens_agent.study.quality import review_contract
-from lecturelens_agent.study.store import BudgetExceeded, RunStopped
+from lecturelens_agent.study.store import (
+    RUN_MODEL_CALL_LIMIT,
+    RUN_RESERVED_TOKEN_LIMIT,
+    RUN_TOOL_CALL_LIMIT,
+    BudgetExceeded,
+    RunStopped,
+)
 from lecturelens_agent.study.support_review import MethodCoverageVerdict
 
 setup = test_study.setup
 
 
-def overlap_scenario(setup, monkeypatch, *, batch=True, recover=False):
+def overlap_scenario(setup, monkeypatch, *, batch=True, recover=False, reserved=0):
     store, authority, runtime, _ = setup
     sources = [
         {
@@ -134,6 +140,9 @@ def overlap_scenario(setup, monkeypatch, *, batch=True, recover=False):
 
     monkeypatch.setattr(store, "save_tool", save)
     run = test_study.start(setup)
+    if reserved:
+        with store.connect() as conn:
+            conn.execute("UPDATE study_run SET reserved_tokens=%s WHERE run_id=%s", (reserved, run["run_id"]))
     runtime.execute(run)
     if recover:
         assert interrupted and test_study.read(setup)["run"]["status"] == "running"
@@ -187,14 +196,36 @@ def test_overlapping_searches_and_window_complete_within_unchanged_budget(setup,
     assert private["questions"][1]["evidence_ids"] == ["owned-caption-0-" + "x" * 60]
 
 
+def test_long_serial_searches_complete_beyond_the_former_reservation_limit(setup, monkeypatch):
+    response, summary, searches = overlap_scenario(setup, monkeypatch, batch=False)
+    assert len(searches) == 2
+    assert response["run"]["status"] == "succeeded", summary
+    assert response["artifact"]["explanation"] and len(response["artifact"]["questions"]) == 2
+    assert summary["model_calls"] == 6 and summary["tool_calls"] == 4
+    assert summary["method_observations"] == 1 and summary["duplicate_observations"] == 0
+    assert summary["reservations"] == [4515, 13695, 15849, 16368, 16842, 10883]
+    # This trajectory needs more than the former 64,000 ceiling and all six former model calls.
+    assert 64000 < summary["reserved_tokens"] == sum(summary["reservations"]) < RUN_RESERVED_TOKEN_LIMIT
+    events = test_study.read(setup, "EVENTS")["events"]
+    assert sum(e["event_type"] == "artifact_created" for e in events) == 1
+    assert sum(e["event_type"] == "quality_checked" for e in events) == 1
+    assert not any(e["event_type"] == "budget_rejected" for e in events)
+
+
 def test_long_serial_searches_stop_with_specific_budget_reason_and_no_artifact(setup, monkeypatch):
-    response, summary, _ = overlap_scenario(setup, monkeypatch, batch=False)
+    # Leave exactly the former 64,000 of headroom: the same trajectory must stop before its fifth request.
+    used = RUN_RESERVED_TOKEN_LIMIT - 64000
+    response, summary, _ = overlap_scenario(setup, monkeypatch, batch=False, reserved=used)
     assert response["run"]["status"] == "budget_exceeded" and response["artifact"] is None
     assert response["run"]["error_code"] == "RUN_BUDGET_EXCEEDED"
+    assert summary["model_calls"] == 4 and summary["tool_calls"] == 3
+    assert summary["reserved_tokens"] == used + sum(summary["reservations"])
     events = test_study.read(setup, "EVENTS")["events"]
     rejected = next(e["payload"] for e in events if e["event_type"] == "budget_rejected")
     assert rejected["reason"] == "reserved_tokens" and rejected["purpose"] == "decision"
-    assert rejected["remaining_tokens"] == 64000 - summary["reserved_tokens"]
+    assert rejected["token_limit"] == RUN_RESERVED_TOKEN_LIMIT
+    assert rejected["reserved_tokens"] == summary["reserved_tokens"]
+    assert rejected["remaining_tokens"] == RUN_RESERVED_TOKEN_LIMIT - summary["reserved_tokens"]
     assert rejected["requested_tokens"] == summary["requested_reservations"][-1]
     assert rejected["requested_tokens"] > rejected["remaining_tokens"]
     assert rejected["reservation"]["message_bytes"] > 0
@@ -203,7 +234,12 @@ def test_long_serial_searches_stop_with_specific_budget_reason_and_no_artifact(s
 
 
 @pytest.mark.parametrize(
-    "used,requested,allowed", [(63900, 100, True), (63900, 101, False), (64000, 1, False)]
+    "used,requested,allowed",
+    [
+        (RUN_RESERVED_TOKEN_LIMIT - 100, 100, True),
+        (RUN_RESERVED_TOKEN_LIMIT - 100, 101, False),
+        (RUN_RESERVED_TOKEN_LIMIT, 1, False),
+    ],
 )
 def test_model_reservation_exact_boundary_and_replay_are_atomic(setup, used, requested, allowed):
     store, _, _, _ = setup
@@ -254,8 +290,8 @@ def test_budget_diagnostic_keeps_public_error_code_and_stops_before_artifact(set
     store, _, runtime, _ = setup
     run = test_study.start(setup)
     assignment = {
-        "model_calls": "model_calls=6",
-        "tool_calls": "tool_calls=8",
+        "model_calls": f"model_calls={RUN_MODEL_CALL_LIMIT}",
+        "tool_calls": f"tool_calls={RUN_TOOL_CALL_LIMIT}",
         "deadline": "deadline=now()-interval '1 second'",
     }[resource]
     with store.connect() as conn:

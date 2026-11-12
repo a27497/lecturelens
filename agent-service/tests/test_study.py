@@ -9,7 +9,13 @@ from langgraph.checkpoint.postgres import PostgresSaver
 from lecturelens_agent.study.contracts import StudyCommand
 from lecturelens_agent.study.provider import MockProvider
 from lecturelens_agent.study.runtime import StudyRuntime
-from lecturelens_agent.study.store import StudyError, StudyStore
+from lecturelens_agent.study.store import (
+    RUN_MODEL_CALL_LIMIT,
+    RUN_RESERVED_TOKEN_LIMIT,
+    RUN_TOOL_CALL_LIMIT,
+    StudyError,
+    StudyStore,
+)
 
 
 class Authority:
@@ -276,14 +282,22 @@ def test_model_tool_and_source_failures_are_explicit(setup, fault):
     assert "secret-provider-key" not in json.dumps(response, default=str)
 
 
+def pin_model_call_limit(monkeypatch, limit):
+    """Pin a small per-Run model-call limit so a short scripted trajectory reaches the boundary."""
+    from lecturelens_agent.study import call_journal, feedback, runtime, store
+
+    for module in (store, call_journal, feedback, runtime):
+        monkeypatch.setattr(module, "RUN_MODEL_CALL_LIMIT", limit)
+
+
 @pytest.mark.parametrize("counter", ["model_calls", "tool_calls", "reserved_tokens", "deadline"])
 def test_budget_is_not_reset_on_recovery(setup, counter):
     store, _, runtime, _ = setup
     run = start(setup)
     assignment = {
-        "model_calls": "model_calls=6",
-        "tool_calls": "tool_calls=8",
-        "reserved_tokens": "reserved_tokens=64000",
+        "model_calls": f"model_calls={RUN_MODEL_CALL_LIMIT}",
+        "tool_calls": f"tool_calls={RUN_TOOL_CALL_LIMIT}",
+        "reserved_tokens": f"reserved_tokens={RUN_RESERVED_TOKEN_LIMIT}",
         "deadline": "deadline=now()-interval '1 second'",
     }[counter]
     with store.connect() as conn:

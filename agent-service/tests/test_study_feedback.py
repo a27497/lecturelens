@@ -431,8 +431,10 @@ def test_rejection_observation_changes_next_candidate_within_persistent_budget(f
     assert result["feedback"]["content"]["observations"][0]["observation"] == "Name when the algorithm stops."
 
 
-def test_feedback_reserves_final_two_calls_for_revision(feedback):
+def test_feedback_reserves_final_two_calls_for_revision(feedback, monkeypatch):
     _, _, runtime, _, _, _, run, calls = feedback
+    # Six calls make this revision trajectory end exactly on the limit.
+    test_study.pin_model_call_limit(monkeypatch, 6)
     original = runtime.provider.feedback
     reviews = 0
 

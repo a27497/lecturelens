@@ -5,7 +5,7 @@ import json
 
 from psycopg.types.json import Jsonb
 
-from .store import StudyError, reservation_error
+from .store import RUN_MODEL_CALL_LIMIT, StudyError, reservation_error
 from .telemetry import _span
 
 
@@ -154,7 +154,7 @@ def legacy_observation(store, conn, run_id, key, fingerprint, metadata, detail):
         (run_id, run_id),
     ).fetchone()
     if row["model_calls"] > row["starts"]:
-        if row["model_calls"] >= 6:
+        if row["model_calls"] >= RUN_MODEL_CALL_LIMIT:
             raise reservation_error(row, "model")
         return stopped(store, conn, run_id, key, "MODEL_OUTCOME_UNKNOWN", metadata)
     return None

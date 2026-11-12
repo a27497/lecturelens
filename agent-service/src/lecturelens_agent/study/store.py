@@ -52,6 +52,14 @@ CREATE TABLE IF NOT EXISTS study_artifact (
 """
 TERMINAL = {"succeeded", "failed", "cancelled", "budget_exceeded"}
 
+# Per-Run ceilings: a misbehaving model cannot loop or spend without limit. The
+# token figure is a conservative byte-based reservation, deliberately generous
+# for now so long-cue courses complete; call counts and the Run deadline are the
+# effective loop guards.
+RUN_RESERVED_TOKEN_LIMIT = 600_000
+RUN_MODEL_CALL_LIMIT = 12
+RUN_TOOL_CALL_LIMIT = 8
+
 
 class StudyError(Exception):
     def __init__(self, code, status=409):
@@ -72,11 +80,11 @@ class BudgetExceeded(Exception):
 def reservation_error(row, kind, tokens=0, **context):
     reason = (
         "model_calls"
-        if kind == "model" and row["model_calls"] >= 6
+        if kind == "model" and row["model_calls"] >= RUN_MODEL_CALL_LIMIT
         else "tool_calls"
-        if kind == "tool" and row["tool_calls"] >= 8
+        if kind == "tool" and row["tool_calls"] >= RUN_TOOL_CALL_LIMIT
         else "reserved_tokens"
-        if row["reserved_tokens"] + tokens > 64000
+        if row["reserved_tokens"] + tokens > RUN_RESERVED_TOKEN_LIMIT
         else None
     )
     if reason:
@@ -85,12 +93,12 @@ def reservation_error(row, kind, tokens=0, **context):
             kind=kind,
             requested_tokens=tokens,
             reserved_tokens=row["reserved_tokens"],
-            remaining_tokens=max(0, 64000 - row["reserved_tokens"]),
-            token_limit=64000,
+            remaining_tokens=max(0, RUN_RESERVED_TOKEN_LIMIT - row["reserved_tokens"]),
+            token_limit=RUN_RESERVED_TOKEN_LIMIT,
             model_calls=row["model_calls"],
-            model_call_limit=6,
+            model_call_limit=RUN_MODEL_CALL_LIMIT,
             tool_calls=row["tool_calls"],
-            tool_call_limit=8,
+            tool_call_limit=RUN_TOOL_CALL_LIMIT,
             **context,
         )
     return None
@@ -551,7 +559,7 @@ class StudyStore:
             if count >= 3:
                 raise StudyError(code or "READ_RETRY_EXHAUSTED", 503)
             if count:
-                if row["tool_calls"] >= 8:
+                if row["tool_calls"] >= RUN_TOOL_CALL_LIMIT:
                     raise reservation_error(row, "tool")
                 conn.execute("UPDATE study_run SET tool_calls=tool_calls+1 WHERE run_id=%s", (run_id,))
             payload = {

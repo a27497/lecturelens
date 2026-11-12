@@ -42,7 +42,7 @@ from .quality import (
 )
 from .sequences import sequence_practice
 from .solution import solution_fingerprint, solution_messages
-from .store import BudgetExceeded, RunStopped, StudyError
+from .store import RUN_MODEL_CALL_LIMIT, BudgetExceeded, RunStopped, StudyError
 from .strings import copied_string_input, novel_string_input
 from .telemetry import TracedAuthority, model_detail, traced_node
 
@@ -484,7 +484,7 @@ class StudyRuntime:
                 state["history"],
                 self.store.recent_context(run["session_id"], run["run_id"]),
                 {
-                    "model_calls_left_after_response": max(0, 5 - planned_calls),
+                    "model_calls_left_after_response": max(0, RUN_MODEL_CALL_LIMIT - 1 - planned_calls),
                     "new_practice_review_calls": 2
                     if self.independent_solutions and self.provider.mode == "real"
                     else 1,
