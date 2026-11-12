@@ -45,6 +45,8 @@ Java 网关仍使用轮询 `EVENTS` 的现有契约；改为转发此流需要�
 
 修改了 `app.py`、`retrieval.py`、`study/runtime.py`，按既有机制登记新的开发身份 `step6-agent-lanes-2eed7cb6c34e7c84`（`study/step6_agent_manifest.json`，63 个模块）。`phase0_agent_manifest.json` 及更早清单保持原字节，Phase 0 身份改由 `verify_phase0_agent` 校验，测试夹具 `tests/fixtures/step6-prior-source.tar.gz` 还原这三个文件的旧字节，再沿原有夹具链重建 P10/P9/P7/FROZEN。新身份不继承任何历史质量结论，也不允许真实 Provider 调用。
 
+Step 6 身份现已成为历史身份。合并 Study 预留预算修复并放宽 Run 上限（12 次模型调用、600,000 保守预留）后，`study/call_journal.py`、`study/context.py`、`study/feedback.py`、`study/method_scope.py`、`study/provider.py`、`study/runtime.py`、`study/store.py` 发生变化，当前开发身份为 `study-budget-71b4d959dfab59a4`（`study/study_budget_agent_manifest.json`，63 个模块）。`step6_agent_manifest.json` 字节不变，由 `verify_step6_agent` 校验；`tests/fixtures/study-budget-prior-source.tar.gz` 还原变更前的七个模块，上文的 Step 6 夹具再接续到 Phase 0/P10/P9/P7/FROZEN。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。
+
 ## 验证
 
 `agent-service/tests/test_agent_lanes.py` 使用事件和屏障构造并发：如果路径仍是串行，测试会死锁并超时失败，而不是靠 sleep 判断。覆盖：其他课程建索引期间检索照常返回；查询槽位占满时建索引不受影响、查询仍有界拒绝；N 个查询同时处于 Embedding 中、第 N+1 个被拒；两个 Session 的 Run 同时处于模型 I/O 中，且预算计数、引用、答案隐藏、证据范围与串行一致；同一 Session 的 Run 按顺序串行；通道数上限；取消只影响一个 Run；事件流的增量、终止、续传、关闭默认值和鉴权。
