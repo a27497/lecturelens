@@ -136,7 +136,8 @@ public class TaskQueryServiceImpl implements TaskQueryService {
             UtcTimestamps.toInstant(task.getCreatedAt()),
             UtcTimestamps.updatedAt(task.getCreatedAt(), task.getUpdatedAt()),
             UtcTimestamps.toInstant(task.getStartedAt()),
-            UtcTimestamps.toInstant(task.getFinishedAt())
+            UtcTimestamps.toInstant(task.getFinishedAt()),
+            LearningAvailability.learnable(task.getStatus(), task.getLearningReadyAt())
         );
     }
 

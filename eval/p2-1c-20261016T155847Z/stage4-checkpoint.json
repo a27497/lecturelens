@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-10-16T16:51:52.627103+00:00",
+  "used_bytes": 116500475904,
+  "available_bytes": 38376935424,
+  "usage_percent": 75.22108931513249,
+  "headroom_to_85_bytes": 15145323724.800003,
+  "java_started": false,
+  "mysql_test_removed": true,
+  "postgres_started": false,
+  "real_trials_submitted": 0
+}

@@ -14,6 +14,11 @@ public final class AsrTextNormalizer {
     );
     private static final Pattern REPEATED_PUNCTUATION = Pattern.compile("([!?;,，。！？；])\\1{1,}");
     private static final Pattern ISOLATED_CJK = Pattern.compile("(?<![\\p{IsHan}])(?<!\\S)[\\p{IsHan}](?!\\S)(?![\\p{IsHan}])");
+    private static final String CJK = "[\\p{IsHan}\\p{IsHiragana}\\p{IsKatakana}\\p{InCJK_Symbols_and_Punctuation}]";
+    // A cue line break separates words unless CJK text is on either side, where no space is written.
+    private static final Pattern CJK_LINE_BREAK = Pattern.compile(
+        "(?<=" + CJK + ") *\\n[ \\n]*| *\\n[ \\n]*(?=" + CJK + ")"
+    );
     private static final List<Replacement> ENGLISH_TECHNICAL_JOINS = List.of(
         new Replacement("(?i)\\bSpringBoot\\b", "Spring Boot"),
         new Replacement("(?i)\\bAPIGateway\\b", "API Gateway"),
@@ -31,6 +36,15 @@ public final class AsrTextNormalizer {
         StringBuilder cleaned = new StringBuilder(text.length());
         text.codePoints().forEach(codePoint -> {
             int type = Character.getType(codePoint);
+            // Line breaks and tabs are ISO controls too: they must stay word boundaries, not be dropped.
+            if (isLineBreak(codePoint, type)) {
+                cleaned.append('\n');
+                return;
+            }
+            if (Character.isWhitespace(codePoint) || Character.isSpaceChar(codePoint)) {
+                cleaned.append(' ');
+                return;
+            }
             boolean forbidden = Character.isISOControl(codePoint)
                 || type == Character.PRIVATE_USE
                 || type == Character.SURROGATE
@@ -48,9 +62,14 @@ public final class AsrTextNormalizer {
                 text = ISOLATED_CJK.matcher(text).replaceAll(" ");
             }
         }
-        return text.replaceAll("[\\t\\x0B\\f\\r ]+", " ")
-            .replaceAll(" *\\n+ *", "\n")
-            .strip();
+        text = CJK_LINE_BREAK.matcher(text).replaceAll("");
+        return text.replaceAll("[ \\n]+", " ").strip();
+    }
+
+    private static boolean isLineBreak(int codePoint, int type) {
+        return codePoint == '\n' || codePoint == '\r' || codePoint == 0x0B || codePoint == '\f' || codePoint == 0x85
+            || type == Character.LINE_SEPARATOR
+            || type == Character.PARAGRAPH_SEPARATOR;
     }
 
     public static List<TranscribedSegment> normalizeAndDeduplicate(
@@ -66,7 +85,7 @@ public final class AsrTextNormalizer {
                 continue;
             }
             result.add(new TranscribedSegment(
-                result.size(), segment.startMillis(), segment.endMillis(), current
+                result.size(), segment.startMillis(), segment.endMillis(), current,segment.timingSource(),segment.timingReason()
             ));
             previous = current;
         }

@@ -64,7 +64,8 @@ class AsrProviderSelectionTest {
             assertThat(asr.getApiKey()).isEmpty();
             var properties = context.getBean(AsrChunkingProperties.class);
             assertThat(properties.getChunkDuration()).isEqualTo(Duration.ofSeconds(180));
-            assertThat(properties.getConcurrency()).isEqualTo(2);
+            assertThat(properties.getConcurrency()).isEqualTo(4);
+            assertThat(properties.effectiveConcurrency()).isEqualTo(4);
             assertThat(properties.getMaxChunkFileSize().toBytes()).isGreaterThan(180L * 32000 + 44);
         });
         profile.withPropertyValues("ASR_CHUNK_DURATION=120s", "ASR_CHUNK_CONCURRENCY=1").run(context -> {

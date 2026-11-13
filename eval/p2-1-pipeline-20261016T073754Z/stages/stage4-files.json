@@ -1,0 +1,178 @@
+[
+  {
+    "path": "backend/src/main/java/com/example/courselingo/common/error/ErrorCode.java",
+    "sha256": "96e5e1fd39c18906a61a69ed72a76ff3a61179cefa046858d8c4f0ff86661ecd"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/mq/AnalysisTaskMessage.java",
+    "sha256": "226fba2a3c6655bb4e2f93b96d2d59068cff1b23656b585f973ae615859289af"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+    "sha256": "d680491a1302e4f491c25f8170b6900077f43fd8c79162753b8081b15958d86d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+    "sha256": "5aa2f053f79d9502bc770706ac6ed337ad9307cacea541b0c9d2bd37d7dd6fd8"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationCheckpointStore.java",
+    "sha256": "de92fe84a056cdb06c8a21ab4f9c583d2906e40dcc31a4d8224f4edca99c1af8"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+    "sha256": "4b627bbd35e5388eee00d9d473f567d77a92e3d99e4266fe2c67e9811e2ef84c"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationRecoveryPolicy.java",
+    "sha256": "dd722e4ae7276a2688e71d040ae602de44efc224bcd9670a262089a91893841b"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationSchedulerEvents.java",
+    "sha256": "39a5b4e621d735a7e7e2073af4dc1185b9dc1b2be98de3a676ebde91618e367e"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SaveTranscriptionSegmentsCommand.java",
+    "sha256": "56df5a41d2b8430eb8c835896dbe35381b0d750738adcc1242f456d7d18dd1da"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleSegmentPersistenceServiceImpl.java",
+    "sha256": "2fa42b9f4ca09c91c97c46baa97416c0a8bb6290b0db1ed2edaa60fb973c8b34"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+    "sha256": "d35b97e9f541bf2d4804df95eceb7fba54d0d39bc6d653a03aa7e76e8170e6b3"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelExecutionService.java",
+    "sha256": "f186395ec11ef7f9399dfb79879ef5f914af94f9ce463cd6da37113fb36da50f"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/controller/TaskResumeController.java",
+    "sha256": "68f038e0e6ccb99d71eded1147df34fbb8eb2fe75d3cb85274a613c4430a5cc5"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskExecutionContext.java",
+    "sha256": "99866f6771a33a0dad74d5703528ad76c1922472419e1345fcb59381607bdc64"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskRunnerImpl.java",
+    "sha256": "3fc49bb8e3928919ddf3cfc5f8ae5af072d057001b04e52f062ea3da6dd4c451"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfiguration.java",
+    "sha256": "5b8145c3e71d5b733d7d40082bb64f285ac29b9d1aea0ac7954c75d4669afb5d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/ExtractKeyframesStep.java",
+    "sha256": "a5e9275b40010c6ff3b65921c616654f9f31560139fb6294efb6d05919a156f5"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/OcrKeyframesStep.java",
+    "sha256": "dc64be85e4b834ee1618440c6ca69904ac337d790cb6b3113d5f93b51764a7b0"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/PersistSubtitleSegmentsStep.java",
+    "sha256": "c6b01e044efc725f20e773d2ee846888a5f31f3f0e2c3636851e5501696a290e"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/PipelineAnalysisTaskStepContext.java",
+    "sha256": "8a8a80c04bc221c641ca4e711884abb81c7e104e450d3cd0e70d6e4fcdea2a40"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/PipelineAnalysisTaskWorkExecutor.java",
+    "sha256": "8db1c596f51fdbf28b670213ddaa4d5d431952794b6f9311951ea14b85bc4192"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/TranscribeAudioStep.java",
+    "sha256": "f38b9023eabe5c0f5194d6d16e21931ef1d2551f41eaa3c95f5c30eb1503ad89"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/DurableTaskOutbox.java",
+    "sha256": "475d5998dd299f6811c0d76d88b2c2eb638087e95ceba371a3606b926137cbe5"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/GenerationFence.java",
+    "sha256": "e020787893ae50db687e2d64bda523970b0b4965a211b4222bca9f7062e9f517"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineCheckpointDeletion.java",
+    "sha256": "af871fc33f465c293a93175cc3e95c4351b515d74b38eba991faa8035e97e385"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineExecutionGuard.java",
+    "sha256": "628e380cb973a1c0c92ef82065a6d26568ae006eeaecb35ab129aea9afa198f4"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineExecutionScope.java",
+    "sha256": "09d8fded305f562d65e2fe51e9da6bf074267531e7234a987b5e657b6cd9fbdb"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineRecoveryActivation.java",
+    "sha256": "74d9fe4741430add2c7060e242c9cee68db4af2da5e91574a6493ad6a9293c18"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineResumeService.java",
+    "sha256": "65bc3e5db2d2b068a413038c1c4d4922a81ff8a74266ac89384d2c8108c9bc40"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineSourceCheckpointStore.java",
+    "sha256": "b71062338864b73a7ed69e7fd6cf40a1ece1a010c6b8d3baf77c9d8104e9f902"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/TaskCreationServiceImpl.java",
+    "sha256": "a7bacac0fc976c75532d8ed4befb80087179c475a848fd4b3556f59b863273dd"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/TaskExecutionLease.java",
+    "sha256": "59a46233ffab34ee78ea138ecfafa6bd4b18d20f68b9240c340408e16d3625e0"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/vision/keyframe/VideoKeyframeObjectKeyGenerator.java",
+    "sha256": "29c8975350215aa22a59a41141676ebde2101be5c910660e4ab2e90245c8c68d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/vision/keyframe/VideoKeyframeScanServiceImpl.java",
+    "sha256": "66a79ad494573495787bcc53b7f22440fda2d8577b44f902a87081b714e84688"
+  },
+  {
+    "path": "backend/src/main/resources/application.yml",
+    "sha256": "d42ac36308a1174fcdbf4a97ebfe0d33aa4c7a3eb9b515413766d5eb79b7a1f7"
+  },
+  {
+    "path": "backend/src/main/resources/db/migration/V30__pipeline_translation_checkpoint.sql",
+    "sha256": "3967b2817aeeb2645fbaa0163c4b49b97b6af904da9aa3fb33cd9885d7d600ed"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/PipelineCheckpointFixture.java",
+    "sha256": "e15e646c28b3a8a7457f4448a87f338668f6502db22a553de2b33db2ba4ab754"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/PipelineResumeMySqlTest.java",
+    "sha256": "fd2d219dd5ec0ff336a41a5f2c3fb6912d4e071001b303181865be7b6815e258"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/TranslationCheckpointMySqlTest.java",
+    "sha256": "317482e8ee7a4a4a200d3a9be722521140f0ae63803a427ee92b0cb93fca6ac1"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/TranslationSchedulerMySqlTest.java",
+    "sha256": "1e48e35296e342493ef8c7164215337fc94f6b513dfbfc2e30243ba0aa2d1a42"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/PipelineRecoveryActivationTest.java",
+    "sha256": "c474941b1d2b1659d913e73409f5de8631c3427e72cda723902f140f3fbed722"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/TaskResumeControllerTest.java",
+    "sha256": "25dd573cd590a4a7f7a4454b4c83335958df414bcc2c84ad1f9c61222af08045"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/runner/PipelineCheckpointExecutionTest.java",
+    "sha256": "9522591d46df902dbcb9d8a7c047071f30a5ff3d660107aef3329884bd0f6183"
+  },
+  {
+    "path": "docs/PIPELINE_TRANSLATION_V2.md",
+    "sha256": "416b51c8bbed5033cea77db0fad42b96dbfe1c4f234001dd20f7dfdcc975adad"
+  }
+]

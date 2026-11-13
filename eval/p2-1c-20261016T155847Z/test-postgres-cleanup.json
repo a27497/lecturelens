@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-10-16T17:44:05.275251+00:00",
+  "name": "lecturelens-p21c-unit-postgres-20261017",
+  "id": "1d7d73d9c2c112efde1a08b4bdb197bd1ba690694a89f966ed8eefb4a2766941",
+  "image": "sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f",
+  "stopped": true,
+  "removed": true,
+  "other_containers_changed": false
+}

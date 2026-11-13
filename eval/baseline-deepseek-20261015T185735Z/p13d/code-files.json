@@ -1,0 +1,12 @@
+[
+  "backend/src/main/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnostics.java",
+  "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationPromptFactory.java",
+  "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+  "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelChatClient.java",
+  "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelLlmProvider.java",
+  "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration.java",
+  "backend/src/main/resources/db/migration/V26__translation_call_diagnostic.sql",
+  "backend/src/test/java/com/example/courselingo/subtitle/SubtitleTranslationServiceTest.java",
+  "backend/src/test/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnosticsTest.java",
+  "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelTranslationObservationTest.java"
+]

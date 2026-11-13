@@ -1,0 +1,72 @@
+[
+  {
+    "version": 9,
+    "parentVersion": 8,
+    "actorUserId": 9,
+    "reason": "BINDING_ROLLED_BACK",
+    "createdAt": "2026-10-15 18:06:29.929"
+  },
+  {
+    "version": 8,
+    "parentVersion": 7,
+    "actorUserId": 9,
+    "reason": "BINDINGS_SAVED",
+    "createdAt": "2026-10-15 18:06:29.790"
+  },
+  {
+    "version": 7,
+    "parentVersion": 6,
+    "actorUserId": 9,
+    "reason": "BINDING_ROLLED_BACK",
+    "createdAt": "2026-10-15 18:02:21.479"
+  },
+  {
+    "version": 6,
+    "parentVersion": 5,
+    "actorUserId": 9,
+    "reason": "BINDINGS_SAVED",
+    "createdAt": "2026-10-15 18:02:00.825"
+  },
+  {
+    "version": 5,
+    "parentVersion": 4,
+    "actorUserId": 9,
+    "reason": "BINDING_ROLLED_BACK",
+    "createdAt": "2026-10-15 17:55:09.884"
+  },
+  {
+    "version": 4,
+    "parentVersion": 3,
+    "actorUserId": 9,
+    "reason": "BINDINGS_SAVED",
+    "createdAt": "2026-10-15 17:55:09.580"
+  },
+  {
+    "version": 3,
+    "parentVersion": 2,
+    "actorUserId": 9,
+    "reason": "MODEL_SAVED",
+    "createdAt": "2026-10-15 17:50:46.804"
+  },
+  {
+    "version": 2,
+    "parentVersion": 1,
+    "actorUserId": 9,
+    "reason": "PROVIDER_SAVED",
+    "createdAt": "2026-10-15 17:50:28.747"
+  },
+  {
+    "version": 1,
+    "parentVersion": 0,
+    "actorUserId": null,
+    "reason": "ENVIRONMENT_CAPTURED",
+    "createdAt": "2026-10-15 17:32:08.602"
+  },
+  {
+    "version": 0,
+    "parentVersion": null,
+    "actorUserId": null,
+    "reason": "INITIAL_EMPTY_CONFIG",
+    "createdAt": "2026-10-15 17:31:14.706"
+  }
+]

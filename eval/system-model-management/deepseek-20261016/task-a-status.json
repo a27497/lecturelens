@@ -1,0 +1,12 @@
+{
+  "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+  "uploadId": "up_70822cba4da94391bdeefdb12e184014",
+  "targetLanguage": "zh-CN",
+  "status": "QUEUED",
+  "progressPercent": 0,
+  "currentStage": "QUEUED",
+  "retryCount": 0,
+  "maxRetryCount": 3,
+  "createdAt": "2026-10-15T17:55:09.657Z",
+  "updatedAt": "2026-10-15T17:55:09.697Z"
+}

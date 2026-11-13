@@ -1,0 +1,9 @@
+{
+  "result": "FAILED",
+  "java_exit": 45,
+  "markers": [
+    "P21_CAPTURE_GATE_PASS",
+    "P21_FINAL_ISOLATION_GATE_PASS"
+  ],
+  "course_tasks_submitted": 0
+}

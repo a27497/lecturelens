@@ -1,0 +1,6 @@
+{
+  "frozen_before_first_full_trial_scoring_utc": "2026-10-15T09:06:43.469346+00:00",
+  "score_sha256": "827f68ecb64740baefca983f5431cd4fec1faf72bf9b0d60c03991085872cf6d",
+  "normalization_protocol": "protocol.json unchanged",
+  "changes_since_initial_score_identity": "Availability and per-node mean/SD fields completed before scoring; reference bytes and normalization unchanged"
+}

@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-10-17T09:39:51.260204+00:00",
+  "base_commit": "4be8593fbec5ea87ec900aff4714ff7432692b63",
+  "candidate_commit": "dcc4dda753afd89fafcc2375eaf3cd942dba4b02",
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "diagnostic_source_sha256": "7069c5176311f4e0c18529c57048098232a48adf41f857ae087945a02704be46",
+  "java_processes_started": 0,
+  "schema_writes": 0,
+  "redis_operations": 0,
+  "course_tasks_submitted": 0,
+  "approval_pending": true,
+  "disk": {
+    "used_bytes": 117528571904,
+    "available_bytes": 37348839424,
+    "usage_percent": 75.88490206302423,
+    "margin_to_85_bytes": 14117227724.800003
+  }
+}

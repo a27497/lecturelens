@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 
 @TableName("subtitle_segment")
 public class SubtitleSegment {
+    private String timingSource = "ESTIMATED";
+    private String timingReason;
+    public String getTimingSource(){return timingSource;}
+    public void setTimingSource(String value){timingSource=value;}
+    public String getTimingReason(){return timingReason;}
+    public void setTimingReason(String value){timingReason=value;}
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;

@@ -1,6 +1,7 @@
 package com.example.courselingo.vision.analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.courselingo.ai.llm.OpenAiCompatibleChatCompletionRequest;
 import com.example.courselingo.ai.llm.OpenAiCompatibleClientResponse;
@@ -23,6 +24,22 @@ class OpenAiCompatibleVisionProviderTest {
 
     @TempDir
     private Path tempDir;
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.EnumSource(value = com.example.courselingo.ai.llm.TranslationFailure.Reason.class,
+        names = {"ACCOUNTING_INCOMPLETE", "CANCELED", "SNAPSHOT_INVALID"})
+    void controlFailuresStillPropagateWithoutOptionalVisionDegradation(
+        com.example.courselingo.ai.llm.TranslationFailure.Reason reason) throws Exception {
+        var failure = com.example.courselingo.ai.llm.TranslationFailure.of(reason);
+        var calls = new java.util.concurrent.atomic.AtomicInteger();
+        var provider = new OpenAiCompatibleVisionProvider(new VisionAnalysisProperties(), request -> {
+            calls.incrementAndGet();
+            throw failure;
+        }, key -> "synthetic-key", new ObjectMapper());
+        var request = new VisionAnalysisRequest("task_1", 9L, 0L, imagePath(), "", "", route());
+        assertThatThrownBy(() -> provider.analyze(request)).isSameAs(failure);
+        assertThat(calls.get()).isEqualTo(1);
+    }
 
     @Test
     void buildsOpenAiCompatibleVisionRequestAndParsesJsonResponse() throws Exception {

@@ -1,0 +1,11 @@
+{
+  "head": "b36af06bc7adf4a275e8eca23c51aae4f9375dab",
+  "files": {
+    "eval/p2-1c-run-20261016T191343Z/runtime_service.py": "085db8597869ba4e945622f88307f7a63f7e3bf2f124c7539009bfe7e33cf223",
+    "eval/p2-1b-pipeline-20261016T122904Z/redis-reuse-authorization.json": "523bb55935235f376373d4f8855c89cb1127822c5005577be6b217cfc40a0396",
+    ".data/p2-1c-20261016T155847Z/candidate/backend.jar": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+    "eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md": "6f28508a7951a4bfec3cef708ceeeb724661863965dc6ca29ea3e111b6e27e32"
+  },
+  "live": "MainPID=4789\nExecMainStartTimestampMonotonic=60822129\nActiveState=active\nSubState=running\n",
+  "temporary_unit": "MainPID=0\nLoadState=not-found\nActiveState=inactive\n"
+}

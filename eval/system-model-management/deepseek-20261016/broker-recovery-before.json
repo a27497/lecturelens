@@ -1,0 +1,7 @@
+{
+  "properties": {
+    "diskSpaceCleanForciblyRatio": 85,
+    "diskSpaceWarningLevelRatio": 90
+  },
+  "disk_used_ratio": 0.8995665164056111
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-15T19:48:10.919903+00:00",
+  "code_commit": "bc2e6cc79f1a3311b90cc4d407f75d2e20048275",
+  "old_jar_sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+  "new_jar_sha256": "b45257e13ac03e313730e193cccad386968e228cc73614616aeedce3dfe0110b",
+  "new_jar_bytes": 91837018,
+  "disk_before": 84.69141762457781,
+  "restart_service": "lecturelens-live-backend",
+  "agent_restart": false,
+  "rollback_backup": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/p13d/backend-before.jar",
+  "configuration_version": 10
+}

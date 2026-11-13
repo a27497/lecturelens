@@ -1,0 +1,6 @@
+{
+  "result": "DID_NOT_START_WITHIN_20_SECONDS",
+  "configuration_restored_to_version": 7,
+  "task_id": "task_70ec3dd6189843979174ed6d32d1237f",
+  "later_recovery": "Same task began after the separately authorized broker restart; final success does not erase the earlier checkpoint."
+}

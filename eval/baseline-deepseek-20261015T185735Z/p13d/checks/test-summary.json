@@ -1,0 +1,37 @@
+[
+  {
+    "name": "com.example.courselingo.systemmodel.SystemModelTranslationObservationTest",
+    "tests": "9",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  },
+  {
+    "name": "com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnosticsTest",
+    "tests": "15",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  },
+  {
+    "name": "com.example.courselingo.subtitle.SubtitleTranslationServiceTest",
+    "tests": "81",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  },
+  {
+    "name": "com.example.courselingo.subtitle.SubtitleTranslationResponseParserTest",
+    "tests": "7",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  },
+  {
+    "name": "com.example.courselingo.subtitle.service.SubtitleTranslationPromptFactoryTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  }
+]

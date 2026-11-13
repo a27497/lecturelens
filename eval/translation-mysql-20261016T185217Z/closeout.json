@@ -1,0 +1,71 @@
+{
+  "at_utc": "2026-10-16T18:58:05.182730+00:00",
+  "base_commit": "47de0cc187e05693ff1146d81e932e73e7710d0d",
+  "protected_evidence_count": 155,
+  "changed_protected_evidence": [],
+  "untracked_metadata_matches": {
+    "inode": true,
+    "bytes": true,
+    "mtime_ns": true
+  },
+  "online_service": {
+    "MainPID": "4866",
+    "ExecMainStartTimestampMonotonic": "31524728",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "online_service_identity_unchanged": true,
+  "online_jar_hash_unchanged": true,
+  "p21c_frozen_jar_hash_unchanged": true,
+  "production_source_diff_empty": true,
+  "resource_removed": true,
+  "fixture_schemas_all_dropped": true,
+  "port_33318_free": true,
+  "test_runs": [
+    {
+      "name": "translation-mysql-01",
+      "status": "FAILED",
+      "exit_code": 1,
+      "cleanup": {
+        "pgid": 3314985,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    },
+    {
+      "name": "translation-mysql-02",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "cleanup": {
+        "pgid": 3317294,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "processes_absent": {
+        "runner_pid": true,
+        "child_pid": true
+      }
+    }
+  ],
+  "disk": {
+    "used_bytes": 117020438528,
+    "available_bytes": 37856972800,
+    "usage_percent": 75.55681459588297,
+    "headroom_to_85_bytes": 14625361100.800003
+  },
+  "real_provider_calls": 0,
+  "live_database_access": false,
+  "online_service_mutations": []
+}

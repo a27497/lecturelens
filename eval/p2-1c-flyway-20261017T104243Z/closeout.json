@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-10-17T10:46:47.071922+00:00",
+  "result": "FROZEN_FAILED",
+  "reason": "SECOND_APPLICATION_START_FAILED",
+  "application_starts_task": 2,
+  "java_identity_gone": true,
+  "unit_removed": true,
+  "port_18091_unbound": true,
+  "used_sigkill": false,
+  "mysql_container_id": "cf44344fee2cd04c285dbeef6d016d10708e75872f91021c5ece7a4880085e98",
+  "mysql_running": true,
+  "mysql_data_retained": true,
+  "mysql_data_dir": "/home/dev/projects/lecturelens/.data/p2-1c-flyway-20261017T100358Z/mysql-data",
+  "redis_removed": true,
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "untracked_stat_unchanged": true,
+  "old_demo_mysql_writes": 0,
+  "further_database_queries_after_freeze": 0,
+  "disk": {
+    "used_bytes": 119747969024,
+    "available_bytes": 35129442304,
+    "usage_percent": 77.31790452669516,
+    "margin_to_85_bytes": 11897830604.800003
+  }
+}

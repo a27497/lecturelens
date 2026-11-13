@@ -1,0 +1,109 @@
+{
+  "kind": "spoken_readiness_probe_not_baseline_trial",
+  "started_at_utc": "2026-10-15T08:18:29.357355+00:00",
+  "elapsed_ms": 1422.929,
+  "model": "qwen-audio-3.1-asr-flash",
+  "source_offset_seconds": 60,
+  "audio_seconds": 5,
+  "http_status": 200,
+  "response": {
+    "sentence": {
+      "sentence_id": 1,
+      "begin_time": 2680,
+      "end_time": 4440,
+      "text": "This is my plan. ",
+      "channel_id": 0,
+      "speaker_id": null,
+      "sentence_end": true,
+      "words": [
+        {
+          "begin_time": 2680,
+          "end_time": 2880,
+          "text": "This",
+          "punctuation": "",
+          "fixed": true,
+          "speaker_id": null
+        },
+        {
+          "begin_time": 2880,
+          "end_time": 3040,
+          "text": " is",
+          "punctuation": "",
+          "fixed": true,
+          "speaker_id": null
+        },
+        {
+          "begin_time": 3040,
+          "end_time": 3280,
+          "text": " my",
+          "punctuation": "",
+          "fixed": true,
+          "speaker_id": null
+        },
+        {
+          "begin_time": 3280,
+          "end_time": 4440,
+          "text": " plan",
+          "punctuation": ". ",
+          "fixed": true,
+          "speaker_id": null
+        }
+      ]
+    },
+    "text": "This is my plan. ",
+    "request_id": "0c2d7c07-ee95-98f7-a138-fd4380e25670",
+    "output": {
+      "sentence": {
+        "sentence_id": 1,
+        "begin_time": 2680,
+        "end_time": 4440,
+        "text": "This is my plan. ",
+        "channel_id": 0,
+        "speaker_id": null,
+        "sentence_end": true,
+        "words": [
+          {
+            "begin_time": 2680,
+            "end_time": 2880,
+            "text": "This",
+            "punctuation": "",
+            "fixed": true,
+            "speaker_id": null
+          },
+          {
+            "begin_time": 2880,
+            "end_time": 3040,
+            "text": " is",
+            "punctuation": "",
+            "fixed": true,
+            "speaker_id": null
+          },
+          {
+            "begin_time": 3040,
+            "end_time": 3280,
+            "text": " my",
+            "punctuation": "",
+            "fixed": true,
+            "speaker_id": null
+          },
+          {
+            "begin_time": 3280,
+            "end_time": 4440,
+            "text": " plan",
+            "punctuation": ". ",
+            "fixed": true,
+            "speaker_id": null
+          }
+        ]
+      },
+      "text": "This is my plan. ",
+      "request_id": "0c2d7c07-ee95-98f7-a138-fd4380e25670"
+    },
+    "usage": {
+      "duration": 4,
+      "input_tokens": 120,
+      "output_tokens": 5,
+      "total_tokens": 125
+    }
+  }
+}

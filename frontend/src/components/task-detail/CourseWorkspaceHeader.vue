@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { AnalysisTaskStatus } from "../../types/task";
 import { getTaskStatusLabel, getTaskStatusTagType } from "../../utils/taskStatus";
+import { courseLearnable } from "./workspace";
 
 const props = defineProps<{
   compact?: boolean;
   demoMode?: boolean;
   status?: AnalysisTaskStatus;
+  learningReady?: boolean | null;
   canCancel: boolean;
   canRetry: boolean;
   refreshing: boolean;
@@ -28,9 +30,9 @@ defineEmits<{
       <span v-if="compact && demoMode" class="workspace-mode">本地演示 · 无外部 AI</span>
       <p v-if="!compact">看课、回看来源，继续你的提问与练习。</p>
     </div>
-    <div class="workspace-header__actions" :class="{ 'is-ready': props.status === 'SUCCEEDED' }" aria-label="课程操作">
+    <div class="workspace-header__actions" :class="{ 'is-ready': courseLearnable(props.status, props.learningReady) }" aria-label="课程操作">
       <el-tag :type="getTaskStatusTagType(props.status)" effect="plain">
-        {{ props.status === "SUCCEEDED" ? "材料已就绪" : props.status ? getTaskStatusLabel(props.status) : "等待处理" }}
+        {{ props.status === "SUCCEEDED" ? "材料已就绪" : courseLearnable(props.status, props.learningReady) ? "可以开始学习 · 资料后台生成中" : props.status ? getTaskStatusLabel(props.status) : "等待处理" }}
       </el-tag>
       <component :is="compact ? 'details' : 'div'" class="course-controls" :open="compact && (canCancel || canRetry)">
         <summary v-if="compact">课程操作</summary>

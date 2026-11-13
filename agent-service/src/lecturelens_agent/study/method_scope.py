@@ -3,6 +3,7 @@
 This is a private planning observation, not a proof of pedagogical support.
 """
 
+import hashlib
 from typing import Annotated
 
 from pydantic import Field
@@ -25,6 +26,48 @@ def latest_coverage(history):
     for item in reversed(history):
         if "course_coverage" in item["result"]:
             return item["result"]["course_coverage"]
+        if item["tool"] == "search_course_evidence":
+            break
+    return None
+
+
+def observation_scope(evidence, practice_kind):
+    # Hash exactly the bounded text the observer saw. These private fingerprints
+    # never replace Java's live ownership, revision and deletion fences.
+    return {
+        "practice_kind": practice_kind,
+        "sources": {
+            item["evidence_id"]: hashlib.sha256(item["text"][:1200].encode()).hexdigest()
+            for item in evidence[:8]
+        },
+    }
+
+
+def reusable_coverage(history, evidence, practice_kind):
+    current = observation_scope(evidence, practice_kind)
+    for item in reversed(history):
+        result = item["result"]
+        if "course_coverage" in result:
+            coverage = result["course_coverage"]
+            prior = result.get("method_observation_scope", {})
+            # Absence is contextual: a new hit may supply the missing method.
+            # Reuse only a positive observation with all its supporting sources
+            # still present verbatim. Final candidate review remains independent.
+            methods = coverage.get("methods", {})
+            refs = set(coverage.get("evidence_ids", [])) | {
+                method["evidence_id"] for method in methods.values()
+            }
+            if (
+                coverage.get("can_answer")
+                and methods
+                and prior.get("practice_kind") == practice_kind
+                and all(
+                    ref in current["sources"] and current["sources"][ref] == prior.get("sources", {}).get(ref)
+                    for ref in refs
+                )
+            ):
+                return coverage
+            return None
         if item["tool"] == "search_course_evidence":
             break
     return None

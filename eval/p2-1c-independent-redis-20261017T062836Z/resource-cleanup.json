@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-10-17T06:33:57.147416+00:00",
+  "unit": "MainPID=0\nLoadState=not-found\nActiveState=inactive\nSubState=dead\n",
+  "java_original_identity_gone": true,
+  "used_sigkill": false,
+  "removed_owned_directories": [
+    ".data/p2-1c-independent-redis-20261017T062836Z/runtime",
+    ".data/p2-1c-independent-redis-20261017T062836Z/extra",
+    ".data/p2-1c-independent-redis-20261017T062836Z/tmp",
+    ".data/p2-1c-independent-redis-20261017T062836Z/workspace"
+  ],
+  "retained_safe_logs_sha256": {
+    ".data/p2-1c-independent-redis-20261017T062836Z/diagnostics-selftest-launch.log": "d8e655171fefefb6a54eed7be86ac88ec4fe21a85d28495cdada2d1ea49440ef",
+    ".data/p2-1c-independent-redis-20261017T062836Z/systemd-create.log": "43ecf8e7525c5524a10516dc7b62c99279aa660ce212e15ba7653dcee97c16a8",
+    ".data/p2-1c-independent-redis-20261017T062836Z/compile.log": "15344d87ff8e31bf353473f4ce09dbce46804491e820564b6e800c15e483e9bd",
+    ".data/p2-1c-independent-redis-20261017T062836Z/selftest-launch.log": "7d204f7e828b46329690d57b7afd18e3be425debeba38c2c19ac33b696efffbb",
+    ".data/p2-1c-independent-redis-20261017T062836Z/diagnostics-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".data/p2-1c-independent-redis-20261017T062836Z/redis-cleanup.log": "3e6233a39ff4f5abecb6dda41ac40e1c42c24bc2deabb4b6a7058d0bd56add73",
+    ".data/p2-1c-independent-redis-20261017T062836Z/redis-create.log": "fd4f881296d050810aa7f6d98ffc50068f16d075c6f527d88d8e153b6dccc499"
+  },
+  "frozen_jar_removed": false,
+  "historical_resources_touched": false
+}

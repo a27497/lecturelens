@@ -93,7 +93,7 @@ public class CourseEvidenceService {
         }
     }
 
-    private List<CourseEvidence> collect(String taskId, Long userId, long revision) {
+    List<CourseEvidence> collect(String taskId, Long userId, long revision) {
         List<CourseEvidence> result = new ArrayList<>();
         for (var row : rows("subtitle_segment", taskId, userId)) {
             add(result, taskId, userId, revision, "SUBTITLE", row, "text", "language", false, null);
@@ -145,17 +145,17 @@ public class CourseEvidenceService {
                 || number(row.get("text_truncated")) == 1));
     }
 
-    private String encode(CourseEvidence item) {
+    String encode(CourseEvidence item) {
         try { return json.writeValueAsString(item); }
         catch (Exception e) { throw new IllegalStateException("Cannot encode evidence", e); }
     }
-    private CourseEvidence decode(String payload) {
+    CourseEvidence decode(String payload) {
         try { return json.readValue(payload, CourseEvidence.class); }
         catch (Exception e) { throw new IllegalStateException("Invalid stored evidence", e); }
     }
     private static String text(Object value) { return value == null ? "" : value.toString(); }
     private static long number(Object value) { return value instanceof Number n ? n.longValue() : 0L; }
-    private static String hash(String value) {
+    static String hash(String value) {
         try { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8))); }
         catch (java.security.NoSuchAlgorithmException e) { throw new IllegalStateException(e); }
     }

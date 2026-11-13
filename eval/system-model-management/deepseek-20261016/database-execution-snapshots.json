@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id,task_id,config_version,SHA2(CAST(resolved_config_json AS CHAR),256),REGEXP_LIKE(CAST(resolved_config_json AS CHAR),'\"ciphertext\"|\"apiKey\"|v1[.][A-Za-z0-9_-]{32,}') FROM system_model_execution_snapshot WHERE task_id IN ('task_70ec3dd6189843979174ed6d32d1237f','task_95c8e25dc07944cd82f20d567745738f') ORDER BY task_id;",
+  "rows": [
+    {
+      "id": "647d6790-c08e-4d10-a844-d9f33dddce32",
+      "taskId": "task_70ec3dd6189843979174ed6d32d1237f",
+      "configVersion": 6,
+      "resolved_config_sha256": "312fd09a71f062a33c028201b56102fca6f5bff97b6dbda8f83f452a2280db85",
+      "has_credential_payload": false
+    },
+    {
+      "id": "01185f38-cfb2-4a2b-b638-b61e3e080833",
+      "taskId": "task_95c8e25dc07944cd82f20d567745738f",
+      "configVersion": 9,
+      "resolved_config_sha256": "b5ad39272068918b0f98f37d4c4f845e32f2cb1f36fb6fdea0611462df64ad68",
+      "has_credential_payload": false
+    }
+  ]
+}

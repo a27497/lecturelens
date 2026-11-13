@@ -50,6 +50,56 @@ management:
       application: courselingo-pro
 
 courselingo:
+  pipeline:
+    # Subtitles-ready learning: open study/Q&A/Agent once subtitles are stored; translation, learning
+    # package and download files then finish in the background with independent outcomes.
+    early-learning:
+      enabled: ${PIPELINE_EARLY_LEARNING_ENABLED:false}
+    translation-v2:
+      enabled: ${PIPELINE_TRANSLATION_V2_ENABLED:false}
+      output-min: ${PIPELINE_TRANSLATION_OUTPUT_MIN:512}
+      output-max: ${PIPELINE_TRANSLATION_OUTPUT_MAX:8192}
+      output-ratio: ${PIPELINE_TRANSLATION_OUTPUT_RATIO:2.0}
+      context-limit: ${PIPELINE_TRANSLATION_CONTEXT_LIMIT:32768}
+      max-depth: ${PIPELINE_TRANSLATION_SPLIT_MAX_DEPTH:6}
+      max-attempts: ${PIPELINE_TRANSLATION_LEAF_MAX_ATTEMPTS:3}
+      max-calls: ${PIPELINE_TRANSLATION_MAX_CALLS:256}
+      token-budget: ${PIPELINE_TRANSLATION_TOKEN_BUDGET:200000}
+      checkpoint-enabled: ${PIPELINE_TRANSLATION_CHECKPOINT_ENABLED:true}
+      max-recoveries: ${PIPELINE_TRANSLATION_MAX_RECOVERIES:3}
+      isolated-runtime: ${PIPELINE_TRANSLATION_ISOLATED_RUNTIME:false}
+      materials-source-only: ${PIPELINE_MATERIALS_SOURCE_ONLY:false}
+      streaming-translation: ${PIPELINE_STREAMING_TRANSLATION:false}
+      materials-parallel: ${PIPELINE_MATERIALS_PARALLEL:false}
+      asr:
+        enabled: ${PIPELINE_ASR_ADAPTIVE_ENABLED:false}
+        initial: ${PIPELINE_ASR_CONCURRENCY_INITIAL:2}
+        maximum: ${PIPELINE_ASR_CONCURRENCY_MAX:4}
+        success-streak: ${PIPELINE_ASR_SUCCESS_STREAK:3}
+        requests-per-second: ${PIPELINE_ASR_REQUESTS_PER_SECOND:10}
+        cooldown-millis: ${PIPELINE_ASR_COOLDOWN_MILLIS:1000}
+        merge-enabled: ${PIPELINE_ASR_MERGE_ENABLED:true}
+        merge-min-millis: ${PIPELINE_ASR_MERGE_MIN_MILLIS:60000}
+        merge-target-millis: ${PIPELINE_ASR_MERGE_TARGET_MILLIS:90000}
+        merge-max-millis: ${PIPELINE_ASR_MERGE_MAX_MILLIS:120000}
+        cache-enabled: ${PIPELINE_ASR_CACHE_ENABLED:false}
+        cache-ttl-seconds: ${PIPELINE_ASR_CACHE_TTL_SECONDS:86400}
+        cache-max-entries: ${PIPELINE_ASR_CACHE_MAX_ENTRIES:256}
+      adaptive:
+        enabled: ${PIPELINE_TRANSLATION_AIMD_ENABLED:true}
+        input-token-budget: ${PIPELINE_TRANSLATION_INPUT_TOKEN_BUDGET:2048}
+        initial: ${PIPELINE_TRANSLATION_CONCURRENCY_INITIAL:1}
+        maximum: ${PIPELINE_TRANSLATION_CONCURRENCY_MAX:4}
+        success-streak: ${PIPELINE_TRANSLATION_SUCCESS_STREAK:3}
+        process-maximum: ${PIPELINE_TRANSLATION_PROVIDER_MAX_INFLIGHT:4}
+      silence:
+        enabled: ${PIPELINE_SILENCE_ENABLED:true}
+        noise-db: ${PIPELINE_SILENCE_NOISE_DB:-35}
+        pause-millis: ${PIPELINE_SILENCE_PAUSE_MILLIS:600}
+        min-millis: ${PIPELINE_SILENCE_MIN_MILLIS:15000}
+        target-millis: ${PIPELINE_SILENCE_TARGET_MILLIS:30000}
+        max-millis: ${PIPELINE_SILENCE_MAX_MILLIS:60000}
+        max-clips: ${PIPELINE_SILENCE_MAX_CLIPS:256}
   study:
     enabled: ${STUDY_AGENT_ENABLED:false}
   retrieval:
@@ -183,6 +233,13 @@ courselingo:
       max-keywords: ${COURSELINGO_FUSION_VIDEO_SEGMENT_MAX_KEYWORDS:12}
   learning-package:
     llm-timeout: ${COURSE_LINGO_LEARNING_PACKAGE_LLM_TIMEOUT:180s}
+    context-limit: ${LEARNING_PACKAGE_CONTEXT_LIMIT:8192}
+    context-reserve: ${LEARNING_PACKAGE_CONTEXT_RESERVE:256}
+    map-max-tokens: ${LEARNING_PACKAGE_MAP_MAX_TOKENS:512}
+    max-model-requests: ${LEARNING_PACKAGE_MAX_MODEL_REQUESTS:64}
+    max-reduce-levels: ${LEARNING_PACKAGE_MAX_REDUCE_LEVELS:6}
+    generation-timeout: ${LEARNING_PACKAGE_GENERATION_TIMEOUT:900s}
+    segment-window-seconds: ${LEARNING_PACKAGE_SEGMENT_WINDOW_SECONDS:240}
   qa:
     rate-limit-enabled: ${COURSELINGO_QA_RATE_LIMIT_ENABLED:true}
     rate-limit-per-minute: ${COURSELINGO_QA_RATE_LIMIT_PER_MINUTE:10}
@@ -355,7 +412,7 @@ courselingo:
         max-audio-file-size: ${ASR_MAX_AUDIO_FILE_SIZE:${SILICONFLOW_ASR_MAX_AUDIO_FILE_SIZE:5MB}}
         max-chunk-file-size: ${ASR_CHUNK_MAX_FILE_SIZE:4MB}
         max-chunks: ${ASR_CHUNK_MAX_CHUNKS:180}
-        concurrency: ${ASR_CHUNK_CONCURRENCY:2}
+        concurrency: ${ASR_CHUNK_CONCURRENCY:4}
         max-concurrency: ${ASR_CHUNK_MAX_CONCURRENCY:4}
       transcript:
         strategy: ${COURSELINGO_ASR_TRANSCRIPT_STRATEGY:EMBEDDED_SUBTITLE_FIRST}

@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-10-17T05:02:41.852105+00:00",
+  "protected_files_match": {
+    "eval/p2-1c-run-20261016T191343Z/runtime_service.py": true,
+    "eval/p2-1b-pipeline-20261016T122904Z/redis-reuse-authorization.json": true,
+    ".data/p2-1c-20261016T155847Z/candidate/backend.jar": true,
+    "eval/baseline-deepseek-20261015T185735Z/DIAGNOSIS.md": true
+  },
+  "live_identity_unchanged": true,
+  "live": "MainPID=4789\nExecMainStartTimestampMonotonic=60822129\nActiveState=active\nSubState=running\n",
+  "temporary_unit": "MainPID=0\nLoadState=not-found\nActiveState=inactive\n",
+  "used_bytes": 116548554752,
+  "available_bytes": 38328856576,
+  "usage_percent": 75.25213247861755,
+  "margin_to_85_bytes": 15097244876.800003
+}

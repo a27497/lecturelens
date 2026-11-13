@@ -1,0 +1,14 @@
+{
+  "total_bytes": 154894188544,
+  "used_bytes": 139430801408,
+  "free_bytes": 15446609920,
+  "used_ratio": 0.9001680612981332,
+  "operations": [
+    "uv cache prune",
+    "docker image prune --force --filter until=24h",
+    "docker builder prune --force --filter until=24h",
+    "npm cache clean --force"
+  ],
+  "scope": "unused build/image caches and npm download cache",
+  "services_restarted": false
+}

@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-16T14:38:02.643421+00:00",
+  "expected_values": {
+    "LEARNING_PACKAGE_CONTEXT_LIMIT": "8192",
+    "LEARNING_PACKAGE_CONTEXT_RESERVE": "256",
+    "LEARNING_PACKAGE_MAP_MAX_TOKENS": "512",
+    "LEARNING_PACKAGE_MAX_MODEL_REQUESTS": "64",
+    "LEARNING_PACKAGE_MAX_REDUCE_LEVELS": "6",
+    "LEARNING_PACKAGE_GENERATION_TIMEOUT": "900s"
+  },
+  "deployment_overrides": {},
+  "model_context_overrides_present": false,
+  "credentials_exported": false
+}

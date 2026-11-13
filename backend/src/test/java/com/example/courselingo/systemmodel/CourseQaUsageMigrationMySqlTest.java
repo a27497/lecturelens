@@ -34,7 +34,7 @@ class CourseQaUsageMigrationMySqlTest {
             Files.copy(Path.of("src/main/resources/db/migration/R__course_qa_model_usage.sql"), baseline.resolve("R__course_qa_model_usage.sql"));
             var flyway = Flyway.configure().dataSource(db.dataSource).locations("filesystem:" + baseline).outOfOrder(false).load();
             flyway.migrate(); flyway.validate();
-            assertThat(flyway.info().current().getVersion().toString()).isEqualTo("25");
+            assertThat(flyway.info().current().getVersion().toString()).isEqualTo(SystemModelMySqlFixture.latestVersion());
             var row = db.jdbc.queryForMap("SELECT execution_snapshot_id,invocation_state,ai_call_record_id,provider,model,total_tokens FROM course_qa_record WHERE task_id=?", task);
             for (int i = 0; i < COLUMNS.length; i++) {
                 Object expected = (present & (1 << i)) == 0 ? null : i == 2 ? 731L : "existing-fact";
@@ -73,7 +73,7 @@ class CourseQaUsageMigrationMySqlTest {
             assertThatThrownBy(missingBundle::validate).isInstanceOf(org.flywaydb.core.api.FlywayException.class);
             var rollback = Flyway.configure().dataSource(db.dataSource).locations("filesystem:" + baseline, "filesystem:" + bundle).outOfOrder(false).load();
             rollback.validate(); assertThat(rollback.migrate().migrationsExecuted).isZero();
-            assertThat(rollback.info().current().getVersion().toString()).isEqualTo("25");
+            assertThat(rollback.info().current().getVersion().toString()).isEqualTo(SystemModelMySqlFixture.latestVersion());
         }
     }
 

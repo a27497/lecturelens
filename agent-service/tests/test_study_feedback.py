@@ -139,12 +139,60 @@ def test_feedback_is_separate_from_answer_and_is_recovered_with_parent_practice(
 def test_feedback_is_disabled_by_default_and_cannot_invent_an_answer(practice, monkeypatch):
     store, scope = practice
     monkeypatch.delenv("STUDY_FEEDBACK_ENABLED", raising=False)
+    assert store.command(StudyCommand(**scope, operation="READ"), "mock")["feedback_enabled"] is False
     command = StudyCommand(**scope, operation="START_FEEDBACK", request_key="missing", attempt_id="not-saved")
     with pytest.raises(StudyError, match="FEEDBACK_DISABLED"):
         store.command(command, "mock")
     monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", "true")
     with pytest.raises(StudyError, match="ATTEMPT_NOT_FOUND"):
         store.command(command, "mock")
+
+
+@pytest.mark.parametrize("configured", ["true", "TrUe"])
+def test_explicitly_enabled_feedback_requires_a_saved_answer(practice, monkeypatch, configured):
+    store, scope = practice
+    monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", configured)
+    assert store.command(StudyCommand(**scope, operation="READ"), "mock")["feedback_enabled"] is True
+    command = StudyCommand(**scope, operation="START_FEEDBACK", request_key="missing", attempt_id="not-saved")
+    with pytest.raises(StudyError, match="ATTEMPT_NOT_FOUND"):
+        store.command(command, "mock")
+    attempt = test_study_attempts.save(practice)
+    command = command.model_copy(update={"attempt_id": attempt["attempt_id"]})
+    result = store.command(command, "mock")
+    assert result["run"]["status"] == "queued"
+    assert result["run"]["task_kind"] == "feedback"
+    assert store.command(command, "mock")["run"]["run_id"] == result["run"]["run_id"]
+
+
+def test_disabling_new_feedback_preserves_answers_feedback_and_notes(feedback, practice, monkeypatch):
+    store, scope, runtime, _, attempt, command, run, _ = feedback
+    runtime.execute(run)
+    saved_feedback = view(feedback)["feedback"]
+    monkeypatch.setenv("STUDY_FEEDBACK_ENABLED", "false")
+    with pytest.raises(StudyError, match="FEEDBACK_DISABLED"):
+        store.command(command.model_copy(update={"request_key": "after-disable"}), "mock")
+    parent = store.command(StudyCommand(**scope, operation="READ"), "mock")
+    assert parent["feedback_enabled"] is False
+    assert parent["attempts"] == [attempt]
+    assert parent["feedback_runs"][0]["feedback"] == saved_feedback
+    assert view(feedback)["feedback"] == saved_feedback
+    note_scope = scope | {"run_id": run["run_id"], "feedback_id": saved_feedback["feedback_id"]}
+    note = store.command(
+        StudyCommand(
+            **note_scope,
+            operation="SAVE_FEEDBACK_NOTE",
+            request_key="disabled-note",
+            expected_version=0,
+            disposition="acknowledged",
+            note_text="Checked against the course evidence.",
+        ),
+        "mock",
+    )["note"]
+    assert store.command(StudyCommand(**note_scope, operation="FEEDBACK_NOTES"), "mock")["notes"] == [note]
+    updated = test_study_attempts.save(practice, key="answer-2", version=1, text="My updated answer")
+    assert updated["version"] == 2
+    assert view(feedback)["feedback"]["attempt_id"] == attempt["attempt_id"]
+    assert view(feedback)["feedback"]["content"] == saved_feedback["content"]
 
 
 def test_model_cannot_smuggle_new_facts_into_the_generated_action_instruction(feedback):
@@ -383,8 +431,10 @@ def test_rejection_observation_changes_next_candidate_within_persistent_budget(f
     assert result["feedback"]["content"]["observations"][0]["observation"] == "Name when the algorithm stops."
 
 
-def test_feedback_reserves_final_two_calls_for_revision(feedback):
+def test_feedback_reserves_final_two_calls_for_revision(feedback, monkeypatch):
     _, _, runtime, _, _, _, run, calls = feedback
+    # Six calls make this revision trajectory end exactly on the limit.
+    test_study.pin_model_call_limit(monkeypatch, 6)
     original = runtime.provider.feedback
     reviews = 0
 

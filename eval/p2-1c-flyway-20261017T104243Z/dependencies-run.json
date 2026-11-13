@@ -1,0 +1,40 @@
+{
+  "status": "SUCCEEDED",
+  "started_at_utc": "2026-10-17T10:43:34.273887+00:00",
+  "runner_pid": 767510,
+  "runner_start_ticks": 1132035,
+  "cwd": "/home/dev/projects/lecturelens",
+  "executable": "python3",
+  "argv_sha256": "bc1d559777b2d487af20e858a50b2a6b8f01e2396034d8937709ea2b14079eb8",
+  "timeout_seconds": 65.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": 0,
+  "exit_code": 0,
+  "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/p21c-r2-dependencies-20261017T104243Z/output.log",
+  "disk_before": {
+    "used_bytes": 119635259392,
+    "available_bytes": 35242151936,
+    "allowed": true
+  },
+  "child_pid": 767511,
+  "pgid": 767511,
+  "child_start_ticks": 1132040,
+  "cleanup": {
+    "pgid": 767511,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  },
+  "finished_at_utc": "2026-10-17T10:43:36.173497+00:00",
+  "elapsed_seconds": 1.8996325029984291,
+  "disk_after": {
+    "used_bytes": 119635509248,
+    "available_bytes": 35241902080,
+    "allowed": true
+  },
+  "log_sha256": "96fb22b21f0b57828e5d65e892fe9eb8a004389aa411f219704a43fc1d801c09"
+}

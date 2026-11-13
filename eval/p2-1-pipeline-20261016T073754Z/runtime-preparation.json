@@ -1,0 +1,45 @@
+{
+  "completed_at_utc": "2026-10-16T12:21:51.302268+00:00",
+  "schema": "lecturelens_p21_20261016",
+  "migration_count": 31,
+  "version": 10,
+  "environment_fingerprint_equal": true,
+  "media": [
+    {
+      "source_id": "algorithms",
+      "upload_id": "up_ccbcc50f28674f8c80e5c5d5c45effbe",
+      "source_sha256": "14654a86b1f2954a09818a0abaea6442ec2c84ca909619d1213d83fb837d817a"
+    },
+    {
+      "source_id": "calculus",
+      "upload_id": "up_5899b2e936244fb49cfcb86027728d44",
+      "source_sha256": "d46c4aee5f5104c2e642c6dbbb8df813aebd20e84f6bc2b88070b3c6f8098750"
+    },
+    {
+      "source_id": "economics",
+      "upload_id": "up_062069063b154670a1cf03a095faa34b",
+      "source_sha256": "116afb01df8dc39dc048273a91ce9e03df793a6cda12364d19b165da43e56222"
+    },
+    {
+      "source_id": "linear",
+      "upload_id": "up_f072268112e2483aa31a6028673f77d6",
+      "source_sha256": "e547ab7cfa64c44cd53b246089d2fa531f83dcce5123ccb136bd92e801f1e2db"
+    },
+    {
+      "source_id": "probability",
+      "upload_id": "up_53f22a0c58c742bcb947bfd913b64771",
+      "source_sha256": "ab0e133be2fde82f0b86bdb3a92c18578e9c58a2d8c1961ff9fa65fa528ce934"
+    }
+  ],
+  "redis_database": 15,
+  "redis_preflight_empty": true,
+  "provider_calls": 0,
+  "disk": {
+    "utc": "2026-10-16T12:21:51.302960+00:00",
+    "used_bytes": 115592388608,
+    "available_bytes": 39285022720,
+    "percent": 74.63476282102751,
+    "headroom_below_85_bytes": 16053411020.800003
+  },
+  "launcher_sha256": "364f380bb97bf2e1f07227f2f4821be6fc5cc72ba18e582a40ba050a0b8e8a8e"
+}

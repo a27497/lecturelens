@@ -1,0 +1,161 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=LearningPackage*Test,LlmProviderFailureClassifierTest,TranslationFailureDiagnosticTest,OpenAiCompatibleLlmProviderTest,ObservedModelCallTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116359041024,
+    "available_bytes": 38518370304,
+    "usage_percent": 75.12976878053207,
+    "headroom_to_85_bytes": 15286758604.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:08:13.467225+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2533887,
+  "start_ticks": "3422057",
+  "exit_code": 0,
+  "disk_peak_percent": 75.12985341004575,
+  "disk_after": {
+    "used_bytes": 116358606848,
+    "available_bytes": 38518804480,
+    "usage_percent": 75.12948844526802,
+    "headroom_to_85_bytes": 15287192780.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage1-unit-02.log",
+  "log_sha256": "cb63eaf4fb0cc4c2bfc5fbc2662496c574a9740f72d5304fec50e111539ca7ce",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.ai.llm.LlmProviderFailureClassifierTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "85c46c72477061a67f9af871a0665d01a9e3cf21cb7884b8defcb82fb224cecb"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.ObservedModelCallTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "959f5112304b68f8c68fb9893b4f29c482d4457e06bad5e1f92e79aeef55bd6d"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.OpenAiCompatibleLlmProviderTest",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b1eb35cd3d885ddf3c34ff4e893698f2b552a611805a5bcbfd4d016f3d2deab4"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "43d9e3ac33c27f15e114b0d206a2230ba50cbdffe36c55e22c7b5a2f7a170c6e"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMapperTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "955f02354b49fcdab8634ffa53880f2362f74e8415584367f0159b1a74ace7e0"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "79d336d058621f89cd49ef5accd3c75990a2ade2edacc9b2ee9440167f806bb7"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageResponseParserTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d5b4850d6a819015b672f13141440095639e54aec02e4251eb0193d2cf24fd6c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageServiceTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d82736db4b6458bca2e6dd5e9d491a4ecaeee7eb4be2888e3fa211655f90d30e"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e5ce30340445e1d038a1e0bd3c949a2776658c6cd08f9fd6f32ec6eb8f189def"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageContextGuardTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b3e9dae6d919252ae3d4c8e52e6b21fd6c2a35a1f5a2cbd082e150e27348e884"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackagePromptFactoryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "884d2fa743245eed0c101b49737eab2810d8389d7214114db5f1c875298eb8c2"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageQualityValidatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e6d9c9d985875f3f4b30258ee276aa68a326fdcded4d3a9bab33a32a6e7ce031"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "28f8d3f9908af50e175e24dd0bd7565a8b0f9cf44ec9ae97b1b85c489807f84c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageVisualOnlyServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "87d6093f92cf76a937bba822e1682ca66ffba8c12ab56442d5c5c14e8886dfad"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.TranslationFailureDiagnosticTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f273e360fe32108baa9ad6f409c894f14f1df00ce6c628ce975b27d9c68bd3d2"
+    }
+  ],
+  "total": {
+    "tests": 134,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

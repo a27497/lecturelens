@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { getEvidenceIndexStatus } from "../../api/qa";
+import { evidenceIndexServable } from "./indexReadiness";
+import { courseLearnable } from "./workspace";
 import { studyCommand as sendStudyCommand, studyEvents, studyStatus } from "../../api/study";
 import type { StudyArtifact, StudyEvent, StudyRun, PracticeQuestion, StudyAttempt, StudyResponse, StudyFeedbackRun, StudyCommand, PracticeResult } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
@@ -23,7 +25,7 @@ import { randomUuid } from "../../utils/randomUuid";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 import type { LearningScope } from "../../api/learningScope";
-const props = defineProps<{ taskId: string; status?: string; compact?: boolean; learningScope?: LearningScope | null }>();
+const props = defineProps<{ taskId: string; status?: string; learningReady?: boolean | null; compact?: boolean; learningScope?: LearningScope | null }>();
 const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"]; position: [position: LearningTaskPosition | null]; accessFailure: [] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
@@ -154,7 +156,9 @@ const hasDrafts = computed(() => [...Object.values(questionDrafts.value), ...Obj
 const questionDrafts = ref<Record<number, boolean>>({});
 const feedbackDrafts = ref<Record<number, boolean>>({});
 const questionElements = new Map<number, HTMLElement>();
-const preparing = computed(() => Boolean(props.status && props.status !== "SUCCEEDED"));
+// Learning opens once subtitles are stored (RUNNING + learningReady), not only when everything finished.
+const learnable = computed(() => courseLearnable(props.status, props.learningReady));
+const preparing = computed(() => Boolean(props.status && !learnable.value));
 let version = 0;
 let controller: AbortController | null = null;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -192,7 +196,8 @@ const canStart = computed(() => props.learningScope !== null && enabled.value &&
 const stateText = computed(() => artifact.value?.kind === "insufficient_evidence" ? "课程证据不足" : ({ awaiting_approval: "等待发布审批", queued: "等待开始", running: "正在学习课程内容", succeeded: "解释与练习已完成", failed: "本次执行未完成", cancelled: "已取消", budget_exceeded: "本次执行已达到时间或调用上限" })[run.value?.status ?? "queued"]);
 const toolText: Record<string, string> = { search_course_evidence: "查找课程证据", read_evidence_window: "补读片段上下文", check_python_example: "核算例题", create_practice_set: "生成解释与练习", create_python_practice: "生成代码练习", create_interval_practice: "生成区间练习", create_sequence_practice: "生成排序步骤练习", report_insufficient_evidence: "确认课程证据不足" };
 
-watch(() => [props.taskId, props.status], () => { void load(); }, { immediate: true });
+// Reload on learnability changes only: a learnable course finishing in the background keeps the open session.
+watch([() => props.taskId, () => Boolean(props.status), learnable], () => { void load(); }, { immediate: true });
 onBeforeUnmount(() => { version++; controller?.abort(); clearTimeout(timer); });
 
 async function openHistory(fresh = false, selectedSession?: string, selectedRun?: string) {
@@ -238,7 +243,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
     if (!config.enabled) return;
     const index = await getEvidenceIndexStatus(task);
     if (current !== version) return;
-    ready.value = index.status === "READY";
+    ready.value = evidenceIndexServable(index);
     readinessText.value = index.status === "FAILED" ? "课程资料准备失败，请查看处理进度并重试。" : index.status === "DISABLED" ? "课程检索尚未启用，请联系维护者完成配置。" : "课程资料正在准备，完成后即可开始学习。";
     if (config.enabled && !fresh) {
       const list = await studyCommand(task, { operation: "LIST" });
@@ -308,7 +313,12 @@ async function start() {
       sessionId.value = response.session_id!;
       sourceRevision.value = response.revision;
     }
-    const response = await studyCommand(task, { operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text, approval_required: approvalRequired.value, ...(practiceFormat.value === "choice" ? { practice_format: "choice" as const } : {}), ...(selectedScope ? { learning_scope: selectedScope } : {}) });
+    const response = await studyCommand(task, {
+      operation: "START", session_id: sessionId.value, request_key: requestKey, goal: text,
+      ...(approvalRequired.value ? { approval_required: true } : {}),
+      ...(practiceFormat.value === "choice" ? { practice_format: "choice" as const } : {}),
+      ...(selectedScope ? { learning_scope: selectedScope } : {}),
+    });
     if (current !== version) return;
     run.value = response.run ?? null; artifact.value = response.artifact ?? null;
     approval.value = response.approval ?? null;
@@ -405,7 +415,7 @@ async function reveal() {
         <details class="artifact-explanation" :open="!artifact.questions.length"><summary>阅读课程解释</summary><p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
-            <el-button text @click="$emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 跳到视频</el-button>
+            <el-button text @click="$emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 回看片段起点</el-button>
             <code class="evidence-id">{{ citation.evidence_id }}</code><p>{{ citation.text }}</p>
           </div>
         </details></details>

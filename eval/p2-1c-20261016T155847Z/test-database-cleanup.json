@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-10-16T16:50:33.109696+00:00",
+  "name": "lecturelens-p21c-unit-mysql-20261017",
+  "id": "864a983030fc6bbc834399af67227b91de3099ed03214996abca2586bd994461",
+  "image": "sha256:3466ba4a4828aa8d46fb7c3bc16b67b781c98413cf4ea0fac6feaa6e881faa26",
+  "stopped": true,
+  "removed": true,
+  "other_containers_changed": false
+}

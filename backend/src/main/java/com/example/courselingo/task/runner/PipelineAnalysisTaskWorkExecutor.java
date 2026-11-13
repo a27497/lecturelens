@@ -15,6 +15,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecutor {
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    public PipelineAnalysisTaskWorkExecutor withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
+    private com.example.courselingo.task.service.LearningAvailability learning;
+    /** Subtitles-ready learning; inert unless the availability switch is enabled. */
+    public PipelineAnalysisTaskWorkExecutor withLearningAvailability(com.example.courselingo.task.service.LearningAvailability value){learning=value;return this;}
+
+    /** Stages that complete in the background once the course is learnable, and the outcome they own. */
+    private static final java.util.Map<PipelineAnalysisTaskStepName, String> BACKGROUND_STAGES = java.util.Map.of(
+        PipelineAnalysisTaskStepName.TRANSLATE_SUBTITLES, com.example.courselingo.task.service.LearningAvailability.TRANSLATION,
+        PipelineAnalysisTaskStepName.GENERATE_LEARNING_PACKAGE, com.example.courselingo.task.service.LearningAvailability.LEARNING_PACKAGE,
+        PipelineAnalysisTaskStepName.GENERATE_ARTIFACTS, com.example.courselingo.task.service.LearningAvailability.ARTIFACTS
+    );
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineAnalysisTaskWorkExecutor.class);
 
@@ -77,6 +89,14 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
 
     @Override
     public AnalysisTaskWorkResult execute(AnalysisTaskExecutionContext context) {
+        try(var ignored=context.protocolVersion()==2
+            ?com.example.courselingo.task.service.PipelineExecutionScope.open(context.taskId(),context.userId(),context.requestId(),context.executionEpoch())
+            :com.example.courselingo.task.service.PipelineExecutionScope.clear()) {
+            return executePipeline(context);
+        }
+    }
+
+    private AnalysisTaskWorkResult executePipeline(AnalysisTaskExecutionContext context) {
         validateContext(context);
         List<PipelineAnalysisTaskStepName> completed = new ArrayList<>();
         PipelineAnalysisTaskStepContext stepContext = new PipelineAnalysisTaskStepContext(
@@ -84,8 +104,32 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             completed
         );
         boolean completedSuccessfully = false;
+        boolean earlyLearning = learning != null && learning.enabled();
+        boolean learningOpen = false;
+        boolean backgroundFailed = false;
+        if (learning != null) learning.resetStages(context.taskId(), context.userId());
+        boolean restoredSource=false,restoredCapture=false;
+        if(context.protocolVersion()==2) {
+            if(checkpoints==null)throw new IllegalStateException("Pipeline checkpoints unavailable");
+            var source=checkpoints.restore(context.taskId(),context.userId(),context.requestId(),context.executionEpoch());
+            restoredSource=source.isPresent();
+            if(restoredSource){stepContext.setSpeechToTextResult(source.orElseThrow());stepContext.markAsrBranchRunning();}
+            restoredCapture=checkpoints.captureReady(context.taskId(),context.userId(),context.requestId(),context.executionEpoch());
+            if(restoredCapture)stepContext.setRestoredVisionCapture();
+        }
         try {
             for (PipelineAnalysisTaskStep step : steps) {
+                if(restoredSource && List.of(PipelineAnalysisTaskStepName.EXTRACT_AUDIO,PipelineAnalysisTaskStepName.TRANSCRIBE,
+                    PipelineAnalysisTaskStepName.PERSIST_SUBTITLES).contains(step.name())
+                    || restoredCapture && step.name()==PipelineAnalysisTaskStepName.EXTRACT_KEYFRAMES) {
+                    completed.add(step.name());
+                    LOGGER.info("event=pipeline_checkpoint_reused taskId={} stepName={} epoch={}",
+                        SafeLogSanitizer.sanitize(context.taskId()),step.name(),context.executionEpoch());
+                    if (earlyLearning && step.name() == PipelineAnalysisTaskStepName.PERSIST_SUBTITLES) {
+                        learningOpen = openLearning(stepContext);
+                    }
+                    continue;
+                }
                 if (step.name() == PipelineAnalysisTaskStepName.EXTRACT_AUDIO) {
                     stepContext.markAsrBranchRunning();
                 }
@@ -104,6 +148,12 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
                     if (step.name() == PipelineAnalysisTaskStepName.TRANSLATE_SUBTITLES
                         && !stepContext.asrBranchFailed()) {
                         stepContext.markAsrBranchSucceeded();
+                    }
+                    if (earlyLearning && step.name() == PipelineAnalysisTaskStepName.PERSIST_SUBTITLES) {
+                        learningOpen = openLearning(stepContext);
+                    }
+                    if (learningOpen && BACKGROUND_STAGES.containsKey(step.name())) {
+                        recordStage(stepContext, step.name(), com.example.courselingo.task.service.LearningAvailability.SUCCEEDED, null);
                     }
                     long durationMillis = elapsedMillis(stepStartedNanos);
                     Instant completedAt = Instant.now();
@@ -130,6 +180,10 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
                         stepContext.setAsrBranchFailure(exception);
                         continue;
                     }
+                    if (canCompleteInBackground(learningOpen, step.name(), exception)) {
+                        backgroundFailed |= recordBackgroundFailure(stepContext, step.name(), exception);
+                        continue;
+                    }
                     flushPendingAiCallRecordsAfterFailure(step, stepContext, exception);
                     throw exception;
                 } catch (RuntimeException exception) {
@@ -150,6 +204,10 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
                         stepContext.setAsrBranchFailure(wrapped);
                         continue;
                     }
+                    if (canCompleteInBackground(learningOpen, step.name(), exception)) {
+                        backgroundFailed |= recordBackgroundFailure(stepContext, step.name(), exception);
+                        continue;
+                    }
                     flushPendingAiCallRecordsAfterFailure(step, stepContext, wrapped);
                     throw wrapped;
                 }
@@ -164,6 +222,10 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
                 completedSuccessfully = true;
                 return AnalysisTaskWorkResult.degradedVisualOnly();
             }
+            if (backgroundFailed) {
+                completedSuccessfully = true;
+                return AnalysisTaskWorkResult.degradedBackground();
+            }
             if (stepContext.visionBranchFailed()) {
                 completedSuccessfully = true;
                 return AnalysisTaskWorkResult.degradedAsrOnly();
@@ -172,7 +234,7 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
             return new AnalysisTaskWorkResult(true, null, null);
         } finally {
             stepContext.cancelVisionBranchAndAwaitExit();
-            if (!completedSuccessfully && evidenceLifecycleService != null) {
+            if (!completedSuccessfully && evidenceLifecycleService != null && context.protocolVersion()!=2) {
                 cleanupFailedTaskEvidence(stepContext);
             }
             if (workspace != null) {
@@ -200,6 +262,47 @@ public class PipelineAnalysisTaskWorkExecutor implements AnalysisTaskWorkExecuto
                 SafeLogSanitizer.sanitize(context.taskId()),
                 cleanupFailure.getClass().getSimpleName()
             );
+        }
+    }
+
+    private boolean openLearning(PipelineAnalysisTaskStepContext context) {
+        if (context.asrBranchFailed()) return false;
+        try {
+            boolean open = learning.openAfterSubtitles(context.taskId(), context.userId());
+            LOGGER.info("event=pipeline_learning_opened taskId={} open={}", SafeLogSanitizer.sanitize(context.taskId()), open);
+            return open;
+        } catch (RuntimeException failure) {
+            // Learning then opens when the run succeeds, exactly as without early learning.
+            LOGGER.warn("event=pipeline_learning_open_failed taskId={} errorType={}",
+                SafeLogSanitizer.sanitize(context.taskId()), failure.getClass().getSimpleName());
+            return false;
+        }
+    }
+
+    /** Background stages may fail on their own only after the course is learnable, and never on cancellation. */
+    private static boolean canCompleteInBackground(boolean learningOpen, PipelineAnalysisTaskStepName stepName, Throwable failure) {
+        return learningOpen
+            && BACKGROUND_STAGES.containsKey(stepName)
+            && !Thread.currentThread().isInterrupted()
+            && !isCancellation(failure)
+            && !com.example.courselingo.task.service.LearningAvailability.runFatal(failure);
+    }
+
+    private boolean recordBackgroundFailure(PipelineAnalysisTaskStepContext context, PipelineAnalysisTaskStepName stepName, Throwable failure) {
+        String code = com.example.courselingo.task.service.LearningAvailability.failureCode(failure);
+        LOGGER.warn("event=pipeline_background_stage_failed taskId={} stepName={} errorCode={}",
+            SafeLogSanitizer.sanitize(context.taskId()), stepName, SafeLogSanitizer.sanitize(code));
+        recordStage(context, stepName, com.example.courselingo.task.service.LearningAvailability.FAILED, code);
+        return true;
+    }
+
+    private void recordStage(PipelineAnalysisTaskStepContext context, PipelineAnalysisTaskStepName stepName, String status, String code) {
+        try {
+            learning.recordStage(context.taskId(), context.userId(), BACKGROUND_STAGES.get(stepName), status, code);
+        } catch (RuntimeException failure) {
+            // The outcome is informational; losing it must not turn a learnable course into a failed one.
+            LOGGER.warn("event=pipeline_stage_outcome_write_failed taskId={} stepName={} errorType={}",
+                SafeLogSanitizer.sanitize(context.taskId()), stepName, failure.getClass().getSimpleName());
         }
     }
 

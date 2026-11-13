@@ -210,17 +210,27 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         boolean hasVisualEvidence = hasSemanticVisualEvidence(multimodalSegments);
         List<SubtitleSegment> sourceSegments = loadAndValidateSourceSegments(validated, hasVisualEvidence);
         boolean visualOnly = sourceSegments.isEmpty();
-        TaskFullTextResult fullTextResult = visualOnly ? null : loadFullTextResult(validated);
-        List<SubtitleTranslationSegment> translationSegments = visualOnly || fullTextResult != null
-            ? List.of()
-            : loadAndValidateTranslationSegments(validated, sourceSegments);
+        TaskFullTextResult fullTextResult = visualOnly || validated.sourceOnly() ? null : loadFullTextResult(validated);
+        // Prefer timed cues grouped into chapter windows over a single full-transcript request,
+        // which previously overflowed an 8192-token context. Full text is a fallback only.
+        List<SubtitleTranslationSegment> translationSegments;
+        if (visualOnly || validated.sourceOnly()) {
+            translationSegments = List.of();
+        } else if (fullTextResult != null) {
+            translationSegments = loadTranslationSegmentsIfPresent(validated, sourceSegments);
+        } else {
+            translationSegments = loadAndValidateTranslationSegments(validated, sourceSegments);
+        }
         LearningPackageQualityProfile qualityProfile = LearningPackageQualityProfile.from(
             sourceSegments, multimodalSegments, properties
         );
-        LlmProvider llmProvider = resolveLlmProvider();
-        LlmResult result = fullTextResult == null
+        LlmProvider llmProvider = new LearningPackageContextGuard(resolveLlmProvider(), properties, () -> {
+            // Recheck ownership, cancellation, source revision and execution lease between chunks.
+            if (generationFence != null) generationFence.commit(ticket, () -> null);
+        });
+        LlmResult result = shouldGenerateFromSegments(validated, sourceSegments, translationSegments, fullTextResult)
             ? generateLearningPackage(llmProvider, validated, sourceSegments, translationSegments, multimodalSegments)
-            : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult, multimodalSegments);
+            : generateLearningPackageFromFullText(llmProvider, validated, fullTextResult, sourceSegments, translationSegments, multimodalSegments);
         String provider = normalizeProvider(firstNonBlank(result.provider(), llmProvider.providerName()));
         LearningPackageResponseParser.ParsedLearningPackage parsed = null;
         LearningPackageQualityReport qualityReport;
@@ -234,17 +244,19 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             logRecoverableContentFailure(validated, result, provider, ex, "start");
             qualityReport = LearningPackageQualityReport.parseFailure("structured output could not be parsed");
         }
+        String generationOrigin = "MODEL";
         if (!qualityReport.valid()) {
+            generationOrigin = "REPAIRED";
             log.warn(
                 "event=learning_package_quality_repair_requested taskId={} tier={} deficits={}",
                 SafeLogSanitizer.sanitize(validated.taskId()), qualityProfile.tier(), qualityReport.promptText()
             );
-            LlmResult retryResult = fullTextResult == null
+            LlmResult retryResult = shouldGenerateFromSegments(validated, sourceSegments, translationSegments, fullTextResult)
                 ? generateLearningPackageRetry(
                     llmProvider, validated, sourceSegments, translationSegments, multimodalSegments, qualityReport
                 )
                 : generateLearningPackageRetryFromFullText(
-                    llmProvider, validated, fullTextResult, multimodalSegments, qualityReport
+                    llmProvider, validated, fullTextResult, sourceSegments, translationSegments, multimodalSegments, qualityReport
                 );
             String retryProvider = normalizeProvider(firstNonBlank(retryResult.provider(), provider));
             try {
@@ -265,6 +277,7 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             }
         }
         if (!qualityReport.valid()) {
+            generationOrigin = "DETERMINISTIC_FALLBACK";
             parsed = LearningPackageFallbackFactory.build(
                 fallbackEvidence(fullTextResult, sourceSegments, translationSegments, multimodalSegments),
                 validated.targetLanguage(),
@@ -289,6 +302,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             return 1;
         };
         int inserted = generationFence == null ? persist.get() : generationFence.commit(ticket, persist);
+        log.info("event=learning_package_outcome taskId={} inputMode={} generationOrigin={}",
+            SafeLogSanitizer.sanitize(validated.taskId()), validated.sourceOnly() ? "SOURCE_ONLY" : "LEGACY", generationOrigin);
         return new LearningPackageAiCallResult(
             inserted,
             provider,
@@ -314,6 +329,21 @@ public class LearningPackageServiceImpl implements LearningPackageService {
             scope.userId(),
             scope.targetLanguage()
         );
+    }
+
+    private static boolean shouldGenerateFromSegments(
+        ValidatedLearningPackageCommand command,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
+        TaskFullTextResult fullTextResult
+    ) {
+        // Full transcript is only a fallback when timed cues cannot be used.
+        // Visual-only courses have no subtitles and must keep the multimodal path.
+        if (command.sourceOnly() || fullTextResult == null) {
+            return true;
+        }
+        return sourceSegments != null && !sourceSegments.isEmpty()
+            && translationSegments != null && !translationSegments.isEmpty();
     }
 
     private List<SubtitleSegment> loadAndValidateSourceSegments(
@@ -408,6 +438,18 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         return translations;
     }
 
+    private List<SubtitleTranslationSegment> loadTranslationSegmentsIfPresent(
+        ValidatedLearningPackageCommand command,
+        List<SubtitleSegment> sourceSegments
+    ) {
+        try {
+            return loadAndValidateTranslationSegments(command, sourceSegments);
+        } catch (BusinessException ignored) {
+            // Full text remains available; skip missing or malformed cue translations rather than fail the stage.
+            return List.of();
+        }
+    }
+
     private static void validateSourceSegment(
         SubtitleSegment segment,
         ValidatedLearningPackageCommand command,
@@ -483,8 +525,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                 llmProvider,
                 request,
                 command,
-                "translatedSubtitles",
-                joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
+                command.sourceOnly() ? "sourceOnly" : "translatedSubtitles",
+                command.sourceOnly() ? joinedLength(sourceSegments.stream().map(SubtitleSegment::getText).toList())
+                    : joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
             );
         } catch (BusinessException ex) {
             throw ex;
@@ -518,8 +561,9 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                 llmProvider,
                 request,
                 command,
-                "translatedSubtitles",
-                joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
+                command.sourceOnly() ? "sourceOnly" : "translatedSubtitles",
+                command.sourceOnly() ? joinedLength(sourceSegments.stream().map(SubtitleSegment::getText).toList())
+                    : joinedLength(translationSegments.stream().map(SubtitleTranslationSegment::getTranslatedText).toList())
             );
         } catch (BusinessException ex) {
             throw ex;
@@ -534,6 +578,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
         TaskFullTextResult fullTextResult,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
         List<VideoSegment> multimodalSegments
     ) {
         try {
@@ -542,6 +588,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
+                    sourceSegments,
+                    translationSegments,
                     multimodalSegments,
                     properties.llmTimeout(),
                     properties
@@ -567,6 +615,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
         LlmProvider llmProvider,
         ValidatedLearningPackageCommand command,
         TaskFullTextResult fullTextResult,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
         List<VideoSegment> multimodalSegments,
         LearningPackageQualityReport qualityReport
     ) {
@@ -576,6 +626,8 @@ public class LearningPackageServiceImpl implements LearningPackageService {
                     command,
                     fullTextResult.getSourceFullText(),
                     fullTextResult.getTranslatedFullText(),
+                    sourceSegments,
+                    translationSegments,
                     multimodalSegments,
                     properties.llmTimeout(),
                     properties

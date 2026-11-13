@@ -22,7 +22,7 @@ class CourseQaHistoryTest {
     ObjectMapper json = new ObjectMapper();
     CourseQaHistoryService service = new CourseQaHistoryService(users, records, jdbc, json);
     static final String OWN = "SELECT content_revision FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL";
-    static final String SOURCE = "SELECT e.evidence_id,e.payload FROM course_evidence e JOIN analysis_task t ON t.id=e.task_id AND t.user_id=e.user_id\nAND t.content_revision=e.revision AND t.deleted_at IS NULL AND t.status='SUCCEEDED'\nWHERE e.task_id=? AND e.user_id=? AND e.revision=? AND e.evidence_id IN (?)";
+    static final String SOURCE = "SELECT e.evidence_id,e.payload FROM course_evidence e JOIN analysis_task t ON t.id=e.task_id AND t.user_id=e.user_id\nAND t.content_revision=e.revision AND t.deleted_at IS NULL AND (t.status='SUCCEEDED' OR (t.status='RUNNING' AND t.learning_ready_at IS NOT NULL))\nWHERE e.task_id=? AND e.user_id=? AND e.revision=? AND e.evidence_id IN (?)";
     void owner() {
         when(users.currentUser("auth")).thenReturn(new CurrentUserResponse(7L,"test@example.invalid","ACTIVE"));
         when(jdbc.queryForList(OWN, Long.class, "course", 7L)).thenReturn(List.of(2L));

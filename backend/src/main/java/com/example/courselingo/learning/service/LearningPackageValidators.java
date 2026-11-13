@@ -33,7 +33,7 @@ final class LearningPackageValidators {
             sourceLanguage,
             targetLanguage,
             requestId,
-                command.execution());
+                command.execution(), command.sourceOnly());
     }
 
     static ValidatedLearningPackageScope validateScope(String taskId, Long userId, String targetLanguage) {

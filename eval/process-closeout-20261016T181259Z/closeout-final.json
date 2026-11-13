@@ -1,0 +1,48 @@
+{
+  "at_utc": "2026-10-16T18:26:50.890373+00:00",
+  "frozen_manifest_entries_unchanged": 115,
+  "frozen_manifest_sha256": "3d81db334a385ee249a6e41c0227113f5caf97ba99ce04882bd19cb7e3307bb1",
+  "candidate_jar_unchanged": true,
+  "untracked_file_metadata_unchanged": true,
+  "existing_chain_identity_and_state_unchanged": true,
+  "existing_processes_signaled": false,
+  "live_backend_identity_unchanged": true,
+  "live_backend_identity": {
+    "MainPID": "4866",
+    "ExecMainStartTimestampMonotonic": "31524728",
+    "Id": "lecturelens-live-backend.service",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "new_test_supervisors": [
+    {
+      "name": "process-closeout-final",
+      "runner_pid": 3142642,
+      "child_pid": 3142643,
+      "both_absent": true
+    },
+    {
+      "name": "process-closeout-qualified",
+      "runner_pid": 3151969,
+      "child_pid": 3151975,
+      "both_absent": true
+    },
+    {
+      "name": "process-closeout-identity",
+      "runner_pid": 3195885,
+      "child_pid": 3195893,
+      "both_absent": true
+    }
+  ],
+  "new_abnormal_wait_chains_remaining": 0,
+  "real_provider_calls": 0,
+  "services_started_or_restarted": 0,
+  "containers_operated": 0,
+  "disk": {
+    "used_bytes": 117002289152,
+    "available_bytes": 37875122176,
+    "usage_percent": 75.54509605291122,
+    "headroom_to_85_bytes": 14643510476.800003
+  },
+  "scope": "new local process supervisor and synthetic process tests only; inherited root chain remains untouched"
+}

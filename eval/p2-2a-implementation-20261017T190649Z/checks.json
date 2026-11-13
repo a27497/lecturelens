@@ -1,0 +1,136 @@
+{
+  "reviewer": "模型辅助，待人工",
+  "real_model_trials": 0,
+  "browser_trials": 0,
+  "python_trials": [
+    {
+      "trial": "initial",
+      "resource": {
+        "container_name": "lecturelens-p2a-pg-20261017T190649Z",
+        "image": "pgvector/pgvector:0.8.6-pg17",
+        "status": "STARTING",
+        "container_id": "9b02bcd4c6c4f047fe86c77c4c88eb8c39cea432adf5ab2106f7084090ee7848",
+        "binding": {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32773"
+        },
+        "volumes": [
+          "0aea15e7adb552b27f4e11c059a875265f78dd62b8b4f35cc288c3a410596f05"
+        ],
+        "error_type": "CalledProcessError",
+        "cleanup": {
+          "remove_exit": 0,
+          "container_absent": true,
+          "remaining_volumes": []
+        }
+      },
+      "resource_sha256": "f04c6518d8767b88b1a42df4443575d3b31883284485d97ea924bdad240545c8",
+      "raw_record": ".data/p2-2a-impl-20261017T190649Z/python-resource.json"
+    },
+    {
+      "trial": "-r2",
+      "resource": {
+        "container_name": "lecturelens-p2a-pg-20261017T190649Z-r2",
+        "image": "pgvector/pgvector:0.8.6-pg17",
+        "status": "FAILED",
+        "container_id": "f0ca3fc0c70b997fdd3df1fa0d1676b844fcb22a223398b60799bb780b630761",
+        "binding": {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32774"
+        },
+        "volumes": [
+          "d19ea84b7cc06afbfc66fc3c7ce5ea2fa98424a3cef2dafefab72cb7b82159c3"
+        ],
+        "supervisor_exit": 1,
+        "check_record": "/home/dev/projects/lecturelens/.data/dev-checks/p2a-python-20261017T190649Z-r2/run.json",
+        "tests": {
+          "tests": "99",
+          "failures": "1",
+          "errors": "0",
+          "skipped": "0",
+          "time": "69.135"
+        },
+        "error_type": "AssertionError",
+        "cleanup": {
+          "remove_exit": 0,
+          "container_absent": true,
+          "remaining_volumes": []
+        }
+      },
+      "resource_sha256": "add2895b8ea35058ab17cd94efb8f1efcd55ecd0fe763e4e61c21bb8e1cb69cf",
+      "raw_record": ".data/p2-2a-impl-20261017T190649Z-r2/python-resource.json",
+      "supervisor_status": "FAILED",
+      "descendants_reaped": true,
+      "supervisor_sha256": "01bbe20311cde0cf7d3a15ff5f25dbb617daa4c216106af873ce8aa8d056b659",
+      "output_sha256": "366841d8db297c32b73cf8c8024114bbe0bea6860bb57dc6cbaca433b0ed83a4",
+      "junit_sha256": "91e078114684143b190525889941a14072f367be8c12a2c206f7b11ab9bab2fb"
+    },
+    {
+      "trial": "-r3",
+      "resource": {
+        "container_name": "lecturelens-p2a-pg-20261017T190649Z-r3",
+        "image": "pgvector/pgvector:0.8.6-pg17",
+        "status": "SUCCEEDED",
+        "container_id": "101f8a243c32a4701ca811eddba47cc7e80ad4c44eed500d1a319244f03208e7",
+        "binding": {
+          "HostIp": "127.0.0.1",
+          "HostPort": "32775"
+        },
+        "volumes": [
+          "b1b4885f31ec6af6b60272a27f7ceb6ed10d7c500633f645a2e2cb94e6b2c93c"
+        ],
+        "supervisor_exit": 0,
+        "check_record": "/home/dev/projects/lecturelens/.data/dev-checks/p2a-python-20261017T190649Z-r3/run.json",
+        "tests": {
+          "tests": "99",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "time": "64.867"
+        },
+        "cleanup": {
+          "remove_exit": 0,
+          "container_absent": true,
+          "remaining_volumes": []
+        }
+      },
+      "resource_sha256": "ef9e7bac97470dc4c1b6a4b1592420d89d0f65837dce7cebd0edcd7577fa9688",
+      "raw_record": ".data/p2-2a-impl-20261017T190649Z-r3/python-resource.json",
+      "supervisor_status": "SUCCEEDED",
+      "descendants_reaped": true,
+      "supervisor_sha256": "25556195818028de37e91f342765499038d76ac94f4c0e1deaa5f95061b06e48",
+      "output_sha256": "9e0f18c308825377cf4c2ae8b222190239b473c64d0d6c7ce7378a9c32dbfa46",
+      "junit_sha256": "eced18831d27b2964c5e3b62a0f1218bbae41e6302be1623ac3f4d768cf0f761"
+    }
+  ],
+  "frontend_unit": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "descendants_reaped": true,
+    "supervisor_sha256": "e155be55f35edd6a5dde87800ed2eea36be2ab09befbd637f7bdcca074d56252",
+    "output_sha256": "10c000feb0d1ef738b1746f8d8fb3e1f0e00b9e9fa6eb953c7409d8a632ebc33",
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit_sha256": "69ce4dc40935ff92f58835de721f21455ef1f218b6bbf37a0cf99ff2ab1ed61a"
+  },
+  "frontend_build": {
+    "status": "SUCCEEDED",
+    "exit_code": 0,
+    "descendants_reaped": true,
+    "supervisor_sha256": "063e4b416b16308f5d4521ce56811c3072995f3e796b5322ae3600f03f0929fd",
+    "output_sha256": "63f6b1edcf166f0d887b5c2dd994544bc1dcfc4fd1d0d75bb3d59274dd805c60"
+  },
+  "static_checks": {
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "diff_check": "passed",
+    "gitleaks_patch_findings": 0
+  },
+  "disk": {
+    "used_percent": 78.116,
+    "available_GiB": 31.566,
+    "headroom_to_85_percent_GiB": 9.93
+  }
+}

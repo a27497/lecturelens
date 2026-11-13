@@ -1,0 +1,11 @@
+{
+  "checked_date": "2026-10-16",
+  "sources": [
+    "https://api-docs.deepseek.com/quick_start/pricing/",
+    "https://help.aliyun.com/zh/model-studio/model-pricing"
+  ],
+  "frozen_price_source": "../p2-1-pipeline-20261016T073754Z/pricing-20261016.json",
+  "rates_unchanged": true,
+  "asr_workspace_endpoint_runtime_card": "UNPRICED",
+  "asr_usage_times_public_rate_reported_only_as_reference": true
+}

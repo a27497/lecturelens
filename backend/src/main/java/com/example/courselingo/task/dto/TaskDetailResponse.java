@@ -18,6 +18,15 @@ public record TaskDetailResponse(
     Instant createdAt,
     Instant updatedAt,
     Instant startedAt,
-    Instant finishedAt
+    Instant finishedAt,
+    /** True when study, Q&A and the Agent are available (SUCCEEDED, or subtitles ready while RUNNING). */
+    Boolean learningReady
 ) {
+    public TaskDetailResponse(String taskId, String uploadId, String targetLanguage, String status, Integer progressPercent,
+                              String currentStage, String errorCode, String errorMessage, Integer retryCount,
+                              Integer maxRetryCount, Instant createdAt, Instant updatedAt, Instant startedAt,
+                              Instant finishedAt) {
+        this(taskId, uploadId, targetLanguage, status, progressPercent, currentStage, errorCode, errorMessage,
+            retryCount, maxRetryCount, createdAt, updatedAt, startedAt, finishedAt, null);
+    }
 }

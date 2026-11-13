@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-10-16T19:22:48.887348+00:00",
+  "removed_owned_directories": [
+    ".data/p2-1c-run-20261016T191343Z/runtime",
+    ".data/p2-1c-run-20261016T191343Z/extra",
+    ".data/p2-1c-run-20261016T191343Z/tmp",
+    ".data/p2-1c-run-20261016T191343Z/workspace",
+    "eval/p2-1c-run-20261016T191343Z/__pycache__"
+  ],
+  "unit_auto_collected": true,
+  "java_created": false,
+  "redis_keys_deleted": 0,
+  "database_rows_deleted": 0,
+  "storage_objects_deleted": 0,
+  "used_sigkill": false
+}

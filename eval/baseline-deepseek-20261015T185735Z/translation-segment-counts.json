@@ -1,0 +1,42 @@
+{
+  "deepseek-algorithms-1": {
+    "source_segments": 18,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-calculus-1": {
+    "source_segments": 13,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-economics-1": {
+    "source_segments": 12,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-linear-1": {
+    "source_segments": 14,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-probability-1": {
+    "source_segments": 18,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-algorithms-2": {
+    "source_segments": 18,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-calculus-2": {
+    "source_segments": 13,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-economics-2": {
+    "source_segments": 12,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-linear-2": {
+    "source_segments": 14,
+    "persisted_translated_segments": 0
+  },
+  "deepseek-probability-2": {
+    "source_segments": 18,
+    "persisted_translated_segments": 0
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-15T19:03:09.381539+00:00",
+  "head": "63186ed30d8ff2674bafeb9552b03c2911dd0ab2",
+  "files": {
+    "eval/baseline-deepseek-20261015T185735Z/run_measurement.py": "e70aefc3588ba8ad56e8c9fd8d0e9123f3ebd0d4352327393e2023c16efbd2c7",
+    "eval/baseline-deepseek-20261015T185735Z/support.py": "68d7ab65775567987a39543edd81ef7fe15c990cfb690ac4e51f9dc7ea1b8bc0",
+    "eval/baseline-deepseek-20261015T185735Z/binding-preflight.json": "4bc7d5a8c648ef625497fd65cb17bb83dc2c757686094f7e20cdd6fa5ba85c91",
+    "eval/baseline-asr-20261015/assets.lock.json": "e9f93adf31c4a3acf0918c26ce7efa7ef8a2f5391e64c825d651362a38be1a52"
+  },
+  "driver_correction": "Accept string success code 0; initial failure was GET /api/me before any upload or task submission."
+}

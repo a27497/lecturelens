@@ -14,6 +14,9 @@ public final class AsrAdapterFactories {
     private AsrAdapterFactories() {}
 
     public static AsrAdapterFactory bailian(SystemModelHttpClient http, SystemModelUrlPolicy urls) {
+        return bailian(http,urls,com.example.courselingo.ai.llm.ModelCallObserver.NOOP);
+    }
+    public static AsrAdapterFactory bailian(SystemModelHttpClient http,SystemModelUrlPolicy urls,com.example.courselingo.ai.llm.ModelCallObserver observer) {
         var environmentTransports =
                 new java.util.concurrent.ConcurrentHashMap<Long, BailianAsrTransport>();
         return new AsrAdapterFactory() {
@@ -56,7 +59,7 @@ public final class AsrAdapterFactories {
                                         options.bailianConnectMillis(),
                                         ignored ->
                                                 new JavaHttpBailianAsrTransport(
-                                                        properties.getConnectTimeout()));
+                                                        properties.getConnectTimeout()).observed(observer));
                 return new BailianAsrProvider(properties, transport);
             }
         };
@@ -64,6 +67,9 @@ public final class AsrAdapterFactories {
 
     public static AsrAdapterFactory siliconFlow(
             SystemModelHttpClient http, SystemModelUrlPolicy urls) {
+        return siliconFlow(http,urls,com.example.courselingo.ai.llm.ModelCallObserver.NOOP);
+    }
+    public static AsrAdapterFactory siliconFlow(SystemModelHttpClient http,SystemModelUrlPolicy urls,com.example.courselingo.ai.llm.ModelCallObserver observer) {
         var environmentClients =
                 new java.util.concurrent.ConcurrentHashMap<Long, SiliconFlowAsrClient>();
         return new AsrAdapterFactory() {
@@ -106,7 +112,7 @@ public final class AsrAdapterFactories {
                                         route.asr().siliconFlowConnectMillis(),
                                         ignored ->
                                                 new JavaHttpSiliconFlowAsrClient(
-                                                        properties.getConnectTimeout()));
+                                                        properties.getConnectTimeout()).observed(observer));
                 return new SiliconFlowAsrProvider(properties, client);
             }
         };

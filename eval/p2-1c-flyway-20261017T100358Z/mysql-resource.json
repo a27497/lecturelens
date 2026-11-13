@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "Id": "cf44344fee2cd04c285dbeef6d016d10708e75872f91021c5ece7a4880085e98",
+    "Name": "/lecturelens-p21c-runtime-mysql-20261017",
+    "Image": "sha256:3466ba4a4828aa8d46fb7c3bc16b67b781c98413cf4ea0fac6feaa6e881faa26",
+    "Config.Labels": {
+      "lecturelens.owner": "p2-1c-flyway-20261017T100358Z"
+    },
+    "HostConfig.PortBindings": {
+      "3306/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "33319"
+        }
+      ]
+    },
+    "Mounts": [
+      {
+        "Destination": "/var/lib/mysql",
+        "Mode": "",
+        "Propagation": "rprivate",
+        "RW": true,
+        "Source": "/home/dev/projects/lecturelens/.data/p2-1c-flyway-20261017T100358Z/mysql-data",
+        "Type": "bind"
+      }
+    ],
+    "HostConfig.Memory": 1073741824,
+    "HostConfig.NanoCpus": 1000000000,
+    "HostConfig.RestartPolicy": {
+      "MaximumRetryCount": 0,
+      "Name": "no"
+    },
+    "Config.Cmd": [
+      "--skip-log-bin"
+    ]
+  },
+  "log_bin_disabled_by_command": true,
+  "persistent_data_retained": true,
+  "root_password_read": false
+}

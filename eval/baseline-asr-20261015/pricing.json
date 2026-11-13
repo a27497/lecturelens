@@ -1,0 +1,15 @@
+{
+  "source_url": "https://help.aliyun.com/zh/model-studio/model-pricing",
+  "retrieved_at_utc": "2026-10-15T08:34:45.947274+00:00",
+  "raw_html_private_file": ".data/baseline-asr-20261015/official-pricing.html",
+  "raw_html_sha256": "a45bf4cfc53fabdbae1b3b3ac295ad261bfa3ac461f18a09e9416206146f8cc6",
+  "model": "qwen-audio-3.1-asr-flash",
+  "region": "China North 2 Beijing",
+  "currency": "CNY",
+  "unit": "per million tokens",
+  "input_rate": 0.8,
+  "output_rate": 2.7,
+  "method": "actual usage.input_tokens and usage.output_tokens, including all observed retries",
+  "excluded": "free credits, negotiated discounts, invoice rounding, taxes, local hardware/electricity; failed/missing-usage charges unavailable",
+  "verification": "official rendered table Qwen-Audio-3.x-ASR-Flash Beijing, checked via browser and HTTP on 2026-10-15"
+}

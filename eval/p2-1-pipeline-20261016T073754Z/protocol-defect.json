@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-16T12:27:55.949801+00:00",
+  "candidate": "P2-1",
+  "task_id": "task_5b6b1585bf3d4b57b28d91fe9cdf68f2",
+  "planned_normal_trials": 10,
+  "submitted_normal_trials": 1,
+  "terminal_normal_trials": 1,
+  "unsubmitted_normal_trials": 9,
+  "recovery_submitted": false,
+  "sigkill_count": 0,
+  "physical_provider_calls": 0,
+  "original_candidate_jar_archive": "/home/dev/projects/lecturelens/.data/p2-1-pipeline-20261016T073754Z/frozen-original.jar",
+  "task_status": "CANCELED",
+  "outbox_v2_rows": [
+    {
+      "event_id": "e87b80ff-0497-41e8-8241-016c45406b73",
+      "protocol_version": 2,
+      "execution_epoch": 1,
+      "payload_protocol_version": "2",
+      "payload_execution_epoch": "1",
+      "status": "SENT"
+    },
+    {
+      "event_id": "d912617d-b321-4a88-9c3f-c7b6fb518efe",
+      "protocol_version": 1,
+      "execution_epoch": null,
+      "payload_protocol_version": null,
+      "payload_execution_epoch": null,
+      "status": "SENT"
+    }
+  ],
+  "consumer_log_event": "mq_message_consume_dropped reason=dirty_business_message errorCode=TASK_INVALID_STATUS",
+  "remaining_trials_not_fabricated": true
+}

@@ -1,0 +1,200 @@
+{
+  "database_connected": false,
+  "runtime_configuration_read": false,
+  "spring_application_started": false,
+  "parsing_only": true,
+  "resources": [
+    {
+      "version": "V10",
+      "flyway_checksum": 1629770941,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V11",
+      "flyway_checksum": -619553914,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V12",
+      "flyway_checksum": 426424873,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V13",
+      "flyway_checksum": -1899005035,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V14",
+      "flyway_checksum": 1390249234,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V15",
+      "flyway_checksum": -1652801935,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V16",
+      "flyway_checksum": 1780785721,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V17",
+      "flyway_checksum": -1233917640,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V18",
+      "flyway_checksum": 1633883900,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V19",
+      "flyway_checksum": 1179324854,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V1",
+      "flyway_checksum": 1222334692,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V20",
+      "flyway_checksum": -1959471896,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V21",
+      "flyway_checksum": 1705125178,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V22",
+      "flyway_checksum": 1520182704,
+      "statements": 5,
+      "parser_passed": true
+    },
+    {
+      "version": "V23",
+      "flyway_checksum": -1934337993,
+      "statements": 5,
+      "parser_passed": true
+    },
+    {
+      "version": "V24",
+      "flyway_checksum": -347979064,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V25",
+      "flyway_checksum": 178249869,
+      "statements": 14,
+      "parser_passed": true
+    },
+    {
+      "version": "V26",
+      "flyway_checksum": 627947602,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V27",
+      "flyway_checksum": -726791917,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V28",
+      "flyway_checksum": 1011024704,
+      "statements": 5,
+      "parser_passed": true
+    },
+    {
+      "version": "V29",
+      "flyway_checksum": -769746681,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V2",
+      "flyway_checksum": -872271564,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V30",
+      "flyway_checksum": -644062326,
+      "statements": 10,
+      "parser_passed": true
+    },
+    {
+      "version": "V31",
+      "flyway_checksum": -1605903799,
+      "statements": 5,
+      "parser_passed": true
+    },
+    {
+      "version": "V32",
+      "flyway_checksum": -749564353,
+      "statements": 6,
+      "parser_passed": true
+    },
+    {
+      "version": "V3",
+      "flyway_checksum": 1461830970,
+      "statements": 2,
+      "parser_passed": true
+    },
+    {
+      "version": "V4",
+      "flyway_checksum": 482746636,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V5",
+      "flyway_checksum": -262232451,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V6",
+      "flyway_checksum": -2078054059,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V7",
+      "flyway_checksum": -28305245,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V8",
+      "flyway_checksum": -1889698344,
+      "statements": 1,
+      "parser_passed": true
+    },
+    {
+      "version": "V9",
+      "flyway_checksum": -1236264616,
+      "statements": 1,
+      "parser_passed": true
+    }
+  ]
+}

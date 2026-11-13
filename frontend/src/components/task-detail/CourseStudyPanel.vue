@@ -9,7 +9,7 @@ const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; result:
 defineEmits<{ seek: [startTimeMillis: number] }>();
 const activeView = ref<StudyView>("summary");
 const learning = computed(() => props.result?.learningPackage ?? null);
-const emptyDescription = computed(() => props.status === "FAILED" ? "处理失败，未生成学习资料" : props.status === "CANCELED" ? "处理已取消，未生成学习资料" : props.status === "SUCCEEDED" ? "本课程尚无已保存学习资料" : "学习资料生成中");
+const emptyDescription = computed(() => props.result?.learningPackageStatus === "FAILED" ? "学习资料生成失败；字幕、提问与学习助手不受影响" : props.status === "FAILED" ? "处理失败，未生成学习资料" : props.status === "CANCELED" ? "处理已取消，未生成学习资料" : props.status === "SUCCEEDED" ? "本课程尚无已保存学习资料" : "学习资料生成中");
 const views: Array<{ value: StudyView; label: string }> = [
   { value: "summary", label: "摘要与重点" },
   { value: "chapters", label: "课程章节" },

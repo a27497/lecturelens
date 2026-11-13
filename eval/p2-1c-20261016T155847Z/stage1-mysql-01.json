@@ -1,0 +1,65 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=SystemModelRuntimeMySqlTest,SystemModelMySqlIntegrationTest,LearningPackageTransactionIntegrationTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116364914688,
+    "available_bytes": 38512496640,
+    "usage_percent": 75.13356124061366,
+    "headroom_to_85_bytes": 15280884940.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:21:17.045170+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2585163,
+  "start_ticks": "3500415",
+  "exit_code": 1,
+  "disk_peak_percent": 75.13394471809751,
+  "disk_after": {
+    "used_bytes": 116365271040,
+    "available_bytes": 38512140288,
+    "usage_percent": 75.13379132710396,
+    "headroom_to_85_bytes": 15280528588.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage1-mysql-01.log",
+  "log_sha256": "883018b9ed3d2424bdb098de628cc59e4a9d0f6d5a00adf3360c6687e158d859",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "332b133d5c2df66d7292aaeccae4daf88887b27318cd55cf5ebd2dadbe831e14"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 1,
+      "errors": 1,
+      "skipped": 0,
+      "sha256": "95f43a1bd3b68926937bd7835fabfdeb658c0aaf3bdba7b438ab4ec64964f199"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fc8478a1080448b8a03c9e445efbb876de0fc514cb974535e6953c58f299d1f3"
+    }
+  ],
+  "total": {
+    "tests": 32,
+    "failures": 1,
+    "errors": 1,
+    "skipped": 0
+  }
+}

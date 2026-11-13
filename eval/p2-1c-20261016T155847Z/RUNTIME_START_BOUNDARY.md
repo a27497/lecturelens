@@ -1,0 +1,15 @@
+# 真实运行启动边界
+
+后续状态：用户已按 AUTHORIZED_SCOPE.md 批准指定临时 unit 的受控启动、冒烟及条件满足后的十次。本文件下文保留当时的边界说明；最新实际检查见 STAGE5_PREFLIGHT.md/stage5-startup-preflight.json。99-system-models.conf 未检出任何凭据指令/路径，当前缺少可引用的系统模型 credential 项，尚未创建/启动 unit；不是要求重复授权相同启动范围。
+
+阶段 4 全量回归已通过：后端 1765、前端 119、Python/PostgreSQL 727 项，失败/错误/跳过均 0。计数与 hash 复算见 STAGE4.md；C/E 特性探针失败，候选继续冻结为 false。测试 MySQL/PostgreSQL 均已按独立许可停止删除。
+
+下一步只涉及已指定的隔离 Java 127.0.0.1:18091、MySQL schema lecturelens_p21_20261016、Redis DB 15、topic lecturelens-p21-20261016T073754Z。候选 JAR、源码及配置身份分别在 candidate-artifact.json/candidate-options.json，最新一致性检查在 stage4-gates-verified.json。不得启动其他服务、操作未知端口占用或改变在线模型绑定。
+
+当前未执行 Java 启动命令。用户已明确要求启动/重启前停下，并两次说明测试数据库许可不含 Java 18091。
+
+旧 P2-1b runtime_support.py 的 deployment() 会由外部脚本读取/复制供应商密钥，违反本轮约束，不能调用或导入。旧 P21Bootstrap 还要求版本及环境指纹匹配，不能绕过该门禁；本轮未读取其配置文件或实际密钥。
+
+因此启动前需要用户指定可由服务管理器/应用直接引用的既有受控启动入口或配置引用，并单独授权启动该隔离 worker。只需路径、单元名或操作入口，不提供密钥内容；在入口确定前无法给出可执行且符合约束的启动命令。已有候选参数可审查，但没有声称运行时参数或模型绑定已核验。
+
+获准且入口合规后，先做磁盘、端口和运行时身份核验，再按 DESIGN 与 AUTHORIZED_SCOPE 做一次完整单节冒烟；ASR 正常且无 403 后继续缓存关闭的正式十次。资料生成单独失败仍保留并继续正式十次，不扩大预算。403、磁盘门禁以及后续恢复演示中的重启仍需按原要求停下。

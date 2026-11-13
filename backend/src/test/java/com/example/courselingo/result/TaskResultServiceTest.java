@@ -498,6 +498,39 @@ class TaskResultServiceTest {
         assertThat(response.translations()).isEmpty();
     }
 
+    @Test
+    void backgroundStageFailureIsReportedPerFeatureOnALearnableCourse() {
+        AnalysisTask done = task("task_bg", 42L);
+        when(analysisTaskMapper.selectByIdAndUserId("task_bg", 42L)).thenReturn(done);
+        when(subtitleSegmentQueryService.listByTaskId("task_bg", 42L)).thenReturn(List.of(
+            new SubtitleSegmentView("task_bg", 0, 0L, 1000L, "en", "Spring Boot", "embedded-subtitle", time(1), time(2))
+        ));
+        when(subtitleTranslationQueryService.listTranslations("task_bg", 42L, "zh-CN")).thenReturn(List.of());
+        when(learningPackageQueryService.getByTaskAndLanguage("task_bg", 42L, "zh-CN")).thenReturn(Optional.empty());
+        when(artifactFileQueryService.listByTaskId("task_bg", 42L)).thenReturn(List.of());
+        when(aiCallRecordService.listByTask("task_bg", 42L)).thenReturn(List.of());
+        var learning = org.mockito.Mockito.mock(com.example.courselingo.task.service.LearningAvailability.class);
+        when(learning.outcomes("task_bg", 42L)).thenReturn(java.util.Map.of(
+            "TRANSLATION", new com.example.courselingo.task.service.LearningAvailability.Outcome("FAILED", "TRANSLATION_TIMEOUT"),
+            "ARTIFACTS", new com.example.courselingo.task.service.LearningAvailability.Outcome("FAILED", "IOEXCEPTION")
+        ));
+        service.configureLearningAvailability(learning);
+
+        TaskResultResponse response = service.getResult("task_bg", "Bearer access-token");
+
+        assertThat(response.translationStatus()).isEqualTo(com.example.courselingo.result.dto.TranslationStatus.FAILED);
+        assertThat(response.artifactsStatus()).isEqualTo(com.example.courselingo.result.dto.BackgroundStageStatus.FAILED);
+        assertThat(response.learningPackageStatus()).isEqualTo(com.example.courselingo.result.dto.BackgroundStageStatus.SKIPPED);
+        assertThat(response.sourceFullText()).contains("Spring Boot");
+
+        done.setStatus(AnalysisTaskStatus.RUNNING.name());
+        when(learning.outcomes("task_bg", 42L)).thenReturn(java.util.Map.of());
+        TaskResultResponse running = service.getResult("task_bg", "Bearer access-token");
+        assertThat(running.translationStatus()).isEqualTo(com.example.courselingo.result.dto.TranslationStatus.RUNNING);
+        assertThat(running.learningPackageStatus()).isEqualTo(com.example.courselingo.result.dto.BackgroundStageStatus.RUNNING);
+        assertThat(running.artifactsStatus()).isEqualTo(com.example.courselingo.result.dto.BackgroundStageStatus.RUNNING);
+    }
+
     private static AnalysisTask task(String taskId, Long userId) {
         AnalysisTask task = new AnalysisTask();
         task.setId(taskId);

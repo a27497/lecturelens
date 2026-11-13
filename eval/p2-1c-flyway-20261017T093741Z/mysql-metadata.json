@@ -1,0 +1,283 @@
+{
+  "at_utc": "2026-10-17T09:38:30.156263+00:00",
+  "disk_before": {
+    "used_bytes": 117342924800,
+    "available_bytes": 37534486528,
+    "usage_percent": 75.76503493559218,
+    "margin_to_85_bytes": 14302874828.800003
+  },
+  "spring_application_started": false,
+  "writes_executed": false,
+  "supplier_calls": 0,
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "database_matches": true,
+  "authenticated_account_nonroot": true,
+  "read_only_transaction": true,
+  "history": [
+    {
+      "installed_rank": 1,
+      "version": "1",
+      "checksum": 1222334692,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 2,
+      "version": "2",
+      "checksum": -872271564,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 3,
+      "version": "3",
+      "checksum": 1461830970,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 4,
+      "version": "4",
+      "checksum": 482746636,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 5,
+      "version": "5",
+      "checksum": -262232451,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 6,
+      "version": "6",
+      "checksum": -2078054059,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 7,
+      "version": "7",
+      "checksum": -28305245,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 8,
+      "version": "8",
+      "checksum": -1889698344,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 9,
+      "version": "9",
+      "checksum": -1236264616,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 10,
+      "version": "10",
+      "checksum": 1629770941,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 11,
+      "version": "11",
+      "checksum": -619553914,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 12,
+      "version": "12",
+      "checksum": 426424873,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 13,
+      "version": "13",
+      "checksum": -1899005035,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 14,
+      "version": "14",
+      "checksum": 1390249234,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 15,
+      "version": "15",
+      "checksum": -1652801935,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 16,
+      "version": "16",
+      "checksum": 1780785721,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 17,
+      "version": "17",
+      "checksum": -1233917640,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 18,
+      "version": "18",
+      "checksum": 1633883900,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 19,
+      "version": "19",
+      "checksum": 1179324854,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 20,
+      "version": "20",
+      "checksum": -1959471896,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 21,
+      "version": "21",
+      "checksum": 1705125178,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 22,
+      "version": "22",
+      "checksum": 1520182704,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 23,
+      "version": "23",
+      "checksum": -1934337993,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 24,
+      "version": "24",
+      "checksum": -347979064,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 25,
+      "version": "25",
+      "checksum": 178249869,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 26,
+      "version": "26",
+      "checksum": 627947602,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 27,
+      "version": "27",
+      "checksum": -726791917,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 28,
+      "version": "28",
+      "checksum": 1011024704,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 29,
+      "version": "29",
+      "checksum": -769746681,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 30,
+      "version": "30",
+      "checksum": -644062326,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 31,
+      "version": "31",
+      "checksum": -1605903799,
+      "success": true,
+      "frozen_checksum_matches": true
+    },
+    {
+      "installed_rank": 32,
+      "version": "32",
+      "checksum": -749564353,
+      "success": false,
+      "frozen_checksum_matches": true
+    }
+  ],
+  "v32_tables": {
+    "asr_scheduler_state": true,
+    "asr_chunk_checkpoint": false,
+    "asr_scheduler_event": false,
+    "asr_result_cache": false
+  },
+  "v32_triggers_visible": {
+    "asr_state_immutable_input": false,
+    "asr_chunk_immutable_input": false
+  },
+  "schema_grant_privilege_names": [
+    "ALTER",
+    "ALTER ROUTINE",
+    "CREATE",
+    "CREATE ROUTINE",
+    "CREATE TEMPORARY TABLES",
+    "CREATE VIEW",
+    "DELETE",
+    "DROP",
+    "EVENT",
+    "EXECUTE",
+    "INDEX",
+    "INSERT",
+    "LOCK TABLES",
+    "REFERENCES",
+    "SELECT",
+    "SHOW VIEW",
+    "TRIGGER",
+    "UPDATE"
+  ],
+  "global_grant_privilege_names": [
+    "USAGE"
+  ],
+  "log_bin": true,
+  "log_bin_trust_function_creators": false,
+  "disk_after": {
+    "used_bytes": 117342924800,
+    "available_bytes": 37534486528,
+    "usage_percent": 75.76503493559218,
+    "margin_to_85_bytes": 14302874828.800003
+  }
+}

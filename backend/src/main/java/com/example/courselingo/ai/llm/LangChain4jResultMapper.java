@@ -28,6 +28,22 @@ final class LangChain4jResultMapper {
         AiMessage aiMessage = response.aiMessage();
         TokenUsage tokenUsage = response.tokenUsage();
         FinishReason finishReason = response.finishReason();
+        var usage = tokenUsage == null ? new LlmUsage(null, null, null)
+            : new LlmUsage(tokenUsage.inputTokenCount(), tokenUsage.outputTokenCount(), tokenUsage.totalTokenCount(),
+                tokenUsage instanceof dev.langchain4j.model.openai.OpenAiTokenUsage openAi && openAi.outputTokensDetails() != null
+                    ? openAi.outputTokensDetails().reasoningTokens() : null,
+                tokenUsage instanceof dev.langchain4j.model.openai.OpenAiTokenUsage openAi && openAi.inputTokensDetails() != null
+                    ? openAi.inputTokensDetails().cachedTokens() : null, null);
+        // The SDK exposes completion metadata, not the successful transport's exact HTTP status.
+        if (finishReason == FinishReason.LENGTH) {
+            throw new TranslationFailure(TranslationFailure.Reason.TRUNCATED, null, usage, "length", 0,
+                TranslationFailure.Check.OUTPUT_TRUNCATED);
+        }
+        if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(fallbackModel)
+            && (aiMessage == null || aiMessage.text() == null || aiMessage.text().isBlank())) {
+            throw new TranslationFailure(TranslationFailure.Reason.EMPTY_OUTPUT, null, usage,
+                finishReason == FinishReason.STOP ? "stop" : null, 0, TranslationFailure.Check.CONTENT_EMPTY);
+        }
 
         Map<String, Object> metadata = new HashMap<>();
         safeResponseId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
@@ -37,9 +53,7 @@ final class LangChain4jResultMapper {
             textOrDefault(response.modelName(), fallbackModel),
             aiMessage == null || aiMessage.text() == null ? "" : aiMessage.text(),
             finishReason == null ? UNKNOWN_FINISH_REASON : finishReason.name(),
-            tokenUsage == null
-                ? new LlmUsage(null, null, null)
-                : new LlmUsage(tokenUsage.inputTokenCount(), tokenUsage.outputTokenCount(), tokenUsage.totalTokenCount()),
+            usage,
             clientResponse.duration(),
             metadata
         );

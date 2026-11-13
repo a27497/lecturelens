@@ -130,7 +130,7 @@ class CourseModelUsageMySqlTest {
                     .locations("filesystem:" + baseline, "filesystem:" + bundle).outOfOrder(false).load();
             rollback.validate();
             assertThat(rollback.migrate().migrationsExecuted).isZero();
-            assertThat(rollback.info().current().getVersion().toString()).isEqualTo("25");
+            assertThat(rollback.info().current().getVersion().toString()).isEqualTo(SystemModelMySqlFixture.latestVersion());
         }
     }
 
@@ -139,7 +139,7 @@ class CourseModelUsageMySqlTest {
         for (boolean pr35First : List.of(false, true)) {
             Path base = temp.resolve(UUID.randomUUID().toString()); Files.createDirectories(base);
             try (var files = Files.list(Path.of("src/main/resources/db/migration"))) {
-                for (var f : files.filter(p -> p.getFileName().toString().startsWith("V")).toList()) Files.copy(f, base.resolve(f.getFileName()));
+                for (var f : files.filter(p -> p.getFileName().toString().startsWith("V") && SystemModelMySqlFixture.version(p) <= 25).toList()) Files.copy(f, base.resolve(f.getFileName()));
             }
             // Start at genuine V25: never synthesize an upgrade by rewriting Flyway history.
             try (var db = new SystemModelMySqlFixture("filesystem:" + base)) {

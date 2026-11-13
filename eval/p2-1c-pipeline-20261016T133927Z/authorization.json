@@ -1,0 +1,14 @@
+{
+  "source": "human reply in this chat",
+  "selected_plan": "a",
+  "deepseek_binding_retained_as_option": true,
+  "redis_database": 15,
+  "retain_existing_keys_unchanged": 12,
+  "clear_or_change_database": false,
+  "asr_scope": "diagnose only; no fix",
+  "worker": "127.0.0.1:18091; same isolated scope as prior trial",
+  "recovery_sigkill_limit": 1,
+  "push": false,
+  "deploy": false,
+  "disk_stop_above_percent": 85
+}

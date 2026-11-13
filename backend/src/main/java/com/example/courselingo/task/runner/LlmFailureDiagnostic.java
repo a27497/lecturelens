@@ -19,6 +19,15 @@ record LlmFailureDiagnostic(
         PipelineAnalysisTaskStepContext context,
         String fallbackProvider
     ) {
+        if (exception instanceof com.example.courselingo.learning.service.LearningPackageContextException failure) {
+            return new LlmFailureDiagnostic(fallbackProvider, null, failure.errorCode().code(),
+                "category=CONTEXT_TOO_LARGE;origin=" + failure.origin() + ";retryable=false", false);
+        }
+        if (exception instanceof com.example.courselingo.ai.llm.TranslationFailure failure) {
+            return new LlmFailureDiagnostic(fallbackProvider,null,failure.reason().name(),
+                "category="+failure.reason().name()+";check="+failure.observationReason()+";retryable="+failure.transportRetryable(),
+                failure.transportRetryable());
+        }
         String semanticOutputReason = semanticOutputReason(exception);
         if (semanticOutputReason != null) {
             return new LlmFailureDiagnostic(

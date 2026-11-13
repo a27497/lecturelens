@@ -1,5 +1,7 @@
 package com.example.courselingo.systemmodel;
 
+import com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics;
+
 import com.example.courselingo.ai.llm.*;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
@@ -81,13 +83,15 @@ public class SystemModelRuntimeConfiguration {
     }
 
     @Bean(destroyMethod = "close")
-    SystemModelHttpClient systemModelHttpClient() {
-        return new SystemModelHttpClient(2 * 1024 * 1024);
+    SystemModelHttpClient systemModelHttpClient(com.example.courselingo.ai.llm.ModelCallObserver observer) {
+        return new SystemModelHttpClient(2 * 1024 * 1024).observed(observer);
     }
 
     @Bean
     @Primary
     LlmProvider systemModelLlmProvider(
+            com.example.courselingo.ai.llm.ModelCallObserver observer,
+            TranslationCallDiagnostics diagnostics,
             SystemModelExecutionService executions,
             SystemModelHttpClient http,
             SystemModelUrlPolicy urls) {
@@ -95,37 +99,39 @@ public class SystemModelRuntimeConfiguration {
                 executions,
                 http,
                 urls,
-                new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5)));
+                new JavaHttpOpenAiCompatibleLlmClient(Duration.ofSeconds(5)).observed(observer), diagnostics);
     }
 
     @Bean
     @Primary
     VisionModelProvider systemModelVisionProvider(
+            com.example.courselingo.ai.llm.ModelCallObserver observer,
             SystemModelExecutionService executions,
             SystemModelHttpClient http,
             VisionAnalysisProperties properties,
             SystemModelUrlPolicy urls) {
-        return new SystemModelVisionProvider(executions, http, properties, urls);
+        return new SystemModelVisionProvider(executions, http, properties, urls).observed(observer);
     }
 
     @Bean
     com.example.courselingo.ai.asr.AsrAdapterFactory bailianAsrAdapterFactory(
-            SystemModelHttpClient http, SystemModelUrlPolicy urls) {
-        return com.example.courselingo.ai.asr.AsrAdapterFactories.bailian(http, urls);
+            SystemModelHttpClient http, SystemModelUrlPolicy urls,com.example.courselingo.ai.llm.ModelCallObserver observer) {
+        return com.example.courselingo.ai.asr.AsrAdapterFactories.bailian(http, urls,observer);
     }
 
     @Bean
     com.example.courselingo.ai.asr.AsrAdapterFactory siliconFlowAsrAdapterFactory(
-            SystemModelHttpClient http, SystemModelUrlPolicy urls) {
-        return com.example.courselingo.ai.asr.AsrAdapterFactories.siliconFlow(http, urls);
+            SystemModelHttpClient http, SystemModelUrlPolicy urls,com.example.courselingo.ai.llm.ModelCallObserver observer) {
+        return com.example.courselingo.ai.asr.AsrAdapterFactories.siliconFlow(http, urls,observer);
     }
 
     @Bean
     @Primary
     com.example.courselingo.ai.asr.SpeechToTextProvider systemModelAsrProvider(
+            com.example.courselingo.ai.llm.ModelCallObserver observer,
             SystemModelExecutionService executions,
             java.util.List<com.example.courselingo.ai.asr.AsrAdapterFactory> factories) {
-        return new SystemModelAsrProvider(executions, factories);
+        return new SystemModelAsrProvider(executions, factories).observed(observer);
     }
 
     @Bean

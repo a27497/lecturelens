@@ -1,0 +1,11 @@
+{
+  "result": "FAILED",
+  "health": "NOT_REACHED",
+  "application_starts_this_attempt": 1,
+  "application_starts_task": 2,
+  "category": "JAVA_TERM_INCOMPLETE",
+  "initial_failure_category": "UNKNOWN",
+  "course_tasks_submitted": 0,
+  "configuration_copy_verified": false,
+  "stop_loss_triggered": true
+}

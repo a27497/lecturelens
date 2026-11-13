@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-10-17T06:45:46.390182+00:00",
+  "exit_code": 0,
+  "markers": [
+    "P21_CAPTURE_GATE_PASS",
+    "P21_FINAL_ISOLATION_GATE_PASS"
+  ],
+  "supplier_calls": 0
+}

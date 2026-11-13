@@ -32,4 +32,22 @@ class LearningPackageConfigurationTest {
                     .isEqualTo(Duration.ofSeconds(240));
             });
     }
+
+    @Test
+    void defaultSegmentWindowMatchesCourseChapterWindows() {
+        contextRunner.run(context -> {
+            assertThat(context.getBean(LearningPackageProperties.class).segmentWindowSeconds()).isEqualTo(240);
+            assertThat(context.getBean(LearningPackageProperties.class).contextLimit("local")).isEqualTo(8192);
+        });
+    }
+
+    @Test
+    void configuredSegmentWindowOverridesDefaultWithoutChangingContextLimit() {
+        contextRunner
+            .withPropertyValues("courselingo.learning-package.segment-window-seconds=120")
+            .run(context -> {
+                assertThat(context.getBean(LearningPackageProperties.class).segmentWindowSeconds()).isEqualTo(120);
+                assertThat(context.getBean(LearningPackageProperties.class).contextLimit("local")).isEqualTo(8192);
+            });
+    }
 }

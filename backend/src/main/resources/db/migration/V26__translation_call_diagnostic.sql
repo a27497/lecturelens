@@ -1,0 +1,31 @@
+-- Private per-attempt observations survive a later batch/stage failure. Never exposed by task APIs.
+CREATE TABLE translation_call_diagnostic (
+    id VARCHAR(64) NOT NULL PRIMARY KEY,
+    snapshot_id VARCHAR(64) NOT NULL,
+    task_id VARCHAR(64) NOT NULL,
+    user_id BIGINT NOT NULL,
+    config_version BIGINT NOT NULL,
+    feature VARCHAR(64) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    provider_attempt INT NOT NULL,
+    segment_count INT NULL,
+    input_chars INT NULL,
+    batch_indexes VARCHAR(2000) NULL,
+    http_status INT NULL,
+    finish_reason VARCHAR(64) NULL,
+    provider_reason VARCHAR(64) NOT NULL,
+    validation_category VARCHAR(32) NULL,
+    validation_reason VARCHAR(64) NULL,
+    final_validation_reason VARCHAR(64) NULL,
+    prompt_tokens INT NULL,
+    completion_tokens INT NULL,
+    total_tokens INT NULL,
+    duration_millis BIGINT NOT NULL,
+    response_chars INT NULL,
+    response_truncated BOOLEAN NOT NULL,
+    response_excerpt TEXT NULL,
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    KEY idx_translation_diagnostic_owner (task_id, user_id),
+    CONSTRAINT fk_translation_diagnostic_snapshot FOREIGN KEY (snapshot_id)
+        REFERENCES system_model_execution_snapshot(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

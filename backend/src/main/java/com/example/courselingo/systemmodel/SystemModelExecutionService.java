@@ -39,6 +39,17 @@ public class SystemModelExecutionService {
         return freeze(taskId, userId, "PIPELINE", taskId, "ADOPTED");
     }
 
+    /** Resumption must not lock/read the current configuration head or adopt a new version. */
+    public SystemModelExecutionRef existingPipeline(String taskId,long userId) {
+        requireOwnedTask(taskId,userId);
+        var rows=jdbc.query("""
+            SELECT id,config_version FROM system_model_execution_snapshot
+            WHERE task_id=? AND user_id=? AND operation_type='PIPELINE' AND operation_id=?
+            """,(r,n)->new SystemModelExecutionRef(r.getString(1),r.getLong(2),taskId,userId),taskId,userId,taskId);
+        if(rows.size()!=1)throw invalid();
+        return rows.getFirst();
+    }
+
     public SystemModelExecutionRef operation(String taskId, long userId, String feature) {
         return freeze(taskId, userId, feature, UUID.randomUUID().toString(), "CREATED");
     }

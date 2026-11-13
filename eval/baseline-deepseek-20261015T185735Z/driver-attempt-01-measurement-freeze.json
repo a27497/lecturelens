@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-15T19:02:44.893959+00:00",
+  "head": "63186ed30d8ff2674bafeb9552b03c2911dd0ab2",
+  "files": {
+    "eval/baseline-deepseek-20261015T185735Z/run_measurement.py": "2510c13e8fa2827da7c8ecf8595392403be7b4374ae86eee9b6f3a5a876d2c8e",
+    "eval/baseline-deepseek-20261015T185735Z/support.py": "68d7ab65775567987a39543edd81ef7fe15c990cfb690ac4e51f9dc7ea1b8bc0",
+    "eval/baseline-deepseek-20261015T185735Z/binding-preflight.json": "4bc7d5a8c648ef625497fd65cb17bb83dc2c757686094f7e20cdd6fa5ba85c91",
+    "eval/baseline-asr-20261015/assets.lock.json": "e9f93adf31c4a3acf0918c26ce7efa7ef8a2f5391e64c825d651362a38be1a52"
+  }
+}

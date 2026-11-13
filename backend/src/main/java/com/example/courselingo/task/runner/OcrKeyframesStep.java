@@ -38,6 +38,7 @@ public class OcrKeyframesStep implements PipelineAnalysisTaskStep {
 
     @Override
     public void execute(PipelineAnalysisTaskStepContext context) {
+        if(context.restoredVisionCapture())return;
         if (context.hasVisionBranchHandle()) {
             awaitAdaptiveVisionBranch(context);
             return;

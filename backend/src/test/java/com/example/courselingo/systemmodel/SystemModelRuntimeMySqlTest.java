@@ -270,7 +270,10 @@ class SystemModelRuntimeMySqlTest {
                         com.example.courselingo.ai.asr.SiliconFlowAsrConfiguration.class,
                         com.example.courselingo.ai.asr.MockAsrConfiguration.class)
                 .withBean(SystemModelSecretCipher.class, () -> cipher)
+                .withBean(ModelCallObserver.class,()->ModelCallObserver.NOOP)
                 .withBean(org.springframework.jdbc.core.JdbcTemplate.class, () -> db.jdbc)
+                .withBean(com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics.class,
+                    () -> new com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics(db.jdbc,db.transactions))
                 .withBean(
                         org.springframework.transaction.PlatformTransactionManager.class,
                         () -> db.transactions)
@@ -796,8 +799,11 @@ class SystemModelRuntimeMySqlTest {
                         () ->
                                 new SystemModelLlmProvider(executions, mock, urls, mock)
                                         .generate(request(ref, AiModelStage.TRANSLATION_FULL_TEXT)))
-                .isInstanceOf(SystemModelCallFailure.class)
-                .hasMessageContaining("OUTPUT_INVALID")
+                .isInstanceOfSatisfying(com.example.courselingo.ai.llm.TranslationFailure.class, failure -> {
+                    assertThat(failure.details().category()).isEqualTo(com.example.courselingo.ai.llm.LlmProviderFailureCategory.OUTPUT_INVALID);
+                    assertThat(failure.status()).isEqualTo(200);
+                    assertThat(failure.transportRetryable()).isFalse();
+                })
                 .hasNoCause();
         assertThat(calls.get()).isEqualTo(1);
     }

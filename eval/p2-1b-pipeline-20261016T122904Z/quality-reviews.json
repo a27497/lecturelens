@@ -1,0 +1,114 @@
+[
+  {
+    "task_id": "task_8b03a2fbae7d40039386451c71cb784a",
+    "trial_id": "normal-algorithms-1",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "ae28f2ef698c694e480a78575febcabf8edcee3a40e32dd429a7c3957970d061",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "Names and other upstream ASR errors can carry through unchanged; ASR correctness is not established by this check."
+  },
+  {
+    "task_id": "task_f6bba3a5f6284043b38f4b34897db5e0",
+    "trial_id": "normal-algorithms-2",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "c996f85c0601ca2dbc2c11214087642bcde1288f3eb4b6c510b2f79ca8816510",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "Names and other upstream ASR errors can carry through unchanged; ASR correctness is not established by this check."
+  },
+  {
+    "task_id": "task_73654e7736404142b996a8e6f2ed1518",
+    "trial_id": "normal-calculus-1",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "1a587b78b636998aff8ef44b8a48cce9c7ade779fbf0b51a09abce9fdb03dfca",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "The middle pair preserves the zero-angle cosine and squared-length statement; no independent ASR accuracy claim."
+  },
+  {
+    "task_id": "task_df926ba507524912b94b52905221faea",
+    "trial_id": "normal-calculus-2",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "ca91fe3c55c1ec3117d8614a733fbcf852f2377e6f551356b138e7ba3cfbf768",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "Zero-angle cosine, squared length and cross-product references are retained."
+  },
+  {
+    "task_id": "task_a12f95ef840b44d897baf8e78eaa7b5a",
+    "trial_id": "normal-economics-1",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "685175e2af0c29cfe6bf357d83d4a9806f3ca18f2e8c44def8ae5d7decc2b3ba",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "The auction example amounts and the end-of-class deadline statements are preserved; upstream ASR accuracy is not checked."
+  },
+  {
+    "task_id": "task_604acd640b574c3c81554c4b5ffe1512",
+    "trial_id": "normal-economics-2",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "f43d27d4942b0e47ed08e7549365ef205eba9fd599be6b51bec4d5e4946bd399",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "The numeric example and Friday/Monday announcements remain consistent with the source."
+  },
+  {
+    "task_id": "task_d4464062edd9404b92b7953dd6a6d211",
+    "trial_id": "normal-linear-1",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "661bfc8de54bf055c4a0b57b86786c32aa3d481d551b10f604931702795206ed",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "The middle sample retains the 2x-y+0z expression and row-to-plane statement."
+  },
+  {
+    "task_id": "task_14645a8b89c5455994282ccac8fb687d",
+    "trial_id": "normal-linear-2",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "3fb0c07b94276c826c64f35e0bc44d0dee0787c29b2c1f9678eb5689e595ca33",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "The expression, unconstrained z and row-to-plane interpretation are retained."
+  },
+  {
+    "task_id": "task_a4505199d541412b946cfdc59a4fc065",
+    "trial_id": "normal-probability-1",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "5d609b317d93c64f3cbcd8cbae43e549c95349acaa87a938b5e602d512ea2030",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "observed_terminology_style_issues": 1,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "Omega probability equal to one is preserved. Collectively exhaustive is translated too literally as 集体穷尽; retain this terminology/style limitation."
+  },
+  {
+    "task_id": "task_43081829cc2f4201ac46e14458447921",
+    "trial_id": "normal-probability-2",
+    "sample_count": 3,
+    "sampling": "min_index,floor((min_index+max_index)/2),max_index",
+    "private_sample_sha256": "41730adad02f9321a602ec41554f22b9cc87926158a1c54f2790092440beb4c0",
+    "assessor": "Codex source-to-translation inspection, not an expert reference score",
+    "observed_meaning_errors": 0,
+    "observed_terminology_style_issues": 1,
+    "verdict": "No obvious source-to-translation contradiction in these three pairs",
+    "notes": "Omega probability equal to one is preserved. The same overly literal 集体穷尽 terminology remains; this is retained as a style/terminology issue."
+  }
+]

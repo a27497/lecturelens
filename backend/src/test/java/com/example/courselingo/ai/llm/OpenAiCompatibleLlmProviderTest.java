@@ -636,6 +636,21 @@ class OpenAiCompatibleLlmProviderTest {
     }
 
     @Test
+    void boundedGenerationCanDisableImplicitStructuredOutputFallback() {
+        SequencedClient client = new SequencedClient(new OpenAiCompatibleClientResponse(
+            400, "{\"error\":{\"code\":\"unsupported_parameter\",\"message\":\"response_format json_object is not supported\"}}",
+            Map.of(), Duration.ofMillis(2)));
+        var original = validRequest();
+        var metadata = new java.util.HashMap<>(original.metadata());
+        metadata.put("structuredOutputFallbackAllowed", false);
+        var bounded = new LlmRequest(original.requestId(), original.taskId(), original.messages(), original.timeout(),
+            original.temperature(), original.maxTokens(), 1, metadata, original.responseFormat(), original.execution());
+        assertThatThrownBy(() -> newProvider(properties(), client).generate(bounded))
+            .isInstanceOf(OpenAiCompatibleLlmException.class);
+        assertThat(client.requests()).hasSize(1);
+    }
+
+    @Test
     void authenticationFailureIsNeverRetried() {
         SequencedClient client = new SequencedClient(new OpenAiCompatibleClientResponse(
             401, "{\"error\":{\"code\":\"unauthorized\"}}", Map.of(), Duration.ofMillis(1)

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "translation-mysql-01",
+    "env": {
+      "SYSTEM_MODEL_TEST_JDBC_URL": "jdbc:mysql://127.0.0.1:33318/lecturelens_translation_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+      "SYSTEM_MODEL_TEST_MYSQL_USER": "root",
+      "SYSTEM_MODEL_TEST_MYSQL_PASSWORD": ""
+    },
+    "argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=LegacyTranslationMySqlTest,SystemModelRuntimeMySqlTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest",
+      "test"
+    ],
+    "cwd": "/home/dev/projects/lecturelens/backend",
+    "supervisor": [
+      "python3",
+      "scripts/dev/run_check.py",
+      "--name",
+      "translation-mysql-01",
+      "--output-root",
+      ".data/translation-mysql-20261016T185217Z",
+      "--cwd",
+      "backend",
+      "--timeout",
+      "600",
+      "--"
+    ],
+    "outer": [
+      "nohup",
+      "timeout",
+      "--kill-after=10s",
+      "660s"
+    ]
+  },
+  {
+    "name": "translation-mysql-02",
+    "env": {
+      "SYSTEM_MODEL_TEST_JDBC_URL": "jdbc:mysql://127.0.0.1:33318/lecturelens_translation_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+      "SYSTEM_MODEL_TEST_MYSQL_USER": "root",
+      "SYSTEM_MODEL_TEST_MYSQL_PASSWORD": ""
+    },
+    "argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=LegacyTranslationMySqlTest,SystemModelRuntimeMySqlTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest",
+      "test"
+    ],
+    "cwd": "/home/dev/projects/lecturelens/backend",
+    "supervisor": [
+      "python3",
+      "scripts/dev/run_check.py",
+      "--name",
+      "translation-mysql-02",
+      "--output-root",
+      ".data/translation-mysql-20261016T185217Z",
+      "--cwd",
+      "backend",
+      "--timeout",
+      "600",
+      "--"
+    ],
+    "outer": [
+      "nohup",
+      "timeout",
+      "--kill-after=10s",
+      "660s"
+    ]
+  }
+]
