@@ -49,6 +49,8 @@ Step 6 身份现已成为历史身份。合并 Study 预留预算修复并放宽
 
 Study budget 身份现已成为历史身份。复核/修复修正（复核工具参数 JSON 重试、可定位的复核重试反馈、仅改标题的修复不再送审）修改了 `study/call_journal.py`、`study/provider.py`、`study/quality.py`、`study/runtime.py`、`study/telemetry.py`，当前开发身份为 `study-review-c83394880f10b710`（`study/study_review_agent_manifest.json`，63 个模块）。`study_budget_agent_manifest.json` 字节不变，由 `verify_study_budget_agent` 校验；`tests/fixtures/study-review-prior-source.tar.gz` 还原这五个模块的旧字节，再接续上文的 Study budget/Step 6 夹具链。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。
 
+Study review 身份现已成为历史身份；线上 Agent 仍运行它。计算模板误选修正（因 `goal_mismatch` 被拒的固定计算模板在本 Run 内关闭并改为重新检索；复核证据选择上限统一为 `REVIEW_EVIDENCE_LIMIT`；复核重试说明合并为一处）修改了 `study/context.py`、`study/goals.py`、`study/method_scope.py`、`study/provider.py`、`study/quality.py`、`study/runtime.py`、`study/solution.py`、`study/support_review.py`，当前开发身份为 `study-reroute-c044bcc73f76226f`（`study/study_reroute_agent_manifest.json`，63 个模块）。`study_review_agent_manifest.json` 字节不变，由 `verify_study_review_agent` 校验；`tests/fixtures/study-reroute-prior-source.tar.gz` 还原这八个模块的旧字节，再接续上文的 Study review/Study budget/Step 6 夹具链。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。
+
 ## 验证
 
 `agent-service/tests/test_agent_lanes.py` 使用事件和屏障构造并发：如果路径仍是串行，测试会死锁并超时失败，而不是靠 sleep 判断。覆盖：其他课程建索引期间检索照常返回；查询槽位占满时建索引不受影响、查询仍有界拒绝；N 个查询同时处于 Embedding 中、第 N+1 个被拒；两个 Session 的 Run 同时处于模型 I/O 中，且预算计数、引用、答案隐藏、证据范围与串行一致；同一 Session 的 Run 按顺序串行；通道数上限；取消只影响一个 Run；事件流的增量、终止、续传、关闭默认值和鉴权。

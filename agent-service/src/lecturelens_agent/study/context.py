@@ -4,6 +4,52 @@ import json
 import re
 from copy import deepcopy
 
+# Java's Evidence authority READ accepts at most eight IDs, so a review input holds at
+# most eight passages. A review that selects supporting passages among them is bounded
+# by the same number; a smaller schema bound only rejects valid selections.
+REVIEW_EVIDENCE_LIMIT = 8
+
+# The model-selected practice_kind locks each later decision to one creation tool.
+PRACTICE_TOOLS = {
+    "general": "create_practice_set",
+    "linear_points": "create_linear_practice",
+    "python_output": "create_python_practice",
+    "python_strings_or_code": "create_python_practice",
+    "python_strings": "create_python_practice",
+    "interval_halving": "create_interval_practice",
+    "selection_steps": "create_sequence_practice",
+    "search_cost": "create_practice_set",
+}
+# Fixed computed templates: a repair can change inputs but not the taught operation, so a
+# goal_mismatch rejection means the template cannot express the learner goal. Python
+# strings and linear points stay open: their goal checks reject inputs or point designs,
+# which a repair inside the same template can fix.
+TEMPLATE_PRACTICE_KINDS = ("interval_halving", "selection_steps", "search_cost")
+PRACTICE_KIND_NOTICE = (
+    "A candidate from the computed template of each closed_practice_kinds entry was rejected for "
+    "goal_mismatch: that template cannot express this learner goal. For the rest of this Run its "
+    "creation tool is withdrawn and search_course_evidence cannot select that practice_kind. Search "
+    "again with the practice_kind that matches the goal (general for other topics), preserving the "
+    "learner goal. Report insufficient evidence only if the course evidence is absent."
+)
+
+
+def closed_practice_kinds(history):
+    """Template practice kinds whose candidate was rejected for goal_mismatch in this Run."""
+    closed, kind = [], None
+    for item in history:
+        if item["tool"] == "search_course_evidence":
+            kind = item["result"].get("practice_kind")
+        quality = item["result"].get("quality") or {}
+        if (
+            kind in TEMPLATE_PRACTICE_KINDS
+            and kind not in closed
+            and quality.get("accepted") is False
+            and "goal_mismatch" in quality.get("issues", [])
+        ):
+            closed.append(kind)
+    return closed
+
 
 def has_time_request(goal):
     return bool(
@@ -308,6 +354,11 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
         context["example_check"] = aliases_in(history[-1]["result"]["example_check"], forward)
     if history and "quality" in history[-1]["result"]:
         context["quality"] = aliases_in(repair_observation(history[-1]["result"]["quality"]), forward)
+    closed = closed_practice_kinds(history)
+    if closed:
+        # Added only after such a rejection, so contexts of other Runs stay byte-identical.
+        context["closed_practice_kinds"] = closed
+        context["practice_kind_notice"] = PRACTICE_KIND_NOTICE
     # Keep the learner's requirements after source/context observations as well.
     context["goal"] = context.pop("goal")
     context["goal_constraints"] = context.pop("goal_constraints")

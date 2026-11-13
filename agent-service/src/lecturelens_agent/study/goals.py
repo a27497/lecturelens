@@ -6,6 +6,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ..contracts import Contract
+from .context import REVIEW_EVIDENCE_LIMIT
 
 
 def goal_constraints(goal):
@@ -48,7 +49,7 @@ def explanation_claims(text):
 class ClaimCheck(Contract):
     id: Annotated[str, Field(pattern=r"^x[1-6]$")]
     course_fact: Annotated[str, Field(min_length=1, max_length=120)]
-    evidence_ids: Annotated[list[str], Field(min_length=1, max_length=8)]
+    evidence_ids: Annotated[list[str], Field(min_length=1, max_length=REVIEW_EVIDENCE_LIMIT)]
     supported: bool
 
 

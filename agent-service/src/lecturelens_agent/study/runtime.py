@@ -14,8 +14,11 @@ from langgraph.types import Command
 from pydantic import ValidationError
 
 from .context import (
+    PRACTICE_TOOLS,
+    REVIEW_EVIDENCE_LIMIT,
     aliases_in,
     build_messages,
+    closed_practice_kinds,
     evidence_gaps,
     has_time_request,
     include_citation_neighbors,
@@ -37,6 +40,7 @@ from .quality import (
     code_observations,
     repair_review,
     review_messages,
+    review_retry_instruction,
     review_schema,
     review_wire_messages,
 )
@@ -473,7 +477,9 @@ class StudyRuntime:
                     },
                 )
                 response = model_call(messages, "review")
-            ids = {f"e{i + 1}": item["evidence_id"] for i, item in enumerate(evidence[:8])}
+            ids = {
+                f"e{i + 1}": item["evidence_id"] for i, item in enumerate(evidence[:REVIEW_EVIDENCE_LIMIT])
+            }
             coverage = QualityReview.model_validate(aliases_in(response["review"], ids))
             return {
                 "can_answer": "unjustified_abstention" in coverage.issues,
@@ -593,6 +599,15 @@ class StudyRuntime:
                 raise StudyError("MODEL_TOOL_CONTRACT")
             pending = []
             seen = {item["fingerprint"] for item in state["history"]}
+            closed_kinds = closed_practice_kinds(state["history"])
+            current_kind = next(
+                (
+                    h["result"].get("practice_kind")
+                    for h in reversed(state["history"])
+                    if h["tool"] == "search_course_evidence"
+                ),
+                None,
+            )
             for offset, tool_call in enumerate(calls):
                 if not isinstance(tool_call, dict):
                     raise StudyError("MODEL_TOOL_CONTRACT")
@@ -615,6 +630,14 @@ class StudyRuntime:
                 ):
                     raise StudyError("ARTIFACT_MUST_END_RUN")
                 raw_arguments = dict(tool_call["arguments"])
+                # Provider-independent fence for the withdrawn template (see closed_practice_kinds):
+                # neither its creation tool nor a search selecting its kind may run again.
+                if name == "search_course_evidence":
+                    if raw_arguments.get("practice_kind") in closed_kinds:
+                        raise StudyError("INVALID_TOOL_ARGUMENTS")
+                    current_kind = raw_arguments.get("practice_kind", current_kind)
+                elif current_kind in closed_kinds and name == PRACTICE_TOOLS[current_kind]:
+                    raise StudyError("INVALID_TOOL_ARGUMENTS")
                 program_plan = None
                 revised_request = None
                 if name == "create_python_practice" and "program_plan" in raw_arguments:
@@ -1218,9 +1241,7 @@ class StudyRuntime:
                             body = json.loads(messages[-1]["content"])
                             body["protocol_feedback"] = {
                                 "error": error.code,
-                                "instruction": "Return one assess_study_candidate call with valid JSON arguments. Keep strings brief."
-                                if error.code == "MODEL_TOOL_CONTRACT"
-                                else "Return the declared schema. Explanation rejection anchors must include explanation:N and its own eN. Give a brief correction, not a full rewritten answer; rejection answer <=200 characters. Preserve semantic checks.",
+                                "instruction": review_retry_instruction(error.code),
                                 "diagnostics": getattr(error, "diagnostics", {}),
                             }
                             messages[-1] = {**messages[-1], "content": json.dumps(body, ensure_ascii=False)}

@@ -38,10 +38,12 @@
 
 - 每个 Run 最多提交两份候选，练习与拒答合并计数。第二份仍被拒绝时，终止为 `QUALITY_REPAIR_EXHAUSTED`，不会用“证据不足”掩盖生成质量失败。
 - 修复候选若除 `title` 外与某份已被拒绝的候选完全相同，不执行也不再送审：决策收到一次 `repair_notice`（指明被拒候选和问题，要求改内容，或在当前模板无法表达学习目标时按匹配的 practice_kind 重新搜索），并记录 `protocol_retry_scheduled`（`REPEATED_TOOL_WITHOUT_PROGRESS`，purpose=`quality_repair`）。再次仅改标题则直接终止为 `QUALITY_REPAIR_EXHAUSTED`，不消耗复核调用。
+- 固定计算模板（`interval_halving`、`selection_steps`、`search_cost`）的候选若因 `goal_mismatch` 被拒，该 practice_kind 在本 Run 内关闭：决策上下文加入 `closed_practice_kinds` 和固定说明，该模板的生成工具不再提供，`search_course_evidence` 的 practice_kind 枚举也去掉它，只能按其他 practice_kind 重新检索或报告证据不足。模型若仍调用已关闭的模板或用它检索，运行时以 `INVALID_TOOL_ARGUMENTS` 终止，不再消耗复核调用。可调整输入的模板（`linear_points`、Python 字符串）和通用练习不受影响，仍在原工具内修复。两份候选的上限不变。
 - 每次复核调用在 `MODEL_REVIEW_CONTRACT`（schema 不符）或 `MODEL_TOOL_CONTRACT`（工具参数不是合法 JSON）时各最多重试一次，仍计入同一 Run 预算。重试反馈只包含运行时生成的固定说明和经校验的违规位置与声明上限（例如 `methods` 超过 `max_length` 2 项），不转发模型原文或自由文本。
 - 决策与复核共享同一 Run 上限：12 次模型调用、8 次工具调用、600,000 保守 token 预留和默认 90 秒 deadline。复核输出最多 300 tokens，决策输出最多 900。没有额外重试预算。
 - 决策的非法工具格式最多获得一次明确纠正观察，仍扣减原有预算并记录 `model_failed` / `protocol_retry_scheduled`；错误响应的工具不执行。持续失败、其他调用错误、复核错误均终止；页面显示纠正进度。失败调用的已知 usage 保留。
 - 复核输入最多 8 条、每条最多 1,200 字符的当前权威 Evidence；引用映射为临时短编号。逐题仍保留自己的引用集合。
+- 复核从输入中选择支持来源时，`evidence_ids` 上限与复核输入条数共用 `REVIEW_EVIDENCE_LIMIT`（8，即 Java READ 的 ID 上限），schema、提示词和测试都引用这一常量。此前课程覆盖/方法观察限 3 条，模型在真实长课中反复列出 4 条以上，每次多花一次复核重试。
 - 复核后重新检查取消、owner/course/revision、worker token 和 deadline。错误工具名、错误结构、模型不可用等情况均阻止发布，不自动切换 mock。
 - 拒绝结果与公开事件在同一事务内写入 `study_tool_result` / `study_event`。提交后、checkpoint 前崩溃时，恢复直接回读复核结果，不再次调用模型，也不重复产物。
 - 模型已经返回但结果尚未提交时，恢复可能重新调用模型；调用前已持久扣减预算，不承诺外部模型恰好调用一次。

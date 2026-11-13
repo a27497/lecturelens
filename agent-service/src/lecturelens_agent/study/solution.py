@@ -6,7 +6,7 @@ from typing import Annotated
 from pydantic import Field, ValidationInfo, model_validator
 
 from ..contracts import Contract
-from .context import aliases_in, compact_json
+from .context import REVIEW_EVIDENCE_LIMIT, aliases_in, compact_json
 from .quality import IndependentAnswer, IndependentSolution
 
 
@@ -53,7 +53,7 @@ def solution_fingerprint(body):
 
 
 def solution_messages(goal, candidate, evidence, example_checks=None):
-    evidence = evidence[:8]
+    evidence = evidence[:REVIEW_EVIDENCE_LIMIT]
     aliases = {e["evidence_id"]: f"e{i + 1}" for i, e in enumerate(evidence)}
     body = {
         "review_mode": "independent_solution",

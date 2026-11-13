@@ -195,22 +195,22 @@ def decision_schemas(messages):
             schemas = tool_schemas(include_time_window=has_time_request(goal), cost_mode=True)
         if kind == "python_strings":
             schemas = tool_schemas(include_time_window=has_time_request(goal), string_mode=True)
-        modes = {
-            "general": "create_practice_set",
-            "linear_points": "create_linear_practice",
-            "python_output": "create_python_practice",
-            "python_strings_or_code": "create_python_practice",
-            "python_strings": "create_python_practice",
-            "interval_halving": "create_interval_practice",
-            "selection_steps": "create_sequence_practice",
-            "search_cost": "create_practice_set",
-        }
+        from .context import PRACTICE_TOOLS as modes
+
+        closed = context.get("closed_practice_kinds") or []
+        for tool in schemas:
+            if tool["function"]["name"] == "search_course_evidence":
+                choices = tool["function"]["parameters"]["properties"]["practice_kind"]
+                choices["enum"] = [value for value in choices["enum"] if value not in closed]
         if kind in modes:
             schemas = [
                 tool
                 for tool in schemas
                 if tool["function"]["name"] not in modes.values() or tool["function"]["name"] == modes[kind]
             ]
+            if kind in closed:
+                # The rejected template cannot express this goal; only a new search unlocks a tool.
+                schemas = [tool for tool in schemas if tool["function"]["name"] != modes[kind]]
         else:
             # Old persisted decisions predate this subject choice.
             schemas = [
