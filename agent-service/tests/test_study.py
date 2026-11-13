@@ -523,6 +523,8 @@ def repair_provider(runtime, accept_second=True):
         if context.get("quality"):
             observations.append(context["quality"])
             result["arguments"]["title"] = "Revised candidate"
+            # A repair changes content; a rename alone is not re-reviewed.
+            result["arguments"]["explanation"] += "已按复核意见修订。"
         return result
 
     def review(messages, timeout):

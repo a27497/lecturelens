@@ -11,20 +11,20 @@ from .telemetry import _span
 
 def slot_key(purpose, ordinal=0):
     span = _span.get()
-    return hashlib.sha256(
-        json.dumps(
-            [
-                "slot-v2",
-                span["node"],
-                span.get("turn"),
-                span.get("call_id"),
-                ordinal,
-                purpose,
-                span.get("protocol_retries", 0),
-            ],
-            sort_keys=True,
-        ).encode()
-    ).hexdigest()
+    parts = [
+        "slot-v2",
+        span["node"],
+        span.get("turn"),
+        span.get("call_id"),
+        ordinal,
+        purpose,
+        span.get("protocol_retries", 0),
+    ]
+    if span.get("unchanged_repair_retries"):
+        # Only a decision after an unchanged-repair notice gets a distinct slot;
+        # every other key stays byte-identical for replay of existing Runs.
+        parts.append(["unchanged_repair", span["unchanged_repair_retries"]])
+    return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
 
 
 def operation_key(messages, schemas, purpose):

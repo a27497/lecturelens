@@ -122,6 +122,35 @@ def tool_arguments(raw):
     return json.loads(value), repairs
 
 
+def declared_fields(schema):
+    """Property names declared by our own review contract, never names chosen by the model."""
+    parameters = schema.model_json_schema()
+    names = set(parameters.get("properties", {}))
+    for definition in parameters.get("$defs", {}).values():
+        names.update(definition.get("properties", {}))
+    return names
+
+
+def review_violation(failure, schema):
+    """A payload-free location and declared bound for one review schema violation.
+
+    Path segments are list indexes or property names declared by the contract;
+    anything else (extra keys, union tags) becomes "other". Bounds are integers.
+    """
+    loc = failure["loc"]
+    entry = {"field": "issues" if loc and loc[0] == "issues" else "other", "type": failure["type"]}
+    if loc:
+        declared = declared_fields(schema)
+        entry["path"] = ".".join(
+            str(part) if type(part) is int or part in declared else "other" for part in loc[:6]
+        )[:120]
+    context = failure.get("ctx") or {}
+    for key in ("max_length", "min_length"):
+        if type(context.get(key)) is int:
+            entry[key] = context[key]
+    return entry
+
+
 def request_reservation(messages, schemas, output_tokens):
     # httpx sends JSON with ensure_ascii=False and compact separators. Charge the
     # same representation, rather than padding/ASCII escapes never sent on wire.
@@ -488,13 +517,7 @@ class ChatProvider:
             failures = error.errors(include_input=False, include_url=False)
             diagnostics = {
                 "stage": "review_schema",
-                "validation": [
-                    {
-                        "field": "issues" if failure["loc"] and failure["loc"][0] == "issues" else "other",
-                        "type": failure["type"],
-                    }
-                    for failure in failures[:10]
-                ],
+                "validation": [review_violation(failure, schema) for failure in failures[:10]],
             }
             raise ModelResponseError("MODEL_REVIEW_CONTRACT", response["usage"], diagnostics) from None
         if review_mode == "independent_solution":

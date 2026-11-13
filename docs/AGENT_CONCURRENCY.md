@@ -47,6 +47,8 @@ Java 网关仍使用轮询 `EVENTS` 的现有契约；改为转发此流需要�
 
 Step 6 身份现已成为历史身份。合并 Study 预留预算修复并放宽 Run 上限（12 次模型调用、600,000 保守预留）后，`study/call_journal.py`、`study/context.py`、`study/feedback.py`、`study/method_scope.py`、`study/provider.py`、`study/runtime.py`、`study/store.py` 发生变化，当前开发身份为 `study-budget-71b4d959dfab59a4`（`study/study_budget_agent_manifest.json`，63 个模块）。`step6_agent_manifest.json` 字节不变，由 `verify_step6_agent` 校验；`tests/fixtures/study-budget-prior-source.tar.gz` 还原变更前的七个模块，上文的 Step 6 夹具再接续到 Phase 0/P10/P9/P7/FROZEN。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。
 
+Study budget 身份现已成为历史身份。复核/修复修正（复核工具参数 JSON 重试、可定位的复核重试反馈、仅改标题的修复不再送审）修改了 `study/call_journal.py`、`study/provider.py`、`study/quality.py`、`study/runtime.py`、`study/telemetry.py`，当前开发身份为 `study-review-c83394880f10b710`（`study/study_review_agent_manifest.json`，63 个模块）。`study_budget_agent_manifest.json` 字节不变，由 `verify_study_budget_agent` 校验；`tests/fixtures/study-review-prior-source.tar.gz` 还原这五个模块的旧字节，再接续上文的 Study budget/Step 6 夹具链。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。
+
 ## 验证
 
 `agent-service/tests/test_agent_lanes.py` 使用事件和屏障构造并发：如果路径仍是串行，测试会死锁并超时失败，而不是靠 sleep 判断。覆盖：其他课程建索引期间检索照常返回；查询槽位占满时建索引不受影响、查询仍有界拒绝；N 个查询同时处于 Embedding 中、第 N+1 个被拒；两个 Session 的 Run 同时处于模型 I/O 中，且预算计数、引用、答案隐藏、证据范围与串行一致；同一 Session 的 Run 按顺序串行；通道数上限；取消只影响一个 Run；事件流的增量、终止、续传、关闭默认值和鉴权。

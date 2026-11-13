@@ -29,14 +29,16 @@ P9_AGENT = "p9-choice-2b5fa77bab87da38"
 P10_AGENT = "p10-choice-review-442bb2af75c77ed1"
 PHASE0_AGENT = "phase0-integration-9d6312fd722f6df3"
 STEP6_AGENT = "step6-agent-lanes-2eed7cb6c34e7c84"
-DEVELOPMENT_AGENT = "study-budget-71b4d959dfab59a4"
+STUDY_BUDGET_AGENT = "study-budget-71b4d959dfab59a4"
+DEVELOPMENT_AGENT = "study-review-c83394880f10b710"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
 P10_MANIFEST_SHA256 = "442bb2af75c77ed1f1a0d4b858dce9b43751b5eb4e9d9e7ff5835a5609c870ab"
 PHASE0_MANIFEST_SHA256 = "9d6312fd722f6df30e44090edf24d6ea22e303446fc92858d9b5108d35fb28a0"
 STEP6_MANIFEST_SHA256 = "2eed7cb6c34e7c84389767cb4d54fedcc12efb0aed07d3783cccf2700f4caf4a"
-DEVELOPMENT_MANIFEST_SHA256 = "71b4d959dfab59a4c870fe0e2ab9f39db95fe4ce0e271debd84d1d836059695b"
+STUDY_BUDGET_MANIFEST_SHA256 = "71b4d959dfab59a4c870fe0e2ab9f39db95fe4ce0e271debd84d1d836059695b"
+DEVELOPMENT_MANIFEST_SHA256 = "c83394880f10b710a8d07830193d4beeb763953ea0f3a19a802ed6d4533cf889"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -143,9 +145,14 @@ def verify_step6_agent(package=None):
     return _verify_agent(package, "step6_agent_manifest.json", STEP6_MANIFEST_SHA256)
 
 
+def verify_study_budget_agent(package=None):
+    """Historical Study reservation-budget identity only; the review-repair runtime must fail."""
+    return _verify_agent(package, "study_budget_agent_manifest.json", STUDY_BUDGET_MANIFEST_SHA256)
+
+
 def verify_development_agent(package=None):
-    """Study reservation-budget candidate; no inherited frozen quality or live permission."""
-    return _verify_agent(package, "study_budget_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """Study review/repair candidate; no inherited frozen quality or live permission."""
+    return _verify_agent(package, "study_review_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)

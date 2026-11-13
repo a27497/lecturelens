@@ -34,6 +34,7 @@ from lecturelens_agent.study.acceptance_cost import (
     P10_AGENT,
     PHASE0_AGENT,
     STEP6_AGENT,
+    STUDY_BUDGET_AGENT,
     UPSTREAM,
     CostDenied,
     CostLedger,
@@ -45,6 +46,7 @@ from lecturelens_agent.study.acceptance_cost import (
     verify_p10_agent,
     verify_phase0_agent,
     verify_step6_agent,
+    verify_study_budget_agent,
     worker_snapshot,
 )
 from lecturelens_agent.study.acceptance_egress import (
@@ -1259,7 +1261,7 @@ def test_review_read_extension_preserves_prior_frozen_manifest_identity():
 
 
 @pytest.fixture
-def historical_step6_package(tmp_path):
+def historical_study_budget_package(tmp_path):
     import tarfile
 
     import lecturelens_agent
@@ -1267,6 +1269,18 @@ def historical_step6_package(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    # Restore the five exact pre-review-repair Study modules; the Study budget manifest is unchanged.
+    with tarfile.open(Path(__file__).parent / "fixtures/study-review-prior-source.tar.gz") as archive:
+        for member in archive.getmembers():
+            (copied / member.name).write_bytes(archive.extractfile(member).read())
+    return copied
+
+
+@pytest.fixture
+def historical_step6_package(historical_study_budget_package):
+    import tarfile
+
+    copied = historical_study_budget_package
     # Restore the seven exact pre-budget-fix Study modules; the Step 6 manifest is unchanged.
     with tarfile.open(Path(__file__).parent / "fixtures/study-budget-prior-source.tar.gz") as archive:
         for member in archive.getmembers():
@@ -1336,12 +1350,28 @@ def test_step6_identity_positive_and_tampering_rejected(historical_step6_package
         verify_step6_agent(copied)
 
 
-def test_study_budget_runtime_cannot_claim_the_step6_identity():
-    assert DEVELOPMENT_AGENT == "study-budget-" + DEVELOPMENT_MANIFEST_SHA256[:16]
+def test_study_budget_identity_positive_and_tampering_rejected(historical_study_budget_package):
+    copied = historical_study_budget_package
+    assert verify_study_budget_agent(copied) == 63
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_development_agent(copied)
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_step6_agent(copied)
+    with (copied / "study/runtime.py").open("a") as out:
+        out.write("\n# tampered\n")
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_study_budget_agent(copied)
+
+
+def test_study_review_runtime_cannot_claim_the_step6_or_study_budget_identity():
+    assert DEVELOPMENT_AGENT == "study-review-" + DEVELOPMENT_MANIFEST_SHA256[:16]
+    assert STUDY_BUDGET_AGENT == "study-budget-71b4d959dfab59a4"
     assert STEP6_AGENT == "step6-agent-lanes-2eed7cb6c34e7c84"
     assert verify_development_agent() == 63
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_step6_agent()
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_study_budget_agent()
 
 
 def test_phase0_identity_positive_and_tampering_rejected(historical_phase0_package):
@@ -1356,9 +1386,10 @@ def test_phase0_identity_positive_and_tampering_rejected(historical_phase0_packa
 
 
 def test_step6_lanes_cannot_claim_the_phase0_identity(historical_step6_package):
-    # Step 6 is itself historical now (Study budget); neither it nor the current source may claim Phase 0.
+    # Step 6 and Study budget are historical now (Study review); neither they nor the current source may claim Phase 0.
     assert STEP6_AGENT.startswith("step6-agent-lanes-")
-    assert DEVELOPMENT_AGENT.startswith("study-budget-")
+    assert STUDY_BUDGET_AGENT.startswith("study-budget-")
+    assert DEVELOPMENT_AGENT.startswith("study-review-")
     assert PHASE0_AGENT == "phase0-integration-9d6312fd722f6df3"
     assert verify_development_agent() == 63
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
@@ -1428,7 +1459,15 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
     now = datetime.now(timezone.utc)
     policy = CostPolicy("synthetic", now.isoformat(), (now + timedelta(hours=1)).isoformat())
     policy.validate()
-    for historical in (FROZEN_AGENT, P7_AGENT, P9_AGENT, P10_AGENT, PHASE0_AGENT, STEP6_AGENT):
+    for historical in (
+        FROZEN_AGENT,
+        P7_AGENT,
+        P9_AGENT,
+        P10_AGENT,
+        PHASE0_AGENT,
+        STEP6_AGENT,
+        STUDY_BUDGET_AGENT,
+    ):
         with pytest.raises(CostDenied, match="POLICY_INVALID"):
             replace(policy, candidate_sha=historical).validate()
     with pytest.raises(CostDenied, match="POLICY_INVALID"):
@@ -1438,7 +1477,8 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
 @pytest.mark.parametrize(
     ("manifest", "verifier"),
     [
-        ("study_budget_agent_manifest.json", verify_development_agent),
+        ("study_review_agent_manifest.json", verify_development_agent),
+        ("study_budget_agent_manifest.json", verify_study_budget_agent),
         ("step6_agent_manifest.json", verify_step6_agent),
         ("phase0_agent_manifest.json", verify_phase0_agent),
         ("p10_agent_manifest.json", verify_p10_agent),

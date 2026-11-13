@@ -691,6 +691,43 @@ def verified_worked_example(candidate, observations):
     return None
 
 
+STRUCTURED_REVIEW_RETRY = "Return the declared schema with every required answer check, each field once, own evidence only. Obey character limits and use the learner language. For coverage: missing_goal_quote is empty for direct/demonstrated_method, an exact goal quote only for absent."
+REVIEW_JSON_RETRY = "The previous assess_study_candidate arguments were not one valid JSON object, so nothing was assessed. Return exactly one assess_study_candidate call whose arguments are a single valid JSON object: escape quotes and backslashes inside strings, no text outside the call, and keep every string brief."
+
+
+def structured_retry_feedback(feedback):
+    """Forward only runtime-generated, payload-free retry facts to a structured reviewer.
+
+    Free-text instructions in the stored body are never forwarded: the reviewer
+    sees a fixed instruction for the error code plus validated violation
+    locations and declared bounds (see provider.review_violation), e.g. that
+    "methods" exceeded max_length 2 items rather than a character limit.
+    """
+    feedback = feedback if isinstance(feedback, dict) else {}
+    view = {
+        "instruction": REVIEW_JSON_RETRY
+        if feedback.get("error") == "MODEL_TOOL_CONTRACT"
+        else STRUCTURED_REVIEW_RETRY
+    }
+    diagnostics = feedback.get("diagnostics")
+    violations = []
+    for item in (diagnostics.get("validation", []) if isinstance(diagnostics, dict) else [])[:10]:
+        if not isinstance(item, dict) or not isinstance(item.get("type"), str):
+            continue
+        if not re.fullmatch(r"[a-z_]{1,40}", item["type"]):
+            continue
+        violation = {"type": item["type"]}
+        if isinstance(item.get("path"), str) and re.fullmatch(r"[A-Za-z0-9_.]{1,120}", item["path"]):
+            violation["path"] = item["path"]
+        for key in ("max_length", "min_length"):
+            if type(item.get(key)) is int and 0 <= item[key] <= 100_000:
+                violation[key] = item[key]
+        violations.append(violation)
+    if violations:
+        view["violations"] = violations
+    return view
+
+
 def review_wire_messages(messages):
     """The semantic reviewer sees a verified problem, not an answer to recompute.
 
@@ -723,9 +760,7 @@ def review_wire_messages(messages):
             else field_view(body)
         )
         if "protocol_feedback" in body:
-            visible["protocol_feedback"] = {
-                "instruction": "Return the declared schema with every required answer check, each field once, own evidence only. Obey character limits and use the learner language. For coverage: missing_goal_quote is empty for direct/demonstrated_method, an exact goal quote only for absent."
-            }
+            visible["protocol_feedback"] = structured_retry_feedback(body["protocol_feedback"])
         return [*messages[:-1], {**messages[-1], "content": compact_json(visible)}]
     if not isinstance(body, dict) or body.get("review_mode") != "computed_application":
         return messages
