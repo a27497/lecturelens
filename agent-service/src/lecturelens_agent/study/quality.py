@@ -86,6 +86,11 @@ class QualityReview(Contract):
     rubric_observations: Annotated[list[RubricObservation], Field(max_length=2)] = []
     answer_observations: Annotated[list[AnswerObservation], Field(max_length=2)] = []
     independent_solution: IndependentSolution | None = None
+    # Per-field issues from field-scoped reviews, so the runtime can tell a rejected
+    # tool-generated question from other defects. Older and unscoped reviews leave it empty.
+    field_issues: dict[
+        Literal["explanation", "question_1", "question_2"], Annotated[list[Issue], Field(max_length=10)]
+    ] = {}
 
 
 class AnswerCheck(Contract):

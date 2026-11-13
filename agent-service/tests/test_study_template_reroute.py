@@ -12,9 +12,12 @@ from test_study_goals import goal_verdict
 from lecturelens_agent.study.context import (
     PRACTICE_KIND_NOTICE,
     REVIEW_EVIDENCE_LIMIT,
+    RUN_CANDIDATE_LIMIT,
     TEMPLATE_PRACTICE_KINDS,
     build_messages,
     closed_practice_kinds,
+    counted_candidates,
+    template_mismatch,
 )
 from lecturelens_agent.study.contracts import materialize_practice
 from lecturelens_agent.study.goals import ClaimCheck
@@ -27,6 +30,8 @@ from lecturelens_agent.study.quality import (
     review_retry_instruction,
     review_schema,
 )
+from lecturelens_agent.study.runtime import SYSTEM as RUNTIME_SYSTEM
+from lecturelens_agent.study.store import RUN_MODEL_CALL_LIMIT
 from lecturelens_agent.study.support_review import (
     COVERAGE_SYSTEM,
     FIELD_EVIDENCE_INSTRUCTION,
@@ -34,6 +39,7 @@ from lecturelens_agent.study.support_review import (
     CoverageVerdict,
     FieldCheck,
     GoalFieldCheck,
+    GoalFieldSupportVerdict,
     MethodCoverageVerdict,
 )
 
@@ -331,3 +337,214 @@ def test_prompts_state_the_shared_bound_and_goal_mode_still_drops_the_field_inst
 def test_one_retry_instruction_per_review_error_code():
     assert review_retry_instruction("MODEL_TOOL_CONTRACT") == REVIEW_JSON_RETRY
     assert review_retry_instruction("MODEL_REVIEW_CONTRACT") == LEGACY_REVIEW_RETRY
+
+
+# --- T2: an unsupported tool-generated question also closes the template ---
+
+
+@pytest.mark.parametrize(
+    "kind,field_issues,closed",
+    [
+        ("interval_halving", {"question_2": ["unsupported_question"]}, True),
+        ("search_cost", {"question_2": ["unsupported_question"]}, True),
+        # The model-written concept question and explanation remain repairable in place.
+        ("interval_halving", {"question_1": ["unsupported_question"]}, False),
+        ("interval_halving", {"explanation": ["unsupported_explanation"]}, False),
+        # Free-form practice writes its own application.
+        ("general", {"question_2": ["unsupported_question"]}, False),
+    ],
+)
+def test_unsupported_generated_question_closes_only_template_kinds(kind, field_issues, closed):
+    rejected = {"tool": "create_practice_set", "arguments": {"title": "Draft"}}
+    rejected["result"] = {
+        "quality": {
+            "accepted": False,
+            "issues": sorted({i for found in field_issues.values() for i in found}),
+            "feedback": "Fix it.",
+            "field_issues": field_issues,
+        }
+    }
+    assert closed_practice_kinds([search(kind), rejected]) == ([kind] if closed else [])
+    assert template_mismatch(rejected["result"]["quality"]) is ("question_2" in field_issues)
+
+
+def test_field_review_records_issues_per_field():
+    from test_study_goals import goal_body
+
+    body = goal_body()
+    data = goal_verdict(body)
+    data["checks"][2].update(issue="unsupported_question", correction="Use a taught operation.")
+    review = GoalFieldSupportVerdict.model_validate(data, context=body).review()
+    assert review.field_issues == {"question_2": ["unsupported_question"]}
+    assert "unsupported_question" in review.issues
+    accepted = GoalFieldSupportVerdict.model_validate(goal_verdict(body), context=body).review()
+    assert accepted.field_issues == {}
+
+
+# --- T3: a closed template's candidate does not use a repair slot ---
+
+
+def test_closed_template_candidate_is_not_counted_toward_the_candidate_limit():
+    closed = [search("interval_halving"), candidate("create_interval_practice", ["goal_mismatch"])]
+    assert counted_candidates(closed) == 0
+    rerouted = [*closed, search("general"), candidate("create_practice_set", ["unsupported_question"])]
+    assert counted_candidates(rerouted) == 1
+    ordinary = [search("general"), candidate("create_practice_set", ["goal_mismatch"])]
+    assert counted_candidates([*ordinary, ordinary[1]]) == 2
+    assert f"At most {RUN_CANDIDATE_LIMIT} candidates." in RUNTIME_SYSTEM
+
+
+def staged_provider(runtime, interval_review, general_reviews):
+    """Interval candidate first, then general candidates reviewed in the given order."""
+    contexts, reviews, general = [], [], []
+
+    def decide(messages, timeout):
+        context = json.loads(messages[-1]["content"])
+        contexts.append(context)
+        if not context["evidence"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "peak", "practice_kind": "interval_halving"},
+            }
+        if "closed_practice_kinds" not in context:
+            return {"name": "create_interval_practice", "arguments": interval_arguments()}
+        if context.get("practice_kind") == "interval_halving":
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "peak", "practice_kind": "general"},
+            }
+        arguments = general_arguments()
+        arguments["explanation"] += " 修订" * len(general)  # each repair changes content
+        general.append(arguments)
+        return {"name": "create_practice_set", "arguments": arguments}
+
+    pending = list(general_reviews)
+
+    def review(messages, timeout):
+        body = json.loads(messages[-1]["content"])
+        reviews.append(body["review_mode"])
+        if body["review_mode"] == "course_methods_v1":
+            data = {
+                "course_fact": "Compare the middle element with its neighbours.",
+                "evidence_ids": ["e1"],
+                "support": "demonstrated_method",
+                "missing_goal_quote": "",
+                "methods": [
+                    {
+                        "operation": "比较中间元素与邻居",
+                        "input": "数组",
+                        "output": "递归方向",
+                        "evidence_id": "e1",
+                    }
+                ],
+            }
+            return {"review": MethodCoverageVerdict.model_validate(data, context=body).review().model_dump()}
+        if "computed" in body["review_mode"]:
+            return {"review": interval_review}
+        verdict = pending.pop(0)
+        if verdict is not None:
+            return {"review": verdict}
+        data = goal_verdict(body)
+        data["application_method_check"] = data["checks"][2].pop("method_alignment")
+        accepted = review_contract(review_mode=body["review_mode"]).model_validate(data, context=body)
+        return {"review": accepted.review().model_dump()}
+
+    runtime.provider.decide, runtime.provider.review = decide, review
+    return contexts, reviews
+
+
+GENERATED_QUESTION_REJECTION = {
+    "issues": ["unsupported_question"],
+    "feedback": "question_2: the course does not teach guessing a hidden number.",
+    "field_issues": {"question_2": ["unsupported_question"]},
+}
+EXPLANATION_REJECTION = {"issues": ["unsupported_explanation"], "feedback": "Cite the explanation source."}
+
+
+def test_closed_template_returns_its_slot_so_two_general_attempts_remain(setup):
+    _, _, runtime, _ = setup
+    contexts, reviews = staged_provider(runtime, GENERATED_QUESTION_REJECTION, [EXPLANATION_REJECTION, None])
+    runtime.execute(test_study.start(setup))
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded"
+    tools, quality = run_events(setup)
+    assert tools == [
+        "search_course_evidence",
+        "create_interval_practice",
+        "search_course_evidence",
+        "create_practice_set",
+        "create_practice_set",
+    ]
+    assert quality == [False, False, True]
+    left = [c["budget"]["candidates_left"] for c in contexts if "budget" in c]
+    assert left[-1] == RUN_CANDIDATE_LIMIT - 1  # the closed template candidate was not counted
+    assert result["run"]["model_calls"] == 9
+    assert result["run"]["model_calls"] <= RUN_MODEL_CALL_LIMIT
+
+
+def test_after_a_returned_slot_two_ordinary_rejections_still_exhaust_the_run(setup):
+    _, _, runtime, _ = setup
+    staged_provider(runtime, GENERATED_QUESTION_REJECTION, [EXPLANATION_REJECTION, EXPLANATION_REJECTION])
+    runtime.execute(test_study.start(setup))
+    result = test_study.read(setup)
+    assert result["run"]["error_code"] == "QUALITY_REPAIR_EXHAUSTED"
+    _, quality = run_events(setup)
+    assert quality == [False, False, False]
+
+
+def test_ordinary_template_rejection_still_counts_toward_the_limit(setup):
+    _, _, runtime, _ = setup
+    # unsupported_explanation on a template candidate is repaired in place and counted.
+    contexts, _ = staged_provider(runtime, EXPLANATION_REJECTION, [])
+    runtime.execute(test_study.start(setup))
+    assert not any("closed_practice_kinds" in c for c in contexts)
+    assert [c["budget"]["candidates_left"] for c in contexts if "budget" in c][-1] == RUN_CANDIDATE_LIMIT - 1
+
+
+# --- T1: window reads batched in one response keep the decision's authorization ---
+
+
+def test_second_window_read_in_one_response_survives_eviction_by_the_first(setup):
+    _, authority, runtime, _ = setup
+    base = authority.read
+
+    def read(scope, action="CHECK", **arguments):
+        if action == "SEARCH":
+            return base(scope, "READ", evidence_ids=[f"s{i}" for i in range(1, 9)])
+        if action == "WINDOW":
+            anchor = arguments["evidence_id"]
+            return base(scope, "READ", evidence_ids=[f"{anchor}-prev", anchor, f"{anchor}-next"])
+        return base(scope, action, **arguments)
+
+    authority.read = read
+    calls = []
+
+    def decide(messages, timeout):
+        context = json.loads(messages[-1]["content"])
+        calls.append(context)
+        if not context["evidence"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "halving", "practice_kind": "interval_halving"},
+            }
+        if len(calls) == 2:
+            # e2 is visible now; the first read's three passages evict it from the eight-ID selection.
+            return {
+                "calls": [
+                    {"name": "read_evidence_window", "arguments": {"evidence_id": "e1"}},
+                    {"name": "read_evidence_window", "arguments": {"evidence_id": "e2"}},
+                ]
+            }
+        return {"name": "create_interval_practice", "arguments": interval_arguments()}
+
+    runtime.provider.decide = decide
+    runtime.execute(test_study.start(setup))
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+    tools, _ = run_events(setup)
+    assert tools == [
+        "search_course_evidence",
+        "read_evidence_window",
+        "read_evidence_window",
+        "create_interval_practice",
+    ]

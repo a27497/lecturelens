@@ -203,7 +203,7 @@ def test_long_serial_searches_complete_beyond_the_former_reservation_limit(setup
     assert response["artifact"]["explanation"] and len(response["artifact"]["questions"]) == 2
     assert summary["model_calls"] == 6 and summary["tool_calls"] == 4
     assert summary["method_observations"] == 1 and summary["duplicate_observations"] == 0
-    assert summary["reservations"] == [4515, 13695, 15849, 16368, 16842, 10883]
+    assert summary["reservations"] == [4513, 13695, 15847, 16366, 16840, 10883]
     # This trajectory needs more than the former 64,000 ceiling and all six former model calls.
     assert 64000 < summary["reserved_tokens"] == sum(summary["reservations"]) < RUN_RESERVED_TOKEN_LIMIT
     events = test_study.read(setup, "EVENTS")["events"]

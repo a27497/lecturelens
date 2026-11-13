@@ -81,6 +81,7 @@ class FieldSupportVerdict(Contract):
             raise ValueError("Review every field exactly once")
         fields = {item["field"]: item for item in field_view(body)["fields"]}
         issues, grounds, corrections, facts, answers = [], {}, [], [], []
+        field_issues = {}
         for check in self.checks:
             field = fields[check.field]
             evidence = {item["evidence_id"]: item["text"] for item in field["own_evidence"]}
@@ -113,6 +114,7 @@ class FieldSupportVerdict(Contract):
             if check.answer_check is not None and not check.answer_check.matches:
                 if "goals_v1" in body["review_mode"]:
                     issues.append("incorrect_answer")
+                    field_issues.setdefault(check.field, []).append("incorrect_answer")
                     corrections.append(
                         f"{check.field}: reference conflicts with independent answer: {check.answer_check.answer}"
                     )
@@ -160,6 +162,7 @@ class FieldSupportVerdict(Contract):
                 )
             if check.issue != "none":
                 issues.append(check.issue)
+                field_issues.setdefault(check.field, []).append(check.issue)
                 corrections.append(f"{check.field}: {check.correction}")
         self._review = QualityReview(
             issues=list(dict.fromkeys(issues)),
@@ -167,6 +170,7 @@ class FieldSupportVerdict(Contract):
             feedback="\n".join(corrections) or "OK",
             grounds=grounds,
             answer_observations=answers,
+            field_issues={field: list(dict.fromkeys(found)) for field, found in field_issues.items()},
             method_assessment=next(
                 (check.method_alignment for check in self.checks if check.method_alignment), None
             ),
@@ -296,6 +300,11 @@ class GoalFieldSupportVerdict(FieldSupportVerdict):
         unsupported = [c for c in self.explanation_checks if not c.supported or c.id in guarded]
         if unsupported:
             self._review.issues = list(dict.fromkeys([*self._review.issues, "unsupported_explanation"]))
+            found = self._review.field_issues.get("explanation", [])
+            self._review.field_issues = {
+                **self._review.field_issues,
+                "explanation": list(dict.fromkeys([*found, "unsupported_explanation"])),
+            }
             details = " ".join(
                 f"{c.id} {claims[c.id]}: "
                 + (
