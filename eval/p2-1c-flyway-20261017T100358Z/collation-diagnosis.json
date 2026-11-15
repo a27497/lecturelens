@@ -1,0 +1,27 @@
+{
+  "failed_version": "13",
+  "sqlState": "HY000",
+  "vendorCode": 3780,
+  "schema_defaults": [
+    {
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    }
+  ],
+  "referenced_column": {
+    "table": "analysis_task",
+    "column": "id",
+    "column_type": "varchar(64)",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_unicode_ci"
+  },
+  "referencing_column_inferred_from_frozen_V13": {
+    "table": "video_keyframe_analysis",
+    "column": "task_id",
+    "column_type": "varchar(64)",
+    "collation": "utf8mb4_0900_ai_ci"
+  },
+  "statement_executed_successfully": false,
+  "reason": "V13 inherits schema collation, unlike referenced analysis_task.id",
+  "error_reference": "https://dev.mysql.com/doc/mysql-errors/8.4/en/server-error-reference.html"
+}

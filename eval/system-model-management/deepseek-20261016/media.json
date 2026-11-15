@@ -1,0 +1,18 @@
+{
+  "source": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/resources/lecture-1-the-geometry-of-linear-equations/",
+  "publisher": "MIT OpenCourseWare",
+  "speaker": "Gilbert Strang",
+  "license": "CC BY-NC-SA 4.0",
+  "original_sha256": "a3fa5bb22fa65d96f95452ae8ef80cd0a743f24ff6d47b7a24332598fa316a31",
+  "original_file": ".data/baseline-asr-20261015/linear.mp4",
+  "clip_start_seconds": 420,
+  "clip_end_seconds": 510,
+  "clip_duration_seconds": 90.023267,
+  "clip_bytes": 8469218,
+  "clip_sha256": "d57bd57bcd7d72883f712600ba0048a57bf75d74602f1b89b36c9057a6b06df5",
+  "clip_private_path": ".data/system-model-management/deepseek-20261016/mit-linear-420-510-embedded.mp4",
+  "embedded_subtitle_streams": 1,
+  "subtitle_bytes": 1845,
+  "subtitle_sha256": "a5bfcc9acae1b11a937132c33672f4c34a26476fc76b3b137588102e92fc65c7",
+  "subtitle_cues": 28
+}

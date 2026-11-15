@@ -134,7 +134,7 @@ cp .env.agent.example .env.agent.local
 
 ## 项目范围
 
-本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆尚未交付；证据闪卡与 FSRS 自评复习调度已实验性实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 说明](docs/P7_EVIDENCE_FLASHCARDS.md)；独立[真实评测通道](eval/p7-real/README.md)已实现，仅完成离线验证，真实请求为 0。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。
+本项目重点是**课程证据约束下的学习 Agent 与可恢复工程链路**。作答反馈是可核对的学习建议，**不是自动评分**；长期记忆尚未交付；证据闪卡与 FSRS 自评复习调度已实验性实现（仅离线 Mock，真实生成质量 NOT_RUN），见 [P7 说明](docs/P7_EVIDENCE_FLASHCARDS.md)；独立[真实评测通道](eval/p7-real/README.md)已实现，仅完成离线验证，真实请求为 0。真实模型演示基于已知公开课程，不声称已经完成未见课程的系统性泛化验证。历史故障、已知 Minor 和评测边界保留在 [验收报告](HUMAN_ACCEPTANCE_REPORT.md) 与 [评测索引](eval/README.md) 中。维护环境的 Agent 契约修复与真实模型质量验收分别记录，当前部署身份及未验证项见[部署说明](docs/DEPLOYMENT.md#study-agent-候选部署与回滚)。
 
 ## License & credits
 

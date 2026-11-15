@@ -1,0 +1,198 @@
+{
+  "kind": "SUPPLEMENTAL_MATERIALS_ONLY_REUSED_EVIDENCE",
+  "original_input_estimate": 69986,
+  "model": "lecturelens-local-qwen",
+  "asr_calls": 0,
+  "translation_calls": 0,
+  "publication": false,
+  "structured_valid": false,
+  "exception_class": "OpenAiCompatibleLlmException",
+  "calls": [
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5612,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1147,
+      "completion_tokens": 108,
+      "duration_millis": 63428,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5679,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1185,
+      "completion_tokens": 85,
+      "duration_millis": 56494,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5691,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1206,
+      "completion_tokens": 116,
+      "duration_millis": 61461,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5653,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1215,
+      "completion_tokens": 88,
+      "duration_millis": 57225,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5734,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1329,
+      "completion_tokens": 98,
+      "duration_millis": 63697,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5588,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1275,
+      "completion_tokens": 97,
+      "duration_millis": 61587,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5725,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1400,
+      "completion_tokens": 73,
+      "duration_millis": 63810,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5617,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1179,
+      "completion_tokens": 115,
+      "duration_millis": 60146,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5663,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1104,
+      "completion_tokens": 89,
+      "duration_millis": 51884,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5655,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1099,
+      "completion_tokens": 62,
+      "duration_millis": 48624,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5713,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1140,
+      "completion_tokens": 83,
+      "duration_millis": 53906,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5732,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1251,
+      "completion_tokens": 109,
+      "duration_millis": 62697,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5718,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1228,
+      "completion_tokens": 75,
+      "duration_millis": 56475,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "MAP",
+      "estimated_input_tokens": 5103,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1114,
+      "completion_tokens": 106,
+      "duration_millis": 55633,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "REDUCE",
+      "estimated_input_tokens": 5476,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 1311,
+      "completion_tokens": 89,
+      "duration_millis": 62895,
+      "finish_reason": "stop"
+    },
+    {
+      "phase": "REDUCE",
+      "estimated_input_tokens": 1064,
+      "input_limit": 5734,
+      "max_output_tokens": 512,
+      "prompt_tokens": 206,
+      "completion_tokens": 71,
+      "duration_millis": 12422,
+      "finish_reason": "stop"
+    }
+  ],
+  "utc": "2026-10-16T14:32:17.296349+00:00",
+  "parent_trial": "normal-algorithms-1",
+  "parent_task_id": "task_8b03a2fbae7d40039386451c71cb784a",
+  "candidate_jar_sha256": "209d9b08d44f31269a7649953db850606d262293c00e6665b4500f4000e67a5e",
+  "source_sha256": "b1b24234b035ec2d27b5271cce105f5f01e8715c7ec567ec574caaa8a532b4dc",
+  "translated_sha256": "89de1baf8ab9dcfdfbd9d0828b53c39ba19b58b9bff349c808df72a3f1fce133",
+  "runtime_source_sha256": "49450ee6bd0d6c165dbb7cc42faec93c000343e56df2b645b1bf83e1fa62145b",
+  "fresh_full_chain": false,
+  "worker_started": false,
+  "configuration_writes": 0,
+  "disk_before": {
+    "utc": "2026-10-16T14:32:17.266077+00:00",
+    "used_bytes": 116324720640,
+    "available_bytes": 38552690688,
+    "percent": 75.10760907131062,
+    "headroom_below_85_bytes": 15321078988.800003
+  },
+  "exit_code": 1,
+  "disk_after": {
+    "utc": "2026-10-16T14:47:18.423692+00:00",
+    "used_bytes": 116330586112,
+    "available_bytes": 38546825216,
+    "percent": 75.1113962420476,
+    "headroom_below_85_bytes": 15315213516.800003
+  },
+  "disk_violations": []
+}

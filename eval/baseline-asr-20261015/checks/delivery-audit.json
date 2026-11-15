@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/delivery-audit.py"
+  ],
+  "started_at_utc": "2026-10-15T11:19:50.436766+00:00",
+  "finished_at_utc": "2026-10-15T11:19:50.520959+00:00",
+  "exit_code": 0,
+  "stdout": "{\n  \"task_error_code_counts\": {\n    \"TASK_RUNNER_EXECUTION_FAILED\": 9,\n    \"MQ_DELIVERY_EXHAUSTED\": 1\n  },\n  \"task_terminal_message_counts\": {\n    \"Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline\": 8,\n    \"Pipeline step GENERATE_LEARNING_PACKAGE failed: OpenAI-compatible LLM request failed category=INVALID_REQUEST;httpStatus=400;providerErrorCode=400;retryable=false;elapsedMs=66\": 1,\n    \"Task delivery failed; create a retry task\": 1\n  },\n  \"exhausted_delivery_trials\": [\n    {\n      \"trial_id\": \"v2-probability-2\",\n      \"task_id\": \"task_a6466fb49ebe4d7e840dc11f220e3b4e\",\n      \"outbox_delivery_attempts\": 8,\n      \"outbox_retries_after_initial_attempt\": 7,\n      \"task_retry_count\": 0,\n      \"entered_asr\": false\n    }\n  ],\n  \"broker_observation\": \"For the exhausted trial the broker rejected all deliveries with response-code=50001 and CL/CQ/INDEX disk usage 0.91. Host df measured 91% after the trials. No service configuration or disk cleanup was performed to hide or replace this failure.\"\n}\n",
+  "stderr": ""
+}

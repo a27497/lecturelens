@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "-m",
+    "pytest",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/test_score.py",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=/home/dev/projects/lecturelens/eval/baseline-asr-20261015/checks/mechanism-final.xml"
+  ],
+  "started_at_utc": "2026-10-15T11:17:14.511380+00:00",
+  "finished_at_utc": "2026-10-15T11:17:15.194780+00:00",
+  "exit_code": 0,
+  "stdout": "........                                                                 [100%]\n- generated xml file: /home/dev/projects/lecturelens/eval/baseline-asr-20261015/checks/mechanism-final.xml -\n8 passed in 0.12s\n",
+  "stderr": ""
+}

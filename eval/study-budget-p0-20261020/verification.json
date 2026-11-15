@@ -1,0 +1,798 @@
+{
+  "baseline_commit": "bd142130e79ee60012d89d515b5bc4577d277b60",
+  "candidate_code_commit": "57d3b9ebd2b247f2748994c6f077d1507575718c",
+  "real_provider_quality": "NOT_RUN; awaiting separate user authorization",
+  "paid_model_calls": 0,
+  "production_database_access_this_turn": false,
+  "deployment_or_service_restart": false,
+  "environment": {
+    "python": "3.13.15",
+    "versions": {
+      "langgraph": "1.2.11",
+      "langgraph-checkpoint-postgres": "3.1.2",
+      "psycopg": "3.3.5",
+      "pytest": "9.1.1",
+      "ruff": "0.16.7"
+    },
+    "database_name": "lecturelens_agent_test",
+    "postgresql": "PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+    "pgvector": "0.8.6",
+    "database_container": "lecturelens-budget-p0-test-20261020"
+  },
+  "final_results": {
+    "full_python_suite": {
+      "passed": 751,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "seconds": 169.79
+    },
+    "focused_suite": {
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "new_pure_unit_cases": 15,
+      "new_postgresql_cases": 9,
+      "existing_support_review_cases": 17
+    },
+    "sigkill_smoke": {
+      "passed": 30,
+      "failed": 0,
+      "points": 30,
+      "trials_per_point": 1,
+      "full_repeated_matrix": false
+    }
+  },
+  "baseline_bug_reproduction": {
+    "expected_status": "budget_exceeded",
+    "pytest_returncode": 1,
+    "record": "study-budget-p0-baseline-final-fixture",
+    "raw_output": "baseline-failure.txt"
+  },
+  "retained_development_failures": {
+    "initial_full_suite": {
+      "passed": 747,
+      "failed": 2,
+      "reason": "existing assertions expected old padded/ASCII-escaped JSON accounting; expectations updated without removing privacy/cancellation assertions"
+    },
+    "cancelled_full_run": "study-budget-p0-full-final; cancelled with verified supervisor identity before Unicode-bound correction; not a pass"
+  },
+  "source_and_test_sha256": {
+    "agent-service/src/lecturelens_agent/study/intervals.py": "712717f32e910a8293c5f4a2751cf885c3dbadaf0678b8c679263139794fc585",
+    "agent-service/src/lecturelens_agent/study/feedback.py": "2266f1242273d2355132ac5b2ef3219c3dc0af067686a5be714be1ff95454888",
+    "agent-service/src/lecturelens_agent/study/store.py": "7b562025d280a7310ee5fb11d1a7d0333d7a1cb5ba49e9a799a9904fb359f31b",
+    "agent-service/src/lecturelens_agent/study/authority.py": "5b4629186886dd63e239d2d0931f9b82d981b9fcfdba76aa54122dd688249700",
+    "agent-service/src/lecturelens_agent/study/attempts.py": "a714bd030a6190a9f4278ed5375a2d584fcefdef04b81e1efe221e98b75b48f9",
+    "agent-service/src/lecturelens_agent/study/metrics_report.py": "7def08a22f789e2695f2042d274c44859bda7b3ec9bc770589a739e194af9328",
+    "agent-service/src/lecturelens_agent/study/__init__.py": "b4cf474e3760e9cc117f211e7f6916cd9f35dcaec2d67ce9326b25770dd7a185",
+    "agent-service/src/lecturelens_agent/study/goals.py": "23f3c1a0e644c842f8f3c4d3221453143b993dc4400aef46962818eb0e212a4a",
+    "agent-service/src/lecturelens_agent/study/solution.py": "be3367138dc5d11fbf4dfac8f1d89a2840de54efe006a8109e8db12b407f8728",
+    "agent-service/src/lecturelens_agent/study/support_review.py": "c055cc6a2f45f22f29ba9cfc62a228c5a43b506c601fd63b8cde9aa81c151cc9",
+    "agent-service/src/lecturelens_agent/study/feedback_store.py": "1653a53a222626bf23df4af3edf8e53ff5f75544c52aa146d57b73daf01ad85e",
+    "agent-service/src/lecturelens_agent/study/context.py": "101abf293da65fd0391d0ebdd6bf30b6e2dd8bfd7233c0ba9bfbf42ec5038956",
+    "agent-service/src/lecturelens_agent/study/trace_cli.py": "d2d6b199e0cf6ccf9befb26074a610121d8c7a3fef4974f2b9c9659ea00ba2d4",
+    "agent-service/src/lecturelens_agent/study/sequences.py": "ff087bd40d6eeddda06b6ea22aafccf62fb1080e883e382806b058da110c93a4",
+    "agent-service/src/lecturelens_agent/study/provider.py": "102aebda5d32ac1e226d16098c66d9db17bad9ba88310ebb38eee4ee8ba5e50e",
+    "agent-service/src/lecturelens_agent/study/resilience.py": "dcb167699a375c2413d97106d79d30616f90f6339e2ddf32060d221eb8253671",
+    "agent-service/src/lecturelens_agent/study/examples.py": "53bb9c028f752207a28c364bb2a966cc977f0958482a74a1c0eda760cf13bd64",
+    "agent-service/src/lecturelens_agent/study/trace.py": "0395b96e3ea70906e3709af6fa7b73f793617a7e91fd2d14bad4c7c3d9056bd6",
+    "agent-service/src/lecturelens_agent/study/contracts.py": "cdb51920df6eea12c04d0501f028cf4efc1b3a0ad15bb560426a5e96fdca29d9",
+    "agent-service/src/lecturelens_agent/study/costs.py": "193b85e5e33ba30d701fced0f8342d905050802f9b700dffbad600a5a3b89505",
+    "agent-service/src/lecturelens_agent/study/strings.py": "f850d26f0704e103ac9dd2f0a6514c26bf3f3edfb1eb472d2c2767a167b3151c",
+    "agent-service/src/lecturelens_agent/study/call_journal.py": "5fd6d99470997d9ed859da04ee2ceacb9039e0c7c56f0efef13c629f662c2b35",
+    "agent-service/src/lecturelens_agent/study/connections.py": "3ff664c9caeafe28493442d3ddabd27638db7ff72de6a1cd514e24ffc802a317",
+    "agent-service/src/lecturelens_agent/study/failures.py": "30d6aaa1184808d80440d2410e351ba25f829a68060a449c4364cc9f5331d265",
+    "agent-service/src/lecturelens_agent/study/replay.py": "362c2c7769b415c5030b8623eaa5afc6cc0fb6783194abef3e3fcbe5354037f4",
+    "agent-service/src/lecturelens_agent/study/models.py": "6057f9ce329f8b5001937feb8c55a3abe71642d1b6e228b433cffbae1ef7142f",
+    "agent-service/src/lecturelens_agent/study/linear.py": "f34b6f79f1c56b351ab861736735f40a6af0717df1b0d5048e4ddf42a6f36693",
+    "agent-service/src/lecturelens_agent/study/method_scope.py": "9dad5f0de4d139b556c17476c34d56ca678910facba3a4e6bea3999520f3b704",
+    "agent-service/src/lecturelens_agent/study/approval.py": "d92a173f124dd41d65d1c37f7d343dc91a6077791bc61080c3f9f133e853909c",
+    "agent-service/src/lecturelens_agent/study/grounded.py": "5be2cb5c143c2a1ec0aab714afb39c49e9049a65983aa184ac1256e4ed6f5833",
+    "agent-service/src/lecturelens_agent/study/quality.py": "02d6e6e9511edd1643c101df23116766d59af4c1e8fc8cd543eba80ee2aaf4b8",
+    "agent-service/src/lecturelens_agent/study/telemetry.py": "df46b3e0484233b1e96a21f1ceff3bbe35cf458f6aebe0ac8dd8ab5a89cff816",
+    "agent-service/src/lecturelens_agent/study/runtime.py": "884d766a9e2d30712b88ea7a4a0c5d3517e4240a6b0f24eb44dbc114cf616b8a",
+    "agent-service/tests/test_study_budget.py": "1969e86e58b4e54068d150e489d3af3a1e1f77477cb8cbaef1b8ca6318d2b392",
+    "agent-service/tests/test_study_budget_context.py": "3a44b2c2fa68d1fab8acf6f10376586131cdf4d800a1231ccabe7bb4d9275d07",
+    "agent-service/tests/test_study_support_review.py": "76ed32ac76ef58cd1699f1ee9ca851790fcabb3163338efec35f4d86d1ffd195"
+  },
+  "lint_and_whitespace": [
+    {
+      "command": [
+        "/home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/bin/ruff",
+        "check",
+        "agent-service/src",
+        "agent-service/tests"
+      ],
+      "returncode": 0,
+      "stdout": "All checks passed!"
+    },
+    {
+      "command": [
+        "/home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/bin/ruff",
+        "format",
+        "--check",
+        "agent-service/src",
+        "agent-service/tests"
+      ],
+      "returncode": 0,
+      "stdout": "90 files already formatted"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": ""
+    }
+  ],
+  "supervisor_sha256": "4c9b291b34003f7d7bf9461c1e0ec76a2295de45b83808cb03fc45fd2a746f5a",
+  "supervisor_terminal_records": [
+    {
+      "name": "study-budget-p0-after-bounded",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:52:47.679702+00:00",
+      "runner_pid": 3121005,
+      "runner_start_ticks": 4846577,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-after-bounded/output.log",
+      "disk_before": {
+        "used_bytes": 126144241664,
+        "available_bytes": 28733169664,
+        "allowed": true
+      },
+      "child_pid": 3121009,
+      "pgid": 3121009,
+      "child_start_ticks": 4846583,
+      "cleanup": {
+        "pgid": 3121009,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:52:50.393678+00:00",
+      "elapsed_seconds": 2.7140028049980174,
+      "disk_after": {
+        "used_bytes": 126144335872,
+        "available_bytes": 28733075456,
+        "allowed": true
+      },
+      "log_sha256": "2daef183c217a187090717d2d8b0778f6f650a40929989941fb06cbc2066e3f8"
+    },
+    {
+      "name": "study-budget-p0-after-compact",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:51:19.574047+00:00",
+      "runner_pid": 3115363,
+      "runner_start_ticks": 4837765,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-after-compact/output.log",
+      "disk_before": {
+        "used_bytes": 126142054400,
+        "available_bytes": 28735356928,
+        "allowed": true
+      },
+      "child_pid": 3115369,
+      "pgid": 3115369,
+      "child_start_ticks": 4837772,
+      "cleanup": {
+        "pgid": 3115369,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:51:22.185813+00:00",
+      "elapsed_seconds": 2.611788952999632,
+      "disk_after": {
+        "used_bytes": 126142148608,
+        "available_bytes": 28735262720,
+        "allowed": true
+      },
+      "log_sha256": "7abc8920af9cab14ef2c579a3e09b4fcdf37a4845ff0098496d36d8672535009"
+    },
+    {
+      "name": "study-budget-p0-after-initial",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:50:28.020355+00:00",
+      "runner_pid": 3111939,
+      "runner_start_ticks": 4832610,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-after-initial/output.log",
+      "disk_before": {
+        "used_bytes": 126139428864,
+        "available_bytes": 28737982464,
+        "allowed": true
+      },
+      "child_pid": 3111964,
+      "pgid": 3111964,
+      "child_start_ticks": 4832617,
+      "cleanup": {
+        "pgid": 3111964,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:50:30.986251+00:00",
+      "elapsed_seconds": 2.965920932998415,
+      "disk_after": {
+        "used_bytes": 126139543552,
+        "available_bytes": 28737867776,
+        "allowed": true
+      },
+      "log_sha256": "533a0baf441208980ecb23fbe4615b8a9e589d7055e25e11f1ef208d6f5de27d"
+    },
+    {
+      "name": "study-budget-p0-baseline",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:49:47.456249+00:00",
+      "runner_pid": 3109254,
+      "runner_start_ticks": 4828552,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-baseline/output.log",
+      "disk_before": {
+        "used_bytes": 126122278912,
+        "available_bytes": 28755132416,
+        "allowed": true
+      },
+      "child_pid": 3109259,
+      "pgid": 3109259,
+      "child_start_ticks": 4828561,
+      "cleanup": {
+        "pgid": 3109259,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:49:52.786441+00:00",
+      "elapsed_seconds": 5.330226597005094,
+      "disk_after": {
+        "used_bytes": 126138433536,
+        "available_bytes": 28738977792,
+        "allowed": true
+      },
+      "log_sha256": "5b8cd5baff642ad6815aa00a507f7f63c38e8f449434d1c367d5e9154ea9c970"
+    },
+    {
+      "name": "study-budget-p0-baseline-final-fixture",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:55:16.000134+00:00",
+      "runner_pid": 3130982,
+      "runner_start_ticks": 4861362,
+      "cwd": "/tmp/lecturelens-budget-p0-baseline/agent-service",
+      "executable": "python",
+      "argv_sha256": "c0889b946095c6d56b9c8344100403a330481100853cbc2019b61ff69eb2a19b",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-baseline-final-fixture/output.log",
+      "disk_before": {
+        "used_bytes": 126228553728,
+        "available_bytes": 28648857600,
+        "allowed": true
+      },
+      "child_pid": 3131083,
+      "pgid": 3131083,
+      "child_start_ticks": 4861415,
+      "cleanup": {
+        "pgid": 3131083,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:55:18.195994+00:00",
+      "elapsed_seconds": 2.1958829579962185,
+      "disk_after": {
+        "used_bytes": 126229073920,
+        "available_bytes": 28648337408,
+        "allowed": true
+      },
+      "log_sha256": "0d52aa55d88b24624950f7a791ee1692f9b7ef375cbda2c8ef442853067d40c4"
+    },
+    {
+      "name": "study-budget-p0-before",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:49:38.662678+00:00",
+      "runner_pid": 3108629,
+      "runner_start_ticks": 4827674,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "b4e43fea864c8d11c6e81fa0be528091c45752a6f5b8b244496791be75e0360b",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-before/output.log",
+      "disk_before": {
+        "used_bytes": 126096564224,
+        "available_bytes": 28780847104,
+        "allowed": true
+      },
+      "child_pid": 3108635,
+      "pgid": 3108635,
+      "child_start_ticks": 4827681,
+      "cleanup": {
+        "pgid": 3108635,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:49:41.826072+00:00",
+      "elapsed_seconds": 3.1634213069992256,
+      "disk_after": {
+        "used_bytes": 126096986112,
+        "available_bytes": 28780425216,
+        "allowed": true
+      },
+      "log_sha256": "b121ae0f11849660345de1fdd07a851729dc9ca6eda67d165a11216e89f61935"
+    },
+    {
+      "name": "study-budget-p0-crash-smoke",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T17:58:15.349669+00:00",
+      "runner_pid": 3147903,
+      "runner_start_ticks": 4879341,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0",
+      "executable": "python",
+      "argv_sha256": "e096f456dbeafb7b7c0bf732150e71ec6b4d4299723a30b4c8946b4e5cad5bf8",
+      "timeout_seconds": 300.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-crash-smoke/output.log",
+      "disk_before": {
+        "used_bytes": 126230581248,
+        "available_bytes": 28646830080,
+        "allowed": true
+      },
+      "child_pid": 3147928,
+      "pgid": 3147928,
+      "child_start_ticks": 4879350,
+      "cleanup": {
+        "pgid": 3147928,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:59:50.926210+00:00",
+      "elapsed_seconds": 95.57656536899594,
+      "disk_after": {
+        "used_bytes": 126232436736,
+        "available_bytes": 28644974592,
+        "allowed": true
+      },
+      "log_sha256": "2dedfc06756d25271ff573a315c346f55a5287722ffc03598cd388e8d6a2fd61"
+    },
+    {
+      "name": "study-budget-p0-crash-verified",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T18:04:31.684915+00:00",
+      "runner_pid": 3178651,
+      "runner_start_ticks": 4916977,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0",
+      "executable": "python",
+      "argv_sha256": "0b7d2144408f70465b82ca6a5369828911fb35682af87fb293c7f0074d83988c",
+      "timeout_seconds": 300.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-crash-verified/output.log",
+      "disk_before": {
+        "used_bytes": 126233276416,
+        "available_bytes": 28644134912,
+        "allowed": true
+      },
+      "child_pid": 3178655,
+      "pgid": 3178655,
+      "child_start_ticks": 4916983,
+      "cleanup": {
+        "pgid": 3178655,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T18:06:09.337683+00:00",
+      "elapsed_seconds": 97.65279285399447,
+      "disk_after": {
+        "used_bytes": 126234251264,
+        "available_bytes": 28643160064,
+        "allowed": true
+      },
+      "log_sha256": "2dedfc06756d25271ff573a315c346f55a5287722ffc03598cd388e8d6a2fd61"
+    },
+    {
+      "name": "study-budget-p0-focused-final",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T17:55:55.531485+00:00",
+      "runner_pid": 3134110,
+      "runner_start_ticks": 4865361,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "beded693838ce0f43c941f18e0ae332ba047661694a31f5cc6a5f5a6ffe46f46",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-focused-final/output.log",
+      "disk_before": {
+        "used_bytes": 126228746240,
+        "available_bytes": 28648665088,
+        "allowed": true
+      },
+      "child_pid": 3134126,
+      "pgid": 3134126,
+      "child_start_ticks": 4865368,
+      "cleanup": {
+        "pgid": 3134126,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:55:59.975304+00:00",
+      "elapsed_seconds": 4.443845520996547,
+      "disk_after": {
+        "used_bytes": 126228787200,
+        "available_bytes": 28648624128,
+        "allowed": true
+      },
+      "log_sha256": "985e9dfa6a1a67512c7357742be325a68b72a9539e78c0416b76ccab4cd30ace"
+    },
+    {
+      "name": "study-budget-p0-full-final",
+      "status": "CANCELLED",
+      "started_at_utc": "2026-10-19T18:00:11.078649+00:00",
+      "runner_pid": 3156009,
+      "runner_start_ticks": 4890917,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "1b8f7f01f2fbea6ce906d0c6dab53199940f1f1d83aab31fa82bb0a3f09be838",
+      "timeout_seconds": 600.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": -15,
+      "exit_code": 143,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-full-final/output.log",
+      "disk_before": {
+        "used_bytes": 126232580096,
+        "available_bytes": 28644831232,
+        "allowed": true
+      },
+      "child_pid": 3156013,
+      "pgid": 3156013,
+      "child_start_ticks": 4890923,
+      "cleanup": {
+        "pgid": 3156013,
+        "signals": [
+          "SIGTERM"
+        ],
+        "errors": [],
+        "targets": [
+          {
+            "pid": 3156013,
+            "ppid": 3156009,
+            "pgid": 3156013,
+            "state": "S",
+            "start_ticks": 4890923,
+            "signal": "SIGTERM"
+          },
+          {
+            "pid": 3158133,
+            "ppid": 3156013,
+            "pgid": 3158133,
+            "state": "S",
+            "start_ticks": 4893447,
+            "signal": "SIGTERM"
+          }
+        ],
+        "reaped_descendants": [
+          {
+            "pid": 3158133,
+            "returncode": -15
+          }
+        ],
+        "remaining": [],
+        "complete": true
+      },
+      "cancel_signal": "SIGTERM",
+      "finished_at_utc": "2026-10-19T18:00:37.235890+00:00",
+      "elapsed_seconds": 26.15726325000287,
+      "disk_after": {
+        "used_bytes": 126232961024,
+        "available_bytes": 28644450304,
+        "allowed": true
+      },
+      "log_sha256": "6eeb7d3eec55e471cdd55ace12dd4240767a01bfd6128ba04c7624e78b0c4bf5"
+    },
+    {
+      "name": "study-budget-p0-full-v1",
+      "status": "FAILED",
+      "started_at_utc": "2026-10-19T17:55:02.319574+00:00",
+      "runner_pid": 3129979,
+      "runner_start_ticks": 4860037,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "1b8f7f01f2fbea6ce906d0c6dab53199940f1f1d83aab31fa82bb0a3f09be838",
+      "timeout_seconds": 600.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 1,
+      "exit_code": 1,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-full-v1/output.log",
+      "disk_before": {
+        "used_bytes": 126147452928,
+        "available_bytes": 28729958400,
+        "allowed": true
+      },
+      "child_pid": 3130003,
+      "pgid": 3130003,
+      "child_start_ticks": 4860047,
+      "cleanup": {
+        "pgid": 3130003,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [
+          {
+            "pid": 3136405,
+            "returncode": 0
+          }
+        ],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:57:54.521113+00:00",
+      "elapsed_seconds": 172.20155949100445,
+      "disk_after": {
+        "used_bytes": 126230376448,
+        "available_bytes": 28647034880,
+        "allowed": true
+      },
+      "log_sha256": "fb5c10e10e771518e9d415d2746c925ada48a75c71fa9599c6871172adc47b7f"
+    },
+    {
+      "name": "study-budget-p0-full-verified",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T18:01:07.609613+00:00",
+      "runner_pid": 3160373,
+      "runner_start_ticks": 4896560,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "1b8f7f01f2fbea6ce906d0c6dab53199940f1f1d83aab31fa82bb0a3f09be838",
+      "timeout_seconds": 600.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-full-verified/output.log",
+      "disk_before": {
+        "used_bytes": 126232387584,
+        "available_bytes": 28645023744,
+        "allowed": true
+      },
+      "child_pid": 3160445,
+      "pgid": 3160445,
+      "child_start_ticks": 4896576,
+      "cleanup": {
+        "pgid": 3160445,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [
+          {
+            "pid": 3166433,
+            "returncode": 0
+          }
+        ],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T18:03:58.757574+00:00",
+      "elapsed_seconds": 171.1479850379983,
+      "disk_after": {
+        "used_bytes": 126233067520,
+        "available_bytes": 28644343808,
+        "allowed": true
+      },
+      "log_sha256": "d04e07ad1049e85a850d38d74db56b43fcfb7315e3969f701c21df088665bbe8"
+    },
+    {
+      "name": "study-budget-p0-regression-v1",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T17:53:29.886612+00:00",
+      "runner_pid": 3123793,
+      "runner_start_ticks": 4850796,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-regression-v1/output.log",
+      "disk_before": {
+        "used_bytes": 126145220608,
+        "available_bytes": 28732190720,
+        "allowed": true
+      },
+      "child_pid": 3123808,
+      "pgid": 3123808,
+      "child_start_ticks": 4850804,
+      "cleanup": {
+        "pgid": 3123808,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:53:32.947087+00:00",
+      "elapsed_seconds": 3.060495345001982,
+      "disk_after": {
+        "used_bytes": 126145331200,
+        "available_bytes": 28732080128,
+        "allowed": true
+      },
+      "log_sha256": "802b6d5931e5788bc926b70f5c5c96b42bac42946c2694abcfdf0ec2ef9a3d11"
+    },
+    {
+      "name": "study-budget-p0-regression-v2",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T17:54:24.250088+00:00",
+      "runner_pid": 3127316,
+      "runner_start_ticks": 4856233,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "f3c1c8559eb24a2421385389ea79d29d126a140898c56fccc2f9eab710adb58d",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-regression-v2/output.log",
+      "disk_before": {
+        "used_bytes": 126146899968,
+        "available_bytes": 28730511360,
+        "allowed": true
+      },
+      "child_pid": 3127331,
+      "pgid": 3127331,
+      "child_start_ticks": 4856240,
+      "cleanup": {
+        "pgid": 3127331,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T17:54:28.668403+00:00",
+      "elapsed_seconds": 4.418334502996004,
+      "disk_after": {
+        "used_bytes": 126147047424,
+        "available_bytes": 28730363904,
+        "allowed": true
+      },
+      "log_sha256": "5db00fb78a6c47499b75afd63482e3f462ba090bc5367acdf8eee046c68534ad"
+    },
+    {
+      "name": "study-budget-p0-unicode-focused",
+      "status": "SUCCEEDED",
+      "started_at_utc": "2026-10-19T18:00:48.232963+00:00",
+      "runner_pid": 3158884,
+      "runner_start_ticks": 4894629,
+      "cwd": "/home/dev/projects/lecturelens-study-budget-p0/agent-service",
+      "executable": "python",
+      "argv_sha256": "2ac89b049edcb337549aaea04a24ab5ac720fc7c4a137e2ef681af59b2c32a45",
+      "timeout_seconds": 180.0,
+      "grace_seconds": 2,
+      "cleanup_seconds": 3,
+      "child_returncode": 0,
+      "exit_code": 0,
+      "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/study-budget-p0-unicode-focused/output.log",
+      "disk_before": {
+        "used_bytes": 126232178688,
+        "available_bytes": 28645232640,
+        "allowed": true
+      },
+      "child_pid": 3158908,
+      "pgid": 3158908,
+      "child_start_ticks": 4894638,
+      "cleanup": {
+        "pgid": 3158908,
+        "signals": [],
+        "errors": [],
+        "targets": [],
+        "reaped_descendants": [],
+        "remaining": [],
+        "complete": true
+      },
+      "finished_at_utc": "2026-10-19T18:00:54.206848+00:00",
+      "elapsed_seconds": 5.973908093998034,
+      "disk_after": {
+        "used_bytes": 126232240128,
+        "available_bytes": 28645171200,
+        "allowed": true
+      },
+      "log_sha256": "3496ef54068a31e7b078ff4c6908ffa65637719b5601691cdc261a1c054834e2"
+    }
+  ],
+  "reproduction_child_commands": [
+    "python -m pytest tests/test_study_budget.py tests/test_study_budget_context.py tests/test_study_support_review.py -q -s",
+    "python -m pytest -q",
+    "python scripts/eval/check-study-crash-matrix.py --smoke --trials 1 --output NEW_ISOLATED_OUTPUT_DIRECTORY"
+  ],
+  "notes": [
+    "All long checks used the existing run_check.py supervisor and isolated test database.",
+    "Supervisor terminal records include intentionally failed baseline/development checks and one cancelled run; these are preserved, not counted as passes.",
+    "Original worktree git status still matches the initial list of modified/untracked paths.",
+    "No frozen eval runner or historical evaluation artifact was edited."
+  ],
+  "final_verification_record_names": [
+    "study-budget-p0-full-verified",
+    "study-budget-p0-crash-verified"
+  ]
+}

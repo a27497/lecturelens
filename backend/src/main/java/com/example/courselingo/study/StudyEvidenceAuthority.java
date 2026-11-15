@@ -22,11 +22,13 @@ public class StudyEvidenceAuthority {
     }
 
     public long current(String taskId,Long owner,boolean ready) {
-        var rows=jdbc.queryForList("SELECT content_revision,status FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL",taskId,owner);
+        var rows=jdbc.queryForList("SELECT content_revision,status,learning_ready_at FROM analysis_task WHERE id=? AND user_id=? AND deleted_at IS NULL",taskId,owner);
         if (rows.isEmpty()) throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
-        if (!"SUCCEEDED".equals(rows.getFirst().get("status"))) throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
+        // SUCCEEDED, or RUNNING after this run published its subtitles (subtitles-ready learning).
+        if (!com.example.courselingo.task.service.LearningAvailability.learnable(rows.getFirst().get("status"),rows.getFirst().get("learning_ready_at")))
+            throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
         long revision=((Number)rows.getFirst().get("content_revision")).longValue();
-        if (ready && !"READY".equals(indexes.status(taskId,owner).status())) throw new BusinessException(ErrorCode.STUDY_INDEX_NOT_READY);
+        if (ready && !indexes.status(taskId,owner).servable()) throw new BusinessException(ErrorCode.STUDY_INDEX_NOT_READY);
         return revision;
     }
 

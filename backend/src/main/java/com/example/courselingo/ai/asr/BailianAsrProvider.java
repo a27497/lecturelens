@@ -50,14 +50,16 @@ public final class BailianAsrProvider implements SpeechToTextProvider {
         long started = System.nanoTime();
         BailianAsrTransport.Response response;
         try {
-            // As with the existing provider, the provider's configured timeout controls the HTTP call.
-            response = transport.send(endpoint, properties.getApiKey(), body, properties.getRequestTimeout());
+            // A request may shorten the provider timeout to the task's remaining persisted budget.
+            Duration timeout=properties.getRequestTimeout();
+            if(request.timeout()!=null && request.timeout().compareTo(timeout)<0)timeout=request.timeout();
+            response = transport.send(endpoint, properties.getApiKey(), body, timeout);
         } catch (AsrCallFailure safe) {
             throw safe;
         } catch (AsrProviderException exception) {
             // Preserve classification, but never trust a transport's message or cause.
             throw new AsrProviderException("Bailian ASR transport failed", exception.retryable(),
-                exception.statusCode().orElse(null));
+                exception.statusCode().orElse(null),exception.retryAfterMillis());
         } catch (RuntimeException exception) {
             throw new AsrProviderException("Bailian ASR network call failed", true);
         }
@@ -65,7 +67,7 @@ public final class BailianAsrProvider implements SpeechToTextProvider {
         int status = response.statusCode();
         if (status < 200 || status >= 300) {
             throw new AsrProviderException("Bailian ASR request failed with HTTP " + status,
-                status == 408 || status == 429 || (status >= 500 && status <= 599), status);
+                status == 408 || status == 429 || (status >= 500 && status <= 599), status,response.retryAfterMillis());
         }
         String text = responseText(response.body());
         // Non-streaming output.text is cumulative; sentence can describe only the last sentence.

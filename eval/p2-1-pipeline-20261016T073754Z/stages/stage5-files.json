@@ -1,0 +1,182 @@
+[
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/AsrAdapterFactories.java",
+    "sha256": "f3b6c836d950763db2e5b93d7d56cd7e8dba39449e995b076964ed4a96c46e3d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/JavaHttpBailianAsrTransport.java",
+    "sha256": "99ed515a38912ec6612bf99fa88e9b9175295dd5b8e80a678f57836cd1a744fc"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/JavaHttpSiliconFlowAsrClient.java",
+    "sha256": "67cc8fae5251862e26b29ed33cdbf4147660735280ba6fb5d2eab158ce710f75"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/SpeechToTextRequest.java",
+    "sha256": "c1b17d11ce522b379328176394e65ee34f51641bae148bf91b26dc312de929bd"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/JavaHttpOpenAiCompatibleLlmClient.java",
+    "sha256": "ab5ccd5a6733cf3a89edc1cd2216bba5add184a6d0bf008e86b7e3f9319f4583"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/LlmUsage.java",
+    "sha256": "83d1f6593e3a375733ac02d8eff42d974d1af6c64b15a3e9ec92c18fdd6c7097"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/ModelCallObserver.java",
+    "sha256": "4b33b67b00c4d52aa5a6f0dfb5fc8cae46b1e6c32a9060da0fe8a89af96912d7"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/ModelCallScope.java",
+    "sha256": "c3f2b7a2c716d881c75a9dbb35fd2cadefdbdcbcb09b81bcac0a9d0805a872ae"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/ObservedModelCall.java",
+    "sha256": "6d0e466266fba737f09ad727ca5d5c8c149cf56fa5f2d10a010cce3b8e83a976"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/OpenAiCompatibleLlmProvider.java",
+    "sha256": "c27e19271d49c76b3481f60eeba3bb1c8887be6698fabbca0f0bb573ac2da044"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/llm/TranslationResponseDecoder.java",
+    "sha256": "45344c8691a7999d4ed1e33ac7657de0fb117f319a2bbd5fa35e3554bfee56ea"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/record/dto/FailAiCallRecordCommand.java",
+    "sha256": "f9c9382671be8d0a7c01ad4916922b95786edd555e60ff786e28a51bfbcef71d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/record/service/AiCallRecordServiceImpl.java",
+    "sha256": "05469aca66a577e25726b93f38e94138906d4514ab6cdc7fb032b9b27d7f2866"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/record/service/AiCallRecordValidators.java",
+    "sha256": "6faea9c30861a679ed5efbb33629d1eab3792805eaed967ce641cbdbaef14758"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/record/service/ValidatedFailAiCallRecordCommand.java",
+    "sha256": "c19df1641e7a57b28cd978e3a68bfbf318884e5067ee7ac7c16a06ffba739b75"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnostics.java",
+    "sha256": "935998a9774afc719d2faeec82ba51a6a4d700765f0b2a3cb9785e290c5cad7f"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+    "sha256": "17997d57a4bc3984e4639e975b1e1f04a0bf60d72623ee9df7cdc6988b84f05c"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationCheckpointStore.java",
+    "sha256": "a453aeac4084915c8a8c49eec7f2a75d211e90ab350a5f53c0aba5f66e8f1a95"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+    "sha256": "a626222a0245019f5ca6f9fa43c6434d0f88d8b60b7078a7aa8e85ab9b7102c2"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelAsrProvider.java",
+    "sha256": "e60d38377215f1284b34bb19a0a733939e8a454a6c4086ccf79002f4e8bbe2e3"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelHttpClient.java",
+    "sha256": "7ecf42c945f130a311835fe4ac73bf63a4909743d7b0432aca47ab1802e1e5d0"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelLlmProvider.java",
+    "sha256": "ec30bcb7bec1b10013e8a533c7f8742b0c5d46480f5edc69107c51cbf61b8134"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelRuntimeConfiguration.java",
+    "sha256": "21e49c00ecd849d14a638b7f3ad324ba77243497961758f6cc2f7ae0adac6289"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/systemmodel/SystemModelVisionProvider.java",
+    "sha256": "0b883647367aa7965d394d11f6bc6b1b107fbf23b3235e9c6f5a70e40388a073"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfiguration.java",
+    "sha256": "568678faab9226730f5662b9119fbda11ecea8af3b49d9a8fe2da957e4b3a45a"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/PipelineAiCallRecord.java",
+    "sha256": "34eca6b1219da022983ac672c111b884cbab48995338438f4698c42a7ab49a88"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/TranscribeAudioStep.java",
+    "sha256": "ee0252d995654c0064571b74fa7d61771ac4ba23ee4eae4f95f1db1a89bde78c"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/WriteAiCallRecordStep.java",
+    "sha256": "5f9042593b536d57b707c767052bb5ec0057c13a1a3036a06a47e845143833a1"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineCheckpointDeletion.java",
+    "sha256": "f28586e904d6227ccd27a7297712a3e507071647bdf3c4696b09c360c0a6907b"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/PipelineResumeService.java",
+    "sha256": "ce5e5fd237c7de087d84356c56c3d105b2e398bb0ef1aa6a3338700d9dbad5d8"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/service/TaskExecutionLease.java",
+    "sha256": "5ece242e10dfda1bb2e9179ff27070c31c9ad47e753346d4e1e4826fadc9d7bc"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/usage/ModelPriceCatalog.java",
+    "sha256": "8877d3dc8a42d40165bc34f2c233c77dfd1db810be369b07f94371211ecb0cf7"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/usage/PipelineUsageLedger.java",
+    "sha256": "313f80aebcf300b8b0c33ede3cd4f9cf63ab6b8ae1f472c1b8bf0d5fba3b94a3"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/vision/analysis/OpenAiCompatibleVisionProvider.java",
+    "sha256": "6f195ab7734f0657c9c3003371c9c848a706847db4d843f07be6e21dee4f7041"
+  },
+  {
+    "path": "backend/src/main/resources/db/migration/V31__translation_usage_price_ledger.sql",
+    "sha256": "736c865093a6dcb7765df3fd1aaed5a6bd3b01f76b7d32f4d0bbd0f09f3c253e"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/ai/asr/AsrPhysicalObservationTest.java",
+    "sha256": "ea7b7cd8e07186a3f5f939b671abc1315c01de0a044799560ee0d0e11c4ea8da"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/ai/llm/ObservedModelCallTest.java",
+    "sha256": "d0c1d69c411dadbda274a5348ab0afea4702103047533994085e46cbc7aec45a"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/ai/record/AiCallRecordServiceTest.java",
+    "sha256": "a5772c590c091870cc898774f2570c9028204f49eb010cb428b95aab6c426d04"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/subtitle/diagnostic/TranslationCallDiagnosticsTest.java",
+    "sha256": "afcfe2baacefddf8d989a3a86e7d9b17344786d5d2f0645ec258801fc7f3a168"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/PipelineCheckpointFixture.java",
+    "sha256": "5f1ac33e7cd9bd521c3a92f66664914e8b065c4394c9e4d62479dc28f7e0fd40"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/PipelineUsageLedgerMySqlTest.java",
+    "sha256": "680bdeccaeb7c2d2de9e8e8dd02abd280fa95502423842476ed65b14c8bd2773"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/SystemModelRuntimeMySqlTest.java",
+    "sha256": "a38da8d997a239d5f7a76c6b6a64ac8dc6044e4e90c8e7369346e8270bbebbb8"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/runner/WriteAiCallRecordStepTest.java",
+    "sha256": "1962d6e9a63d4a90fd858b398952d3d1850b54cf4aeac41db93c187fc63ca867"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/usage/ModelPriceCatalogTest.java",
+    "sha256": "b895fdb28bf0361b49b5288041931f15abf7a70d2b65d0dd5a1d8ab7ce10396d"
+  },
+  {
+    "path": "docs/PIPELINE_TRANSLATION_V2.md",
+    "sha256": "49a09c0c3c4201ff566ce5ba503f6d640165d67232442c4ad88495fc61c8582c"
+  }
+]

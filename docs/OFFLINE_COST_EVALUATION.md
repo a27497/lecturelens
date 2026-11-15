@@ -58,7 +58,7 @@ address validation remains unchanged. Neither application nor workflow is change
 
 | Boundary | Offline experiment |
 | --- | --- |
-| Main runtime | 6 model calls, 8 logical tools, 64,000 conservative input/output reservation, 90-second Run deadline, at most two candidates |
+| Main runtime | 12 model calls, 8 logical tools, 600,000 conservative input/output reservation, 90-second Run deadline, at most two candidates. The expense ledger still admits only Runs within its own 6 calls / 8 tools / 64,000 gate |
 | Feedback request | Same Run limits; existing per-request timeout at most 20 seconds |
 | Output | Decision 900, practice review 300/900/1200 according to main's review stage, feedback 900 |
 | Input | Entire outgoing UTF-8 JSON at most 65,536 bytes, text and client function tools only |

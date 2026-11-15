@@ -1,0 +1,66 @@
+{
+  "name": "translation-mysql-02",
+  "status": "SUCCEEDED",
+  "exit_code": 0,
+  "totals": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.example.courselingo.systemmodel.LegacyTranslationMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.PipelineResumeMySqlTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.PipelineUsageLedgerMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.TranslationCheckpointMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sha256": {
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02-reports/TEST-com.example.courselingo.systemmodel.LegacyTranslationMySqlTest.xml": "efd2fde7858db75c082bc573ec3740f8a61cf9334de77e5c16f52895c2884093",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02-reports/TEST-com.example.courselingo.systemmodel.PipelineResumeMySqlTest.xml": "2e9fe0961071d649df52400be080c34405cd65d2164855e715f7d9176affafd7",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02-reports/TEST-com.example.courselingo.systemmodel.PipelineUsageLedgerMySqlTest.xml": "9c26141924543093aaf25352c93dc4ef7c94d9ca0753799c06bc007b981cc259",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02-reports/TEST-com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest.xml": "4b616e756b48488b06df7f9eb96858e66f9c6bfa5c0fba0aaf421e604592f86b",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02-reports/TEST-com.example.courselingo.systemmodel.TranslationCheckpointMySqlTest.xml": "1c788e9c2ee6703c5b7c18fc5727593936b0627c54a60784b44a386afd2425da",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02/run.json": "a8eb926b28fec9e33db5f38c4b6e3e5e50de9ee8cc5c908888f17b730b4031a2",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-02/output.log": "9191a1f2133a21c590b26ee3b1468264501841b6c1c5f5a44b760f0305a1d243"
+  },
+  "cleanup": {
+    "pgid": 3317294,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  }
+}

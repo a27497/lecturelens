@@ -1,0 +1,15 @@
+{
+  "checked_at_utc": "2026-10-16T10:08:55.639527+00:00",
+  "used_bytes": 131209060352,
+  "available_bytes": 23668350976,
+  "use_percent": 84.71800970002329,
+  "headroom_below_85_bytes": 436739276,
+  "real_trial_minimum_headroom_bytes": 2147483648,
+  "real_trials_started": false,
+  "runtime_started": false,
+  "models_called": 0,
+  "reason": "INSUFFICIENT_ACCEPTED_DESIGN_HEADROOM",
+  "proposed_port": 18091,
+  "proposed_topic": "lecturelens-p21-20261016T073754Z",
+  "protected_service_restart_count": 0
+}

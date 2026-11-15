@@ -13,7 +13,13 @@ from lecturelens_agent.store import VectorStore
 from lecturelens_agent.study.contracts import StudyCommand
 from lecturelens_agent.study.provider import MockProvider
 from lecturelens_agent.study.runtime import StudyRuntime
-from lecturelens_agent.study.store import RunStopped, StudyError, StudyStore
+from lecturelens_agent.study.store import (
+    RUN_MODEL_CALL_LIMIT,
+    RUN_TOOL_CALL_LIMIT,
+    RunStopped,
+    StudyError,
+    StudyStore,
+)
 
 
 class Authority:
@@ -273,7 +279,19 @@ def test_model_loop_budget_and_legacy_worker_isolation(lab):
     lab[2].execute(run)
     result = command(lab, "DUE_CARDS")
     assert result["generation"]["status"] == "budget_exceeded"
-    assert result["generation"]["model_calls"] == 6 and result["total_count"] == 0
+    # Each decision asks for one more search, so the tool limit stops the loop before the model-call limit.
+    assert result["generation"]["model_calls"] == RUN_TOOL_CALL_LIMIT + 1 <= RUN_MODEL_CALL_LIMIT
+    assert result["total_count"] == 0
+    with lab[0].connect() as conn:
+        counted = conn.execute(
+            "SELECT tool_calls FROM study_run WHERE run_id=%s", (run["run_id"],)
+        ).fetchone()
+        rejected = conn.execute(
+            "SELECT payload FROM study_event WHERE run_id=%s AND event_type='budget_rejected'",
+            (run["run_id"],),
+        ).fetchone()
+    assert counted["tool_calls"] == RUN_TOOL_CALL_LIMIT
+    assert rejected["payload"]["reason"] == "tool_calls"
 
 
 def test_real_mode_rejected_before_resolving_model_credentials(lab):

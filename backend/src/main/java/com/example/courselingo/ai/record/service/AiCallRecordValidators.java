@@ -80,7 +80,8 @@ final class AiCallRecordValidators {
             sanitizer.sanitizeErrorMessage(command.errorMessage()),
             command.retryable(),
             validateFingerprint(command.requestFingerprint(), sanitizer),
-            validateFingerprint(command.responseFingerprint(), sanitizer)
+            validateFingerprint(command.responseFingerprint(), sanitizer),validateNonNegative(command.promptTokens()),
+            validateNonNegative(command.completionTokens()),validateNonNegative(command.totalTokens())
         );
     }
 

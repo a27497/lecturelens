@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/agent-service/.venv/bin/ruff",
+    "check",
+    "agent-service",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015"
+  ],
+  "started_at_utc": "2026-10-15T11:23:17.750018+00:00",
+  "finished_at_utc": "2026-10-15T11:23:17.762997+00:00",
+  "exit_code": 0,
+  "stdout": "All checks passed!\n",
+  "stderr": ""
+}

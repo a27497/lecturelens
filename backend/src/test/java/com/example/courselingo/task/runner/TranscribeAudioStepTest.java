@@ -641,6 +641,9 @@ class TranscribeAudioStepTest {
     @Test
     void asrChunkConcurrencyIsClampedToSafeBounds() {
         AsrChunkingProperties properties = new AsrChunkingProperties();
+        assertThat(properties.getConcurrency()).isEqualTo(4);
+        assertThat(properties.getMaxConcurrency()).isEqualTo(4);
+        assertThat(properties.effectiveConcurrency()).isEqualTo(4);
 
         properties.setConcurrency(0);
         properties.setMaxConcurrency(4);
@@ -649,6 +652,71 @@ class TranscribeAudioStepTest {
         properties.setConcurrency(12);
         properties.setMaxConcurrency(12);
         assertThat(properties.effectiveConcurrency()).isEqualTo(4);
+    }
+
+    @Test
+    void defaultConcurrencyRunsAtMostFourChunksInFlight() throws Exception {
+        Path audioFile = Files.writeString(tempDir.resolve("eight-chunk-course.wav"), "large audio");
+        PeakTrackingSpeechToTextProvider provider = new PeakTrackingSpeechToTextProvider();
+        AsrChunkingProperties properties = new AsrChunkingProperties();
+        properties.setMaxAudioFileSize(DataSize.ofBytes(1));
+        properties.setMaxChunkFileSize(DataSize.ofKilobytes(1));
+        properties.setChunkDuration(Duration.ofSeconds(60));
+        PipelineAnalysisTaskStepContext context = context();
+        context.setAudioExtractionResult(new AudioExtractionResult(audioFile, "wav", 16000, 1));
+        PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(
+            new AnalysisTaskRunnerProperties(tempDir.resolve("runner-peak"))
+        );
+
+        new TranscribeAudioStep(
+            provider,
+            new ManyAudioChunksChunker(8),
+            properties,
+            workspace,
+            runningTaskMapper(),
+            new RecordingTaskProgressSnapshotService(),
+            new RecordingTaskClaimService(),
+            authoritativeDuration(480_000L)
+        ).execute(context);
+
+        assertThat(properties.effectiveConcurrency()).isEqualTo(4);
+        assertThat(provider.maxActive.get()).isEqualTo(4);
+        assertThat(provider.calls.get()).isEqualTo(8);
+        assertThat(context.speechToTextResult()).isPresent();
+        assertThat(context.requireSpeechToTextResult().segments()).hasSize(8);
+    }
+
+    @Test
+    void oneFailedChunkFailsTheStepAndDoesNotStoreAPartialTranscript() throws Exception {
+        Path audioFile = Files.writeString(tempDir.resolve("partial-failing-course.wav"), "large audio");
+        AsrChunkingProperties properties = new AsrChunkingProperties();
+        properties.setMaxAudioFileSize(DataSize.ofBytes(1));
+        properties.setMaxChunkFileSize(DataSize.ofKilobytes(1));
+        properties.setChunkDuration(Duration.ofSeconds(60));
+        properties.getChunkRetry().setMaxAttempts(1);
+        properties.getChunkRetry().setBackoff(List.of(Duration.ZERO));
+        PipelineAnalysisTaskStepContext context = context();
+        context.setAudioExtractionResult(new AudioExtractionResult(audioFile, "wav", 16000, 1));
+        PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(
+            new AnalysisTaskRunnerProperties(tempDir.resolve("runner-fail"))
+        );
+
+        assertThatThrownBy(() -> new TranscribeAudioStep(
+            new FailIndexedChunkSpeechToTextProvider(3),
+            new ManyAudioChunksChunker(8),
+            properties,
+            workspace,
+            runningTaskMapper(),
+            new RecordingTaskProgressSnapshotService(),
+            new RecordingTaskClaimService(),
+            authoritativeDuration(480_000L)
+        ).execute(context))
+            .isInstanceOf(BusinessException.class)
+            .hasMessageContaining("chunkIndex=4")
+            .hasMessageContaining("synthetic ASR failure at clip 3");
+        assertThat(context.speechToTextResult()).isEmpty();
+        assertThat(context.pendingAiCallRecords()).isNotEmpty()
+            .anySatisfy(record -> assertThat(record.errorCode()).isEqualTo("AI_PROVIDER_FAILED"));
     }
 
     @Test
@@ -1242,6 +1310,81 @@ class TranscribeAudioStepTest {
                 "en",
                 "chunk",
                 List.of(new TranscribedSegment(4, 0L, 60_000L, "chunk")),
+                Duration.ofMillis(10),
+                60_000L,
+                Map.of()
+            );
+        }
+
+        @Override
+        public String providerName() {
+            return "fake-asr";
+        }
+    }
+
+
+    private static final class PeakTrackingSpeechToTextProvider implements SpeechToTextProvider {
+        private final AtomicInteger active = new AtomicInteger();
+        private final AtomicInteger maxActive = new AtomicInteger();
+        private final AtomicInteger calls = new AtomicInteger();
+        private final CountDownLatch reachedPeak = new CountDownLatch(4);
+
+        @Override
+        public SpeechToTextResult transcribe(SpeechToTextRequest request) {
+            calls.incrementAndGet();
+            int current = active.incrementAndGet();
+            maxActive.accumulateAndGet(current, Math::max);
+            reachedPeak.countDown();
+            try {
+                if (!reachedPeak.await(5, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException("default concurrency did not reach 4 in-flight calls");
+                }
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(exception);
+            } finally {
+                active.decrementAndGet();
+            }
+            String name = request.audioFile().getFileName().toString();
+            int index = Integer.parseInt(name.replaceAll("\\D+", " ").trim().split(" ")[0]);
+            String text = "chunk " + index;
+            return new SpeechToTextResult(
+                "fake-asr",
+                "en",
+                text,
+                List.of(new TranscribedSegment(index, 0, 60_000L, text)),
+                Duration.ofMillis(10),
+                60_000L,
+                Map.of()
+            );
+        }
+
+        @Override
+        public String providerName() {
+            return "fake-asr";
+        }
+    }
+
+    private static final class FailIndexedChunkSpeechToTextProvider implements SpeechToTextProvider {
+        private final int failingIndex;
+
+        private FailIndexedChunkSpeechToTextProvider(int failingIndex) {
+            this.failingIndex = failingIndex;
+        }
+
+        @Override
+        public SpeechToTextResult transcribe(SpeechToTextRequest request) {
+            String name = request.audioFile().getFileName().toString();
+            int index = Integer.parseInt(name.replaceAll("\\D+", " ").trim().split(" ")[0]);
+            if (index == failingIndex) {
+                throw new AsrProviderException("synthetic ASR failure at clip " + index, false, 500);
+            }
+            String text = "chunk " + index;
+            return new SpeechToTextResult(
+                "fake-asr",
+                "en",
+                text,
+                List.of(new TranscribedSegment(index, 0, 60_000L, text)),
                 Duration.ofMillis(10),
                 60_000L,
                 Map.of()

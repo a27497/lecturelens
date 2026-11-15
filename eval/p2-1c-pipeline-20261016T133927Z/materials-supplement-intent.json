@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-16T14:32:17.296349+00:00",
+  "kind": "SUPPLEMENTAL_MATERIALS_ONLY_REUSED_EVIDENCE",
+  "parent_trial": "normal-algorithms-1",
+  "parent_task_id": "task_8b03a2fbae7d40039386451c71cb784a",
+  "candidate_jar_sha256": "209d9b08d44f31269a7649953db850606d262293c00e6665b4500f4000e67a5e",
+  "source_sha256": "b1b24234b035ec2d27b5271cce105f5f01e8715c7ec567ec574caaa8a532b4dc",
+  "translated_sha256": "89de1baf8ab9dcfdfbd9d0828b53c39ba19b58b9bff349c808df72a3f1fce133",
+  "runtime_source_sha256": "49450ee6bd0d6c165dbb7cc42faec93c000343e56df2b645b1bf83e1fa62145b",
+  "fresh_full_chain": false,
+  "worker_started": false,
+  "configuration_writes": 0,
+  "asr_calls": 0,
+  "translation_calls": 0,
+  "disk_before": {
+    "utc": "2026-10-16T14:32:17.266077+00:00",
+    "used_bytes": 116324720640,
+    "available_bytes": 38552690688,
+    "percent": 75.10760907131062,
+    "headroom_below_85_bytes": 15321078988.800003
+  }
+}

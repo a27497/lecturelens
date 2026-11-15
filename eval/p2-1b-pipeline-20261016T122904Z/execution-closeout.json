@@ -1,0 +1,37 @@
+{
+  "utc": "2026-10-16T13:11:21.174796+00:00",
+  "sigkill_count": 0,
+  "starts": 1,
+  "process_events": [
+    {
+      "utc": "2026-10-16T12:30:50.952105+00:00",
+      "action": "START",
+      "label": "initial",
+      "pid": 1687093,
+      "start_ticks": "2117795",
+      "cwd": "/home/dev/projects/lecturelens/.data/p2-1b-pipeline-20261016T122904Z",
+      "jar_sha256": "fa21a575d09789b9899faba71ec861216d3c741b6919a0f3add50c532242efb7"
+    },
+    {
+      "utc": "2026-10-16T13:09:21.477005+00:00",
+      "action": "SIGTERM",
+      "group": true,
+      "pid": 1687093,
+      "start_ticks": "2117795",
+      "cwd": "/home/dev/projects/lecturelens/.data/p2-1b-pipeline-20261016T122904Z",
+      "jar_sha256": "fa21a575d09789b9899faba71ec861216d3c741b6919a0f3add50c532242efb7"
+    }
+  ],
+  "disk_samples": 3030,
+  "disk_max_percent": 75.11144384614904,
+  "disk_final": {
+    "utc": "2026-10-16T13:11:21.175099+00:00",
+    "used_bytes": 116176609280,
+    "available_bytes": 38700802048,
+    "percent": 75.01197772085737,
+    "headroom_below_85_bytes": 15469190348.800003
+  },
+  "normal_terminal_trials": 10,
+  "recovery_terminal_trials": 1,
+  "occupied_18091": false
+}

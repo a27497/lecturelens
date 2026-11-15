@@ -1,0 +1,77 @@
+{
+  "version": 10,
+  "features": [
+    {
+      "key": "TRANSLATION_FULL_TEXT",
+      "connected": true,
+      "active": true,
+      "source": "DATABASE",
+      "version": 10,
+      "finalUrl": "https://api.deepseek.com/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "SUBTITLE_TRANSLATION",
+      "connected": true,
+      "active": false,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "LEARNING_PACKAGE",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "COURSE_QA",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "COURSE_CHAPTER",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "http://127.0.0.1:8091/v1/chat/completions",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "VISION_FRAME_ANALYSIS",
+      "connected": true,
+      "active": false,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "https://api.siliconflow.cn/v1/chat/completions",
+      "configurationStatus": "MISSING_KEY"
+    },
+    {
+      "key": "ASR_TRANSCRIPTION",
+      "connected": true,
+      "active": true,
+      "source": "ENV",
+      "version": 10,
+      "finalUrl": "https://ws-7133crgrd736hgz8.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation",
+      "configurationStatus": "READY"
+    },
+    {
+      "key": "FUSION_SUMMARY",
+      "connected": false,
+      "active": false,
+      "source": "UNCONNECTED",
+      "version": 10,
+      "finalUrl": null,
+      "configurationStatus": "UNCONNECTED"
+    }
+  ]
+}

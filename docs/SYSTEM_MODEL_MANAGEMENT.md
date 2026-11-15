@@ -37,6 +37,8 @@ V25 is a prerequisite for this Java binary even with model management disabled: 
 
 ## ASR 运行时选择
 
+资料生成的独立 `LEARNING_PACKAGE` 绑定继续可选 DeepSeek；长输入分块、每次请求预检和上下文配置见[资料生成上下文约束](LEARNING_PACKAGE_CONTEXT.md)。此路径不自动改变已冻结模型绑定。
+
 系统层启用后同时注册百炼与 SiliconFlow 适配器工厂，唯一 ASR 入口按任务执行引用解析 `ASR_TRANSCRIPTION`。该功能要求模型声明 `ASR`，协议为 `BAILIAN_ASR` 或 `SILICONFLOW_ASR`；文本/视觉不能绑定这两类协议。保存绑定、清除绑定及回滚均生成新版本，不重启服务。
 
 - 新任务创建时冻结 ASR 路由；真正需要外部转写时只创建一次任务专属适配器。所有分片、并发 worker、重试、合并都显式使用它，不读取当前绑定或可变单例选择。自动重投继续原执行引用。

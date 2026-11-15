@@ -32,7 +32,7 @@ public final class LlmProviderFailureClassifier {
             return details(LlmProviderFailureCategory.RATE_LIMIT, status, errorCode, true);
         }
         if ((status != null && status == 413)
-            || containsAny(body, "context length", "context_length", "context too large", "too many tokens")) {
+            || containsAny(body, "context length", "context_length", "context too large", "too many tokens", "exceed_context_size_error")) {
             return details(LlmProviderFailureCategory.CONTEXT_TOO_LARGE, status, errorCode, false);
         }
         if ((status != null && (status == 400 || status == 422)) && explicitlyRejectsStructuredOutput(body)) {
@@ -57,6 +57,9 @@ public final class LlmProviderFailureClassifier {
         Throwable current = failure;
         Set<Throwable> visited = Collections.newSetFromMap(new IdentityHashMap<>());
         while (current != null && visited.add(current)) {
+            if (current instanceof LlmStageException stage) return stage.details();
+            if (current instanceof com.example.courselingo.ai.llm.TranslationFailure translation)
+                return translation.details();
             if (current
                     instanceof
                     com.example.courselingo.systemmodel.SystemModelCallFailure safeFailure) {

@@ -1,0 +1,29 @@
+{
+  "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "retrieved_utc": "2026-10-15T19:00:17.911091+00:00",
+  "source_sha256": "210f102275ccf1a6542f08a3bc9e4b4c7c83278cb74b35217bffa112df6363b2",
+  "model": "deepseek-flash",
+  "currency": "USD",
+  "unit": "per 1 million tokens",
+  "off_peak": {
+    "input_cache_hit": 0.003,
+    "input_cache_miss": 0.15,
+    "output": 0.6
+  },
+  "peak": {
+    "input_cache_hit": 0.006,
+    "input_cache_miss": 0.3,
+    "output": 1.2
+  },
+  "peak_utc_hours_weekdays": [
+    [
+      1,
+      4
+    ],
+    [
+      6,
+      10
+    ]
+  ],
+  "scope": "Off-peak outside those intervals; official page excludes Chinese public holidays. Cache split is not persisted by current Java runtime; calculate bounds, not an exact bill."
+}

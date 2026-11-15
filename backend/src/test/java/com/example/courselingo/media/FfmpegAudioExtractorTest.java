@@ -105,6 +105,7 @@ class FfmpegAudioExtractorTest {
             .contains("ffmpeg", "-i", inputVideo.toAbsolutePath().normalize().toString(), outputFile.toString())
             .containsSubsequence("-ar", "16000")
             .containsSubsequence("-ac", "1")
+            .containsSubsequence("-c:a", "pcm_s16le")
             .containsSubsequence("-f", "wav");
         assertThat(command).doesNotContain("cmd", "cmd.exe", "powershell", "sh", "-c", "/c");
         assertThat(command).allSatisfy(argument -> assertThat(argument).doesNotContain(" -i "));

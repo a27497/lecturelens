@@ -9,7 +9,7 @@ import test_study
 
 from lecturelens_agent.study.choice_graph import MockChoiceProvider
 from lecturelens_agent.study.contracts import StudyCommand
-from lecturelens_agent.study.store import StudyError, StudyStore
+from lecturelens_agent.study.store import RUN_MODEL_CALL_LIMIT, StudyError, StudyStore
 
 setup = test_study.setup
 
@@ -414,13 +414,15 @@ def test_choice_uses_persisted_budget_and_is_invisible_to_legacy_workers(setup):
         assert not conn.execute(
             "SELECT 1 FROM study_run WHERE run_id=%s AND status IN ('queued','running')", (queued["run_id"],)
         ).fetchone()
-        conn.execute("UPDATE study_run SET model_calls=6 WHERE run_id=%s", (queued["run_id"],))
+        conn.execute(
+            "UPDATE study_run SET model_calls=%s WHERE run_id=%s", (RUN_MODEL_CALL_LIMIT, queued["run_id"])
+        )
     with pytest.raises(psycopg.Error), store.connect() as conn:
         conn.execute("UPDATE study_run SET practice_format='open' WHERE run_id=%s", (queued["run_id"],))
     runtime.execute(queued)
     result = store.command(StudyCommand(**scope, operation="READ"), "mock")
     assert result["run"]["status"] == "budget_exceeded" and result["artifact"] is None
-    assert result["run"]["model_calls"] == 6
+    assert result["run"]["model_calls"] == RUN_MODEL_CALL_LIMIT
 
 
 def test_new_choice_runtime_cannot_inherit_the_frozen_p7_evaluation_identity():

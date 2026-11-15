@@ -1,0 +1,28 @@
+[
+  {
+    "id": "4befe79c-b79f-46ac-9341-66cf6fc53b10",
+    "model": "deepseek-flash",
+    "feature": "TRANSLATION_FULL_TEXT",
+    "task_id": "task_1b5dd375008544258544f7b6f3a2001c",
+    "created_at": "2026-10-15 19:51:26.930000",
+    "http_status": 200,
+    "input_chars": 3093,
+    "snapshot_id": "a846fab4-158b-4bb7-88d6-ac3c76b1b5c6",
+    "total_tokens": 3976,
+    "batch_indexes": "0",
+    "finish_reason": "length",
+    "prompt_tokens": 903,
+    "segment_count": 1,
+    "config_version": 10,
+    "response_chars": 11337,
+    "duration_millis": 17312,
+    "provider_reason": "CONTENT_EMPTY",
+    "provider_attempt": 1,
+    "completion_tokens": 3073,
+    "validation_reason": null,
+    "response_truncated": 1,
+    "validation_category": null,
+    "final_validation_reason": null,
+    "excerpt_sha256": "950bcb648c94bbf4d16ce8e60726edec98274d9c1502a416b542a9f2cee97fb8"
+  }
+]

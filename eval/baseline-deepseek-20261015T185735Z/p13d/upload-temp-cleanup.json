@@ -1,0 +1,213 @@
+{
+  "checked_utc": "2026-10-16T06:49:32.322337+00:00",
+  "checked_asia_shanghai": "2026-10-16T14:49:32.324933+08:00",
+  "scope": "Only ten submitted upload_ids from trials.jsonl; no scope expansion",
+  "paths": [
+    {
+      "upload_id": "up_062069063b154670a1cf03a095faa34b",
+      "path": "/tmp/courselingo/chunks/9/up_062069063b154670a1cf03a095faa34b",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_7a09477a6dd24cc49ee0ffd645704fad",
+          "upload_id": "up_062069063b154670a1cf03a095faa34b",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_0acb76cb382f4ca48619397b63a96016",
+      "path": "/tmp/courselingo/chunks/9/up_0acb76cb382f4ca48619397b63a96016",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_d24f7945cfb344289c35c40d94cd47a8",
+          "upload_id": "up_0acb76cb382f4ca48619397b63a96016",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_174767ba4f514eb2bf238b6c1ae59030",
+      "path": "/tmp/courselingo/chunks/9/up_174767ba4f514eb2bf238b6c1ae59030",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_824f8160998147e7b7d66a8a33fd0834",
+          "upload_id": "up_174767ba4f514eb2bf238b6c1ae59030",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_53f22a0c58c742bcb947bfd913b64771",
+      "path": "/tmp/courselingo/chunks/9/up_53f22a0c58c742bcb947bfd913b64771",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_6544116ea9e448a1b12d57e5786fe74a",
+          "upload_id": "up_53f22a0c58c742bcb947bfd913b64771",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_5899b2e936244fb49cfcb86027728d44",
+      "path": "/tmp/courselingo/chunks/9/up_5899b2e936244fb49cfcb86027728d44",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_f7d4ccf68ed644e680b6c406d869312f",
+          "upload_id": "up_5899b2e936244fb49cfcb86027728d44",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_5e7e2966cfeb4496b6645186c3b177e1",
+      "path": "/tmp/courselingo/chunks/9/up_5e7e2966cfeb4496b6645186c3b177e1",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_012ad9c1ea20484491aa7ceaa039a8b9",
+          "upload_id": "up_5e7e2966cfeb4496b6645186c3b177e1",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_97ae031e746f4956b38e3bd68f5ef591",
+      "path": "/tmp/courselingo/chunks/9/up_97ae031e746f4956b38e3bd68f5ef591",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_2f672dd2acb6401c800d53f8830ca7f3",
+          "upload_id": "up_97ae031e746f4956b38e3bd68f5ef591",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_b5618740a8c248b3b163a379b9b30c74",
+      "path": "/tmp/courselingo/chunks/9/up_b5618740a8c248b3b163a379b9b30c74",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_8255462bb195479893e67ba63fff27a1",
+          "upload_id": "up_b5618740a8c248b3b163a379b9b30c74",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        },
+        {
+          "task_id": "task_1b5dd375008544258544f7b6f3a2001c",
+          "upload_id": "up_b5618740a8c248b3b163a379b9b30c74",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_ccbcc50f28674f8c80e5c5d5c45effbe",
+      "path": "/tmp/courselingo/chunks/9/up_ccbcc50f28674f8c80e5c5d5c45effbe",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_27eabe74454a47b885f005ac81bbe9dc",
+          "upload_id": "up_ccbcc50f28674f8c80e5c5d5c45effbe",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    },
+    {
+      "upload_id": "up_f072268112e2483aa31a6028673f77d6",
+      "path": "/tmp/courselingo/chunks/9/up_f072268112e2483aa31a6028673f77d6",
+      "state_before": "ALREADY_ABSENT",
+      "state_after": "ABSENT",
+      "action": "NONE",
+      "deleted_allocated_bytes": 0,
+      "tasks": [
+        {
+          "task_id": "task_1ed8e0722acb4b28ac7409215e08e1f4",
+          "upload_id": "up_f072268112e2483aa31a6028673f77d6",
+          "task_status": "FAILED",
+          "upload_status": "STORED"
+        }
+      ]
+    }
+  ],
+  "database_prechecks_passed": true,
+  "lsof": {
+    "command": [
+      "sudo",
+      "-n",
+      "lsof",
+      "-nP",
+      "-Fpn"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "matching_open_files": [],
+    "coverage": "Global FD scan also checks deleted files; +D is inapplicable because paths were absent"
+  },
+  "deleted_directories": 0,
+  "deleted_allocated_bytes": 0,
+  "released_by_this_operation_bytes": 0,
+  "filesystem_before": {
+    "utc": "2026-10-16T06:49:22.500964+00:00",
+    "total_bytes": 154894188544,
+    "available_bytes": 24003522560,
+    "used_percent": 84.50327750470674
+  },
+  "filesystem_after": {
+    "utc": "2026-10-16T06:49:32.322337+00:00",
+    "total_bytes": 154894188544,
+    "available_bytes": 24002613248,
+    "used_percent": 84.50386455836482
+  },
+  "df_after": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/root       145G  122G   23G  85% /\n",
+  "proceed_with_evidence_commit": true,
+  "untouched": [
+    "remotion temporary directories",
+    "puppeteer temporary directories",
+    "logs",
+    "images",
+    "volumes",
+    "protected containers",
+    "source and evaluation evidence"
+  ]
+}

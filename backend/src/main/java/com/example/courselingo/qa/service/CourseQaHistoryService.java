@@ -69,7 +69,7 @@ public class CourseQaHistoryService {
         var args = new ArrayList<Object>(List.of(taskId, owner, revision)); args.addAll(ids);
         var rows = jdbc.queryForList("""
             SELECT e.evidence_id,e.payload FROM course_evidence e JOIN analysis_task t ON t.id=e.task_id AND t.user_id=e.user_id
-            AND t.content_revision=e.revision AND t.deleted_at IS NULL AND t.status='SUCCEEDED'
+            AND t.content_revision=e.revision AND t.deleted_at IS NULL AND\s""" + com.example.courselingo.task.service.LearningAvailability.learnableSql("t") + "\n" + """
             WHERE e.task_id=? AND e.user_id=? AND e.revision=? AND e.evidence_id IN (""" + placeholders + ")", args.toArray());
         var counts = new HashMap<String, Integer>();
         for (var row : rows) counts.merge((String) row.get("evidence_id"), 1, Integer::sum);

@@ -1,0 +1,6 @@
+{
+  "started_at_utc": "2026-10-15T08:51:46.253130+00:00",
+  "path": "eval/baseline-asr-20261015/run-final.py",
+  "sha256": "be12fb14454505da1d3c82eef3c3708c31f437a11df4f5c0605704cef41f3cb2",
+  "previous_driver_completed_trial": "v2-algorithms-1; unchanged observations retained"
+}

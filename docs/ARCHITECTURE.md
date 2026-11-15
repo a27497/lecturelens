@@ -1,6 +1,6 @@
 # LectureLens 当前架构
 
-本文描述当前仓库的组件、状态和故障边界。Study Agent 已完成有限课程范围验收，仍属实验能力，尚未发布；线上配置保持不变。质量结论见 [AU 完成报告](../eval/phase-completion/FINAL_AU.md)，实验过程与失败记录见[评测索引](../eval/README.md)。接口字段和表结构分别以 [API](API.md) 与[数据库参考](DB_SCHEMA.md)为准。
+本文描述当前仓库的组件、状态和故障边界。Study Agent 仍属实验能力；有限课程质量结论见 [AU 完成报告](../eval/phase-completion/FINAL_AU.md)。维护环境现固定 Agent `bc2e6cc` 配套既有 Java，并显式开启反馈；本轮仅完成隔离 PostgreSQL 机制检查和部署健康检查，未调用真实模型，线上 Java 协议检查待用户执行，见[部署记录](../eval/live-contract-fix-20261019/RESULTS.txt)。接口字段和表结构分别以 [API](API.md) 与[数据库参考](DB_SCHEMA.md)为准。
 
 ## 组件与数据所有权
 
@@ -71,7 +71,7 @@ Java 先验证当前用户、课程存在、处理成功及索引 READY，再签
 
 练习草稿经过目标条件、逐字段来源、答案一致性和课程方法范围复核。复核意见可触发预算内修订，最多提交两份候选；参数、未知工具、重复调用和越权引用错误明确停止。受限 Python AST 工具没有导入、I/O、循环或任意方法执行能力。数值工具按声明条件核算，计算正确不能替代课程支持检查。通过后原子保存解释、两道练习和私有答案，或保存证据不足产物。工具契约及上下文规则见 [Agent 执行说明](L2_STUDY_AGENT.md)和[复核说明](L2_QUALITY_REVIEW.md)。
 
-作答保存为不可变版本；反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。模型选授权来源，程序回填权威原文；学生引文必须匹配实际作答。新作答不会把旧反馈重新标为新版本，用户核对记录单独保存。`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有运行和记录保持原语义。Session 可携带最近两个已完成轮次的有限摘要与产物引用；开放题自动评分、长期学习记忆尚未交付；[P9](P9_EVIDENCE_CHOICE.md) 新增 Mock 原文选择题生成与按私有 key 的程序判分，结果与作答同事务保存；证据闪卡与 FSRS 自评调度实验性已实现，仅离线 Mock，真实生成质量 NOT_RUN，见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。见[学习交互](L3_LEARNING_FLOW.md)。
+作答保存为不可变版本；反馈是引用精确 `source_attempt_id` 的独立 Run，复用队列、预算、模型快照和恢复协议。模型选授权来源，程序回填权威原文；学生引文必须匹配实际作答。新作答不会把旧反馈重新标为新版本，用户核对记录单独保存。`STUDY_FEEDBACK_ENABLED` 默认关闭，仅控制新反馈请求，已有运行和记录保持原语义；示例配置与维护环境的启动器显式开启，见[部署说明](DEPLOYMENT.md)。Session 可携带最近两个已完成轮次的有限摘要与产物引用；开放题自动评分、长期学习记忆尚未交付；[P9](P9_EVIDENCE_CHOICE.md) 新增 Mock 原文选择题生成与按私有 key 的程序判分，结果与作答同事务保存；证据闪卡与 FSRS 自评调度实验性已实现，仅离线 Mock，真实生成质量 NOT_RUN，见 [P7 设计](P7_EVIDENCE_FLASHCARDS.md)。见[学习交互](L3_LEARNING_FLOW.md)。
 
 ### 持久状态与恢复
 
@@ -90,7 +90,7 @@ Java 先验证当前用户、课程存在、处理成功及索引 READY，再签
 
 ### 预算、取消与删除
 
-默认 Run 上限为 6 次模型调用、8 次逻辑工具执行、64,000 保守 token 预留和 90 秒 deadline。调用前持久扣减，内部权威读取另受查询/窗口上限约束；Provider 实际 usage 单独记录，缺失 usage 不计作零成本。deadline 从首次领取起计时，包含重启停机时间；配置范围为 30–300 秒。模型响应最多 128 KiB，请求按剩余运行时间限时；Authority HTTP 使用独立的 10 秒超时，返回后仍须通过 Run deadline 检查。
+默认 Run 上限为 12 次模型调用、8 次逻辑工具执行、600,000 保守 token 预留和 90 秒 deadline。模型调用和预留上限已放宽，使长字幕片段的课程能够完成，成本调优留待后续；调用次数和 deadline 是防止失控循环的有效边界。调用前持久扣减，内部权威读取另受查询/窗口上限约束；Provider 实际 usage 单独记录，缺失 usage 不计作零成本。deadline 从首次领取起计时，包含重启停机时间；配置范围为 30–300 秒。模型响应最多 128 KiB，请求按剩余运行时间限时；Authority HTTP 使用独立的 10 秒超时，返回后仍须通过 Run deadline 检查。
 
 取消立即将 Run 标为 `cancelled`。外部请求可能继续到返回或 HTTP 超时，晚到结果不能发布或覆盖新 Run 状态。预算耗尽为 `budget_exceeded`；工具、Provider、持续格式错误、修订耗尽、权限或版本变化均终止执行。没有人工审批或 `waiting_user` 节点。
 

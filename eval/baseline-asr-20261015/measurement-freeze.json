@@ -1,0 +1,10 @@
+{
+  "frozen_before_trials_utc": "2026-10-15T08:24:15.928698+00:00",
+  "files": {
+    "eval/baseline-asr-20261015/assets.lock.json": "e9f93adf31c4a3acf0918c26ce7efa7ef8a2f5391e64c825d651362a38be1a52",
+    "eval/baseline-asr-20261015/protocol.json": "1b8743c19f28ef18d3f4a31bcd9e2b40aa8cac252f7ebb5cd94416d8fe7bcf37",
+    "eval/baseline-asr-20261015/meter.py": "d56ffb66e8236ef9f47ec0238b8daf017ed70f1270c2068665ef6227377a2f85",
+    "eval/baseline-asr-20261015/run.py": "d73ab7b71af9ea6c39560699d686206d28579f2fc9e5a91e1517af75687a89fb",
+    "eval/baseline-asr-20261015/runtime-identity.json": "fa97e75ecf96d1ea956dc64ac7403ef4eba4ee4941b0b34e161d13b336122680"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "expected_dev_uid": 1002,
+  "command": [
+    "journalctl",
+    "-u",
+    "lecturelens-p21c-worker-20261017.service",
+    "--since",
+    "2026-10-16 19:20:00 UTC",
+    "--no-pager",
+    "-o",
+    "json",
+    "--grep=REDIS15_UNEXPECTED_KEYS"
+  ],
+  "rows": [
+    {
+      "__REALTIME_TIMESTAMP": "1792178425570440",
+      "_UID": "1002",
+      "_GID": "1003",
+      "_PID": "3471067",
+      "_SYSTEMD_INVOCATION_ID": "83307e3128ac414689f94e2ebeaf8caf",
+      "MESSAGE": "REDIS15_UNEXPECTED_KEYS"
+    }
+  ],
+  "uid_verified_from_journal": true,
+  "first_projection_attempt": "asserted UID 1000 before checking account metadata; corrected to passwd lookup; no service retry"
+}

@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-15T19:46:53.680097+00:00",
+  "active": [],
+  "version": 10,
+  "source": "DATABASE",
+  "model": "deepseek-flash",
+  "baseUrl": "https://api.deepseek.com",
+  "disk_percent": 84.60931208840795,
+  "services": {
+    "lecturelens-live-backend": {
+      "pid": 2659162,
+      "start_ticks": "4028994"
+    },
+    "lecturelens-live-agent": {
+      "pid": 5102,
+      "start_ticks": "2722"
+    },
+    "lecturelens-live-model": {
+      "pid": 5105,
+      "start_ticks": "2726"
+    }
+  },
+  "active_query": "status IN ('CREATED','QUEUED','RUNNING','RETRYING')"
+}

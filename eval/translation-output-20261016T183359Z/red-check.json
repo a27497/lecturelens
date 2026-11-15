@@ -1,0 +1,33 @@
+{
+  "kind": "red regression before production fix",
+  "record_path": ".data/translation-output-20261016T183359Z/translation-output-red/run.json",
+  "log_path": "/home/dev/projects/lecturelens/.data/translation-output-20261016T183359Z/translation-output-red/output.log",
+  "log_sha256": "9156decfcae450f125ab933369f0f6e60d52aa6520f7fab74e15ff6a0156ac77",
+  "exit_code": 1,
+  "suites": [
+    {
+      "name": "com.example.courselingo.subtitle.SubtitleTranslationServiceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "path": ".data/translation-output-20261016T183359Z/translation-output-red-reports/TEST-com.example.courselingo.subtitle.SubtitleTranslationServiceTest.xml",
+      "sha256": "9a6c45c90f9b21341e8c3269c7aeae6a1eaecda25e5d1d8867092098ab5a5625"
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".data/translation-output-20261016T183359Z/translation-output-red-reports/TEST-com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest.xml",
+      "sha256": "39c72542a82ef8307951346f63b2864bf4bf4dcfdf49a18075238ad809111a57"
+    }
+  ],
+  "total": {
+    "tests": 2,
+    "failures": 1,
+    "errors": 1,
+    "skipped": 0
+  }
+}

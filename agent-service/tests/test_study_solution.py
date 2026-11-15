@@ -90,11 +90,14 @@ def test_computation_observations_reach_solver_and_invalidate_cached_solution():
 @pytest.mark.parametrize("changed_question,crash", [(False, False), (False, True), (True, False)])
 def test_solution_reuse_is_persistent_scoped_and_never_expands_six_call_budget(
     setup,
+    monkeypatch,
     changed_question,
     crash,
 ):
     store, _, runtime, scope = setup
     runtime.independent_solutions = True
+    # Six calls: a reused solution fits exactly; a changed question needs a seventh and must stop.
+    test_study.pin_model_call_limit(monkeypatch, 6)
     solves, reviews = [], []
 
     class Provider:

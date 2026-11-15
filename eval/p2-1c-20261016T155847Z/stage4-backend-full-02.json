@@ -1,0 +1,2088 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116301361152,
+    "available_bytes": 38576050176,
+    "usage_percent": 75.09252650517028,
+    "headroom_to_85_bytes": 15344438476.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:47:50.916199+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2694987,
+  "start_ticks": "3659802",
+  "exit_code": 0,
+  "disk_peak_percent": 75.09510770533738,
+  "disk_after": {
+    "used_bytes": 116302692352,
+    "available_bytes": 38574718976,
+    "usage_percent": 75.09338602366854,
+    "headroom_to_85_bytes": 15343107276.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage4-backend-full-02.log",
+  "log_sha256": "55ed862f0b6482e9c39737c70332bf635b0ff3f28bfe890e921f04d0f9a6f8d3",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.CourseLingoBackendApplicationTests",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1547c7efe9ccf80cdb96c51fe42efc3595351abf95ae5d08010954955295a0e4"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrPhysicalObservationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f6b8212268c3a6f5e2301516b30cb727717cfe7a731343906309828a3f7e2d3f"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrProviderExceptionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c10df3d24aaebf5fa315c066f5b1579c01ea863bdd9891e81aca8f4c6a169960"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrProviderSelectionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "199873105c6a153fa96f7bde7a9ba4d6de1bef321deeae70555b72a6978a533a"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.AsrTextNormalizerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d37c52cc5431f70ca830deb766e22d9a566894f527ace0c00e4082b7bbab5fd1"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.BailianAsrContractTest",
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "32548a6957b671fe1bf9140abfd11970438cef7d878982f665f4b96e7f7c2894"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.BailianAsrProviderTest",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "045daa125260b27e1ba94b933f82c948bfb4f5794dcdbc88ff0017a2c8ca9b66"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.JavaHttpBailianAsrTransportTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5bcc51d38b684ffe94f3073c1d77a84139f4e9f2603b88191d267fcd47ade127"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.MockAsrProviderTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "761d1fdb8a478f69bce059953534a5e41d296f72698a3c21b3a27fc6532f9bc0"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.SiliconFlowAsrProviderTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "000736953e5a06a600334d25c9454323a9c53a60fe954dba56b3fb3fa9443003"
+    },
+    {
+      "suite": "com.example.courselingo.ai.asr.SpeechToTextProviderTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "94daa7597ffe3da6fb61341479cb509a27a8296cc190de25ba01a5813a13f3f4"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.DemoMockLlmProviderTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "09b50ae52aca6116503cd6ae07295e4823f29abed1db0554f891128315093268"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.LangChain4jLlmProviderTest",
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c974f9b731df55f29bb6f22a74fae0de9dd628005489e0ffb233e74dd957c9e7"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.LlmProviderFailureClassifierTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0d3878113ef534f4f928d216fcfbdb4f66e1fc40a6f0dde2a807835e44fa8572"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.ObservedModelCallTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "85694f416e61053d697e7ee829923f9542b3c4089f9e36d42140a6f20fc20284"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.OpenAiCompatibleLlmProviderTest",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "7fbb2dfdc56d638ba5ae8367ab5114d213f4cb417374dc9bd1e0995ac06e3f6c"
+    },
+    {
+      "suite": "com.example.courselingo.ai.llm.OpenAiCompatibleRequestOptionsAdapterTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9f3b0e46ffb9ffe29e3e4dc433a26e1c9efae2d15421782820a868dbe477f834"
+    },
+    {
+      "suite": "com.example.courselingo.ai.record.AiCallRecordMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "23a3ddb9f3dd1802eb9b8070b4a255dcc52d2a1829d0af24fe1721af127325cf"
+    },
+    {
+      "suite": "com.example.courselingo.ai.record.AiCallRecordServiceTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "06a66ac7f4c877f7ad6b7b9c1670692ab842cbf096229ca236ca82412eb06edd"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactFileDownloadControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "52f2176f404153e109dfa446689cb41cedb660b50b9c278d04b59ea901dabdac"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactFileDownloadServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "06efb48388ceb7afdcc466da10a8c1ca4ccb50402eaef55d73b50f1b8ddccbbf"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactFileMapperTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0dbc86441af9485e4ce604547a9172965b0689ccbeefdffaca517fc16e7501e3"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactFileMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4ce6573daa722904b6836f2707114cc0b624ae5f0b19334b06c83281018ad94f"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactFileServiceTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "88d25b299ee3399a694ad2ba194ed9a432a2e428ee1d3f97761a87497daa8c38"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.ArtifactMultimodalTimelineBuilderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d3aaf9defc5cfec95acb890c9a2bf5d886c5508c061901b28d0193e8578e0a3c"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.JsonArtifactServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ba3f0a8b4c568e182b8cee7399e3fac6e982d4d611ff6aea21ab8bc287b91905"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.JsonLearningPackageExporterTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c6d90ac1f985ad2904c6d32472b963f938def5fa881accb0e1c2ee1e8837d7b4"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.MarkdownArtifactServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "632ab75cb71c6c8e792d9e218d3b0599348dff3aecb41ce24101be495016709a"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.MarkdownLearningPackageFormatterTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "3538cfe0c62eb2a72c385f8548e0b4a25236099b001f08238215cf61141ea1fe"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.SrtArtifactServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bf78e0b9ef0207600456db16144b896bbd4f22d824447dc5e5adf4a68520588f"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.SrtFormatterTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fcc898d8f4a9a81a15f27e973c33600060a1811718b357e27c2ef7a72efe32ad"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.VttArtifactServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dd7996775580aff1f1c24bf7053443b541ea5e1016db8ac66e2e86e384cc583d"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.VttFormatterTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5635cf80f981d5a171a244b547b4865fa13e328ef96ede3b4808e240f61229af"
+    },
+    {
+      "suite": "com.example.courselingo.artifact.service.ArtifactSensitiveDataValidatorTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ecabc4d83b969ef0791c2af17e94ef528d0e0cfc87fa2a93273aa513b267121f"
+    },
+    {
+      "suite": "com.example.courselingo.auth.AuthControllerTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ff6f66fe6dc7efcb7ea68feed12c462746c9ee0852bee19ce2eb6905dde0ddfc"
+    },
+    {
+      "suite": "com.example.courselingo.auth.AuthLoginServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b37aeae50028f76e023f594b73d4d708841550b3086e66833e0c379d51e85842"
+    },
+    {
+      "suite": "com.example.courselingo.auth.AuthRegistrationServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8eaa0c844087cf226b92c9513acbab7896dbba6abab027472ff41ce10ad967b9"
+    },
+    {
+      "suite": "com.example.courselingo.auth.CurrentUserServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9ed5421a12140a3869a138cdd317351957547c8fbeaacfe9d7d9b13722c946e7"
+    },
+    {
+      "suite": "com.example.courselingo.auth.JwtAccessTokenServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e0ddfd279b58dee8d9b74b15e57ab45311a70e526ffd4124d2738ec291e58cec"
+    },
+    {
+      "suite": "com.example.courselingo.auth.RefreshTokenServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c36835a6140beb0975b4a5fdd26898d241f678ddf7897679b35f8825ab73e4e7"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "18a1ae3659a63f8a13933ffc28b5fde4a2aab4c43b5a2bab5f61efd56250325f"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterEvidenceBuilderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c082f78c17741933a848a353145d40b91f13dea565a75d816a670b70ca8395c5"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterPromptFactoryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "21c60e3872489dde57638021bc936ba45bd5d84e03d4dcfd4d67b190d4c72b77"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterRecordServiceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cdf6c6cd1f81abaac6fcbfa81de942729ef433ddc38ccb8209f5bd0651d7dcf5"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterResponseParserTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e9ea8187d683ea89b9a6936f988a397de386e437b439ce417efd43ca5abe1478"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterServiceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b466d2c9f61bf79cd757eb5e84f7259aea5b0487e31605b21804d8babbd978c9"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.CourseChapterTransactionIntegrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e25a116448f1fa9d04adb73994c2a68bfd5cdfc3b73e6aae0c5515893f899490"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.service.CourseChapterCoverageCompleterTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "35c28cadacd4f7368d45ae136a3a09820fe687b3ea8ed95371defcc9e3d087dc"
+    },
+    {
+      "suite": "com.example.courselingo.chapter.service.CourseChapterCoverageValidatorTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "47c58cb3327003f90ccde02174af3bf31e8b607a32b2c87aeaf2c8497dece99c"
+    },
+    {
+      "suite": "com.example.courselingo.common.CommonErrorHandlingTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "399ae07d7c4952290385c077010fe82ed9f893a9ff2da7092b32823cc3239f62"
+    },
+    {
+      "suite": "com.example.courselingo.common.logging.SafeLogSanitizerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "344a6876fafa0f073465b7aa8b7cedaeed4de9d7c1c0bc46b2270e1c173c6aa5"
+    },
+    {
+      "suite": "com.example.courselingo.common.metrics.BusinessMetricsConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b7afb2177da2bf3a10de470c91eeb1c7f0c431f20984045435a573b332b1f0a9"
+    },
+    {
+      "suite": "com.example.courselingo.common.metrics.BusinessMetricsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a88075a8cf6fa8b0f0bd69cb877ee365c8ca13479418bf926c816ab0e113ae3d"
+    },
+    {
+      "suite": "com.example.courselingo.common.security.SecurityBoundaryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "987357a3b29ea5b60a8af8e818613943c16cd8ec161d40b85f8a27de452ad1c4"
+    },
+    {
+      "suite": "com.example.courselingo.common.security.SecurityHeadersFilterTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1c2dddc106d5b990919bd73de9872edd98e164afcc1d651af8f54811c0dcf2c9"
+    },
+    {
+      "suite": "com.example.courselingo.common.time.UtcTimestampsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e1fffef26c7be5fffb897d76a44f5f3e389c4a449ce69a1e6452dd34e808415e"
+    },
+    {
+      "suite": "com.example.courselingo.common.tracing.TracingContextTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b425ad50b3c523e52e77fe0a0390d595a209cce30d6b3f03090d193df696bb27"
+    },
+    {
+      "suite": "com.example.courselingo.common.web.GlobalExceptionAsyncRequestTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "69198d104b49cc9ccf13cd6d021016e427dfad1124af5121328777c59fae8fc0"
+    },
+    {
+      "suite": "com.example.courselingo.common.web.GlobalExceptionStructuredLoggingTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "15265418e746b36b05d71e83ed34342c2258e5c275ae8a2446f30efd9e7da8e4"
+    },
+    {
+      "suite": "com.example.courselingo.common.web.StructuredRequestLoggingFilterTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1e02a3de3f5255ccc682ffe2b6d5c855ecf7ba2d972079c86b4736c3742dc4dc"
+    },
+    {
+      "suite": "com.example.courselingo.dispatch.BoundedTaskExecutorTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4982b5a51e5445b1d753514bef46b39184149e9c6d2fa47acefab2f66ac4e91a"
+    },
+    {
+      "suite": "com.example.courselingo.fusion.VideoSegmentControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "41a122f834293564528162c56771fb1b7f98c8f4bc9b48e9b3339bd8f5a4f68e"
+    },
+    {
+      "suite": "com.example.courselingo.fusion.VideoSegmentFusionServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0b2fa3d7292f66a1c391cb337178983925b6ffe4229878ec2daaab93b6bc39af"
+    },
+    {
+      "suite": "com.example.courselingo.fusion.VideoSegmentMigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "eefc9254a82a1af14981cec2daa34e9bcee66eb73f14e95a58f7a437922c1396"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.ActuatorHealthTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2fc52fd7e0be79f809a26c1291e0bf00ef95b65798b6e31ea832fdb903fc67cb"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.AuthSchemaMigrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5cef26473f9ed496f2aed0bc485960c813121840f4713a6a968581c7dadc60f8"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.BuildInfoControllerTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d7542088d16baed3da5a933ec2d33aac318b078a094d06ca52e514975ab16fec"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.BuildInfoGitCommitResolverTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d6f0500de2ad0dc4a7d5a2ffaa5f4ea93d697daba26d180d2746087c88790ee3"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.DemoAiModeGuardTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bd2095dba970f3dfc519a6a70f16672a8ee369bcbc59b5ef04ba0e2b2a9e9a59"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.FlywayConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "55049749923ff74e4f10d5f33ea219cb34592a98b79d6deaa667859802c1ff15"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.PublicRuntimeConfigurationControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f32327f0ca7c7a8b3ba9a324486a211915a02345c0e2593ccc5977c13f50dd1f"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.RedisConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "399687b55475257ae5f1a9c6dadd1c91b2db8ad4d27a69b9b6b881eec3c72ebe"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.UploadSessionMigrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e86c508e17548d2f62adf8809d7f706160d4b22f876cd5d02edb3bb27711a8df"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.UtcJacksonConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2d619873aece90e4747edd91c55bbfb04cc907f0e98b51d5c1a885bdec576205"
+    },
+    {
+      "suite": "com.example.courselingo.infrastructure.V21MigrationContractTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "39d66a73bd3cfbd10dc443c084e1edfc1f0a5d1ceb5141d1d8781ffdad0a1a6c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "eb1a6df12157583293057ebf59ef285a6bfcfcb1154ee6261526af27dfb85241"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMapperTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "20be13ed6014392f4c41780e331848dc3e519d246362602d499eb2becafac977"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e8ff368645f8d993d363c24ac57790bec555a86f10c29a8fbb15bc0f0a54d17c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageResponseParserTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ab2f222f2e5a26dc29eff07a744d57aa2be1675898550d54a3d2973a23e9c6eb"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageServiceTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5b1d205daa595a4c622b76d13d1a685b8b449fe68dc0e2567833c1a3285ea60f"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6fa6e38d0d674aba4011e7ef715290004dfab169240a550f94199d6307618cd3"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageContextGuardTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e737eb760c5600c0796e64ffdf0cd21755132185d4895f5c2bc433e20e5979aa"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackagePromptFactoryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cc2894ec692e20f8e5ec0191238ac2fe9af9fe9cdd19ca19f32fcc21876fe3d8"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageQualityValidatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dbf2ecc050653e702dbfa5ec73d94f43cf3b22640daa6606216cb5523844c27c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b86ca5e1635b1b959b6b18788a30963e4e8a8a00778b62bcea05d1790e16064c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageVisualOnlyServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6b3660798335ee3c55f50718e1dd021645252725ec249ed553eec35fbb58a015"
+    },
+    {
+      "suite": "com.example.courselingo.media.AdaptiveVideoMediaIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c17854091c62d26b50e0e45224ff499466aaa41471b1b3e49cfb6459acacc483"
+    },
+    {
+      "suite": "com.example.courselingo.media.EmbeddedSubtitleControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "01a1868dadba82b91a95adec10d652df6fb7d8fc155d424306bb05b76c2a6d22"
+    },
+    {
+      "suite": "com.example.courselingo.media.EmbeddedSubtitleServiceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "20adbd6798c2c4792bba50972bc58a55e99201a3d445e01f009ae0d4664c3223"
+    },
+    {
+      "suite": "com.example.courselingo.media.EmbeddedSubtitleTranscriptExtractorTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "da29aa043ea7da684a5d6ba828fb3fdb41ab5d90f1e87b2ea151f729637cefeb"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfmpegAudioExtractorTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bfbbb7b09fa54d87073ef7a4f1c502cea5855cd0b05ecf893710a638966dc218"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfmpegVideoFrameBatchSamplerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "94d8bbf75dabd52db9f5ee33f2dae8f4bca919f2734bb84c0503504f3de0be71"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfmpegVideoFrameSamplerTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d3fa1cf6d1f7a6800d203dd274af703458efc60ee2a4fd01feb98e95b3f5fe98"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfmpegVideoSceneScannerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f7519f8648d7b7bdaf4b2cd4a492eec5fbc0388f4aff4ffd18b8b1ce26c2fa7c"
+    },
+    {
+      "suite": "com.example.courselingo.media.FfprobeVideoMetadataProbeTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c380e4dcba10f5ee09f8771c78ffd0ef6957b9dcb16831e13574b81c86a4379a"
+    },
+    {
+      "suite": "com.example.courselingo.media.JavaSoundAudioDurationProbeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8f9076c3a56bd4b0e29b4b4a6c8bda075e02843bf9025c66c5b0d28a58a21299"
+    },
+    {
+      "suite": "com.example.courselingo.media.MediaPlaybackControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2bf4bb10fc79132982e34e35240062e22bed523d7b58bc3bb85027c3017736d8"
+    },
+    {
+      "suite": "com.example.courselingo.media.MediaPlaybackServiceTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b4de1ef794868de69a2c7c212303beffa6532ad58e71e48213b16727c34fbc9c"
+    },
+    {
+      "suite": "com.example.courselingo.media.MergedAudioChunkPlannerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "87daecc3051c3ddf1abd70aa137b320921ac2a7d4c9deb856b0d0603c439a8f8"
+    },
+    {
+      "suite": "com.example.courselingo.media.MovTextEmbeddedSubtitleIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ab902863cf2d022fe72948dbb4f66c6210c83537b4db4991ab435bdfb1aa78b6"
+    },
+    {
+      "suite": "com.example.courselingo.media.SilenceAudioChunkPlannerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b282a6fcc36e3b49148b8d654c8eae43922c698594caaf9dfa27b433a77127ee"
+    },
+    {
+      "suite": "com.example.courselingo.media.SilenceAudioMediaIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0617b9bdd1701d863483faee88e41979901998fd9db7894abdbfe37afe383369"
+    },
+    {
+      "suite": "com.example.courselingo.modelrouting.AiModelRouterTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d443ad4ff17224a6696332134a0773a4af844aeeaba3435218b206f9d088c03e"
+    },
+    {
+      "suite": "com.example.courselingo.mq.AnalysisTaskMessageTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d01522ad561bf0e501d6b43a796c5994c03373edf623a08b6e964682c8b98e0a"
+    },
+    {
+      "suite": "com.example.courselingo.mq.AnalysisTaskRunnerMessageHandlerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d90b5965bd3cf2c84408842bfe76ed335c7624dbb9172a93ff2f2a409d7f60a8"
+    },
+    {
+      "suite": "com.example.courselingo.mq.RocketMqAnalysisTaskMessageConsumerTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "aebf3ff315f2877c4a23cb5159ec48fd287ffd2e8ad260c263d6a4692b108624"
+    },
+    {
+      "suite": "com.example.courselingo.mq.RocketMqAnalysisTaskMessageProducerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "303e975ed383cc37277cbf333bad824248b2f73437660b0039aa923b29308e33"
+    },
+    {
+      "suite": "com.example.courselingo.mq.RocketMqProducerConfigurationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "317cf333eab30990c6727732be0c112c934c094668b18dc9536bab09bea7b3e2"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "65a712ba5c25cee668b41a4cec34b9240a3a8638b0b122c9e47ce0bb33f75edc"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaEvidenceRetrieverTest",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d1f54b86953665a10a057e5d96b1fbdc49d84622d0f319a6b1d8a8c633a39387"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaQueryTermExtractorTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ebf50f6b95ec3e215d7d1fb1a8c2817c998e6c8d7a84c92dec67b44c8b5445dc"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaRecordServiceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1cd0e777f355679b0c7b5f436abfe8a9d30c920c7333f1ae07d54d88075118a4"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaResponseParserTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "beb13e4067f980d434ab26264f992237e4ed56588062a4d305556d6318b17169"
+    },
+    {
+      "suite": "com.example.courselingo.qa.CourseQaServiceTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "69bbc8a08e81ba8e069526cccfdd55506f827e18b553a61e0caad76fc16d2d63"
+    },
+    {
+      "suite": "com.example.courselingo.qa.DenseEvidenceClientTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "03b898c5392f9011c9476c14526ac2a299c28866f34d1ab02fbefbde098af19c"
+    },
+    {
+      "suite": "com.example.courselingo.qa.DenseRetrievalRoutingTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9c66c11ae2e18e0043ae3bd6672d2946312387f513ee31324f2531464d49a01f"
+    },
+    {
+      "suite": "com.example.courselingo.qa.ModelManagementTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "76e9d7254c0f9b7b51e9eaa4146b72931e7ccc75f8507e1c4ba497659798a1c5"
+    },
+    {
+      "suite": "com.example.courselingo.qa.StudyAuthorityTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "787e1080f5aa96dd04c5fecee2f7918807de64ea12b5afd6049e72d6d54f4dc8"
+    },
+    {
+      "suite": "com.example.courselingo.qa.StudyControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0d0b28712450b0eaf780d53ea9087f773674ce6c07c82052f24fea16d44f339e"
+    },
+    {
+      "suite": "com.example.courselingo.qa.service.CourseQaPromptFactoryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "be662f63ea283e09ed54f9fe54786c5d34a72c60fbec020a50827707bbce6d8b"
+    },
+    {
+      "suite": "com.example.courselingo.reliability.CourseQaFailureTransactionTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9d7ed47d89ef72bd16a2f11a582ceeec5bcb1a26a72f7b906b6b1e6bda2683b3"
+    },
+    {
+      "suite": "com.example.courselingo.reliability.DurableBoundariesIntegrationTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b7fccdee9eedacec1362fbe37c8c3c8d3a8f369aa5b0a66d1307477c1d7edfc9"
+    },
+    {
+      "suite": "com.example.courselingo.result.TaskResultControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "97259ffabf2ad3948942a3771072739f9ca03f5040ec5a8930106af71a18897d"
+    },
+    {
+      "suite": "com.example.courselingo.result.TaskResultServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cd3851f67183445c6f65efd68189906d5b3498b7bcdd12f5abc6aada267ead82"
+    },
+    {
+      "suite": "com.example.courselingo.storage.MinioStorageServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b674b313b4b0ddb96b7dd49f2fd25dfe6cb7121bbf5c0727c679b98e7e7817ec"
+    },
+    {
+      "suite": "com.example.courselingo.storage.StorageObjectKeyValidatorTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "33b1ceaa63e03c05cbbfd36a11b1eb1d03c2aa2ec65d50dbd09755b1c480c602"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.PipelineTranslationServiceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "924408c32545aec730c6ef94cb714198a8d5378efd12541ffc8345ec5a67f0e8"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleSegmentMapperTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "479d5d51fec486cb47a534c7064a62563a0422563f433acd92c02e319335afd0"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleSegmentMigrationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "804531c6eb7cf55bed5dab63164aa76a261f9090da388e600834b6d78ff9ec62"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleSegmentPersistenceServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "09d5f3af1f47b808c5fc280baee9d996b2c27e9cbedfd4eed182035bf206aa7f"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleTranslationMapperTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4b59033e6386b64d2f020882686ece0d6d5547780a5fcc2eeac62ef7bc1d9935"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleTranslationMigrationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "74a3c714153a1ed7045cc0d2c59bd8cc635b097f46793cf958796ddbf72778ab"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleTranslationResponseParserTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "08b272ac1b0ba2264a1f23d1f66799f2b8edd72e5389f3509ecae4c15876eb9a"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.SubtitleTranslationServiceTest",
+      "tests": 81,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "34bbd25c36205d7300449d543d3220f87f76cfe68227bbb84eff0fbb052bc647"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnosticsTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b163b152df0abd163b14f8e94f566c36e82133e400ca4c29550ee1eff234b7d5"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.AdaptiveTranslationControllerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "743f3f6d5b189d9dcac6cafd25f2e0954df09bb6737a8d9c6363b5d974dedbad"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.PreparationFlowPolicyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "424a883f2e881ef37a357a239c79163c75f0c5426ec12953b56c78c90030a749"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.TranscriptParagraphTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "da5ffb5a1875bbb7883f762a45e26ff6bdda98eccdc52eeb144a0220ac114459"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.TranslationAdaptiveBatchTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "13746ae85f339b215375509cc4baebbea7e99e9e6cbea25a6ec1b1809d6862d3"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinatorTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "80e7919f4303276659f1f6f840faddd20b018bac80652ec3512b801cfb99dfdf"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.service.SubtitleSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0943f43cb32d52664037eee2600fb3d69d102239b8ae28912371d27632ebcd4e"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.service.SubtitleTranslationPromptFactoryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8dac1171abd2cdf2e6865fcb099144a5f00f6d6a839210b1c7ecac01c931e9da"
+    },
+    {
+      "suite": "com.example.courselingo.subtitle.service.SubtitleTranslationPropertiesTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1a7b0166248246dfc26605296c319ca080d6d9d8abd9e7459f1794db19417623"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.AsrExecutionMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ee46a1023ca4c887221864d4dd39e21e25e395fae02ca81890361bc20d4c6403"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PipelinePolicyMySqlTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4ca3769d04eb278730e8f4bd22045f28a53356dbda9e17020bd3a9044c33768e"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PipelineResumeMySqlTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6e4b2df93b1cca2e6bc2b81bafc2d413fd6a0a4bd98443f3e12926474981c353"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PipelineUsageLedgerMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cb33f07fa8aae2e0c2218de16269544fb521c418125a4fa257a5c215a3adc57b"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.PreparationFlowMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f296596bc2c6e9f5afe809a0936c7b71f21f26746cac31dd793bb8003790d0e1"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelActivationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "45d2cc1e1be8bc0741a9e9f2f7232997b45acebd069927faa6a618e880908375"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelAdminBoundaryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "31654997ba1ab830ea3d9258f0d50aa66aec214cffb7b08d16ad1dfe7e780a2d"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelAsrMySqlTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "444d00e8f23a5b59b6754557fd3c99e7507f68e624425d7f264bdf96a8cbf24c"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelHttpClientTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5a968aae16ec4fea98a029ae4a70f5309c7cdd72fb06c4ee1b2decc52d842960"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelMySqlIntegrationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "70ce6f979d10be53730f97fc4bfeb6aa35ebfc5c870c88d555c8164eb355d410"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelProbeMySqlTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "13a7940ff5ccf7d940a39fe104246034e26c5dcddf30419815e0d24e57a27423"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelProbeTransportTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "72d073e411df071d813332902e6a1d0b0df4fba544cc741530f1ea7c45ff6c0a"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1def02bc0ddc70c796282295b1744a0b693e2f1e2cc27eee8f5943faa43e4f9f"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelSecretCipherTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "76a7be081ab5a1ce348f78374f6998ecdc15b6c8900fb38a292289313d442261"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelTranslationObservationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2bd9d97b993f0e2192c19f908b7ae78bfeff117004be96c793414705e41435bf"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelTranslationV2Test",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8f017235c4da0b5265a79e29152fc8506f61b211db4ce4f0745f9660f992e68f"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelUrlPolicyTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d5cc8f0dca8801d76918a9a3d7aa2e8f7686b0291479ebe7ad63875184e16f2d"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.TranscriptParagraphMySqlTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4738cb53e63755df69453fd4774aa94399ec836807b8e399a0cedae2edce2569"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.TranslationCheckpointMySqlTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c5875f3a012a96c4219456afc4bbb59c2529c9c4141d5832b96b548cf59d4c76"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.TranslationSchedulerMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2e0c595d62339f86d44466bb3ec4ed33d141b2c6563aa5238763207d7052d083"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskMigrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9dca9e3795fce69be7263623db5fa3e0baaf8c7e1dd2da4e22380400ab10a218"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskRunnerTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6e1cf8c9fd3ce319a07316ef84f278c23c2ac1a64f2745c879521862621f0068"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskSoftDeleteBoundaryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8e5225851054a095c234441f0860e3e2c760dd6fda2c88cc216b883dac5d80fd"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskSoftDeleteMigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "273f6eb303a8b6582f26ee81835b8e3259e24ff2cf60f3e7e64ec7af2115a4e7"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskStateMachineTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b9dc7fdd942e0896c10f135ba8421c828ebadc8b4f5ba50e6b540e474370ef06"
+    },
+    {
+      "suite": "com.example.courselingo.task.AnalysisTaskStateServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9a94fd1dbf8c757b97bf27fab402fa3522d59f8c2ed2615731690a45d77bdbf9"
+    },
+    {
+      "suite": "com.example.courselingo.task.PipelineRecoveryActivationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "871e99077d92866ff23fee7078808e6fd3c82801a8ce05e70da08f37b89f678b"
+    },
+    {
+      "suite": "com.example.courselingo.task.RedisAnalysisRateLimitServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "32c03788d3b71f85bc1150d8b1f5efd1de533db4b3752da73ea359410766396a"
+    },
+    {
+      "suite": "com.example.courselingo.task.RedisTaskClaimServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2a238f63eb4fe8098aab2427e8c0dea0d8930ed99b2a7372659ed506a174f9be"
+    },
+    {
+      "suite": "com.example.courselingo.task.RedisTaskProgressSnapshotServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8bff81a991e977d48dcb6d77bf4f3619acb8f222e7beb4da0be6220778ddbee3"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskBatchDeleteControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1d3e7df5b5be6607f27251f475d1517c581bbbb141c68735bfdd91bbec2fabb7"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskCommandControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "70f0745a11d40ae9cc7908129795b0c5871d3f0dd191d05f6cc76bc527e3393a"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskCommandServiceTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "52babb07f387c4efe9779b039d83d861c1a6e0b46ecb0576598e0387d58d7b46"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskCreationControllerTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "365d0548eb0a041cc773ee197ca2d85047ab6b59ebbbef92ac70740f54fdb573"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskCreationServiceTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2c134545f14afda35ea36f24e485ac84d1b991ead10521e05a119349f496c9d7"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskEventControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2cabb6eba2d533d38798e0f6927099c15f15d1a87e9a197a867f42bc2529eb05"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskEventStreamServiceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b006edef89a12c60e6bf0e20a4d7c7b4cae811ca8bc8298560388bd5b7d99343"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskQueryControllerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6c622faf518ad1943ac9d489f261b29f7b4228c1e1fe18cf583160d7223d6d90"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskQueryServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "db604ec1a3d8c4029afefc7e31d365c526cea290bad36a676b9d8e8df4272f33"
+    },
+    {
+      "suite": "com.example.courselingo.task.TaskResumeControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2e90200573100a73d5157337216be97c6dae5420f2af7fc18a30150fb3d92aec"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.AdaptiveAsrControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "993d5797de67569f8de8b1c704f2f129adb3efee955bd7a49a964c685384998c"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.AnalysisTaskWorkExecutorConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f7b1d16e7b72b8c002057bfc273c1cc13e5f17925edf22d323b1d561a0795b0e"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.AnalyzeKeyframesStepTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "472c0f958f8f3cff65b3a9bd78be8a2d26649d016ae839ae5efd31cc0f00a852"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.ExtractAudioStepTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4124ff09e5f55c260e51536807cf34d527c8329ad5111ced60a6353f29404e68"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.ExtractKeyframesStepTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "63b2afac415bbe79bc8ce99d022505dfe51da23ca5bca24467b75b6bc9146157"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.FuseVideoSegmentsStepTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "049ab9a80ea6b475ea24726c1815ffcc42fa658c7c9ab14b87fbb1f1068af3b3"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.GenerateArtifactsStepTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c4c3fc5af58e0d99a84e3015c1192d5001b3d95ae433d08d4bbf84a4cd15415d"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.GenerateLearningPackageStepTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1abba4b6eb111f50e9cdfd2278859337c7551e35a96d6ffe4fdd68af0c8f8e1b"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.OcrKeyframesStepTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "317d121f874f9b3ba648cbb644ef40eaf9321c757766d805d1b3d1f10ab0b906"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PersistSubtitleSegmentsStepTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ac8eef3c6caff045aec7ea33f695668157df1eb02a1d6aee91ab3a7d69b71b19"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineAnalysisTaskRunnerFailureTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2743f2323fda123ec04e9baa4cd6b2146cff241e06cea0d067da49bd5c16915e"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineAnalysisTaskWorkExecutorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cae5740795b1a24da0f7cb79f4d19ee9c76569ca6e5d57995a391ebf482666fa"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineCheckpointExecutionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "91a45b43ad393fbc03888ed21910a129235f4d9c48ed38c04ef48738a0db32d2"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineF2ExecutionOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5e44912dfb31518d28e284e2d46a735e0e53ee12b7650face124b20d5813b5d6"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineF3ExecutionOrderTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a726bf191a1e77d36d8b998bba1a57c9950cebc313c22a9b51e5a9fe42fe2062"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineF4ExecutionOrderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "be8d229f4de0450a24ca35ded6e22b26169a73869e9d3b7a10f76ec4ad927129"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineF5ExecutionOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e763f7d6151d38dc1d540b550a577e89c86fa30775a9e02e60e11117bf8e914e"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineF6FailureFlushTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "17e1e9193333aa9965f1881caddc3a5c9165291c3f9283a2b4193c2e37593761"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineFusionExecutionOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "7373ad89cda2c6230c40c1c7ce77ae4cb8ee1a4eebca5880db093f2157554bda"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineOcrExecutionOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "14c377686b6682852a4f04b02c9634a62a5561cbc94b1bb95df5c55448687339"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineVisionAnalysisExecutionOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fcb1c10f9f98f1d7db4b3a143f03ea23f56510a0c4e6bbac79ee934bbe8bf9b6"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.PipelineVisionBranchCoordinatorTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9f4be417c89cb79eed4bf708933e5a0ee5448217c8ff63e6f531ab3cd7ac269d"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.ResolveUploadedSourceStepTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "18c4cf458ddf9e6768d2553482c246336c1a0c17c858e32c445c8d5977f5a6ea"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.SilenceTranscribeStepTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "99e8f755a67043bbb0257fdfe9a11c31796a4b79c7bbd2240f7167339b2ce2af"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.TranscribeAudioStepTest",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "97f835b43d3571f2becde59d5892eb1ff510dacbdd5bf8f6ffb0cc4e542c2d9d"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.TranslateSubtitleSegmentsStepTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9c237240245630ee486076e8fc7fa71a077bebaa8b2798d81467fb2f089a1691"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.TranslationFailureDiagnosticTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ac04bb468eb2286502b1fd98339faaed8c38e9c954f6fdebaa5d505dca69d13e"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.WriteAiCallRecordStepTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c0f49e672c132a8422d13bfac3910123cc67a9dd933220e1deecc562a4a14095"
+    },
+    {
+      "suite": "com.example.courselingo.task.service.TaskBatchDeleteServiceTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a391d4b68fe9b978cedd5798fa34fa261c9f7fc4338a04c1d58ad037c19f967e"
+    },
+    {
+      "suite": "com.example.courselingo.task.usage.ModelPriceCatalogTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d231fa36ec6b1eb0be2e77d367374bd3597c8e6d28f1e77ac3f6835122aac5a3"
+    },
+    {
+      "suite": "com.example.courselingo.upload.CompleteUploadControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5cc6bb0ea3a9d9fd355c852403bb76ea0a3137a4b861fa1aabb5d2cd5a5eadb4"
+    },
+    {
+      "suite": "com.example.courselingo.upload.CompleteUploadServiceTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c023d20e91050c05971ccf412df3bed81c13fdd557a03d40f4718266653ef4eb"
+    },
+    {
+      "suite": "com.example.courselingo.upload.MissingChunksControllerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b505ef606a0009dbff7e772813bf1f7ed86ec3d85136de5d8ffc2e6a82c21cb5"
+    },
+    {
+      "suite": "com.example.courselingo.upload.MissingChunksServiceTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bb7f533190cad0db2f386e08b62e7132be99e602a161d4529d1652078b95f6ba"
+    },
+    {
+      "suite": "com.example.courselingo.upload.RedisUploadChunkStateServiceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "50c06ea96af431b169a57234be3e486442b42138c1e97f0beaa91b371868bcb0"
+    },
+    {
+      "suite": "com.example.courselingo.upload.UploadChunkControllerTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fc85eb14941f18e2cd782ae959f3bf39d2b2e747fc6dbebb94c6e1cc14a1c7c2"
+    },
+    {
+      "suite": "com.example.courselingo.upload.UploadChunkServiceTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "9fa829008d147767e3af0ed710562b9bf406d5aaae6a2f1076a2db5db4329d7d"
+    },
+    {
+      "suite": "com.example.courselingo.upload.UploadSessionControllerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5817805ba80f7f0f8c04f334c6a7ede5696005d43859ac09ef6d91025202266a"
+    },
+    {
+      "suite": "com.example.courselingo.upload.UploadSessionOwnerGuardTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "da2a598a7026fc7669f02e98b744c0c722d28be10920b0f9fa4dfabd44195bad"
+    },
+    {
+      "suite": "com.example.courselingo.upload.UploadSessionServiceTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "e3097a71b09738418172bc75464c458d953fa6be06af8d9f4c709796017f6935"
+    },
+    {
+      "suite": "com.example.courselingo.video.context.CourseVideoChunkMigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "555c7aa0fa65944a9685681dd4f5f1f5c95b88df170c277a84e4a5b9c3a53dd5"
+    },
+    {
+      "suite": "com.example.courselingo.video.context.CourseVideoChunkServiceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a0aa623cf70ec14e325273117eaa66565407b590f8ac21c514a6c626045bd67d"
+    },
+    {
+      "suite": "com.example.courselingo.video.context.CourseVideoContextBuilderTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d4c9dae36a7dbee5a63935cf5546750cd065bb7d92f93f98bdf88d0867dad12f"
+    },
+    {
+      "suite": "com.example.courselingo.video.context.CourseVideoContextControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "172324b664eda8f2a831e76bc161d33de32f832345ce445790df5b38d971636b"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.BoundedOcrExecutorTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cd1111e0e00c36bcbb2fab9e6cc3b30fe6535f959a0d5bd0ec3fc2cf4fbf6bc9"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.CandidateTimestampPlannerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b80fcaa4a8422a2020a0ac1f0e213ca76f516fc38a75d5985e75bd9404ef12df"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.ContentAdaptiveFrameBudgetAllocatorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ee3a396e7f8763d8e7fd19b701c88da7b229d045d9c26cc12b70292b01c3608d"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.DeduplicatorsTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "96ba935f2d564c5cb916f7e324612f3225874bd447ef6718fe761796fc739c9e"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.ImageQualityAnalyzerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1e820005525bdf79a267a01f6cecc40d8cdb427e99c9489c57e3a7aa90476d9b"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.OcrImagePreprocessorTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bbc5ceb3f96168156e580fc6bf6e6e80620243778ccb702a0c803244212895c6"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.PreOcrFrameBudgetAllocatorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "7e0f4f30db250fab2c5e0f0444438e7f0188f89ca4dd2d646503fb9f93718b04"
+    },
+    {
+      "suite": "com.example.courselingo.vision.adaptive.StableFrameSelectorTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ca9f39bd5898ae343164558bd7b540fde50b85d63d1726d7945d4fdd2dcf847f"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.HighValueKeyframeSelectorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2ac6f29807aeeb2ab73f084040f64b229f79e1cf3e4374861437cb5adc341571"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.OpenAiCompatibleVisionProviderTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b5c586d1f5464818470a9f441ba1deb9e02854107c0b61af66e96858a45ac090"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VideoKeyframeAnalysisMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "891ecfacdce45a5445a2af68d07a81951cd8e6701a9c9aa221aede474135f2db"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VideoKeyframeAnalysisViewsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ddbeaa30865557a4d25aa0d11cefa4ef38e7bef5903f76c67a13d2b4e8a4b3e0"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VisionAnalysisAiCallTransactionIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "82ad6ba8a4074c8e843a6d3f6de496329a8e58ebade735d5595f4595dfcabb19"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VisionAnalysisServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cb0ab8a49c1582fde466dd690ab9cbae010afbc2429031e76a4e2d368dd7272b"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VisionConfigurationBoundsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ecf2cd4f28a458f73568c4d4e7a0e71cab06063560a87396055cdb8bfd17cd3e"
+    },
+    {
+      "suite": "com.example.courselingo.vision.analysis.VisionPromptContextBuilderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4f535e2d1788bf8793bbc7f12afa131407f00d71075eb219870db192216077ab"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.AdaptiveKeyframeMigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f7111e9c8d877f3fbace1a4869bf3b1480272d477be31a800630c778016016d7"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.AdaptiveVideoKeyframeScanServiceTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "77837036fafb1efda8046c405709d507891f373fc7d2c02375df46e0ff8e76a6"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.EvidenceImageWriterTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1e770a269c06250cf8beed3e0d802d551edf36cae11bead8437de2b2cc8ba9fd"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.KeyframeSelectionServiceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ca0741807974c41a10b6ef225f14441178d905726692e5885638e65f1b81aece"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.VideoKeyframeControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "1d69d88463baebc9457a3763d2864a6ffab524a98806af5f0da6de392b1df919"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.VideoKeyframeEvidenceLifecycleServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "b1b3f66a924c1c10bb63331670db2ccc28cd2dc89427ba275ad73fab868f6797"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.VideoKeyframeMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f6c4562db43e5a20f4834ec4e6bc81a952820eef8a1b01c892fdb8eb99ea1859"
+    },
+    {
+      "suite": "com.example.courselingo.vision.keyframe.VideoKeyframeServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "bd0185cd3e9383bd25cf980a2bb5085ee4299c8edbed98e24d50f7b7ccac0d7c"
+    },
+    {
+      "suite": "com.example.courselingo.vision.ocr.OcrTextQualityEvaluatorTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "69352b2f2ed5e9ebcf4dc8e45666f89b01a6122fd091f28ddf0ee70bf1abdaa8"
+    },
+    {
+      "suite": "com.example.courselingo.vision.ocr.TesseractOcrProviderTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "42b5fcf1f306fe1e7a8c39f60fd2a1d58e19c416bb22cbc8155d8ac73f00a4ce"
+    },
+    {
+      "suite": "com.example.courselingo.vision.ocr.VideoKeyframeOcrMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "899cebe9e8911bbb07c6273e15f6575c87baa62831fa2678e05c447943723cf7"
+    },
+    {
+      "suite": "com.example.courselingo.vision.ocr.VideoKeyframeOcrServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "fb2a21dae8e82017966635cf6798b6c16582bd2b5aebd74c4efa7be38ef5e185"
+    },
+    {
+      "suite": "com.example.courselingo.vision.ocr.VideoKeyframeOcrViewsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "935e28e811943ae4ecbba2e8a8aa174523242f9a2da6bbe0585149f34019028c"
+    }
+  ],
+  "total": {
+    "tests": 1765,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

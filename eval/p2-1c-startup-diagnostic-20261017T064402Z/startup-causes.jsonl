@@ -1,0 +1,4 @@
+{"index": 0, "kind": "DEPENDENCY"}
+{"index": 1, "kind": "DEPENDENCY"}
+{"index": 2, "kind": "BEAN_CREATION"}
+{"index": 3, "kind": "FLYWAY"}

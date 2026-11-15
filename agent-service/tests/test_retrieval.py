@@ -143,16 +143,23 @@ def test_chunks_preserve_full_text_and_original_timestamps():
     assert all(c[0].start_ms == 3 and c[0].end_ms == 9 for c in chunks)
 
 
+def hold_query_slots(retriever):
+    for _ in range(retriever.query_concurrency):
+        assert retriever.query_slots.acquire(blocking=False)
+
+
 def test_busy_admission_does_not_queue_embedding():
     retriever = Retriever(UnusedStore(), FakeEmbedding())
-    with retriever.lock, pytest.raises(BusyError):
+    hold_query_slots(retriever)
+    with pytest.raises(BusyError):
         retriever.search(RetrieveRequest.model_validate(payload()))
 
 
 def test_busy_http_response():
     retriever = Retriever(UnusedStore(), FakeEmbedding())
     body = json.dumps(payload()).encode()
-    with TestClient(create_app(retriever, SECRET)) as client, retriever.lock:
+    hold_query_slots(retriever)
+    with TestClient(create_app(retriever, SECRET)) as client:
         response = client.post(PATH, content=body, headers=signed(body))
         assert response.status_code == 503
         assert response.headers["Retry-After"] == "1"
@@ -279,8 +286,8 @@ def test_delete_without_queries_and_late_apply_cannot_resurrect(store):
     retriever = Retriever(store, FakeEmbedding())
     original = sync_request(query)
     retriever.sync(original)
-    # Deletion is admitted even while another document embedding holds the CPU lock.
-    with retriever.lock:
+    # Deletion is admitted even while another document embedding holds the index lock.
+    with retriever.index_lock:
         result = retriever.sync(sync_request(query, 2, [], "DELETE"))
     assert result["state"] == "DELETED"
     with store.connect() as conn:

@@ -96,6 +96,9 @@ public class AiCallRecordServiceImpl implements AiCallRecordService {
         AiCallRecord existing = findOwnedRecord(validated.recordId(), validated.taskId(), validated.userId());
         AiCallRecord update = new AiCallRecord();
         update.setStatus(AiCallRecordStatus.FAILED.name());
+        update.setPromptTokens(validated.promptTokens());
+        update.setCompletionTokens(validated.completionTokens());
+        update.setTotalTokens(validated.totalTokens());
         update.setFinishedAt(now());
         update.setDurationMillis(validated.durationMillis());
         update.setRequestFingerprint(validated.requestFingerprint());

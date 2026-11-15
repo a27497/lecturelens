@@ -1,0 +1,77 @@
+[
+  {
+    "path": ".data/process-closeout-20261016T181259Z/cancel-without-record.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/legacy-launcher.log",
+    "sha256": "b12279f84ac5bc6f572a151e7022886cf1e44264e6f07798c0929c846b6a5595",
+    "bytes": 56
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-final/output.log",
+    "sha256": "713f15a8522a954ae3c59be9f36360381dc67cc602344c5eb83ee4d75cf9edd7",
+    "bytes": 1735
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-final/run.json",
+    "sha256": "59f6b8905db037259e805a56a33b90dea313e82f772d56b22712b9c8662cbdee",
+    "bytes": 1119
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-identity/output.log",
+    "sha256": "277b7b3230b87331b75c228a4dc98214e90f6e07fbf50e096bb5ae856e557231",
+    "bytes": 2017
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-identity/run.json",
+    "sha256": "3590ce8bae187e04c8f8df91a9ad85354cd559db25621c7de74dba94b9bff48b",
+    "bytes": 1185
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-qualified/output.log",
+    "sha256": "789ebb83cf00aff8682dd98598e27825c154258ed71e489fb45456fb2c77889e",
+    "bytes": 2017
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/process-closeout-qualified/run.json",
+    "sha256": "a11610be9e4798efcbe252c13d29db5058d681f14ab18be37d7b0b93e7656037",
+    "bytes": 1123
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/success-descendant.log",
+    "sha256": "dae9371856c2a6810c79e274ecad44545b0b3810ae68114d13b3b5e7b00f754e",
+    "bytes": 113
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/tests-01.log",
+    "sha256": "e98259d14b4f44cfb40ad744c82be6bfaf5c9ab97c71e2c036c357bb602c8c2c",
+    "bytes": 1583
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/tests-02.log",
+    "sha256": "4f107cd7267d98393141d20c9a718cd840f74e19a9849ca88507c307a03cc377",
+    "bytes": 1735
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/tests-final-launcher.log",
+    "sha256": "0d21b23fefecc9822c9446b1eabeded0dbefbdedd8c4b7bb31c1ada23b55f7af",
+    "bytes": 156
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/tests-identity-launcher.log",
+    "sha256": "665220c920540315eecd8ea6ef1b066b5b38414aeddd72e41f2200718af686bf",
+    "bytes": 159
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/tests-qualified-launcher.log",
+    "sha256": "3ec2087c4bb6f3fb4402d67f2416dcc096d0a3172e0c797cd8bb68cd6a82a5e2",
+    "bytes": 160
+  },
+  {
+    "path": ".data/process-closeout-20261016T181259Z/timeout-descendant.log",
+    "sha256": "dae9371856c2a6810c79e274ecad44545b0b3810ae68114d13b3b5e7b00f754e",
+    "bytes": 113
+  }
+]

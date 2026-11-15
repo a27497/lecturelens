@@ -1,0 +1,130 @@
+[
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/AsrTextNormalizer.java",
+    "sha256": "45c0c18dbbfc713ec6e87bf123b7e825e2ec7a77f0cc36eb065df0d6971e0164"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/SpeechToTextProvider.java",
+    "sha256": "bcfd4dc861a36c956424fa70ac94b5c77b6d41c3000b1dc15555f33bc815e5eb"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/TranscribedSegment.java",
+    "sha256": "2beee105db93a8dd3908dd767dcf4fb8a7c10702a845e99c1f94c90d03c35f24"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/ai/asr/TranscriptTimingSource.java",
+    "sha256": "bdc9200f45f0c96e3f6cff085e896c096c6b254222d101f66a40f6deda710803"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/media/AudioChunk.java",
+    "sha256": "f251c3a0ed53c8bc2e265d7c471e842ba9aa5d26f375e8de21efc634e35be8ce"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/media/FfmpegProcessExecutor.java",
+    "sha256": "b2e776047fa028efd0a0c02a9ffb65bf47131ca5a3cd900c3895cf19ad6c1e94"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/media/ProcessBuilderFfmpegProcessExecutor.java",
+    "sha256": "a1679d745c5ddd4d19a9dcca3a29edb525cee3bcc568c257fdea90a74cd2ebca"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/media/SilenceAudioChunkPlanner.java",
+    "sha256": "72114430f4f0f573fafbeee74114c159dc8baf15026c54db19c3dc4a9cd3152f"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/media/SilenceSegmentationPolicy.java",
+    "sha256": "6bd2505f4cc3324d8137dadd329bd1b2cc7d5cdd78318cd786008c6a9a591e6a"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/domain/SubtitleSegment.java",
+    "sha256": "97533fd84a42127e650b0b98cdfabba032a0543b06cd7a8bf16c5ba0a2a5b802"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/dto/AlignedParagraphView.java",
+    "sha256": "b227be7be8472cdb93518448e01504cb5cce5fb52c90991a4e7c736dd2525040"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/dto/TaskFullTextResultView.java",
+    "sha256": "4ef28ff2e9d856bde49b4528d12f0931a3cced18558d3e153072a4c60f98fa9f"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+    "sha256": "7de5bd5f0aa2b867901c7961dd3944f846239699b77118983c724b5345d13c87"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+    "sha256": "ec422667beef5b428cca8f7354ce05aefb8c9a59ca620abbc0291909b11917cb"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranscriptParagraphService.java",
+    "sha256": "db8c9e5cbebb720922113635f268b6e953710a2823fb946bc0ac7d3c991f93e5"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+    "sha256": "e51bfc22abd3bbf483535c9a4609bf23574d14812294ee125a8e24de40c94e12"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+    "sha256": "e94447df71466db242fcc6f3ef2c1a8113bcafd28db94374daf72c747128082a"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleSegmentPersistenceServiceImpl.java",
+    "sha256": "3924c219bfe0956bd7e54358509bb9dd5e13b7e429c437220e707b83af9b8666"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationPersistenceService.java",
+    "sha256": "e6bdf2a85bd420d7dc8c0be408bf18da1dd4fabe3f215c5790e8f5a098c8f343"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+    "sha256": "465f3d505d8a5431e71f68b18d37496ea455d4d50e82f386711a05f0423ff6f3"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/TaskFullTextResultQueryServiceImpl.java",
+    "sha256": "2c990e3add35d3e94632c421c870d3a0a0e379b7ca0be7510be21695d88fbc10"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfiguration.java",
+    "sha256": "cc261547b7a89e265d74798db889f1cf2d3bb8d61dd375c5ecc6dd089eeb73cc"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/AsrChunkingProperties.java",
+    "sha256": "0e5124ebcabde93124387c5fb52579a36df1fa07870ab1cdc2c3ed792f95a7ae"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/task/runner/TranscribeAudioStep.java",
+    "sha256": "f87ff1c06350b3582397a24e57942f86a9dcef7e2c7fdd266fc0f2ef4e628bfe"
+  },
+  {
+    "path": "backend/src/main/resources/application.yml",
+    "sha256": "d75376902823c5a5b40686e7f5316d9ade07839b3e12f43af557fd3b46e0c0a3"
+  },
+  {
+    "path": "backend/src/main/resources/db/migration/V28__transcript_paragraph_alignment.sql",
+    "sha256": "ea388b35f9799a85e7da3250795f68d029b38d80fca547a3b980f171942092ca"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/media/SilenceAudioChunkPlannerTest.java",
+    "sha256": "de40c36a7dbfb0901aae1dd4543c3dd6d7f1a865f17d3b7731f27068757cdcf5"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/media/SilenceAudioMediaIntegrationTest.java",
+    "sha256": "dc0aabc7dedb3cbb355d48e69be3e5f72155dba8a1a0c404eb2f6775477184ae"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/subtitle/pipeline/TranscriptParagraphTest.java",
+    "sha256": "599a77855a5ab773fb42202caf3d1f66a201d6815c9fd2b8979e4d9b1ba680e3"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/TranscriptParagraphMySqlTest.java",
+    "sha256": "85b8bec6c5c6bcdbfe7dcd2154778f3c9f1c819fb27bf960c99f5cdd1882cc37"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/task/runner/SilenceTranscribeStepTest.java",
+    "sha256": "068fc775b2558e0383e8bd3aa48b15b778af1cea924872e1e41a86b316f3d28b"
+  },
+  {
+    "path": "docs/PIPELINE_TRANSLATION_V2.md",
+    "sha256": "284d35936376cf7031db19cf2e6bc5cc531eadf388a489bf279a371bed8df147"
+  }
+]

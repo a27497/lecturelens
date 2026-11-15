@@ -18,6 +18,8 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
     private final OkHttpClient http;
     private final SystemModelUrlPolicy addresses;
     private final int responseLimit;
+    private ModelCallObserver observer=ModelCallObserver.NOOP;
+    public SystemModelHttpClient observed(ModelCallObserver observer){this.observer=observer;return this;}
 
     public SystemModelHttpClient(int responseLimit) {
         this(responseLimit, new SystemModelUrlPolicy());
@@ -58,8 +60,15 @@ public final class SystemModelHttpClient implements OpenAiCompatibleLlmClient, A
                 request.body().getBytes(StandardCharsets.UTF_8), request.timeout());
     }
 
-    public OpenAiCompatibleClientResponse post(URI uri, Map<String, String> headers,
-            String contentType, byte[] body, Duration timeout) {
+    public OpenAiCompatibleClientResponse post(
+            URI uri,
+            java.util.Map<String, String> headers,
+            String contentType,
+            byte[] body,
+            Duration timeout) {
+        return ObservedModelCall.execute(observer,uri,headers,body,contentType.equals("application/json"),()->postOnce(uri,headers,contentType,body,timeout));
+    }
+    private OpenAiCompatibleClientResponse postOnce(URI uri,java.util.Map<String,String> headers,String contentType,byte[] body,Duration timeout) {
         long start = System.nanoTime();
         try {
             // Literal IP hosts bypass OkHttp's DNS callback, so validate them here as well.

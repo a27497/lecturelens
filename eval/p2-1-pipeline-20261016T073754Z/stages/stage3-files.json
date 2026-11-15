@@ -1,0 +1,66 @@
+[
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/AdaptiveTranslationController.java",
+    "sha256": "42f5175ec8bf5e68f77ec5d6888f4a2fa019bbf79846d8265b870c1c1d46a09d"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelinePolicyService.java",
+    "sha256": "32677e382216d09663c6ad82e1fb1e387ffd076f8ddff0fc4249d907e7cc594a"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/PipelineTranslationProperties.java",
+    "sha256": "0a78ebc7c8e6ecbe233020a3ac5dc4074f84e0e7984eaa36f2c71f309a871084"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationAimdPolicy.java",
+    "sha256": "659ee0a28334ada6102217dbd0f2e4e70b4b4f6675af77c7d18fc0acf5d853c2"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchCoordinator.java",
+    "sha256": "f5352002d4042482295fc252340ee468d6cb7c947f9f56d9ea37081abddad218"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationBatchPlanner.java",
+    "sha256": "f0d599592937532b8c7c4ce7805193cff271cf0486ff101d4ce9db84e9ed000a"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationPolicy.java",
+    "sha256": "0d5696d4b4806ba26085fc66f1a03769f892d39ae09726f95112681870ba691f"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationProviderLimiter.java",
+    "sha256": "d1746258b4bbf66e9645fa41c98141c7dcac80317b74fb11bc3affbe472e3409"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/pipeline/TranslationSchedulerEvents.java",
+    "sha256": "5b715a50248928d566cfdf5ef41472523bfef181643d97b1ce898a127c33850b"
+  },
+  {
+    "path": "backend/src/main/java/com/example/courselingo/subtitle/service/SubtitleTranslationServiceImpl.java",
+    "sha256": "fae7952724b2adeee9980ba6b202e559e301fc7e8d2acc2a8097b0b5321fd584"
+  },
+  {
+    "path": "backend/src/main/resources/application.yml",
+    "sha256": "071546c024140417977e4cd7a66e371b26d79a0859582bcaaad2010c74c83833"
+  },
+  {
+    "path": "backend/src/main/resources/db/migration/V29__translation_scheduler_observation.sql",
+    "sha256": "ca9a240a1b583b738e7b6d17afcd9e2622c9126ffe8ed7c3491cc412ea84fe18"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/subtitle/pipeline/AdaptiveTranslationControllerTest.java",
+    "sha256": "a92715545d6669529cd4efd74a394ec05ee598072e0cfcd8f5eae856774afe2b"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/subtitle/pipeline/TranslationAdaptiveBatchTest.java",
+    "sha256": "d87f4b356f3eadcc4124695c7b61656aa4c934ecd87dd21a4b7b5377d8a24616"
+  },
+  {
+    "path": "backend/src/test/java/com/example/courselingo/systemmodel/TranslationSchedulerMySqlTest.java",
+    "sha256": "f035df3139f4cba063f629f7a667e3d0f3ec3f279295237273407a8d04398f60"
+  },
+  {
+    "path": "docs/PIPELINE_TRANSLATION_V2.md",
+    "sha256": "3909eb2db057a8a1c94b0bb93b9b300c124d1dd3f007c925c33d45cfd40091ce"
+  }
+]

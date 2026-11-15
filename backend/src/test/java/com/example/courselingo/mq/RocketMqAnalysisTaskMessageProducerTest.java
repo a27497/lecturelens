@@ -53,6 +53,8 @@ class RocketMqAnalysisTaskMessageProducerTest {
         assertThat(body.get("requestId").asText()).isEqualTo("req_1");
         assertThat(body.get("traceId").asText()).isEqualTo("trace_1");
         assertThat(body.get("createdAt").asText()).isEqualTo("2026-06-27T10:00:00Z");
+        assertThat(body.has("protocolVersion")).isFalse();
+        assertThat(body.has("executionEpoch")).isFalse();
         assertThat(body.toString())
             .doesNotContainIgnoringCase("authorization")
             .doesNotContainIgnoringCase("cookie")
@@ -70,6 +72,31 @@ class RocketMqAnalysisTaskMessageProducerTest {
 
         producer.send(AnalysisTaskMessageTag.ANALYSIS_CANCEL, validMessage());
         assertThat(sender.tag).isEqualTo("ANALYSIS_CANCEL");
+    }
+
+    @Test
+    void preservesCheckpointProtocolAndEpochAcrossTheActualProducerConsumerWire() {
+        var properties = new RocketMqProducerProperties("127.0.0.1:9876", "127.0.0.1:8081",
+            "courselingo-analysis-producer-group", "courselingo-analysis-task", 3000, false, true);
+        for (var tag : AnalysisTaskMessageTag.values()) {
+            for (long epoch : new long[] {1, 7}) {
+                var expected = validMessage().withExecution(epoch);
+                var received = new java.util.concurrent.atomic.AtomicReference<AnalysisTaskMessage>();
+                var receivedTag = new java.util.concurrent.atomic.AtomicReference<AnalysisTaskMessageTag>();
+                var consumer = new RocketMqAnalysisTaskMessageConsumer(OBJECT_MAPPER, (actualTag, actual) -> {
+                    receivedTag.set(actualTag);
+                    received.set(actual);
+                }, properties);
+                producer.send(tag, expected);
+                var result = consumer.consume(new RocketMqInboundMessage(sender.topic, sender.tag, sender.key, sender.body));
+
+                assertThat(result.status()).isEqualTo(ConsumerProcessResult.Status.SUCCESS);
+                assertThat(receivedTag.get()).isEqualTo(tag);
+                assertThat(received.get()).isEqualTo(expected);
+                assertThat(received.get().protocol()).isEqualTo(2);
+                assertThat(received.get().epoch()).isEqualTo(epoch);
+            }
+        }
     }
 
     @Test

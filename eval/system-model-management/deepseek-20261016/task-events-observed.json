@@ -1,0 +1,200 @@
+[
+  {
+    "event": "task_state_changed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "stage": "QUEUED",
+    "outcome": "success"
+  },
+  {
+    "event": "http_request_completed",
+    "outcome": "success"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "task_state_changed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "stage": "QUEUED",
+    "outcome": "success"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "http_request_completed",
+    "outcome": "success"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "http_request_completed",
+    "outcome": "success"
+  },
+  {
+    "event": "http_request_completed",
+    "outcome": "success"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_af2961a5253a4e8dbcb811a3efcbcede",
+    "errorType": "BusinessException"
+  },
+  {
+    "event": "mq_message_send_requested",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "start"
+  },
+  {
+    "event": "mq_message_send_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "tag": "ANALYSIS_CREATED",
+    "outcome": "failure"
+  },
+  {
+    "event": "outbox_delivery_failed",
+    "taskId": "task_fb81356012b143bd9b986fe0dae24c7c",
+    "errorType": "BusinessException"
+  }
+]

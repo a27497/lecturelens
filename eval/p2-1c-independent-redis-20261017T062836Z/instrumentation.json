@@ -1,0 +1,18 @@
+{
+  "bootstrap_source_unchanged": true,
+  "all_frozen_property_arguments_present": true,
+  "safe_filter_checked": true,
+  "bootstrap_selftest_status": "SUCCEEDED",
+  "bootstrap_selftest_log_sha256": "a375277e9e92512249d8e064071ba35aa98a825f9380ca3201f8b36c0ccbf444",
+  "source_sha256": {
+    "redis_resource.py": "1bc3aa80c1eb9c6651016b07264a0e729ee9b0ba55e4f174e62affcbf80ba649",
+    "runtime_service.py": "03e2509db6f21b922c8ad42459f672db4c93c49e68816e7b789de389f1ec4977"
+  },
+  "classes_sha256": {
+    "META-INF/spring.factories": "09e62c1e3b3bf37bf8882e2b691af93087f5f4f38956926bfd882eb757e1f71f",
+    "com/example/courselingo/systemmodel/P21Bootstrap.class": "1c8c33294a24767f816430c4ee91d8c2ac69e8ddd5ca29883a70960c2b14ad51",
+    "com/example/courselingo/systemmodel/P21Bootstrap$1$1.class": "9ba07011b6e2504475de0b715b3a1f717aeef9374eb8419bb59fcd57a681f5cd",
+    "com/example/courselingo/systemmodel/P21Bootstrap$1.class": "16b41d100e64e414ff0db0dff01f13ee18dc83fb0205213566b88c220f5d8c5c",
+    "com/example/courselingo/systemmodel/P21IsolationGate.class": "ed4ee04e58db7adb62b4dd7994f106dc1a53ae1696a1ff62dceaac9b7178dd53"
+  }
+}

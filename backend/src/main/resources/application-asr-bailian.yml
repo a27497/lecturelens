@@ -5,6 +5,6 @@ courselingo:
       provider: bailian
       chunking:
         chunk-duration: ${ASR_CHUNK_DURATION:180s}
-        concurrency: ${ASR_CHUNK_CONCURRENCY:2}
+        concurrency: ${ASR_CHUNK_CONCURRENCY:4}
         max-audio-file-size: ${ASR_MAX_AUDIO_FILE_SIZE:7MB}
         max-chunk-file-size: ${ASR_CHUNK_MAX_FILE_SIZE:6MB}

@@ -1,0 +1,29 @@
+{
+  "frozen_sql_sha256": "1600e40a8f8785a61f4db361171f3e02cdc90c1bfea5de15e785a76d9832e325",
+  "statements": [
+    {
+      "kind": "TABLE",
+      "name": "asr_scheduler_state"
+    },
+    {
+      "kind": "TRIGGER",
+      "name": "asr_state_immutable_input"
+    },
+    {
+      "kind": "TABLE",
+      "name": "asr_chunk_checkpoint"
+    },
+    {
+      "kind": "TABLE",
+      "name": "asr_scheduler_event"
+    },
+    {
+      "kind": "TABLE",
+      "name": "asr_result_cache"
+    },
+    {
+      "kind": "TRIGGER",
+      "name": "asr_chunk_immutable_input"
+    }
+  ]
+}

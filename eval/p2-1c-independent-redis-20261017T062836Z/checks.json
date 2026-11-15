@@ -1,0 +1,40 @@
+{
+  "p21c-redis-bootstrap-20261017T062836Z": {
+    "status": "SUCCEEDED",
+    "child_returncode": 0,
+    "started_at_utc": "2026-10-17T06:29:52.774699+00:00",
+    "finished_at_utc": "2026-10-17T06:29:53.326620+00:00",
+    "elapsed_seconds": 0.5519478419992083,
+    "cleanup": {
+      "pgid": 580758,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "a375277e9e92512249d8e064071ba35aa98a825f9380ca3201f8b36c0ccbf444",
+    "original_record": ".data/dev-checks/p21c-redis-bootstrap-20261017T062836Z/run.json",
+    "original_log": ".data/dev-checks/p21c-redis-bootstrap-20261017T062836Z/output.log"
+  },
+  "p21c-startup-diagnostics-20261017T062836Z": {
+    "status": "SUCCEEDED",
+    "child_returncode": 0,
+    "started_at_utc": "2026-10-17T06:33:14.817112+00:00",
+    "finished_at_utc": "2026-10-17T06:33:15.065821+00:00",
+    "elapsed_seconds": 0.24873481199938396,
+    "cleanup": {
+      "pgid": 593980,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "e45a8223b7311d983a3d8a2115e3e301beff733b417b1e1f3d7874234d1336f0",
+    "original_record": ".data/dev-checks/p21c-startup-diagnostics-20261017T062836Z/run.json",
+    "original_log": ".data/dev-checks/p21c-startup-diagnostics-20261017T062836Z/output.log"
+  }
+}

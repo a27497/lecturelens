@@ -34,12 +34,21 @@ public class ExtractAudioStep implements PipelineAnalysisTaskStep {
         Path sourcePath = context.requireUploadedSourcePath();
         Path outputDirectory = workspace.audioOutputDirectory(context);
         ensureOutputDirectory(outputDirectory);
+        long started = System.nanoTime();
         AudioExtractionResult result = ffmpegAudioExtractor.extract(new AudioExtractionRequest(
             sourcePath,
             outputDirectory,
             AUDIO_OUTPUT_FILE_NAME
         ));
         context.setAudioExtractionResult(result);
+        org.slf4j.LoggerFactory.getLogger(getClass()).info(
+            "event=audio_extraction_observed taskId={} durationMillis={} inputBytes={} outputBytes={} sampleRate={} channels={} format={}",
+            com.example.courselingo.common.logging.SafeLogSanitizer.sanitize(context.taskId()),
+            (System.nanoTime()-started)/1000000,size(sourcePath),size(result.audioFile()),result.sampleRate(),result.channels(),result.audioFormat());
+    }
+
+    private static Long size(Path path) {
+        try { return Files.size(path); } catch (IOException ignored) { return null; }
     }
 
     private static void ensureOutputDirectory(Path outputDirectory) {

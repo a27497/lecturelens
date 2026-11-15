@@ -15,6 +15,8 @@ final class WriteAiCallRecordStep implements PipelineAnalysisTaskStep {
 
     private final AnalysisTaskMapper analysisTaskMapper;
     private final AiCallRecordService aiCallRecordService;
+    private com.example.courselingo.task.usage.PipelineUsageLedger ledger;
+    WriteAiCallRecordStep withLedger(com.example.courselingo.task.usage.PipelineUsageLedger value){ledger=value;return this;}
 
     WriteAiCallRecordStep(
         AnalysisTaskMapper analysisTaskMapper,
@@ -46,6 +48,14 @@ final class WriteAiCallRecordStep implements PipelineAnalysisTaskStep {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
         for (PipelineAiCallRecord record : records) {
+            if(ledger!=null && context.taskContext().protocolVersion()==2) {
+                String feature=switch(record.stage()) {
+                    case TRANSCRIPTION->"ASR_TRANSCRIPTION";case TRANSLATION->"TRANSLATION_FULL_TEXT";
+                    case VISION_ANALYSIS->"VISION_FRAME_ANALYSIS";default->record.stage().name();
+                };
+                var usage=ledger.totals(context.taskId(),context.userId(),feature);
+                if(usage!=null)record=record.withUsage(usage);
+            }
             AiCallRecordView started = aiCallRecordService.startCall(new StartAiCallRecordCommand(
                 context.taskId(),
                 context.userId(),
@@ -83,7 +93,7 @@ final class WriteAiCallRecordStep implements PipelineAnalysisTaskStep {
                     record.errorMessage(),
                     record.retryable(),
                     record.requestFingerprint(),
-                    record.responseFingerprint()
+                    record.responseFingerprint(),record.promptTokens(),record.completionTokens(),record.totalTokens()
                 ));
             }
         }

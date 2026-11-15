@@ -1,0 +1,10 @@
+{
+  "result": "FAILED",
+  "health": "NOT_REACHED",
+  "application_starts": 1,
+  "java_exit": 45,
+  "category": "APPLICATION_START_FAILED",
+  "course_tasks_submitted": 0,
+  "configuration_export_started": false,
+  "configuration_import_started": false
+}

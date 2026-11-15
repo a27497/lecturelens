@@ -1,0 +1,25 @@
+{
+  "captured_utc": "2026-10-15T19:10:25.319662+00:00",
+  "services": {
+    "lecturelens-live-backend": {
+      "pid": 2659162,
+      "start_ticks": "4028994"
+    },
+    "lecturelens-live-agent": {
+      "pid": 5102,
+      "start_ticks": "2722"
+    },
+    "lecturelens-live-model": {
+      "pid": 5105,
+      "start_ticks": "2726"
+    }
+  },
+  "java_jar_path": "/home/dev/projects/lecturelens/.data/system-model-management/deploy-20261016/backend.jar",
+  "java_jar_sha256": "74ce36c807ce2e16cdb7a372dd73efe70bbf88bbf1ec08caac717a7bc82ead01",
+  "git_head": "63186ed30d8ff2674bafeb9552b03c2911dd0ab2",
+  "baseline_jar_sha256": "a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08",
+  "comparison_limit": "Original baseline used an isolated older artifact/schema/topic and response tee; this run uses the already deployed system-model artifact and live gateway. Same frozen media and unchanged current runtime parameters; not a controlled model-only A/B.",
+  "changed_business_files": [],
+  "changed_timeout_or_concurrency": false,
+  "process_restart": false
+}

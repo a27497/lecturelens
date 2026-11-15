@@ -136,10 +136,12 @@ public class TaskEventStreamServiceImpl implements TaskEventStreamService {
         Optional<TaskProgressSnapshot> redisSnapshot = progressSnapshotService.find(task.getId())
             .filter(snapshot -> Objects.equals(task.getId(), snapshot.taskId()))
             .filter(snapshot -> Objects.equals(task.getStatus(), snapshot.status()));
-        return redisSnapshot.map(this::fromSnapshot).orElseGet(() -> fromMysql(task));
+        boolean learningReady = com.example.courselingo.task.service.LearningAvailability.learnable(
+            task.getStatus(), task.getLearningReadyAt());
+        return redisSnapshot.map(snapshot -> fromSnapshot(snapshot, learningReady)).orElseGet(() -> fromMysql(task, learningReady));
     }
 
-    private TaskEventPayload fromSnapshot(TaskProgressSnapshot snapshot) {
+    private TaskEventPayload fromSnapshot(TaskProgressSnapshot snapshot, boolean learningReady) {
         return new TaskEventPayload(
             snapshot.taskId(),
             snapshot.status(),
@@ -151,11 +153,12 @@ public class TaskEventStreamServiceImpl implements TaskEventStreamService {
             snapshot.completedChunks(),
             snapshot.totalChunks(),
             snapshot.currentChunkIndex(),
-            snapshot.stepDetail()
+            snapshot.stepDetail(),
+            learningReady
         );
     }
 
-    private TaskEventPayload fromMysql(AnalysisTask task) {
+    private TaskEventPayload fromMysql(AnalysisTask task, boolean learningReady) {
         return new TaskEventPayload(
             task.getId(),
             task.getStatus(),
@@ -163,7 +166,12 @@ public class TaskEventStreamServiceImpl implements TaskEventStreamService {
             task.getCurrentStage(),
             task.getErrorCode(),
             task.getErrorMessage(),
-            toInstant(task.getUpdatedAt(), task.getCreatedAt())
+            toInstant(task.getUpdatedAt(), task.getCreatedAt()),
+            null,
+            null,
+            null,
+            null,
+            learningReady
         );
     }
 

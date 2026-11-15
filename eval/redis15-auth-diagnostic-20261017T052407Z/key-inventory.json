@@ -1,0 +1,170 @@
+[
+  {
+    "id": "26231a5ca6f35b1d5de49fc11a8d742e911ae83f20dc6202adb05d1a0534e4d9",
+    "authorized": true,
+    "type": "string",
+    "ttls": [
+      25232,
+      25231,
+      25230
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1-pipeline-20261016T073754Z"
+    ]
+  },
+  {
+    "id": "35d0c51b6b8a8ae128847a8aef826b77fabc1829d61551308d64fb673f875f5b",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      25744,
+      25743,
+      25742
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "41bebc4bcd0216a16907430b92a696484d91d5af608a9b478e2c764d6705de34",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      26610,
+      26609,
+      26608
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "43ca0f52bc48f06b68fa25096bd3b9f123cb3a990d80b01a2c54260dc7bdb311",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      26968,
+      26967,
+      26966
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "44ed94c46d5e1ef2f7cabd0d3ad4917e37c94494bbd9473061da2e886c15f057",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      26268,
+      26267,
+      26266
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "50f6396ccde1792fdddcc7b4ad72e0d2ae24e3bc380e9a62d86fdf818428bef5",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      26424,
+      26423,
+      26422
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "6aa9780283c11d3921aca23c789d231b2b25de8858fd3ef1fa524ce6eccae1f2",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      25973,
+      25972,
+      25971
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "9716f6b4ee043875f81fd3719bab7556315f3c5305b730d1e867a25d534a984a",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      27807,
+      27806,
+      27805
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "e1714a412b6fdcc701b15ede01af5422ee4828b64e506c195cf05815e81e463b",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      27395,
+      27394,
+      27393
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "f0846bc1e043479823650de6fdcad0d709685bb56cf29cc95df2a3b4c308d166",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      27146,
+      27145,
+      27144
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "f7d0403a060e0715fea1fd9e8649e9d95b917f100a049056042a9d43bb2d2454",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      27647,
+      27646,
+      27645
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  },
+  {
+    "id": "f937c071aa32d8d5f33b0771db77f6c05b6f30b75ee7fa8bda5192712fe52b73",
+    "authorized": false,
+    "type": "string",
+    "ttls": [
+      26784,
+      26783,
+      26782
+    ],
+    "ownership": "ARCHIVED_ISOLATED_TASK_IDENTIFIER_CONFIRMED",
+    "evidence_groups": [
+      "p2-1b-pipeline-20261016T122904Z"
+    ]
+  }
+]

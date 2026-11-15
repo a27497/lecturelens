@@ -1,0 +1,122 @@
+[
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_3be63a6fef0f4ed598985bcc4c5fb96a",
+    "created_at": "2026-10-15 09:08:45.002000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 09:25:48.195000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_5abe016bef254b4884edd1e3c2146867",
+    "created_at": "2026-10-15 08:51:48.856000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 09:08:35.603000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "FAILED",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_8f4c251ced84477d8adee4b0e1181a3a",
+    "created_at": "2026-10-15 10:52:14.422000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 11:08:14.416000",
+    "retry_count": 0,
+    "error_message": "Pipeline step GENERATE_LEARNING_PACKAGE failed: OpenAI-compatible LLM request failed category=INVALID_REQUEST;httpStatus=400;providerErrorCode=400;retryable=false;elapsedMs=66"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_9a87f5be4f5a43f38c7cb83735eabbad",
+    "created_at": "2026-10-15 09:42:47.287000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 10:00:00.946000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_a4b06448ec134edcad5549f7e847898b",
+    "created_at": "2026-10-15 09:25:51.617000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 09:42:44.079000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "QUEUED",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_a6466fb49ebe4d7e840dc11f220e3b4e",
+    "created_at": "2026-10-15 11:08:17.598000",
+    "deleted_at": null,
+    "error_code": "MQ_DELIVERY_EXHAUSTED",
+    "finished_at": "2026-10-15 11:12:38.000000",
+    "retry_count": 0,
+    "error_message": "Task delivery failed; create a retry task"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_b339b9b1541e44a7a0157019a916f4ea",
+    "created_at": "2026-10-15 10:00:04.455000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 10:17:54.330000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_d50a858fcd4a48ac863357fc39dde8c3",
+    "created_at": "2026-10-15 08:34:13.367000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 08:51:43.733000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_d636cdc9867c4781b679b15231632a44",
+    "created_at": "2026-10-15 10:34:59.492000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 10:52:12.164000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  },
+  {
+    "stage": "TRANSLATE",
+    "schema": "baseline_asr_20261015",
+    "status": "FAILED",
+    "task_id": "task_f090137e928e44adbea11007d3d75601",
+    "created_at": "2026-10-15 10:17:56.926000",
+    "deleted_at": null,
+    "error_code": "TASK_RUNNER_EXECUTION_FAILED",
+    "finished_at": "2026-10-15 10:34:56.923000",
+    "retry_count": 0,
+    "error_message": "Pipeline step TRANSLATE_SUBTITLES failed: Subtitle translation exceeded its total deadline"
+  }
+]

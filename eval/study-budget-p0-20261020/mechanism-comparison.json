@@ -1,0 +1,141 @@
+{
+  "baseline_commit": "bd142130e79ee60012d89d515b5bc4577d277b60",
+  "candidate_code_commit": "57d3b9ebd2b247f2748994c6f077d1507575718c",
+  "fixture_sha256": "1969e86e58b4e54068d150e489d3af3a1e1f77477cb8cbaef1b8ca6318d2b392",
+  "kind": "deterministic mechanism only; not provider token usage or real-model quality",
+  "limits": {
+    "reserved_tokens": 64000,
+    "model_calls": 6,
+    "tool_calls": 8,
+    "deadline_seconds": 90
+  },
+  "before": {
+    "batch": true,
+    "duplicate_observations": 1,
+    "error_code": "RUN_BUDGET_EXCEEDED",
+    "method_observations": 2,
+    "model_calls": 4,
+    "requested_reservations": [
+      4509,
+      13819,
+      13819,
+      19508,
+      21512
+    ],
+    "reservations": [
+      4509,
+      13819,
+      13819,
+      19508
+    ],
+    "reserved_tokens": 51655,
+    "reused_observations": 1,
+    "status": "budget_exceeded",
+    "tool_calls": 3
+  },
+  "after": {
+    "batch": true,
+    "duplicate_observations": 0,
+    "error_code": null,
+    "method_observations": 1,
+    "model_calls": 5,
+    "requested_reservations": [
+      4380,
+      13695,
+      16179,
+      16653,
+      10883
+    ],
+    "reservations": [
+      4380,
+      13695,
+      16179,
+      16653,
+      10883
+    ],
+    "reserved_tokens": 61790,
+    "reused_observations": 2,
+    "status": "succeeded",
+    "tool_calls": 4
+  },
+  "after_checkpoint_recovery": {
+    "batch": true,
+    "duplicate_observations": 0,
+    "error_code": null,
+    "method_observations": 1,
+    "model_calls": 5,
+    "requested_reservations": [
+      4380,
+      13695,
+      16179,
+      16653,
+      10883
+    ],
+    "reservations": [
+      4380,
+      13695,
+      16179,
+      16653,
+      10883
+    ],
+    "reserved_tokens": 61790,
+    "reused_observations": 2,
+    "status": "succeeded",
+    "tool_calls": 4
+  },
+  "retained_failure_long_serial_searches": {
+    "batch": false,
+    "duplicate_observations": 0,
+    "error_code": "RUN_BUDGET_EXCEEDED",
+    "method_observations": 1,
+    "model_calls": 4,
+    "requested_reservations": [
+      4380,
+      13695,
+      15687,
+      16179,
+      16653
+    ],
+    "reservations": [
+      4380,
+      13695,
+      15687,
+      16179
+    ],
+    "reserved_tokens": 49941,
+    "reused_observations": 2,
+    "status": "budget_exceeded",
+    "tool_calls": 3
+  },
+  "same_window_complete_checkpoint": {
+    "before": {
+      "reserved_tokens": 51655,
+      "model_calls": 4,
+      "tool_calls": 3
+    },
+    "after": {
+      "reserved_tokens": 34254,
+      "model_calls": 3,
+      "tool_calls": 3
+    }
+  },
+  "before_next_decision_requested": 21512,
+  "before_projected_reserved_before_final_review": 73167,
+  "after_remaining_tokens": 2210,
+  "production_observation_source": "User supplied read-only verification; not independently queried this turn",
+  "production_observation": {
+    "status": "budget_exceeded",
+    "error_code": "RUN_BUDGET_EXCEEDED",
+    "reserved_tokens": 49283,
+    "model_calls": 4,
+    "tool_calls": 3,
+    "reservations": [
+      5010,
+      13598,
+      13598,
+      17077
+    ],
+    "provider_usage_tokens": 11964,
+    "elapsed_seconds_approx": 6.83
+  }
+}

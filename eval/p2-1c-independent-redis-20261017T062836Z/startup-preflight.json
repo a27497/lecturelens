@@ -1,0 +1,10 @@
+{
+  "at_utc": "2026-10-17T06:30:39.952552+00:00",
+  "unit_absent": true,
+  "referenced_paths_exist": true,
+  "independent_redis_ready": true,
+  "used_bytes": 117468946432,
+  "available_bytes": 37408464896,
+  "usage_percent": 75.84640356831882,
+  "margin_to_85_bytes": 14176853196.800003
+}

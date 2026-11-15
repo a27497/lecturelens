@@ -1,0 +1,218 @@
+{
+  "name": "translation-output-regression",
+  "status": "SUCCEEDED",
+  "exit_code": 0,
+  "totals": {
+    "tests": 311,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.example.courselingo.ai.llm.LangChain4jLlmProviderTest",
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.ai.llm.LlmProviderFailureClassifierTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.ai.llm.ObservedModelCallTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.ai.llm.OpenAiCompatibleLlmProviderTest",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.ai.llm.OpenAiCompatibleRequestOptionsAdapterTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.modelrouting.AiModelRouterTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.PipelineTranslationServiceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.SubtitleTranslationResponseParserTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.SubtitleTranslationServiceTest",
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnosticsTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.pipeline.AdaptiveTranslationControllerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.pipeline.TranslationAdaptiveBatchTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinatorTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.service.SubtitleTranslationPromptFactoryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.subtitle.service.SubtitleTranslationPropertiesTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelTranslationObservationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.systemmodel.SystemModelTranslationV2Test",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.PipelineAnalysisTaskRunnerFailureTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.PipelineAnalysisTaskWorkExecutorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.PipelineCheckpointExecutionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.PipelineF6FailureFlushTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.TranslateSubtitleSegmentsStepTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.example.courselingo.task.runner.TranslationFailureDiagnosticTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sha256": {
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.ai.llm.LangChain4jLlmProviderTest.xml": "b407aeeb9c10e9799c945c3f419fb9e8b852217a025ba4198801b73b7808b232",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.ai.llm.LlmProviderFailureClassifierTest.xml": "091f221da8fa24c0d22c3ef9d94a0bd11123fe059a33632e73ffe2255eb9b19a",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.ai.llm.ObservedModelCallTest.xml": "5c67754b26d3e8557511887ea8b8c525b487589c5691a7305292fdfe5f78051c",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.ai.llm.OpenAiCompatibleLlmProviderTest.xml": "0f9d17bc87eb47dc558af2f06477771058f0e2438f10cea91ad26ffc1938b4b9",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.ai.llm.OpenAiCompatibleRequestOptionsAdapterTest.xml": "17d9822f6353c3167080a9b54fcf87e0982406b90812f98facddeb826215c807",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.modelrouting.AiModelRouterTest.xml": "8c2da34c06d91d812a13a7fde84efa0c4d53ff18cced8f4ea0a5001d74695856",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.PipelineTranslationServiceTest.xml": "52d9c33acc8466ab877be72d17b971df12169b13c1abb82df749a95d47be9896",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.SubtitleTranslationResponseParserTest.xml": "f316a79f452afa0a28ab95a4b97362d2073d8e7913809d0ba067c8a3ba3f6a43",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.SubtitleTranslationServiceTest.xml": "f8b4693ff6c7babce6d4e91f7820db70ca2f2a6322419a31034afd65db255f1c",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnosticsTest.xml": "b666e7a8d6df966db0d4f1c15cee66caaae80796f4695d38a6d49f4a0f4fd07e",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.pipeline.AdaptiveTranslationControllerTest.xml": "da4bdbf67f50930caa12565e3aeb1dc850b7889c5f491377069ce1c011622848",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.pipeline.TranslationAdaptiveBatchTest.xml": "3daa2967d69553e261e3415043f45e27be6ed9b9bff6740220efe032dad71324",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.pipeline.TranslationBatchCoordinatorTest.xml": "63e40c5c6f585b7dab314039756ba60504ccbf4a21eb67cde1e1acd2fe437248",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.service.SubtitleTranslationPromptFactoryTest.xml": "c656367a1ae2f408c4bdb9ce1d5becedaf2210ce1d5f8194e02d78a3a9c594be",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.subtitle.service.SubtitleTranslationPropertiesTest.xml": "ee9440e37f642bf55815b74fed706e6f4fdd6956d71d5ccbd57c505aa29164ef",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.systemmodel.SystemModelLegacyTranslationTest.xml": "407047763243394c3c60f841ba459fa45e413ee023641f455256db3c0f5a927d",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.systemmodel.SystemModelTranslationObservationTest.xml": "7304ad2a17961d156baa460a22cbafbf555487e5722fe654931d5701969fbe03",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.systemmodel.SystemModelTranslationV2Test.xml": "e7b4a7d59e615b1fdbe2af6158036d872bc838e0fb720c3521310e9e759e0f7a",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.PipelineAnalysisTaskRunnerFailureTest.xml": "3b18969fd64ff29a99a795fcf960af006b295123a9acf65e9a42b6bb52e62211",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.PipelineAnalysisTaskWorkExecutorTest.xml": "982a4d20ae6edf0c0ba43b67e5bf20433aa21f1e0e8838c568b56fa96384316d",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.PipelineCheckpointExecutionTest.xml": "ba3914789ea38da1949ef58f51c995b11d41bcd2b565de569ffbc807c0daaebf",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.PipelineF6FailureFlushTest.xml": "41604862d109886a8b7adc7f96038fd9772d32a0babbe02eda25feedaeea1f3f",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.TranslateSubtitleSegmentsStepTest.xml": "b0588cab38de275d8d9182ddd20d3cd0c083dd78cd36b01bd8e26379d58bb412",
+    ".data/translation-output-20261016T183359Z/translation-output-regression-reports/TEST-com.example.courselingo.task.runner.TranslationFailureDiagnosticTest.xml": "1ca3db36324e9167766b4a79160d464984efb4a7ff3d3c556345dd8d825afe84",
+    ".data/translation-output-20261016T183359Z/translation-output-regression/run.json": "bd778ce8bb94269a3f83d6ff829e4859800f7d18441fe54b990b1bd93b67b48e",
+    ".data/translation-output-20261016T183359Z/translation-output-regression/output.log": "6a035a5e92281a391377897c1be40c27d6a8b66dc33bf12b9e50678a2682ff1d"
+  },
+  "cleanup": {
+    "pgid": 3260562,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  }
+}

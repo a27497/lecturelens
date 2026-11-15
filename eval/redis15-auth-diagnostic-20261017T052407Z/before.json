@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-10-17T05:24:07.014522+00:00",
+  "head": "53fd50a7603a1d5e01708fb1ba3d2941da2e7132",
+  "protected_sha256": {
+    "eval/p2-1c-run-20261016T191343Z/runtime_service.py": "085db8597869ba4e945622f88307f7a63f7e3bf2f124c7539009bfe7e33cf223",
+    "eval/p2-1b-pipeline-20261016T122904Z/redis-reuse-authorization.json": "523bb55935235f376373d4f8855c89cb1127822c5005577be6b217cfc40a0396",
+    ".data/p2-1c-20261016T155847Z/candidate/backend.jar": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0"
+  },
+  "untracked_stat": {
+    "size": 25603,
+    "mtime_ns": 1792093257081128261
+  },
+  "disk": {
+    "used_bytes": 116636065792,
+    "available_bytes": 38241345536,
+    "usage_percent": 75.30863590235742,
+    "margin_to_85_bytes": 15009733836.800003
+  },
+  "live": "MainPID=4789\nExecMainStartTimestampMonotonic=60822129\nActiveState=active\nSubState=running\n",
+  "temporary_unit": "MainPID=0\nLoadState=not-found\nActiveState=inactive\n"
+}

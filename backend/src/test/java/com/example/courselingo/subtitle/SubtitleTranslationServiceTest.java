@@ -92,6 +92,36 @@ class SubtitleTranslationServiceTest {
         queryService = new SubtitleTranslationQueryServiceImpl(translationMapper);
     }
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"schema,UNEXPECTED_SCHEMA", "count,EXTRA_SEGMENT",
+        "parse,JSON_PARSE_ERROR", "length,OUTPUT_TRUNCATED", "language,TARGET_LANGUAGE_MISMATCH"})
+    void observationsReportOriginalValidationWithoutChangingFailure(String kind, String expected) {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setSemanticMaxAttempts(1);
+        translationService = fullTextTranslationService(properties);
+        var diagnostics = org.mockito.Mockito.mock(com.example.courselingo.subtitle.diagnostic.TranslationCallDiagnostics.class);
+        translationService.setTranslationDiagnostics(diagnostics);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 1000, "Welcome to class.")));
+        String text = switch (kind) {
+            case "schema" -> "{}";
+            case "count" -> alignedJson("你好世界。", "额外分段。");
+            case "parse" -> "not-json";
+            case "length" -> alignedJson("欢迎来到课堂。");
+            default -> alignedJson("Today's lesson describes mathematical reasoning.");
+        };
+        LlmResult response = llmResult(text, kind.equals("length") ? "length" : "stop", 10, 20, 1);
+        fakeLlmProvider.nextOutcomes(response);
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(BusinessException.class);
+        var reason = ArgumentCaptor.forClass(String.class);
+        org.mockito.Mockito.verify(diagnostics, org.mockito.Mockito.atLeastOnce())
+            .validation(org.mockito.ArgumentMatchers.isNull(), org.mockito.ArgumentMatchers.any(), reason.capture());
+        assertThat(reason.getAllValues()).anySatisfy(r -> assertThat(r).startsWith(expected));
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
+    }
+
     @Test
     void defaultTranslationIsolatesAdjacentUtterancesBeforeBindingTheirTimestamps() {
         translationService = fullTextTranslationService(new SubtitleTranslationProperties());
@@ -858,6 +888,91 @@ class SubtitleTranslationServiceTest {
         SubtitleTranslationSegment inserted = captureInsertedSegments(1).getFirst();
         assertThat(inserted.getSegmentIndex()).isEqualTo(7);
         assertThat(inserted.getTranslatedText()).isEqualTo("\u7b2c\u4e00\u6bb5 \u7b2c\u4e8c\u6bb5 \u7b2c\u4e09\u6bb5");
+    }
+
+    @Test
+    void typedLengthFailureUsesExistingBoundedSplitAndWritesOnlyValidatedPieces() {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setEnabled(true);
+        properties.getFullText().setSingleSegmentMaxPieceChars(12);
+        properties.getFullText().setSingleSegmentMinPieceChars(5);
+        translationService = fullTextTranslationService(properties);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(7, 0, 2900, "first part. second part. third part.")));
+        when(translationMapper.insert(any(SubtitleTranslationSegment.class))).thenReturn(1);
+        when(fullTextResultMapper.insert(any(TaskFullTextResult.class))).thenReturn(1);
+        fakeLlmProvider.nextOutcomes(
+            new com.example.courselingo.ai.llm.TranslationFailure(
+                com.example.courselingo.ai.llm.TranslationFailure.Reason.TRUNCATED, 200,
+                new LlmUsage(903, 3073, 3976), "length", 0,
+                com.example.courselingo.ai.llm.TranslationFailure.Check.OUTPUT_TRUNCATED),
+            llmResult(alignedJson("第一段"), "stop", 2, 1, 1),
+            llmResult(alignedJson("第二段"), "stop", 2, 1, 1),
+            llmResult(alignedJson("第三段"), "stop", 2, 1, 1));
+        var outcome = translationService.translateTaskSubtitlesWithAiCallRecord(command());
+        assertThat(outcome.savedCount()).isEqualTo(1);
+        assertThat(outcome.batchCount()).isEqualTo(4);
+        assertThat(outcome.retryCount()).isEqualTo(3);
+        assertThat(outcome.promptTokens()).isEqualTo(909);
+        assertThat(outcome.completionTokens()).isEqualTo(3076);
+        assertThat(outcome.totalTokens()).isEqualTo(3985);
+        assertThat(outcome.providerDuration()).isGreaterThanOrEqualTo(Duration.ofMillis(3));
+        assertThat(fakeLlmProvider.requests).hasSize(4);
+        assertThat(captureInsertedSegments(1).getFirst().getTranslatedText()).isEqualTo("第一段 第二段 第三段");
+    }
+
+    @Test
+    void typedLengthOnUnsplittableSourceTerminatesWithoutRetryOrWrites() {
+        translationService = fullTextTranslationService();
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(0, 0, 1000, "short synthetic sentence")));
+        fakeLlmProvider.nextOutcomes(new com.example.courselingo.ai.llm.TranslationFailure(
+            com.example.courselingo.ai.llm.TranslationFailure.Reason.TRUNCATED, 200, null, "length", 0));
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(com.example.courselingo.ai.llm.LlmStageException.class);
+        assertThat(fakeLlmProvider.requests).hasSize(1);
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
+    }
+
+    @Test
+    void typedInvalidOutputDoesNotSplitEvenWhenSourceCanBeSplit() {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setEnabled(true);
+        properties.getFullText().setSingleSegmentMaxPieceChars(12);
+        translationService = fullTextTranslationService(properties);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(7, 0, 2900, "first part. second part. third part.")));
+        fakeLlmProvider.nextOutcomes(new com.example.courselingo.ai.llm.TranslationFailure(
+            com.example.courselingo.ai.llm.TranslationFailure.Reason.FORMAT_INVALID, 200, null, "stop", 0,
+            com.example.courselingo.ai.llm.TranslationFailure.Check.CONTENT_JSON_INVALID));
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(com.example.courselingo.ai.llm.LlmStageException.class);
+        assertThat(fakeLlmProvider.requests).hasSize(1);
+        verify(translationMapper, never()).deleteByTaskIdUserIdAndTargetLanguage(any(), any(), any());
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
+    }
+
+    @Test
+    void typedTruncationStopsAtExistingDepthLimitWithoutPartialPublication() {
+        SubtitleTranslationProperties properties = new SubtitleTranslationProperties();
+        properties.getFullText().setEnabled(true);
+        properties.getFullText().setSingleSegmentMaxPieceChars(12);
+        properties.getFullText().setSingleSegmentMinPieceChars(5);
+        properties.getFullText().setSingleSegmentMaxDepth(1);
+        translationService = fullTextTranslationService(properties);
+        when(sourceMapper.selectByTaskIdAndUserId("task_1", 42L)).thenReturn(List.of(
+            sourceSegment(7, 0, 2900, "first part. second part. third part.")));
+        var failure = new com.example.courselingo.ai.llm.TranslationFailure(
+            com.example.courselingo.ai.llm.TranslationFailure.Reason.TRUNCATED, 200, null, "length", 0);
+        fakeLlmProvider.nextOutcomes(failure, failure);
+        assertThatThrownBy(() -> translationService.translateTaskSubtitlesWithAiCallRecord(command()))
+            .isInstanceOf(com.example.courselingo.ai.llm.LlmStageException.class);
+        assertThat(fakeLlmProvider.requests).hasSize(2);
+        verify(translationMapper, never()).deleteByTaskIdUserIdAndTargetLanguage(any(), any(), any());
+        verify(translationMapper, never()).insert(any(SubtitleTranslationSegment.class));
+        verify(fullTextResultMapper, never()).insert(any(TaskFullTextResult.class));
     }
 
     @Test

@@ -1,0 +1,7 @@
+{
+  "at_utc": "2026-10-16T19:20:25.569879+00:00",
+  "code": "REDIS15_UNEXPECTED_KEYS",
+  "owned_tasks": [],
+  "java_exit": null,
+  "used_sigkill": false
+}

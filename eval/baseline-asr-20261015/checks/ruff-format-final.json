@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/agent-service/.venv/bin/ruff",
+    "format",
+    "--check",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015"
+  ],
+  "started_at_utc": "2026-10-15T11:20:39.575069+00:00",
+  "finished_at_utc": "2026-10-15T11:20:39.587756+00:00",
+  "exit_code": 0,
+  "stdout": "25 files already formatted\n",
+  "stderr": ""
+}

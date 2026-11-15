@@ -43,7 +43,8 @@ class DurableBoundariesIntegrationTest {
         manager = new DataSourceTransactionManager(ds);
         tx = new TransactionTemplate(manager);
         jdbc.execute("CREATE TABLE analysis_task(id VARCHAR(64) PRIMARY KEY,user_id BIGINT,status VARCHAR(32),"
-            + "deleted_at TIMESTAMP,error_code VARCHAR(64),error_message VARCHAR(1024),finished_at TIMESTAMP)");
+            + "deleted_at TIMESTAMP,error_code VARCHAR(64),error_message VARCHAR(1024),finished_at TIMESTAMP,"
+            + "learning_ready_at TIMESTAMP)");
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V22__durable_task_boundaries.sql"),
             new ClassPathResource("db/migration/V23__versioned_course_evidence.sql"),
             new ClassPathResource("db/migration/V24__evidence_index_sync.sql")).execute(ds);

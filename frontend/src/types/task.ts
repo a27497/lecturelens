@@ -36,6 +36,8 @@ export interface TaskEventPayload {
   totalChunks?: number | null;
   currentChunkIndex?: number | null;
   stepDetail?: string | null;
+  /** Study, Q&A and the Agent are open: SUCCEEDED, or subtitles stored while still RUNNING. */
+  learningReady?: boolean | null;
 }
 
 export interface TaskEventMessage {
@@ -66,6 +68,8 @@ export interface TaskSummaryResponse {
   updatedAt: string | null;
   startedAt: string | null;
   finishedAt: string | null;
+  /** Present on task detail: study, Q&A and the Agent are open. */
+  learningReady?: boolean | null;
 }
 
 export type TaskDetailResponse = TaskSummaryResponse;

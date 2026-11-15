@@ -8,6 +8,8 @@ import pytest
 from lecturelens_agent.study.acceptance_cost import (
     DEVELOPMENT_AGENT,
     P10_AGENT,
+    PHASE0_AGENT,
+    STEP6_AGENT,
     CostDenied,
     verify_development_agent,
     verify_p10_agent,
@@ -92,7 +94,10 @@ def test_profile_does_not_change_other_providers_or_models(monkeypatch, url, mod
 
 
 def test_phase0_provider_change_cannot_claim_historical_p10_identity():
-    assert DEVELOPMENT_AGENT.startswith("phase0-integration-")
+    # Phase 0, Step 6 and Study budget are historical now (Study review); none may claim P10.
+    assert PHASE0_AGENT.startswith("phase0-integration-")
+    assert STEP6_AGENT.startswith("step6-agent-lanes-")
+    assert DEVELOPMENT_AGENT.startswith("study-review-")
     assert P10_AGENT == "p10-choice-review-442bb2af75c77ed1"
     assert verify_development_agent() == 63
     with pytest.raises(CostDenied, match="COST_AGENT_IDENTITY_CHANGED"):

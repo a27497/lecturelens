@@ -44,25 +44,44 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        if (command.sourceOnly()) return buildFromSource(command, sourceSegments, multimodalSegments, llmTimeout, properties);
+        PromptBody body = translatedBody(command, sourceSegments, translationSegments, multimodalSegments, properties);
         return new LlmRequest(
             command.requestId(),
             command.taskId(),
-            List.of(systemMessage(), userMessage(
-                command, sourceSegments, translationSegments, multimodalSegments, properties
-            )),
+            List.of(systemMessage(), body.user()),
             Objects.requireNonNull(llmTimeout, "llmTimeout must not be null"),
             TEMPERATURE,
             MAX_TOKENS,
-            Map.of(
-                "sourceLanguage", command.sourceLanguage(),
-                "targetLanguage", command.targetLanguage(),
-                "sourceSegmentCount", sourceSegments.size(),
-                "translationSegmentCount", translationSegments.size(),
-                "multimodalSegmentCount", boundedTimeline(multimodalSegments).size()
-            ),
+            body.metadata(command, sourceSegments, translationSegments, multimodalSegments, null),
             LlmResponseFormat.JSON_OBJECT
         )
                 .withExecution(command.execution());
+    }
+
+    private static LlmRequest buildFromSource(ValidatedLearningPackageCommand command,
+            List<SubtitleSegment> sourceSegments, List<VideoSegment> visuals,
+            Duration timeout, LearningPackageProperties properties) {
+        // Fused/translated visual text can depend on translation; source-only mode uses independent observations.
+        var independentVisuals = visuals.stream().map(source -> {
+            var result = new VideoSegment();
+            result.setSegmentIndex(source.getSegmentIndex()); result.setStartMillis(source.getStartMillis());
+            result.setEndMillis(source.getEndMillis()); result.setOcrText(source.getOcrText());
+            result.setVisualSummary(source.getVisualSummary());
+            return result;
+        }).toList();
+        var evidence = new StringBuilder("Source transcript:\n");
+        var sections = appendChapters(evidence, LearningPackageSegmentPlanner.plan(sourceSegments, List.of(), properties), false);
+        var user = new StringBuilder("Build a learning package using only original course evidence.\n")
+            .append("Source language: ").append(command.sourceLanguage()).append('\n')
+            .append("Target language: ").append(command.targetLanguage()).append('\n')
+            .append("Target-language title is required. Quality requirements: ")
+            .append(LearningPackageQualityProfile.from(sourceSegments, independentVisuals, properties).promptRequirements())
+            .append("\n\n").append(evidence);
+        appendTimeline(user, independentVisuals);
+        return new LlmRequest(command.requestId(), command.taskId(), List.of(systemMessage(), new LlmMessage(LlmRole.USER, user.toString())),
+            timeout, TEMPERATURE, MAX_TOKENS, metadata(command, sourceSegments, List.of(), independentVisuals, "sourceOnly", sections), LlmResponseFormat.JSON_OBJECT)
+            .withExecution(command.execution());
     }
 
     static LlmRequest buildFromFullText(
@@ -72,7 +91,7 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout
     ) {
         return buildFromFullText(
-            command, sourceFullText, translatedFullText, List.of(), llmTimeout,
+            command, sourceFullText, translatedFullText, List.of(), List.of(), List.of(), llmTimeout,
             new LearningPackageProperties()
         );
     }
@@ -85,21 +104,32 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        return buildFromFullText(
+            command, sourceFullText, translatedFullText, List.of(), List.of(), multimodalSegments, llmTimeout, properties
+        );
+    }
+
+    static LlmRequest buildFromFullText(
+        ValidatedLearningPackageCommand command,
+        String sourceFullText,
+        String translatedFullText,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments,
+        Duration llmTimeout,
+        LearningPackageProperties properties
+    ) {
+        PromptBody body = fullTextBody(
+            command, sourceFullText, translatedFullText, sourceSegments, translationSegments, multimodalSegments, properties
+        );
         return new LlmRequest(
             command.requestId(),
             command.taskId(),
-            List.of(systemMessage(), fullTextUserMessage(
-                command, sourceFullText, translatedFullText, multimodalSegments, properties
-            )),
+            List.of(systemMessage(), body.user()),
             Objects.requireNonNull(llmTimeout, "llmTimeout must not be null"),
             TEMPERATURE,
             MAX_TOKENS,
-            Map.of(
-                "sourceLanguage", command.sourceLanguage(),
-                "targetLanguage", command.targetLanguage(),
-                "promptSource", "fullText",
-                "multimodalSegmentCount", boundedTimeline(multimodalSegments).size()
-            ),
+            body.metadata(command, sourceSegments, translationSegments, multimodalSegments, "fullText"),
             LlmResponseFormat.JSON_OBJECT)
                 .withExecution(command.execution());
     }
@@ -124,23 +154,25 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        if (command.sourceOnly()) {
+            var request = buildFromSource(command, sourceSegments, multimodalSegments, llmTimeout, properties);
+            var metadata = new java.util.LinkedHashMap<>(request.metadata());
+            metadata.put("promptVariant", "retry");
+            return new LlmRequest(request.requestId(), request.taskId(),
+                List.of(retrySystemMessage(), request.messages().get(1)), request.timeout(), 0.0,
+                request.maxTokens(), metadata, request.responseFormat()).withExecution(command.execution());
+        }
+        PromptBody body = translatedBody(command, sourceSegments, translationSegments, multimodalSegments, properties);
+        var metadata = new java.util.LinkedHashMap<>(body.metadata(command, sourceSegments, translationSegments, multimodalSegments, null));
+        metadata.put("promptVariant", "retry");
         return new LlmRequest(
             command.requestId(),
             command.taskId(),
-            List.of(retrySystemMessage(), userMessage(
-                command, sourceSegments, translationSegments, multimodalSegments, properties
-            )),
+            List.of(retrySystemMessage(), body.user()),
             Objects.requireNonNull(llmTimeout, "llmTimeout must not be null"),
             0.0,
             MAX_TOKENS,
-            Map.of(
-                "sourceLanguage", command.sourceLanguage(),
-                "targetLanguage", command.targetLanguage(),
-                "sourceSegmentCount", sourceSegments.size(),
-                "translationSegmentCount", translationSegments.size(),
-                "promptVariant", "retry",
-                "multimodalSegmentCount", boundedTimeline(multimodalSegments).size()
-            ),
+            metadata,
             LlmResponseFormat.JSON_OBJECT
         )
                 .withExecution(command.execution());
@@ -166,22 +198,34 @@ final class LearningPackagePromptFactory {
         Duration llmTimeout,
         LearningPackageProperties properties
     ) {
+        return buildRetryFromFullText(
+            command, sourceFullText, translatedFullText, List.of(), List.of(), multimodalSegments, llmTimeout, properties
+        );
+    }
+
+    static LlmRequest buildRetryFromFullText(
+        ValidatedLearningPackageCommand command,
+        String sourceFullText,
+        String translatedFullText,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments,
+        Duration llmTimeout,
+        LearningPackageProperties properties
+    ) {
+        PromptBody body = fullTextBody(
+            command, sourceFullText, translatedFullText, sourceSegments, translationSegments, multimodalSegments, properties
+        );
+        var metadata = new java.util.LinkedHashMap<>(body.metadata(command, sourceSegments, translationSegments, multimodalSegments, "fullText"));
+        metadata.put("promptVariant", "retry");
         return new LlmRequest(
             command.requestId(),
             command.taskId(),
-            List.of(retrySystemMessage(), fullTextUserMessage(
-                command, sourceFullText, translatedFullText, multimodalSegments, properties
-            )),
+            List.of(retrySystemMessage(), body.user()),
             Objects.requireNonNull(llmTimeout, "llmTimeout must not be null"),
             0.0,
             MAX_TOKENS,
-            Map.of(
-                "sourceLanguage", command.sourceLanguage(),
-                "targetLanguage", command.targetLanguage(),
-                "promptSource", "fullText",
-                "promptVariant", "retry",
-                "multimodalSegmentCount", boundedTimeline(multimodalSegments).size()
-            ),
+            metadata,
             LlmResponseFormat.JSON_OBJECT
         )
                 .withExecution(command.execution());
@@ -224,64 +268,150 @@ If visual evidence is absent, use transcript evidence only and do not infer scre
 """);
     }
 
-    private static LlmMessage userMessage(
+    private static PromptBody translatedBody(
         ValidatedLearningPackageCommand command,
         List<SubtitleSegment> sourceSegments,
         List<SubtitleTranslationSegment> translationSegments,
         List<VideoSegment> multimodalSegments,
         LearningPackageProperties properties
     ) {
-        Map<Integer, SubtitleTranslationSegment> translationsByIndex = translationSegments.stream()
-            .collect(Collectors.toMap(SubtitleTranslationSegment::getSegmentIndex, segment -> segment));
-        StringBuilder payload = new StringBuilder();
-        payload.append("Build a learning package from ")
+        var chapters = LearningPackageSegmentPlanner.plan(sourceSegments, translationSegments, properties);
+        var payload = new StringBuilder("Build a learning package from ")
             .append(command.sourceLanguage())
             .append(" source subtitles and ")
             .append(command.targetLanguage())
             .append(" translated subtitles. ")
             .append("Target-language title is required. Quality requirements: ")
             .append(LearningPackageQualityProfile.from(sourceSegments, multimodalSegments, properties).promptRequirements())
-            .append(". Segments JSON: {\"segments\":[");
-        for (int i = 0; i < sourceSegments.size(); i++) {
-            SubtitleSegment source = sourceSegments.get(i);
-            SubtitleTranslationSegment translated = translationsByIndex.get(source.getSegmentIndex());
-            if (i > 0) {
-                payload.append(',');
-            }
-            payload.append("{\"index\":")
-                .append(source.getSegmentIndex())
-                .append(",\"startMillis\":")
-                .append(source.getStartMillis())
-                .append(",\"endMillis\":")
-                .append(source.getEndMillis())
-                .append(",\"sourceText\":\"")
-                .append(escapeJson(source.getText()))
-                .append("\",\"translatedText\":\"")
-                .append(escapeJson(translated == null ? "" : translated.getTranslatedText()))
-                .append("\"}");
-        }
-        payload.append("]}");
+            .append(".\nSource transcript:\n");
+        var sections = appendChapters(payload, chapters, true);
         appendTimeline(payload, multimodalSegments);
-        return new LlmMessage(LlmRole.USER, payload.toString());
+        return new PromptBody(new LlmMessage(LlmRole.USER, payload.toString()), sections);
     }
 
-    private static LlmMessage fullTextUserMessage(
+    private static PromptBody fullTextBody(
         ValidatedLearningPackageCommand command,
         String sourceFullText,
         String translatedFullText,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
         List<VideoSegment> multimodalSegments,
         LearningPackageProperties properties
     ) {
-        StringBuilder payload = new StringBuilder("Build a learning package from this course transcript.\n\n")
+        var chapters = LearningPackageSegmentPlanner.plan(sourceSegments, translationSegments, properties);
+        var payload = new StringBuilder("Build a learning package from this course transcript.\n\n")
             .append("Source language: ").append(command.sourceLanguage()).append('\n')
             .append("Target language: ").append(command.targetLanguage()).append("\n")
             .append("Target-language title is required. Quality requirements: ")
-            .append(LearningPackageQualityProfile.from(List.of(), multimodalSegments, properties).promptRequirements())
+            .append(LearningPackageQualityProfile.from(
+                sourceSegments == null ? List.of() : sourceSegments, multimodalSegments, properties
+            ).promptRequirements())
             .append("\n\n")
-            .append("Source transcript:\n").append(sourceFullText).append("\n\n")
-            .append("Translated transcript:\n").append(translatedFullText);
+            .append("Source transcript:\n");
+        List<LearningPackageSourceSection> sections;
+        if (chapters.isEmpty()) {
+            int start = payload.length();
+            payload.append(sourceFullText == null ? "" : sourceFullText)
+                .append("\n\nTranslated transcript:\n")
+                .append(translatedFullText == null ? "" : translatedFullText);
+            sections = List.of();
+            if (payload.length() > start) {
+                sections = List.of(new LearningPackageSourceSection(
+                    start, payload.length(), 0, 0L, 0L,
+                    com.example.courselingo.subtitle.pipeline.PipelinePolicyService.hash(payload.substring(start))
+                ));
+            }
+        } else {
+            sections = appendChapters(payload, chapters, true);
+        }
         appendTimeline(payload, multimodalSegments);
-        return new LlmMessage(LlmRole.USER, payload.toString());
+        return new PromptBody(new LlmMessage(LlmRole.USER, payload.toString()), sections);
+    }
+
+    private static List<LearningPackageSourceSection> appendChapters(
+        StringBuilder evidence,
+        List<LearningPackageSegmentPlanner.Chapter> chapters,
+        boolean includeTranslations
+    ) {
+        var sections = new java.util.ArrayList<LearningPackageSourceSection>();
+        for (var chapter : chapters) {
+            int start = evidence.length();
+            evidence.append("Chapter ").append(chapter.chapterIndex() + 1).append(" [")
+                .append(chapter.startMillis()).append(',').append(chapter.endMillis()).append(") ms:\n");
+            if (includeTranslations) {
+                var translationsByIndex = chapter.translations().stream()
+                    .filter(item -> item.getSegmentIndex() != null)
+                    .collect(Collectors.toMap(
+                        SubtitleTranslationSegment::getSegmentIndex, item -> item, (first, ignored) -> first
+                    ));
+                evidence.append("Segments JSON: {\"segments\":[");
+                for (int i = 0; i < chapter.sources().size(); i++) {
+                    SubtitleSegment source = chapter.sources().get(i);
+                    SubtitleTranslationSegment translated = translationsByIndex.get(source.getSegmentIndex());
+                    if (i > 0) evidence.append(',');
+                    evidence.append("{\"index\":")
+                        .append(source.getSegmentIndex())
+                        .append(",\"startMillis\":")
+                        .append(source.getStartMillis())
+                        .append(",\"endMillis\":")
+                        .append(source.getEndMillis())
+                        .append(",\"sourceText\":\"")
+                        .append(escapeJson(source.getText()))
+                        .append("\",\"translatedText\":\"")
+                        .append(escapeJson(translated == null ? "" : translated.getTranslatedText()))
+                        .append("\"}");
+                }
+                evidence.append("]}\n\n");
+            } else {
+                for (SubtitleSegment source : chapter.sources()) {
+                    evidence.append("Section ").append(source.getSegmentIndex()).append(" [")
+                        .append(source.getStartMillis()).append(',').append(source.getEndMillis()).append(") ms:\n")
+                        .append(source.getText()).append("\n\n");
+                }
+            }
+            List<Integer> members = chapter.sources().stream().map(SubtitleSegment::getSegmentIndex).toList();
+            sections.add(new LearningPackageSourceSection(
+                start, evidence.length(), chapter.chapterIndex(),
+                chapter.startMillis(), chapter.endMillis(),
+                com.example.courselingo.subtitle.pipeline.PipelinePolicyService.hash(evidence.substring(start)),
+                members
+            ));
+        }
+        return List.copyOf(sections);
+    }
+
+    private static java.util.Map<String, Object> metadata(
+        ValidatedLearningPackageCommand command,
+        List<SubtitleSegment> sourceSegments,
+        List<SubtitleTranslationSegment> translationSegments,
+        List<VideoSegment> multimodalSegments,
+        String promptSource,
+        List<LearningPackageSourceSection> sections
+    ) {
+        var metadata = new java.util.LinkedHashMap<String, Object>();
+        metadata.put("sourceLanguage", command.sourceLanguage());
+        metadata.put("targetLanguage", command.targetLanguage());
+        metadata.put("sourceSegmentCount", sourceSegments == null ? 0 : sourceSegments.size());
+        metadata.put("translationSegmentCount", translationSegments == null ? 0 : translationSegments.size());
+        metadata.put("multimodalSegmentCount", boundedTimeline(multimodalSegments).size());
+        metadata.put("learningSourceSections", List.copyOf(sections == null ? List.of() : sections));
+        metadata.put("learningChapterCount", sections == null ? 0 : sections.size());
+        if (promptSource != null) metadata.put("promptSource", promptSource);
+        return metadata;
+    }
+
+    private record PromptBody(LlmMessage user, List<LearningPackageSourceSection> sections) {
+        java.util.Map<String, Object> metadata(
+            ValidatedLearningPackageCommand command,
+            List<SubtitleSegment> sourceSegments,
+            List<SubtitleTranslationSegment> translationSegments,
+            List<VideoSegment> multimodalSegments,
+            String promptSource
+        ) {
+            return LearningPackagePromptFactory.metadata(
+                command, sourceSegments, translationSegments, multimodalSegments, promptSource, sections
+            );
+        }
     }
 
     private static void appendTimeline(StringBuilder payload, List<VideoSegment> multimodalSegments) {

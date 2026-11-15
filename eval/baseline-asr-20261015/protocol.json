@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "frozen_before_trials": true,
+  "population": "Five whole English MIT OCW lectures, two serial trials each, same audio/video packets; separate official reference captions",
+  "normalization": [
+    "Decode HTML entities, Unicode NFKC, casefold",
+    "For references parse WebVTT cues and join text in cue order; remove markup and non-speech square-bracket annotations from both texts",
+    "Remove uppercase speaker-name prefixes followed by colon; keep their spoken words",
+    "Remove digit-grouping commas only between digits; convert standalone nonnegative integers and decimal strings using num2words 0.5.14 English cardinal spelling in both texts",
+    "Keep Unicode letter/number codepoints only, removing all punctuation and whitespace; no spelling correction or domain-specific substitutions"
+  ],
+  "cer": "Levenshtein character edit distance / normalized reference codepoint count; weighted aggregate=sum(distances)/sum(reference_lengths), not mean of per-lecture percentages",
+  "variation": "Two repeats: arithmetic mean, sample standard deviation (ddof=1), minimum and maximum; no confidence or population claims",
+  "processing_e2e": "Monotonic elapsed time immediately before POST /api/tasks through observed index READY; includes queueing/polling; excludes upload/download and offline subtitle-track removal",
+  "upload_inclusive_e2e": "processing_e2e + observed upload elapsed",
+  "stages": "Existing pipeline_step_completed log durationMillis; actual index HTTP requests separately measured, index wait is task terminal-to-observed READY and includes poll/scheduler delay",
+  "cost": "Actual ASR input/output tokens from transparent proxy times official China Beijing list prices 0.8/2.7 CNY per million; local translation/embedding have zero external API fees, machine cost unavailable; missing usage or failed calls are never silently priced at zero",
+  "budget": "Stop before the next ASR request when accounted spend plus in-flight headroom would exceed the evaluation guard; no proxy retries or caching; successful missing usage stops future requests",
+  "reference_status": "Official OCW professional captions. MIT News documents ASR draft plus human editing/manager review, but individual captioner logs for these five files are not available; not an independently reannotated human gold standard."
+}

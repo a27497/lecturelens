@@ -1,0 +1,61 @@
+{
+  "unchanged_legacy_source": "eval/p2-1c-20261016T155847Z/run_check.py",
+  "cases": [
+    {
+      "case": "success-descendant",
+      "runner_exit_code": 0,
+      "terminal_record_exists": true,
+      "leftovers_before_probe_cleanup": [
+        {
+          "pid": 3134611,
+          "start_ticks": 4212578,
+          "state": "S",
+          "ppid": 3134602
+        }
+      ],
+      "original_stop_reason": null,
+      "original_child_returncode": 0,
+      "probe_cleanup_complete": true,
+      "elapsed_seconds": 1.119913627000642
+    },
+    {
+      "case": "cancel-without-record",
+      "runner_exit_code": -15,
+      "terminal_record_exists": false,
+      "leftovers_before_probe_cleanup": [
+        {
+          "pid": 3134738,
+          "start_ticks": 4212687,
+          "state": "S",
+          "ppid": 3134602
+        },
+        {
+          "pid": 3134739,
+          "start_ticks": 4212691,
+          "state": "S",
+          "ppid": 3134738
+        }
+      ],
+      "probe_cleanup_complete": true,
+      "elapsed_seconds": 0.10757695299980696
+    },
+    {
+      "case": "timeout-descendant",
+      "runner_exit_code": 88,
+      "terminal_record_exists": true,
+      "leftovers_before_probe_cleanup": [
+        {
+          "pid": 3134743,
+          "start_ticks": 4212701,
+          "state": "S",
+          "ppid": 3134602
+        }
+      ],
+      "original_stop_reason": "TIMEOUT",
+      "original_child_returncode": 0,
+      "probe_cleanup_complete": true,
+      "elapsed_seconds": 1.1083091070031514
+    }
+  ],
+  "existing_processes_signaled": false
+}

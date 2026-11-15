@@ -53,6 +53,9 @@ import org.springframework.context.annotation.Configuration;
     VideoSegmentProperties.class
 })
 public class AnalysisTaskWorkExecutorConfiguration {
+    private com.example.courselingo.task.service.AsrExecutionStore asrStore;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    void configureAsrStore(com.example.courselingo.task.service.AsrExecutionStore value){asrStore=value;}
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisTaskWorkExecutorConfiguration.class);
     private static final int VISION_BRANCH_CONCURRENCY = 2;
@@ -126,7 +129,12 @@ public class AnalysisTaskWorkExecutorConfiguration {
         EmbeddedSubtitleTranscriptExtractor embeddedSubtitleTranscriptExtractor,
         EmbeddedSubtitleTranscriptProperties embeddedSubtitleTranscriptProperties,
         VisionPipelineBranchCoordinator visionBranchCoordinator,
-        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService
+        VideoKeyframeEvidenceLifecycleService evidenceLifecycleService,
+        com.example.courselingo.subtitle.pipeline.PipelinePolicyService pipelinePolicies,
+        com.example.courselingo.media.SilenceAudioChunkPlanner silencePlanner,
+        com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints,
+        com.example.courselingo.task.usage.PipelineUsageLedger ledger,
+        org.springframework.beans.factory.ObjectProvider<com.example.courselingo.task.service.LearningAvailability> learningAvailability
     ) {
         PipelineRunnerWorkspace workspace = new PipelineRunnerWorkspace(runnerProperties);
         return new PipelineAnalysisTaskWorkExecutor(List.of(
@@ -139,7 +147,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 taskLogMapper,
                 Clock.systemUTC(),
                 visionBranchCoordinator
-            ),
+            ).withCheckpoints(checkpoints),
             new ExtractAudioStep(
                 ffmpegAudioExtractor,
                 workspace
@@ -156,7 +164,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 audioDurationProbe,
                 embeddedSubtitleTranscriptExtractor,
                 embeddedSubtitleTranscriptProperties
-            ),
+            ).withSilencePlanning(pipelinePolicies,silencePlanner).withCheckpoints(checkpoints).withAsrStore(asrStore),
             new PersistSubtitleSegmentsStep(analysisTaskMapper, subtitleSegmentPersistenceService),
             new TranslateSubtitleSegmentsStep(analysisTaskMapper, subtitleTranslationService),
             new OcrKeyframesStep(
@@ -178,7 +186,7 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 taskLogMapper,
                 Clock.systemUTC()
             ),
-            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService),
+            new GenerateLearningPackageStep(analysisTaskMapper, learningPackageService).withPolicies(pipelinePolicies),
             new GenerateArtifactsStep(
                 analysisTaskMapper,
                 srtArtifactService,
@@ -187,13 +195,14 @@ public class AnalysisTaskWorkExecutorConfiguration {
                 jsonArtifactService,
                 artifactFileService
             ),
-            new WriteAiCallRecordStep(analysisTaskMapper, aiCallRecordService),
+            new WriteAiCallRecordStep(analysisTaskMapper, aiCallRecordService).withLedger(ledger),
             new NoopPipelineAnalysisTaskStep(PipelineAnalysisTaskStepName.UPDATE_TASK_PROGRESS_STATUS)
         ), new DefaultPipelineTaskProgressReporter(
             analysisTaskMapper,
             progressSnapshotService,
             Clock.systemUTC()
-        ), workspace, evidenceLifecycleService);
+        ), workspace, evidenceLifecycleService).withCheckpoints(checkpoints)
+            .withLearningAvailability(learningAvailability.getIfAvailable());
     }
 
     @Bean

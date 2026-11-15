@@ -1,0 +1,140 @@
+{
+  "suites": [
+    {
+      "suite": "com.example.courselingo.ai.llm.OpenAiCompatibleLlmProviderTest",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.26,
+      "report_sha256": "71e6ec78c58746e3c6252f4da920cec4ffe7a272d56856c912797e1e1c130508"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageConfigurationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.093,
+      "report_sha256": "285ba7290f0742519cefb5000b3b81f44d94f23f2abd57b70538be9095e469a4"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMapperTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.176,
+      "report_sha256": "7b347e87ce8567a90f4daf012cfa40b3946c2fe2c162b6e9331531b49d8aadfb"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageMigrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.04,
+      "report_sha256": "ff06d97c263b7a249c5edf5d03878bf44c293dac8d1321d84c3421c11453bc7c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageResponseParserTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.119,
+      "report_sha256": "93115853bf793672b209b4717eb4eb37f6ca42b98168059a10d68dcf47815b4c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageServiceTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.226,
+      "report_sha256": "a4381bd0099f19209c6479270ee78d56acbf5c82de3aebbd0225152788a7f51f"
+    },
+    {
+      "suite": "com.example.courselingo.learning.LearningPackageTransactionIntegrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.931,
+      "report_sha256": "d2696ba6a2912c3246d59ab23c1d2c6c243478a3525b736706d9bcbbbeef7e21"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageContextGuardTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.144,
+      "report_sha256": "0d50eac4b7e50d36801e3a0349eb2fad3787a4fc544f697ddef44a8c8648b86b"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackagePromptFactoryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.032,
+      "report_sha256": "8a2a636660d9984a11e24e20a8525e9a7e8fe43079d9309ab7b11dfa475cd93a"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageQualityValidatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.092,
+      "report_sha256": "4e4a224ac2c0e4f7d13351977f9742864db46da96244ae3385f88b1d1a7e12ed"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageSensitiveDataValidatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.011,
+      "report_sha256": "0a3ab855ffb69b9775f6c3d4339610b98a28c132a0d73ae873395f9370f1788c"
+    },
+    {
+      "suite": "com.example.courselingo.learning.service.LearningPackageVisualOnlyServiceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.246,
+      "report_sha256": "c363cd45ba5f043bb165757e6b568f3a5fcd20274ae8308f84f31658b5ca88a8"
+    },
+    {
+      "suite": "com.example.courselingo.systemmodel.SystemModelRuntimeMySqlTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 12.337,
+      "report_sha256": "961cae22afec24e3e50c1efdf347a83ab7a40e82ecee5fb71fd173c24550c301"
+    },
+    {
+      "suite": "com.example.courselingo.task.runner.GenerateLearningPackageStepTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.425,
+      "report_sha256": "2dcd4fb36ca6a5c85412c17f5dab53847a267b9e7540b0d1179387f5241455da"
+    }
+  ],
+  "total": {
+    "tests": 148,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "real_model_quality": false,
+  "mysql_test_schema": "independent dynamically created fixtures via lecturelens_p21c_test; removed",
+  "mysql_provider": "deterministic",
+  "initial_mysql_attempt": "Maven offline cache under root missing; tests not executed; rerun under dev passed"
+}

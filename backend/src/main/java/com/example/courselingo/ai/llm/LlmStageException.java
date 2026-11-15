@@ -39,7 +39,19 @@ public class LlmStageException extends BusinessException {
     public String safeDiagnosticSummary() {
         String failureType = providerFailureType();
         return details.safeSummary() + ";stage=" + stage
-            + (failureType == null ? "" : ";failureType=" + failureType);
+            + (failureType == null ? "" : ";failureType=" + failureType)
+            + translationFailureSummary();
+    }
+
+    private String translationFailureSummary() {
+        Throwable current = getCause();
+        for (int depth = 0; current != null && depth < 16; depth++, current = current.getCause()) {
+            if (current instanceof TranslationFailure failure) {
+                return ";reason=" + failure.reason().name() + ";check=" + failure.observationReason()
+                    + (failure.finishReason() == null ? "" : ";finishReason=" + failure.finishReason());
+            }
+        }
+        return "";
     }
 
     private String providerFailureType() {

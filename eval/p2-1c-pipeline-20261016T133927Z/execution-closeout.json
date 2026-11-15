@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-16T14:47:32.081350+00:00",
+  "worker_started": false,
+  "worker_stopped": true,
+  "port_18091_occupied": false,
+  "supplemental_process_exited": true,
+  "normal_trials_submitted": 0,
+  "recovery_trials_submitted": 0,
+  "sigkill_count": 0,
+  "acceptance": "BLOCKED_ASR_ACCESS_DENIED_UNPURCHASED",
+  "disk_samples": 453,
+  "disk_max_percent": 75.11201245069405,
+  "disk_final": {
+    "utc": "2026-10-16T14:47:32.081299+00:00",
+    "used_bytes": 116331540480,
+    "available_bytes": 38545870848,
+    "percent": 75.11201245069405,
+    "headroom_below_85_bytes": 15314259148.800003
+  },
+  "protected_container_lifecycle_commands": 0,
+  "push": false,
+  "deploy": false
+}

@@ -1,0 +1,48 @@
+{
+  "kind": "synthetic_gate_behavior_only",
+  "real_redis_access": false,
+  "cases": [
+    {
+      "case": "empty",
+      "outcome": "PASS",
+      "scan_commands": 0,
+      "passed": true
+    },
+    {
+      "case": "one_authorized_complete",
+      "outcome": "PASS",
+      "scan_commands": 1,
+      "passed": true
+    },
+    {
+      "case": "one_unauthorized",
+      "outcome": "REDIS15_UNEXPECTED_KEYS",
+      "scan_commands": 1,
+      "passed": true
+    },
+    {
+      "case": "one_authorized_nonzero_cursor",
+      "outcome": "REDIS15_UNEXPECTED_KEYS",
+      "scan_commands": 1,
+      "passed": true
+    },
+    {
+      "case": "duplicate_authorized_return",
+      "outcome": "REDIS15_UNEXPECTED_KEYS",
+      "scan_commands": 1,
+      "passed": true
+    },
+    {
+      "case": "more_than_one_short_circuit",
+      "outcome": "REDIS15_UNEXPECTED_KEYS",
+      "scan_commands": 0,
+      "passed": true
+    },
+    {
+      "case": "expired_between_dbsize_and_scan",
+      "outcome": "REDIS15_UNEXPECTED_KEYS",
+      "scan_commands": 1,
+      "passed": true
+    }
+  ]
+}

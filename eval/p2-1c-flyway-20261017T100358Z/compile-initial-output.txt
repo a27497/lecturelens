@@ -1,0 +1,2 @@
+Note: eval/p2-1c-flyway-20261017T100358Z/P21HealthBootstrap.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.

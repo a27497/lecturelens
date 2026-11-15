@@ -1,0 +1,12 @@
+{
+  "timezone": "UTC",
+  "task_a_frozen_version": 6,
+  "translation_started": "2026-10-15T18:06:23.825Z",
+  "rollback_to_original_binding_at": "2026-10-15T18:06:29.930000+00:00",
+  "current_version_after_rollback": 9,
+  "task_b_created": "2026-10-15T18:06:30.014Z",
+  "translation_a_finished": "2026-10-15T18:06:40.907Z",
+  "task_b_frozen_version": 9,
+  "rollback_occurred_during_a_translation": true,
+  "task_b_created_after_rollback": true
+}

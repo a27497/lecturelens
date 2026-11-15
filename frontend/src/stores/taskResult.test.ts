@@ -20,3 +20,20 @@ it("rejects publication for another course or an unexpected response identity", 
   store.acceptVerified("next-course", result("old-course", "mismatched source"));
   expect(store.result).toBeNull(); expect(store.taskId).toBe("next-course");
 });
+it("refreshes a learnable running course in place without clearing what the learner reads", async () => {
+  const store = useTaskResultStore();
+  vi.mocked(fetchTaskResult).mockResolvedValueOnce(result("course", "subtitles only"));
+  await store.load("course");
+  let finish!: (value: TaskResultResponse) => void;
+  vi.mocked(fetchTaskResult).mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+  const work = store.refresh("course");
+  expect(store.result?.sourceFullText).toBe("subtitles only");
+  expect(store.loading).toBe(false);
+  finish(result("course", "with translation")); await work;
+  expect(store.result?.sourceFullText).toBe("with translation");
+  vi.mocked(fetchTaskResult).mockRejectedValueOnce(new Error("offline"));
+  await store.refresh("course");
+  expect(store.result?.sourceFullText).toBe("with translation"); expect(store.errorMessage).toBe("");
+  await store.refresh("other-course");
+  expect(fetchTaskResult).toHaveBeenCalledTimes(3);
+});

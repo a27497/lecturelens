@@ -1,0 +1,122 @@
+{
+  "offline_initial": {
+    "original_record": ".data/dev-checks/redis15-auth-offline-20261017T052407Z/run.json",
+    "original_log": ".data/dev-checks/redis15-auth-offline-20261017T052407Z/output.log",
+    "status": "SUCCEEDED",
+    "started_at_utc": "2026-10-17T05:25:37.997904+00:00",
+    "finished_at_utc": "2026-10-17T05:25:38.197997+00:00",
+    "runner_pid": 196436,
+    "runner_start_ticks": 303112,
+    "child_pid": 196437,
+    "child_start_ticks": 303117,
+    "child_returncode": 0,
+    "exit_code": 0,
+    "cleanup": {
+      "pgid": 196437,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "e11bbb630c1a6ea91f4322ac92d7ce2a6c043ad84d3e41ecf0d0f5a73e9c9fd0",
+    "elapsed_seconds": 0.20012019399973724
+  },
+  "authenticated": {
+    "original_record": ".data/dev-checks/redis15-auth-live-20261017T052407Z/run.json",
+    "original_log": ".data/dev-checks/redis15-auth-live-20261017T052407Z/output.log",
+    "status": "SUCCEEDED",
+    "started_at_utc": "2026-10-17T05:25:52.535442+00:00",
+    "finished_at_utc": "2026-10-17T05:25:55.697018+00:00",
+    "runner_pid": 197377,
+    "runner_start_ticks": 304566,
+    "child_pid": 197378,
+    "child_start_ticks": 304571,
+    "child_returncode": 0,
+    "exit_code": 0,
+    "cleanup": {
+      "pgid": 197378,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "bed42a86b4940a3d5cff78bfded70ea74c1a8ca6eda5836d30de695e6a9d8fdf",
+    "elapsed_seconds": 3.161601387999781
+  },
+  "provenance_initial": {
+    "original_record": ".data/dev-checks/redis15-provenance-20261017T052407Z/run.json",
+    "original_log": ".data/dev-checks/redis15-provenance-20261017T052407Z/output.log",
+    "status": "FAILED",
+    "started_at_utc": "2026-10-17T05:26:51.386182+00:00",
+    "finished_at_utc": "2026-10-17T05:26:51.602964+00:00",
+    "runner_pid": 201123,
+    "runner_start_ticks": 310451,
+    "child_pid": 201124,
+    "child_start_ticks": 310456,
+    "child_returncode": 1,
+    "exit_code": 1,
+    "cleanup": {
+      "pgid": 201124,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "887adffd5fb50f9228d4b7ac95f3619f11f32a31d1756c6ecba3ecc084831e15",
+    "elapsed_seconds": 0.21680943299998034
+  },
+  "provenance_final": {
+    "original_record": ".data/dev-checks/redis15-provenance-v2-20261017T052407Z/run.json",
+    "original_log": ".data/dev-checks/redis15-provenance-v2-20261017T052407Z/output.log",
+    "status": "SUCCEEDED",
+    "started_at_utc": "2026-10-17T05:27:11.024424+00:00",
+    "finished_at_utc": "2026-10-17T05:27:12.243041+00:00",
+    "runner_pid": 202384,
+    "runner_start_ticks": 312414,
+    "child_pid": 202387,
+    "child_start_ticks": 312420,
+    "child_returncode": 0,
+    "exit_code": 0,
+    "cleanup": {
+      "pgid": 202387,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "0b5cdffca77605b7ba7f229a073252ab48ef14ad737f8f8e72e5f2f9bbd49039",
+    "elapsed_seconds": 1.2186417610000717
+  },
+  "offline_final": {
+    "original_record": ".data/dev-checks/redis15-auth-offline-v2-20261017T052407Z/run.json",
+    "original_log": ".data/dev-checks/redis15-auth-offline-v2-20261017T052407Z/output.log",
+    "status": "SUCCEEDED",
+    "started_at_utc": "2026-10-17T05:27:48.292745+00:00",
+    "finished_at_utc": "2026-10-17T05:27:48.545357+00:00",
+    "runner_pid": 205029,
+    "runner_start_ticks": 316141,
+    "child_pid": 205063,
+    "child_start_ticks": 316147,
+    "child_returncode": 0,
+    "exit_code": 0,
+    "cleanup": {
+      "pgid": 205063,
+      "signals": [],
+      "errors": [],
+      "targets": [],
+      "reaped_descendants": [],
+      "remaining": [],
+      "complete": true
+    },
+    "log_sha256": "2b8a5c7e7bfdde85bf100dde94d4f0d07df6f886aca0c69849d08d8bb7a0973a",
+    "elapsed_seconds": 0.25263927200012404
+  }
+}

@@ -10,10 +10,13 @@ final class VideoKeyframeObjectKeyGenerator {
     }
 
     static String generate(Long userId, String taskId, int frameIndex) {
+        var execution=com.example.courselingo.task.service.PipelineExecutionScope.current();
+        String generation=execution==null?"":"/execution-"+execution.epoch()+"-"+safe(execution.eventId());
         return "keyframes/"
             + safe(userId)
             + "/"
             + safe(taskId)
+            + generation
             + "/frame-"
             + String.format("%06d", frameIndex)
             + ".jpg";

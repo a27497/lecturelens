@@ -1,0 +1,41 @@
+{
+  "at_utc": "2026-10-16T19:23:27.036893+00:00",
+  "code": "REDIS15_UNEXPECTED_KEYS",
+  "unit_invocation": "83307e3128ac414689f94e2ebeaf8caf",
+  "dev_uid": 1002,
+  "controlled_process_pids": [
+    "3471067"
+  ],
+  "controlled_processes_absent": true,
+  "unit": {
+    "MainPID": "0",
+    "LoadState": "not-found",
+    "ActiveState": "inactive",
+    "SubState": "dead"
+  },
+  "port_18091_listening": false,
+  "online_service_unchanged": true,
+  "online_jar_hash_unchanged": true,
+  "protected_evidence_count": 182,
+  "protected_evidence_unchanged": true,
+  "untracked_metadata_unchanged": true,
+  "frozen_candidate_unchanged": true,
+  "supplier_model_requests": 0,
+  "formal_trials_submitted": 0,
+  "smoke": "未测",
+  "formal_success_rate": "未测",
+  "stage_timings": "未测",
+  "supplier_billing": "未测",
+  "used_sigkill": false,
+  "live_database_access": false,
+  "redis_values_read": false,
+  "redis_keys_modified": 0,
+  "cleanup_complete": true,
+  "exec_tool_uid": 1002,
+  "disk": {
+    "used_bytes": 117287182336,
+    "available_bytes": 37590228992,
+    "usage_percent": 75.7290435902294,
+    "headroom_to_85_bytes": 14358617292.800003
+  }
+}

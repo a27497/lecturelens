@@ -1,0 +1,47 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "test:unit",
+    "--",
+    "--maxWorkers=2",
+    "--reporter=default",
+    "--reporter=junit",
+    "--outputFile=/home/dev/projects/lecturelens/.data/p2-1c-20261016T155847Z/checks/stage4-frontend-full-01-junit.xml"
+  ],
+  "cwd": "frontend",
+  "disk_before": {
+    "used_bytes": 116277440512,
+    "available_bytes": 38599970816,
+    "usage_percent": 75.07708161892451,
+    "headroom_to_85_bytes": 15368359116.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:43:36.313725+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2676095,
+  "start_ticks": "3634342",
+  "exit_code": 0,
+  "disk_peak_percent": 75.07916562069877,
+  "disk_after": {
+    "used_bytes": 116278534144,
+    "available_bytes": 38598877184,
+    "usage_percent": 75.07778774642924,
+    "headroom_to_85_bytes": 15367265484.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage4-frontend-full-01.log",
+  "log_sha256": "8100875ed00631ea9bd7de7b5327f37fc5a2e0e578b83f5d7c0a983df96be4f1",
+  "suites": [],
+  "total": {
+    "tests": 119,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "external_junit": {
+    "path": ".data/p2-1c-20261016T155847Z/checks/stage4-frontend-full-01-junit.xml",
+    "sha256": "30255abf49aca9a4b22deee1e354e0468f45ba2440594d50934395ee6fe24cb9"
+  }
+}

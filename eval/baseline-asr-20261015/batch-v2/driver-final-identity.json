@@ -1,0 +1,6 @@
+{
+  "frozen_before_remaining_trials_utc": "2026-10-15T08:39:24.822559+00:00",
+  "path": "eval/baseline-asr-20261015/run-final.py",
+  "sha256": "2469c40bc5362c28de91988df9efcd42e116bcee76c1b5edcb9a0ca4586a9fc3",
+  "change": "Driver only: skip already completed cases; no resubmission. Failed requests without usage reserve 1 CNY each for budget control, never report this as cost; successful missing usage still stops. V3 was never executed; null-usage arithmetic fixed before use. Runtime/media/normalization and dispatch identical."
+}

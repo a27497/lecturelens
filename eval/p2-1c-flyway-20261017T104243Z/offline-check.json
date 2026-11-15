@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "private_log_exclusion",
+    "strict_cause_filter",
+    "migration_marker",
+    "framed_row_hash",
+    "collation_before_migrate",
+    "single_application_spawn",
+    "no_task_endpoint",
+    "no_repair_or_clean"
+  ],
+  "application_started": false
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "group": "baseline-asr-20261015-consumer",
+    "topic": "baseline-asr-20261015",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "consumerProgress",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-g",
+      "baseline-asr-20261015-consumer",
+      "-t",
+      "baseline-asr-20261015",
+      "-c",
+      "DefaultCluster"
+    ],
+    "returncode": 0,
+    "stdout": "#Topic                                                            #Broker Name                      #QID  #Broker Offset        #Consumer Offset      #Diff                #Inflight           #LastTime\nbaseline-asr-20261015                                             broker-a                          0     4                     4                     0                    0                    2026-10-15 10:17:57\nbaseline-asr-20261015                                             broker-a                          1     1                     1                     0                    0                    2026-10-15 10:52:14\nbaseline-asr-20261015                                             broker-a                          2     3                     3                     0                    0                    2026-10-15 10:35:00\nbaseline-asr-20261015                                             broker-a                          3     0                     0                     0                    0                    N/A\nbaseline-asr-20261015                                             broker-a                          4     4                     4                     0                    0                    2026-10-15 08:51:48\nbaseline-asr-20261015                                             broker-a                          5     2                     2                     0                    0                    2026-10-15 09:42:47\nbaseline-asr-20261015                                             broker-a                          6     1                     1                     0                    0                    2026-10-15 10:00:04\nbaseline-asr-20261015                                             broker-a                          7     1                     1                     0                    0                    2026-10-15 08:27:41\n\nConsume TPS: 0.00\nConsume Diff Total: 0\nConsume Inflight Total: 0\n",
+    "stderr": ""
+  },
+  {
+    "group": "lecturelens-demo-consumer-group",
+    "topic": "courselingo-analysis-task",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "consumerProgress",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-g",
+      "lecturelens-demo-consumer-group",
+      "-t",
+      "courselingo-analysis-task",
+      "-c",
+      "DefaultCluster"
+    ],
+    "returncode": 0,
+    "stdout": "#Topic                                                            #Broker Name                      #QID  #Broker Offset        #Consumer Offset      #Diff                #Inflight           #LastTime\ncourselingo-analysis-task                                         broker-a                          0     2                     2                     0                    0                    2026-09-26 10:28:10\ncourselingo-analysis-task                                         broker-a                          1     2                     2                     0                    0                    2026-09-26 18:41:40\ncourselingo-analysis-task                                         broker-a                          2     0                     0                     0                    0                    N/A\ncourselingo-analysis-task                                         broker-a                          3     1                     1                     0                    0                    2026-09-26 10:26:11\ncourselingo-analysis-task                                         broker-a                          4     1                     1                     0                    0                    2026-10-15 18:06:30\ncourselingo-analysis-task                                         broker-a                          5     4                     4                     0                    0                    2026-10-15 18:06:23\ncourselingo-analysis-task                                         broker-a                          6     3                     3                     0                    0                    2026-09-21 20:38:04\ncourselingo-analysis-task                                         broker-a                          7     2                     2                     0                    0                    2026-09-26 07:21:37\n\nConsume TPS: 0.00\nConsume Diff Total: 0\nConsume Inflight Total: 0\n",
+    "stderr": ""
+  },
+  {
+    "group": "lecturelens-learning-loop-consumer",
+    "topic": "lecturelens-learning-loop",
+    "command": [
+      "docker",
+      "exec",
+      "lecturelens-demo-l2-rocketmq-broker-1",
+      "sh",
+      "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+      "consumerProgress",
+      "-n",
+      "rocketmq-namesrv:9876",
+      "-g",
+      "lecturelens-learning-loop-consumer",
+      "-t",
+      "lecturelens-learning-loop",
+      "-c",
+      "DefaultCluster"
+    ],
+    "returncode": 0,
+    "stdout": "#Topic                                                            #Broker Name                      #QID  #Broker Offset        #Consumer Offset      #Diff                #Inflight           #LastTime\nlecturelens-learning-loop                                         broker-a                          0     9                     9                     0                    0                    2026-09-22 07:17:29\nlecturelens-learning-loop                                         broker-a                          1     7                     7                     0                    0                    2026-09-28 07:44:37\nlecturelens-learning-loop                                         broker-a                          2     11                    11                    0                    0                    2026-09-28 07:17:00\nlecturelens-learning-loop                                         broker-a                          3     6                     6                     0                    0                    2026-10-02 15:26:45\nlecturelens-learning-loop                                         broker-a                          4     7                     7                     0                    0                    2026-09-22 06:37:25\nlecturelens-learning-loop                                         broker-a                          5     15                    15                    0                    0                    2026-10-02 18:31:59\nlecturelens-learning-loop                                         broker-a                          6     4                     4                     0                    0                    2026-09-21 10:56:14\nlecturelens-learning-loop                                         broker-a                          7     10                    10                    0                    0                    2026-10-02 18:30:57\n\nConsume TPS: 0.00\nConsume Diff Total: 0\nConsume Inflight Total: 0\n",
+    "stderr": ""
+  }
+]

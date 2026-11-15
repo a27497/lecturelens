@@ -1,0 +1,43 @@
+{
+  "command": [
+    "./.venv/bin/python",
+    "-m",
+    "pytest",
+    "--junitxml=/home/dev/projects/lecturelens/.data/p2-1c-20261016T155847Z/checks/stage4-python-full-02-junit.xml"
+  ],
+  "cwd": "agent-service",
+  "disk_before": {
+    "used_bytes": 116512821248,
+    "available_bytes": 38364590080,
+    "usage_percent": 75.22906035745179,
+    "headroom_to_85_bytes": 15132978380.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T17:41:20.761208+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2907862,
+  "start_ticks": "3980787",
+  "exit_code": 0,
+  "disk_peak_percent": 75.23197478632899,
+  "disk_after": {
+    "used_bytes": 116499046400,
+    "available_bytes": 38378364928,
+    "usage_percent": 75.22016632449896,
+    "headroom_to_85_bytes": 15146753228.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage4-python-full-02.log",
+  "log_sha256": "7444d81d48b54dabf17e813a6cab39deb9c9566086d60f78a0602ecafd47f6be",
+  "suites": [],
+  "total": {
+    "tests": 727,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "external_junit": {
+    "path": ".data/p2-1c-20261016T155847Z/checks/stage4-python-full-02-junit.xml",
+    "sha256": "4d99a9e6d956e394cb7aae43f4a3cbc9686b3af6f1c714fcc12ae30f488e3f00"
+  }
+}

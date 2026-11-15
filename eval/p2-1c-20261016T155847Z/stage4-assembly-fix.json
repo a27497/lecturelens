@@ -1,0 +1,49 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=AnalysisTaskWorkExecutorConfigurationTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116300800000,
+    "available_bytes": 38576611328,
+    "usage_percent": 75.09216418506486,
+    "headroom_to_85_bytes": 15344999628.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:46:47.237798+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2690679,
+  "start_ticks": "3653434",
+  "exit_code": 0,
+  "disk_peak_percent": 75.09234137810911,
+  "disk_after": {
+    "used_bytes": 116300898304,
+    "available_bytes": 38576513024,
+    "usage_percent": 75.09222765720011,
+    "headroom_to_85_bytes": 15344901324.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage4-assembly-fix.log",
+  "log_sha256": "62a99215e8a5b20d6d49103ac1a075aa1b01bcac562fe4ade1a677b85dc41ddc",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.task.runner.AnalysisTaskWorkExecutorConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dfdc476401e44ddf37ca930e004d97cc0ff70f5326121cf801c7de8e10d3a0b7"
+    }
+  ],
+  "total": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

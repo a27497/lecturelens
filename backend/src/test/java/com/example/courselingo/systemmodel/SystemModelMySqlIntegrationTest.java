@@ -70,7 +70,12 @@ class SystemModelMySqlIntegrationTest {
     void freshMigrationAndV24UpgradeBothValidate() throws Exception {
         for (String url : List.of(freshUrl, upgradedUrl)) {
             flyway(url).validate();
-            assertThat(flyway(url).info().current().getVersion().toString()).isEqualTo("25");
+            var migrations = new org.springframework.core.io.support.PathMatchingResourcePatternResolver()
+                .getResources("classpath:db/migration/V*__*.sql");
+            String latest = java.util.Arrays.stream(migrations).map(org.springframework.core.io.Resource::getFilename)
+                .mapToInt(name -> Integer.parseInt(name.substring(1, name.indexOf("__")))).max().orElseThrow() + "";
+            assertThat(flyway(url).info().current().getVersion().toString()).isEqualTo(latest);
+            assertThat(flyway(url).info().pending()).isEmpty();
             try (Connection connection = open(url)) {
                 assertThat(scalar(connection, "SELECT current_version FROM system_model_config_state WHERE id=1")).isEqualTo("0");
                 assertThat(scalar(connection, "SELECT config_sha256 = SHA2(config_json, 256) FROM system_model_config_version WHERE version=0"))
@@ -214,7 +219,7 @@ class SystemModelMySqlIntegrationTest {
     void cliEntryPointReturnsSafeErrorsAndCanGrantAnExistingAccount() throws Exception {
         var output = new ByteArrayOutputStream();
         var errors = new ByteArrayOutputStream();
-        Map<String, String> environment = Map.of("MYSQL_JDBC_URL", upgradedUrl, "MYSQL_USERNAME", username, "MYSQL_PASSWORD", password);
+        Map<String, String> environment = Map.of("MYSQL_JDBC_URL", upgradedUrl, "MYSQL_USERNAME", username, "MYSQL_PASSWORD", password == null ? "" : password);
         try (Connection connection = open(upgradedUrl)) {
             long user = createUser(connection, "ACTIVE");
             assertThat(SystemModelAdminCli.execute(new String[] {"grant", "--user-id", Long.toString(user)}, environment,

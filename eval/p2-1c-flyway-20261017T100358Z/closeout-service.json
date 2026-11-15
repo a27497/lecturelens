@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-10-17T10:07:56.288119+00:00",
+  "category": "APPLICATION_START_FAILED",
+  "java_exit": 45,
+  "application_starts": 1,
+  "used_sigkill": false,
+  "mysql_data_retained": true
+}

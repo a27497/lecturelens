@@ -1,0 +1,13 @@
+{
+  "ready": true,
+  "disk": {
+    "at_utc": "2026-10-17T10:43:36.081277+00:00",
+    "used_bytes": 119635501056,
+    "available_bytes": 35241910272,
+    "usage_percent": 77.24528711461703,
+    "margin_to_85_bytes": 12010298572.800003
+  },
+  "mysql_schema": "lecturelens_p21c_20261017_r2",
+  "mysql_port": 33319,
+  "redis_port": 33318
+}

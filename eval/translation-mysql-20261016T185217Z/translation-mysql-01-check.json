@@ -1,0 +1,25 @@
+{
+  "name": "translation-mysql-01",
+  "status": "FAILED",
+  "exit_code": 1,
+  "totals": {
+    "tests": 0,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [],
+  "sha256": {
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-01/run.json": "ae428ea3905e4bb00efadef5565f468c8508a2a9b6c988820c3d77f923d9364a",
+    ".data/translation-mysql-20261016T185217Z/translation-mysql-01/output.log": "872381bd9446d36cb073db7b8fe7c7e1aee1e92c84cf062f4baaf6a250dced2b"
+  },
+  "cleanup": {
+    "pgid": 3314985,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  }
+}

@@ -32,6 +32,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateLearningPackageStepTest {
+    @Test void materialInputModeUsesFrozenTaskPolicyAndExecutionReference() {
+        var ref=new com.example.courselingo.systemmodel.SystemModelExecutionRef("snapshot",10,"task_1",7L);
+        var settings=new com.example.courselingo.subtitle.pipeline.PipelineTranslationProperties();
+        var policy=settings.freezePipeline(Duration.ofSeconds(120),Duration.ofMinutes(15),1,1000,16000,1,2,4*1024*1024,3,List.of(0L))
+            .withFlow(new com.example.courselingo.subtitle.pipeline.PreparationFlowPolicy(true,false,false));
+        var policies=org.mockito.Mockito.mock(com.example.courselingo.subtitle.pipeline.PipelinePolicyService.class);
+        when(policies.find("task_1",7L)).thenReturn(java.util.Optional.of(new com.example.courselingo.subtitle.pipeline.PipelinePolicyService.Frozen(policy,"hash",java.time.Instant.now().plusSeconds(100),ref)));
+        when(analysisTaskMapper.selectByIdAndUserId("task_1",7L)).thenReturn(task());
+        when(learningPackageService.generateLearningPackageWithAiCallRecord(any())).thenReturn(new LearningPackageAiCallResult(1,"fake","fake",Duration.ZERO,1,1,2,1,1,null,null));
+        var context=new PipelineAnalysisTaskStepContext(new AnalysisTaskExecutionContext("task_1","up",7L,"en","zh-CN","req_1",ref,2,1));
+        context.setSpeechToTextResult(new SpeechToTextResult("fake","en","source",List.of(new TranscribedSegment(0,0,1000,"source")),Duration.ZERO,1000,Map.of()));
+        step.withPolicies(policies).execute(context);
+        var command=ArgumentCaptor.forClass(GenerateLearningPackageCommand.class);
+        verify(learningPackageService).generateLearningPackageWithAiCallRecord(command.capture());
+        assertThat(command.getValue().sourceOnly()).isTrue();assertThat(command.getValue().execution()).isEqualTo(ref);
+    }
 
     @Mock
     private AnalysisTaskMapper analysisTaskMapper;

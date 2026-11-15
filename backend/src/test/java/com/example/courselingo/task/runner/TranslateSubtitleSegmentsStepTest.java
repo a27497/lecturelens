@@ -138,6 +138,25 @@ class TranslateSubtitleSegmentsStepTest {
     }
 
     @Test
+    void typedTruncationRemainsFailedAndRetainsOnlyBoundedStageDiagnosis() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task());
+        var failure = new com.example.courselingo.ai.llm.TranslationFailure(
+            com.example.courselingo.ai.llm.TranslationFailure.Reason.TRUNCATED, 200, null, "length", 0,
+            com.example.courselingo.ai.llm.TranslationFailure.Check.OUTPUT_TRUNCATED);
+        when(subtitleTranslationService.translateTaskSubtitlesWithAiCallRecord(any(TranslateSubtitleCommand.class)))
+            .thenThrow(new com.example.courselingo.ai.llm.LlmStageException("TRANSLATION_FULL_TEXT", failure));
+        var context = contextWithAsrResult(7L);
+
+        assertThatThrownBy(() -> step.execute(context)).isInstanceOf(com.example.courselingo.ai.llm.LlmStageException.class);
+        assertThat(context.pendingAiCallRecords()).singleElement().satisfies(record -> {
+            assertThat(record.success()).isFalse();
+            assertThat(record.errorCode()).isEqualTo("OUTPUT_INVALID");
+            assertThat(record.retryable()).isFalse();
+            assertThat(record.errorMessage()).contains("reason=TRUNCATED", "check=OUTPUT_TRUNCATED", "httpStatus=200", "finishReason=length");
+        });
+    }
+
+    @Test
     void translateSubtitleSegmentsAddsSanitizedFailureRecordWhenLlmServiceFails() {
         when(analysisTaskMapper.selectByIdAndUserId("task_1", 7L)).thenReturn(task());
         when(subtitleTranslationService.translateTaskSubtitlesWithAiCallRecord(any(TranslateSubtitleCommand.class)))

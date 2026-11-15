@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/start-direct.py",
+    "--check-only",
+    "--source-pid",
+    "5104",
+    "--jar",
+    "/home/dev/projects/lecturelens-asr-b/.data/asr-b-deploy/backend-asr-b.jar",
+    "--asr-config",
+    "/home/dev/projects/lecturelens-asr-b/.data/asr-b-deploy/asr-bailian.yml",
+    "--batch",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/batch-v2"
+  ],
+  "started_at_utc": "2026-10-15T11:17:14.197833+00:00",
+  "finished_at_utc": "2026-10-15T11:17:14.511015+00:00",
+  "exit_code": 0,
+  "stdout": "{\"jar_sha256\": \"a6148f8aad454f506f644102c793690871dce5d2f34036c1a30f5b5d56dd6a08\", \"source_process_readable\": true, \"credentials_printed\": false, \"models_called\": 0}\n",
+  "stderr": ""
+}

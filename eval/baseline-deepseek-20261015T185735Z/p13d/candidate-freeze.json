@@ -1,0 +1,7 @@
+{
+  "code_commit": "bc2e6cc79f1a3311b90cc4d407f75d2e20048275",
+  "files": {
+    "eval/baseline-deepseek-20261015T185735Z/p13d_reproduce.py": "6122c5731669ae12a74ba40002c83379ce9cf086ea309e401f854a6962f15258",
+    "backend/src/main/resources/db/migration/V26__translation_call_diagnostic.sql": "af657cf35c24949756609555aa1e2b8749f02078f3d2f9e291b2bfd8f3f3e859"
+  }
+}

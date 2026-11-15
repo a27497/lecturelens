@@ -12,13 +12,26 @@ import java.util.UUID;
 final class SystemModelMySqlFixture implements AutoCloseable {
     final String base = System.getenv("SYSTEM_MODEL_TEST_JDBC_URL");
     final String username = System.getenv().getOrDefault("SYSTEM_MODEL_TEST_MYSQL_USER", "root");
-    final String password = System.getenv("SYSTEM_MODEL_TEST_MYSQL_PASSWORD");
+    final String password = System.getenv().getOrDefault("SYSTEM_MODEL_TEST_MYSQL_PASSWORD", "");
     final String database =
             "lecturelens_p14_phase2_" + UUID.randomUUID().toString().replace("-", "");
     final String url;
     final DriverManagerDataSource dataSource;
     final JdbcTemplate jdbc;
     final DataSourceTransactionManager transactions;
+
+    static int version(java.nio.file.Path migration) {
+        String name = migration.getFileName().toString();
+        return Integer.parseInt(name.substring(1, name.indexOf("__")));
+    }
+
+    /** Highest checked-in versioned migration; repeatable migrations must not move it. */
+    static String latestVersion() throws java.io.IOException {
+        try (var files = java.nio.file.Files.list(java.nio.file.Path.of("src/main/resources/db/migration"))) {
+            return String.valueOf(files.filter(p -> p.getFileName().toString().startsWith("V"))
+                    .mapToInt(SystemModelMySqlFixture::version).max().orElseThrow());
+        }
+    }
 
     SystemModelMySqlFixture() throws Exception {
         this("classpath:db/migration");

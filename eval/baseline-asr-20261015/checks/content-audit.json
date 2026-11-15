@@ -1,0 +1,10 @@
+{
+  "observed_at_utc": "2026-10-15T11:22:10.657943+00:00",
+  "public_files_scanned": 117,
+  "total_bytes": 1771436,
+  "exact_known_secret_values_checked": 10,
+  "credential_findings": [],
+  "largest_file_bytes": 202789,
+  "media_env_cache_or_pstats_files": 0,
+  "method": "Exact matching of known long process/account secrets and common high-entropy credential/private-key formats; paths only on a finding. No secret values are saved."
+}

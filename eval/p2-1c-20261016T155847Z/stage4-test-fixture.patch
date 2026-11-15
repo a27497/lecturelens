@@ -1,0 +1,16 @@
+diff --git a/backend/src/test/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfigurationTest.java b/backend/src/test/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfigurationTest.java
+index b38d066..538eacd 100644
+--- a/backend/src/test/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfigurationTest.java
++++ b/backend/src/test/java/com/example/courselingo/task/runner/AnalysisTaskWorkExecutorConfigurationTest.java
+@@ -78,6 +78,11 @@ class AnalysisTaskWorkExecutorConfigurationTest {
+             .withBean(SubtitleSegmentPersistenceService.class, () -> mock(SubtitleSegmentPersistenceService.class))
+             .withBean(SubtitleTranslationService.class, () -> mock(SubtitleTranslationService.class))
+             .withBean(LearningPackageService.class, () -> mock(LearningPackageService.class))
++            .withBean(com.example.courselingo.subtitle.pipeline.PipelinePolicyService.class, () -> mock(com.example.courselingo.subtitle.pipeline.PipelinePolicyService.class))
++            .withBean(com.example.courselingo.media.SilenceAudioChunkPlanner.class, () -> mock(com.example.courselingo.media.SilenceAudioChunkPlanner.class))
++            .withBean(com.example.courselingo.task.service.PipelineSourceCheckpointStore.class, () -> mock(com.example.courselingo.task.service.PipelineSourceCheckpointStore.class))
++            .withBean(com.example.courselingo.task.service.AsrExecutionStore.class, () -> mock(com.example.courselingo.task.service.AsrExecutionStore.class))
++            .withBean(com.example.courselingo.task.usage.PipelineUsageLedger.class, () -> mock(com.example.courselingo.task.usage.PipelineUsageLedger.class))
+             .withBean(AiCallRecordService.class, () -> mock(AiCallRecordService.class))
+             .withBean(SrtArtifactService.class, () -> mock(SrtArtifactService.class))
+             .withBean(VttArtifactService.class, () -> mock(VttArtifactService.class))

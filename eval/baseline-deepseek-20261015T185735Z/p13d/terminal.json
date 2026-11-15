@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-15T19:51:27.302274+00:00",
+  "elapsed_ms": 132646.959,
+  "task": {
+    "taskId": "task_1b5dd375008544258544f7b6f3a2001c",
+    "uploadId": "up_b5618740a8c248b3b163a379b9b30c74",
+    "targetLanguage": "zh-CN",
+    "status": "FAILED",
+    "progressPercent": 60,
+    "currentStage": "TRANSLATE",
+    "errorCode": "TASK_RUNNER_EXECUTION_FAILED",
+    "errorMessage": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+    "retryCount": 0,
+    "maxRetryCount": 3,
+    "createdAt": "2026-10-15T19:49:14.932Z",
+    "updatedAt": "2026-10-15T19:51:27.054Z",
+    "startedAt": "2026-10-15T19:49:15.474Z",
+    "finishedAt": "2026-10-15T19:51:27.051Z"
+  }
+}

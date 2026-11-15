@@ -1,0 +1,2267 @@
+{
+  "finished_trials": 10,
+  "submitted_trials": 10,
+  "expected_trials": 10,
+  "task_status_counts": {
+    "FAILED": 10
+  },
+  "translation_status_counts": {
+    "FAILED": 10
+  },
+  "overall": {
+    "n": 10,
+    "successes": 0,
+    "success_rate": 0.0,
+    "translation_successes": 0,
+    "task_terminal_seconds": {
+      "n": 10,
+      "mean": 167.3088245627987,
+      "sample_sd": 54.228054687928164,
+      "min": 114.77393493099953,
+      "max": 253.7437895549956
+    },
+    "stage_seconds": {
+      "EXTRACT_AUDIO": {
+        "n": 10,
+        "mean": 9.4296,
+        "sample_sd": 2.039468950486866,
+        "min": 6.914,
+        "max": 12.623
+      },
+      "EXTRACT_KEYFRAMES": {
+        "n": 10,
+        "mean": 0.0039000000000000003,
+        "sample_sd": 0.0011972189997378647,
+        "min": 0.003,
+        "max": 0.007
+      },
+      "PERSIST_SUBTITLES": {
+        "n": 10,
+        "mean": 0.0402,
+        "sample_sd": 0.010358034991681041,
+        "min": 0.027,
+        "max": 0.06
+      },
+      "RESOLVE_UPLOADED_SOURCE": {
+        "n": 10,
+        "mean": 0.0086,
+        "sample_sd": 0.004742245131674331,
+        "min": 0.005,
+        "max": 0.017
+      },
+      "TRANSCRIBE": {
+        "n": 10,
+        "mean": 116.779,
+        "sample_sd": 26.775399185736813,
+        "min": 88.937,
+        "max": 152.402
+      },
+      "TRANSLATE_SUBTITLES": {
+        "n": 10,
+        "mean": 39.4131,
+        "sample_sd": 34.27326936533614,
+        "min": 14.369,
+        "max": 117.569
+      },
+      "VALIDATE_TASK": {
+        "n": 10,
+        "mean": 0.0041,
+        "sample_sd": 0.0015238839267549948,
+        "min": 0.003,
+        "max": 0.007
+      }
+    },
+    "successful_stage_seconds": {
+      "EXTRACT_AUDIO": {
+        "n": 10,
+        "mean": 9.4296,
+        "sample_sd": 2.039468950486866,
+        "min": 6.914,
+        "max": 12.623
+      },
+      "EXTRACT_KEYFRAMES": {
+        "n": 10,
+        "mean": 0.0039000000000000003,
+        "sample_sd": 0.0011972189997378647,
+        "min": 0.003,
+        "max": 0.007
+      },
+      "PERSIST_SUBTITLES": {
+        "n": 10,
+        "mean": 0.0402,
+        "sample_sd": 0.010358034991681041,
+        "min": 0.027,
+        "max": 0.06
+      },
+      "RESOLVE_UPLOADED_SOURCE": {
+        "n": 10,
+        "mean": 0.0086,
+        "sample_sd": 0.004742245131674331,
+        "min": 0.005,
+        "max": 0.017
+      },
+      "TRANSCRIBE": {
+        "n": 10,
+        "mean": 116.779,
+        "sample_sd": 26.775399185736813,
+        "min": 88.937,
+        "max": 152.402
+      },
+      "TRANSLATE_SUBTITLES": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "VALIDATE_TASK": {
+        "n": 10,
+        "mean": 0.0041,
+        "sample_sd": 0.0015238839267549948,
+        "min": 0.003,
+        "max": 0.007
+      }
+    },
+    "failed_stage_seconds": {
+      "EXTRACT_AUDIO": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "EXTRACT_KEYFRAMES": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "PERSIST_SUBTITLES": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "RESOLVE_UPLOADED_SOURCE": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "TRANSCRIBE": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "TRANSLATE_SUBTITLES": {
+        "n": 10,
+        "mean": 39.4131,
+        "sample_sd": 34.27326936533614,
+        "min": 14.369,
+        "max": 117.569
+      },
+      "VALIDATE_TASK": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "deepseek_cost_lower_usd": {
+      "n": 0,
+      "mean": null,
+      "sample_sd": null,
+      "min": null,
+      "max": null
+    },
+    "deepseek_cost_upper_usd": {
+      "n": 0,
+      "mean": null,
+      "sample_sd": null,
+      "min": null,
+      "max": null
+    }
+  },
+  "per_lecture": {
+    "algorithms": {
+      "n": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "translation_successes": 0,
+      "task_terminal_seconds": {
+        "n": 2,
+        "mean": 232.5609593804984,
+        "sample_sd": 29.957045722219995,
+        "min": 211.37812920600118,
+        "max": 253.7437895549956
+      },
+      "stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 11.594999999999999,
+          "sample_sd": 1.4538115421195412,
+          "min": 10.567,
+          "max": 12.623
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0515,
+          "sample_sd": 0.012020815280171309,
+          "min": 0.043,
+          "max": 0.06
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0085,
+          "sample_sd": 0.0035355339059327372,
+          "min": 0.006,
+          "max": 0.011
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 137.4835,
+          "sample_sd": 21.09794503026301,
+          "min": 122.565,
+          "max": 152.402
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 81.903,
+          "sample_sd": 50.439340915598805,
+          "min": 46.237,
+          "max": 117.569
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.004,
+          "sample_sd": 0.001414213562373095,
+          "min": 0.003,
+          "max": 0.005
+        }
+      },
+      "successful_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 11.594999999999999,
+          "sample_sd": 1.4538115421195412,
+          "min": 10.567,
+          "max": 12.623
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0515,
+          "sample_sd": 0.012020815280171309,
+          "min": 0.043,
+          "max": 0.06
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0085,
+          "sample_sd": 0.0035355339059327372,
+          "min": 0.006,
+          "max": 0.011
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 137.4835,
+          "sample_sd": 21.09794503026301,
+          "min": 122.565,
+          "max": 152.402
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.004,
+          "sample_sd": 0.001414213562373095,
+          "min": 0.003,
+          "max": 0.005
+        }
+      },
+      "failed_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSCRIBE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 81.903,
+          "sample_sd": 50.439340915598805,
+          "min": 46.237,
+          "max": 117.569
+        },
+        "VALIDATE_TASK": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "deepseek_cost_lower_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "deepseek_cost_upper_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "calculus": {
+      "n": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "translation_successes": 0,
+      "task_terminal_seconds": {
+        "n": 2,
+        "mean": 130.87728023149612,
+        "sample_sd": 22.71953999725544,
+        "min": 114.8121394339978,
+        "max": 146.94242102899443
+      },
+      "stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 7.963,
+          "sample_sd": 0.2658721497261415,
+          "min": 7.775,
+          "max": 8.151
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0021213203435596424,
+          "min": 0.004,
+          "max": 0.007
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0355,
+          "sample_sd": 0.01060660171779821,
+          "min": 0.028,
+          "max": 0.043
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.017,
+          "sample_sd": 0.0,
+          "min": 0.017,
+          "max": 0.017
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 95.2355,
+          "sample_sd": 8.896110414107957,
+          "min": 88.945,
+          "max": 101.526
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 26.026,
+          "sample_sd": 14.079910226986534,
+          "min": 16.07,
+          "max": 35.982
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.006500000000000001,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.006,
+          "max": 0.007
+        }
+      },
+      "successful_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 7.963,
+          "sample_sd": 0.2658721497261415,
+          "min": 7.775,
+          "max": 8.151
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0021213203435596424,
+          "min": 0.004,
+          "max": 0.007
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0355,
+          "sample_sd": 0.01060660171779821,
+          "min": 0.028,
+          "max": 0.043
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.017,
+          "sample_sd": 0.0,
+          "min": 0.017,
+          "max": 0.017
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 95.2355,
+          "sample_sd": 8.896110414107957,
+          "min": 88.945,
+          "max": 101.526
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.006500000000000001,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.006,
+          "max": 0.007
+        }
+      },
+      "failed_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSCRIBE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 26.026,
+          "sample_sd": 14.079910226986534,
+          "min": 16.07,
+          "max": 35.982
+        },
+        "VALIDATE_TASK": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "deepseek_cost_lower_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "deepseek_cost_upper_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "economics": {
+      "n": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "translation_successes": 0,
+      "task_terminal_seconds": {
+        "n": 2,
+        "mean": 117.80924515299921,
+        "sample_sd": 1.493450641540113,
+        "min": 116.7532160769988,
+        "max": 118.86527422899962
+      },
+      "stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 6.9975000000000005,
+          "sample_sd": 0.11808683245815393,
+          "min": 6.914,
+          "max": 7.081
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.028499999999999998,
+          "sample_sd": 0.002121320343559642,
+          "min": 0.027,
+          "max": 0.03
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.006500000000000001,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.006,
+          "max": 0.007
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 93.519,
+          "sample_sd": 2.692662622758378,
+          "min": 91.615,
+          "max": 95.423
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 15.990499999999999,
+          "sample_sd": 1.035911434438292,
+          "min": 15.258,
+          "max": 16.723
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.004,
+          "sample_sd": 0.001414213562373095,
+          "min": 0.003,
+          "max": 0.005
+        }
+      },
+      "successful_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 6.9975000000000005,
+          "sample_sd": 0.11808683245815393,
+          "min": 6.914,
+          "max": 7.081
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.028499999999999998,
+          "sample_sd": 0.002121320343559642,
+          "min": 0.027,
+          "max": 0.03
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.006500000000000001,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.006,
+          "max": 0.007
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 93.519,
+          "sample_sd": 2.692662622758378,
+          "min": 91.615,
+          "max": 95.423
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.004,
+          "sample_sd": 0.001414213562373095,
+          "min": 0.003,
+          "max": 0.005
+        }
+      },
+      "failed_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSCRIBE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 15.990499999999999,
+          "sample_sd": 1.035911434438292,
+          "min": 15.258,
+          "max": 16.723
+        },
+        "VALIDATE_TASK": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "deepseek_cost_lower_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "deepseek_cost_upper_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "linear": {
+      "n": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "translation_successes": 0,
+      "task_terminal_seconds": {
+        "n": 2,
+        "mean": 150.98402043199894,
+        "sample_sd": 51.20879401020274,
+        "min": 114.77393493099953,
+        "max": 187.19410593299835
+      },
+      "stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 9.036000000000001,
+          "sample_sd": 0.369109739779378,
+          "min": 8.775,
+          "max": 9.297
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0475,
+          "sample_sd": 0.0035355339059327407,
+          "min": 0.045,
+          "max": 0.05
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.005,
+          "max": 0.006
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 119.68299999999999,
+          "sample_sd": 43.48141018872318,
+          "min": 88.937,
+          "max": 150.429
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 20.055,
+          "sample_sd": 8.041218315653419,
+          "min": 14.369,
+          "max": 25.741
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.003,
+          "sample_sd": 0.0,
+          "min": 0.003,
+          "max": 0.003
+        }
+      },
+      "successful_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 9.036000000000001,
+          "sample_sd": 0.369109739779378,
+          "min": 8.775,
+          "max": 9.297
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.0475,
+          "sample_sd": 0.0035355339059327407,
+          "min": 0.045,
+          "max": 0.05
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.005,
+          "max": 0.006
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 119.68299999999999,
+          "sample_sd": 43.48141018872318,
+          "min": 88.937,
+          "max": 150.429
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.003,
+          "sample_sd": 0.0,
+          "min": 0.003,
+          "max": 0.003
+        }
+      },
+      "failed_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSCRIBE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 20.055,
+          "sample_sd": 8.041218315653419,
+          "min": 14.369,
+          "max": 25.741
+        },
+        "VALIDATE_TASK": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "deepseek_cost_lower_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "deepseek_cost_upper_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    },
+    "probability": {
+      "n": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "translation_successes": 0,
+      "task_terminal_seconds": {
+        "n": 2,
+        "mean": 204.3126176170008,
+        "sample_sd": 55.549892411001764,
+        "min": 165.03291199899832,
+        "max": 243.59232323500328
+      },
+      "stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 11.5565,
+          "sample_sd": 0.48295393155041183,
+          "min": 11.215,
+          "max": 11.898
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.038,
+          "sample_sd": 0.0014142135623730963,
+          "min": 0.037,
+          "max": 0.039
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.005,
+          "max": 0.006
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 137.974,
+          "sample_sd": 15.721812172901704,
+          "min": 126.857,
+          "max": 149.091
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 53.090999999999994,
+          "sample_sd": 39.67010463812769,
+          "min": 25.04,
+          "max": 81.142
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.003,
+          "sample_sd": 0.0,
+          "min": 0.003,
+          "max": 0.003
+        }
+      },
+      "successful_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 2,
+          "mean": 11.5565,
+          "sample_sd": 0.48295393155041183,
+          "min": 11.215,
+          "max": 11.898
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 2,
+          "mean": 0.0035,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.003,
+          "max": 0.004
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 2,
+          "mean": 0.038,
+          "sample_sd": 0.0014142135623730963,
+          "min": 0.037,
+          "max": 0.039
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 2,
+          "mean": 0.0055,
+          "sample_sd": 0.0007071067811865475,
+          "min": 0.005,
+          "max": 0.006
+        },
+        "TRANSCRIBE": {
+          "n": 2,
+          "mean": 137.974,
+          "sample_sd": 15.721812172901704,
+          "min": 126.857,
+          "max": 149.091
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "VALIDATE_TASK": {
+          "n": 2,
+          "mean": 0.003,
+          "sample_sd": 0.0,
+          "min": 0.003,
+          "max": 0.003
+        }
+      },
+      "failed_stage_seconds": {
+        "EXTRACT_AUDIO": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "EXTRACT_KEYFRAMES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "PERSIST_SUBTITLES": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSCRIBE": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "TRANSLATE_SUBTITLES": {
+          "n": 2,
+          "mean": 53.090999999999994,
+          "sample_sd": 39.67010463812769,
+          "min": 25.04,
+          "max": 81.142
+        },
+        "VALIDATE_TASK": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "deepseek_cost_lower_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      },
+      "deepseek_cost_upper_usd": {
+        "n": 0,
+        "mean": null,
+        "sample_sd": null,
+        "min": null,
+        "max": null
+      }
+    }
+  },
+  "deepseek_tokens": {
+    "deepseek_prompt_tokens": {
+      "known_sum": null,
+      "complete_trials": 0
+    },
+    "deepseek_completion_tokens": {
+      "known_sum": null,
+      "complete_trials": 0
+    },
+    "deepseek_total_tokens": {
+      "known_sum": null,
+      "complete_trials": 0
+    }
+  },
+  "usage_complete_trials": 0,
+  "baseline": {
+    "task_status_counts": {
+      "FAILED": 10
+    },
+    "translation_status_counts": {
+      "FAILED": 8,
+      "SUCCEEDED": 1,
+      "NOT_STARTED": 1
+    },
+    "processing_ms": {
+      "n": 10,
+      "mean": 947371.2965,
+      "sample_sd": 242866.85540266344,
+      "min": 261057.525,
+      "max": 1070140.525
+    },
+    "stage_ms": {
+      "ANALYZE_KEYFRAMES": {
+        "n": 1,
+        "mean": 5,
+        "sample_sd": null,
+        "min": 5,
+        "max": 5
+      },
+      "EXTRACT_AUDIO": {
+        "n": 9,
+        "mean": 12256.888888888889,
+        "sample_sd": 4606.4359988076585,
+        "min": 7654,
+        "max": 22177
+      },
+      "EXTRACT_KEYFRAMES": {
+        "n": 9,
+        "mean": 7.333333333333333,
+        "sample_sd": 4.358898943540674,
+        "min": 4,
+        "max": 15
+      },
+      "FUSE_VIDEO_SEGMENTS": {
+        "n": 1,
+        "mean": 4,
+        "sample_sd": null,
+        "min": 4,
+        "max": 4
+      },
+      "GENERATE_LEARNING_PACKAGE": {
+        "n": 1,
+        "mean": 109,
+        "sample_sd": null,
+        "min": 109,
+        "max": 109
+      },
+      "OCR_KEYFRAMES": {
+        "n": 1,
+        "mean": 4,
+        "sample_sd": null,
+        "min": 4,
+        "max": 4
+      },
+      "PERSIST_SUBTITLES": {
+        "n": 9,
+        "mean": 55.666666666666664,
+        "sample_sd": 30.430248109405877,
+        "min": 34,
+        "max": 119
+      },
+      "RESOLVE_UPLOADED_SOURCE": {
+        "n": 9,
+        "mean": 13.222222222222221,
+        "sample_sd": 8.135996831639282,
+        "min": 7,
+        "max": 27
+      },
+      "TRANSCRIBE": {
+        "n": 9,
+        "mean": 114712.66666666667,
+        "sample_sd": 22012.00056219334,
+        "min": 90563,
+        "max": 157173
+      },
+      "TRANSLATE_SUBTITLES": {
+        "n": 9,
+        "mean": 895527,
+        "sample_sd": 13477.129136058615,
+        "min": 859588,
+        "max": 900046
+      },
+      "VALIDATE_TASK": {
+        "n": 9,
+        "mean": 7.111111111111111,
+        "sample_sd": 4.48454134902457,
+        "min": 4,
+        "max": 17
+      }
+    },
+    "per_lecture": {
+      "algorithms": {
+        "n": 2,
+        "cer": {
+          "n": 2,
+          "mean": 0.03240319305370773,
+          "sample_sd": 7.427072136263817e-05,
+          "min": 0.03235067572298859,
+          "max": 0.032455710384426864
+        },
+        "processing_ms": {
+          "n": 2,
+          "mean": 1060488.0559999999,
+          "sample_sd": 13650.652570185759,
+          "min": 1050835.587,
+          "max": 1070140.525
+        },
+        "stage_ms": {
+          "EXTRACT_AUDIO": {
+            "n": 2,
+            "mean": 12675,
+            "sample_sd": 560.0285706997456,
+            "min": 12279,
+            "max": 13071
+          },
+          "EXTRACT_KEYFRAMES": {
+            "n": 2,
+            "mean": 8.5,
+            "sample_sd": 6.363961030678928,
+            "min": 4,
+            "max": 13
+          },
+          "PERSIST_SUBTITLES": {
+            "n": 2,
+            "mean": 66,
+            "sample_sd": 35.35533905932738,
+            "min": 41,
+            "max": 91
+          },
+          "RESOLVE_UPLOADED_SOURCE": {
+            "n": 2,
+            "mean": 17.5,
+            "sample_sd": 13.435028842544403,
+            "min": 8,
+            "max": 27
+          },
+          "TRANSCRIBE": {
+            "n": 2,
+            "mean": 146662.5,
+            "sample_sd": 14864.091647322415,
+            "min": 136152,
+            "max": 157173
+          },
+          "TRANSLATE_SUBTITLES": {
+            "n": 2,
+            "mean": 900030,
+            "sample_sd": 22.627416997969522,
+            "min": 900014,
+            "max": 900046
+          },
+          "VALIDATE_TASK": {
+            "n": 2,
+            "mean": 7.5,
+            "sample_sd": 4.949747468305833,
+            "min": 4,
+            "max": 11
+          }
+        },
+        "index_http_ms": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "asr_list_price_cny": {
+          "n": 1,
+          "mean": 0.05538610000000001,
+          "sample_sd": null,
+          "min": 0.05538610000000001,
+          "max": 0.05538610000000001
+        }
+      },
+      "calculus": {
+        "n": 2,
+        "cer": {
+          "n": 2,
+          "mean": 0.06671270718232045,
+          "sample_sd": 0.0011329335168182256,
+          "min": 0.06591160220994476,
+          "max": 0.06751381215469614
+        },
+        "processing_ms": {
+          "n": 2,
+          "mean": 1013987.8035,
+          "sample_sd": 9714.86864893706,
+          "min": 1007118.354,
+          "max": 1020857.253
+        },
+        "stage_ms": {
+          "EXTRACT_AUDIO": {
+            "n": 2,
+            "mean": 8820,
+            "sample_sd": 535.986940139403,
+            "min": 8441,
+            "max": 9199
+          },
+          "EXTRACT_KEYFRAMES": {
+            "n": 2,
+            "mean": 6.5,
+            "sample_sd": 3.5355339059327378,
+            "min": 4,
+            "max": 9
+          },
+          "PERSIST_SUBTITLES": {
+            "n": 2,
+            "mean": 76.5,
+            "sample_sd": 60.10407640085654,
+            "min": 34,
+            "max": 119
+          },
+          "RESOLVE_UPLOADED_SOURCE": {
+            "n": 2,
+            "mean": 9.5,
+            "sample_sd": 3.5355339059327378,
+            "min": 7,
+            "max": 12
+          },
+          "TRANSCRIBE": {
+            "n": 2,
+            "mean": 103797,
+            "sample_sd": 9649.179136071627,
+            "min": 96974,
+            "max": 110620
+          },
+          "TRANSLATE_SUBTITLES": {
+            "n": 2,
+            "mean": 900014.5,
+            "sample_sd": 2.1213203435596424,
+            "min": 900013,
+            "max": 900016
+          },
+          "VALIDATE_TASK": {
+            "n": 2,
+            "mean": 5,
+            "sample_sd": 1.4142135623730951,
+            "min": 4,
+            "max": 6
+          }
+        },
+        "index_http_ms": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "asr_list_price_cny": {
+          "n": 2,
+          "mean": 0.03977265000000001,
+          "sample_sd": 4.391133111168632e-05,
+          "min": 0.0397416,
+          "max": 0.039803700000000004
+        }
+      },
+      "economics": {
+        "n": 2,
+        "cer": {
+          "n": 2,
+          "mean": 0.05082241318971886,
+          "sample_sd": 0.00021996555778249375,
+          "min": 0.05066687405218338,
+          "max": 0.05097795232725435
+        },
+        "processing_ms": {
+          "n": 2,
+          "mean": 1028060.932,
+          "sample_sd": 6622.450985609522,
+          "min": 1023378.152,
+          "max": 1032743.712
+        },
+        "stage_ms": {
+          "EXTRACT_AUDIO": {
+            "n": 2,
+            "mean": 14915.5,
+            "sample_sd": 10269.31178317223,
+            "min": 7654,
+            "max": 22177
+          },
+          "EXTRACT_KEYFRAMES": {
+            "n": 2,
+            "mean": 9.5,
+            "sample_sd": 7.7781745930520225,
+            "min": 4,
+            "max": 15
+          },
+          "PERSIST_SUBTITLES": {
+            "n": 2,
+            "mean": 55.5,
+            "sample_sd": 13.435028842544403,
+            "min": 46,
+            "max": 65
+          },
+          "RESOLVE_UPLOADED_SOURCE": {
+            "n": 2,
+            "mean": 15,
+            "sample_sd": 11.313708498984761,
+            "min": 7,
+            "max": 23
+          },
+          "TRANSCRIBE": {
+            "n": 2,
+            "mean": 112173,
+            "sample_sd": 16939.450050104933,
+            "min": 100195,
+            "max": 124151
+          },
+          "TRANSLATE_SUBTITLES": {
+            "n": 2,
+            "mean": 900020,
+            "sample_sd": 4.242640687119285,
+            "min": 900017,
+            "max": 900023
+          },
+          "VALIDATE_TASK": {
+            "n": 2,
+            "mean": 10.5,
+            "sample_sd": 9.192388155425117,
+            "min": 4,
+            "max": 17
+          }
+        },
+        "index_http_ms": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "asr_list_price_cny": {
+          "n": 2,
+          "mean": 0.040663500000000005,
+          "sample_sd": 3.818376618404306e-06,
+          "min": 0.040660800000000004,
+          "max": 0.0406662
+        }
+      },
+      "linear": {
+        "n": 2,
+        "cer": {
+          "n": 2,
+          "mean": 0.042110231265404585,
+          "sample_sd": 0.0018540741024347036,
+          "min": 0.04079920289475064,
+          "max": 0.04342125963605852
+        },
+        "processing_ms": {
+          "n": 2,
+          "mean": 986566.002,
+          "sample_sd": 36939.630187352195,
+          "min": 960445.739,
+          "max": 1012686.265
+        },
+        "stage_ms": {
+          "ANALYZE_KEYFRAMES": {
+            "n": 1,
+            "mean": 5,
+            "sample_sd": null,
+            "min": 5,
+            "max": 5
+          },
+          "EXTRACT_AUDIO": {
+            "n": 2,
+            "mean": 12669,
+            "sample_sd": 5023.286573549233,
+            "min": 9117,
+            "max": 16221
+          },
+          "EXTRACT_KEYFRAMES": {
+            "n": 2,
+            "mean": 6.5,
+            "sample_sd": 3.5355339059327378,
+            "min": 4,
+            "max": 9
+          },
+          "FUSE_VIDEO_SEGMENTS": {
+            "n": 1,
+            "mean": 4,
+            "sample_sd": null,
+            "min": 4,
+            "max": 4
+          },
+          "GENERATE_LEARNING_PACKAGE": {
+            "n": 1,
+            "mean": 109,
+            "sample_sd": null,
+            "min": 109,
+            "max": 109
+          },
+          "OCR_KEYFRAMES": {
+            "n": 1,
+            "mean": 4,
+            "sample_sd": null,
+            "min": 4,
+            "max": 4
+          },
+          "PERSIST_SUBTITLES": {
+            "n": 2,
+            "mean": 34.5,
+            "sample_sd": 0.7071067811865476,
+            "min": 34,
+            "max": 35
+          },
+          "RESOLVE_UPLOADED_SOURCE": {
+            "n": 2,
+            "mean": 14,
+            "sample_sd": 9.899494936611665,
+            "min": 7,
+            "max": 21
+          },
+          "TRANSCRIBE": {
+            "n": 2,
+            "mean": 93135,
+            "sample_sd": 3637.3572824236003,
+            "min": 90563,
+            "max": 95707
+          },
+          "TRANSLATE_SUBTITLES": {
+            "n": 2,
+            "mean": 879800,
+            "sample_sd": 28584.084522684996,
+            "min": 859588,
+            "max": 900012
+          },
+          "VALIDATE_TASK": {
+            "n": 2,
+            "mean": 7,
+            "sample_sd": 2.8284271247461903,
+            "min": 5,
+            "max": 9
+          }
+        },
+        "index_http_ms": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "asr_list_price_cny": {
+          "n": 2,
+          "mean": 0.0413646,
+          "sample_sd": 3.436538956566329e-05,
+          "min": 0.0413403,
+          "max": 0.0413889
+        }
+      },
+      "probability": {
+        "n": 2,
+        "cer": {
+          "n": 2,
+          "mean": 0.5079229314846493,
+          "sample_sd": 0.6959020640272037,
+          "min": 0.01584586296929864,
+          "max": 1.0
+        },
+        "processing_ms": {
+          "n": 2,
+          "mean": 647753.689,
+          "sample_sd": 546870.9596464506,
+          "min": 261057.525,
+          "max": 1034449.853
+        },
+        "stage_ms": {
+          "EXTRACT_AUDIO": {
+            "n": 1,
+            "mean": 12153,
+            "sample_sd": null,
+            "min": 12153,
+            "max": 12153
+          },
+          "EXTRACT_KEYFRAMES": {
+            "n": 1,
+            "mean": 4,
+            "sample_sd": null,
+            "min": 4,
+            "max": 4
+          },
+          "PERSIST_SUBTITLES": {
+            "n": 1,
+            "mean": 36,
+            "sample_sd": null,
+            "min": 36,
+            "max": 36
+          },
+          "RESOLVE_UPLOADED_SOURCE": {
+            "n": 1,
+            "mean": 7,
+            "sample_sd": null,
+            "min": 7,
+            "max": 7
+          },
+          "TRANSCRIBE": {
+            "n": 1,
+            "mean": 120879,
+            "sample_sd": null,
+            "min": 120879,
+            "max": 120879
+          },
+          "TRANSLATE_SUBTITLES": {
+            "n": 1,
+            "mean": 900014,
+            "sample_sd": null,
+            "min": 900014,
+            "max": 900014
+          },
+          "VALIDATE_TASK": {
+            "n": 1,
+            "mean": 4,
+            "sample_sd": null,
+            "min": 4,
+            "max": 4
+          }
+        },
+        "index_http_ms": {
+          "n": 0,
+          "mean": null,
+          "sample_sd": null,
+          "min": null,
+          "max": null
+        },
+        "asr_list_price_cny": {
+          "n": 1,
+          "mean": 0.056237800000000004,
+          "sample_sd": null,
+          "min": 0.056237800000000004,
+          "max": 0.056237800000000004
+        }
+      }
+    },
+    "known_successful_asr_call_fee_cny": 0.4106304
+  },
+  "trials": [
+    {
+      "trial_id": "deepseek-algorithms-1",
+      "task_id": "task_012ad9c1ea20484491aa7ceaa039a8b9",
+      "source_id": "algorithms",
+      "repeat": 1,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.7246144820019254,
+      "task_terminal_seconds": 253.7437895549956,
+      "processing_to_index_seconds": 253.8160871200016,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 18,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 25909,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 9,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.005
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.011
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.004
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 12.623
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 122.565
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.06
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 117.569
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-calculus-1",
+      "task_id": "task_2f672dd2acb6401c800d53f8830ca7f3",
+      "source_id": "calculus",
+      "repeat": 1,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.087024464002752,
+      "task_terminal_seconds": 114.8121394339978,
+      "processing_to_index_seconds": 114.86489654999605,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 13,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 0,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 0,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.007
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.017
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.004
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 7.775
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 88.945
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.043
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 16.07
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-economics-1",
+      "task_id": "task_8255462bb195479893e67ba63fff27a1",
+      "source_id": "economics",
+      "repeat": 1,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 1.650182263001625,
+      "task_terminal_seconds": 116.7532160769988,
+      "processing_to_index_seconds": 116.81948408199969,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 12,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 0,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 0,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.005
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.007
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.004
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 6.914
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 91.615
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.027
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 16.723
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-linear-1",
+      "task_id": "task_d24f7945cfb344289c35c40d94cd47a8",
+      "source_id": "linear",
+      "repeat": 1,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 1.9282580540020717,
+      "task_terminal_seconds": 187.19410593299835,
+      "processing_to_index_seconds": 187.24670868999965,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 14,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 3806,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 2,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.006
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.004
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 8.775
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 150.429
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.05
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 25.741
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-probability-1",
+      "task_id": "task_824f8160998147e7b7d66a8a33fd0834",
+      "source_id": "probability",
+      "repeat": 1,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.375633884999843,
+      "task_terminal_seconds": 165.03291199899832,
+      "processing_to_index_seconds": 165.1115383130018,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 18,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 2891,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 1,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.006
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.004
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 11.215
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 126.857
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.039
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 25.04
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-algorithms-2",
+      "task_id": "task_27eabe74454a47b885f005ac81bbe9dc",
+      "source_id": "algorithms",
+      "repeat": 2,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.2724231019965373,
+      "task_terminal_seconds": 211.37812920600118,
+      "processing_to_index_seconds": 211.4612124999985,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 18,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 9089,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 3,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.006
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 10.567
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 152.402
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.043
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 46.237
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-calculus-2",
+      "task_id": "task_f7d4ccf68ed644e680b6c406d869312f",
+      "source_id": "calculus",
+      "repeat": 2,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.0101191610010574,
+      "task_terminal_seconds": 146.94242102899443,
+      "processing_to_index_seconds": 147.0008668859955,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 13,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 5973,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 2,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.006
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.017
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.007
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 8.151
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 101.526
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.028
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 35.982
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-economics-2",
+      "task_id": "task_7a09477a6dd24cc49ee0ffd645704fad",
+      "source_id": "economics",
+      "repeat": 2,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 1.718090200003644,
+      "task_terminal_seconds": 118.86527422899962,
+      "processing_to_index_seconds": 118.91435727600037,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 12,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 0,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 0,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.006
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 7.081
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 95.423
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.03
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 15.258
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-linear-2",
+      "task_id": "task_1ed8e0722acb4b28ac7409215e08e1f4",
+      "source_id": "linear",
+      "repeat": 2,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.0914350759994704,
+      "task_terminal_seconds": 114.77393493099953,
+      "processing_to_index_seconds": 114.82555955799762,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 14,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 0,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 0,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.005
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 9.297
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 88.937
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.045
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 14.369
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    },
+    {
+      "trial_id": "deepseek-probability-2",
+      "task_id": "task_6544116ea9e448a1b12d57e5786fe74a",
+      "source_id": "probability",
+      "repeat": 2,
+      "status": "FAILED",
+      "db_status": "FAILED",
+      "failure_stage": "TRANSLATE",
+      "failure_reason": "Pipeline step TRANSLATE_SUBTITLES failed: 翻译服务返回格式不正确，请重试。",
+      "config_version": 10,
+      "upload_seconds": 2.5276562979997834,
+      "task_terminal_seconds": 243.59232323500328,
+      "processing_to_index_seconds": 243.657146739999,
+      "index_status": null,
+      "translation_status": "FAILED",
+      "source_segment_count": 18,
+      "translated_segment_count": null,
+      "translation_batch_count": null,
+      "translation_retries": null,
+      "asr_chunk_retry_events": 0,
+      "task_retry_count": 0,
+      "deepseek_prompt_tokens": null,
+      "deepseek_completion_tokens": null,
+      "deepseek_total_tokens": null,
+      "completed_batch_total_tokens": 18989,
+      "failed_call_usage_available": false,
+      "usage_scope": "Only successful batch totalTokens in logs; failed call and input/output split unavailable",
+      "completed_batch_count": 6,
+      "stages": {
+        "VALIDATE_TASK": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "RESOLVE_UPLOADED_SOURCE": {
+          "event": "completed",
+          "seconds": 0.005
+        },
+        "EXTRACT_KEYFRAMES": {
+          "event": "completed",
+          "seconds": 0.003
+        },
+        "EXTRACT_AUDIO": {
+          "event": "completed",
+          "seconds": 11.898
+        },
+        "TRANSCRIBE": {
+          "event": "completed",
+          "seconds": 149.091
+        },
+        "PERSIST_SUBTITLES": {
+          "event": "completed",
+          "seconds": 0.037
+        },
+        "TRANSLATE_SUBTITLES": {
+          "event": "failed",
+          "seconds": 81.142
+        }
+      },
+      "deepseek_list_price_usd": null,
+      "asr_fee": null,
+      "asr_fee_note": "Production ASR call records do not persist billing usage; original baseline used a response tee, which is not installed/reconfigured in this run."
+    }
+  ]
+}

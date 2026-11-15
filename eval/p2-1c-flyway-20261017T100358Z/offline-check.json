@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": [
+    "private_log_exclusion",
+    "strict_cause_filter",
+    "migration_marker",
+    "framed_row_hash",
+    "migrate_before_copy_barrier",
+    "one_application_spawn",
+    "no_task_endpoint"
+  ],
+  "compiled_against_frozen_classpath": true,
+  "application_started": false,
+  "controlled_reference_existence_only": true,
+  "credential_contents_read_by_tools": false
+}

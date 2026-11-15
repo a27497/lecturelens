@@ -1,0 +1,9 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "packages": {
+    "httpx": "0.28.1",
+    "pymysql": "1.2.3",
+    "minio": "7.2.20"
+  },
+  "java": "openjdk version \"21.0.12.1\" 2026-08-18"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "translation-output-red",
+    "cwd": "/home/dev/projects/lecturelens",
+    "test_argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=SystemModelLegacyTranslationTest#lengthBeforeEmptyContentRetainsStatusUsageAndBoundedSafeDiagnosis,SubtitleTranslationServiceTest#typedLengthFailureUsesExistingBoundedSplitAndWritesOnlyValidatedPieces",
+      "test"
+    ],
+    "shell": "nohup timeout --kill-after=10s 360s python3 scripts/dev/run_check.py --name translation-output-red --output-root .data/translation-output-20261016T183359Z --cwd backend --timeout 300 -- ./mvnw -o -B '-Dtest=SystemModelLegacyTranslationTest#lengthBeforeEmptyContentRetainsStatusUsageAndBoundedSafeDiagnosis,SubtitleTranslationServiceTest#typedLengthFailureUsesExistingBoundedSplitAndWritesOnlyValidatedPieces' test > .data/translation-output-20261016T183359Z/red-launcher.log 2>&1 < /dev/null &"
+  },
+  {
+    "name": "translation-output-targeted",
+    "cwd": "/home/dev/projects/lecturelens",
+    "test_argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest",
+      "test"
+    ],
+    "shell": "nohup timeout --kill-after=10s 360s python3 scripts/dev/run_check.py --name translation-output-targeted --output-root .data/translation-output-20261016T183359Z --cwd backend --timeout 300 -- ./mvnw -o -B -Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest test > .data/translation-output-20261016T183359Z/targeted-launcher.log 2>&1 < /dev/null &"
+  },
+  {
+    "name": "translation-output-targeted-v2",
+    "cwd": "/home/dev/projects/lecturelens",
+    "test_argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest",
+      "test"
+    ],
+    "shell": "nohup timeout --kill-after=10s 360s python3 scripts/dev/run_check.py --name translation-output-targeted-v2 --output-root .data/translation-output-20261016T183359Z --cwd backend --timeout 300 -- ./mvnw -o -B -Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest test > .data/translation-output-20261016T183359Z/targeted-v2-launcher.log 2>&1 < /dev/null &"
+  },
+  {
+    "name": "translation-output-regression",
+    "cwd": "/home/dev/projects/lecturelens",
+    "test_argv": [
+      "./mvnw",
+      "-o",
+      "-B",
+      "-Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest,TranslationCallDiagnosticsTest,SubtitleTranslationResponseParserTest,PipelineTranslationServiceTest,TranslationBatchCoordinatorTest,TranslationAdaptiveBatchTest,AdaptiveTranslationControllerTest,TranslationFailureDiagnosticTest,LlmProviderFailureClassifierTest,ObservedModelCallTest,OpenAiCompatibleLlmProviderTest,LangChain4jLlmProviderTest,OpenAiCompatibleRequestOptionsAdapterTest,SubtitleTranslationPromptFactoryTest,SubtitleTranslationPropertiesTest,PipelineAnalysisTaskRunnerFailureTest,PipelineAnalysisTaskWorkExecutorTest,PipelineCheckpointExecutionTest,PipelineF6FailureFlushTest,AiModelRouterTest",
+      "test"
+    ],
+    "shell": "nohup timeout --kill-after=10s 360s python3 scripts/dev/run_check.py --name translation-output-regression --output-root .data/translation-output-20261016T183359Z --cwd backend --timeout 300 -- ./mvnw -o -B -Dtest=SystemModelLegacyTranslationTest,SystemModelTranslationObservationTest,SystemModelTranslationV2Test,SubtitleTranslationServiceTest,TranslateSubtitleSegmentsStepTest,TranslationCallDiagnosticsTest,SubtitleTranslationResponseParserTest,PipelineTranslationServiceTest,TranslationBatchCoordinatorTest,TranslationAdaptiveBatchTest,AdaptiveTranslationControllerTest,TranslationFailureDiagnosticTest,LlmProviderFailureClassifierTest,ObservedModelCallTest,OpenAiCompatibleLlmProviderTest,LangChain4jLlmProviderTest,OpenAiCompatibleRequestOptionsAdapterTest,SubtitleTranslationPromptFactoryTest,SubtitleTranslationPropertiesTest,PipelineAnalysisTaskRunnerFailureTest,PipelineAnalysisTaskWorkExecutorTest,PipelineCheckpointExecutionTest,PipelineF6FailureFlushTest,AiModelRouterTest test > .data/translation-output-20261016T183359Z/regression-launcher.log 2>&1 < /dev/null &"
+  }
+]

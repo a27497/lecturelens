@@ -1,0 +1,7 @@
+{
+  "a": "task_70ec3dd6189843979174ed6d32d1237f",
+  "b": "task_95c8e25dc07944cd82f20d567745738f",
+  "a_frozen_version": 6,
+  "binding_before_live_rollback": 8,
+  "rollback_version": 9
+}

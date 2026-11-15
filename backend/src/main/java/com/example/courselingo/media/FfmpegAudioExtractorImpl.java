@@ -111,7 +111,7 @@ public class FfmpegAudioExtractorImpl implements FfmpegAudioExtractor {
     }
 
     private List<String> buildCommand(Path inputVideo, Path outputFile) {
-        return List.of(
+        var command = new java.util.ArrayList<>(List.of(
             properties.executable(),
             "-y",
             "-i",
@@ -120,11 +120,11 @@ public class FfmpegAudioExtractorImpl implements FfmpegAudioExtractor {
             "-ar",
             String.valueOf(properties.sampleRate()),
             "-ac",
-            String.valueOf(properties.channels()),
-            "-f",
-            properties.normalizedAudioFormat(),
-            outputFile.toString()
-        );
+            String.valueOf(properties.channels())
+        ));
+        if ("wav".equals(properties.normalizedAudioFormat())) command.addAll(List.of("-c:a", "pcm_s16le"));
+        command.addAll(List.of("-f", properties.normalizedAudioFormat(), outputFile.toString()));
+        return List.copyOf(command);
     }
 
     private FfmpegProcessResult execute(List<String> command) {

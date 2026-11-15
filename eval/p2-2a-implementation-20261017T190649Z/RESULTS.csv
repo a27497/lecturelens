@@ -1,0 +1,11 @@
+case_id,layer,status,passed,failed,skipped,reviewer,note
+PG-PREP-1,resource,FAILED,,,,模型辅助，待人工,pytest未启动；准备CalledProcessError；容器及卷已删除
+PYTHON-2,mechanism,FAILED,98,1,0,模型辅助，待人工,测试缺少fixture声明；原失败记录保留；容器及卷已删除
+PYTHON-3,mechanism,PASSED,99,0,0,模型辅助，待人工,同一组完整复验；确定性provider+新PostgreSQL；容器及卷已删除
+FRONTEND-UNIT,mechanism,PASSED,31,0,0,模型辅助，待人工,4个相关测试文件；隔离源码副本
+FRONTEND-BUILD,build,PASSED,,,,模型辅助，待人工,vue-tsc和Vite；未覆盖live frontend/dist
+G1,real-model-browser,NOT_RUN,,,,模型辅助，待人工,待用户选择后端并由用户本人审阅
+G2,real-model-browser,NOT_RUN,,,,模型辅助，待人工,待用户选择后端并由用户本人审阅
+G3,real-model-browser,NOT_RUN,,,,模型辅助，待人工,待用户选择后端并由用户本人审阅
+G4,real-model-browser,NOT_RUN,,,,模型辅助，待人工,待用户选择后端并由用户本人审阅
+G5,real-model-browser,NOT_RUN,,,,模型辅助，待人工,待用户选择后端并由用户本人审阅

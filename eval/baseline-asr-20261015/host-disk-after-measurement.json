@@ -1,0 +1,9 @@
+{
+  "observed_at_utc": "2026-10-15T11:17:28.431566+00:00",
+  "command": [
+    "df",
+    "-h",
+    "."
+  ],
+  "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/root       145G  131G   15G  91% /\n"
+}

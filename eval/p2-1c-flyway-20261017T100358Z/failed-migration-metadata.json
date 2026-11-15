@@ -1,0 +1,1430 @@
+{
+  "history": [
+    {
+      "version": "1",
+      "checksum": 1222334692,
+      "success": true
+    },
+    {
+      "version": "2",
+      "checksum": -872271564,
+      "success": true
+    },
+    {
+      "version": "3",
+      "checksum": 1461830970,
+      "success": true
+    },
+    {
+      "version": "4",
+      "checksum": 482746636,
+      "success": true
+    },
+    {
+      "version": "5",
+      "checksum": -262232451,
+      "success": true
+    },
+    {
+      "version": "6",
+      "checksum": -2078054059,
+      "success": true
+    },
+    {
+      "version": "7",
+      "checksum": -28305245,
+      "success": true
+    },
+    {
+      "version": "8",
+      "checksum": -1889698344,
+      "success": true
+    },
+    {
+      "version": "9",
+      "checksum": -1236264616,
+      "success": true
+    },
+    {
+      "version": "10",
+      "checksum": 1629770941,
+      "success": true
+    },
+    {
+      "version": "11",
+      "checksum": -619553914,
+      "success": true
+    },
+    {
+      "version": "12",
+      "checksum": 426424873,
+      "success": true
+    },
+    {
+      "version": "13",
+      "checksum": -1899005035,
+      "success": false
+    }
+  ],
+  "schema_defaults": [
+    {
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    }
+  ],
+  "tables": [
+    {
+      "table": "ai_call_record",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "learning_package",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "refresh_token",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_segment",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_log",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "user_account",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "collation": "utf8mb4_unicode_ci"
+    }
+  ],
+  "columns": [
+    {
+      "table": "ai_call_record",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "call_type",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "stage",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "model",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "status",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "started_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "finished_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "duration_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "prompt_tokens",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "completion_tokens",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "total_tokens",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "input_units",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "output_units",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "request_fingerprint",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "response_fingerprint",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "error_code",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "error_message",
+      "column_type": "varchar(512)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "ai_call_record",
+      "column": "retryable",
+      "column_type": "tinyint(1)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "ai_call_record",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "upload_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "target_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "status",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "progress_percent",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "current_stage",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "error_code",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "error_message",
+      "column_type": "varchar(1024)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "analysis_task",
+      "column": "retry_count",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "max_retry_count",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "started_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "finished_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "analysis_task",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "artifact_file",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "artifact_file",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "artifact_file",
+      "column": "artifact_type",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "file_name",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "content_type",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "storage_backend",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "object_key",
+      "column_type": "varchar(512)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "size_bytes",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "artifact_file",
+      "column": "sha256",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "artifact_file",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "artifact_file",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "installed_rank",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "version",
+      "column_type": "varchar(50)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "description",
+      "column_type": "varchar(200)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "type",
+      "column_type": "varchar(20)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "script",
+      "column_type": "varchar(1000)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "checksum",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "installed_by",
+      "column_type": "varchar(100)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "installed_on",
+      "column_type": "timestamp",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "execution_time",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "flyway_schema_history",
+      "column": "success",
+      "column_type": "tinyint(1)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "source_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "target_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "title",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "summary",
+      "column_type": "text",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "key_points_json",
+      "column_type": "json",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "glossary_json",
+      "column_type": "json",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "qa_json",
+      "column_type": "json",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "schema_version",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "learning_package",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "learning_package",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "refresh_token",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "refresh_token",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "refresh_token",
+      "column": "token_hash",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "refresh_token",
+      "column": "expires_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "refresh_token",
+      "column": "revoked_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "refresh_token",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "segment_index",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "start_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "end_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "text",
+      "column_type": "text",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_segment",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "segment_index",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "start_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "end_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "source_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "target_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "translated_text",
+      "column_type": "text",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "subtitle_translation_segment",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "source_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "target_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "source_full_text",
+      "column_type": "longtext",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "translated_full_text",
+      "column_type": "longtext",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_0900_ai_ci"
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "created_at",
+      "column_type": "datetime",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_full_text_result",
+      "column": "updated_at",
+      "column_type": "datetime",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_log",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_log",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_log",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_log",
+      "column": "level",
+      "column_type": "varchar(16)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_log",
+      "column": "stage",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_log",
+      "column": "message",
+      "column_type": "varchar(1024)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_log",
+      "column": "detail",
+      "column_type": "text",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_log",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_transcript",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_transcript",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_transcript",
+      "column": "source_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "target_language",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "source_text",
+      "column_type": "mediumtext",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "translated_text",
+      "column_type": "mediumtext",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "segment_count",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_transcript",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "model",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "task_transcript",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "task_transcript",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "filename",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "ext",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "total_chunks",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "chunk_size_bytes",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "size_bytes",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "file_md5",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "status",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "storage_type",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "object_key",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "upload_session",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "upload_session",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "user_account",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "user_account",
+      "column": "email",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "user_account",
+      "column": "password_hash",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "user_account",
+      "column": "status",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "user_account",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "user_account",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "frame_index",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "timestamp_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "time_text",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "change_score",
+      "column_type": "decimal(10,6)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "select_reason",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "content_type",
+      "column_type": "varchar(128)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "storage_backend",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "object_key",
+      "column_type": "varchar(512)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe",
+      "column": "size_bytes",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "created_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe",
+      "column": "updated_at",
+      "column_type": "datetime(3)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "task_id",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "user_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "keyframe_id",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "timestamp_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "provider",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "language_hint",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "ocr_text",
+      "column_type": "text",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "text_length",
+      "column_type": "int",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "text_truncated",
+      "column_type": "tinyint(1)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "confidence",
+      "column_type": "decimal(5,4)",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "status",
+      "column_type": "varchar(32)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "error_code",
+      "column_type": "varchar(64)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "error_message",
+      "column_type": "varchar(255)",
+      "charset": "utf8mb4",
+      "collation": "utf8mb4_unicode_ci"
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "duration_millis",
+      "column_type": "bigint",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "created_at",
+      "column_type": "datetime",
+      "charset": null,
+      "collation": null
+    },
+    {
+      "table": "video_keyframe_ocr",
+      "column": "updated_at",
+      "column_type": "datetime",
+      "charset": null,
+      "collation": null
+    }
+  ],
+  "log_bin": false,
+  "readonly": true,
+  "business_rows_read": false
+}

@@ -11,7 +11,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-final class SubtitleTranslationPromptFactory {
+public final class SubtitleTranslationPromptFactory {
+
+    private static final String V2_CORRECTION = "Previous output failed validation: %s. Return the entire batch as the exact JSON object specified above; preserve every input index and translate every item.";
+
+    public static String policyTemplate() {
+        var source = new SubtitleSegment(); source.setSegmentIndex(0); source.setText("POLICY_SENTINEL");
+        return List.of("zh-CN", "zh-TW", "en", "ja", "ko", "auto").stream().map(language ->
+            alignedBatchSystemMessage(language).content() + alignedBatchSemanticRetrySystemMessage(language).content()
+                + alignedBatchUserMessage(new ValidatedTranslationCommand("policy",1L,"en",language,"policy"),List.of(source)).content())
+            .collect(java.util.stream.Collectors.joining("\n")) + V2_CORRECTION;
+    }
+
+    static LlmRequest buildV2(ValidatedTranslationCommand command, List<SubtitleSegment> source,
+            Duration timeout, String correction) {
+        var request = buildAlignedBatch(command,source,timeout,8192,1);
+        if (correction == null) return request;
+        var messages = new java.util.ArrayList<>(request.messages());
+        messages.add(new LlmMessage(LlmRole.USER,V2_CORRECTION.formatted(correction)));
+        return new LlmRequest(request.requestId(),request.taskId(),messages,timeout,request.temperature(),
+            request.maxTokens(),1,request.metadata(),request.responseFormat(),request.execution());
+    }
 
     private static final Duration SUBTITLE_TIMEOUT = Duration.ofSeconds(60);
     private static final double TEMPERATURE = 0.1;
@@ -117,6 +137,9 @@ final class SubtitleTranslationPromptFactory {
             metadata.put("semanticRetryReason", semanticRetryReason);
         }
         metadata.put("sourceSegmentCount", sourceSegments.size());
+        metadata.put("translationDiagnostic.inputChars", sourceSegments.stream().mapToInt(s -> s.getText().length()).sum());
+        metadata.put("translationDiagnostic.indexes", sourceSegments.stream().map(s -> String.valueOf(s.getSegmentIndex()))
+            .collect(java.util.stream.Collectors.joining(",")));
         return new LlmRequest(
             command.requestId(),
             command.taskId(),

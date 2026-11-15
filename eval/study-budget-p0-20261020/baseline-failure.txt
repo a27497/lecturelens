@@ -1,0 +1,35 @@
+BASELINE_RUNTIME /tmp/lecturelens-budget-p0-baseline/agent-service/src/lecturelens_agent/study/runtime.py
+BUDGET_SCENARIO {"batch": true, "duplicate_observations": 1, "error_code": "RUN_BUDGET_EXCEEDED", "method_observations": 2, "model_calls": 4, "requested_reservations": [4509, 13819, 13819, 19508, 21512], "reservations": [4509, 13819, 13819, 19508], "reserved_tokens": 51655, "reused_observations": 1, "status": "budget_exceeded", "tool_calls": 3}
+F
+=================================== FAILURES ===================================
+_ test_overlapping_searches_and_window_complete_within_unchanged_budget[False] _
+
+setup = (<lecturelens_agent.study.store.StudyStore object at 0x7af4582caba0>, <test_study.Authority object at 0x7af4581f01a0>,...': 'study-test-f0a9ad3669ee44869e368a56d1d72268', 'revision': 1, 'session_id': '996b424b-5235-5a1e-9c00-bcc12f761815'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7af4581f9940>
+recover = False
+
+    @pytest.mark.parametrize("recover", [False, True])
+    def test_overlapping_searches_and_window_complete_within_unchanged_budget(setup, monkeypatch, recover):
+        response, summary, searches = overlap_scenario(setup, monkeypatch, recover=recover)
+        assert len(searches) == (3 if recover else 2) and len(set(searches[0]) & set(searches[1])) == 5
+>       assert response["run"]["status"] == "succeeded", summary
+E       AssertionError: {'status': 'budget_exceeded', 'error_code': 'RUN_BUDGET_EXCEEDED', 'model_calls': 4, 'tool_calls': 3, ...}
+E       assert 'budget_exceeded' == 'succeeded'
+E         
+E         - succeeded
+E         + budget_exceeded
+
+/home/dev/projects/lecturelens-study-budget-p0/agent-service/tests/test_study_budget.py:170: AssertionError
+=============================== warnings summary ===============================
+../../../home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1345
+  /home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1345: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; anyio
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+../../../home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1345
+  /home/dev/projects/lecturelens-study-budget-p0/agent-service/.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1345: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; langsmith
+    self._mark_plugins_for_rewrite(hook, disable_autoload)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../home/dev/projects/lecturelens-study-budget-p0/agent-service/tests/test_study_budget.py::test_overlapping_searches_and_window_complete_within_unchanged_budget[False]
+1 failed, 2 warnings in 0.67s

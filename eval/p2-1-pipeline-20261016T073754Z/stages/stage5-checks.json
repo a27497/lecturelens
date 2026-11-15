@@ -1,0 +1,196 @@
+[
+  {
+    "name": "stage5-compile01",
+    "result": null,
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-compile01.log",
+    "log_sha256": "df694de46f636c063a34b4745d167374063d5cd11ffa2970df22c4d0c0ee10a7",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:52:36.011732+00:00",
+      "disk_before": {
+        "used_bytes": 131201216512,
+        "available_bytes": 23676194816,
+        "use_percent": 84.71294515256427
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "test-compile"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71299275666571,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131201474560,
+        "available_bytes": 23675936768,
+        "use_percent": 84.71311176691931
+      },
+      "finished_at_utc": "2026-10-16T09:52:58.021225+00:00"
+    }
+  },
+  {
+    "name": "stage5-final05",
+    "result": {
+      "tests": 417,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-final05.log",
+    "log_sha256": "1b9f749ebc45a9badbbfbc853508b60e4ef58343d5f3413febc5343eedd2f05a",
+    "execution": {
+      "started_at_utc": "2026-10-16T10:02:12.836712+00:00",
+      "disk_before": {
+        "used_bytes": 131206422528,
+        "available_bytes": 23670988800,
+        "use_percent": 84.71630653106057
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=ObservedModelCallTest,AsrPhysicalObservationTest,ModelPriceCatalogTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,WriteAiCallRecordStepTest,AiCallRecordServiceTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,SystemModelHttpClientTest,SystemModelActivationTest,TranslationCallDiagnosticsTest,SystemModelTranslationObservationTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,TranscribeAudioStepTest,JavaHttpBailianAsrTransportTest,SiliconFlowAsrProviderTest,BailianAsrProviderTest,OpenAiCompatibleVisionProviderTest,PipelineF6FailureFlushTest,TranslationFailureDiagnosticTest,SystemModelTranslationV2Test,TranslationBatchCoordinatorTest,PipelinePolicyMySqlTest,PipelineCheckpointExecutionTest,DurableBoundariesIntegrationTest,TaskResumeControllerTest,PipelineRecoveryActivationTest,TranslationSchedulerMySqlTest,TranslationAdaptiveBatchTest,SilenceAudioChunkPlannerTest,SilenceAudioChunkPlannerIntegrationTest,TranscriptParagraphMySqlTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71776639017146,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131207663616,
+        "available_bytes": 23669747712,
+        "use_percent": 84.71710786676817
+      },
+      "finished_at_utc": "2026-10-16T10:03:26.876264+00:00"
+    }
+  },
+  {
+    "name": "stage5-package06",
+    "result": null,
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-package06.log",
+    "log_sha256": "8d7ce40ef8d5c4ba07555425c049772cf1c64c2da7323b9827cd8d6c46573a12",
+    "execution": {
+      "started_at_utc": "2026-10-16T10:04:53.364903+00:00",
+      "disk_before": {
+        "used_bytes": 131207479296,
+        "available_bytes": 23669932032,
+        "use_percent": 84.71698885651458
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "package"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71704174996061,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131207929856,
+        "available_bytes": 23669481472,
+        "use_percent": 84.71727977046783
+      },
+      "finished_at_utc": "2026-10-16T10:04:59.367513+00:00"
+    }
+  },
+  {
+    "name": "stage5-related02",
+    "result": {
+      "tests": 272,
+      "failures": 1,
+      "errors": 8,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-related02.log",
+    "log_sha256": "374acf7e8d047f02e84f8872ac90419d6e77b8469492b2ee97b77c7c2279a3fa",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:54:33.302115+00:00",
+      "disk_before": {
+        "used_bytes": 131201556480,
+        "available_bytes": 23675854848,
+        "use_percent": 84.71316466036536
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=ObservedModelCallTest,ModelPriceCatalogTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,WriteAiCallRecordStepTest,AiCallRecordServiceTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,TranslationCallDiagnosticsTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,TranscribeAudioStepTest,JavaHttpBailianAsrTransportTest,JavaHttpSiliconFlowAsrClientTest,OpenAiCompatibleVisionProviderTest,PipelineF6FailureFlushTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71434682888452,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 131202764800,
+        "available_bytes": 23674646528,
+        "use_percent": 84.71394483869456
+      },
+      "finished_at_utc": "2026-10-16T09:55:30.344692+00:00"
+    }
+  },
+  {
+    "name": "stage5-related03",
+    "result": {
+      "tests": 322,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-related03.log",
+    "log_sha256": "51bdf424b50fdfaa38da637b3548a52bf5f83f993835c8e658828204bdeeaa00",
+    "execution": {
+      "started_at_utc": "2026-10-16T09:56:20.532030+00:00",
+      "disk_before": {
+        "used_bytes": 131203162112,
+        "available_bytes": 23674249216,
+        "use_percent": 84.71420137190789
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=ObservedModelCallTest,ModelPriceCatalogTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,WriteAiCallRecordStepTest,AiCallRecordServiceTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,TranslationCallDiagnosticsTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,TranscribeAudioStepTest,JavaHttpBailianAsrTransportTest,JavaHttpSiliconFlowAsrClientTest,OpenAiCompatibleVisionProviderTest,PipelineF6FailureFlushTest,TranslationFailureDiagnosticTest,SystemModelTranslationV2Test,TranslationBatchCoordinatorTest,PipelinePolicyMySqlTest,PipelineCheckpointExecutionTest,DurableBoundariesIntegrationTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.71542585518388,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131204259840,
+        "available_bytes": 23673151488,
+        "use_percent": 84.71491014408493
+      },
+      "finished_at_utc": "2026-10-16T09:57:25.584016+00:00"
+    }
+  },
+  {
+    "name": "stage5-related04",
+    "result": {
+      "tests": 416,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/stage5-related04.log",
+    "log_sha256": "726710dc1283d40aa374e81480f62bc81cca7476e65ebd0d156fb8fb1e639d41",
+    "execution": {
+      "started_at_utc": "2026-10-16T10:00:21.662530+00:00",
+      "disk_before": {
+        "used_bytes": 131204841472,
+        "available_bytes": 23672569856,
+        "use_percent": 84.71528568755186
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=ObservedModelCallTest,AsrPhysicalObservationTest,ModelPriceCatalogTest,PipelineUsageLedgerMySqlTest,TranslationCheckpointMySqlTest,PipelineResumeMySqlTest,WriteAiCallRecordStepTest,AiCallRecordServiceTest,SystemModelRuntimeMySqlTest,SystemModelAsrMySqlTest,SystemModelHttpClientTest,SystemModelActivationTest,TranslationCallDiagnosticsTest,SystemModelTranslationObservationTest,SubtitleTranslationServiceTest,OpenAiCompatibleLlmProviderTest,TranscribeAudioStepTest,JavaHttpBailianAsrTransportTest,SiliconFlowAsrProviderTest,BailianAsrProviderTest,OpenAiCompatibleVisionProviderTest,PipelineF6FailureFlushTest,TranslationFailureDiagnosticTest,SystemModelTranslationV2Test,TranslationBatchCoordinatorTest,PipelinePolicyMySqlTest,PipelineCheckpointExecutionTest,DurableBoundariesIntegrationTest,TaskResumeControllerTest,PipelineRecoveryActivationTest,TranslationSchedulerMySqlTest,TranslationAdaptiveBatchTest,SilenceAudioChunkPlannerTest,SilenceAudioChunkPlannerIntegrationTest,TranscriptParagraphMySqlTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 84.7168037294534,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 131206172672,
+        "available_bytes": 23671238656,
+        "use_percent": 84.71614520605011
+      },
+      "finished_at_utc": "2026-10-16T10:01:33.731993+00:00"
+    }
+  }
+]

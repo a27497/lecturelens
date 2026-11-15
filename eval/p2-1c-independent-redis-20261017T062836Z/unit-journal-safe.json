@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "invocation_id": "6abbe89b165d4efe8576d043c2caf971",
+  "rows": [
+    {
+      "__REALTIME_TIMESTAMP": "1792218667903557",
+      "_UID": "1002",
+      "_GID": "1003",
+      "_PID": "584970",
+      "_SYSTEMD_INVOCATION_ID": "6abbe89b165d4efe8576d043c2caf971",
+      "fixed_message": "APPLICATION_START_FAILED"
+    }
+  ],
+  "raw_messages_saved": false
+}

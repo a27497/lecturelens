@@ -1,0 +1,105 @@
+{
+  "utc": "2026-10-16T14:33:15.120786+00:00",
+  "disk": {
+    "utc": "2026-10-16T14:33:15.035898+00:00",
+    "used_bytes": 116325736448,
+    "available_bytes": 38551674880,
+    "percent": 75.10826495004162,
+    "headroom_below_85_bytes": 15320063180.800003
+  },
+  "redis_database": 15,
+  "redis_gate": "PASS_EXPLICIT_TWELVE_OWNED_KEYS_REUSE",
+  "allowed_existing_keys": [
+    "cl:t:progress:task_14645a8b89c5455994282ccac8fb687d",
+    "cl:t:progress:task_43081829cc2f4201ac46e14458447921",
+    "cl:t:progress:task_5b6b1585bf3d4b57b28d91fe9cdf68f2",
+    "cl:t:progress:task_604acd640b574c3c81554c4b5ffe1512",
+    "cl:t:progress:task_73654e7736404142b996a8e6f2ed1518",
+    "cl:t:progress:task_8b03a2fbae7d40039386451c71cb784a",
+    "cl:t:progress:task_a12f95ef840b44d897baf8e78eaa7b5a",
+    "cl:t:progress:task_a4505199d541412b946cfdc59a4fc065",
+    "cl:t:progress:task_bca24366edcd4e09b38f38b213817485",
+    "cl:t:progress:task_d4464062edd9404b92b7953dd6a6d211",
+    "cl:t:progress:task_df926ba507524912b94b52905221faea",
+    "cl:t:progress:task_f6bba3a5f6284043b38f4b34897db5e0"
+  ],
+  "existing_keys": [
+    {
+      "key": "cl:t:progress:task_14645a8b89c5455994282ccac8fb687d",
+      "type": "string",
+      "ttl_seconds": 80704
+    },
+    {
+      "key": "cl:t:progress:task_43081829cc2f4201ac46e14458447921",
+      "type": "string",
+      "ttl_seconds": 81204
+    },
+    {
+      "key": "cl:t:progress:task_5b6b1585bf3d4b57b28d91fe9cdf68f2",
+      "type": "string",
+      "ttl_seconds": 78790
+    },
+    {
+      "key": "cl:t:progress:task_604acd640b574c3c81554c4b5ffe1512",
+      "type": "string",
+      "ttl_seconds": 80342
+    },
+    {
+      "key": "cl:t:progress:task_73654e7736404142b996a8e6f2ed1518",
+      "type": "string",
+      "ttl_seconds": 79825
+    },
+    {
+      "key": "cl:t:progress:task_8b03a2fbae7d40039386451c71cb784a",
+      "type": "string",
+      "ttl_seconds": 79302
+    },
+    {
+      "key": "cl:t:progress:task_a12f95ef840b44d897baf8e78eaa7b5a",
+      "type": "string",
+      "ttl_seconds": 80168
+    },
+    {
+      "key": "cl:t:progress:task_a4505199d541412b946cfdc59a4fc065",
+      "type": "string",
+      "ttl_seconds": 80953
+    },
+    {
+      "key": "cl:t:progress:task_bca24366edcd4e09b38f38b213817485",
+      "type": "string",
+      "ttl_seconds": 81366
+    },
+    {
+      "key": "cl:t:progress:task_d4464062edd9404b92b7953dd6a6d211",
+      "type": "string",
+      "ttl_seconds": 80526
+    },
+    {
+      "key": "cl:t:progress:task_df926ba507524912b94b52905221faea",
+      "type": "string",
+      "ttl_seconds": 79983
+    },
+    {
+      "key": "cl:t:progress:task_f6bba3a5f6284043b38f4b34897db5e0",
+      "type": "string",
+      "ttl_seconds": 79532
+    }
+  ],
+  "values_read": false,
+  "keys_deleted": 0,
+  "model_state": {
+    "courselingo": {
+      "current_version": 10,
+      "config_sha256": "d02d9d3febf59420cac97c80f35e9e74a9572a85486b9e9baee255c2027fe3e4"
+    },
+    "lecturelens_p21_20261016": {
+      "current_version": 10,
+      "config_sha256": "d02d9d3febf59420cac97c80f35e9e74a9572a85486b9e9baee255c2027fe3e4"
+    }
+  },
+  "asr_gate": "BLOCKED_ACCESS_DENIED_UNPURCHASED",
+  "worker_started": false,
+  "normal_trials_submitted": 0,
+  "recovery_trials_submitted": 0,
+  "sigkill_count": 0
+}

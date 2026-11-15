@@ -1,0 +1,15 @@
+{
+  "command": [
+    "docker",
+    "exec",
+    "lecturelens-demo-l2-rocketmq-broker-1",
+    "sh",
+    "/home/rocketmq/rocketmq-5.3.4/bin/mqadmin",
+    "topicList",
+    "-n",
+    "rocketmq-namesrv:9876"
+  ],
+  "returncode": 0,
+  "stdout": "RMQ_SYS_TRANS_HALF_TOPIC\ncourselingo-analysis-task\nBenchmarkTest\nOFFSET_MOVED_EVENT\n%RETRY%LL_DISK_DIAG_CG_2032f8adeeb6\n%RETRY%baseline-asr-20261015-consumer_baseline-asr-20261015\nTBW102\nbaseline-asr-20261015\nrmq_sys_REVIVE_LOG_DefaultCluster\nSELF_TEST_TOPIC\nDefaultCluster\n%RETRY%lecturelens-learning-loop-consumer_lecturelens-learning-loop\nLL_DISK_DIAG_20261015_2032f8adeeb6\nSCHEDULE_TOPIC_XXXX\nDefaultCluster_REPLY_TOPIC\nrmq_sys_wheel_timer\nrmq_sys_SYNC_BROKER_MEMBER_broker-a\nRMQ_SYS_TRANS_OP_HALF_TOPIC\n%RETRY%lecturelens-demo-consumer-group_courselingo-analysis-task\nlecturelens-learning-loop\nlecturelens-l22-completion\nbroker-a\n",
+  "stderr": ""
+}

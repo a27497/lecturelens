@@ -24,6 +24,8 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
     private final TaskLogMapper taskLogMapper;
     private final Clock clock;
     private final VisionPipelineBranchCoordinator branchCoordinator;
+    private com.example.courselingo.task.service.PipelineSourceCheckpointStore checkpoints;
+    ExtractKeyframesStep withCheckpoints(com.example.courselingo.task.service.PipelineSourceCheckpointStore value){checkpoints=value;return this;}
 
     public ExtractKeyframesStep(
         VideoKeyframeScanService keyframeScanService,
@@ -62,9 +64,11 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
             return;
         }
         if (branchCoordinator != null) {
+            var execution=com.example.courselingo.task.service.PipelineExecutionScope.current();
             Path sourcePath = context.requireUploadedSourcePath();
             Path outputDirectory = workspace.keyframeOutputDirectory(context);
             context.setVisionBranchHandle(branchCoordinator.submit(() -> {
+                try(var ignored=com.example.courselingo.task.service.PipelineExecutionScope.restore(execution)) {
                 ensureOutputDirectory(outputDirectory);
                 var result = keyframeScanService.scan(new VideoKeyframeScanCommand(
                     context.taskId(),
@@ -75,7 +79,9 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
                 if (result == null || result.savedKeyframeCount() <= 0) {
                     throw new IllegalStateException("vision preprocessing produced no usable keyframes");
                 }
+                if(execution!=null && checkpoints!=null)checkpoints.recordCapture(execution);
                 return null;
+                }
             }, properties.branchTimeout()));
             return;
         }
@@ -89,6 +95,8 @@ public class ExtractKeyframesStep implements PipelineAnalysisTaskStep {
                 sourcePath,
                 outputDirectory
             ));
+            var execution=com.example.courselingo.task.service.PipelineExecutionScope.current();
+            if(execution!=null && checkpoints!=null)checkpoints.recordCapture(execution);
         } catch (Exception exception) {
             writeWarning(context, exception);
             LOGGER.warn(

@@ -1,0 +1,49 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=AsrExecutionMySqlTest",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116272943104,
+    "available_bytes": 38604468224,
+    "usage_percent": 75.07417776873652,
+    "headroom_to_85_bytes": 15372856524.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:36:59.402803+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2649323,
+  "start_ticks": "3594651",
+  "exit_code": 0,
+  "disk_peak_percent": 75.07458240359878,
+  "disk_after": {
+    "used_bytes": 116273381376,
+    "available_bytes": 38604029952,
+    "usage_percent": 75.07446074867288,
+    "headroom_to_85_bytes": 15372418252.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage2-merged-integration.log",
+  "log_sha256": "8e2662bf4d0bb64e41967bda798c43ceb395d7c6f32b1c55d2c3d3a1c714ee06",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.systemmodel.AsrExecutionMySqlTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8dcabb704cc724c20fc2bff4dae4f6248f8404fd992e9874514ab846e01067f2"
+    }
+  ],
+  "total": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

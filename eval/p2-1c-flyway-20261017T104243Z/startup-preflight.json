@@ -1,0 +1,28 @@
+{
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "extracted_files_verified": 1118,
+  "source_sha256": {
+    "resources.py": "5d15361cbe0b3c1291f4c016438b0d31d16b289eae1ab18fe21a7765c4746dbf",
+    "runtime_service.py": "8195068ef9b1c0b25ac2a2270f8c5b87cf2738ba9531b437926a519fded4c987",
+    "P21HealthBootstrap.java": "2082b4114c6bd51c7686cba6844d0f02d433e6c49faeca33855e18c2ee92459f"
+  },
+  "extra_class_sha256": {
+    "com/example/courselingo/systemmodel/P21HealthBootstrap$MigrationImportBarrier.class": "61e116e0b0861550582c8fd87239a3ec84aee1bf51ff7dcc16e345125c171f3c",
+    "com/example/courselingo/systemmodel/P21HealthBootstrap$ConfigurationInput.class": "66b73b43477c833dff0f5539057a0a38b62d536be6c1b07692c17913d0560bc2",
+    "com/example/courselingo/systemmodel/P21HealthBootstrap.class": "78e70757f26717011f206985f94530732e84cbb7df3f2508ab7db15892878035"
+  },
+  "application_starts_this_attempt_before": 0,
+  "application_starts_task_before": 1,
+  "approved_application_start": 2,
+  "untracked_stat": {
+    "size": 25603,
+    "mtime_ns": 1792093257081128261,
+    "inode": 2380827
+  },
+  "schema": "lecturelens_p21c_20261017_r2",
+  "collation_verified": "utf8mb4_unicode_ci",
+  "disk": {
+    "usage_percent": 77.3097562913316,
+    "margin_to_85_bytes": 11910450380.800003
+  }
+}

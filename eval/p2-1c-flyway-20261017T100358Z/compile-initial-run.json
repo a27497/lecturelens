@@ -1,0 +1,40 @@
+{
+  "status": "SUCCEEDED",
+  "started_at_utc": "2026-10-17T10:06:39.249577+00:00",
+  "runner_pid": 594818,
+  "runner_start_ticks": 910529,
+  "cwd": "/home/dev/projects/lecturelens",
+  "executable": "javac",
+  "argv_sha256": "0732bae06595d838738ccb252fc3fbaf7d70e7330e10ad7359497508d27b85a7",
+  "timeout_seconds": 60.0,
+  "grace_seconds": 2,
+  "cleanup_seconds": 3,
+  "child_returncode": 0,
+  "exit_code": 0,
+  "log_path": "/home/dev/projects/lecturelens/.data/dev-checks/p21c-health-compile-20261017T100358Z/output.log",
+  "disk_before": {
+    "used_bytes": 118960922624,
+    "available_bytes": 35916488704,
+    "allowed": true
+  },
+  "child_pid": 594820,
+  "pgid": 594820,
+  "child_start_ticks": 910538,
+  "cleanup": {
+    "pgid": 594820,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  },
+  "finished_at_utc": "2026-10-17T10:06:42.988167+00:00",
+  "elapsed_seconds": 3.7386185619998287,
+  "disk_after": {
+    "used_bytes": 118958903296,
+    "available_bytes": 35918508032,
+    "allowed": true
+  },
+  "log_sha256": "5379fff142d24d5810d6e7d64327e58cc7d6fc67a6dbbb926a434548f1f4a647"
+}

@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "id": "6915c6f23da76f08766a7417bd73c9ea77710d6bc0957fbc0c8ce3062dbf4331",
+    "name": "/lecturelens-translation-mysql-20261016T185217Z",
+    "created": "2026-10-16T18:53:06.613238621Z",
+    "image": "sha256:3466ba4a4828aa8d46fb7c3bc16b67b781c98413cf4ea0fac6feaa6e881faa26",
+    "labels": {
+      "lecturelens.eval": "translation-mysql-20261016T185217Z"
+    },
+    "ports": {
+      "3306/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "33318"
+        }
+      ]
+    },
+    "mounts": null,
+    "tmpfs": {
+      "/var/lib/mysql": "rw,size=1073741824"
+    },
+    "memory": 1073741824,
+    "nano_cpus": 1000000000
+  },
+  "disk_before": {
+    "used_bytes": 117017571328,
+    "available_bytes": 37859840000
+  }
+}

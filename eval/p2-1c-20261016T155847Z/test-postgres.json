@@ -1,0 +1,15 @@
+{
+  "name": "lecturelens-p21c-unit-postgres-20261017",
+  "identity": [
+    "1d7d73d9c2c112efde1a08b4bdb197bd1ba690694a89f966ed8eefb4a2766941",
+    "sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f",
+    "running",
+    "2026-10-16T17:38:32.769081666Z",
+    "p2-1c-unit-postgres"
+  ],
+  "binding": "127.0.0.1:33317",
+  "database": "lecturelens_p21c_agent_test",
+  "authorized": true,
+  "log_path": ".data/p2-1c-20261016T155847Z/postgres-start.log",
+  "log_sha256": "260b6462d33b4f33fd4c06b254bc0dfedde69c36a9602c8019ecec5f7a7804fe"
+}

@@ -1,0 +1,9 @@
+{
+  "incident": "OVERBROAD_READONLY_SEARCH_RETURNED_TEXT_FRAGMENT",
+  "scope": "rg search included JSON evidence while locating CER helpers",
+  "provenance_of_text_fragment": "not further inspected",
+  "raw_fragment_copied_into_this_evidence": false,
+  "configuration_or_key_values_copied_into_this_evidence": false,
+  "correction": "subsequent searches restricted to explicit code paths; scoring reads only inside approved unit",
+  "supplier_calls_at_incident": 0
+}

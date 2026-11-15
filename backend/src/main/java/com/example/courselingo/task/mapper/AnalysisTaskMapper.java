@@ -61,7 +61,9 @@ public interface AnalysisTaskMapper extends BaseMapper<AnalysisTask> {
             .set(AnalysisTask::getErrorCode, task.getErrorCode())
             .set(AnalysisTask::getErrorMessage, task.getErrorMessage())
             .set(AnalysisTask::getStartedAt, task.getStartedAt())
-            .set(AnalysisTask::getFinishedAt, task.getFinishedAt()));
+            .set(AnalysisTask::getFinishedAt, task.getFinishedAt())
+            // Each run must publish its own subtitles before it opens learning early again.
+            .set("RUNNING".equals(task.getStatus()), AnalysisTask::getLearningReadyAt, null));
     }
 
     default int updateRetryingByIdAndUserId(AnalysisTask task) {

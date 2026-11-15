@@ -1,0 +1,8 @@
+{
+  "algorithms": {
+    "original_speaker_metadata": "Erik Demaine",
+    "correct_primary_speaker": "Srini Devadas",
+    "co_instructor_with_brief_intro": "Erik Demaine",
+    "evidence": "references/algorithms.vtt.txt:34 explicitly says I'm Srini Devadas; original caption bytes, media, normalization and scoring unchanged"
+  }
+}

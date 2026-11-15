@@ -1,0 +1,9 @@
+{
+  "private_directory": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z",
+  "results": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/results",
+  "task_logs": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/logs",
+  "driver_log": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/driver.log",
+  "response_observer_log": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/local-response-observer.log",
+  "pricing_html": "/home/dev/projects/lecturelens/.data/baseline-deepseek-20261015T185735Z/deepseek-pricing.html",
+  "media_manifest": "eval/baseline-asr-20261015/assets.lock.json"
+}

@@ -1,0 +1,63 @@
+{
+  "version": 10,
+  "effective": {
+    "SUBTITLE_TRANSLATION": {
+      "source": "ENV",
+      "model": "lecturelens-local-qwen",
+      "maxTokens": 3072,
+      "timeoutMillis": 180000,
+      "maxAttempts": 3,
+      "base_url_sha256": "dac93ea845f3bbff78bfe830aa8241c6e7ae8fbe0e27c7f769e9168321370ff0"
+    },
+    "ASR_TRANSCRIPTION": {
+      "source": "ENV",
+      "model": "qwen-audio-3.1-asr-flash",
+      "maxTokens": null,
+      "timeoutMillis": 180000,
+      "maxAttempts": null,
+      "base_url_sha256": "e245a80ff2e3ea2cde40919dcbd2f1adc722d3b87ac26b4201df3b107e54aea5"
+    },
+    "COURSE_QA": {
+      "source": "ENV",
+      "model": "lecturelens-local-qwen",
+      "maxTokens": 512,
+      "timeoutMillis": 90000,
+      "maxAttempts": 1,
+      "base_url_sha256": "dac93ea845f3bbff78bfe830aa8241c6e7ae8fbe0e27c7f769e9168321370ff0"
+    },
+    "COURSE_CHAPTER": {
+      "source": "ENV",
+      "model": "lecturelens-local-qwen",
+      "maxTokens": 4096,
+      "timeoutMillis": 60000,
+      "maxAttempts": 3,
+      "base_url_sha256": "dac93ea845f3bbff78bfe830aa8241c6e7ae8fbe0e27c7f769e9168321370ff0"
+    },
+    "LEARNING_PACKAGE": {
+      "source": "ENV",
+      "model": "lecturelens-local-qwen",
+      "maxTokens": 3072,
+      "timeoutMillis": 180000,
+      "maxAttempts": 3,
+      "base_url_sha256": "dac93ea845f3bbff78bfe830aa8241c6e7ae8fbe0e27c7f769e9168321370ff0"
+    },
+    "VISION_FRAME_ANALYSIS": {
+      "source": "ENV",
+      "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+      "maxTokens": 2048,
+      "timeoutMillis": 60000,
+      "maxAttempts": 1,
+      "base_url_sha256": "dcfb966d818ddf8f4d10f7397ce546e86d3fcb8afe26371506405f6978c6f661"
+    },
+    "TRANSLATION_FULL_TEXT": {
+      "source": "DATABASE",
+      "model": "deepseek-flash",
+      "maxTokens": null,
+      "timeoutMillis": null,
+      "maxAttempts": null,
+      "base_url_sha256": "a34e2a4708ed1c61008a151688838dcf1c44d4e7f08054633e72ba7c0b16cfc1"
+    }
+  },
+  "original_effective_projection_sha256": "8f1c2a493cd6fe61be0e0ce485b4055c1227f3b7c31049b5259783594b98396f",
+  "public_effective_projection_sha256": "59fd4d7321e28bd6b6f3531ab3016f87f92e89b10dc71486505a517a9a130b52"
+}

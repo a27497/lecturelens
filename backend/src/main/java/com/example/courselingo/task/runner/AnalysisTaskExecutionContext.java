@@ -7,7 +7,11 @@ public record AnalysisTaskExecutionContext(
     String sourceLanguage,
     String targetLanguage,
     String requestId,
-        com.example.courselingo.systemmodel.SystemModelExecutionRef systemModels) {
+        com.example.courselingo.systemmodel.SystemModelExecutionRef systemModels,int protocolVersion,long executionEpoch) {
+    public AnalysisTaskExecutionContext(String taskId,String uploadId,Long userId,String sourceLanguage,String targetLanguage,
+            String requestId,com.example.courselingo.systemmodel.SystemModelExecutionRef systemModels) {
+        this(taskId,uploadId,userId,sourceLanguage,targetLanguage,requestId,systemModels,1,0);
+    }
     public AnalysisTaskExecutionContext(
             String taskId,
             String uploadId,

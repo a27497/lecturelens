@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-10-16T12:26:28.179618+00:00",
+  "used_bytes": 115728207872,
+  "available_bytes": 39149203456,
+  "use_percent": 74.72245750990139,
+  "headroom_below_85_bytes": 15917591756.800003,
+  "real_trial_minimum_headroom_bytes": 2147483648,
+  "real_trials_started": true,
+  "runtime_started": true,
+  "runtime_currently_stopped": true,
+  "models_called": 0,
+  "reason": "ORIGINAL_CANDIDATE_MQ_PROTOCOL_FIELDS_DROPPED",
+  "proposed_port": 18091,
+  "proposed_topic": "lecturelens-p21-20261016T073754Z",
+  "protected_service_restart_count": 0,
+  "successor_candidate": "../p2-1b-pipeline-20261016T122904Z/"
+}

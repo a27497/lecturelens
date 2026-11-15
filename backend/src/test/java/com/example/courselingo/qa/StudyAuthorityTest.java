@@ -26,8 +26,8 @@ class StudyAuthorityTest {
     StudyEvidenceAuthority authority;
     @BeforeEach void setup() {
         jdbc=new JdbcTemplate(new DriverManagerDataSource("jdbc:h2:mem:"+UUID.randomUUID()+";DB_CLOSE_DELAY=-1", "sa", ""));
-        jdbc.execute("CREATE TABLE analysis_task(id VARCHAR(64),user_id BIGINT,content_revision BIGINT,status VARCHAR(32),deleted_at TIMESTAMP)");
-        jdbc.update("INSERT INTO analysis_task VALUES ('task',42,1,'SUCCEEDED',NULL)");
+        jdbc.execute("CREATE TABLE analysis_task(id VARCHAR(64),user_id BIGINT,content_revision BIGINT,status VARCHAR(32),deleted_at TIMESTAMP,learning_ready_at TIMESTAMP)");
+        jdbc.update("INSERT INTO analysis_task VALUES ('task',42,1,'SUCCEEDED',NULL,NULL)");
         evidence=mock(CourseEvidenceService.class); indexes=mock(EvidenceIndexSynchronizer.class); dense=mock(DenseEvidenceClient.class);
         when(indexes.status("task",42L)).thenReturn(new EvidenceIndexSynchronizer.IndexStatus("READY",1,1L,"v1",0,null,null));
         when(evidence.current("task",42L)).thenReturn(List.of(item("e1",0),item("e2",1000),item("e3",2000)));
@@ -90,6 +90,27 @@ class StudyAuthorityTest {
         when(indexes.status("task",42L)).thenReturn(new EvidenceIndexSynchronizer.IndexStatus("FAILED",1,null,null,1,null,null));
         assertThat(authority.execute(request("CHECK",null,null)).get("revision")).isEqualTo(1L);
         assertThatThrownBy(()->authority.execute(request("SEARCH",null,null))).isInstanceOf(BusinessException.class);
+    }
+    @Test void runningCourseIsStudiableOnlyAfterItsSubtitlesOpenedLearning() {
+        jdbc.update("UPDATE analysis_task SET status='RUNNING'");
+        assertThatThrownBy(()->authority.current("task",42L,false)).isInstanceOf(BusinessException.class)
+            .extracting("errorCode").isEqualTo(com.example.courselingo.common.error.ErrorCode.TASK_INVALID_STATUS);
+        jdbc.update("UPDATE analysis_task SET learning_ready_at=CURRENT_TIMESTAMP");
+        assertThat(authority.execute(request("WINDOW",null,"e2")).get("evidence")).asList().hasSize(3);
+        for (String ended : List.of("FAILED","CANCELED","QUEUED")) {
+            jdbc.update("UPDATE analysis_task SET status=?",ended);
+            assertThatThrownBy(()->authority.current("task",42L,false)).isInstanceOf(BusinessException.class);
+        }
+    }
+    @Test void sameRevisionIndexCatchUpKeepsStudyAvailable() {
+        when(indexes.status("task",42L)).thenReturn(new EvidenceIndexSynchronizer.IndexStatus("PENDING",1,1L,"v1",0,null,null));
+        assertThat(authority.execute(request("WINDOW",null,"e2")).get("evidence")).asList().hasSize(3);
+        when(indexes.status("task",42L)).thenReturn(new EvidenceIndexSynchronizer.IndexStatus("INDEXING",1,1L,"v1",0,null,null));
+        assertThat(authority.execute(request("WINDOW",null,"e2")).get("evidence")).asList().hasSize(3);
+        // An index built for another revision is never served.
+        when(indexes.status("task",42L)).thenReturn(new EvidenceIndexSynchronizer.IndexStatus("PENDING",1,0L,"v1",0,null,null));
+        assertThatThrownBy(()->authority.execute(request("WINDOW",null,"e2"))).isInstanceOf(BusinessException.class)
+            .extracting("errorCode").isEqualTo(com.example.courselingo.common.error.ErrorCode.STUDY_INDEX_NOT_READY);
     }
     @Test void serviceSignatureBindsPathTimeAndBody() throws Exception {
         var config=new DenseRetrievalProperties();config.setServiceSecret("test-study-context-secret-32-bytes-minimum");

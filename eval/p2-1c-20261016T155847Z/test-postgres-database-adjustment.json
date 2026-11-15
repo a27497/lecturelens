@@ -1,0 +1,17 @@
+{
+  "at_utc": "2026-10-16T17:41:17.792746+00:00",
+  "container_id": "1d7d73d9c2c112efde1a08b4bdb197bd1ba690694a89f966ed8eefb4a2766941",
+  "command": [
+    "docker",
+    "exec",
+    "1d7d73d9c2c112efde1a08b4bdb197bd1ba690694a89f966ed8eefb4a2766941",
+    "createdb",
+    "--username=lecturelens",
+    "lecturelens_agent_test"
+  ],
+  "initial_database": "lecturelens_p21c_agent_test",
+  "retry_database": "lecturelens_agent_test",
+  "reason": "Existing pilot evaluator rejects database names outside its fixed test-only allowlist. Preserve that gate; create allowed database inside the same approved isolated container.",
+  "service_restarted": false,
+  "production_or_test_code_changed": false
+}

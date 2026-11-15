@@ -80,6 +80,7 @@ public class RocketMqAnalysisTaskMessageProducer implements AnalysisTaskMessageP
         }
     }
 
+    // Keep the execution fence on the wire; omit absent fields for legacy messages.
     private record AnalysisTaskMessagePayload(
         String taskId,
         String uploadId,
@@ -88,7 +89,11 @@ public class RocketMqAnalysisTaskMessageProducer implements AnalysisTaskMessageP
         String targetLanguage,
         String requestId,
         String traceId,
-        String createdAt
+        String createdAt,
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        Integer protocolVersion,
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        Long executionEpoch
     ) {
 
         private static AnalysisTaskMessagePayload from(AnalysisTaskMessage message) {
@@ -100,7 +105,9 @@ public class RocketMqAnalysisTaskMessageProducer implements AnalysisTaskMessageP
                 message.targetLanguage(),
                 message.requestId(),
                 message.traceId(),
-                message.createdAt().toString()
+                message.createdAt().toString(),
+                message.protocolVersion(),
+                message.executionEpoch()
             );
         }
     }

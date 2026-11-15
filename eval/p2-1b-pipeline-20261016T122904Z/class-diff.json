@@ -1,0 +1,7 @@
+{
+  "changed_candidate_classes": [
+    "BOOT-INF/classes/com/example/courselingo/mq/RocketMqAnalysisTaskMessageProducer$AnalysisTaskMessagePayload.class"
+  ],
+  "checked_classes": 951,
+  "dependencies_equal": true
+}

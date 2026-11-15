@@ -6,7 +6,13 @@ record ValidatedLearningPackageCommand(
     String sourceLanguage,
     String targetLanguage,
     String requestId,
-        com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
+        com.example.courselingo.systemmodel.SystemModelExecutionRef execution,
+    boolean sourceOnly) {
+    ValidatedLearningPackageCommand(String taskId, Long userId, String sourceLanguage,
+            String targetLanguage, String requestId,
+            com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
+        this(taskId, userId, sourceLanguage, targetLanguage, requestId, execution, false);
+    }
     ValidatedLearningPackageCommand(
             String taskId,
             Long userId,
@@ -19,6 +25,6 @@ record ValidatedLearningPackageCommand(
     ValidatedLearningPackageCommand withExecution(
             com.example.courselingo.systemmodel.SystemModelExecutionRef execution) {
         return new ValidatedLearningPackageCommand(
-                taskId, userId, sourceLanguage, targetLanguage, requestId, execution);
+                taskId, userId, sourceLanguage, targetLanguage, requestId, execution, sourceOnly);
     }
 }

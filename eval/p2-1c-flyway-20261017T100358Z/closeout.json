@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-10-17T10:09:30.240011+00:00",
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "java_identity_gone": true,
+  "unit_removed": true,
+  "port_18091_unbound": true,
+  "redis_removed": true,
+  "mysql_running": true,
+  "mysql_container_id": "cf44344fee2cd04c285dbeef6d016d10708e75872f91021c5ece7a4880085e98",
+  "mysql_data_retained": true,
+  "mysql_data_dir": "/home/dev/projects/lecturelens/.data/p2-1c-flyway-20261017T100358Z/mysql-data",
+  "original_mysql_writes": 0,
+  "original_mysql_source_export_connections": 0,
+  "application_starts": 1,
+  "second_start_approval_pending": true,
+  "stop_loss_triggered": false,
+  "disk": {
+    "used_bytes": 119032627200,
+    "available_bytes": 35844784128,
+    "usage_percent": 76.85602837712223,
+    "margin_to_85_bytes": 12613172428.800003
+  }
+}

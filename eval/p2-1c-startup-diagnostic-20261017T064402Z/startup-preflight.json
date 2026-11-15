@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-10-17T06:45:43.359836+00:00",
+  "unit_absent": true,
+  "approved_reference_paths_exist": true,
+  "independent_redis_ready": true,
+  "used_bytes": 117663637504,
+  "available_bytes": 37213773824,
+  "usage_percent": 75.97211013219447,
+  "margin_to_85_bytes": 13982162124.800003,
+  "classes_sha256": {
+    "META-INF/spring.factories": "09e62c1e3b3bf37bf8882e2b691af93087f5f4f38956926bfd882eb757e1f71f",
+    "com/example/courselingo/systemmodel/P21Bootstrap.class": "1c8c33294a24767f816430c4ee91d8c2ac69e8ddd5ca29883a70960c2b14ad51",
+    "com/example/courselingo/systemmodel/P21Bootstrap$1$1.class": "9ba07011b6e2504475de0b715b3a1f717aeef9374eb8419bb59fcd57a681f5cd",
+    "com/example/courselingo/systemmodel/P21Bootstrap$1.class": "16b41d100e64e414ff0db0dff01f13ee18dc83fb0205213566b88c220f5d8c5c",
+    "com/example/courselingo/systemmodel/P21IsolationGate.class": "ed4ee04e58db7adb62b4dd7994f106dc1a53ae1696a1ff62dceaac9b7178dd53",
+    "com/example/courselingo/systemmodel/P21StartupDiagnostics.class": "91421f111837626c5ae8c7d943597f65838444d3b5438c9000fe3f48f3acb420"
+  }
+}

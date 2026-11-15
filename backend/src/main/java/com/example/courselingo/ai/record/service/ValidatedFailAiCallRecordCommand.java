@@ -9,6 +9,6 @@ record ValidatedFailAiCallRecordCommand(
     String errorMessage,
     Boolean retryable,
     String requestFingerprint,
-    String responseFingerprint
+    String responseFingerprint,Integer promptTokens,Integer completionTokens,Integer totalTokens
 ) {
 }

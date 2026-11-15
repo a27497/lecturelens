@@ -1,0 +1,11 @@
+{
+  "compiled_files": {
+    ".data/p2-1c-run-20261016T191343Z/extra/META-INF/spring.factories": "09e62c1e3b3bf37bf8882e2b691af93087f5f4f38956926bfd882eb757e1f71f",
+    ".data/p2-1c-run-20261016T191343Z/extra/com/example/courselingo/systemmodel/P21Bootstrap.class": "1c8c33294a24767f816430c4ee91d8c2ac69e8ddd5ca29883a70960c2b14ad51",
+    ".data/p2-1c-run-20261016T191343Z/extra/com/example/courselingo/systemmodel/P21Bootstrap$1$1.class": "9ba07011b6e2504475de0b715b3a1f717aeef9374eb8419bb59fcd57a681f5cd",
+    ".data/p2-1c-run-20261016T191343Z/extra/com/example/courselingo/systemmodel/P21Bootstrap$1.class": "16b41d100e64e414ff0db0dff01f13ee18dc83fb0205213566b88c220f5d8c5c",
+    ".data/p2-1c-run-20261016T191343Z/extra/com/example/courselingo/systemmodel/P21IsolationGate.class": "b311101f2dd1204a50ff6d9f204480d510fb1f8c98c7484921b8b68509b4f601"
+  },
+  "candidate_classes_modified": false,
+  "removed_after_unit_exit": true
+}

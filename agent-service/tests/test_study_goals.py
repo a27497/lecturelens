@@ -233,6 +233,8 @@ def test_goal_failure_is_replayed_into_repair_with_original_budget(setup):
         candidate = decide(messages, timeout)
         if observations:
             candidate["arguments"]["title"] = "Goal-corrected draft"
+            # A repair changes content; a rename alone is not re-reviewed.
+            candidate["arguments"]["explanation"] += "已按目标修订。"
         return candidate
 
     def review(messages, timeout):

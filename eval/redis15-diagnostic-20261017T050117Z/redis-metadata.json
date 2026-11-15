@@ -1,0 +1,23 @@
+{
+  "started_at_utc": "2026-10-17T05:01:50.410347+00:00",
+  "endpoint": {
+    "host": "localhost",
+    "port": 16379,
+    "database": 15
+  },
+  "connection_source": "historical_safe_endpoint_metadata",
+  "authentication": "NONE",
+  "key_identifier": "HMAC-SHA256 with non-persisted random secret",
+  "values_read": false,
+  "mutation_commands": 0,
+  "commands": {
+    "SELECT": 1
+  },
+  "scans": [],
+  "peer": [
+    "127.0.0.1",
+    16379
+  ],
+  "code": "REDIS_NOAUTH",
+  "finished_at_utc": "2026-10-17T05:01:50.413234+00:00"
+}

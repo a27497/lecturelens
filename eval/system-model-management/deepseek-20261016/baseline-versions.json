@@ -1,0 +1,30 @@
+[
+  {
+    "version": 3,
+    "parentVersion": 2,
+    "actorUserId": 9,
+    "reason": "MODEL_SAVED",
+    "createdAt": "2026-10-15 17:50:46.804"
+  },
+  {
+    "version": 2,
+    "parentVersion": 1,
+    "actorUserId": 9,
+    "reason": "PROVIDER_SAVED",
+    "createdAt": "2026-10-15 17:50:28.747"
+  },
+  {
+    "version": 1,
+    "parentVersion": 0,
+    "actorUserId": null,
+    "reason": "ENVIRONMENT_CAPTURED",
+    "createdAt": "2026-10-15 17:32:08.602"
+  },
+  {
+    "version": 0,
+    "parentVersion": null,
+    "actorUserId": null,
+    "reason": "INITIAL_EMPTY_CONFIG",
+    "createdAt": "2026-10-15 17:31:14.706"
+  }
+]

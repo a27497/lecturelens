@@ -42,7 +42,7 @@ class BailianAsrProviderTest {
         var provider = new BailianAsrProvider(properties, (endpoint, key, body, timeout) -> {
             assertThat(endpoint.toString()).isEqualTo(properties.getEndpoint());
             assertThat(key).isEqualTo(FAKE_KEY);
-            assertThat(timeout).isEqualTo(Duration.ofSeconds(180));
+            assertThat(timeout).isEqualTo(Duration.ofSeconds(60));
             sent.set(body);
             return new BailianAsrTransport.Response(200,
                 "{\"output\":{\"text\":\"First sentence. Last sentence.\",\"sentence\":{\"text\":\"Last sentence.\",\"begin_time\":2000,\"end_time\":3000}},\"request_id\":\"" + FAKE_KEY + "\"}");

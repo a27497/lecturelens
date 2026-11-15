@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/home/dev/projects/lecturelens/.data/baseline-asr-20261015/.venv/bin/python",
+    "/home/dev/projects/lecturelens/eval/baseline-asr-20261015/prepare.py"
+  ],
+  "started_at_utc": "2026-10-15T11:12:49.853236+00:00",
+  "finished_at_utc": "2026-10-15T11:12:53.321765+00:00",
+  "exit_code": 0,
+  "stdout": "algorithms 3201045 ms hashes verified\ncalculus 2320300 ms hashes verified\neconomics 2053931 ms hashes verified\nlinear 2388842 ms hashes verified\nprobability 3070640 ms hashes verified\n{\"lectures\": 5, \"total_duration_ms\": 13034758}\n",
+  "stderr": ""
+}

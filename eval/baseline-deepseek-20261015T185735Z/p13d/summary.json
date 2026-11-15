@@ -1,0 +1,51 @@
+{
+  "task_id": "task_1b5dd375008544258544f7b6f3a2001c",
+  "status": "FAILED",
+  "new_tasks": 1,
+  "configuration_version": 10,
+  "counts_by_reason": {
+    "CONTENT_EMPTY": 1
+  },
+  "physical_calls": 1,
+  "successful_batches": 0,
+  "failed_calls": 1,
+  "known_usage": {
+    "prompt_tokens": 903,
+    "completion_tokens": 3073,
+    "total_tokens": 3976
+  },
+  "unknown_total_usage_calls": 0,
+  "samples": [
+    {
+      "id": "4befe79c-b79f-46ac-9341-66cf6fc53b10",
+      "provider_reason": "CONTENT_EMPTY",
+      "finish_reason": "length",
+      "http_status": 200,
+      "content_type_from_excerpt": "str",
+      "reasoning_content_nonempty_in_excerpt": true,
+      "content_chars_from_excerpt": 0,
+      "completion_tokens": 3073,
+      "total_tokens": 3976
+    }
+  ],
+  "disk_max_percent": 84.8966563433369,
+  "configuration_unchanged": true,
+  "pipeline_stage_ms": {
+    "VALIDATE_TASK": 20,
+    "RESOLVE_UPLOADED_SOURCE": 260,
+    "EXTRACT_KEYFRAMES": 14,
+    "EXTRACT_AUDIO": 8724,
+    "TRANSCRIBE": 104849,
+    "PERSIST_SUBTITLES": 68,
+    "TRANSLATE_SUBTITLES": 17431
+  },
+  "translation_request_parameters": {
+    "segmentCount": 1,
+    "inputCharCount": 3093,
+    "requestTimeoutMillis": 120000,
+    "maxTokens": 3072,
+    "maxAttempts": 3,
+    "promptChars": 3999
+  },
+  "task_observation_ms": 132646.959
+}

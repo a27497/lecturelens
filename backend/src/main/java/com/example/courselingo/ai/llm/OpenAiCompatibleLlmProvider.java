@@ -48,7 +48,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         try {
             return generateOnce(request);
         } catch (OpenAiCompatibleLlmException exception) {
-            if (request.responseFormat() != LlmResponseFormat.JSON_OBJECT
+            if (Boolean.FALSE.equals(request.metadata().get("structuredOutputFallbackAllowed"))
+                || request.responseFormat() != LlmResponseFormat.JSON_OBJECT
                 || exception.failureCategory() != LlmProviderFailureCategory.UNSUPPORTED_RESPONSE_FORMAT) {
                 throw exception;
             }
@@ -73,6 +74,16 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
 
     private LlmResult generateOnce(LlmRequest request) {
         ValidatedSettings settings = validateSettings(request);
+        if (com.example.courselingo.ai.llm.TranslationResponseDecoder.enabled(request)) {
+            try {
+                var response = client.complete(new OpenAiCompatibleChatCompletionRequest(settings.uri(),
+                    Map.of("Authorization", "Bearer " + settings.apiKey()), "POST", "application/json",
+                    jsonBody(request, settings), settings.requestTimeout()));
+                return com.example.courselingo.ai.llm.TranslationResponseDecoder.decode(response,
+                    settings.model(), Map.of("providerRetryCount", 0));
+            } catch (com.example.courselingo.ai.llm.TranslationFailure safe) { throw safe; }
+            catch (RuntimeException failure) { throw com.example.courselingo.ai.llm.TranslationFailure.from(failure); }
+        }
         AttemptedResponse attempted = callClient(request, settings);
         handleErrorStatus(attempted.response(), settings);
         return mapSuccessResponse(
@@ -112,6 +123,8 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                     continue;
                 }
                 return new AttemptedResponse(response, attempt - 1);
+            } catch (TranslationFailure safe) {
+                throw safe;
             } catch (OpenAiCompatibleLlmException exception) {
                 OpenAiCompatibleLlmException diagnostic = withSettings(request, settings, exception);
                 if (diagnostic.retryable() && attempt < maxAttempts) {
@@ -178,7 +191,14 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
         int retryCount
     ) {
         OpenAiCompatibleChatCompletionResponse payload;
+        com.fasterxml.jackson.databind.JsonNode root;
         try {
+            root = objectMapper.readTree(response.body());
+            if (root != null) {
+                LlmOutputGuard.rejectTruncated(root, response.statusCode());
+                if (OpenAiCompatibleRequestOptionsAdapter.supportsDeepSeekThinkingToggle(settings.model()))
+                    LlmOutputGuard.rejectEmpty(root, response.statusCode());
+            }
             payload = objectMapper.readValue(response.body(), OpenAiCompatibleChatCompletionResponse.class);
         } catch (JsonProcessingException exception) {
             throw responseException(
@@ -226,8 +246,6 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
                 content
             );
         }
-        OpenAiCompatibleChatCompletionResponse.Usage usage = payload.usage();
-
         Map<String, Object> metadata = new HashMap<>();
         traceId(response).ifPresent(traceId -> metadata.put("providerTraceId", traceId));
         metadata.put("providerRetryCount", Math.max(0, retryCount));
@@ -237,9 +255,7 @@ public class OpenAiCompatibleLlmProvider implements LlmProvider {
             textOrDefault(payload.model(), settings.model()),
             content,
             choice.finishReason(),
-            usage == null
-                ? new LlmUsage(null, null, null)
-                : new LlmUsage(usage.promptTokens(), usage.completionTokens(), usage.totalTokens()),
+            LlmUsage.parse(root),
             response.duration(),
             metadata
         );

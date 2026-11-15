@@ -22,6 +22,32 @@ beforeEach(() => {
   vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "READY" } as never);
 });
 
+it.each([
+  { choice: "default unchecked", toggles: [], expected: false },
+  { choice: "checked", toggles: [true], expected: true },
+  { choice: "unchecked again", toggles: [true, false], expected: false },
+])("sends a compatible START request with approval $choice", async ({ toggles, expected }) => {
+  vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
+    if (command.operation === "CREATE_SESSION") return { session_id: "session" };
+    if (command.operation === "START") return { run, artifact };
+    return { sessions: [], runs: [] };
+  });
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  await flushPromises();
+  await wrapper.findAll("textarea")[0]!.setValue("解释停止条件");
+  for (const checked of toggles) await wrapper.find('input[type="checkbox"]').setValue(checked);
+  await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
+  await flushPromises();
+  const starts = vi.mocked(studyCommand).mock.calls.filter(call => call[1].operation === "START");
+  expect(starts).toHaveLength(1);
+  expect(starts[0]).toEqual(["task", expect.objectContaining({
+    operation: "START", session_id: "session", goal: "解释停止条件", request_key: expect.any(String),
+  })]);
+  if (expected) expect(starts[0]![1]).toHaveProperty("approval_required", true);
+  else expect(starts[0]![1]).not.toHaveProperty("approval_required");
+  wrapper.unmount();
+});
+
 it("restores a completed run, keeps answers private and preserves citation seek", async () => {
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
     if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
@@ -33,7 +59,7 @@ it("restores a completed run, keeps answers private and preserves citation seek"
   expect(wrapper.text()).toContain("停止条件");
   expect(wrapper.text()).not.toContain("PRIVATE ANSWER");
   expect(vi.mocked(studyCommand).mock.calls.some(call => call[1].operation === "ANSWERS")).toBe(false);
-  await wrapper.findAll("button").find(button => button.text().includes("跳到视频"))!.trigger("click");
+  await wrapper.findAll("button").find(button => button.text() === "00:00:01 - 00:00:02 · 回看片段起点")!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "e1", revision: 1 }]]);
   await wrapper.findAll("button").find(button => button.text().includes("查看参考答案"))!.trigger("click");
   await flushPromises();
@@ -169,6 +195,33 @@ it("shows preparation before querying the study gateway for a processing course"
   wrapper.unmount();
 });
 
+it("opens learning on a running course once its subtitles are ready and keeps the session when it finishes", async () => {
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: false }, global: { stubs } });
+  await flushPromises();
+  expect(studyStatus).not.toHaveBeenCalled();
+  expect(wrapper.text()).toContain("课程内容尚未处理完成");
+  await wrapper.setProps({ learningReady: true }); await flushPromises();
+  expect(studyStatus).toHaveBeenCalledTimes(1);
+  expect(wrapper.text()).not.toContain("课程内容尚未处理完成");
+  // Background stages finishing must not reset an open study session.
+  await wrapper.setProps({ status: "SUCCEEDED" }); await flushPromises();
+  expect(studyStatus).toHaveBeenCalledTimes(1);
+  wrapper.unmount();
+});
+
+it("stays usable while the index catches up on the same revision after a late translation", async () => {
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "PENDING", revision: 1, indexedRevision: 1 } as never);
+  const wrapper = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: true }, global: { stubs } });
+  await flushPromises();
+  expect(wrapper.text()).not.toContain("课程资料正在准备");
+  wrapper.unmount();
+  vi.mocked(getEvidenceIndexStatus).mockResolvedValue({ status: "PENDING", revision: 2, indexedRevision: 1 } as never);
+  const stale = mount(CourseAgentPanel, { props: { taskId: "task", status: "RUNNING", learningReady: true }, global: { stubs } });
+  await flushPromises();
+  expect(stale.text()).toContain("课程资料正在准备");
+  stale.unmount();
+});
+
 it("opens a saved older run from learning history", async () => {
   vi.mocked(studyCommand).mockImplementation(async (_task, command) => {
     if (command.operation === "LIST") return { sessions: [{ session_id: "session", revision: 1 }] };
@@ -211,7 +264,7 @@ it("uses the CREATE_SESSION source revision rather than the artifact edit revisi
   await wrapper.get("textarea").setValue("Explain the new course source");
   await wrapper.findAll("button").find(button => button.text() === "解释并出题")!.trigger("click");
   await flushPromises();
-  await wrapper.findAll("button").find(button => button.text().includes("跳到视频"))!.trigger("click");
+  await wrapper.findAll("button").find(button => button.text().includes("回看片段起点"))!.trigger("click");
   expect(wrapper.emitted("seek")).toEqual([[1234, { evidenceId: "e1", revision: 2 }]]);
   wrapper.unmount();
 });
@@ -577,7 +630,8 @@ it('starts choice practice only after explicit format selection and keeps open p
     expect(studyCommand).not.toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START' }));
     await wrapper.get('textarea').setValue('Identify course evidence.');
     await wrapper.findAll('button').find(b => b.text() === '解释并出题')!.trigger('click'); await flushPromises();
-    expect(studyCommand).toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START', practice_format: 'choice', approval_required: false }));
+    expect(studyCommand).toHaveBeenCalledWith('task', expect.objectContaining({ operation: 'START', practice_format: 'choice' }));
+    expect(vi.mocked(studyCommand).mock.calls.find(call => call[1].operation === 'START')![1]).not.toHaveProperty('approval_required');
   } finally { wrapper.unmount(); }
 });
 

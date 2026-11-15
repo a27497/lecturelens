@@ -1,0 +1,22 @@
+{
+  "status": "SUCCEEDED",
+  "started_at_utc": "2026-10-17T05:02:24.515635+00:00",
+  "finished_at_utc": "2026-10-17T05:02:24.689306+00:00",
+  "child_returncode": 0,
+  "exit_code": 0,
+  "cleanup": {
+    "pgid": 106944,
+    "signals": [],
+    "errors": [],
+    "targets": [],
+    "reaped_descendants": [],
+    "remaining": [],
+    "complete": true
+  },
+  "elapsed_seconds": 0.17370486599998003,
+  "log_sha256": "e977e1299eafcc050817ac7ad05bef83e2de949d9a7fee24ee1a77d20f68dc73",
+  "runner_pid": 106924,
+  "runner_start_ticks": 163763,
+  "child_pid": 106944,
+  "child_start_ticks": 163769
+}

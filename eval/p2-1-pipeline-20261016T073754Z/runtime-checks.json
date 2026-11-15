@@ -1,0 +1,99 @@
+[
+  {
+    "name": "runtime-wire-reproduction01",
+    "counts": [
+      5,
+      1,
+      0,
+      0
+    ],
+    "execution": {
+      "started_at_utc": "2026-10-16T12:26:40.311960+00:00",
+      "disk_before": {
+        "used_bytes": 115729010688,
+        "available_bytes": 39148400640,
+        "use_percent": 74.72297586567265
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=RocketMqAnalysisTaskMessageProducerTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 74.72371901858962,
+      "exit_code": 1,
+      "disk_after": {
+        "used_bytes": 115730132992,
+        "available_bytes": 39147278336,
+        "use_percent": 74.7237005058835
+      },
+      "finished_at_utc": "2026-10-16T12:27:07.345937+00:00"
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/runtime-wire-reproduction01.log",
+    "log_sha256": "60352b5ff8a77dfd1c193b098b3d4c55e9307f260490cab593b45ad1050b8292"
+  },
+  {
+    "name": "runtime-wire-fix02",
+    "counts": [
+      48,
+      0,
+      0,
+      0
+    ],
+    "execution": {
+      "started_at_utc": "2026-10-16T12:27:24.024674+00:00",
+      "disk_before": {
+        "used_bytes": 115730223104,
+        "available_bytes": 39147188224,
+        "use_percent": 74.72375868867415
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dtest=RocketMqAnalysisTaskMessageProducerTest,RocketMqAnalysisTaskMessageConsumerTest,AnalysisTaskMessageTest,AnalysisTaskRunnerTest,TaskCreationServiceTest",
+        "test"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 74.78669660012565,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 115827433472,
+        "available_bytes": 39049977856,
+        "use_percent": 74.786524696426
+      },
+      "finished_at_utc": "2026-10-16T12:28:10.121158+00:00"
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/runtime-wire-fix02.log",
+    "log_sha256": "93cad19642c08b759c2d63d7f6303a970c9c9fb0a8eb8a4030ef3356a7476e18"
+  },
+  {
+    "name": "runtime-replacement-package03",
+    "counts": null,
+    "execution": {
+      "started_at_utc": "2026-10-16T12:28:31.238311+00:00",
+      "disk_before": {
+        "used_bytes": 115825233920,
+        "available_bytes": 39052177408,
+        "use_percent": 74.78510450739964
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-DskipTests",
+        "package"
+      ],
+      "timeout_seconds": 240,
+      "disk_peak_percent": 74.78520764961942,
+      "exit_code": 0,
+      "disk_after": {
+        "used_bytes": 115824529408,
+        "available_bytes": 39052881920,
+        "use_percent": 74.78464962376363
+      },
+      "finished_at_utc": "2026-10-16T12:29:05.313845+00:00"
+    },
+    "log_path": ".data/p2-1-pipeline-20261016T073754Z/checks/runtime-replacement-package03.log",
+    "log_sha256": "2b0185bdbf04245370e41b9315577cc97131288697a6c716977e76ba0fcfbd99"
+  }
+]

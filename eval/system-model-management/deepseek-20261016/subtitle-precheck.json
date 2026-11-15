@@ -1,0 +1,6 @@
+{
+  "cues": 28,
+  "coverage": 1.0,
+  "expected_strategy": "EMBEDDED_SUBTITLE_FIRST",
+  "extra_asr_requested": false
+}

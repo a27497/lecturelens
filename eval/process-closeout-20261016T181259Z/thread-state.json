@@ -1,0 +1,17 @@
+{
+  "thread": {
+    "id": "01a144a4-1902-7a03-b82e-82ce996effd0",
+    "title": "\u8fd0\u884c\u9694\u79bb Java \u57fa\u7ebf\u4e0e\u6062\u590d\u9a8c\u8bc1",
+    "status": {
+      "type": "idle"
+    },
+    "updatedAt": 1792162257
+  },
+  "turns": [
+    {
+      "id": "01a14531-64f8-7461-852a-2d14dbdebd08",
+      "status": "completed",
+      "completedAt": 1792162257
+    }
+  ]
+}

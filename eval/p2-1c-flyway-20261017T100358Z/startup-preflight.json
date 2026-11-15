@@ -1,0 +1,21 @@
+{
+  "frozen_jar_sha256": "35e8f63b6895e1d69fe45b51be45c196b4585c140b6a6c52b370a9922438d3b0",
+  "extracted_files_verified": 1118,
+  "source_sha256": {
+    "resources.py": "a92fd09855d8e303cd4e7b1c7f4ee51be60ae1f0dd64be43f280154f0e9264ce",
+    "runtime_service.py": "cbab86c2aaa58617606ae1fb844edebfc08ba4240d99100c57b68656eb025fb0",
+    "P21HealthBootstrap.java": "5c74a5076c399a5050b64ff742af477d516f09f19e403fe106f844d493b93644"
+  },
+  "extra_class_sha256": {
+    "com/example/courselingo/systemmodel/P21HealthBootstrap$MigrationImportBarrier.class": "8d8c9c80054c3a4f13add9c95de2e98e1c045264bcbe803dbeb6f000765f41d8",
+    "com/example/courselingo/systemmodel/P21HealthBootstrap$ConfigurationInput.class": "13fdca80bba4bf846ffbf46dc504b4e53b6468c21a29956ce7e2020cbe311459",
+    "com/example/courselingo/systemmodel/P21HealthBootstrap.class": "d129ccf1c463fcd88a65a0a960790b6824f9ad95ae79cc721a3928762e327bf7"
+  },
+  "application_starts_before": 0,
+  "schema_isolation": "new independent MySQL only",
+  "provider_calls_allowed": false,
+  "disk": {
+    "usage_percent": 76.81093671436703,
+    "margin_to_85_bytes": 12683009228.800003
+  }
+}

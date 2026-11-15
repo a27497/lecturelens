@@ -1,0 +1,17 @@
+{
+  "at_utc": "2026-10-17T06:49:31.796081+00:00",
+  "protected_file_count": 104,
+  "protected_files_all_unchanged": true,
+  "changed_protected_files": [],
+  "frozen_jar_unchanged": true,
+  "untracked_stat_unchanged": true,
+  "live_identity_unchanged": true,
+  "live": "MainPID=4789\nExecMainStartTimestampMonotonic=60822129\nActiveState=active\nSubState=running\n",
+  "owned_runtime_listeners_absent": true,
+  "disk": {
+    "used_bytes": 117567877120,
+    "available_bytes": 37309534208,
+    "usage_percent": 75.91028033843766,
+    "margin_to_85_bytes": 14077922508.800003
+  }
+}

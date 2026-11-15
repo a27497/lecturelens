@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class SubtitleTranslationPersistenceService {
+    private com.example.courselingo.subtitle.pipeline.TranscriptParagraphService paragraphs;
+    @org.springframework.beans.factory.annotation.Autowired(required=false)
+    public void configureParagraphs(com.example.courselingo.subtitle.pipeline.TranscriptParagraphService value){paragraphs=value;}
 
     private com.example.courselingo.task.service.GenerationFence generationFence;
 
@@ -53,6 +56,12 @@ class SubtitleTranslationPersistenceService {
         List<SubtitleTranslationSegment> translations,
         TaskFullTextResult fullTextResult
     ) {
+        replaceDualOutput(taskId,userId,targetLanguage,translations,fullTextResult,null);
+    }
+
+    @Transactional
+    void replaceDualOutput(String taskId,Long userId,String targetLanguage,List<SubtitleTranslationSegment> translations,
+            TaskFullTextResult fullTextResult,String sourceFingerprint) {
         if (fullTextResultMapper == null) {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Full text persistence is not configured");
         }
@@ -63,6 +72,7 @@ class SubtitleTranslationPersistenceService {
         if (fullTextResultMapper.insert(fullTextResult) != 1) {
             throw new BusinessException(ErrorCode.COMMON_INTERNAL_ERROR, "Full text translation persistence failed");
         }
+        if(paragraphs!=null) paragraphs.publish(taskId,userId,targetLanguage,sourceFingerprint);
     }
 
     @Transactional

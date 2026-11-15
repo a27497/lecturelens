@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-16T13:11:20.941914+00:00",
+  "objects": [
+    {
+      "task_id": "task_8b03a2fbae7d40039386451c71cb784a",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_f6bba3a5f6284043b38f4b34897db5e0",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_73654e7736404142b996a8e6f2ed1518",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_df926ba507524912b94b52905221faea",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_a12f95ef840b44d897baf8e78eaa7b5a",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_604acd640b574c3c81554c4b5ffe1512",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_d4464062edd9404b92b7953dd6a6d211",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_14645a8b89c5455994282ccac8fb687d",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_a4505199d541412b946cfdc59a4fc065",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_43081829cc2f4201ac46e14458447921",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    },
+    {
+      "task_id": "task_bca24366edcd4e09b38f38b213817485",
+      "artifact_objects": [],
+      "keyframe_objects": []
+    }
+  ],
+  "source_objects_read_only": true,
+  "submission_prefixes_are_unverified_hints": true,
+  "no_object_cleanup_performed": true
+}

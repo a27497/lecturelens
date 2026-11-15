@@ -1,0 +1,49 @@
+{
+  "command": [
+    "./mvnw",
+    "-o",
+    "-B",
+    "-Dtest=PreparationOverlapProbe",
+    "test"
+  ],
+  "cwd": "backend",
+  "disk_before": {
+    "used_bytes": 116273905664,
+    "available_bytes": 38603505664,
+    "usage_percent": 75.07479926672758,
+    "headroom_to_85_bytes": 15371893964.800003,
+    "allowed": true
+  },
+  "started_at_utc": "2026-10-16T16:39:17.349322+00:00",
+  "runtime_services_started": false,
+  "real_model_quality": false,
+  "pid": 2658640,
+  "start_ticks": "3608445",
+  "exit_code": 1,
+  "disk_peak_percent": 75.07511662740386,
+  "disk_after": {
+    "used_bytes": 116274302976,
+    "available_bytes": 38603108352,
+    "usage_percent": 75.07505579994091,
+    "headroom_to_85_bytes": 15371496652.800003,
+    "allowed": true
+  },
+  "log_path": ".data/p2-1c-20261016T155847Z/checks/stage3-overlap-probe.log",
+  "log_sha256": "eb0b1f3ef6fc1ccc46f6fff594d5a1c846aae875ff6b8ac2d8cf0b2d7bb07bf2",
+  "suites": [
+    {
+      "suite": "com.example.courselingo.systemmodel.PreparationOverlapProbe",
+      "tests": 2,
+      "failures": 1,
+      "errors": 1,
+      "skipped": 0,
+      "sha256": "b4821445468b952188887dd1cad40604db5585688fc6e33f973fc291914089ff"
+    }
+  ],
+  "total": {
+    "tests": 2,
+    "failures": 1,
+    "errors": 1,
+    "skipped": 0
+  }
+}

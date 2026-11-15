@@ -34,6 +34,7 @@ import CourseWorkspaceNav from "../components/task-detail/CourseWorkspaceNav.vue
 import { readCourseLocation, validPosition } from "../components/task-detail/courseLocation";
 import type { ContentView, SeekRequest } from "../components/task-detail/courseLocation";
 import type { CourseWorkspace } from "../components/task-detail/workspace";
+import { courseLearnable } from "../components/task-detail/workspace";
 import { useTaskEventsStore } from "../stores/taskEvents";
 import { useTaskResultStore } from "../stores/taskResult";
 import type { TaskDetailResponse } from "../types/task";
@@ -124,6 +125,9 @@ const taskId = computed(() => {
   return Array.isArray(value) ? value[0] || "" : value || "";
 });
 const task = computed(() => taskEventsStore.task);
+/** Subtitles-ready learning: the live event wins; task detail covers the time before the first event. */
+const learningReady = computed(() => task.value?.learningReady ?? taskDetail.value?.learningReady ?? null);
+const learnable = computed(() => courseLearnable(task.value?.status, learningReady.value));
 const result = computed(() => taskResultStore.result);
 const hasTaskId = computed(() => taskId.value.trim().length > 0);
 const canCancelTask = computed(() => ["CREATED", "QUEUED", "RUNNING", "RETRYING"].includes(task.value?.status || ""));
@@ -185,6 +189,15 @@ watch(() => task.value?.status, (status) => {
     completedResultReloadTaskId.value = currentTaskId;
     void taskResultStore.load(currentTaskId);
   }
+});
+
+// While a learnable course is still running, pick up subtitles, translations and materials as each
+// background stage starts, without clearing what the learner is already reading.
+watch(() => [learnable.value, task.value?.currentStage] as const, ([open, stage], previous) => {
+  const currentTaskId = taskId.value.trim();
+  if (!currentTaskId || !open || task.value?.status !== "RUNNING") return;
+  if (previous && previous[0] === open && previous[1] === stage) return;
+  void taskResultStore.refresh(currentTaskId);
 });
 
 onBeforeUnmount(() => {
@@ -515,6 +528,7 @@ async function confirmRetryTask() {
         :demo-mode="isDemoMode"
         v-show="!courseBlocked && !(reviewingEvidence && narrowScreen && !classicLayout)"
         :status="task?.status"
+        :learning-ready="learningReady"
         :can-cancel="canCancelTask"
         :can-retry="canRetryTask"
         :refreshing="taskEventsStore.isConnecting || taskResultStore.loading"
@@ -622,9 +636,9 @@ async function confirmRetryTask() {
             <CourseTutorPanel v-else-if="learningWorkspace === 'tutor'" :task-id="taskId" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
             <CourseFlashcardsPanel v-else-if="learningWorkspace === 'flashcards'" :task-id="taskId" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
             <CourseStudyPanel v-else-if="learningWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" @seek="seekTo" @navigate="changeWorkspace" />
+            <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" :learning-ready="learningReady" @seek="seekTo" @navigate="changeWorkspace" />
             <CourseQaPanel @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="learningWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
-            <CourseFilesPanel v-else-if="learningWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" />
+            <CourseFilesPanel v-else-if="learningWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" :artifacts-status="result?.artifactsStatus" />
             <CourseTechnicalPanel
               v-else-if="learningWorkspace === 'technical'"
               :task-id="taskId"

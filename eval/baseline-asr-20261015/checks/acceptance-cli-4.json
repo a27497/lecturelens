@@ -1,0 +1,14 @@
+{
+  "command": [
+    "bash",
+    "-o",
+    "pipefail",
+    "-c",
+    ".data/baseline-asr-20261015/.venv/bin/python eval/baseline-asr-20261015/coverage_asr.py | cmp - eval/baseline-asr-20261015/coverage-asr.json"
+  ],
+  "started_at_utc": "2026-10-15T11:20:39.306063+00:00",
+  "finished_at_utc": "2026-10-15T11:20:39.390467+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

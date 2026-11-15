@@ -35,6 +35,17 @@ class EmbeddedSubtitleTranscriptExtractorTest {
     }
 
     @Test
+    void multiLineCueKeepsWordBoundaryAtLineBreak() {
+        List<TranscribedSegment> segments = EmbeddedSubtitleTranscriptExtractor.parseWebVtt(
+            "WEBVTT\n\n00:00:17.000 --> 00:00:21.000\nRemember, in the\nfirst lecture, we drew a <i>diagram</i>\nsort of like this.\n",
+            "en"
+        );
+
+        assertThat(segments).extracting(TranscribedSegment::text)
+            .containsExactly("Remember, in the first lecture, we drew a diagram sort of like this.");
+    }
+
+    @Test
     void selectsMatchingLanguageFromMultipleStreamsAndCleansTemporaryFile() throws Exception {
         Path video = Files.writeString(tempDir.resolve("sample.mp4"), "video");
         RecordingExecutor executor = new RecordingExecutor(false);

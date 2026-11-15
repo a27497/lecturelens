@@ -1,0 +1,45 @@
+LectureLens 维护环境证书与 Agent 契约修复（2026-10-19）
+
+范围与身份
+按顺序更新 gateway TLS，再将 Agent 固定到 bc2e6cc79f1a3311b90cc4d407f75d2e20048275。
+Java jar、Java 进程、10-16 前端和本地模型进程保持不变。无 push。
+仅 Agent 使用一次获准重启；gateway 只做 nginx -t 和 reload，没有重建容器。
+没有真实模型、ASR、翻译调用；没有线上 MySQL DDL/GRANT/Flyway；没有手写线上 PostgreSQL DDL/GRANT。
+
+证书
+本地 CA 签发，leaf SAN 包含目标公网 IP，验证期 2026-10-19 至 2027-11-20。
+私有目录中验证证书链、IP SAN、公私钥匹配及 0600 权限后，原位写入原 bind 文件，inode 保持不变。
+nginx -t、reload 成功；reload 后首次立即连接仍碰到旧 worker，随后复查新指纹一致、CA 校验通过且 HTTPS 200。
+Windows Chrome/Edge 需由用户自行将公开根证书导入当前用户 Root 信任库；本轮未操作演示电脑，尚未验证其浏览器无警告。
+CA/服务器私钥和原证书备份只在私有目录，不入 Git。
+
+Agent 部署与迁移
+从指定提交 git archive 导出 release；使用同提交 uv.lock、Python 3.12、uv sync --frozen --offline --no-editable。
+依赖采用独立 copy 链接模式后，将 release 固化为 root 所有、无写权限，避免影响开发 venv 的共享硬链接。
+冻结启动器沿用原环境加载器，不查看或输出其凭据；仅调整解释器/PYTHONPATH/工作目录并显式开启 STUDY_FEEDBACK_ENABLED，其他现有开关和模型路由原样传递。
+启动器仅接管 Agent argv，其他服务命令被拒绝；2 项针对性测试通过。
+独立 PostgreSQL 17/pgvector 容器先恢复上一轮 lecturelens_agent 备份，再执行候选自带 initialize/setup。
+旧表行数及旧 Run 状态/预算计数保持一致，重复初始化幂等；审批唯一索引加入 awaiting_approval。
+生产切换前已准备新 PG dump、原 Agent unit 备份、回滚脚本及无在途 Run 的守卫。
+切换时 queued/running/awaiting_approval 均为 0，连接数 6/100，余量 94。
+线上仅通过候选应用启动时初始化/迁移；新建6表、11个新索引，并重建1个审批唯一索引。私有目录保留完整索引定义、字段差异及前后数据对照。
+/healthz ready，index_version 未改变，运行工作目录指向冻结 release。
+
+演练与保留的失败
+首次离线 uv sync 自动选 Python 3.13，缺少对应缓存 wheel，失败；指定原服务同系列 Python 3.12 后离线锁定安装通过，未修改 lock。
+首次机制测试为 163 通过、2 失败：新测试入口缺少 __main__ 保护，spawn 子进程重复执行 pytest；以及 release 未导出测试所需同提交 scripts/eval/report-study.py。
+未修改任何冻结实现/测试/历史证据。修正本次封装、补齐原提交辅助脚本、从旧 dump 重建隔离库后，同一组165项全部通过、0失败、0跳过。
+测试使用确定性 MockProvider 和合成 Authority，socket 守卫阻止实际供应商连接；不代表模型学习质量。
+另外三个独立进程验证：审批等待 checkpoint 跨进程恢复、决定后只发布一次且不增加模型计数、越权404、再次重启后取消待审批 Run且不发布产物。
+回滚演练：旧 C runtime 在升级后的独立库可初始化，5个 Session 可查询、5个终态 Run 可读；无在途 Run。生产回滚须先检查没有新审批/反馈在途状态，再删除冻结 drop-in、daemon-reload、使用剩余一次获准 Agent 重启恢复原启动源；保留加法 schema，不自动全库恢复丢弃新数据。
+
+当前验证边界
+7项离线请求校验通过，涵盖旧版拒绝的 RUNS、approval_required=false START、SAVE_ATTEMPT。
+线上未创建任何 Run；既有3个 Run、模型调用累计4次与切换前一致，新增 study_model_call 为0。
+线上 Java 的认证验收由用户选择在已登录浏览器运行 verify-study-protocol.browser.js，当前待结果。
+脚本仅 status、RUNS 查询，以及使用不存在 Run ID 的 DECIDE_APPROVAL/ATTEMPT_HISTORY/FEEDBACK_NOTES；后3项预期404，不是成功审批或学习闭环验收。
+本轮未验证真实生成、作答反馈质量、完整审批后的真实模型续跑、Windows 导入后的实际浏览器表现；不能宣称全功能已通过。
+私有演练容器保持运行，未停止其他服务或容器；恢复点、日志、证书和复现脚本不入 Git。
+
+后续用户回传
+Windows 当前用户 Root 导入及线上 TLS 验证已回传通过；浏览器无警告确认及五项 Java 接口仍为 NOT_RUN。执行受阻原因及证据边界见 USER_CHECKPOINT.txt，不覆盖本报告原始验证状态。

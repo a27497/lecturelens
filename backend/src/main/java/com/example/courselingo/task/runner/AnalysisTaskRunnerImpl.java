@@ -133,6 +133,10 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                     throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
                 }
 
+                if(message.protocol()==2 && executionLease!=null) {
+                    String old=executionLease.previousClaim(message);
+                    if(old!=null)taskClaimService.release(message.taskId(),old);
+                }
                 acquireClaim(message);
                 boolean leaseOpened = false;
                 try {
@@ -140,8 +144,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                         executionLease.open(message);
                         leaseOpened = true;
                     }
-                    changeState(message, AnalysisTaskStatus.RUNNING, task.getProgressPercent(), AnalysisTaskStage.EXTRACT_AUDIO,
-                        null, null);
+                    Runnable start=()->changeState(message, AnalysisTaskStatus.RUNNING, task.getProgressPercent(), AnalysisTaskStage.EXTRACT_AUDIO,null,null);
+                    if(message.protocol()==2 && executionLease!=null)executionLease.publishSuccess(message,start);else start.run();
                     executeWork(message);
                     outcome = "success";
                     logRunnerBoundary("runner_run_completed", message, "success");
@@ -167,12 +171,14 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 if (systemModels == null && disabledModels != null)
                     disabledModels.requireLegacyTask(message.taskId());
                 AnalysisTaskStatus status = AnalysisTaskStatus.fromDatabaseValue(task.getStatus());
-                if (status != AnalysisTaskStatus.RETRYING) {
+                if (status != AnalysisTaskStatus.RETRYING && !(message.protocol()==2 && status==AnalysisTaskStatus.QUEUED)) {
                     throw new BusinessException(ErrorCode.TASK_INVALID_STATUS);
                 }
 
-                changeState(message, AnalysisTaskStatus.QUEUED, task.getProgressPercent(), AnalysisTaskStage.QUEUED,
-                    null, null);
+                if(status==AnalysisTaskStatus.RETRYING) {
+                    Runnable queued=()->changeState(message, AnalysisTaskStatus.QUEUED, task.getProgressPercent(), AnalysisTaskStage.QUEUED,null,null);
+                    if(message.protocol()==2 && executionLease!=null)executionLease.publishQueued(message,queued);else queued.run();
+                }
                 run(message);
                 outcome = "success";
             } finally {
@@ -248,7 +254,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
             message.requestId(),
                         systemModels == null
                                 ? null
-                                : systemModels.pipeline(message.taskId(), message.userId()));
+                                : message.protocol()==2?systemModels.existingPipeline(message.taskId(),message.userId())
+                                    :systemModels.pipeline(message.taskId(), message.userId()),message.protocol(),message.epoch());
 
         AnalysisTaskWorkResult result;
         try {
@@ -266,8 +273,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 throw exception;
             }
             String sanitized = sanitizeAndLimit(exception.getMessage());
-            changeState(message, AnalysisTaskStatus.FAILED, null, failureStage(exception, sanitized),
-                ErrorCode.TASK_RUNNER_EXECUTION_FAILED.code(), sanitized);
+            Runnable failed=()->changeState(message, AnalysisTaskStatus.FAILED, null, failureStage(exception, sanitized),ErrorCode.TASK_RUNNER_EXECUTION_FAILED.code(), sanitized);
+            if(executionLease==null || message.protocol()!=2)failed.run();else executionLease.publishFailure(message,failed);
             throw new BusinessException(ErrorCode.TASK_RUNNER_EXECUTION_FAILED, sanitized, exception);
         }
 
@@ -281,8 +288,8 @@ public class AnalysisTaskRunnerImpl implements AnalysisTaskRunner {
                 ? ErrorCode.TASK_RUNNER_EXECUTION_FAILED.code()
                 : result.errorCode();
             String errorMessage = result == null ? "Analysis task work executor failed" : result.errorMessage();
-            changeState(message, AnalysisTaskStatus.FAILED, null, failureStage(null, errorMessage),
-                errorCode, sanitizeAndLimit(errorMessage));
+            Runnable failed=()->changeState(message, AnalysisTaskStatus.FAILED, null, failureStage(null,errorMessage),errorCode,sanitizeAndLimit(errorMessage));
+            if(executionLease==null || message.protocol()!=2)failed.run();else executionLease.publishFailure(message,failed);
             return;
         }
 

@@ -3,11 +3,11 @@ import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { downloadTaskArtifactText } from "../../api/result";
 import type { AnalysisTaskStatus } from "../../types/task";
-import type { ResultArtifactFile } from "../../types/result";
+import type { BackgroundStageStatus, ResultArtifactFile } from "../../types/result";
 import { getArtifactDescription, getArtifactLabel } from "../../utils/artifact";
 import { formatFileSize } from "../../utils/fileSize";
 
-const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; artifacts: ResultArtifactFile[] }>();
+const props = defineProps<{ taskId: string; status?: AnalysisTaskStatus; artifacts: ResultArtifactFile[]; artifactsStatus?: BackgroundStageStatus }>();
 const downloadingKey = ref("");
 const requestVersion = ref(0);
 watch(() => props.taskId, () => { requestVersion.value += 1; downloadingKey.value = ""; });
@@ -33,7 +33,7 @@ async function download(artifact: ResultArtifactFile) {
     if (version === requestVersion.value && props.taskId === currentTaskId) downloadingKey.value = "";
   }
 }
-function emptyText() { return props.status === "FAILED" ? "处理失败，暂无下载文件" : props.status === "CANCELED" ? "处理已取消，暂无下载文件" : "下载文件生成中"; }
+function emptyText() { return props.artifactsStatus === "FAILED" ? "下载文件生成失败；课程学习不受影响" : props.status === "FAILED" ? "处理失败，暂无下载文件" : props.status === "CANCELED" ? "处理已取消，暂无下载文件" : "下载文件生成中"; }
 </script>
 
 <template>
