@@ -160,6 +160,8 @@ def test_candidate_review_retries_invalid_tool_json_once(setup, repeat_failure):
     assert inputs[0]["candidate"] == inputs[1]["candidate"]
     assert "protocol_feedback" not in inputs[0]
     assert inputs[1]["protocol_feedback"]["error"] == "MODEL_TOOL_CONTRACT"
+    # Same fixed text as the structured wire view (see quality.review_retry_instruction).
+    assert inputs[1]["protocol_feedback"]["instruction"] == REVIEW_JSON_RETRY
     assert inputs[1]["protocol_feedback"]["diagnostics"] == JSON_FAILURE
     assert result["run"]["model_calls"] == 5
     events = test_study.read(setup, "EVENTS")["events"]

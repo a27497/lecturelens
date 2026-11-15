@@ -263,28 +263,28 @@ PATHS = {
         None,
         9,
         ["decision", OBSERVE, "decision", "decision", FINAL_REVIEW],
-        [4587, 13263, 15907, 16365, 18725],
+        [4585, 13263, 15905, 16363, 18725],
     ),
     "second_observation": (
         SHIFTED_HITS,
         None,
         10,
         ["decision", OBSERVE, OBSERVE, "decision", "decision", FINAL_REVIEW],
-        [4587, 13263, 13263, 15907, 16407, 18725],
+        [4585, 13263, 13263, 15905, 16405, 18725],
     ),
     "reused_observation_retried": (
         OVERLAPPING_HITS,
         (OBSERVE, 1),
         9,
         ["decision", FAILED_OBSERVE, OBSERVE, "decision", "decision", FINAL_REVIEW],
-        [4587, 13263, 13567, 15907, 16365, 18725],
+        [4585, 13263, 13567, 15905, 16363, 18725],
     ),
     "reused_observation_final_review_retried": (
         OVERLAPPING_HITS,
         (FINAL_REVIEW, 1),
         9,
         ["decision", OBSERVE, "decision", "decision", FINAL_REVIEW + "!", FINAL_REVIEW],
-        [4587, 13263, 15907, 16365, 18725, 19029],
+        [4585, 13263, 15905, 16363, 18725, 19029],
     ),
     # The recorded Run with a protocol retry: the second search's observation failed once.
     "second_observation_retried": (
@@ -292,14 +292,14 @@ PATHS = {
         (OBSERVE, 2),
         10,
         ["decision", OBSERVE, FAILED_OBSERVE, OBSERVE, "decision", "decision", FINAL_REVIEW],
-        [4587, 13263, 13263, 13567, 15907, 16407, 18725],
+        [4585, 13263, 13263, 13567, 15905, 16405, 18725],
     ),
     "second_observation_final_review_retried": (
         SHIFTED_HITS,
         (FINAL_REVIEW, 1),
         10,
         ["decision", OBSERVE, OBSERVE, "decision", "decision", FINAL_REVIEW + "!", FINAL_REVIEW],
-        [4587, 13263, 13263, 15907, 16407, 18725, 19029],
+        [4585, 13263, 13263, 15905, 16405, 18725, 19029],
     ),
 }
 

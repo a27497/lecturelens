@@ -9,6 +9,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ..contracts import Contract
+from .context import REVIEW_EVIDENCE_LIMIT
 
 
 class MethodSelection(Contract):
@@ -38,7 +39,7 @@ def observation_scope(evidence, practice_kind):
         "practice_kind": practice_kind,
         "sources": {
             item["evidence_id"]: hashlib.sha256(item["text"][:1200].encode()).hexdigest()
-            for item in evidence[:8]
+            for item in evidence[:REVIEW_EVIDENCE_LIMIT]
         },
     }
 

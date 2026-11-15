@@ -8,7 +8,7 @@ from typing import Annotated, Literal
 from pydantic import Field, PrivateAttr, ValidationInfo, model_validator
 
 from ..contracts import Contract
-from .context import aliases_in, compact_json
+from .context import REVIEW_EVIDENCE_LIMIT, aliases_in, compact_json
 from .goals import CLAIM_SYSTEM, GOAL_SYSTEM, ClaimCheck, GoalCheck
 from .method_scope import MethodAlignment, MethodObservation
 
@@ -86,6 +86,11 @@ class QualityReview(Contract):
     rubric_observations: Annotated[list[RubricObservation], Field(max_length=2)] = []
     answer_observations: Annotated[list[AnswerObservation], Field(max_length=2)] = []
     independent_solution: IndependentSolution | None = None
+    # Per-field issues from field-scoped reviews, so the runtime can tell a rejected
+    # tool-generated question from other defects. Older and unscoped reviews leave it empty.
+    field_issues: dict[
+        Literal["explanation", "question_1", "question_2"], Annotated[list[Issue], Field(max_length=10)]
+    ] = {}
 
 
 class AnswerCheck(Contract):
@@ -552,7 +557,7 @@ def review_messages(
         expected = materialize_practice(original)
         if candidate["questions"] != expected["questions"]:
             raise ValueError("Do not relabel a modified/free-form rubric as a derived rubric")
-    evidence = evidence[:8]
+    evidence = evidence[:REVIEW_EVIDENCE_LIMIT]
     aliases = {item["evidence_id"]: f"e{i + 1}" for i, item in enumerate(evidence)}
     from .context import course_order
 
@@ -608,7 +613,7 @@ def review_messages(
                 key: value for key, value in catalog.items() if value["source"] in {"explanation", "goal"}
             }
     if structured_support and (derived or abstention):
-        from .support_review import COVERAGE_SYSTEM, FIELD_SYSTEM
+        from .support_review import COVERAGE_SYSTEM, FIELD_EVIDENCE_INSTRUCTION, FIELD_SYSTEM
 
         body["review_mode"] = (
             "course_coverage_v1"
@@ -643,7 +648,7 @@ def review_messages(
                 "Answer mismatch automatically rejects via answer_check.matches=false; issue is for other defects. Do not call a correct answer incorrect because its task misses the goal.",
             )
             system = system.replace(
-                "State course_fact, select 1-3 own evidence_ids, then issue/correction.",
+                FIELD_EVIDENCE_INSTRUCTION,
                 "State course_fact from each field's bound own sources, then issue/correction. Do not return evidence_ids; the runtime preserves every original own source.",
             )
             system = GOAL_SYSTEM + "\n" + CLAIM_SYSTEM + "\n" + system
@@ -693,6 +698,16 @@ def verified_worked_example(candidate, observations):
 
 STRUCTURED_REVIEW_RETRY = "Return the declared schema with every required answer check, each field once, own evidence only. Obey character limits and use the learner language. For coverage: missing_goal_quote is empty for direct/demonstrated_method, an exact goal quote only for absent."
 REVIEW_JSON_RETRY = "The previous assess_study_candidate arguments were not one valid JSON object, so nothing was assessed. Return exactly one assess_study_candidate call whose arguments are a single valid JSON object: escape quotes and backslashes inside strings, no text outside the call, and keep every string brief."
+LEGACY_REVIEW_RETRY = "Return the declared schema. Explanation rejection anchors must include explanation:N and its own eN. Give a brief correction, not a full rewritten answer; rejection answer <=200 characters. Preserve semantic checks."
+
+
+def review_retry_instruction(code):
+    """The fixed retry instruction a legacy (unstructured) review input carries.
+
+    Structured review modes replace it on the wire with structured_retry_feedback,
+    which uses the same REVIEW_JSON_RETRY text for invalid tool-call JSON.
+    """
+    return REVIEW_JSON_RETRY if code == "MODEL_TOOL_CONTRACT" else LEGACY_REVIEW_RETRY
 
 
 def structured_retry_feedback(feedback):
