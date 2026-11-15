@@ -1541,7 +1541,7 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
 @pytest.mark.parametrize(
     ("manifest", "verifier"),
     [
-        ("study_reroute2_agent_manifest.json", verify_development_agent),
+        ("study_reroute_guard_agent_manifest.json", verify_development_agent),
         ("study_reroute_agent_manifest.json", verify_study_reroute_agent),
         ("study_review_agent_manifest.json", verify_study_review_agent),
         ("study_budget_agent_manifest.json", verify_study_budget_agent),

@@ -602,6 +602,7 @@ class StudyRuntime:
             pending = []
             seen = {item["fingerprint"] for item in state["history"]}
             closed_kinds = closed_practice_kinds(state["history"])
+            withdrawn_tools = {PRACTICE_TOOLS[kind] for kind in closed_kinds}
             current_kind = next(
                 (
                     h["result"].get("practice_kind")
@@ -638,7 +639,12 @@ class StudyRuntime:
                     if raw_arguments.get("practice_kind") in closed_kinds:
                         raise StudyError("INVALID_TOOL_ARGUMENTS")
                     current_kind = raw_arguments.get("practice_kind", current_kind)
-                elif current_kind in closed_kinds and name == PRACTICE_TOOLS[current_kind]:
+                elif name in withdrawn_tools and (
+                    current_kind in closed_kinds
+                    or name != PRACTICE_TOOLS.get(current_kind, "create_practice_set")
+                ):
+                    # General and search_cost share create_practice_set. A new open kind
+                    # may keep a shared tool, but it cannot bring back a withdrawn template.
                     raise StudyError("INVALID_TOOL_ARGUMENTS")
                 program_plan = None
                 revised_request = None

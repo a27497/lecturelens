@@ -32,7 +32,7 @@ STEP6_AGENT = "step6-agent-lanes-2eed7cb6c34e7c84"
 STUDY_BUDGET_AGENT = "study-budget-71b4d959dfab59a4"
 STUDY_REVIEW_AGENT = "study-review-c83394880f10b710"
 STUDY_REROUTE_AGENT = "study-reroute-c044bcc73f76226f"
-DEVELOPMENT_AGENT = "study-reroute2-f3a0397cd336a660"
+DEVELOPMENT_AGENT = "study-reroute2-9216f275f49dd67a"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
@@ -42,7 +42,7 @@ STEP6_MANIFEST_SHA256 = "2eed7cb6c34e7c84389767cb4d54fedcc12efb0aed07d3783cccf27
 STUDY_BUDGET_MANIFEST_SHA256 = "71b4d959dfab59a4c870fe0e2ab9f39db95fe4ce0e271debd84d1d836059695b"
 STUDY_REVIEW_MANIFEST_SHA256 = "c83394880f10b710a8d07830193d4beeb763953ea0f3a19a802ed6d4533cf889"
 STUDY_REROUTE_MANIFEST_SHA256 = "c044bcc73f76226f7ae74f77e83276dbe11421959954729e4b488ad2f9a1ee68"
-DEVELOPMENT_MANIFEST_SHA256 = "f3a0397cd336a6601f24a2c2ea20ed756e2c8ae337c407520867cb517ba70cf2"
+DEVELOPMENT_MANIFEST_SHA256 = "9216f275f49dd67afa551c337e3fa3cdd9721aee832f8b440521578483d19355"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -166,7 +166,7 @@ def verify_study_reroute_agent(package=None):
 
 def verify_development_agent(package=None):
     """Study re-route tuning candidate; no inherited frozen quality or live permission."""
-    return _verify_agent(package, "study_reroute2_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    return _verify_agent(package, "study_reroute_guard_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)
