@@ -32,7 +32,9 @@ STEP6_AGENT = "step6-agent-lanes-2eed7cb6c34e7c84"
 STUDY_BUDGET_AGENT = "study-budget-71b4d959dfab59a4"
 STUDY_REVIEW_AGENT = "study-review-c83394880f10b710"
 STUDY_REROUTE_AGENT = "study-reroute-c044bcc73f76226f"
-DEVELOPMENT_AGENT = "study-reroute2-9216f275f49dd67a"
+STUDY_REROUTE2_AGENT = "study-reroute2-f3a0397cd336a660"
+STUDY_REROUTE3_AGENT = "study-reroute3-f93cf8faab6862d8"
+DEVELOPMENT_AGENT = "study-content-c3e05752ba161db0"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
@@ -42,7 +44,10 @@ STEP6_MANIFEST_SHA256 = "2eed7cb6c34e7c84389767cb4d54fedcc12efb0aed07d3783cccf27
 STUDY_BUDGET_MANIFEST_SHA256 = "71b4d959dfab59a4c870fe0e2ab9f39db95fe4ce0e271debd84d1d836059695b"
 STUDY_REVIEW_MANIFEST_SHA256 = "c83394880f10b710a8d07830193d4beeb763953ea0f3a19a802ed6d4533cf889"
 STUDY_REROUTE_MANIFEST_SHA256 = "c044bcc73f76226f7ae74f77e83276dbe11421959954729e4b488ad2f9a1ee68"
-DEVELOPMENT_MANIFEST_SHA256 = "9216f275f49dd67afa551c337e3fa3cdd9721aee832f8b440521578483d19355"
+STUDY_REROUTE2_MANIFEST_SHA256 = "f3a0397cd336a6601f24a2c2ea20ed756e2c8ae337c407520867cb517ba70cf2"
+STUDY_REROUTE3_MANIFEST_SHA256 = "f93cf8faab6862d8544e834d7745f8e246739cce662f53cc3132bc8f4696331b"
+STUDY_CONTENT_MANIFEST_SHA256 = "2131d025b61561e5c63a6c59dc17078fb07eb112062501a48669776708d0efbf"
+DEVELOPMENT_MANIFEST_SHA256 = "c3e05752ba161db00a8b5468b496261f72050be96a93d0814fb6dd4a192bcaf0"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -164,9 +169,24 @@ def verify_study_reroute_agent(package=None):
     return _verify_agent(package, "study_reroute_agent_manifest.json", STUDY_REROUTE_MANIFEST_SHA256)
 
 
+def verify_study_reroute2_agent(package=None):
+    """Historical re-route tuning identity (7f97823) only; the review close-out runtime must fail."""
+    return _verify_agent(package, "study_reroute2_agent_manifest.json", STUDY_REROUTE2_MANIFEST_SHA256)
+
+
+def verify_study_reroute3_agent(package=None):
+    """Historical review close-out identity (baea8b9) only; the content-quality runtime must fail."""
+    return _verify_agent(package, "study_reroute3_agent_manifest.json", STUDY_REROUTE3_MANIFEST_SHA256)
+
+
+def verify_study_content_agent(package=None):
+    """Historical T2/T3 content-quality identity."""
+    return _verify_agent(package, "study_content_agent_manifest.json", STUDY_CONTENT_MANIFEST_SHA256)
+
+
 def verify_development_agent(package=None):
-    """Study re-route tuning candidate; no inherited frozen quality or live permission."""
-    return _verify_agent(package, "study_reroute_guard_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """Current Study candidate with template and abstention guards."""
+    return _verify_agent(package, "study_content_guard_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)

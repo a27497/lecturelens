@@ -624,6 +624,52 @@ def test_pre_retrieval_learner_plan_recovers_and_binds_actual_task_and_outcomes(
         assert "同学声称" in result["artifact"]["questions"][1]["question"]
 
 
+def test_locked_linear_plan_reviews_an_abstention_without_requesting_a_search(setup):
+    from lecturelens_agent.study.contracts import StudyCommand
+    from lecturelens_agent.study.provider import decision_schemas
+
+    store, _, runtime, scope = setup
+    plan = {"task": "verify", "equation_count": 2, "point_outcomes": ["all"], "coordinate_mode": "new"}
+    contexts = []
+
+    def decide(messages, timeout):
+        context = json.loads(messages[-1]["content"])
+        contexts.append(context)
+        if not context["history"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "point", "practice_kind": "linear_points", "linear_request": plan},
+            }
+        assert context["linear_request"] == {**plan, "intent_version": 2}
+        offered = {tool["function"]["name"] for tool in decision_schemas(messages)}
+        assert "search_course_evidence" not in offered
+        assert "report_insufficient_evidence" in offered
+        return {
+            "name": "report_insufficient_evidence",
+            "arguments": {"reason": "The retrieved passages do not contain this exercise."},
+        }
+
+    runtime.provider.decide = decide
+    response = store.command(
+        StudyCommand(
+            **scope,
+            operation="START",
+            request_key="locked-linear-abstention",
+            goal="用两条方程出一道题，判断一个点是否同时满足两条方程。",
+        ),
+        "mock",
+    )
+    run = next(row for row in store.candidates() if row["run_id"] == response["run"]["run_id"])
+
+    runtime.execute(run)
+
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+    assert result["artifact"]["kind"] == "insufficient_evidence"
+    assert len(contexts) == 2
+    assert not any("abstention_notice" in context for context in contexts)
+
+
 def test_budget_policy_reserves_review_and_plan_schema_omits_already_bound_decisions():
     from lecturelens_agent.study.context import build_messages
     from lecturelens_agent.study.provider import decision_schemas
@@ -967,3 +1013,128 @@ def test_explicit_plan_revision_preserves_original_and_requires_verbatim_goal():
     args["request_revision"]["goal_quote"] = "invented request"
     with pytest.raises(ValueError):
         bind_linear_request(args, plan, goal)
+
+
+# --- Phase R1: the replayed linear call matches the decision contract ---
+
+
+def stored_linear_call():
+    """The journal form: LinearPracticeArgs with the runtime-bound top-level evidence_ids."""
+    args = arguments()
+    args["concept"]["evidence_ids"] = ["a", "b"]
+    args["application"]["evidence_ids"] = ["b", "a"]
+    args["evidence_ids"] = ["a", "b"]
+    stored = LinearPracticeArgs.model_validate(args).model_dump()
+    return {"tool": "create_linear_practice", "arguments": stored, "result": {"evidence_ids": ["a", "b"]}}
+
+
+def test_replayed_linear_call_omits_runtime_bound_ids_and_validates_against_its_schema():
+    from lecturelens_agent.study.context import aliases_in, build_messages
+    from lecturelens_agent.study.linear import LinearSelectionArgs
+
+    evidence = [
+        {"evidence_id": ref, "text": "Substitute the point.", "start_ms": i * 5000, "end_ms": i * 5000 + 1000}
+        for i, ref in enumerate(["a", "b"])
+    ]
+    item = stored_linear_call()
+    messages, reverse = build_messages("system", "检查点", evidence, [item], [])
+    replayed = json.loads(messages[-2]["tool_calls"][0]["function"]["arguments"])
+    assert "evidence_ids" not in replayed
+    # The model-visible citations remain, and a verbatim resubmission is a valid decision.
+    restored = aliases_in(replayed, reverse)
+    assert restored["concept"]["evidence_ids"] == ["a", "b"]
+    assert restored["application"]["evidence_ids"] == ["b", "a"]
+    LinearSelectionArgs.model_validate(replayed)
+    # The journal itself still holds the bound IDs, and the contract stays strict.
+    assert item["arguments"]["evidence_ids"] == ["a", "b"]
+    with pytest.raises(ValidationError):
+        LinearSelectionArgs.model_validate({**replayed, "evidence_ids": ["e1"]})
+
+
+def test_other_replayed_calls_keep_their_top_level_evidence_ids():
+    from lecturelens_agent.study.context import build_messages
+
+    evidence = [{"evidence_id": "a", "text": "A passage.", "start_ms": 0, "end_ms": 1000}]
+    item = {
+        "tool": "create_practice_set",
+        "arguments": {"title": "Draft", "evidence_ids": ["a"]},
+        "result": {"evidence_ids": ["a"]},
+    }
+    messages, _ = build_messages("system", "goal", evidence, [item], [])
+    assert json.loads(messages[-2]["tool_calls"][0]["function"]["arguments"])["evidence_ids"] == ["e1"]
+
+
+def test_linear_repair_resubmitting_its_replayed_call_is_accepted_with_owned_citations(setup):
+    """Mirrors the C2 c1-linear failure: the repair copies the previous call and edits it."""
+    store, _, runtime, _ = setup
+    first, reviewed = [], []
+
+    def decide(messages, timeout):
+        body = json.loads(messages[-1]["content"])
+        if not body["evidence"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "point", "practice_kind": "linear_points"},
+            }
+        previous = [
+            call["function"]
+            for message in messages
+            if message.get("role") == "assistant"
+            for call in message.get("tool_calls") or []
+            if call["function"]["name"] == "create_linear_practice"
+        ]
+        if not previous:
+            # First submission: citations only in the accepted concept/application fields.
+            args = arguments()
+            args.pop("evidence_ids")
+            args["concept"]["evidence_ids"] = ["e2"]
+            first.append(args)
+            return {"name": "create_linear_practice", "arguments": args}
+        args = json.loads(previous[-1]["arguments"])
+        args["application"]["points"][1]["x"] = 3
+        return {"name": "create_linear_practice", "arguments": args}
+
+    def review(messages, timeout):
+        body = json.loads(messages[-1]["content"])
+        if body["review_mode"] == "course_methods_v1":
+            data = {
+                "course_fact": "An observed check",
+                "support": "demonstrated_method",
+                "missing_goal_quote": "",
+                "evidence_ids": ["e1"],
+                "methods": [
+                    {"operation": "Check a point", "input": "Point", "output": "Checks", "evidence_id": "e1"}
+                ],
+            }
+            return {"review": MethodCoverageVerdict.model_validate(data, context=body).review().model_dump()}
+        reviewed.append(body)
+        data = goal_verdict(body)
+        data["application_method_check"] = data["checks"][2].pop("method_alignment")
+        if len(reviewed) == 1:
+            data["checks"][2].update(issue="unsupported_question", correction="Use another point.")
+        verdict = review_contract(review_mode=body["review_mode"]).model_validate(data, context=body)
+        return {"review": verdict.review().model_dump()}
+
+    runtime.provider.decide, runtime.provider.review = decide, review
+    run = test_study.start(setup)
+    runtime.execute(run)
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+    assert len(reviewed) == 2
+    with store.connect() as conn:
+        stored = [
+            row["arguments"]
+            for row in conn.execute(
+                "SELECT arguments FROM study_tool_result WHERE run_id=%s AND tool_name='create_linear_practice'"
+                " ORDER BY call_id",
+                (run["run_id"],),
+            ).fetchall()
+        ]
+    assert len(stored) == 2 and first
+    for args in stored:
+        # The runtime still binds top-level IDs from concept plus the observed method source.
+        assert args["evidence_ids"] == args["concept"]["evidence_ids"]
+    artifact = result["artifact"]
+    ids = set(artifact["evidence_ids"])
+    assert all(c["evidence_id"] in ids for c in artifact["citations"])
+    assert all(set(q["evidence_ids"]) <= ids for q in artifact["questions"])

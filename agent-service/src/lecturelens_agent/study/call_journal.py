@@ -24,6 +24,9 @@ def slot_key(purpose, ordinal=0):
         # Only a decision after an unchanged-repair notice gets a distinct slot;
         # every other key stays byte-identical for replay of existing Runs.
         parts.append(["unchanged_repair", span["unchanged_repair_retries"]])
+    if span.get("abstention_notices"):
+        # Likewise for the decision after a withheld abstention (context.ABSTENTION_NOTICE).
+        parts.append(["abstention_notice", span["abstention_notices"]])
     return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
 
 

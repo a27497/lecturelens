@@ -46,6 +46,7 @@ def traced_node(store, run, token, name, function):
                 "turn": state.get("turn", 0),
                 "protocol_retries": state.get("protocol_retries", 0),
                 "unchanged_repair_retries": state.get("unchanged_repair_retries", 0),
+                "abstention_notices": state.get("abstention_notices", 0),
                 "store": store,
                 "run_id": run["run_id"],
                 "token": token,

@@ -94,10 +94,10 @@ def test_profile_does_not_change_other_providers_or_models(monkeypatch, url, mod
 
 
 def test_phase0_provider_change_cannot_claim_historical_p10_identity():
-    # Phase 0, Step 6 and the Study budget/review/re-route identities are historical now; none may claim P10.
+    # Phase 0, Step 6 and the Study budget/review/re-route/tuning/close-out identities are historical; none may claim P10.
     assert PHASE0_AGENT.startswith("phase0-integration-")
     assert STEP6_AGENT.startswith("step6-agent-lanes-")
-    assert DEVELOPMENT_AGENT.startswith("study-reroute2-")
+    assert DEVELOPMENT_AGENT.startswith("study-content-")
     assert P10_AGENT == "p10-choice-review-442bb2af75c77ed1"
     assert verify_development_agent() == 63
     with pytest.raises(CostDenied, match="COST_AGENT_IDENTITY_CHANGED"):

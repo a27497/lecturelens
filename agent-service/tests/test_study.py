@@ -139,7 +139,12 @@ def test_insufficient_evidence_is_a_persisted_outcome_without_fake_practice(setu
     assert result["artifact"]["questions"] == result["artifact"]["citations"] == []
     assert read(setup, "ANSWERS")["questions"] == []
     events = read(setup, "EVENTS")["events"]
-    assert sum(event["event_type"] == "model_finished" for event in events) == 3
+    # Search decision, the withheld first abstention (one reformulation notice), the repeated
+    # abstention and its review. A model may still abstain after the notice.
+    assert sum(event["event_type"] == "model_finished" for event in events) == 4
+    assert [e["payload"]["purpose"] for e in events if e["event_type"] == "protocol_retry_scheduled"] == [
+        "abstention_check"
+    ]
     assert all(
         event["payload"]["duration_ms"] >= 0 for event in events if event["event_type"] == "model_finished"
     )
@@ -716,7 +721,8 @@ def test_false_abstention_feedback_can_lead_to_grounded_practice(setup):
     runtime.provider.decide, runtime.provider.review = decide, review
     runtime.execute(start(setup))
     response = read(setup)
-    assert response["run"]["status"] == "succeeded" and response["run"]["model_calls"] == 5
+    # One more decision than before: the first abstention is withheld for one reformulation.
+    assert response["run"]["status"] == "succeeded" and response["run"]["model_calls"] == 6
     assert response["artifact"]["kind"] == "practice"
     assert observed[0]["issues"] == ["unjustified_abstention"]
 

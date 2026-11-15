@@ -539,7 +539,9 @@ def test_managed_pilot_uses_isolated_routes_and_never_changes_source_config(regi
     row = json.loads((output / "results.jsonl").read_text())
     assert row["run"]["status"] == "succeeded"
     assert row["artifact"]["kind"] == "insufficient_evidence"
-    assert [call["model"] for call in calls] == ["qwen-plus", "qwen-plus", "qwen3-max"]
+    # Decisions use the decision model, the abstention review the review model. The first
+    # abstention is withheld once for a reformulated search (context.ABSTENTION_NOTICE).
+    assert [call["model"] for call in calls] == ["qwen-plus", "qwen-plus", "qwen-plus", "qwen3-max"]
     assert command(registry, "LIST") == before
     assert "private-provider-key" not in (output / "results.jsonl").read_text()
     with reg.store.connect() as conn:
@@ -551,7 +553,7 @@ def test_managed_pilot_uses_isolated_routes_and_never_changes_source_config(regi
         )
     with pytest.raises(FileExistsError):
         pilot.main()
-    assert len(calls) == 3
+    assert len(calls) == 4  # the refused rerun makes no provider call
 
 
 def test_run_freezes_single_turn_evidence_without_promoting_other_evidence(registry):
