@@ -14,9 +14,16 @@ from langgraph.types import Command
 from pydantic import ValidationError
 
 from .context import (
+    ABSTENTION_NOTICE,
+    ABSTENTION_NOTICE_MIN_MODEL_CALLS,
+    ABSTENTION_NOTICE_MIN_TOOL_CALLS,
+    EXPLORATION_TOOLS,
+    METHOD_CITATION_CHECK,
     PRACTICE_TOOLS,
     REVIEW_EVIDENCE_LIMIT,
     RUN_CANDIDATE_LIMIT,
+    TOOL_CALL_NOTICE,
+    TOOL_CALL_NOTICE_AT,
     aliases_in,
     build_messages,
     closed_practice_kinds,
@@ -48,7 +55,7 @@ from .quality import (
 )
 from .sequences import sequence_practice
 from .solution import solution_fingerprint, solution_messages
-from .store import RUN_MODEL_CALL_LIMIT, BudgetExceeded, RunStopped, StudyError
+from .store import RUN_MODEL_CALL_LIMIT, RUN_TOOL_CALL_LIMIT, BudgetExceeded, RunStopped, StudyError
 from .strings import copied_string_input, novel_string_input
 from .telemetry import TracedAuthority, model_detail, traced_node
 
@@ -116,6 +123,8 @@ class State(TypedDict):
     tool_contract_diagnostics: dict
     unchanged_repair_retries: int
     retry_unchanged_repair: dict | None
+    abstention_notices: int
+    retry_abstention: bool
 
 
 class StudyRuntime:
@@ -286,6 +295,8 @@ class StudyRuntime:
                             "retry_tool_contract": False,
                             "unchanged_repair_retries": 0,
                             "retry_unchanged_repair": None,
+                            "abstention_notices": 0,
+                            "retry_abstention": False,
                         }
                     )
                     if saved.interrupts and initial is None:
@@ -498,6 +509,9 @@ class StudyRuntime:
 
             budget_row = guard()
             planned_calls = planning_calls(self.store, run["run_id"], token, budget_row["model_calls"])
+            calls_left_after_response = max(0, RUN_MODEL_CALL_LIMIT - 1 - planned_calls)
+            # Persistent count; no tool runs between this read and the checkpointed decision.
+            tools_left = RUN_TOOL_CALL_LIMIT - budget_row["tool_calls"]
             evidence = (
                 self.authority.read(run, "READ", evidence_ids=state["selected"])["evidence"]
                 if state["selected"]
@@ -536,12 +550,17 @@ class StudyRuntime:
                 state["history"],
                 self.store.recent_context(run["session_id"], run["run_id"]),
                 {
-                    "model_calls_left_after_response": max(0, RUN_MODEL_CALL_LIMIT - 1 - planned_calls),
+                    "model_calls_left_after_response": calls_left_after_response,
                     "new_practice_review_calls": 2
                     if self.independent_solutions and self.provider.mode == "real"
                     else 1,
                     "computed_practice_review_calls": 1,
                     "candidates_left": RUN_CANDIDATE_LIMIT - counted_candidates(state["history"]),
+                    **(
+                        {"tool_calls_left": tools_left, "tool_call_notice": TOOL_CALL_NOTICE}
+                        if tools_left <= TOOL_CALL_NOTICE_AT
+                        else {}
+                    ),
                 },
             )
             unchanged = state.get("retry_unchanged_repair")
@@ -559,6 +578,13 @@ class StudyRuntime:
                     "search again with the practice_kind that matches the goal instead of resubmitting it. "
                     "Report insufficient evidence only if the course evidence is absent."
                 )
+                messages[-1] = {**messages[-1], "content": compact_json(observation)}
+            if state.get("retry_abstention"):
+                # Added only after a withheld abstention, so other contexts stay byte-identical.
+                from .context import compact_json
+
+                observation = json.loads(messages[-1]["content"])
+                observation["abstention_notice"] = ABSTENTION_NOTICE
                 messages[-1] = {**messages[-1], "content": compact_json(observation)}
             if state.get("retry_tool_contract"):
                 messages.append(
@@ -593,6 +619,7 @@ class StudyRuntime:
                     "protocol_retries": 1,
                     "retry_tool_contract": True,
                     "tool_contract_diagnostics": getattr(error, "diagnostics", {}),
+                    "retry_abstention": False,
                 }
             if not isinstance(call, dict):
                 raise StudyError("MODEL_TOOL_CONTRACT")
@@ -631,6 +658,54 @@ class StudyRuntime:
                     and offset != len(calls) - 1
                 ):
                     raise StudyError("ARTIFACT_MUST_END_RUN")
+                if (
+                    name == "report_insufficient_evidence"
+                    and len(calls) == 1
+                    and not state.get("abstention_notices", 0)
+                    and tools_left >= ABSTENTION_NOTICE_MIN_TOOL_CALLS
+                    and calls_left_after_response >= ABSTENTION_NOTICE_MIN_MODEL_CALLS
+                ):
+                    # See ABSTENTION_NOTICE: one reformulated search before the first abstention.
+                    guard()
+                    self.store.event(
+                        run["run_id"],
+                        token,
+                        "protocol_retry_scheduled",
+                        {
+                            "error_code": "SEARCH_REQUIRED",
+                            "failure_category": failure_category("SEARCH_REQUIRED"),
+                            "retry": 1,
+                            "purpose": "abstention_check",
+                        },
+                    )
+                    return {
+                        "pending": None,
+                        "queue": [],
+                        "retry_tool_contract": False,
+                        "retry_unchanged_repair": None,
+                        "abstention_notices": 1,
+                        "retry_abstention": True,
+                    }
+                if name in EXPLORATION_TOOLS and tools_left - len(pending) == 1:
+                    # This call would take the reserved last tool call (see EXPLORATION_TOOLS).
+                    # Earlier calls and a final candidate in the same response still run. With
+                    # no call left, the persistent reservation still ends the Run budget_exceeded.
+                    self.store.event(
+                        run["run_id"],
+                        token,
+                        "tool_rejected",
+                        {
+                            "node": "decide",
+                            "call_id": None,
+                            "turn": state["turn"],
+                            "offset": offset,
+                            "tool": name,
+                            "error_code": "TOOL_CALL_BUDGET_RESERVED",
+                            "failure_category": failure_category("TOOL_CALL_BUDGET_RESERVED"),
+                            "policy": "skip_exploration_at_last_tool_call",
+                        },
+                    )
+                    continue
                 raw_arguments = dict(tool_call["arguments"])
                 # Provider-independent fence for the withdrawn template (see closed_practice_kinds):
                 # neither its creation tool nor a search selecting its kind may run again.
@@ -736,6 +811,20 @@ class StudyRuntime:
                         arguments = LinearPracticeArgs.model_validate(arguments).model_dump()
                     if name == "create_practice_set":
                         arguments = GenericPracticeArgs.model_validate(arguments).to_draft()
+                        if application_method is not None:
+                            # As for linear practice: the chosen method_id names the source of
+                            # the application's operation, so question_2 cites it before review.
+                            # The source is already authorized (METHOD_EVIDENCE_NOT_SELECTED) and,
+                            # like every citation, one of at most eight visible aliases, so the
+                            # question's bound holds. Review still judges method alignment and
+                            # support. method_citation_check remains for checkpointed candidates
+                            # decided before this binding.
+                            application = arguments["questions"][1]
+                            application["evidence_ids"] = list(
+                                dict.fromkeys(
+                                    [*application["evidence_ids"], application_method["evidence_id"]]
+                                )
+                            )
                 referenced = set(arguments.get("evidence_ids", []))
                 if name == "read_evidence_window":
                     referenced.add(arguments["evidence_id"])
@@ -792,6 +881,7 @@ class StudyRuntime:
                         "queue": [],
                         "retry_tool_contract": False,
                         "unchanged_repair_retries": 1,
+                        "retry_abstention": False,
                         "retry_unchanged_repair": {
                             "call": f"c{prior_index}",
                             "issues": state["history"][prior_index]["result"]["quality"]["issues"],
@@ -802,7 +892,9 @@ class StudyRuntime:
                 seen.add(fingerprint)
                 pending.append(
                     {
-                        "call_id": f"{run['run_id']}:{state['turn'] + offset}",
+                        # Executed calls are numbered consecutively; a skipped reserved-call
+                        # exploration must not leave a gap that a later decision would reuse.
+                        "call_id": f"{run['run_id']}:{state['turn'] + len(pending)}",
                         "name": name,
                         "arguments": arguments,
                         "fingerprint": fingerprint,
@@ -819,11 +911,15 @@ class StudyRuntime:
                         ),
                     }
                 )
+            if not pending:
+                # Only reserved-call explorations: the provider schema had withdrawn them.
+                raise StudyError("INVALID_TOOL_ARGUMENTS")
             return {
                 "pending": pending[0],
                 "queue": pending[1:],
                 "retry_tool_contract": False,
                 "retry_unchanged_repair": None,
+                "retry_abstention": False,
             }
 
         def act(state):
@@ -1190,7 +1286,7 @@ class StudyRuntime:
                     if method_missing:
                         verdict = repair_review(["unsupported_question"])
                         verdict.feedback = "The application must cite its selected method's observed source, or select a supported method and rewrite the application."
-                        check_source = "method_citation_check"
+                        check_source = METHOD_CITATION_CHECK
                     elif copied_input:
                         verdict = repair_review(["goal_mismatch"])
                         verdict.feedback = "The learner requested new string practice. Every multi-character input is already in the observed course. Choose a different string input while preserving the taught operations and requested task; then recompute the exact program."
@@ -1340,7 +1436,9 @@ class StudyRuntime:
             "decide",
             lambda state: (
                 "decide"
-                if state.get("retry_tool_contract") or state.get("retry_unchanged_repair")
+                if state.get("retry_tool_contract")
+                or state.get("retry_unchanged_repair")
+                or state.get("retry_abstention")
                 else "tool"
             ),
         )

@@ -548,3 +548,194 @@ def test_second_window_read_in_one_response_survives_eviction_by_the_first(setup
         "read_evidence_window",
         "create_interval_practice",
     ]
+
+
+# --- Phase R2: method_citation_check rejections use the same closure decision ---
+
+
+def method_check_rejection():
+    from lecturelens_agent.study.context import METHOD_CITATION_CHECK
+    from lecturelens_agent.study.quality import repair_review
+
+    verdict = repair_review(["unsupported_question"])
+    verdict.feedback = "The application must cite its selected method's observed source."
+    rejected = {"tool": "create_practice_set", "arguments": {"title": "Draft"}}
+    rejected["result"] = {
+        "quality": {"accepted": False, "source": METHOD_CITATION_CHECK, **verdict.model_dump()}
+    }
+    return rejected
+
+
+@pytest.mark.parametrize("kind", [*TEMPLATE_PRACTICE_KINDS, "general", "linear_points", "python_strings"])
+def test_method_citation_rejection_closes_exactly_the_template_kinds(kind):
+    rejected = method_check_rejection()
+    # The stored verdict is unchanged: the check still writes no field_issues.
+    assert rejected["result"]["quality"]["field_issues"] == {}
+    assert template_mismatch(rejected["result"]["quality"])
+    closed = kind in TEMPLATE_PRACTICE_KINDS
+    assert closed_practice_kinds([search(kind), rejected]) == ([kind] if closed else [])
+    assert counted_candidates([search(kind), rejected]) == (0 if closed else 1)
+
+
+def test_unsupported_issue_without_question_2_attribution_still_does_not_close():
+    # A model review naming another field, or an unattributed check, keeps in-place repair.
+    for source, field_issues in [
+        ("model_review", {"question_1": ["unsupported_question"]}),
+        ("model_review", {}),
+        ("citation_check", {}),
+    ]:
+        rejected = candidate("create_practice_set", ["unsupported_question"])
+        rejected["result"]["quality"].update(source=source, field_issues=field_issues)
+        assert closed_practice_kinds([search("search_cost"), rejected]) == []
+
+
+@pytest.mark.parametrize(
+    "history",
+    [
+        [search("general"), method_check_rejection()],
+        [search("linear_points"), method_check_rejection()],
+        [search("search_cost"), candidate("create_practice_set", ["unsupported_explanation"])],
+        [search("interval_halving")],
+    ],
+)
+def test_contexts_without_a_closure_are_byte_identical_to_the_previous_rule(history, monkeypatch):
+    from lecturelens_agent.study import context as module
+
+    current = build_messages("system", PEAK_GOAL, EVIDENCE, history, [], budget={"candidates_left": 1})
+    monkeypatch.setattr(
+        module, "question_2_issues", lambda q: (q.get("field_issues") or {}).get("question_2", [])
+    )
+    previous = build_messages("system", PEAK_GOAL, EVIDENCE, history, [], budget={"candidates_left": 1})
+    assert json.dumps(current, sort_keys=True) == json.dumps(previous, sort_keys=True)
+    assert "closed_practice_kinds" not in current[0][-1]["content"]
+
+
+def separate_method_source(authority):
+    """Keep e2 away from e1 so citation completion cannot add the method source to question_2."""
+    original = authority.read
+
+    def read(scope, action="CHECK", **kwargs):
+        result = original(scope, action, **kwargs)
+        for item in result.get("evidence", []):
+            if item["evidence_id"] == "e2":
+                item.update(start_ms=10000, end_ms=11000)
+        return result
+
+    authority.read = read
+
+
+def method_check_provider(runtime, first_kind, cost_method_id=None):
+    """The first candidate cites only e2 in question_2; the observed method's source is e1."""
+    contexts, decided = [], []
+
+    def decide(messages, timeout):
+        from test_study_costs import arguments as cost_arguments
+
+        context = json.loads(messages[-1]["content"])
+        contexts.append(context)
+        if not context["evidence"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "cost", "practice_kind": first_kind},
+            }
+        decided.append(context.get("practice_kind"))
+        if context.get("practice_kind") == "search_cost":
+            args = cost_arguments()
+            args["evidence_ids"] = args["concept"]["evidence_ids"] = args["application_evidence_ids"] = ["e2"]
+            if cost_method_id:
+                args["method_id"] = cost_method_id
+            return {"name": "create_practice_set", "arguments": args}
+        arguments = general_arguments()
+        if len(decided) == 1:
+            # As in the probe Runs: the shared citations include both passages, question_2 omits e1.
+            arguments["evidence_ids"] = ["e1", "e2"]
+            arguments["application"]["evidence_ids"] = ["e2"]
+        return {"name": "create_practice_set", "arguments": arguments}
+
+    def review(messages, timeout):
+        body = json.loads(messages[-1]["content"])
+        if body["review_mode"] == "course_methods_v1":
+            data = {
+                "course_fact": "Compare the costs of lookups.",
+                "evidence_ids": ["e1"],
+                "support": "demonstrated_method",
+                "missing_goal_quote": "",
+                "methods": [
+                    {"operation": "比较代价", "input": "查找次数", "output": "复杂度", "evidence_id": "e1"}
+                ],
+            }
+            return {"review": MethodCoverageVerdict.model_validate(data, context=body).review().model_dump()}
+        data = goal_verdict(body)
+        if "application_method" in body:
+            data["application_method_check"] = data["checks"][2].pop("method_alignment")
+        verdict = review_contract(review_mode=body["review_mode"]).model_validate(data, context=body)
+        return {"review": verdict.review().model_dump()}
+
+    runtime.provider.decide, runtime.provider.review = decide, review
+    return contexts
+
+
+def stored_qualities(store, run):
+    with store.connect() as conn:
+        rows = conn.execute(
+            "SELECT call_id, result->'quality' AS quality FROM study_tool_result WHERE run_id=%s AND result ? 'quality'",
+            (run["run_id"],),
+        ).fetchall()
+    return [row["quality"] for row in sorted(rows, key=lambda r: int(r["call_id"].rsplit(":", 1)[1]))]
+
+
+def test_general_application_cites_its_method_source_before_review(setup):
+    """Phase S1: an omitted method source is bound, not rejected by method_citation_check.
+
+    In the 2026-11-14 probe all three method_citation_check rejections were this omission.
+    """
+    store, authority, runtime, _ = setup
+    separate_method_source(authority)
+    contexts = method_check_provider(runtime, "general")
+    reviewed = []
+    review = runtime.provider.review
+
+    def capture(messages, timeout):
+        body = json.loads(messages[-1]["content"])
+        if body["review_mode"] != "course_methods_v1":
+            reviewed.append(body)
+        return review(messages, timeout)
+
+    runtime.provider.review = capture
+    run = test_study.start(setup)
+    runtime.execute(run)
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+    tools, quality = run_events(setup)
+    assert tools == ["search_course_evidence", "create_practice_set"]
+    assert quality == [True]
+    assert [q["source"] for q in stored_qualities(store, run)] == ["mock_demo"]
+    with store.connect() as conn:
+        stored = conn.execute(
+            "SELECT arguments FROM study_tool_result WHERE run_id=%s AND tool_name='create_practice_set'",
+            (run["run_id"],),
+        ).fetchone()["arguments"]
+    # The model cited only e2; the observed method's source e1 is bound before review.
+    assert stored["questions"][1]["evidence_ids"] == ["e2", "e1"]
+    assert stored["questions"][0]["evidence_ids"] == ["e1"]  # concept citations are not changed
+    assert len(reviewed) == 1 and reviewed[0]["application_method"]["evidence_id"]
+    artifact = result["artifact"]
+    assert set(artifact["questions"][1]["evidence_ids"]) <= set(artifact["evidence_ids"])
+    assert not any("closed_practice_kinds" in c for c in contexts)
+
+
+@pytest.mark.parametrize("method_id", [None, "m1"])
+def test_cost_template_cannot_reach_method_citation_check_in_the_current_runtime(setup, method_id):
+    """search_cost observes no course methods, so the R2 attribution is a guard, not an observed path."""
+    store, authority, runtime, _ = setup
+    separate_method_source(authority)
+    method_check_provider(runtime, "search_cost", cost_method_id=method_id)
+    run = test_study.start(setup)
+    runtime.execute(run)
+    result = test_study.read(setup)
+    if method_id:
+        assert result["run"]["error_code"] == "UNOBSERVED_APPLICATION_METHOD"
+        assert stored_qualities(store, run) == []
+    else:
+        assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+        assert [q["source"] for q in stored_qualities(store, run)] == ["mock_demo"]

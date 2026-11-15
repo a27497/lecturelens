@@ -28,6 +28,29 @@ TEMPLATE_PRACTICE_KINDS = ("interval_halving", "selection_steps", "search_cost")
 # Each candidate needs at least one review call, so two candidates fit the persistent
 # 12-call Run budget with room for search, reads and one review retry.
 RUN_CANDIDATE_LIMIT = 2
+# Tools that observe but cannot end a Run. Each execution uses one of the persistent
+# RUN_TOOL_CALL_LIMIT tool calls; if one takes the last call, no candidate or abstention
+# can follow and the Run can only end budget_exceeded. That last call is reserved.
+EXPLORATION_TOOLS = ("search_course_evidence", "read_evidence_window", "check_python_example")
+# The remaining tool calls are shown only from this point on, so other contexts are unchanged.
+TOOL_CALL_NOTICE_AT = 2
+TOOL_CALL_NOTICE = (
+    "tool_calls_left counts the Run's remaining tool executions, including the candidate. The "
+    "last one is reserved for a candidate or report_insufficient_evidence: a search, window read "
+    "or check that would use it is not executed. Draft from the visible evidence."
+)
+# Abstention review sees only retrieved passages, so it cannot detect a retrieval miss. Before
+# the first abstention of a Run one reformulated search is required when the budget still fits
+# it: one search (tool) with its course observation (model call), then the abstention decision
+# and its review (two model calls), keeping the reserved last tool call.
+ABSTENTION_NOTICE_MIN_TOOL_CALLS = 2
+ABSTENTION_NOTICE_MIN_MODEL_CALLS = 3
+ABSTENTION_NOTICE = (
+    "report_insufficient_evidence was NOT executed. Abstention is judged only against passages "
+    "already retrieved, so first search once more with different wording: use the course's own "
+    "terms in the lecture's language and name the specific algorithm, operation or quantity in "
+    "the learner goal. If that search also lacks the topic, report insufficient evidence."
+)
 PRACTICE_KIND_NOTICE = (
     "A candidate from the computed template of each closed_practice_kinds entry was rejected "
     "because that template cannot express this learner goal (goal_mismatch, or its generated "
@@ -39,6 +62,23 @@ PRACTICE_KIND_NOTICE = (
 )
 
 
+# Source label of the runtime's application-method citation check (see question_2_issues).
+METHOD_CITATION_CHECK = "method_citation_check"
+
+
+def question_2_issues(quality):
+    """Issues attributed to question_2, the field a fixed template generates.
+
+    Field reviews record them in field_issues. method_citation_check examines only
+    question_2 (its application must cite the selected method's source) and writes no
+    field_issues, so all of its issues belong to question_2. Its stored verdict and the
+    repair observation stay unchanged; only the closure decision reads this attribution.
+    """
+    if quality.get("source") == METHOD_CITATION_CHECK:
+        return quality.get("issues", [])
+    return (quality.get("field_issues") or {}).get("question_2", [])
+
+
 def template_mismatch(quality):
     """A rejection showing the fixed template, not its inputs, misses the goal.
 
@@ -46,8 +86,7 @@ def template_mismatch(quality):
     that field is a property of the template; question_1 and explanation stay repairable.
     """
     return quality.get("accepted") is False and (
-        "goal_mismatch" in quality.get("issues", [])
-        or "unsupported_question" in (quality.get("field_issues") or {}).get("question_2", [])
+        "goal_mismatch" in quality.get("issues", []) or "unsupported_question" in question_2_issues(quality)
     )
 
 
@@ -409,6 +448,12 @@ def build_messages(system, goal, evidence, history, previous_turns, budget=None)
     for index, item in enumerate(history):
         call_id = f"c{index}"
         wire_arguments = dict(item["arguments"])
+        if item["tool"] == "create_linear_practice":
+            # The journal keeps the runtime-bound top-level evidence_ids (LinearPracticeArgs);
+            # the decision contract forbids it. Replaying it as the model's own call taught every
+            # observed repair to resubmit it (extra_forbidden). Citations stay in concept and
+            # application, which the runtime re-binds and authorizes on every submission.
+            wire_arguments.pop("evidence_ids", None)
         if wire_arguments.get("linear_request"):
             from .linear import effective_linear_request
 

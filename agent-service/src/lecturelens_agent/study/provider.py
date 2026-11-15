@@ -315,6 +315,13 @@ def decision_schemas(messages):
                 if tool["function"]["name"]
                 not in {"search_course_evidence", "read_evidence_window", "check_python_example"}
             ]
+        tools_left = context.get("budget", {}).get("tool_calls_left")
+        if type(tools_left) is int and tools_left <= 1:
+            from .context import EXPLORATION_TOOLS
+
+            # The last tool call is reserved (the runtime skips such calls independently);
+            # a candidate or report_insufficient_evidence remains available.
+            schemas = [tool for tool in schemas if tool["function"]["name"] not in EXPLORATION_TOOLS]
     return schemas
 
 
