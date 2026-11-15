@@ -41,10 +41,10 @@ TOOL_CALL_NOTICE = (
 )
 # Abstention review sees only retrieved passages, so it cannot detect a retrieval miss. Before
 # the first abstention of a Run one reformulated search is required when the budget still fits
-# it: one search (tool) with its course observation (model call), then the abstention decision
-# and its review (two model calls), keeping the reserved last tool call.
+# it: reserve model calls for the reformulation decision, a fresh course observation if
+# needed, the final decision, and its review. Keep the final tool call for the candidate.
 ABSTENTION_NOTICE_MIN_TOOL_CALLS = 2
-ABSTENTION_NOTICE_MIN_MODEL_CALLS = 3
+ABSTENTION_NOTICE_MIN_MODEL_CALLS = 4
 ABSTENTION_NOTICE = (
     "report_insufficient_evidence was NOT executed. Abstention is judged only against passages "
     "already retrieved, so first search once more with different wording: use the course's own "

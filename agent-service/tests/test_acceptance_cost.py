@@ -1279,7 +1279,8 @@ def historical_study_content_package(tmp_path):
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
     with tarfile.open(Path(__file__).parent / "fixtures/study-content-guard-prior-source.tar.gz") as archive:
-        (copied / "study/runtime.py").write_bytes(archive.extractfile("study/runtime.py").read())
+        for member in archive.getmembers():
+            (copied / member.name).write_bytes(archive.extractfile(member).read())
     return copied
 
 
