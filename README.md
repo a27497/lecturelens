@@ -112,6 +112,7 @@ flowchart LR
 | **2,067 项自动化测试通过** | 2026-09-22 求职版冻结时的 Java、Python/PostgreSQL 和前端测试合计；[验收记录](HUMAN_ACCEPTANCE_REPORT.md#job-search-freeze) |
 | **2,160 次负向授权请求，0 次绕过** | 指定跨用户、课程、Evidence、Run 等测试路径；[隔离评测](eval/multi-user-phase-e/README.md) |
 | **真实模型学习闭环验收** | 在已知 MIT OCW 公开课程片段上完成解释、引用、无证据拒答、保存作答、反馈及 Trace；[浏览器验收](eval/recruiter-demo-phase-d/README.md) |
+| **Study 开发探测（实验阶段）** | 7f97823 两份开发样本可比子集 18/21、16/21；`study-content-2131d025b61561e5`（1,456 项机制测试通过）旧目标 T2 可比子集 18/21，新目标 T3 跑了 16/20 个 Run 后早停，13 个通过（评分方式待批准）。都是开发集，不是保留集结论，也不说明泛化；[T2](eval/study-development-20261115.md) · [T3](eval/study-development-20261115.md) |
 
 这些结果证明的是各自的测试范围，不代表对所有课程的教学效果或生产级并发能力做出保证。
 

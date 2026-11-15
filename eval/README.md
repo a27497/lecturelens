@@ -59,3 +59,5 @@
 - [发布审批与 SIGKILL 恢复矩阵](approval-recovery-20261014/README.md)：默认关闭的学习者审批、持久预算/调用日志与真实 PostgreSQL 子进程恢复；确定性执行验证，不是教学质量评分。
 
 - [P8 Tutor](p8-tutor/README.md): 24 dialogues/80 turns across eight public lecture snapshots; deterministic multi-turn/Socratic/abstention mechanisms and separate Flash/Pro ledger channel. Offline only; real-model task quality NOT_RUN. Does not modify frozen P7/AU assets.
+
+[Study 开发探测摘要（2026-11-15）](study-development-20261115.md)记录了模板路由和内容质量的实测结果、早停与已知缺陷。

@@ -38,10 +38,14 @@
 
 - 每个 Run 最多提交两份候选（`RUN_CANDIDATE_LIMIT`），练习与拒答合并计数；被关闭模板的候选除外（见下文）。第二份仍被拒绝时，终止为 `QUALITY_REPAIR_EXHAUSTED`，不会用“证据不足”掩盖生成质量失败。
 - 修复候选若除 `title` 外与某份已被拒绝的候选完全相同，不执行也不再送审：决策收到一次 `repair_notice`（指明被拒候选和问题，要求改内容，或在当前模板无法表达学习目标时按匹配的 practice_kind 重新搜索），并记录 `protocol_retry_scheduled`（`REPEATED_TOOL_WITHOUT_PROGRESS`，purpose=`quality_repair`）。再次仅改标题则直接终止为 `QUALITY_REPAIR_EXHAUSTED`，不消耗复核调用。
-- 固定计算模板（`interval_halving`、`selection_steps`、`search_cost`）的候选若被判定为模板不匹配，该 practice_kind 在本 Run 内关闭。判定条件：复核给出 `goal_mismatch`，或者字段级复核结果 `field_issues.question_2` 含 `unsupported_question`（这三个模板的 question_2 由工具生成，问题出在模板本身；question_1 和讲解仍按原模板修复）。关闭后，决策上下文加入 `closed_practice_kinds` 和固定说明，该模板的生成工具不再提供，`search_course_evidence` 的 practice_kind 枚举也去掉它，只能按其他 practice_kind 重新检索或报告证据不足。模型若仍调用已关闭的模板或用它检索，运行时以 `INVALID_TOOL_ARGUMENTS` 终止，不再消耗复核调用。被关闭模板的那份候选不计入候选上限（`RUN_CANDIDATE_LIMIT`=2，`budget.candidates_left` 同步）；每个模板最多返还一次，因此一个 Run 最多复核 2+3 份候选，12 次模型调用和 8 次工具调用的持久上限不变。可调整输入的模板（`linear_points`、Python 字符串）和通用练习不受影响，仍在原工具内修复。
+- 固定计算模板（`interval_halving`、`selection_steps`、`search_cost`）的候选若被判定为模板不匹配，该 practice_kind 在本 Run 内关闭。判定条件：复核给出 `goal_mismatch`，或者 question_2 被判 `unsupported_question`。question_2 的归属来自字段级复核的 `field_issues.question_2`；运行时的 `method_citation_check`（question_2 未引用所选方法的来源）不写 `field_issues`，它的问题全部归属 question_2，走同一判定（这三个模板的 question_2 由工具生成，问题出在模板本身；question_1 和讲解仍按原模板修复）。当前只有 general 和 linear_points 检索会观察课程方法，带 `method_id` 的 cost 模式候选以 `UNOBSERVED_APPLICATION_METHOD` 终止，因此这条检查暂时到不了模板类型，这一归属只是关闭规则的保护，尚无对应的真实 Run。关闭后，决策上下文加入 `closed_practice_kinds` 和固定说明，该模板的生成工具不再提供，`search_course_evidence` 的 practice_kind 枚举也去掉它，只能按其他 practice_kind 重新检索或报告证据不足。重新检索之后，运行时仍会拒绝已关闭的专用模板。通用练习仍可使用自己的共享生成工具。模型若仍调用已关闭的模板或用它检索，运行时以 `INVALID_TOOL_ARGUMENTS` 终止，不再消耗复核调用。被关闭模板的那份候选不计入候选上限（`RUN_CANDIDATE_LIMIT`=2，`budget.candidates_left` 同步）；每个模板最多返还一次，因此一个 Run 最多复核 2+3 份候选，12 次模型调用和 8 次工具调用的持久上限不变。可调整输入的模板（`linear_points`、Python 字符串）和通用练习不受影响，仍在原工具内修复。
+- 通用练习选了 `method_id` 时，运行时在送审前把所选方法的来源 ID 并入 question_2 的引用，与 `create_linear_practice` 绑定方法来源的做法相同。来源已经过 `METHOD_EVIDENCE_NOT_SELECTED` 授权；复核仍按 `METHOD_FIELD_SYSTEM` 判断方法是否一致、来源是否支持，概念题和讲解的引用不变。2026-11-14 开发探测中，`method_citation_check` 的 3 次拒绝全部是 question_2 漏引方法来源，三个耗尽 Run 中有两个的最终拒绝属于这一类。这条检查保留下来，只对绑定之前已写入 checkpoint 的候选生效。
+- 一个 Run 的第一次 `report_insufficient_evidence`（响应中只有这一个调用），如果当前提供检索工具，且剩余至少 2 次工具调用和 4 次模型调用，足够安排改写检索的决策、可能需要的课程观察、最终决定和复核，先不执行：决策收到一次固定的 `abstention_notice`，要求用课程自身术语换措辞再检索，并记录 `protocol_retry_scheduled`（`SEARCH_REQUIRED`，purpose=`abstention_check`）。第二次拒答照常执行并复核。拒答复核只看已检索的段落，发现不了检索遗漏；三份样本中 b2-cost-lure 的三次假拒答都是检索没拿到 1D 复杂度段落后、在仍有预算时直接拒答。通知后的决策使用独立的 journal slot。代价是每个拒答 Run 最多多一次决策、一次检索及其覆盖观察。
+- 决策历史回放 `create_linear_practice` 时去掉运行时绑定的顶层 `evidence_ids`（`LinearPracticeArgs`）：决策契约 `LinearSelectionArgs` 禁止该字段，回放它会让修订照抄并以 `MODEL_TOOL_CONTRACT`（`extra_forbidden`）终止。私有记录、契约校验、运行时绑定和引用授权不变；引用只在 `concept` 和 `application` 中提交。
 - 同一响应中的多个 `read_evidence_window` 按做决策时的选中集合授权：前一次补读把后一次的锚点挤出 8 条选中范围时，后一次仍然执行，不再以 `EVIDENCE_NOT_SELECTED` 终止。锚点在决策时必须可见，Java WINDOW 仍复核归属、版本与删除。
 - 每次复核调用在 `MODEL_REVIEW_CONTRACT`（schema 不符）或 `MODEL_TOOL_CONTRACT`（工具参数不是合法 JSON）时各最多重试一次，仍计入同一 Run 预算。重试反馈只包含运行时生成的固定说明和经校验的违规位置与声明上限（例如 `methods` 超过 `max_length` 2 项），不转发模型原文或自由文本。
 - 决策与复核共享同一 Run 上限：12 次模型调用、8 次工具调用、600,000 保守 token 预留和默认 90 秒 deadline。复核输出最多 300 tokens，决策输出最多 900。没有额外重试预算。
+- 8 次工具调用中的最后一次留给候选或 `report_insufficient_evidence`：会用掉它的检索、窗口补读或 Python 检查不执行，记录 `tool_rejected`（`TOOL_CALL_BUDGET_RESERVED`，类别 budget）；同一响应中较早的调用和末尾候选照常执行。剩余工具调用不超过 2 次时，预算观察加入 `tool_calls_left` 和固定说明；只剩 1 次时决策 schema 撤下探索工具。只剩不可执行的探索调用时以 `INVALID_TOOL_ARGUMENTS` 终止；已无剩余调用时仍由持久预留以 `budget_exceeded` 终止。限制：剩余超过 2 次时模型看不到工具预算；补读结果是否已全部在选中集合内，要等 Java WINDOW 返回后才知道，无法提前拒绝。
 - 决策的非法工具格式最多获得一次明确纠正观察，仍扣减原有预算并记录 `model_failed` / `protocol_retry_scheduled`；错误响应的工具不执行。持续失败、其他调用错误、复核错误均终止；页面显示纠正进度。失败调用的已知 usage 保留。
 - 复核输入最多 8 条、每条最多 1,200 字符的当前权威 Evidence；引用映射为临时短编号。逐题仍保留自己的引用集合。
 - 复核从输入中选择支持来源时，`evidence_ids` 上限与复核输入条数共用 `REVIEW_EVIDENCE_LIMIT`（8，即 Java READ 的 ID 上限），schema、提示词和测试都引用这一常量。此前课程覆盖/方法观察限 3 条，模型在真实长课中反复列出 4 条以上，每次多花一次复核重试。
@@ -56,6 +60,14 @@
 ## 验证与真实模型边界
 
 机制测试使用确定性 provider 与真实 PostgreSQL，覆盖拒绝后修订、错误拒答后改为练习、两次拒绝、崩溃恢复、取消、版本变更、超时和非法复核结果。它们不证明模型能够识别或改正真实错误。
+
+模板关闭、名额返还和窗口补读授权的真实模型开发探测（DeepSeek，已知课程，非保留集）：7f97823 两份样本共 54 Run，窗口补读修正真实触发 3 次全部通过；模板关闭与名额返还 0 次触发，只有机制测试覆盖。见[第二样本记录](../eval/study-development-20261115.md)。2026-11-15 对 `study-content-2131d025b61561e5` 做了两轮真实模型探测（DeepSeek，开发集，非保留集），见 [T2 旧目标归因](../eval/study-development-20261115.md) 和 [T3 新目标](../eval/study-development-20261115.md)。T2 跑满 27 个 Run，通过 23 个（可比子集 18/21）；T3 在执行 16 个 Run 后早停，通过 13 个（评分方式待批准，标为 PROVISIONAL）。逐项结果：
+- 修订回放：`extra_forbidden evidence_ids` 降为 0。但 c1-linear 改为以 `QUALITY_REPAIR_EXHAUSTED` 结束，原因是 system_solution 模板固定生成的讲解句“只检验其中一个方程还不足以确认一个点是方程组的解”被判 `unsupported_explanation`，模型无法修订这句话。
+- 最后一次工具调用的预留：`RUN_BUDGET_EXCEEDED` 为 0；它以撤下工具 schema 的方式起作用，没有出现跳过执行。
+- 模板关闭：第一次被真实触发（T2 R1 b2，search_cost）。但关闭后需要重新检索，而最后一次调用的预留不允许检索，决策只剩拒答；模型调用了未提供的工具，Run 以 `MODEL_TOOL_CONTRACT` 结束。名额返还没有产生可用的效果。
+- 方法来源绑定：带 method_id 的通用候选共 38 份，其中运行时补入方法来源 2 次，其余 36 次是模型自己引用的。
+- 首次拒答扣留：在 T3 n-calc-angle 触发 1 次，但当时没有提供检索工具，Run 以 `MODEL_TOOL_CONTRACT` 结束。T2 中 b2 的假拒答没有出现，原因是模型这一轮写出了能检索到相关段落的查询。当前源码 `study-content-c3e05752ba161db0` 已通过离线回归验证。只有检索工具可用且剩余模型调用足以完成检索及最终复核时，才会要求改写检索。这个版本的真实模型结果待验证。
+诊断摘要见[开发探测记录](../eval/study-development-20261115.md)。
 
 新试验使用 MIT 6.0001 第 4 讲函数课程的官方字幕，固定片段、六道新的保留任务、同一 Qwen2.5-3B Q4 模型及资源预算，比较冻结的旧运行时与本轮候选。真实执行 Python LangGraph、ChatProvider 和 PostgreSQL；Evidence 入口使用固定片段回放，所有检索返回同一范围的正文。这能隔离 Agent 行为，但不验证 Java 鉴权、向量召回、媒体摄取或浏览器全链路。
 
