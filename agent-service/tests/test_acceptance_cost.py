@@ -51,6 +51,7 @@ from lecturelens_agent.study.acceptance_cost import (
     verify_phase0_agent,
     verify_step6_agent,
     verify_study_budget_agent,
+    verify_study_content_agent,
     verify_study_reroute2_agent,
     verify_study_reroute3_agent,
     verify_study_reroute_agent,
@@ -1269,7 +1270,7 @@ def test_review_read_extension_preserves_prior_frozen_manifest_identity():
 
 
 @pytest.fixture
-def historical_study_reroute3_package(tmp_path):
+def historical_study_content_package(tmp_path):
     import tarfile
 
     import lecturelens_agent
@@ -1277,6 +1278,16 @@ def historical_study_reroute3_package(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    with tarfile.open(Path(__file__).parent / "fixtures/study-content-guard-prior-source.tar.gz") as archive:
+        (copied / "study/runtime.py").write_bytes(archive.extractfile("study/runtime.py").read())
+    return copied
+
+
+@pytest.fixture
+def historical_study_reroute3_package(historical_study_content_package):
+    import tarfile
+
+    copied = historical_study_content_package
     # Restore the four exact pre-content-quality modules of baea8b9; the close-out manifest is unchanged.
     with tarfile.open(Path(__file__).parent / "fixtures/study-content-prior-source.tar.gz") as archive:
         for member in archive.getmembers():
@@ -1471,6 +1482,14 @@ def test_study_reroute3_identity_positive_and_tampering_rejected(historical_stud
         verify_study_reroute3_agent(copied)
 
 
+def test_t2_t3_candidate_stays_verifiable_after_the_study_guard_fixes(historical_study_content_package):
+    assert verify_study_content_agent(historical_study_content_package) == 63
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_study_content_agent()
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_development_agent(historical_study_content_package)
+
+
 def test_study_content_runtime_cannot_claim_an_earlier_study_identity():
     assert DEVELOPMENT_AGENT == "study-content-" + DEVELOPMENT_MANIFEST_SHA256[:16]
     assert STUDY_REROUTE3_AGENT == "study-reroute3-f93cf8faab6862d8"
@@ -1603,7 +1622,8 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
 @pytest.mark.parametrize(
     ("manifest", "verifier"),
     [
-        ("study_content_agent_manifest.json", verify_development_agent),
+        ("study_content_guard_agent_manifest.json", verify_development_agent),
+        ("study_content_agent_manifest.json", verify_study_content_agent),
         ("study_reroute3_agent_manifest.json", verify_study_reroute3_agent),
         ("study_reroute2_agent_manifest.json", verify_study_reroute2_agent),
         ("study_reroute_agent_manifest.json", verify_study_reroute_agent),

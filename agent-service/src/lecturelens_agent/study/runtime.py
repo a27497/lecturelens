@@ -85,6 +85,12 @@ def candidate_substance(name, arguments, application_method=None):
     ).hexdigest()
 
 
+def decision_offers_search(messages):
+    return any(
+        schema["function"]["name"] == "search_course_evidence" for schema in decision_schemas(messages)
+    )
+
+
 def unchanged_rejected_candidate(history, name, arguments, application_method):
     """Index of an earlier rejected candidate with the same substance, if any."""
     if name not in CANDIDATE_TOOLS:
@@ -579,7 +585,7 @@ class StudyRuntime:
                     "Report insufficient evidence only if the course evidence is absent."
                 )
                 messages[-1] = {**messages[-1], "content": compact_json(observation)}
-            if state.get("retry_abstention"):
+            if state.get("retry_abstention") and decision_offers_search(messages):
                 # Added only after a withheld abstention, so other contexts stay byte-identical.
                 from .context import compact_json
 
@@ -629,6 +635,7 @@ class StudyRuntime:
             pending = []
             seen = {item["fingerprint"] for item in state["history"]}
             closed_kinds = closed_practice_kinds(state["history"])
+            withdrawn_tools = {PRACTICE_TOOLS[kind] for kind in closed_kinds}
             current_kind = next(
                 (
                     h["result"].get("practice_kind")
@@ -664,6 +671,7 @@ class StudyRuntime:
                     and not state.get("abstention_notices", 0)
                     and tools_left >= ABSTENTION_NOTICE_MIN_TOOL_CALLS
                     and calls_left_after_response >= ABSTENTION_NOTICE_MIN_MODEL_CALLS
+                    and decision_offers_search(messages)
                 ):
                     # See ABSTENTION_NOTICE: one reformulated search before the first abstention.
                     guard()
@@ -713,7 +721,12 @@ class StudyRuntime:
                     if raw_arguments.get("practice_kind") in closed_kinds:
                         raise StudyError("INVALID_TOOL_ARGUMENTS")
                     current_kind = raw_arguments.get("practice_kind", current_kind)
-                elif current_kind in closed_kinds and name == PRACTICE_TOOLS[current_kind]:
+                elif name in withdrawn_tools and (
+                    current_kind in closed_kinds
+                    or name != PRACTICE_TOOLS.get(current_kind, "create_practice_set")
+                ):
+                    # General and search_cost share create_practice_set. A new open kind
+                    # may keep a shared tool, but it cannot bring back a withdrawn template.
                     raise StudyError("INVALID_TOOL_ARGUMENTS")
                 program_plan = None
                 revised_request = None
