@@ -624,6 +624,52 @@ def test_pre_retrieval_learner_plan_recovers_and_binds_actual_task_and_outcomes(
         assert "同学声称" in result["artifact"]["questions"][1]["question"]
 
 
+def test_locked_linear_plan_reviews_an_abstention_without_requesting_a_search(setup):
+    from lecturelens_agent.study.contracts import StudyCommand
+    from lecturelens_agent.study.provider import decision_schemas
+
+    store, _, runtime, scope = setup
+    plan = {"task": "verify", "equation_count": 2, "point_outcomes": ["all"], "coordinate_mode": "new"}
+    contexts = []
+
+    def decide(messages, timeout):
+        context = json.loads(messages[-1]["content"])
+        contexts.append(context)
+        if not context["history"]:
+            return {
+                "name": "search_course_evidence",
+                "arguments": {"query": "point", "practice_kind": "linear_points", "linear_request": plan},
+            }
+        assert context["linear_request"] == {**plan, "intent_version": 2}
+        offered = {tool["function"]["name"] for tool in decision_schemas(messages)}
+        assert "search_course_evidence" not in offered
+        assert "report_insufficient_evidence" in offered
+        return {
+            "name": "report_insufficient_evidence",
+            "arguments": {"reason": "The retrieved passages do not contain this exercise."},
+        }
+
+    runtime.provider.decide = decide
+    response = store.command(
+        StudyCommand(
+            **scope,
+            operation="START",
+            request_key="locked-linear-abstention",
+            goal="用两条方程出一道题，判断一个点是否同时满足两条方程。",
+        ),
+        "mock",
+    )
+    run = next(row for row in store.candidates() if row["run_id"] == response["run"]["run_id"])
+
+    runtime.execute(run)
+
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "succeeded", result["run"]["error_code"]
+    assert result["artifact"]["kind"] == "insufficient_evidence"
+    assert len(contexts) == 2
+    assert not any("abstention_notice" in context for context in contexts)
+
+
 def test_budget_policy_reserves_review_and_plan_schema_omits_already_bound_decisions():
     from lecturelens_agent.study.context import build_messages
     from lecturelens_agent.study.provider import decision_schemas

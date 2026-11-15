@@ -173,7 +173,7 @@ def general_arguments():
     }
 
 
-def reroute_provider(runtime, after_rejection):
+def reroute_provider(runtime, after_rejection, *, after_reroute=None):
     contexts, reviews = [], []
 
     def decide(messages, timeout):
@@ -186,6 +186,8 @@ def reroute_provider(runtime, after_rejection):
             return {"name": "create_interval_practice", "arguments": interval_arguments()}
         if context.get("practice_kind") == "interval_halving":
             return after_rejection()
+        if after_reroute is not None:
+            return after_reroute()
         return {"name": "create_practice_set", "arguments": general_arguments()}
 
     def review(messages, timeout):
@@ -277,6 +279,35 @@ def test_closed_template_cannot_run_again_even_if_a_provider_ignores_the_schema(
     assert tools == ["search_course_evidence", "create_interval_practice"]
     assert quality == [False]
     assert reviews == ["field_support_computed_goals_v1"]  # no review spent on the withdrawn template
+
+
+@pytest.mark.parametrize("same_response", [False, True])
+def test_rerouting_cannot_reopen_a_withdrawn_template(setup, same_response):
+    _, _, runtime, _ = setup
+    search_again = {
+        "name": "search_course_evidence",
+        "arguments": {"query": "peak", "practice_kind": "general"},
+    }
+    withdrawn = {"name": "create_interval_practice", "arguments": interval_arguments(lower=-6)}
+    _, reviews = reroute_provider(
+        runtime,
+        lambda: {"calls": [search_again, withdrawn]} if same_response else search_again,
+        after_reroute=lambda: withdrawn,
+    )
+
+    runtime.execute(test_study.start(setup))
+
+    result = test_study.read(setup)
+    assert result["run"]["status"] == "failed"
+    assert result["run"]["error_code"] == "INVALID_TOOL_ARGUMENTS"
+    assert result["artifact"] is None
+    tools, quality = run_events(setup)
+    expected = ["search_course_evidence", "create_interval_practice"]
+    if not same_response:
+        expected.append("search_course_evidence")
+    assert tools == expected
+    assert quality == [False]
+    assert reviews.count("field_support_computed_goals_v1") == 1
 
 
 # --- One declared bound for review evidence selections ---

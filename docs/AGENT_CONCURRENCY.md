@@ -55,8 +55,10 @@ Study re-route 身份（9691bb3，2026-11-13 部署到线上做开发探针）�
 
 Study re-route tuning 身份（7f97823，2026-11-13 起部署在线上做开发探针，见[探测记录](../eval/study-development-20261115.md)）现已成为历史身份。复核收口的三项修正（回放 `create_linear_practice` 时去掉运行时绑定的顶层 `evidence_ids`；`method_citation_check` 的问题归属 question_2 并走同一模板关闭判定；8 次工具调用的最后一次留给候选或拒答）修改了 `study/context.py`、`study/provider.py`、`study/runtime.py`，开发身份为 `study-reroute3-f93cf8faab6862d8`（`study/study_reroute3_agent_manifest.json`，63 个模块）。`study_reroute2_agent_manifest.json` 字节不变，由 `verify_study_reroute2_agent` 校验；`tests/fixtures/study-reroute3-prior-source.tar.gz` 还原这三个模块在 7f97823 的字节，再接续上文的夹具链。
 
-复核收口身份（baea8b9，从未部署，没有真实模型证据）现已成为历史身份。内容质量收口的两项修正（通用练习送审前绑定所选方法来源；一个 Run 的首次拒答先要求换措辞再检索一次）修改了 `study/call_journal.py`、`study/context.py`、`study/runtime.py`、`study/telemetry.py`，当前开发身份为 `study-content-2131d025b61561e5`（`study/study_content_agent_manifest.json`，63 个模块）。`study_reroute3_agent_manifest.json` 字节不变，由 `verify_study_reroute3_agent` 校验；`tests/fixtures/study-content-prior-source.tar.gz` 还原这四个模块在 baea8b9 的字节，再接续上文的夹具链。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。2026-11-15 部署到维护环境做开发探测（release `d0e3874-study-content-20261115`），结果见 [T2](../eval/study-development-20261115.md) 和 [T3](../eval/study-development-20261115.md)。
+复核收口身份（baea8b9，从未部署，没有真实模型证据）现已成为历史身份。内容质量收口的两项修正（通用练习送审前绑定所选方法来源；一个 Run 的首次拒答先要求换措辞再检索一次）修改了 `study/call_journal.py`、`study/context.py`、`study/runtime.py`、`study/telemetry.py`，当时的开发探测身份为 `study-content-2131d025b61561e5`（`study/study_content_agent_manifest.json`，63 个模块）。`study_reroute3_agent_manifest.json` 字节不变，由 `verify_study_reroute3_agent` 校验；`tests/fixtures/study-content-prior-source.tar.gz` 还原这四个模块在 baea8b9 的字节，再接续上文的夹具链。当前身份不继承任何历史质量结论，也不授予真实 Provider 调用权限。2026-11-15 部署到维护环境做开发探测（release `d0e3874-study-content-20261115`），结果见 [T2](../eval/study-development-20261115.md) 和 [T3](../eval/study-development-20261115.md)。
 
 ## 验证
 
 `agent-service/tests/test_agent_lanes.py` 使用事件和屏障构造并发：如果路径仍是串行，测试会死锁并超时失败，而不是靠 sleep 判断。覆盖：其他课程建索引期间检索照常返回；查询槽位占满时建索引不受影响、查询仍有界拒绝；N 个查询同时处于 Embedding 中、第 N+1 个被拒；两个 Session 的 Run 同时处于模型 I/O 中，且预算计数、引用、答案隐藏、证据范围与串行一致；同一 Session 的 Run 按顺序串行；通道数上限；取消只影响一个 Run；事件流的增量、终止、续传、关闭默认值和鉴权。
+
+当前源码身份为 `study-content-b97c6d9815dd85e1`（`study/study_content_guard_agent_manifest.json`）。运行时在重新检索后仍拒绝已关闭的模板工具，并仅在检索工具可用时要求改写首次拒答。历史 T2/T3 仍对应 `study-content-2131d025b61561e5`，由 `verify_study_content_agent` 校验。
