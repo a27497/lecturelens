@@ -48,6 +48,8 @@ class DurableBoundariesIntegrationTest {
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V22__durable_task_boundaries.sql"),
             new ClassPathResource("db/migration/V23__versioned_course_evidence.sql"),
             new ClassPathResource("db/migration/V24__evidence_index_sync.sql")).execute(ds);
+        // H2's CURRENT_TIMESTAMP has microseconds. A millisecond column can round work into the future.
+        jdbc.execute("ALTER TABLE evidence_index_sync ALTER COLUMN available_at SET DATA TYPE DATETIME(6)");
         jdbc.execute("CREATE TABLE publication(content VARCHAR(64))");
         jdbc.update("INSERT INTO analysis_task(id,user_id,status) VALUES ('task',42,'QUEUED')");
         jdbc.execute("CREATE TABLE subtitle_segment(id BIGINT PRIMARY KEY,task_id VARCHAR(64),user_id BIGINT,"
@@ -135,6 +137,7 @@ class DurableBoundariesIntegrationTest {
         indexes.synchronize();
         assertThat(indexes.status("task",42L).status()).isEqualTo("PENDING");
         assertThat(indexes.status("task",42L).indexedRevision()).isNull();
+        verify(dense).sync(eq("task"),eq(42L),anyLong(),anyLong(),anyList(),eq(false));
     }
 
     @Test void deletionRevokesAnInFlightIndexClaim() throws Exception {

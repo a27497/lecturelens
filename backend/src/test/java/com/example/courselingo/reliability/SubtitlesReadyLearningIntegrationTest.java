@@ -55,6 +55,8 @@ class SubtitlesReadyLearningIntegrationTest {
             new ClassPathResource("db/migration/V23__versioned_course_evidence.sql"),
             new ClassPathResource("db/migration/V24__evidence_index_sync.sql"),
             new ClassPathResource("db/migration/V33__subtitles_ready_learning.sql")).execute(ds);
+        // Match the H2 clock precision so work scheduled for now is due on the first poll.
+        jdbc.execute("ALTER TABLE evidence_index_sync ALTER COLUMN available_at SET DATA TYPE DATETIME(6)");
         jdbc.update("INSERT INTO analysis_task(id,user_id,status) VALUES ('task',42,'RUNNING')");
         jdbc.execute("CREATE TABLE subtitle_segment(id BIGINT PRIMARY KEY,task_id VARCHAR(64),user_id BIGINT,"
             + "segment_index INT,start_millis BIGINT,end_millis BIGINT,text VARCHAR(4000),language VARCHAR(32))");
