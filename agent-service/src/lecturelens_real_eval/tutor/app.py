@@ -9,8 +9,9 @@ from fastapi import HTTPException, Request
 from pydantic import ValidationError
 from starlette.concurrency import run_in_threadpool
 
+from lecturelens_agent.app import course_authority
 from lecturelens_agent.app import create_app as base_app
-from lecturelens_agent.study.authority import course_authority, signature
+from lecturelens_agent.study.authority import signature
 from lecturelens_agent.study.store import StudyError
 
 from .contracts import Command

@@ -12,25 +12,17 @@ import httpx
 from pydantic import ValidationError
 
 from .errors import StudyError
+from .evidence_contract import EVIDENCE_REQUESTS, CourseResult
 from .failures import failure_category
 from .learning_scope import check_scope_response, inject_scope, validate_scope_call
 from .store import BudgetExceeded, RunStopped
 
 
 def execute_read(read_once, span, scope, action="CHECK", **arguments):
-    from ..course_mcp.contracts import ACTION_TO_TOOL, TOOLS, CourseResult
-
     try:
         validate_scope_call(scope, action, arguments)
-        if action not in ACTION_TO_TOOL:
-            raise StudyError("MCP_INVALID_REQUEST", 422)
-        _, schema, _ = TOOLS[ACTION_TO_TOOL[action]]
-        schema.model_validate(
-            {
-                **{k: scope[k] for k in ("owner_id", "course_id", "revision")},
-                **arguments,
-                "authorization": {"timestamp": "0", "signature": "0" * 64},
-            }
+        EVIDENCE_REQUESTS[action].model_validate(
+            {**{k: scope[k] for k in ("owner_id", "course_id", "revision")}, **arguments}
         )
         if set(arguments) & {
             "owner_id",

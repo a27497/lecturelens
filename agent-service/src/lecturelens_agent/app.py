@@ -57,6 +57,19 @@ def sse(name, data, event_id=None):
     return f"{head}event: {name}\ndata: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
 
 
+def course_authority(url, secret):
+    transport = os.environ.get("AGENT_COURSE_TOOL_TRANSPORT", "internal")
+    if transport == "internal":
+        from .study.authority import EvidenceAuthority
+
+        return EvidenceAuthority(url, secret)
+    if transport == "mcp":
+        from .course_mcp.client import McpEvidenceAuthority
+
+        return McpEvidenceAuthority(url, secret)
+    raise RuntimeError("AGENT_COURSE_TOOL_TRANSPORT must be internal or mcp")
+
+
 def create_app(
     retriever=None,
     secret=None,
@@ -88,7 +101,6 @@ def create_app(
         app.state.study = study_runtime
         app.state.models = model_registry
         if study_runtime is not None or os.environ.get("STUDY_AGENT_ENABLED", "false").lower() == "true":
-            from .study.authority import course_authority
             from .study.models import ModelRegistry, RegistryProvider
             from .study.provider import MockProvider
             from .study.runtime import DEFAULT_RUN_CONCURRENCY, MAX_RUN_CONCURRENCY, StudyRuntime

@@ -1,10 +1,20 @@
 from typing import Annotated
 
-from pydantic import Field, model_validator
+from pydantic import Field
 
-from ..contracts import Contract, Identifier
-from ..study.contracts import StudyScope
-from ..study.learning_scope import LearningScope
+from ..contracts import Contract
+from ..study.evidence_contract import (
+    CourseEvidence as CourseEvidence,
+)
+from ..study.evidence_contract import (
+    CourseResult as CourseResult,
+)
+from ..study.evidence_contract import (
+    EvidenceReadRequest,
+    EvidenceRequest,
+    EvidenceSearchRequest,
+    EvidenceWindowRequest,
+)
 
 
 class JavaProof(Contract):
@@ -12,51 +22,20 @@ class JavaProof(Contract):
     signature: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 
 
-class CourseRequest(StudyScope):
-    learning_scope: LearningScope | None = None
+class CourseRequest(EvidenceRequest):
     authorization: JavaProof
 
 
-class SearchRequest(CourseRequest):
-    expand_to_course: Annotated[bool, Field(strict=True)] = False
-    query: Annotated[str, Field(min_length=1, max_length=500)]
-    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
-    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)] | None = None
-
-    @model_validator(mode="after")
-    def valid_window(self):
-        if not self.query.strip() or (self.start_ms is None) != (self.end_ms is None):
-            raise ValueError("Invalid query or time window")
-        if self.start_ms is not None and self.start_ms > self.end_ms:
-            raise ValueError("Reversed time window")
-        return self
+class SearchRequest(EvidenceSearchRequest, CourseRequest):
+    pass
 
 
-class ReadRequest(CourseRequest):
-    evidence_ids: Annotated[list[Identifier], Field(max_length=8)]
+class ReadRequest(EvidenceReadRequest, CourseRequest):
+    pass
 
 
-class WindowRequest(CourseRequest):
-    evidence_id: Identifier
-
-
-class CourseEvidence(Contract):
-    evidence_id: Identifier
-    text: Annotated[str, Field(max_length=1200)]
-    start_ms: Annotated[int, Field(ge=0, le=2**63 - 1)]
-    end_ms: Annotated[int, Field(ge=0, le=2**63 - 1)]
-    source_type: Annotated[str, Field(min_length=1, max_length=64)]
-
-    @model_validator(mode="after")
-    def interval(self):
-        if self.end_ms < self.start_ms:
-            raise ValueError("Invalid Evidence interval")
-        return self
-
-
-class CourseResult(StudyScope):
-    learning_scope: LearningScope | None = None
-    evidence: Annotated[list[CourseEvidence], Field(max_length=8)]
+class WindowRequest(EvidenceWindowRequest, CourseRequest):
+    pass
 
 
 # Names and argument schemas are fixed, not dynamically supplied to the model.

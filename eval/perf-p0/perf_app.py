@@ -5,9 +5,9 @@ import logging
 import os
 import time
 
+from lecturelens_agent.app import course_authority
 from lecturelens_agent.retrieval import Retriever
 from lecturelens_agent.store import VectorStore
-from lecturelens_agent.study.authority import course_authority
 from lecturelens_real_eval.tutor.app import create_app as product_app
 from lecturelens_real_eval.tutor.runtime import MockTutor, TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
