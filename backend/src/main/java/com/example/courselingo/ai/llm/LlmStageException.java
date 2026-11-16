@@ -32,8 +32,14 @@ public class LlmStageException extends BusinessException {
         return details;
     }
 
+    @Override
     public AiServiceErrorDetails apiDetails() {
         return new AiServiceErrorDetails(safeErrorCode, details.category(), details.retryable(), stage, userMessage);
+    }
+
+    @Override
+    public String diagnosticMessage() {
+        return safeDiagnosticSummary();
     }
 
     public String safeDiagnosticSummary() {

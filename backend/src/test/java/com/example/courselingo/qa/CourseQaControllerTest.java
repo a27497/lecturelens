@@ -1,5 +1,6 @@
 package com.example.courselingo.qa;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.doThrow;
@@ -10,6 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.courselingo.ai.llm.LlmProviderFailureCategory;
+import com.example.courselingo.ai.llm.LlmProviderFailureDetails;
+import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.web.GlobalExceptionHandler;
@@ -19,6 +23,8 @@ import com.example.courselingo.qa.dto.CourseQaEvidenceItem;
 import com.example.courselingo.qa.dto.CourseQaResponse;
 import com.example.courselingo.qa.dto.CourseQaUsage;
 import com.example.courselingo.qa.service.CourseQaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +45,9 @@ class CourseQaControllerTest {
 
     @Autowired
     private CourseQaService courseQaService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     CourseQaControllerTest(MockMvc mockMvc) {
@@ -134,6 +143,81 @@ class CourseQaControllerTest {
                 .content("{\"question\":\"hello\"}"))
             .andExpect(status().isTooManyRequests())
             .andExpect(content().string(containsString(ErrorCode.TASK_RATE_LIMITED.code())));
+    }
+
+    @Test
+    void askReturnsExactProviderTimeoutResponse() throws Exception {
+        var failure = new LlmStageException("COURSE_QA",
+            new LlmProviderFailureDetails(LlmProviderFailureCategory.TIMEOUT, null, null, true), null);
+
+        assertAskError(failure, 504, """
+            {
+              "code": "AI_PROVIDER_TIMEOUT",
+              "message": "课程问答响应超时，本次请求已结束，请稍后重试。",
+              "data": {
+                "errorCode": "COURSE_QA_PROVIDER_TIMEOUT",
+                "errorCategory": "TIMEOUT",
+                "retryable": true,
+                "stage": "COURSE_QA",
+                "userMessage": "课程问答响应超时，本次请求已结束，请稍后重试。"
+              },
+              "traceId": "qa-error-trace"
+            }
+            """);
+    }
+
+    @Test
+    void askReturnsExactModelNotFoundResponse() throws Exception {
+        var failure = new LlmStageException("COURSE_QA",
+            new LlmProviderFailureDetails(LlmProviderFailureCategory.MODEL_NOT_FOUND, 404, "provider-only-code", false),
+            new IllegalStateException("provider-only-message"));
+
+        assertAskError(failure, 502, """
+            {
+              "code": "AI_PROVIDER_FAILED",
+              "message": "当前 AI 模型不可用，请检查模型配置。",
+              "data": {
+                "errorCode": "MODEL_NOT_FOUND",
+                "errorCategory": "MODEL_NOT_FOUND",
+                "retryable": false,
+                "stage": "COURSE_QA",
+                "userMessage": "当前 AI 模型不可用，请检查模型配置。"
+              },
+              "traceId": "qa-error-trace"
+            }
+            """);
+    }
+
+    @Test
+    void askKeepsFallbackResponseWhenProviderFailureIsWrapped() throws Exception {
+        var cause = new LlmStageException("COURSE_QA",
+            new LlmProviderFailureDetails(LlmProviderFailureCategory.TIMEOUT, null, null, true), null);
+
+        assertAskError(new IllegalStateException("unexpected failure", cause), 500, """
+            {
+              "code": "COMMON_INTERNAL_ERROR",
+              "message": "服务内部错误",
+              "traceId": "qa-error-trace"
+            }
+            """);
+    }
+
+    private void assertAskError(RuntimeException failure, int expectedStatus, String expectedBody) throws Exception {
+        when(courseQaService.ask("task_1", "Bearer demo", new CourseQaAskRequest("hello"))).thenThrow(failure);
+
+        var result = mockMvc.perform(post("/api/tasks/{taskId}/qa", "task_1")
+                .header("Authorization", "Bearer demo")
+                .header("X-Trace-Id", "qa-error-trace")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"question\":\"hello\"}"))
+            .andExpect(status().is(expectedStatus))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.timestamp").isString())
+            .andReturn();
+
+        var body = (ObjectNode) objectMapper.readTree(result.getResponse().getContentAsByteArray());
+        body.remove("timestamp");
+        assertThat(body).isEqualTo(objectMapper.readTree(expectedBody));
     }
 
     @Test
