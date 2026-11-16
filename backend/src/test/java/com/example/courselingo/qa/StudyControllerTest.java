@@ -103,7 +103,7 @@ class StudyControllerTest {
     }
 
     @Test void scopedAuthorityRouteBindsSignatureAndRejectsDowngradeEnvelopes() throws Exception {
-        var config=new com.example.courselingo.qa.service.DenseRetrievalProperties();config.setServiceSecret("test-scoped-authority-secret-32-bytes-only");
+        var config=new com.example.courselingo.evidence.retrieval.DenseRetrievalProperties();config.setServiceSecret("test-scoped-authority-secret-32-bytes-only");
         var json=new ObjectMapper();var authority=mock(StudyEvidenceAuthority.class);
         when(authority.execute(any())).thenReturn(Map.of("evidence",java.util.List.of()));
         var properties=new StudyProperties();properties.setEnabled(true);

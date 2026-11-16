@@ -10,7 +10,7 @@ import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.CourseEvidenceService;
 import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.qa.service.CourseQaEvidenceRetriever;
-import com.example.courselingo.qa.service.DenseEvidenceClient;
+import com.example.courselingo.evidence.retrieval.DenseEvidenceClient;
 import com.example.courselingo.subtitle.mapper.SubtitleSegmentMapper;
 import com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper;
 import com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper;

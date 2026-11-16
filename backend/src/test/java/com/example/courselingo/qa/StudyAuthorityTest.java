@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.*;
+import com.example.courselingo.evidence.retrieval.DenseEvidenceClient;
+import com.example.courselingo.evidence.retrieval.DenseRetrievalProperties;
 import com.example.courselingo.qa.service.*;
 import com.example.courselingo.study.*;
 import com.fasterxml.jackson.databind.ObjectMapper;

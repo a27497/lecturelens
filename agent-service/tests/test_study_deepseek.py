@@ -99,6 +99,6 @@ def test_phase0_provider_change_cannot_claim_historical_p10_identity():
     assert STEP6_AGENT.startswith("step6-agent-lanes-")
     assert DEVELOPMENT_AGENT.startswith("study-content-")
     assert P10_AGENT == "p10-choice-review-442bb2af75c77ed1"
-    assert verify_development_agent() == 65
+    assert verify_development_agent() == 66
     with pytest.raises(CostDenied, match="COST_AGENT_IDENTITY_CHANGED"):
         verify_p10_agent()

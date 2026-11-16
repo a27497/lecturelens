@@ -7,6 +7,7 @@ import pytest
 import test_study
 from test_study_goals import goal_verdict
 
+from lecturelens_agent.study.decision import candidate_substance
 from lecturelens_agent.study.method_scope import METHOD_SYSTEM, MethodSelection
 from lecturelens_agent.study.provider import ChatProvider, ModelResponseError
 from lecturelens_agent.study.quality import (
@@ -16,7 +17,6 @@ from lecturelens_agent.study.quality import (
     review_messages,
     review_wire_messages,
 )
-from lecturelens_agent.study.runtime import candidate_substance
 from lecturelens_agent.study.support_review import MethodCoverageVerdict
 
 setup = test_study.setup

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.courselingo.evidence.CourseEvidence;
 import com.example.courselingo.evidence.CourseEvidenceService;
+import com.example.courselingo.evidence.EvidenceIndexClient;
 import com.example.courselingo.evidence.EvidenceIndexSynchronizer;
 import com.example.courselingo.evidence.LearnableEvidencePublisher;
 import com.example.courselingo.task.service.GenerationFence;
@@ -39,7 +40,7 @@ class SubtitlesReadyLearningIntegrationTest {
     CourseEvidenceService evidence;
     LearningAvailability learning;
     EvidenceIndexSynchronizer indexes;
-    com.example.courselingo.qa.service.DenseEvidenceClient dense;
+    EvidenceIndexClient dense;
 
     @BeforeEach
     void setup() throws Exception {
@@ -74,10 +75,9 @@ class SubtitlesReadyLearningIntegrationTest {
         beans.addBean("learnablePublication", new LearnableEvidencePublisher(jdbc, evidence));
         fence.configureLearnablePublication(beans.getBeanProvider(LearnableSourcePublication.class));
         learning = new LearningAvailability(jdbc, true);
-        dense = mock(com.example.courselingo.qa.service.DenseEvidenceClient.class);
+        dense = mock(EvidenceIndexClient.class);
         when(dense.enabled()).thenReturn(true);
-        when(dense.sync(anyString(), anyLong(), anyLong(), anyLong(), anyList(), anyBoolean())).thenAnswer(call ->
-            new ObjectMapper().createObjectNode().put("state", "READY").put("index_version", "test-v1"));
+        when(dense.sync(anyString(), anyLong(), anyLong(), anyLong(), anyList(), anyBoolean())).thenReturn("test-v1");
         indexes = new EvidenceIndexSynchronizer(jdbc, evidence, dense, manager);
         // The run publishes its subtitles exactly like PERSIST_SUBTITLES does.
         tx.executeWithoutResult(status -> {

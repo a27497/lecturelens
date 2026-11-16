@@ -374,7 +374,7 @@ class SystemModelRuntimeMySqlTest {
                 mock(com.example.courselingo.subtitle.mapper.SubtitleTranslationSegmentMapper.class),
                 mock(com.example.courselingo.vision.ocr.mapper.VideoKeyframeOcrMapper.class));
         retriever.configureEvidence(sources);
-        var dense = mock(com.example.courselingo.qa.service.DenseEvidenceClient.class);
+        var dense = mock(com.example.courselingo.evidence.retrieval.DenseEvidenceClient.class);
         when(dense.enabled()).thenReturn(true);
         Runnable revise = () -> new org.springframework.transaction.support.TransactionTemplate(db.transactions)
                 .executeWithoutResult(status -> fence.sourceChanging(task, user));
