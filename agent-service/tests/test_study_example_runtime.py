@@ -1,4 +1,7 @@
+import importlib.util
 import json
+import tarfile
+from pathlib import Path
 
 import pytest
 import test_study
@@ -9,8 +12,10 @@ from lecturelens_agent.study.contracts import StudyCommand
 setup = test_study.setup
 
 
-@pytest.mark.parametrize("crash", [False, True])
-def test_computed_observation_drives_draft_and_survives_checkpoint_recovery(setup, monkeypatch, crash):
+@pytest.mark.parametrize("checkpoint", ["none", "current", "prior_runtime"])
+def test_computed_observation_drives_draft_and_survives_checkpoint_recovery(
+    setup, monkeypatch, tmp_path, checkpoint
+):
     import lecturelens_agent.study.runtime as module
 
     store, _, runtime, scope = setup
@@ -50,7 +55,7 @@ def test_computed_observation_drives_draft_and_survives_checkpoint_recovery(setu
     runtime.provider.decide, runtime.provider.review = decide, review
     run = test_study.start(setup)
     original_save = store.save_tool
-    if crash:
+    if checkpoint != "none":
 
         def save(*args, **kwargs):
             result = original_save(*args, **kwargs)
@@ -60,8 +65,21 @@ def test_computed_observation_drives_draft_and_survives_checkpoint_recovery(setu
             return result
 
         store.save_tool = save
-        with pytest.raises(SystemExit):
-            runtime.execute(run)
+        with monkeypatch.context() as patch:
+            if checkpoint == "prior_runtime":
+                fixture = Path(__file__).parent / "fixtures/study-decision-prior-source.tar.gz"
+                with tarfile.open(fixture) as archive:
+                    archive.extractall(tmp_path, filter="data")
+                spec = importlib.util.spec_from_file_location(
+                    "lecturelens_agent.study._prior_runtime", tmp_path / "study/runtime.py"
+                )
+                prior = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(prior)
+                patch.setattr(prior, "check_example", check)
+                patch.setattr(runtime, "graph", prior.StudyRuntime.graph.__get__(runtime))
+            with pytest.raises(SystemExit, match="after private tool commit"):
+                runtime.execute(run)
+        assert test_study.read(setup)["run"]["status"] == "running"
     runtime.execute(run)
     response = test_study.read(setup)
     assert response["run"]["status"] == "succeeded"
@@ -73,11 +91,16 @@ def test_computed_observation_drives_draft_and_survives_checkpoint_recovery(setu
     assert "lrld" not in json.dumps(events, default=str)
     assert "world" not in json.dumps(events, default=str)
     with store.connect() as conn:
-        row = conn.execute(
-            "SELECT result FROM study_tool_result WHERE run_id=%s AND tool_name='create_practice_set'",
+        journal = conn.execute(
+            "SELECT tool_name,result FROM study_tool_result WHERE run_id=%s ORDER BY call_id",
             (run["run_id"],),
-        ).fetchone()
-    assert row["result"]["quality"]["accepted"] is True
+        ).fetchall()
+    assert [row["tool_name"] for row in journal] == [
+        "search_course_evidence",
+        "check_python_example",
+        "create_practice_set",
+    ]
+    assert journal[-1]["result"]["quality"]["accepted"] is True
 
 
 def test_example_checker_cannot_reference_another_courses_evidence(setup, monkeypatch):

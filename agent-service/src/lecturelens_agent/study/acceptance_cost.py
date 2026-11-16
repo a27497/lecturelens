@@ -37,7 +37,8 @@ STUDY_REROUTE2_AGENT = "study-reroute2-f3a0397cd336a660"
 STUDY_REROUTE3_AGENT = "study-reroute3-f93cf8faab6862d8"
 STUDY_CONTENT_GUARD_AGENT = "study-content-c3e05752ba161db0"
 STUDY_ERROR_BOUNDARY_AGENT = "study-content-b3b463fe687163cb"
-DEVELOPMENT_AGENT = "study-content-e027ef9e7ebd4d32"
+STUDY_EVIDENCE_TRANSPORT_AGENT = "study-content-e027ef9e7ebd4d32"
+DEVELOPMENT_AGENT = "study-content-fce4d4e7cf91a757"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
@@ -52,7 +53,8 @@ STUDY_REROUTE3_MANIFEST_SHA256 = "f93cf8faab6862d8544e834d7745f8e246739cce662f53
 STUDY_CONTENT_MANIFEST_SHA256 = "2131d025b61561e5c63a6c59dc17078fb07eb112062501a48669776708d0efbf"
 STUDY_CONTENT_GUARD_MANIFEST_SHA256 = "c3e05752ba161db00a8b5468b496261f72050be96a93d0814fb6dd4a192bcaf0"
 STUDY_ERROR_BOUNDARY_MANIFEST_SHA256 = "b3b463fe687163cbacf7dc02d5a100c785b8fd53b37a466c9c3ca5c26d3d6ac9"
-DEVELOPMENT_MANIFEST_SHA256 = "e027ef9e7ebd4d32d7a007632c2f49a582250c8f7d0b3f112cc557a55e46634f"
+STUDY_EVIDENCE_TRANSPORT_MANIFEST_SHA256 = "e027ef9e7ebd4d32d7a007632c2f49a582250c8f7d0b3f112cc557a55e46634f"
+DEVELOPMENT_MANIFEST_SHA256 = "fce4d4e7cf91a75796456cc7e97de9e83ce572ba41009eedc466832245531cb0"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -203,9 +205,16 @@ def verify_study_error_boundary_agent(package=None):
     )
 
 
+def verify_study_evidence_transport_agent(package=None):
+    """Historical Study candidate with transport-independent Evidence validation."""
+    return _verify_agent(
+        package, "study_evidence_transport_agent_manifest.json", STUDY_EVIDENCE_TRANSPORT_MANIFEST_SHA256
+    )
+
+
 def verify_development_agent(package=None):
-    """Current Study candidate with transport-independent Evidence validation."""
-    return _verify_agent(package, "study_evidence_transport_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """Current Study candidate with independently testable tool-call decisions."""
+    return _verify_agent(package, "study_decision_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)
