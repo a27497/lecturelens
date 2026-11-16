@@ -1,16 +1,17 @@
 # 复现顺序与独立 PostgreSQL
 
-从仓库根目录执行，使用已安装依赖的 `agent-service/.venv`。只允许专用测试实例上的 `lecturelens_agent_test`，不能指向服务数据库。连接串由环境提供，不写入报告或 Git。新批次目录必须不存在，已有结果不能覆盖。
+从仓库根目录执行。下文的机制评测重跑使用已安装依赖的 `agent-service/.venv`。只允许专用测试实例上的 `lecturelens_agent_test`，不能指向服务数据库。连接串由环境提供，不写入报告或 Git。新批次目录必须不存在，已有结果不能覆盖。
 
 ## 只读复算已保存记录
 
-无需数据库、Java、浏览器或模型凭据：
+使用系统 Python 3，从[已提交的分片](PUBLIC_RECORDS.md)恢复两份原始矩阵，再离线复算：
 
 ```bash
-agent-service/.venv/bin/python eval/approval-recovery-20261014/verify.py
+python3 eval/approval-recovery-20261014/restore_public_records.py
+python3 eval/approval-recovery-20261014/verify.py
 ```
 
-此命令从原 JSONL/JUnit 计算，逐点核对原 summary 和 RESULTS；遇到不一致退出非零。不会重新评分、改标注或写旧文件。数字和口径见 [VERIFY](VERIFY.md)。
+验算脚本读取原 JSONL 和 JUnit 记录，逐点对照原 summary 和 RESULTS，遇到不一致会以非零状态退出。不会重新评分、改标注或写旧文件。数字和口径见 [VERIFY](VERIFY.md)。
 
 ## 最小机制抽样复跑
 
