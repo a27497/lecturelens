@@ -29,4 +29,13 @@ public class BusinessException extends RuntimeException {
     public ErrorCode errorCode() {
         return errorCode;
     }
+
+    /** Optional details intended for the client response. */
+    public Object apiDetails() {
+        return null;
+    }
+
+    public String diagnosticMessage() {
+        return getMessage();
+    }
 }

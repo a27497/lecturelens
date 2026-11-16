@@ -1,8 +1,6 @@
 package com.example.courselingo.common.web;
 
 import com.example.courselingo.common.error.ErrorCode;
-import com.example.courselingo.ai.llm.AiServiceErrorDetails;
-import com.example.courselingo.ai.llm.LlmStageException;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.common.logging.SafeLogSanitizer;
 import com.example.courselingo.common.response.ApiResponse;
@@ -35,22 +33,13 @@ public class GlobalExceptionHandler {
         log.debug("event=client_stream_disconnected exceptionType={}", exception.getClass().getSimpleName());
     }
 
-    @ExceptionHandler(LlmStageException.class)
-    public ResponseEntity<ApiResponse<AiServiceErrorDetails>> handleLlmStageException(LlmStageException exception) {
-        ErrorCode errorCode = exception.errorCode();
-        logHandledException(errorCode, exception, exception.safeDiagnosticSummary());
-        return ResponseEntity
-            .status(errorCode.httpStatus())
-            .body(ApiResponse.failure(errorCode.code(), exception.apiDetails().userMessage(), exception.apiDetails()));
-    }
-
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException exception) {
+    public ResponseEntity<ApiResponse<Object>> handleBusinessException(BusinessException exception) {
         ErrorCode errorCode = exception.errorCode();
-        logHandledException(errorCode, exception);
+        logHandledException(errorCode, exception, exception.diagnosticMessage());
         return ResponseEntity
             .status(errorCode.httpStatus())
-            .body(ApiResponse.failure(errorCode.code(), exception.getMessage()));
+            .body(ApiResponse.failure(errorCode.code(), exception.getMessage(), exception.apiDetails()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
