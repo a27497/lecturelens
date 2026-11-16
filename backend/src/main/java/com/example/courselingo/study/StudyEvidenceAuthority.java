@@ -6,7 +6,7 @@ import com.example.courselingo.evidence.CourseEvidence;
 import com.example.courselingo.evidence.LearningScope;
 import com.example.courselingo.evidence.CourseEvidenceService;
 import com.example.courselingo.evidence.EvidenceIndexSynchronizer;
-import com.example.courselingo.qa.service.DenseEvidenceClient;
+import com.example.courselingo.evidence.retrieval.DenseEvidenceClient;
 import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

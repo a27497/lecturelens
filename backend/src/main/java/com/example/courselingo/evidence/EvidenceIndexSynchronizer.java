@@ -2,7 +2,6 @@ package com.example.courselingo.evidence;
 
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
-import com.example.courselingo.qa.service.DenseEvidenceClient;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -21,10 +20,10 @@ public class EvidenceIndexSynchronizer {
     private static final Logger log = LoggerFactory.getLogger(EvidenceIndexSynchronizer.class);
     private final JdbcTemplate jdbc;
     private final CourseEvidenceService evidence;
-    private final DenseEvidenceClient client;
+    private final EvidenceIndexClient client;
     private final TransactionTemplate transaction;
 
-    public EvidenceIndexSynchronizer(JdbcTemplate jdbc, CourseEvidenceService evidence, DenseEvidenceClient client,
+    public EvidenceIndexSynchronizer(JdbcTemplate jdbc, CourseEvidenceService evidence, EvidenceIndexClient client,
                                       PlatformTransactionManager manager) {
         this.jdbc = jdbc;
         this.evidence = evidence;
@@ -86,12 +85,12 @@ public class EvidenceIndexSynchronizer {
                 release(work);
                 return;
             }
-            var result = client.sync(work.taskId(), work.ownerId(), work.revision(), work.sequence(), items, work.deleted());
+            String indexVersion = client.sync(work.taskId(), work.ownerId(), work.revision(), work.sequence(), items, work.deleted());
             int changed = jdbc.update("""
                 UPDATE evidence_index_sync SET synced_sequence=?,indexed_revision=?,index_version=?,status=?,attempts=0,
                     available_at=?,claim_id=NULL,claim_until=NULL,last_error=NULL,updated_at=CURRENT_TIMESTAMP
                 WHERE task_id=? AND claim_id=? AND desired_sequence=?
-                """, work.sequence(), work.revision(), result.path("index_version").asText(),
+                """, work.sequence(), work.revision(), indexVersion,
                 work.deleted() ? "DELETED" : "READY", Timestamp.from(Instant.now().plusSeconds(300)),
                 work.taskId(), work.claimId(), work.sequence());
             if (changed == 0) release(work);

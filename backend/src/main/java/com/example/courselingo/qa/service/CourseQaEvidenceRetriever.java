@@ -3,6 +3,7 @@ package com.example.courselingo.qa.service;
 import com.example.courselingo.evidence.LearningScope;
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
+import com.example.courselingo.evidence.retrieval.DenseEvidenceClient;
 import com.example.courselingo.fusion.VideoSegment;
 import com.example.courselingo.fusion.mapper.VideoSegmentMapper;
 import com.example.courselingo.qa.dto.CourseQaEvidenceItem;

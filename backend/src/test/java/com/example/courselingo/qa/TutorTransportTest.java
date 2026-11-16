@@ -3,7 +3,7 @@ package com.example.courselingo.qa;
 import static org.assertj.core.api.Assertions.*;
 
 import com.example.courselingo.common.exception.BusinessException;
-import com.example.courselingo.qa.service.DenseRetrievalProperties;
+import com.example.courselingo.evidence.retrieval.DenseRetrievalProperties;
 import com.example.courselingo.study.StudyTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;

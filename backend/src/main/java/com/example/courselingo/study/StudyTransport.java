@@ -2,7 +2,7 @@ package com.example.courselingo.study;
 
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
-import com.example.courselingo.qa.service.DenseRetrievalProperties;
+import com.example.courselingo.evidence.retrieval.DenseRetrievalProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;

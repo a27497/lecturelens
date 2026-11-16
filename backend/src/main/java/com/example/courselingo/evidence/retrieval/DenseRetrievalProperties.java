@@ -1,4 +1,4 @@
-package com.example.courselingo.qa.service;
+package com.example.courselingo.evidence.retrieval;
 
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;

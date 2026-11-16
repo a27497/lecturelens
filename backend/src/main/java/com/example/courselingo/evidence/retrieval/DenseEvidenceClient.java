@@ -1,8 +1,9 @@
-package com.example.courselingo.qa.service;
+package com.example.courselingo.evidence.retrieval;
 
 import com.example.courselingo.common.error.ErrorCode;
 import com.example.courselingo.common.exception.BusinessException;
 import com.example.courselingo.evidence.CourseEvidence;
+import com.example.courselingo.evidence.EvidenceIndexClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DenseEvidenceClient implements AutoCloseable {
+public class DenseEvidenceClient implements EvidenceIndexClient, AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(DenseEvidenceClient.class);
     private static final String PATH = "/internal/v1/retrieve";
     private final DenseRetrievalProperties properties;
@@ -40,13 +41,15 @@ public class DenseEvidenceClient implements AutoCloseable {
         this.json = json;
     }
 
+    @Override
     public boolean enabled() { return properties.isEnabled(); }
 
     @jakarta.annotation.PreDestroy
     @Override
     public void close() { http.close(); }
 
-    public com.fasterxml.jackson.databind.JsonNode sync(String taskId, Long ownerId, long revision,
+    @Override
+    public String sync(String taskId, Long ownerId, long revision,
             long sequence, List<CourseEvidence> evidence, boolean deleted) throws Exception {
         Map<String, Object> payload = new LinkedHashMap<>();
         String requestId = UUID.randomUUID().toString();
@@ -65,9 +68,9 @@ public class DenseEvidenceClient implements AutoCloseable {
         validateSync(plan, requestId, taskId, ownerId, revision, sequence);
         if (deleted) {
             if (!"DELETED".equals(plan.path("state").asText())) throw new IllegalStateException("Delete not acknowledged");
-            return plan;
+            return plan.path("index_version").asText();
         }
-        if ("READY".equals(plan.path("state").asText())) return plan;
+        if ("READY".equals(plan.path("state").asText())) return plan.path("index_version").asText();
         if (!"PENDING".equals(plan.path("state").asText()) || !plan.path("missing_ids").isArray()) {
             throw new IllegalStateException("Invalid sync plan");
         }
@@ -86,7 +89,7 @@ public class DenseEvidenceClient implements AutoCloseable {
                 || !plan.path("index_version").equals(result.path("index_version"))) {
             throw new IllegalStateException("Index not published");
         }
-        return result;
+        return result.path("index_version").asText();
     }
 
     private void validateSync(com.fasterxml.jackson.databind.JsonNode result, String requestId, String taskId,

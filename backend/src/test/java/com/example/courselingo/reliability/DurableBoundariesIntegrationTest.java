@@ -31,7 +31,7 @@ class DurableBoundariesIntegrationTest {
     RocketMqAnalysisTaskMessageProducer transport;
     VideoKeyframeEvidenceLifecycleService cleanup;
     AnalysisTaskMessage message;
-    com.example.courselingo.qa.service.DenseEvidenceClient dense;
+    EvidenceIndexClient dense;
     EvidenceIndexSynchronizer indexes;
     DataSourceTransactionManager manager;
 
@@ -68,7 +68,7 @@ class DurableBoundariesIntegrationTest {
         cleanup = mock(VideoKeyframeEvidenceLifecycleService.class);
         outbox = new DurableTaskOutbox(jdbc, json, transport, cleanup, manager);
         evidence = new CourseEvidenceService(jdbc, json, fence, manager);
-        dense = mock(com.example.courselingo.qa.service.DenseEvidenceClient.class);
+        dense = mock(EvidenceIndexClient.class);
         when(dense.enabled()).thenReturn(true);
         indexes = new EvidenceIndexSynchronizer(jdbc, evidence, dense, manager);
         message = new AnalysisTaskMessage("task", "upload", 42L, "en-US", "zh-CN", "event", "trace", Instant.now());
@@ -82,8 +82,7 @@ class DurableBoundariesIntegrationTest {
         });
         when(dense.sync(anyString(), anyLong(), anyLong(), anyLong(), anyList(), anyBoolean())).thenAnswer(call -> {
             assertThat(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
-            return new ObjectMapper().createObjectNode().put("state", (boolean) call.getArgument(5) ? "DELETED" : "READY")
-                .put("index_version", "test-v1");
+            return "test-v1";
         });
     }
 
@@ -118,7 +117,7 @@ class DurableBoundariesIntegrationTest {
             outbox.enqueueCleanup("task",42L);
         });
         assertThatThrownBy(() -> indexes.status("task",42L)).isInstanceOf(BusinessException.class);
-        doReturn(new ObjectMapper().createObjectNode().put("state","DELETED").put("index_version","test-v1"))
+        doReturn("test-v1")
             .when(dense).sync(anyString(),anyLong(),anyLong(),anyLong(),anyList(),eq(true));
         new EvidenceIndexSynchronizer(jdbc,evidence,dense,manager).synchronizeDeletes();
         assertThat(jdbc.queryForObject("SELECT status FROM evidence_index_sync",String.class)).isEqualTo("DELETED");
@@ -132,7 +131,7 @@ class DurableBoundariesIntegrationTest {
                 fence.sourceChanging("task",42L);
                 jdbc.update("UPDATE analysis_task SET status='RUNNING'");
             });
-            return new ObjectMapper().createObjectNode().put("state","READY").put("index_version","test-v1");
+            return "test-v1";
         });
         indexes.synchronize();
         assertThat(indexes.status("task",42L).status()).isEqualTo("PENDING");
