@@ -4,7 +4,7 @@ import uuid
 
 from psycopg.types.json import Jsonb
 
-from .store import StudyError
+from .errors import StudyError
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS study_attempt (

@@ -11,9 +11,10 @@ import uuid
 import httpx
 from pydantic import ValidationError
 
+from .errors import StudyError
 from .failures import failure_category
 from .learning_scope import check_scope_response, inject_scope, validate_scope_call
-from .store import BudgetExceeded, RunStopped, StudyError
+from .store import BudgetExceeded, RunStopped
 
 
 def execute_read(read_once, span, scope, action="CHECK", **arguments):

@@ -12,8 +12,9 @@ from contextvars import ContextVar
 from langchain_core.runnables import RunnableConfig
 from pydantic import ValidationError
 
+from .errors import StudyError
 from .failures import failure_category
-from .store import BudgetExceeded, RunStopped, StudyError
+from .store import BudgetExceeded, RunStopped
 
 _span = ContextVar("study_trace_span", default=None)
 

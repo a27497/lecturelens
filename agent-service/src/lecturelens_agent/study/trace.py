@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 from langgraph.checkpoint.postgres import PostgresSaver
 
-from .store import StudyError
+from .errors import StudyError
 
 SCOPE = ("owner_id", "course_id", "revision")
 RUN_FIELDS = (

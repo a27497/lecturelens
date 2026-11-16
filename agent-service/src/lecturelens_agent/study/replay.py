@@ -2,7 +2,8 @@
 
 import hashlib
 
-from .store import TERMINAL, StudyError
+from .errors import StudyError
+from .store import TERMINAL
 from .trace import SCOPE
 
 

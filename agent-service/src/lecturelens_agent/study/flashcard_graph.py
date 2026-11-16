@@ -9,7 +9,8 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import Field
 
 from ..contracts import Contract, Identifier
-from .store import RunStopped, StudyError
+from .errors import StudyError
+from .store import RunStopped
 from .telemetry import model_detail, traced_node
 
 

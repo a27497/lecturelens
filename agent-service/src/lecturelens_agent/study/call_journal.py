@@ -5,7 +5,8 @@ import json
 
 from psycopg.types.json import Jsonb
 
-from .store import RUN_MODEL_CALL_LIMIT, StudyError, reservation_error
+from .errors import StudyError
+from .store import RUN_MODEL_CALL_LIMIT, reservation_error
 from .telemetry import _span
 
 

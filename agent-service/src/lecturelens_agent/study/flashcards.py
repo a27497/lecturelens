@@ -5,8 +5,8 @@ from datetime import timedelta
 
 from psycopg.types.json import Jsonb
 
+from .errors import StudyError
 from .scheduling import POLICY, new_state, schedule, utc_now
-from .store import StudyError
 
 SCHEMA = """
 ALTER TABLE study_run DROP CONSTRAINT IF EXISTS study_run_task_kind_check;

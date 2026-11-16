@@ -18,9 +18,10 @@ from psycopg.types.json import Jsonb
 from pydantic import Field, SecretStr, TypeAdapter, ValidationError
 
 from ..contracts import Contract, Identifier
+from .errors import StudyError
 from .model_evidence import single_turn_evidence
 from .provider import ChatProvider
-from .store import BudgetExceeded, StudyError, StudyStore
+from .store import BudgetExceeded, StudyStore
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS agent_model_connection (

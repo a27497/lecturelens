@@ -16,7 +16,7 @@ from mcp.server.stdio import stdio_server
 from pydantic import ValidationError
 
 from ..study.authority import EvidenceAuthority, forward_signed
-from ..study.store import StudyError
+from ..study.errors import StudyError
 from .contracts import TOOLS, CourseResult, authority_payload
 
 
