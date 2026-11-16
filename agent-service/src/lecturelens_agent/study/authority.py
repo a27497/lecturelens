@@ -8,8 +8,8 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from .errors import StudyError
 from .learning_scope import check_scope_response, inject_scope
-from .store import StudyError
 
 AUDIENCE = "lecturelens-study-v1"
 AUTHORITY_PATH = "/internal/v1/study/evidence"

@@ -8,6 +8,7 @@ import psycopg
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
+from .errors import StudyError as StudyError
 from .failures import failure_category
 from .learning_scope import ACTIVE_SQL, public_status, stored_status
 from .model_evidence import single_turn_evidence
@@ -59,12 +60,6 @@ TERMINAL = {"succeeded", "failed", "cancelled", "budget_exceeded"}
 RUN_RESERVED_TOKEN_LIMIT = 600_000
 RUN_MODEL_CALL_LIMIT = 12
 RUN_TOOL_CALL_LIMIT = 8
-
-
-class StudyError(Exception):
-    def __init__(self, code, status=409):
-        self.code, self.status = code, status
-        super().__init__(code)
 
 
 class RunStopped(Exception):

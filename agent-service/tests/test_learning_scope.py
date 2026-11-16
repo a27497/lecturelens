@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from test_study import setup  # noqa: F401
 
 from lecturelens_agent.study.contracts import StudyCommand
+from lecturelens_agent.study.errors import StudyError as DomainStudyError
 from lecturelens_agent.study.learning_scope import (
     LearningScope,
     check_scope_response,
@@ -215,8 +216,10 @@ def test_scope_echo_and_tool_boundaries_fail_closed():
     scope = dict(owner_id=42, course_id="c", revision=1, learning_scope=selection())
     payload = inject_scope(scope, {})
     for result in [{}, {"learning_scope": selection(), "evidence": [{"evidence_id": "e2"}]}]:
-        with pytest.raises(StudyError, match="EVIDENCE_SCOPE_MISMATCH"):
+        with pytest.raises(StudyError, match="EVIDENCE_SCOPE_MISMATCH") as caught:
             check_scope_response(payload, result)
+        assert type(caught.value) is DomainStudyError
+        assert (caught.value.code, caught.value.status) == ("EVIDENCE_SCOPE_MISMATCH", 409)
     for action, args in [
         ("READ", {"evidence_ids": ["e2"]}),
         ("WINDOW", {"evidence_id": "e2"}),

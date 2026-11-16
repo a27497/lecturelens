@@ -208,7 +208,7 @@ def create_app(
     @app.post("/internal/v1/study/command")
     async def study_command(request: Request):
         from .study.contracts import StudyCommand
-        from .study.store import StudyError
+        from .study.errors import StudyError
 
         body = await authenticated_body(request, study=True)
         if app.state.study is None:
@@ -243,7 +243,7 @@ def create_app(
         before the first byte and again before every later read.
         """
         from .study.contracts import StudyCommand
-        from .study.store import StudyError
+        from .study.errors import StudyError
 
         body = await authenticated_body(request, study=True)
         if not app.state.event_stream:
@@ -307,8 +307,8 @@ def create_app(
 
     @app.post("/internal/v1/models/command")
     async def model_command(request: Request):
+        from .study.errors import StudyError
         from .study.models import ModelCommand
-        from .study.store import StudyError
 
         body = await authenticated_body(request, study=True)
         if app.state.models is None:

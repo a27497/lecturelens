@@ -6,8 +6,9 @@ import uuid
 from langgraph.types import interrupt
 from psycopg.types.json import Jsonb
 
+from .errors import StudyError
 from .learning_scope import public_status, stored_status
-from .store import RunStopped, StudyError
+from .store import RunStopped
 
 SCHEMA = """
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS approval_required boolean NOT NULL DEFAULT false;

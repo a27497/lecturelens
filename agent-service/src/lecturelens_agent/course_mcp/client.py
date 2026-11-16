@@ -15,8 +15,8 @@ from mcp.shared.exceptions import McpError
 from pydantic import ValidationError
 
 from ..study.authority import EvidenceAuthority, authority_path, request_body, signature
+from ..study.errors import StudyError
 from ..study.learning_scope import check_scope_response, inject_scope
-from ..study.store import StudyError
 from .contracts import ACTION_TO_TOOL, TOOLS, CourseResult, authority_payload
 
 ERRORS = {

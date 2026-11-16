@@ -11,7 +11,8 @@ from pydantic import Field
 from ..contracts import Contract
 from .choice import Choice
 from .contracts import AnswerPointsQuestion
-from .store import RunStopped, StudyError
+from .errors import StudyError
+from .store import RunStopped
 from .telemetry import model_detail, traced_node
 
 

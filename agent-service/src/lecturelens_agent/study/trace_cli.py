@@ -8,8 +8,9 @@ from urllib.parse import quote, urlsplit
 
 import httpx
 
+from .errors import StudyError
 from .replay import start_replay
-from .store import TERMINAL, StudyError, StudyStore
+from .store import TERMINAL, StudyStore
 from .trace import RunTrace, compare
 
 

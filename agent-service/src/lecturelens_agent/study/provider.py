@@ -12,8 +12,9 @@ from pydantic import ValidationError
 
 from .context import has_time_request
 from .contracts import TOOLS, tool_schemas
+from .errors import StudyError
 from .quality import AbstentionVerdict, repair_review, review_contract, review_schema, review_wire_messages
-from .store import BudgetExceeded, StudyError
+from .store import BudgetExceeded
 
 
 def bailian_nonthinking(url, model):

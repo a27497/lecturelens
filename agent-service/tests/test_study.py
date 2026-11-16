@@ -406,6 +406,13 @@ def test_http_study_context_signature_and_scope(setup):
         response = client.post(COMMAND_PATH, content=body, headers=headers)
         assert response.status_code == 200 and response.json()["run"] is None
         assert response.json()["owner_id"] == scope["owner_id"]
+        stale_scope = scope | {"revision": scope["revision"] + 1}
+        stale_body = StudyCommand(**stale_scope, operation="READ").model_dump_json().encode()
+        stale_headers = headers | {
+            "X-LectureLens-Signature": signature(secret, timestamp, stale_body, COMMAND_PATH)
+        }
+        response = client.post(COMMAND_PATH, content=stale_body, headers=stale_headers)
+        assert response.status_code == 404 and response.json() == {"detail": "SESSION_NOT_FOUND_OR_STALE"}
         headers["X-LectureLens-Signature"] = retrieval_signature(secret, timestamp, body, COMMAND_PATH)
         assert client.post(COMMAND_PATH, content=body, headers=headers).status_code == 401
 

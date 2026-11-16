@@ -5,6 +5,7 @@ from typing import Annotated, Literal
 from pydantic import Field, model_validator
 
 from ..contracts import Contract, Identifier
+from .errors import StudyError
 
 
 class LearningScope(Contract):
@@ -47,8 +48,6 @@ def inject_scope(scope, payload):
     if frozen is not None:
         frozen = LearningScope.model_validate(frozen).model_dump()
         if frozen["revision"] != scope["revision"]:
-            from .store import StudyError
-
             raise StudyError("EVIDENCE_SCOPE_MISMATCH")
         payload["learning_scope"] = frozen
     return payload
@@ -58,8 +57,6 @@ def check_scope_response(payload, result):
     frozen = payload.get("learning_scope")
     if frozen is None:
         return
-    from .store import StudyError
-
     # A legacy Java server must fail the initial CHECK, before any unscoped search/model call.
     if result.get("learning_scope") != frozen:
         raise StudyError("EVIDENCE_SCOPE_MISMATCH")
@@ -73,7 +70,6 @@ def validate_scope_call(scope, action, arguments):
     if frozen is None:
         return
     frozen = LearningScope.model_validate(frozen).model_dump()
-    from .store import StudyError
 
     if arguments.get("expand_to_course") and frozen["policy"] != "course":
         raise StudyError("EVIDENCE_SCOPE_MISMATCH")

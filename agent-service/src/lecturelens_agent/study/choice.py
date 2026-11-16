@@ -5,7 +5,7 @@ from typing import Annotated
 from pydantic import Field, model_validator
 
 from ..contracts import Contract, Identifier
-from .store import StudyError
+from .errors import StudyError
 
 
 class Option(Contract):

@@ -5,8 +5,8 @@ import uuid
 
 from psycopg.types.json import Jsonb
 
+from .errors import StudyError
 from .learning_scope import ACTIVE_SQL, public_status, stored_status
-from .store import StudyError
 
 SCHEMA = """
 ALTER TABLE study_run ADD COLUMN IF NOT EXISTS task_kind text NOT NULL DEFAULT 'practice'

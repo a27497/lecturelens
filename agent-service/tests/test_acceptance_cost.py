@@ -35,6 +35,7 @@ from lecturelens_agent.study.acceptance_cost import (
     PHASE0_AGENT,
     STEP6_AGENT,
     STUDY_BUDGET_AGENT,
+    STUDY_CONTENT_GUARD_AGENT,
     STUDY_REROUTE2_AGENT,
     STUDY_REROUTE3_AGENT,
     STUDY_REROUTE_AGENT,
@@ -52,6 +53,7 @@ from lecturelens_agent.study.acceptance_cost import (
     verify_step6_agent,
     verify_study_budget_agent,
     verify_study_content_agent,
+    verify_study_content_guard_agent,
     verify_study_reroute2_agent,
     verify_study_reroute3_agent,
     verify_study_reroute_agent,
@@ -221,7 +223,7 @@ def test_frozen_module_manifest_detects_source_drift(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "package"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
-    assert verify_development_agent(copied) == 63
+    assert verify_development_agent(copied) == 64
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_frozen_agent(copied)
     altered = copied / "study/provider.py"
@@ -251,7 +253,7 @@ def test_cli_plan_is_read_only_and_fake_policy_cannot_activate(gate, tmp_path):
     result = subprocess.run([*command, "plan"], capture_output=True, text=True, check=True, timeout=10)
     plan = json.loads(result.stdout)
     assert plan["provider_requests"] == 0 and plan["money_limit_implies_max_admitted_calls"] == 9
-    assert plan["verified_development_modules"] == 63
+    assert plan["verified_development_modules"] == 64
     assert plan["historical_agent_candidate"] == FROZEN_AGENT
     assert plan["agent_candidate"] == DEVELOPMENT_AGENT
     policy_file = tmp_path / "fake-policy.json"
@@ -1270,7 +1272,7 @@ def test_review_read_extension_preserves_prior_frozen_manifest_identity():
 
 
 @pytest.fixture
-def historical_study_content_package(tmp_path):
+def historical_study_content_guard_package(tmp_path):
     import tarfile
 
     import lecturelens_agent
@@ -1278,6 +1280,17 @@ def historical_study_content_package(tmp_path):
     package = Path(lecturelens_agent.__file__).parent
     copied = tmp_path / "historical"
     shutil.copytree(package, copied, ignore=shutil.ignore_patterns("__pycache__"))
+    (copied / "study/errors.py").unlink()
+    with tarfile.open(Path(__file__).parent / "fixtures/study-error-boundary-prior-source.tar.gz") as archive:
+        archive.extractall(copied, filter="data")
+    return copied
+
+
+@pytest.fixture
+def historical_study_content_package(historical_study_content_guard_package):
+    import tarfile
+
+    copied = historical_study_content_guard_package
     with tarfile.open(Path(__file__).parent / "fixtures/study-content-guard-prior-source.tar.gz") as archive:
         for member in archive.getmembers():
             (copied / member.name).write_bytes(archive.extractfile(member).read())
@@ -1491,6 +1504,16 @@ def test_t2_t3_candidate_stays_verifiable_after_the_study_guard_fixes(historical
         verify_development_agent(historical_study_content_package)
 
 
+def test_guard_candidate_stays_verifiable_after_the_study_error_refactor(
+    historical_study_content_guard_package,
+):
+    assert verify_study_content_guard_agent(historical_study_content_guard_package) == 63
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_study_content_guard_agent()
+    with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
+        verify_development_agent(historical_study_content_guard_package)
+
+
 def test_study_content_runtime_cannot_claim_an_earlier_study_identity():
     assert DEVELOPMENT_AGENT == "study-content-" + DEVELOPMENT_MANIFEST_SHA256[:16]
     assert STUDY_REROUTE3_AGENT == "study-reroute3-f93cf8faab6862d8"
@@ -1499,7 +1522,7 @@ def test_study_content_runtime_cannot_claim_an_earlier_study_identity():
     assert STUDY_REVIEW_AGENT == "study-review-c83394880f10b710"
     assert STUDY_BUDGET_AGENT == "study-budget-71b4d959dfab59a4"
     assert STEP6_AGENT == "step6-agent-lanes-2eed7cb6c34e7c84"
-    assert verify_development_agent() == 63
+    assert verify_development_agent() == 64
     for historical in (
         verify_step6_agent,
         verify_study_budget_agent,
@@ -1533,7 +1556,7 @@ def test_step6_lanes_cannot_claim_the_phase0_identity(historical_step6_package):
     assert STUDY_REROUTE3_AGENT.startswith("study-reroute3-")
     assert DEVELOPMENT_AGENT.startswith("study-content-")
     assert PHASE0_AGENT == "phase0-integration-9d6312fd722f6df3"
-    assert verify_development_agent() == 63
+    assert verify_development_agent() == 64
     with pytest.raises(CostDenied, match="AGENT_IDENTITY_CHANGED"):
         verify_phase0_agent()
     assert verify_step6_agent(historical_step6_package) == 63
@@ -1613,6 +1636,7 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
         STUDY_REROUTE_AGENT,
         STUDY_REROUTE2_AGENT,
         STUDY_REROUTE3_AGENT,
+        STUDY_CONTENT_GUARD_AGENT,
     ):
         with pytest.raises(CostDenied, match="POLICY_INVALID"):
             replace(policy, candidate_sha=historical).validate()
@@ -1623,7 +1647,8 @@ def test_offline_policy_cannot_claim_historical_candidate_or_gain_live_permissio
 @pytest.mark.parametrize(
     ("manifest", "verifier"),
     [
-        ("study_content_guard_agent_manifest.json", verify_development_agent),
+        ("study_error_boundary_agent_manifest.json", verify_development_agent),
+        ("study_content_guard_agent_manifest.json", verify_study_content_guard_agent),
         ("study_content_agent_manifest.json", verify_study_content_agent),
         ("study_reroute3_agent_manifest.json", verify_study_reroute3_agent),
         ("study_reroute2_agent_manifest.json", verify_study_reroute2_agent),

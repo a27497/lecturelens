@@ -35,6 +35,7 @@ from .context import (
     unfinished_speech,
 )
 from .contracts import TOOLS, GenericPracticeArgs, materialize_practice, python_practice
+from .errors import StudyError
 from .examples import check_example
 from .failures import failure_category
 from .goals import refusal_text
@@ -55,7 +56,7 @@ from .quality import (
 )
 from .sequences import sequence_practice
 from .solution import solution_fingerprint, solution_messages
-from .store import RUN_MODEL_CALL_LIMIT, RUN_TOOL_CALL_LIMIT, BudgetExceeded, RunStopped, StudyError
+from .store import RUN_MODEL_CALL_LIMIT, RUN_TOOL_CALL_LIMIT, BudgetExceeded, RunStopped
 from .strings import copied_string_input, novel_string_input
 from .telemetry import TracedAuthority, model_detail, traced_node
 

@@ -17,8 +17,9 @@ from psycopg.conninfo import conninfo_to_dict, make_conninfo
 from psycopg.types.json import Jsonb
 
 from .call_journal import request_fingerprint
+from .errors import StudyError
 from .learning_scope import public_status
-from .store import StudyError, StudyStore
+from .store import StudyStore
 from .support_review import output_tokens
 
 FROZEN_AGENT = "e34d8c596d74d4320ce6a224359190374520e4d3"
@@ -34,7 +35,8 @@ STUDY_REVIEW_AGENT = "study-review-c83394880f10b710"
 STUDY_REROUTE_AGENT = "study-reroute-c044bcc73f76226f"
 STUDY_REROUTE2_AGENT = "study-reroute2-f3a0397cd336a660"
 STUDY_REROUTE3_AGENT = "study-reroute3-f93cf8faab6862d8"
-DEVELOPMENT_AGENT = "study-content-c3e05752ba161db0"
+STUDY_CONTENT_GUARD_AGENT = "study-content-c3e05752ba161db0"
+DEVELOPMENT_AGENT = "study-content-b3b463fe687163cb"
 PRIOR_DEVELOPMENT_MANIFEST_SHA256 = "480fc58639fd4a595fa34f6e3ae6d1e489107094da36a9cc71b9c661821fcb25"
 P7_MANIFEST_SHA256 = "56df1f68a682ab001e3b0f151adf6bcfc0b953aabcf59cf64c9bb7a339e56333"
 P9_MANIFEST_SHA256 = "2b5fa77bab87da3888e11b373175cf3921a08739a74dcebb46eae31982826471"
@@ -47,7 +49,8 @@ STUDY_REROUTE_MANIFEST_SHA256 = "c044bcc73f76226f7ae74f77e83276dbe11421959954729
 STUDY_REROUTE2_MANIFEST_SHA256 = "f3a0397cd336a6601f24a2c2ea20ed756e2c8ae337c407520867cb517ba70cf2"
 STUDY_REROUTE3_MANIFEST_SHA256 = "f93cf8faab6862d8544e834d7745f8e246739cce662f53cc3132bc8f4696331b"
 STUDY_CONTENT_MANIFEST_SHA256 = "2131d025b61561e5c63a6c59dc17078fb07eb112062501a48669776708d0efbf"
-DEVELOPMENT_MANIFEST_SHA256 = "c3e05752ba161db00a8b5468b496261f72050be96a93d0814fb6dd4a192bcaf0"
+STUDY_CONTENT_GUARD_MANIFEST_SHA256 = "c3e05752ba161db00a8b5468b496261f72050be96a93d0814fb6dd4a192bcaf0"
+DEVELOPMENT_MANIFEST_SHA256 = "b3b463fe687163cbacf7dc02d5a100c785b8fd53b37a466c9c3ca5c26d3d6ac9"
 UPSTREAM = "https://api.deepseek.com/chat/completions"
 MODEL = "deepseek-flash"
 MAX_BODY = 65_536
@@ -184,9 +187,16 @@ def verify_study_content_agent(package=None):
     return _verify_agent(package, "study_content_agent_manifest.json", STUDY_CONTENT_MANIFEST_SHA256)
 
 
+def verify_study_content_guard_agent(package=None):
+    """Historical Study candidate with template and abstention guards."""
+    return _verify_agent(
+        package, "study_content_guard_agent_manifest.json", STUDY_CONTENT_GUARD_MANIFEST_SHA256
+    )
+
+
 def verify_development_agent(package=None):
-    """Current Study candidate with template and abstention guards."""
-    return _verify_agent(package, "study_content_guard_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
+    """Current Study candidate with a storage-independent error type."""
+    return _verify_agent(package, "study_error_boundary_agent_manifest.json", DEVELOPMENT_MANIFEST_SHA256)
 
 
 @dataclass(frozen=True)
