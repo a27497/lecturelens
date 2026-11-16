@@ -27,12 +27,13 @@
 
 全量/Java/前端的旧测试数字来自旧原始结果复算，本次只重新执行用户要求的审批相关测试和 Ruff。验收方的外部 35/35（等待强杀 12/12）没有对应原始文件保存在本目录，不能由本包独立复算，也未混入统计。
 
-## 已实际执行的只读复算命令
+## 恢复原始记录并离线复算
 
-在仓库根目录：
+从仓库根目录用系统 Python 3 执行。先按[分片清单](public-record-parts.json)恢复矩阵原件，再复算：
 
 ```bash
-agent-service/.venv/bin/python eval/approval-recovery-20261014/verify.py
+python3 eval/approval-recovery-20261014/restore_public_records.py
+python3 eval/approval-recovery-20261014/verify.py
 ```
 
 标准输出实存于 [recomputed.json](documentation-check-20261015/recomputed.json)。该脚本从原 JSONL 复算两批样本、终态和分位数，逐点核对两份原 summary，核对原 RESULTS；从原 JUnit 核对 collection 及 727/23，读取 Java 公开投影、前端和浏览器原记录，校验复制截图哈希。已执行两次，输出一致；`checks.json` 记录重复核对。关键输出：577/577、523 个不同点、18×3、96、1658.319/2641.105 ms、1140.497/1214.510 ms。
