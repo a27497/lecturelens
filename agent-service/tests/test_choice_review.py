@@ -187,6 +187,6 @@ def test_review_rejects_unbounded_offset_before_querying():
 def test_review_runtime_has_independent_identity_and_cannot_claim_p9():
     from lecturelens_agent.study.acceptance_cost import CostDenied, verify_development_agent, verify_p9_agent
 
-    assert verify_development_agent() == 64
+    assert verify_development_agent() == 65
     with pytest.raises(CostDenied, match="IDENTITY_CHANGED"):
         verify_p9_agent()

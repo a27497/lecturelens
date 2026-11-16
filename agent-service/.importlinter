@@ -1,0 +1,10 @@
+[importlinter]
+root_package = lecturelens_agent
+
+[importlinter:contract:study_mcp]
+name = Study does not depend on the MCP transport
+type = forbidden
+source_modules =
+    lecturelens_agent.study
+forbidden_modules =
+    lecturelens_agent.course_mcp

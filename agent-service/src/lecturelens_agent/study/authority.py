@@ -2,7 +2,6 @@ import hashlib
 import hmac
 import ipaddress
 import json
-import os
 import time
 from urllib.parse import urlsplit
 
@@ -90,14 +89,3 @@ class EvidenceAuthority:
         return forward_signed(
             self.url, payload, timestamp, signature(self.secret, timestamp, body, authority_path(payload))
         )
-
-
-def course_authority(url, secret):
-    transport = os.environ.get("AGENT_COURSE_TOOL_TRANSPORT", "internal")
-    if transport == "internal":
-        return EvidenceAuthority(url, secret)
-    if transport == "mcp":
-        from ..course_mcp.client import McpEvidenceAuthority
-
-        return McpEvidenceAuthority(url, secret)
-    raise RuntimeError("AGENT_COURSE_TOOL_TRANSPORT must be internal or mcp")

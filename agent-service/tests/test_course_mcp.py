@@ -5,15 +5,18 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import test_study
 import test_study_attempts
 import test_study_feedback
+from fastapi.testclient import TestClient
 from mcp import StdioServerParameters
 
+from lecturelens_agent.app import STREAM_END, course_authority, create_app
 from lecturelens_agent.course_mcp.client import McpEvidenceAuthority
-from lecturelens_agent.study.authority import AUTHORITY_PATH, EvidenceAuthority, course_authority, signature
+from lecturelens_agent.study.authority import AUTHORITY_PATH, COMMAND_PATH, EvidenceAuthority, signature
 from lecturelens_agent.study.contracts import StudyCommand
 from lecturelens_agent.study.provider import MockProvider
 from lecturelens_agent.study.runtime import StudyRuntime
@@ -290,6 +293,63 @@ def test_broken_mcp_enters_existing_terminal_failure_without_fallback(setup, mod
         assert direct.reads == [] and result["artifact"] is None
     finally:
         client.close()
+
+
+@pytest.mark.parametrize(("transport", "trace_transport"), [("internal", "internal"), ("mcp", "mcp-stdio")])
+def test_app_selects_evidence_transport_for_signed_study_run(
+    setup, java_fixture, monkeypatch, transport, trace_transport
+):
+    store, _, _, scope = setup
+    url, state = java_fixture
+    monkeypatch.setenv("STUDY_AGENT_ENABLED", "true")
+    monkeypatch.setenv("AGENT_LLM_MODE", "mock")
+    monkeypatch.setenv("AGENT_DATABASE_URL", store.dsn)
+    monkeypatch.setenv("AGENT_JAVA_BASE_URL", url)
+    monkeypatch.setenv("AGENT_COURSE_TOOL_TRANSPORT", transport)
+
+    with TestClient(create_app(retriever=SimpleNamespace(), secret=SECRET)) as client:
+
+        def command(operation, **arguments):
+            body = StudyCommand(**scope, operation=operation, **arguments).model_dump_json().encode()
+            timestamp = str(int(time.time()))
+            return client.post(
+                COMMAND_PATH,
+                content=body,
+                headers={
+                    "X-LectureLens-Timestamp": timestamp,
+                    "X-LectureLens-Signature": signature(SECRET, timestamp, body, COMMAND_PATH),
+                },
+            )
+
+        response = command("START", request_key="app-transport", goal="解释停止条件并出两道题")
+        assert response.status_code == 200
+        run_id = response.json()["run"]["run_id"]
+
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            response = command("READ")
+            assert response.status_code == 200
+            result = response.json()
+            if result["run"]["status"] in STREAM_END:
+                break
+            time.sleep(0.05)
+        assert result["run"]["status"] == "succeeded", result["run"]
+        assert result["run"]["run_id"] == run_id
+        assert result["artifact"]["citations"]
+        assert len(result["artifact"]["questions"]) == 2
+        assert all("answer" not in question for question in result["artifact"]["questions"])
+        with store.connect() as conn:
+            rows = conn.execute(
+                "SELECT payload FROM study_event WHERE run_id=%s AND event_type='evidence_finished'",
+                (run_id,),
+            ).fetchall()
+        assert {"SEARCH", "WINDOW"} <= {row["payload"]["action"] for row in rows}
+        assert {row["payload"]["transport"] for row in rows} == {trace_transport}
+
+        state["revision"] += 1
+        response = command("READ")
+        assert response.status_code == 409
+        assert response.json() == {"detail": "COURSE_UNAVAILABLE_OR_CHANGED"}
 
 
 def test_transport_selection_is_explicit_and_invalid_values_fail(monkeypatch):

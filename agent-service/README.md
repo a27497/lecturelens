@@ -71,11 +71,13 @@ AGENT_TEST_DATABASE_URL='postgresql://USER:PASSWORD@127.0.0.1:PORT/lecturelens_a
 
 测试使用确定性模型/向量夹具和真实 PostgreSQL，覆盖权限、取消、幂等、进程恢复、预算及删除。未设置测试数据库时相关用例会 skip，不能报告为完整通过。CI 提供独立数据库；真实模型质量按[质量评测说明](../docs/L2_QUALITY_EVALUATION.md)单独验证，Java `DenseRetrievalLiveIT` 只验证检索契约。
 
+验证 Study 的导入边界时，在 `agent-service/` 用 Import Linter 执行 `PYTHONPATH=src lint-imports --no-cache`。
+
 - **Trace / Replay：** `python -m lecturelens_agent.study.trace_cli` 导出私有 Trace、启动授权的新 Run Replay 和比较结果；需要运维数据库访问及 Java 用户登录，读取前后重新授权。[用法与真实失败](../eval/agent-trace-phase-b/README.md)
 - **持久记录指标：** `python -m lecturelens_agent.study.metrics_report --records FILE.jsonl --output-dir NEW_DIR` 或 `--database` 只读汇总 Run 终态、工具结局、模型用量与延迟；每项附样本量/UTC 范围，未记录金额和节点耗时标不可得。[统一口径与命令](../docs/STUDY_METRICS.md)
 - **并发通道：** 检索与建索引分开准入，不同 Session 的 Run 并行、同一 Session 串行，可选服务端事件流默认关闭。[配置与取舍](../docs/AGENT_CONCURRENCY.md)
 - **只读容错：** CHECK/SEARCH/READ/WINDOW 的超时和依赖不可用最多重试两次，退避 50/100ms；每次重试持久扣减上述工具预算。参数、响应、权属/版本错误直接拒绝，持续依赖故障明确失败，不生成无证据产物。公开 Trace 记录失败类别、重试、退避与终止；写入不自动重试。[故障注入与基线](../eval/tool-resilience-20261014/README.md)
-- **Course MCP：** `AGENT_COURSE_TOOL_TRANSPORT=mcp` 启用官方 SDK stdio Client/Server；默认 `internal`。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
+- **Course MCP：** 应用启动时读取 `AGENT_COURSE_TOOL_TRANSPORT`。默认 `internal` 直连 Java，`mcp` 使用官方 SDK 的 stdio Client/Server。Study 在进入任一传输前使用同一份 Evidence 契约。Server 转发原 Java 签名请求，不持有签名密钥，错误不回退直连。[协议与验证](../eval/course-mcp-phase-c/README.md)
 - **离线检索评测：** `lecturelens_agent.benchmark` 比较 Dense、BM25、RRF 和 Cross-Encoder，依赖独立 eval 环境；生产 app 不导入该模块，默认 Dense 不变。[复现说明](../eval/retrieval-phase-a/REPRODUCE.md)
 - **检索评测 v2：** `lecturelens_agent.benchmark_v2.run report` 从冻结的 120 题排名重算配对 CI 和失败分桶，开发/保留按课程隔离，保留检索仅运行一次。模型辅助标注不代表人类金标准，观测指标不认证回答质量。[结果与复现](../eval/retrieval-v2/README.md)
 - **验收与历史：** [学习闭环完成报告](../eval/phase-completion/FINAL_AU.md)、[并发与隔离](../eval/multi-user-phase-e/README.md)和[评测索引](../eval/README.md)保留候选身份、失败记录与测量口径。
