@@ -147,7 +147,12 @@ jobs:
 
       - name: Audit frontend dependencies
         working-directory: frontend
-        run: npm audit
+        run: |
+          python3 -m unittest discover -s ../scripts/ci/tests -p 'test_npm_audit_gate.py'
+          # npm audit exits 1 whenever it reports anything, so the gate decides.
+          # A registry failure leaves an error object or invalid JSON and fails closed.
+          npm audit --json > "$RUNNER_TEMP/npm-audit.json" || true
+          python3 ../scripts/ci/npm_audit_gate.py --audit-json "$RUNNER_TEMP/npm-audit.json" --allowlist audit-allowlist.json
 
       - name: Build frontend
         working-directory: frontend
