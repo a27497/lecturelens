@@ -119,26 +119,27 @@ Nothing here was measured on the rental machine. Planning inputs:
 | Shakedown invocation (config A, S1–S4, c=1, `--requests 3`), verified, before the matrix | 10 min | 8 min overhead + ~2 min groups |
 | Fixed overhead per invocation (offline package, infra + PostgreSQL up, Java + Agent start, synthetic course, attestation, logs, owned teardown, `verify.py`, export) | 8 min | The CI job "MySQL migrations and Mock AI E2E" runs the same `Smoke` lifecycle on a hosted runner in 244–313 s (median ≈290 s, last 12 successful CI runs, 2026-11). 8 min ≈ 1.6× that median for the extra compile/fingerprint/log steps |
 | Warmups per invocation | 1 min | One operation per scenario |
-| One measured group | 70 s typical, 120 s upper | 60 s admission + drain; drain is bounded by the 60 s operation timeout |
+| One measured group | 70 s typical, 130 s upper | 60 s admission, then drain: an attempt admitted at the end of the window can take the 60 s operation timeout plus the 8 s cancel/drain window (128 s) |
 | Final export, checksum manifest, instance/disk deletion | 15 min | Allowance |
 
 Per repetition: 4 invocations × (8 + 1) min = 36 min, plus 28 groups × 70 s =
-32.7 min (typical) or × 120 s = 56 min (upper) → **68.7 min typical, 92 min
+32.7 min (typical) or × 130 s = 60.7 min (upper) → **68.7 min typical, 96.7 min
 upper**.
 
-Three repetitions: 206 min typical, 276 min upper. Adding one-time preparation,
+Three repetitions: 206 min typical, 290 min upper. Adding one-time preparation,
 shakedown and final export (45 + 10 + 15 = 70 min):
 
 - typical: 206 + 70 = **276 min ≈ 4.6 machine hours**
-- upper: 276 + 70 = **346 min ≈ 5.8 machine hours**
+- upper: 290 + 70 = **360 min = 6.0 machine hours**
 
-Request an approved cap of **8 machine hours**: the 5.8 h upper bound plus 25%
-(1.45 h) for re-running failed invocations ≈ 7.2 h, rounded up. The optional
-default-policy S2 row adds 3 × (8 + 1 + 4 × ~0.5) ≈ 33 min and still fits
-(5.8 h + 0.55 h = 6.35 h; × 1.25 ≈ 7.9 h). If the S2 approval is absent, the
-20-point matrix needs 20 groups per repetition: upper 3 × (36 + 40) + 70 = 298 min
-≈ 5.0 h. For comparison, the earlier one-stack-per-point layout would need
-84 invocations × 9 min = 12.6 h of overhead alone.
+Request an approved cap of **8 machine hours**: the 6.0 h upper bound plus 25%
+(1.5 h) for re-running failed invocations = 7.5 h, rounded up. The optional
+default-policy S2 row adds 3 × (8 + 1 + 4 × ~0.5) ≈ 33 min; run it only if at
+least 45 min remain under the cap after the core matrix (6.0 h + 0.55 h = 6.55 h
+upper without re-runs). If the S2 approval is absent, the 20-point matrix needs
+20 groups per repetition: upper 3 × (36 + 43.3) + 70 = 308 min ≈ 5.1 h. For
+comparison, the earlier one-stack-per-point layout would need 84 invocations ×
+9 min = 12.6 h of overhead alone.
 
 Stop the rental at the cap even if points remain; leave them NOT_RUN.
 
@@ -162,6 +163,9 @@ python3 scripts/dev/run_check.py --name "l2-shakedown" \
   --run-deadline 1800 --output .data/l2-rental/shakedown
 ```
 
+Without the raised-QA approval, use `--scenarios S1,S3,S4 --qa-per-minute 10`
+for the shakedown and the fallback lines in the matrix below.
+
 The matrix, for rep=1,2,3 in this order (each line is one fresh invocation):
 
 ```bash
@@ -182,13 +186,16 @@ for rep in 1 2 3; do
   run_point b-qa  S1,S2    8 2 100000 &&
   run_point c-run S4       4 4 10 || break
 done
+# Fallback without the raised-QA approval (20 points; S2 recorded NOT_RUN):
+#   run_point a-qa S1,S3 4 2 10 && run_point a-run S4 4 2 10 &&
+#   run_point b-qa S1    8 2 10 && run_point c-run S4 4 4 10 || break
 ```
 
 The sequence is bounded (12 invocations, no model calls) and stops at the first
 failed invocation or verification instead of continuing; inspect the failure
 before any re-run. `--qa-per-minute` is irrelevant for the S4-only invocations and keeps
 the product default. The internal deadline (3000 s) covers the 8 min overhead and
-at most 12 groups × 120 s; the outer timeout exceeds it by 600 s for cleanup.
+at most 12 groups × 130 s (2100 s total); the outer timeout exceeds it by 600 s for cleanup.
 Bootstrap failures or timeouts are retained, not relabeled as performance
 observations. A failed invocation may be re-run once as a new output directory
 inside the cap; keep both.
@@ -269,7 +276,10 @@ range per point):
   intended backpressure, and fewer fast rejections can raise all-attempt P95.
 - Run lanes (`c-run` vs `a-run`, S4 at c=4/8/16): keep 2 unless config C cuts S4
   `queue_ms` P95 and raises successful Runs/s beyond the repetition range without
-  raising `execution_ms` P95 or failures beyond it. Mock execution holds a lane for
+  raising `execution_ms` P95 or failures beyond it. `queue_ms` covers only Runs
+  whose `running` state a poll observed; compare it only when `running_unobserved`
+  is under 5% of successful Runs in both configurations, otherwise decide on
+  successful Runs/s and `turn_latency_ms` alone. Mock execution holds a lane for
   injected delay, not real model I/O; any change still needs the provider-side
   rate-limit caveat in AGENT_CONCURRENCY.md.
 - At most two parameter changes come out of L2, each as a separate product change

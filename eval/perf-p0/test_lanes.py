@@ -538,6 +538,29 @@ class QueueAndExecution(unittest.IsolatedAsyncioTestCase):
                 await paths().run("S4", client, row)
         self.assertIs(row["cleanup_ok"], False)
 
+    async def test_ambiguous_submit_response_is_hidden_backlog(self):
+        responses = {
+            "server_error": httpx.Response(503, json={"code": "RETRIEVAL_UNAVAILABLE"}),
+            "non_json": httpx.Response(200, text="not JSON"),
+            "untrusted_code": httpx.Response(409, json={"code": "not a code"}),
+            "no_run": java({"unexpected": True}),
+        }
+        for name, response in responses.items():
+            with self.subTest(name=name):
+
+                def handler(request, response=response):
+                    if json.loads(request.content)["operation"] == "CREATE_SESSION":
+                        return java({"session_id": "s1"})
+                    return response
+
+                row = {"http_requests": 0, "polls": 0, "request_id": "r1"}
+                async with httpx.AsyncClient(
+                    transport=httpx.MockTransport(handler)
+                ) as client:
+                    with self.assertRaises((OperationError, KeyError)):
+                        await paths().run("S4", client, row)
+                self.assertIs(row["cleanup_ok"], False)
+
     async def test_rejected_submit_has_nothing_to_drain(self):
         def handler(request):
             body = json.loads(request.content)
@@ -682,6 +705,10 @@ class VerifyV3(unittest.TestCase):
                 "split_unobserved": lambda r, rows: rows[3].update(
                     running_observed=False
                 ),
+                "observation_missing": lambda r, rows: [
+                    rows[3].pop(k)
+                    for k in ("running_observed", "queue_ms", "execution_ms")
+                ],
                 "queue_metric": lambda r, rows: r["groups"][1]["queue_ms"].update(
                     p95=1
                 ),

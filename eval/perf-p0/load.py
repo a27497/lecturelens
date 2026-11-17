@@ -412,13 +412,15 @@ class Paths:
                 generated = await send(
                     row, "GENERATE_CARDS", session_id=session, request_key=key
                 )
-            except OperationError:
-                # An error envelope is a rolled-back command: no Run exists to drain.
-                submit_answered = True
+            except OperationError as error:
+                # Only a well-formed 4xx business rejection (e.g. SESSION_BUSY) is a
+                # rolled-back command. A 5xx may be a Java-side timeout after Python
+                # committed the Run, and a malformed body proves nothing.
+                submit_answered = rejected(str(error))
                 raise
-            submit_answered = True
             run_id = generated["run"]["run_id"]
             row["run_id"] = run_id
+            submit_answered = True
             while True:
                 run = (await send(row, "READ", session_id=session, run_id=run_id))[
                     "run"
@@ -489,6 +491,11 @@ class Paths:
             row["cleanup_ok"] = False
         row["cleanup_http_requests"] = cleanup_row["http_requests"]
         row["cleanup_ms"] = round((time.perf_counter() - cleanup_started) * 1000, 3)
+
+
+def rejected(error):
+    match = re.fullmatch(r"JAVA_HTTP_(4[0-9]{2})_CODE_([A-Z0-9_]+)", error)
+    return bool(match) and match.group(2) not in {"INVALID_CODE", "UNKNOWN"}
 
 
 def observe(row, status, terminal, submitted, running_at):

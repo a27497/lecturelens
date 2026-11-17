@@ -258,6 +258,16 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
                 ),
                 "Failure class mismatch",
             )
+            if row["scenario"] in {"S3", "S4"} and row["ok"]:
+                require(
+                    type(row.get("running_observed")) is bool,
+                    "Successful turn/Run has no running observation state",
+                )
+            if row.get("running_observed") is False:
+                require(
+                    "queue_ms" not in row and "execution_ms" not in row,
+                    "Unobserved running state has an invented split",
+                )
             if "queue_ms" in row or "execution_ms" in row:
                 require(
                     row.get("running_observed") is True

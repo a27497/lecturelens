@@ -197,9 +197,11 @@ subsequent groups.
 Do not interpret a timeout as an absent or successful observation.
 
 Failed S4 attempts drain the same way: `CANCEL` the own Run and poll `READ` to a
-terminal state within eight seconds. If the `GENERATE_CARDS` response was lost
-(transport error, no envelope), the Run cannot be named; that attempt is recorded
-as undrained and stops admission. Cancel is terminal in PostgreSQL immediately;
+terminal state within eight seconds. If the `GENERATE_CARDS` outcome is unknown
+(transport error, 5xx, malformed envelope or missing `run_id`), the Run cannot be
+named; that attempt is recorded as undrained and stops admission. Only a
+well-formed 4xx business rejection (for example `SESSION_BUSY`) counts as a
+rolled-back submit with nothing to drain. Cancel is terminal in PostgreSQL immediately;
 the worker lane is released at its next guard, at most one Mock decision later.
 
 - `result.json`: schema/config, label, Git SHA + dirty/source drift checks, CPU
@@ -295,7 +297,7 @@ python3 scripts/dev/run_check.py --name perf-harness-unit \
   agent-service/.venv/bin/python eval/perf-p0/deterministic_tests.py
 ```
 
-Deterministic suite at this revision: **51 tests** (29 P11-A plus 22 Step 6 lane
+Deterministic suite at this revision: **52 tests** (29 P11-A plus 23 Step 6 lane
 tests in `test_lanes.py`). Self-tests use simulated HTTP only to verify harness accounting/protocol rules;
 they do not replace the fresh Java→Python→MySQL/PostgreSQL smoke above. Java addon
 compilation and actual wrapper use are checked by each service smoke. No product
