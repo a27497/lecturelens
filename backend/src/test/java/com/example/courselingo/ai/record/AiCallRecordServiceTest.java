@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -324,8 +325,11 @@ class AiCallRecordServiceTest {
             .thenReturn(List.of(
                 record(100L, "task_1", 42L, AiCallRecordStatus.STARTED),
                 record(101L, "task_1", 42L, AiCallRecordStatus.SUCCEEDED)
-            ))
-            .thenReturn(List.of(record(100L, "task_1", 42L, AiCallRecordStatus.STARTED)));
+            ));
+        // Stub selectOne itself: MyBatis-Plus 3.5.18 routes BaseMapper.selectOne through
+        // selectList(Wrapper, RowBounds), so the mapper contract is asserted, not library internals.
+        doReturn(record(100L, "task_1", 42L, AiCallRecordStatus.STARTED))
+            .when(scopedMapper).selectOne(any(Wrapper.class));
         when(scopedMapper.update(any(AiCallRecord.class), any(Wrapper.class))).thenReturn(1);
 
         assertThat(scopedMapper.selectByTaskIdAndUserId("task_1", 42L)).hasSize(2);
@@ -333,7 +337,8 @@ class AiCallRecordServiceTest {
         assertThat(scopedMapper.updateByIdTaskIdAndUserId(record(100L, "task_1", 42L, AiCallRecordStatus.SUCCEEDED), 100L, "task_1", 42L))
             .isEqualTo(1);
 
-        verify(scopedMapper, org.mockito.Mockito.times(2)).selectList(any(Wrapper.class));
+        verify(scopedMapper).selectList(any(Wrapper.class));
+        verify(scopedMapper).selectOne(any(Wrapper.class));
         verify(scopedMapper).update(any(AiCallRecord.class), any(Wrapper.class));
     }
 

@@ -408,7 +408,7 @@ class SystemModelRuntimeMySqlTest {
         when(tasks.selectByIdAndUserId(task, user)).thenReturn(entity);
         var configuration = new com.baomidou.mybatisplus.core.MybatisConfiguration();
         configuration.addMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
-        var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean();
+        var factory = new com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean();
         factory.setDataSource(db.dataSource); factory.setConfiguration(configuration);
         var records = new org.mybatis.spring.SqlSessionTemplate(factory.getObject())
                 .getMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
@@ -575,7 +575,7 @@ class SystemModelRuntimeMySqlTest {
         var config = new com.baomidou.mybatisplus.core.MybatisConfiguration();
         config.addMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
         config.addMapper(com.example.courselingo.ai.record.mapper.AiCallRecordMapper.class);
-        var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean(); factory.setDataSource(db.dataSource); factory.setConfiguration(config);
+        var factory = new com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean(); factory.setDataSource(db.dataSource); factory.setConfiguration(config);
         var session = new org.mybatis.spring.SqlSessionTemplate(factory.getObject());
         var records = session.getMapper(com.example.courselingo.qa.mapper.CourseQaRecordMapper.class);
         var calls = session.getMapper(com.example.courselingo.ai.record.mapper.AiCallRecordMapper.class);
