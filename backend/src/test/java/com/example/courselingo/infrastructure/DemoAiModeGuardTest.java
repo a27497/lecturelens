@@ -70,4 +70,28 @@ class DemoAiModeGuardTest {
         consumer.withProperty("courselingo.ai.llm.demo-mock.enabled","true");
         DemoAiModeGuard.validate(consumer);
     }
+
+    @Test
+    void acceptsBailianAsrWithTaskConsumer() {
+        var environment = realAiTaskConsumer()
+            .withProperty("courselingo.ai.asr.provider", "bailian");
+        DemoAiModeGuard.validate(environment);
+    }
+
+    @Test
+    void rejectsExplicitlyDisabledAsrWithTaskConsumer() {
+        var environment = realAiTaskConsumer()
+            .withProperty("courselingo.ai.asr.provider", "none")
+            .withProperty("courselingo.ai.asr.silicon-flow.enabled", "true");
+        assertThatIllegalStateException().isThrownBy(() -> DemoAiModeGuard.validate(environment))
+            .withMessageContaining("ASR provider");
+    }
+
+    private MockEnvironment realAiTaskConsumer() {
+        return new MockEnvironment()
+            .withProperty("courselingo.mq.rocketmq.enabled", "true")
+            .withProperty("courselingo.task.runner.pipeline.enabled", "true")
+            .withProperty("spring.flyway.enabled", "true")
+            .withProperty("courselingo.ai.llm.openai-compatible.enabled", "true");
+    }
 }
