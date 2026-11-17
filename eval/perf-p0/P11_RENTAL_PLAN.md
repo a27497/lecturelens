@@ -280,7 +280,9 @@ range per point):
   whose `running` state a poll observed; compare it only when `running_unobserved`
   is under 5% of successful Runs in both configurations. Otherwise replace the
   `queue_ms` condition with successful `turn_latency_ms` P95; the throughput,
-  `execution_ms` and failure guards still apply. Mock execution holds a lane for
+  `execution_ms` and failure guards still apply. If no successful Run in either
+  configuration has an `execution_ms` observation, mark the Run-lane comparison
+  inconclusive rather than "defaults adequate". Mock execution holds a lane for
   injected delay, not real model I/O; any change still needs the provider-side
   rate-limit caveat in AGENT_CONCURRENCY.md.
 - At most two parameter changes come out of L2, each as a separate product change
