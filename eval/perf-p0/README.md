@@ -1,19 +1,25 @@
 # Performance P0 harness
 
-P11-A review: [findings and deterministic evidence](P11_A_REVIEW.md).
+P11-A review: [findings and deterministic evidence](P11_A_REVIEW.md) (historical:
+it describes the pre-Step-6 single retrieval lock and schema v2).
 The approved-independent-machine procedure is [P11_RENTAL_PLAN.md](P11_RENTAL_PLAN.md).
 Do not start services or execute load on the shared SameScale server. Commands
 that create a stack below are for a separately approved disposable host only.
 
-The runner measures **Mock execution mechanics**, with the existing retrieval
-busy lock left intact. Development runs are labeled **DEV_SMOKE_NOT_RESUME** in
+The runner measures **Mock execution mechanics** of the Step 6 concurrency lanes
+([AGENT_CONCURRENCY.md](../../docs/AGENT_CONCURRENCY.md)) with their product
+admission code unchanged. Each invocation sets `AGENT_RETRIEVAL_CONCURRENCY`
+(`--retrieval-concurrency`, product default 4, range 1–16) and
+`AGENT_RUN_CONCURRENCY` (`--run-concurrency`, default 2, range 1–8); defaults and
+ranges are imported from the product modules. Development runs are labeled **DEV_SMOKE_NOT_RESUME** in
 both JSON and Markdown. They are neither rental-machine baselines nor resume
 numbers. Rental-machine full runs, real-model Tutor quality, expanded/held-out
 Tutor evaluation and blind review are **NOT_RUN** in this stage.
 
-Only this directory is added. No product source, worker count, lock, budget,
-frozen identity, workflow or online configuration is changed. The eval-only
-adapters below must be included in comparisons; they are not a product release.
+Only this directory is changed. No product source, default lane count, lock,
+budget, frozen identity, workflow or online configuration is changed. The
+eval-only adapters below must be included in comparisons; they are not a product
+release.
 
 ## Prerequisites and one-command entrypoints
 
@@ -36,7 +42,7 @@ python3 scripts/dev/run_check.py --name perf-dev-health \
   --mock-delay-ms 25 --output .data/perf-p0/dev-health
 ```
 
-Then directly exercise lock contention in a separate fresh environment:
+Then directly exercise query-slot contention in a separate fresh environment:
 
 ```bash
 python3 scripts/dev/run_check.py --name perf-dev-busy \
@@ -56,10 +62,14 @@ cannot produce clean-source evidence accepted by `verify.py`.
 ```bash
 python3 scripts/dev/run_check.py --name perf-rental-mock \
   --output .data/perf-p0/checks --timeout 7800 -- \
-  bash eval/perf-p0/run.sh --profile rental --scenarios S1,S2,S3 \
+  bash eval/perf-p0/run.sh --profile rental --scenarios S1,S2,S3,S4 \
   --concurrency 1,4,8,16 --seconds 60 --timeout 60 --mock-delay-ms 150 \
+  --retrieval-concurrency 4 --run-concurrency 2 \
   --qa-per-minute 100000 --run-deadline 7200 --output .data/perf-p0/rental-mock-01
 ```
+
+The L2 matrix in [P11_RENTAL_PLAN.md](P11_RENTAL_PLAN.md) splits this into
+smaller invocations per lane configuration; use that plan for formal points.
 
 The rental profile refuses fewer than 16 available logical CPUs or 60 GB memory,
 including visible cgroup v2 ancestor limits; unknown limits fail closed. This is a guard against running the full matrix
@@ -79,15 +89,20 @@ single-course baseline, not production sizing or a semantic embedding benchmark.
 
 | Scenario | One logical attempt and success boundary | Included work |
 |---|---|---|
-| S1 pure retrieve | One signed `POST /internal/v1/retrieve`; HTTP 200 with nonempty, owner/course/revision-fenced hits | Python HTTP, original nonblocking `Retriever.search()` lock, deterministic hash embedding, real PostgreSQL vector query; bypasses Java/Study orchestration |
-| S2 Java QA | Authenticated `POST /api/tasks/{id}/qa`; code 0, answer and Evidence present | Java auth/MySQL authority, QA rate limit, Java→Python retrieval, existing DemoMock QA generation, saved QA result |
-| S3 P8 Tutor | Create fresh Session, submit one turn, poll until **completed** with an answered result and citations | Java auth/authority, Python original Tutor loop/worker, course Evidence tools, PostgreSQL checkpoints, two normal Mock decisions, queue and polling delay |
+| S1 pure retrieve | One signed `POST /internal/v1/retrieve`; HTTP 200 with nonempty, owner/course/revision-fenced hits | Python HTTP, product `Retriever.search()` query slots (`AGENT_RETRIEVAL_CONCURRENCY`), deterministic hash embedding, real PostgreSQL vector query; bypasses Java/Study orchestration |
+| S2 Java QA | Authenticated `POST /api/tasks/{id}/qa`; code 0, answer and Evidence present | Java auth/MySQL authority, QA rate limit, Java→Python retrieval (same query slots), existing DemoMock QA generation, saved QA result |
+| S3 P8 Tutor | Create fresh Session, submit one turn, poll until **completed** with an answered result and citations | Java auth/authority, Python experimental Tutor (`real_eval`) loop with its **single** `tutor-worker` thread, course Evidence tools, PostgreSQL checkpoints, two normal Mock decisions, queue and polling delay |
+| S4 Study Run | Create fresh Study Session, `GENERATE_CARDS`, poll `READ` until **succeeded**, then `EVENTS` must contain `deck_created` with ≥1 card | Java Study gateway/authority, Python `StudyRuntime` dispatcher + `AGENT_RUN_CONCURRENCY` worker lanes, two delayed Mock flashcard decisions, one Java-authorized SEARCH (query slots), budgets, checkpoints, queue and polling delay |
 
-S3 submission HTTP 200 means accepted, **not completed**. A fresh Session per
-attempt avoids accumulated Session budget exhaustion without changing budgets.
-The default original single Tutor worker is preserved. S3 is not a multi-turn
-teaching-quality evaluation. Each scenario runs sequentially; concurrency groups
-run in the requested order. No mixed S1/S2/S3 workload is claimed.
+S3/S4 submission HTTP 200 means accepted, **not completed**. A fresh Session per
+attempt avoids accumulated Session budget exhaustion without changing budgets,
+and lets S4 Runs use separate lanes (same-Session Runs are serialized by design).
+`AGENT_RUN_CONCURRENCY` governs only S4: the Tutor runtime is a separate
+single-worker loop, so S3 queueing shows that worker, not the Run lanes. Flashcards
+is the only Run kind with an end-to-end Mock path in the existing CI smoke; S4
+does not measure practice/feedback Runs or real-model latency. Neither S3 nor S4
+is a multi-turn teaching-quality evaluation. Each scenario runs sequentially;
+concurrency groups run in the requested order. No mixed workload is claimed.
 
 The historical Phase E **90 attempted / 31 failed** count described whole Study
 Runs failing at SEARCH. It is not a direct-retrieve sample and must not be merged
@@ -112,11 +127,30 @@ Evidence set are shared by all load workers. Video/text hashes, Evidence and
 vector chunk counts are recorded. This deliberately small hot-course workload
 cannot establish large-index, diverse-course or cold-cache capacity.
 
-`perf_app.py` injects deterministic **hash384** embeddings into the original
-Retriever/VectorStore. No embedding sleep, forced lock acquisition or synthetic
+`perf_app.py` injects deterministic **hash384** embeddings into the product
+Retriever/VectorStore. No embedding sleep, forced slot acquisition or synthetic
 503 is injected. Therefore a busy 503 is the real application admission failure,
 but its frequency includes this embedding/corpus choice and cannot be compared
 as production encoder throughput. No embedding model weights are fetched.
+
+Because the adapter passes its own Retriever and StudyRuntime into the product
+app, the product lifespan does not read the two lane settings itself. `perf_app`
+therefore parses them with the product's `bounded_setting` and constants (an
+out-of-range value fails startup, as in the product), builds the Retriever with
+`query_concurrency` and the StudyRuntime with `concurrency`, and logs one
+`PERF_FACTORY ... retrieval_concurrency=N; run_concurrency=M` line from the
+constructed objects. The runner refuses to measure unless that line matches the
+requested point and records it as `effective_agent_lanes`.
+
+`CountingRetriever` subclasses the product Retriever and only counts each
+`search()` outcome (`ok`, `busy_503`, `index_changed_409`, `index_not_ready_409`,
+`error`). Java maps every non-200 retrieval to `RETRIEVAL_UNAVAILABLE`, and the
+Tutor/Study tools see a generic failure, so only these server-side counters can
+separate busy from snapshot-change rejections on S2–S4. They are exposed on an
+eval-only, HMAC-signed loopback route `POST /internal/perf-p0/retrieval-outcomes`
+and snapshotted before and after each group; the snapshots are outside the group
+wall time. A request whose client timed out but which the server finishes later
+is counted in the next snapshot.
 
 `--mock-delay-ms` (default 25, range 0–5000) sleeps **inside** the eval wrappers:
 
@@ -129,7 +163,10 @@ as production encoder throughput. No embedding model weights are fetched.
   latency for timing, not that metadata.
 - S3: `DelayedMockTutor` sleeps once per `decide`, then delegates to the existing
   MockTutor. A normal supported turn makes two decisions. No worker/budget/tool
-  or frozen Tutor source is edited. Logs attest each wrapper was actually used.
+  or frozen Tutor source is edited.
+- S4: `DelayedStudyMock` sleeps once per `flashcards` decision inside the Run
+  lane, then delegates to the product Study `MockProvider`. A normal Run makes two
+  decisions. Logs attest each wrapper was actually used.
 
 Only generated secrets are passed in child environments; logs redact them.
 Provider credentials, proxies, JVM options and application configuration are not
@@ -159,6 +196,14 @@ wall time still includes it. An undrained turn stops further admission and
 subsequent groups.
 Do not interpret a timeout as an absent or successful observation.
 
+Failed S4 attempts drain the same way: `CANCEL` the own Run and poll `READ` to a
+terminal state within eight seconds. If the `GENERATE_CARDS` outcome is unknown
+(transport error, 5xx, malformed envelope or missing `run_id`), the Run cannot be
+named; that attempt is recorded as undrained and stops admission. Only a
+well-formed 4xx business rejection (for example `SESSION_BUSY`) counts as a
+rolled-back submit with nothing to drain. Cancel is terminal in PostgreSQL immediately;
+the worker lane is released at its next guard, at most one Mock decision later.
+
 - `result.json`: schema/config, label, Git SHA + dirty/source drift checks, CPU
   model/count/affinity/cgroup limits, RAM/kernel/architecture, Python/Java/Docker/
   Compose versions, jar/file/image hashes, corpus/config fingerprints, stages,
@@ -172,7 +217,25 @@ Do not interpret a timeout as an absent or successful observation.
   histogram; `http_response_status_counts` counts actual responses and can exceed
   operation count for Tutor polling. Cancel
   cleanup requests are counted separately and do not overwrite the error status.
-- `REPORT.md`: concise group table and NOT_RUN list. P50/P95 use nearest rank in
+- Schema v3 (this revision) keeps every v2 field and denominator and adds:
+  `failure_class` per failed row and `failure_classes` per group
+  (`retrieval_busy_503` = direct S1 503 `Retrieval busy`;
+  `evidence_index_changed_409` = direct S1 409 `Evidence index changed`;
+  `other_unexpected` = every other failure, including 409 `Evidence index not
+  ready` and Java-mediated retrieval failures; the three always sum to `failed`);
+  `agent_retrieval_outcomes` per group (server counters above); for S3/S4
+  `queue_ms` (submit start → first poll seeing `running`), `execution_ms` (that
+  poll → poll seeing terminal) and `running_observed`, with success-only P50/P95
+  and a `running_unobserved` count when a turn/Run finished between polls (no
+  boundary is invented; resolution is one 0.1 s poll plus one Java round trip, and
+  S4 queue time includes the dispatcher's ≤1 s re-poll); `run_id`/`run_status` for
+  S4; config fields `agent_retrieval_concurrency`, `agent_run_concurrency`,
+  `retrieval_admission`, `study_run_lanes`, `tutor_worker_model` and
+  `study_mock_task` (the misleading v2 `retriever_lock` field is removed); and
+  `effective_agent_lanes`. The legacy `retrieval_busy_503` count and the
+  `undrained_tutor` field name are retained (the latter now also covers S4).
+- `REPORT.md`: concise group table (three failure classes, server busy/changed,
+  all/success latency, queue/execution split) and NOT_RUN list. P50/P95 use nearest rank in
   milliseconds; JSON separates **all / successful / failed** latency samples.
   Empty percentiles/error rates are null. `error_rate = failed / attempted`;
   attempted and successful throughput each divide by actual drained wall time.
@@ -192,8 +255,17 @@ agent-service/.venv/bin/python eval/perf-p0/verify.py .data/perf-p0/dev-busy \
 ```
 
 Expected 503s never turn into a synthetic pass: `--require-busy` fails unless S1
-actually observed `503 / Retrieval busy` and `Retry-After: 1`. If this machine
-cannot reproduce it within the bounded smoke, retain that observation honestly.
+actually observed `503 / Retrieval busy` and `Retry-After: 1`. For schema v3 it
+first fails if the configured matrix has no S1 level above
+`agent_retrieval_concurrency`: at most that many searches hold a slot, so busy is
+impossible at or below it (the condition is necessary, not sufficient; with fast
+hash384 searches the slots may never all be held at once). The development busy
+example uses c=8 against the default 4 slots; add `--retrieval-concurrency 1` to
+reproduce single-slot admission. If
+a machine cannot reproduce busy within the bounded smoke, retain that observation
+honestly. The harness never rebuilds the index during measurement, so any
+`evidence_index_changed_409` is unexpected for this workload and makes the point
+ineligible for comparison until explained.
 
 Normal completion, errors, Ctrl-C and SIGTERM run owned cleanup, verify no
 containers/volumes/networks remain and retain failure logs. Use `--run-deadline` (default 1200s), or verify and SIGTERM the exact recorded
@@ -225,16 +297,19 @@ python3 scripts/dev/run_check.py --name perf-harness-unit \
   agent-service/.venv/bin/python eval/perf-p0/deterministic_tests.py
 ```
 
-Self-tests use simulated HTTP only to verify harness accounting/protocol rules;
+Deterministic suite at this revision: **52 tests** (29 P11-A plus 23 Step 6 lane
+tests in `test_lanes.py`). Self-tests use simulated HTTP only to verify harness accounting/protocol rules;
 they do not replace the fresh Java→Python→MySQL/PostgreSQL smoke above. Java addon
 compilation and actual wrapper use are checked by each service smoke. No product
 or shared Study code changed, so Agent full pytest, frontend build and product
 Java suites are NOT_RUN for this harness-only change. Existing development and
 Tutor frozen hashes can be checked without rewriting any manifest.
 
-Schema v1 historical evidence is read-only and remains verifiable at its own
+Schema v1/v2 historical evidence is read-only and remains verifiable at its own
 recorded SHA, rather than current HEAD. Schema v1 latency includes cancellation
-cleanup. Do not compare it directly with v2 operation/turn latency. `verify.py`
+cleanup. Do not compare it directly with v2/v3 operation/turn latency. Schema v1/v2
+runs measured the pre-Step-6 single retrieval lock; never pair them with v3 lane
+results as a before/after comparison. `verify.py`
 now uses independent metric recomputation and rejects missing matrix points,
 failed/missing warmups, nonfinite metrics, raw SHA/label drift and empty groups;
 its checks stay active under `python -O`. Run the guarded deterministic suite

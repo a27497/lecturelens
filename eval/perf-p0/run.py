@@ -9,6 +9,7 @@ import json
 import math
 import os
 import platform
+import re
 import resource
 import secrets
 import signal
@@ -20,9 +21,17 @@ from importlib.metadata import distributions
 from pathlib import Path
 from types import SimpleNamespace
 
-from load import Paths, group
+import httpx
+from lecturelens_agent.retrieval import DEFAULT_QUERY_CONCURRENCY, MAX_QUERY_CONCURRENCY
+from lecturelens_agent.study.runtime import DEFAULT_RUN_CONCURRENCY, MAX_RUN_CONCURRENCY
+from load import SCHEMA_VERSION, Paths, outcome_delta
+from load import group as run_group
 
 HERE = Path(__file__).resolve().parent
+SCENARIOS = ("S1", "S2", "S3", "S4")
+FACTORY_LINE = re.compile(
+    r"PERF_FACTORY hash384; retrieval_concurrency=(\d+); run_concurrency=(\d+);"
+)
 ROOT = HERE.parents[1]
 spec = importlib.util.spec_from_file_location(
     "existing_smoke", ROOT / "scripts/ci/mock-study-tutor-e2e.py"
@@ -151,6 +160,68 @@ def require_rental_host(host):
         )
 
 
+def config(options):
+    """Recorded, fingerprinted point configuration (schema v3)."""
+    return {
+        "profile": options.profile,
+        "scenarios": options.scenarios,
+        "concurrency": options.concurrency,
+        "requests_per_group": options.requests,
+        "admission_seconds": options.seconds,
+        "operation_timeout_seconds": options.timeout,
+        "mock_model_delay_ms_per_decision": options.mock_delay_ms,
+        "qa_rate_limit_enabled": True,
+        "qa_rate_limit_per_owner_per_minute": options.qa_per_minute,
+        "embedding": "hash384/perf-p0-hash384-v1; no semantic model inference",
+        "uvicorn_workers": 1,
+        # Requested values; result.effective_agent_lanes records what the Agent built.
+        "agent_retrieval_concurrency": options.retrieval_concurrency,
+        "agent_run_concurrency": options.run_concurrency,
+        "retrieval_admission": (
+            "Step 6 lanes, per Uvicorn process: AGENT_RETRIEVAL_CONCURRENCY "
+            "non-blocking query slots (BoundedSemaphore); full -> immediate 503 "
+            "Retrieval busy + Retry-After: 1, no queue; index APPLY has its own "
+            "single non-blocking lock (503 Indexing busy); PLAN/DELETE take no lock; "
+            "snapshot rebuilt/deleted during search -> 409 Evidence index changed "
+            "+ Retry-After: 1"
+        ),
+        "study_run_lanes": (
+            "1 dispatcher + AGENT_RUN_CONCURRENCY worker threads; different Sessions "
+            "in parallel, one Session serialized in creation order; dispatcher "
+            "re-polls at most every 1 s"
+        ),
+        "tutor_workers": 1,
+        "tutor_worker_model": (
+            "real_eval TutorRuntime: one tutor-worker thread, 0.5 s idle poll; "
+            "not governed by AGENT_RUN_CONCURRENCY"
+        ),
+        "http_client": "httpx closed loop; trust_env=false; no retries/redirects",
+        "top_k": 8,
+        "poll_seconds": 0.1,
+        "warmup": "one excluded operation per selected scenario before the whole matrix",
+        "topology": "one synthetic owner/course/revision shared by all workers; fresh Tutor/Study Session per operation",
+        "llm_mode": "mock",
+        "java_real_providers": False,
+        "agent_non_loopback_guard": True,
+        "study_enabled": True,
+        "study_mock_task": "GENERATE_CARDS: two delayed Mock decisions, one Java-authorized SEARCH",
+        "feedback_enabled": False,
+        "offline_dependency_bootstrap": options.offline,
+        "minio_source_build": options.build_minio,
+        "run_deadline_seconds": options.run_deadline,
+        "latency_contract": "v3 = v2 (operation excludes cancellation cleanup; turn timer starts before turn/Run submit; wall includes cleanup/drain) + client-observed queue_ms/execution_ms split at the first poll seeing running",
+    }
+
+
+def effective_lanes(log_text):
+    """Read the lane sizes the Agent factory actually constructed."""
+    found = FACTORY_LINE.findall(log_text)
+    if len(found) != 1:
+        raise RuntimeError("Agent lane configuration line missing or repeated")
+    retrieval, run = (int(v) for v in found[0])
+    return {"agent_retrieval_concurrency": retrieval, "agent_run_concurrency": run}
+
+
 class Environment(existing.Smoke):
     def __init__(self, args):
         suffix = secrets.token_hex(6)
@@ -162,7 +233,7 @@ class Environment(existing.Smoke):
         self.result["repository_root"] = str(ROOT)
         self.result["runner_pid"] = os.getpid()
         self.result["runner_start_ticks"] = process_start_ticks(os.getpid())
-        self.result["schema_version"] = 2
+        self.result["schema_version"] = SCHEMA_VERSION
         self.result["started_at_utc"] = datetime.now(timezone.utc).isoformat()
         self.result["not_run"] = [
             "rental-machine full baseline",
@@ -215,6 +286,8 @@ class Environment(existing.Smoke):
         super().preflight()
         self.env.update(
             PERF_MOCK_MODEL_DELAY_MS=str(self.options.mock_delay_ms),
+            AGENT_RETRIEVAL_CONCURRENCY=str(self.options.retrieval_concurrency),
+            AGENT_RUN_CONCURRENCY=str(self.options.run_concurrency),
             COURSELINGO_QA_RATE_LIMIT_ENABLED="true",
             COURSELINGO_QA_RATE_LIMIT_PER_MINUTE=str(self.options.qa_per_minute),
         )
@@ -233,35 +306,7 @@ class Environment(existing.Smoke):
         if self.options.profile == "rental":
             require_rental_host(self.result["machine"])
             self.result["not_run"].remove("rental-machine full baseline")
-        self.result["config"] = {
-            "profile": self.options.profile,
-            "scenarios": self.options.scenarios,
-            "concurrency": self.options.concurrency,
-            "requests_per_group": self.options.requests,
-            "admission_seconds": self.options.seconds,
-            "operation_timeout_seconds": self.options.timeout,
-            "mock_model_delay_ms_per_decision": self.options.mock_delay_ms,
-            "qa_rate_limit_enabled": True,
-            "qa_rate_limit_per_owner_per_minute": self.options.qa_per_minute,
-            "embedding": "hash384/perf-p0-hash384-v1; no semantic model inference",
-            "uvicorn_workers": 1,
-            "tutor_workers": 1,
-            "retriever_lock": "original nonblocking single in-process lock",
-            "http_client": "httpx closed loop; trust_env=false; no retries/redirects",
-            "top_k": 8,
-            "poll_seconds": 0.1,
-            "warmup": "one excluded operation per selected scenario before the whole matrix",
-            "topology": "one synthetic owner/course/revision shared by all workers; fresh Tutor Session per operation",
-            "llm_mode": "mock",
-            "java_real_providers": False,
-            "agent_non_loopback_guard": True,
-            "study_enabled": True,
-            "feedback_enabled": False,
-            "offline_dependency_bootstrap": self.options.offline,
-            "minio_source_build": self.options.build_minio,
-            "run_deadline_seconds": self.options.run_deadline,
-            "latency_contract": "v2 operation excludes cancellation cleanup; turn timer starts before turn POST; wall includes cleanup/drain",
-        }
+        self.result["config"] = config(self.options)
         self.result["python_distributions"] = sorted(
             (d.metadata["Name"], d.version) for d in distributions()
         )
@@ -399,6 +444,22 @@ class Environment(existing.Smoke):
             ROOT / "agent-service",
         )
         self.health(process, self.agent_base, "/healthz")
+        # The log drain thread may trail the health probe by a line.
+        text = self.wait(
+            lambda: (self.out / "agent.log").read_text(),
+            FACTORY_LINE.search,
+            10,
+            "Agent lane configuration log",
+        )
+        lanes = effective_lanes(text)
+        configured = {
+            k: self.result["config"][k]
+            for k in ("agent_retrieval_concurrency", "agent_run_concurrency")
+        }
+        if lanes != configured:
+            raise RuntimeError("Agent lanes differ from the requested configuration")
+        self.result["effective_agent_lanes"] = lanes
+        self.save()
         return process
 
     def fingerprints(self):
@@ -472,6 +533,22 @@ class Environment(existing.Smoke):
         )
         self.result["warmups"] = []
         self.result["groups"] = []
+        control = httpx.AsyncClient(trust_env=False, timeout=10, follow_redirects=False)
+
+        async def group(*args, **kwargs):
+            # Groups are sequential and drained, so the counter delta is this group's
+            # server-side retrieval traffic (snapshots are outside its wall time).
+            before = await paths.retrieval_outcomes(control)
+            result = await run_group(*args, **kwargs)
+            result["agent_retrieval_outcomes"] = outcome_delta(
+                before, await paths.retrieval_outcomes(control)
+            )
+            return result
+
+        async with control:
+            await self.measure(paths, group)
+
+    async def measure(self, paths, group):
         with (self.out / "requests.jsonl").open("w") as raw:
             for scenario in self.options.scenarios:
                 result = await group(
@@ -510,13 +587,14 @@ class Environment(existing.Smoke):
                     )
                     self.result["groups"].append(result)
                     self.save()
+                    classes = result["failure_classes"]
                     print(
-                        f"{self.result['label']} {scenario} c={concurrency} attempted={result['attempted']} failed={result['failed']} busy503={result['retrieval_busy_503']}",
+                        f"{self.result['label']} {scenario} c={concurrency} attempted={result['attempted']} failed={result['failed']} busy503={classes['retrieval_busy_503']} changed409={classes['evidence_index_changed_409']} other={classes['other_unexpected']} server={result['agent_retrieval_outcomes']}",
                         flush=True,
                     )
                     if result["undrained_tutor"]:
                         raise RuntimeError(
-                            "Undrained Tutor work; refusing subsequent groups"
+                            "Undrained Tutor/Study work; refusing subsequent groups"
                         )
 
     def attest(self):
@@ -536,6 +614,8 @@ class Environment(existing.Smoke):
             assert "PERF_MOCK_QA_DECIDE" in (self.out / "java.log").read_text()
         if "S3" in self.options.scenarios:
             assert "PERF_MOCK_TUTOR_DECIDE" in (self.out / "agent.log").read_text()
+        if "S4" in self.options.scenarios:
+            assert "PERF_MOCK_STUDY_DECIDE" in (self.out / "agent.log").read_text()
         self.result["external_models"] = {
             "configured_calls": 0,
             "agent_socket_guard": "active, no denied attempts",
@@ -558,13 +638,27 @@ class Environment(existing.Smoke):
             "",
             "Mock mechanisms only; no real-model quality or production/resume throughput claim.",
             "",
-            "| Scenario | C | Attempts | Failed | Busy 503 | P50/P95 all (ms) | Successful ops/s |",
-            "|---|---:|---:|---:|---:|---:|---:|",
+            f"Agent lanes (effective): `{self.result.get('effective_agent_lanes', 'not started')}`",
+            "",
+            (
+                "Client failure classes: busy = direct S1 `503 Retrieval busy`; changed = direct S1 "
+                "`409 Evidence index changed`; other = every other failure, including Java-mediated "
+                "retrieval failures. Server columns count Python `Retriever.search` outcomes for all paths."
+            ),
+            "",
+            "| Scenario | C | Attempts | Failed | Busy 503 | Changed 409 | Other | Server busy/changed | P50/P95 all (ms) | P50/P95 success (ms) | Queue P50/P95 (ms) | Exec P50/P95 (ms) | Successful ops/s |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for item in self.result.get("groups", []):
-            lat = item["latency_ms"]["all"]
+            lat, good = item["latency_ms"]["all"], item["latency_ms"]["success"]
+            classes = item["failure_classes"]
+            server = item["agent_retrieval_outcomes"]
+            queue, execution = item["queue_ms"], item["execution_ms"]
             lines.append(
-                f"| {item['scenario']} | {item['concurrency']} | {item['attempted']} | {item['failed']} | {item['retrieval_busy_503']} | {lat['p50']}/{lat['p95']} | {item['successful_per_second']:.3f} |"
+                f"| {item['scenario']} | {item['concurrency']} | {item['attempted']} | {item['failed']} "
+                f"| {classes['retrieval_busy_503']} | {classes['evidence_index_changed_409']} | {classes['other_unexpected']} "
+                f"| {server['busy_503']}/{server['index_changed_409']} | {lat['p50']}/{lat['p95']} | {good['p50']}/{good['p95']} "
+                f"| {queue['p50']}/{queue['p95']} | {execution['p50']}/{execution['p95']} | {item['successful_per_second']:.3f} |"
             )
         lines += [
             "",
@@ -699,6 +793,18 @@ def arguments(argv=None):
     parser.add_argument("--mock-delay-ms", type=int, default=25)
     parser.add_argument("--qa-per-minute", type=int, default=10)
     parser.add_argument(
+        "--retrieval-concurrency",
+        type=int,
+        default=DEFAULT_QUERY_CONCURRENCY,
+        help=f"AGENT_RETRIEVAL_CONCURRENCY for this point (1-{MAX_QUERY_CONCURRENCY})",
+    )
+    parser.add_argument(
+        "--run-concurrency",
+        type=int,
+        default=DEFAULT_RUN_CONCURRENCY,
+        help=f"AGENT_RUN_CONCURRENCY for this point (1-{MAX_RUN_CONCURRENCY})",
+    )
+    parser.add_argument(
         "--run-deadline",
         type=int,
         default=1200,
@@ -727,10 +833,10 @@ def arguments(argv=None):
         parser.error("Concurrency must be comma-separated integers")
     if (
         not args.scenarios
-        or any(s not in ("S1", "S2", "S3") for s in args.scenarios)
+        or any(s not in SCENARIOS for s in args.scenarios)
         or len(set(args.scenarios)) != len(args.scenarios)
     ):
-        parser.error("Scenarios must be a unique selection of S1,S2,S3")
+        parser.error("Scenarios must be a unique selection of S1,S2,S3,S4")
     if args.requests is None and args.seconds is None:
         args.requests = 3 if args.profile == "dev" else None
         args.seconds = 60 if args.profile == "rental" else None
@@ -746,6 +852,11 @@ def arguments(argv=None):
         or not 0 <= args.mock_delay_ms <= 5000
     ):
         parser.error("Invalid positive limits/delay/concurrency")
+    # Same ranges as the product's startup validation; out-of-range never reaches a stack.
+    if not 1 <= args.retrieval_concurrency <= MAX_QUERY_CONCURRENCY:
+        parser.error(f"--retrieval-concurrency must be 1-{MAX_QUERY_CONCURRENCY}")
+    if not 1 <= args.run_concurrency <= MAX_RUN_CONCURRENCY:
+        parser.error(f"--run-concurrency must be 1-{MAX_RUN_CONCURRENCY}")
     if (
         args.requests is not None
         and args.requests < 1

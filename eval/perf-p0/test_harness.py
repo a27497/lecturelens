@@ -67,7 +67,7 @@ class Metrics(unittest.TestCase):
             ("--seconds", "nan"),
             ("--concurrency", "0"),
             ("--requests", "201"),
-            ("--scenarios", "S4"),
+            ("--scenarios", "S5"),
             ("--timeout", "inf"),
         ):
             with (
