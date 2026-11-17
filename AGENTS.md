@@ -31,6 +31,12 @@ LectureLens is a course-grounded Study Agent project, currently experimental. Th
 - Keep README, architecture and deployment instructions consistent with actual code. State implemented, experimental and planned capabilities separately. Current quality limitations remain visible when presenting the project as a Study Agent.
 - Preserve existing uncommitted work. Keep provider credentials, downloaded media and private evaluation records out of Git.
 
+## CI triggers
+
+- CI skips changes limited to root-level Markdown, `docs/`, `agent-service/README.md` or `LICENSE`. `eval/`, backend resources and `scripts/` always run CI because tests read them.
+- A small code change may carry `[skip ci]` in the commit message: one module, roughly 30 lines or fewer, no dependency, `.github/`, database migration, security or `agent-service/src/lecturelens_agent/study/` change. Run the targeted local tests first and report the command and pass count.
+- Every other change and every phase's final candidate commit run the full CI. For a code change, the last push before a merge must not use `[skip ci]`. Use `workflow_dispatch` for a manual full run.
+
 ## Documentation and comments
 
 - Comments explain invariants, constraints, races, failure semantics or non-obvious trade-offs; preserve authority, idempotency, privacy and recovery explanations.
