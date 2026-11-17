@@ -94,7 +94,7 @@ Each invocation is one fresh stack and runs the concurrency ladder **1 → 4 →
   rate-limit envelope, not the lanes. Never combine its denominator with the
   raised-limit rows.
 
-Every group is preceded within its invocation by one excluded warmup per scenario;
+Every invocation starts with one excluded warmup per selected scenario;
 this consumes the real QA counter. Do not clear counters in-place. Window
 boundaries and warmup consumption affect success counts.
 
@@ -142,6 +142,72 @@ comparison, the earlier one-stack-per-point layout would need 84 invocations ×
 9 min = 12.6 h of overhead alone.
 
 Stop the rental at the cap even if points remain; leave them NOT_RUN.
+
+## Faster execution on the larger rental host
+
+The optional [fast runner](fast_matrix.sh) keeps the same 28 points × 3
+repetitions (with S2), 60-second admission windows, operation timeouts, lane
+sizes, scenario order, fresh databases and 12 independent stack invocations.
+Only Java build preparation is reused: the successful shakedown retains its
+JAR, extracted application/dependencies and compiled eval wrappers. Each later
+invocation verifies the seed evidence, clean source SHA/input hashes, checkout,
+Java/javac versions and artifact content hash before starting services. An
+end-of-run hash check rejects changes during measurement. Maven packaging,
+extraction and wrapper compilation are skipped for those 12 invocations.
+Python dependency sync and image availability checks remain; changing images
+or Python distributions from the shakedown stops the batch. Keep the seed
+directory until all runs finish and export its evidence with the matrix.
+
+On the proposed 16-core/32-thread, 128-GB, NVMe host, leave the whole CPU and
+memory allocation available to each invocation. The load driver already issues
+concurrent requests at c=1/4/8/16. Do not increase that ladder, Uvicorn workers,
+product lanes, Mock speed or DB settings to make the host busier. Unused CPU
+while waiting for Mock delays, polling or admission is expected. Use the
+additional RAM/NVMe for dependency/artifact caches; do not run colocated builds
+or load generators during measured windows. Building once makes repeated
+parallel compilation unnecessary.
+
+No speedup has been measured. The admission-only floor is **84 minutes**;
+at the original typical 70-second group estimate, windows plus drain are
+**98 minutes**. With the original 70-minute one-time allowance, total time is
+approximately **168 + 12 × B minutes**, where B is the *observed* per-invocation
+non-measurement overhead, including warmups, build verification, fresh service
+startup, course preparation and teardown. For example, B=3 min gives 204 min
+(3.4 h); B=5 min gives 228 min (3.8 h); B=9 min reproduces 276 min (4.6 h).
+These are scenarios, not a new upper bound or a claim that caching removes all
+startup overhead. Re-estimate from actual stage/group timings after the first
+cached invocation; slow downloads, startup or smoke fixes can erase the gain.
+The existing 8-hour cap and failure reserve remain in force.
+
+After approving the machine/window and enabling the read-only telemetry below,
+run this **on the rental host only**, at a clean committed SHA:
+
+```bash
+# EXPIRY_UTC is the actual approved rental expiry, e.g. YYYY-MM-DDTHH:MM:SSZ.
+# --include-s2 selects the eval-only raised QA policy, if already authorized.
+bash eval/perf-p0/fast_matrix.sh .data/l2-rental-fast "$EXPIRY_UTC" --include-s2
+```
+
+Omit `--include-s2` without the raised-QA approval (20 points × 3 repetitions;
+S2 is NOT_RUN). Add `--offline-bootstrap` if dependencies/images are already
+cached; otherwise only the initial shakedown can bootstrap online. The optional
+`--build-minio` applies consistently to the seed and every measured invocation.
+Host package installation is still a prerequisite. A failed shakedown or
+verification stops the batch; no automatic retries, optional extra rows or
+instance deletion occur. Output directories cannot be overwritten. The batch
+holds a checkout-local lock; the operator must still exclude other worktrees
+and unrelated workloads on the host.
+
+The script reserves the full internal deadline, 600 seconds for supervision/
+cleanup and 15 minutes for final export before starting each invocation. It
+uses the earlier of the supplied rental expiry and eight hours after script
+start, so pass the actual expiry including time already spent installing the
+host. The provider-side automatic shutdown/deletion deadline remains required.
+Stop/cancel via the exact harness PID/start ticks as described below; do not
+interrupt the generic supervisor during teardown. Export evidence/checksums and
+release the instance/disk after the batch; the script does not operate a cloud
+account. Service smoke, cached-build live execution and the complete matrix
+remain **NOT_RUN** until performed on the approved host.
 
 ## Execute only on the approved rental machine
 
@@ -280,9 +346,13 @@ range per point):
   whose `running` state a poll observed; compare it only when `running_unobserved`
   is under 5% of successful Runs in both configurations. Otherwise replace the
   `queue_ms` condition with successful `turn_latency_ms` P95; the throughput,
-  `execution_ms` and failure guards still apply. If no successful Run in either
-  configuration has an `execution_ms` observation, mark the Run-lane comparison
-  inconclusive rather than "defaults adequate". Mock execution holds a lane for
+  `execution_ms` and failure guards still apply. At each compared concurrency,
+  if either configuration lacks an `execution_ms` observation in any one of
+  the three repetitions, mark that point's Run-lane comparison
+  inconclusive rather than "defaults adequate". Require observations from both
+  configurations in all three repetitions; do not discard missing repetitions
+  or substitute another concurrency's data. Apply the 5% unobserved threshold
+  to each configuration/repetition as well. Mock execution holds a lane for
   injected delay, not real model I/O; any change still needs the provider-side
   rate-limit caveat in AGENT_CONCURRENCY.md.
 - At most two parameter changes come out of L2, each as a separate product change
