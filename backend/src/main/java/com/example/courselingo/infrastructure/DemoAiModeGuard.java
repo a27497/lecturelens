@@ -1,5 +1,6 @@
 package com.example.courselingo.infrastructure;
 
+import com.example.courselingo.ai.asr.AsrProviderSelection;
 import org.springframework.core.env.Environment;
 
 /** Validates the explicit local Demo profile before provider beans are created. */
@@ -26,18 +27,18 @@ public final class DemoAiModeGuard {
         if (consumer && !enabled(environment, "spring.flyway.enabled")) {
             throw new IllegalStateException("An enabled task consumer requires Flyway and durable task tables.");
         }
-        if (consumer && !(mockAsr || siliconFlowAsr)) {
+        if (mockAsr && siliconFlowAsr) {
+            throw new IllegalStateException(
+                "Invalid AI provider configuration: Demo Mock ASR and SiliconFlow ASR cannot both be enabled."
+            );
+        }
+        if (consumer && "none".equals(AsrProviderSelection.selected(environment))) {
             throw new IllegalStateException("An enabled task consumer requires an ASR provider.");
         }
         if (consumer && !(demoLlm || openAiCompatibleLlm || langChain4jLlm)) {
             throw new IllegalStateException("An enabled task consumer requires a text LLM provider.");
         }
 
-        if (mockAsr && siliconFlowAsr) {
-            throw new IllegalStateException(
-                "Invalid AI provider configuration: Demo Mock ASR and SiliconFlow ASR cannot both be enabled."
-            );
-        }
         if (demoLlm && (openAiCompatibleLlm || langChain4jLlm)) {
             throw new IllegalStateException(
                 "Invalid AI provider configuration: Demo Mock LLM and a real LLM cannot both be enabled."
