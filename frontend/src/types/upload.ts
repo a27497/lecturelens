@@ -59,11 +59,3 @@ export type UploadPhase =
   | "completing"
   | "success"
   | "error";
-
-export interface UploadProgressSnapshot {
-  phase: UploadPhase;
-  statusText: string;
-  progressPercent: number;
-  uploadedChunks: number;
-  totalChunks: number;
-}
