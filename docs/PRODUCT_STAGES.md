@@ -1,6 +1,6 @@
 # LectureLens 产品阶段
 
-基线以开发工作树的 Git SHA 为准。验收时工作树须干净；若有未提交改动，须把 `git diff` 与 `git status --short` 随证据一起保存，否则该 SHA 不能代表被测源码。现有 Study Agent 实验、源码身份和质量证据见 [AGENTS.md](../AGENTS.md) 与 [FINAL_AU](../eval/phase-completion/FINAL_AU.md)。
+基线以开发工作树的 Git SHA 为准。验收时工作树须干净；若有未提交改动，须把 `git diff HEAD`（含已暂存改动）、`git status --short` 及未跟踪源文件随证据一起保存，否则该 SHA 不能代表被测源码。现有 Study Agent 实验、源码身份和质量证据见 [AGENTS.md](../AGENTS.md) 与 [FINAL_AU](../eval/phase-completion/FINAL_AU.md)。
 
 | 阶段 | 工作 | 通过条件 |
 | --- | --- | --- |
