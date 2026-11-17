@@ -1,9 +1,16 @@
-# P11 independent-server measurement plan
+# P11 / L2 independent-server measurement plan
 
-Status: **prepared, NOT_RUN**. P11-A performs no service startup, business load,
-cloud rental or real Provider calls. Execution below requires a separately
-approved P11-B window on a disposable independent machine. Do not run this plan
-on the shared SameScale development server.
+Status: **prepared, NOT_RUN**. Preparation performs no service startup, business
+load, cloud rental or real Provider calls. Execution below requires a separately
+approved window on a disposable independent machine. Do not run this plan on the
+shared development server.
+
+L2 revision: the harness now targets the Step 6 concurrency lanes
+([AGENT_CONCURRENCY.md](../../docs/AGENT_CONCURRENCY.md)), schema v3. The goal
+is to measure success rate, throughput, P50/P95 and the expected busy rejections
+at the target concurrency, then decide whether `AGENT_RETRIEVAL_CONCURRENCY=4` and
+`AGENT_RUN_CONCURRENCY=2` fit. "Defaults are adequate, no change" is an
+acceptable outcome.
 
 ## Machine and spending envelope
 
@@ -18,45 +25,122 @@ on the shared SameScale development server.
   closed. Limits hidden by a host/container namespace still require operator
   confirmation against the rental specification.
 - Obtain an hourly quote and an approved spending/time cap **before** ordering.
-  Budget = quoted hourly rate × approved maximum hours + storage/network/tax.
-  There is no vendor price claim here. Use hourly billing, a disposable disk,
-  billing alerts and a provider-side automatic shutdown deadline. Record expiry
-  in UTC. Stop provisioning if dependency bootstrap consumes its agreed budget;
-  do not silently extend the rental. Delete the instance/disk after exporting
-  redacted evidence. No cloud account credentials belong in this repository.
+  Budget = quoted hourly rate × approved maximum hours (see the machine-hour
+  estimate below) + storage/network/tax. There is no vendor price claim here. Use
+  hourly billing, a disposable disk, billing alerts and a provider-side automatic
+  shutdown deadline. Record expiry in UTC. Stop provisioning if dependency
+  bootstrap consumes its agreed budget; do not silently extend the rental. Delete
+  the instance/disk after exporting redacted evidence. No cloud account
+  credentials belong in this repository.
 
-## Fixed workload and matrix
+## Fixed workload
 
 Use a clean committed PR HEAD, locked dependencies and the same image IDs. This
 harness is **Mock only**: hash384 embeddings, one generated short synthetic
-course, one owner/revision shared by clients, top_k=8, one original Uvicorn/Tutor
-worker, original retrieval lock and budgets. A fresh Tutor Session is created
-per operation. Model delay is 150 ms per decision in this planned matrix, QA
-only in Java and every Tutor decision in Python. This is a controlled injected
-delay, not observed real-model latency or production semantic-encoder throughput.
+course, one owner/revision shared by clients, top_k=8, one Uvicorn process, the
+product query slots / index APPLY lock / Run lanes / budgets, and the experimental
+Tutor's single worker. A fresh Tutor or Study Session is created per operation.
+Model delay is 150 ms per Mock decision: QA in Java, every Tutor decision and
+every flashcard decision in Python. This is a controlled injected delay, not
+observed real-model latency or production semantic-encoder throughput.
 
-| Experiment | Path | Concurrency | Stop condition per point | QA policy |
+What each lane setting can affect, which keeps the matrix small:
+
+| Setting | S1 direct retrieve | S2 Java QA | S3 Tutor | S4 Study Run |
 |---|---|---|---|---|
-| Default policy baseline | S2 Java QA | 1 / 4 / 8 / 16 | 64 logical attempts | enabled, original 10/owner/minute |
-| Mock mechanism baseline | S1 pure retrieve | 1 / 4 / 8 / 16 | 60 s admission, drain | default (not on this direct path) |
-| Authorized test configuration | S2 Java QA | 1 / 4 / 8 / 16 | 60 s admission, drain | enabled, 100000/owner/minute **only if separately approved** |
-| Mock mechanism baseline | S3 Tutor completion | 1 / 4 / 8 / 16 | 60 s admission, drain | original Tutor budgets; no QA quota change needed |
+| `AGENT_RETRIEVAL_CONCURRENCY` | yes: up to c concurrent searches | yes: up to c concurrent searches via Java | at most 1 Tutor search at a time (single worker) | at most `AGENT_RUN_CONCURRENCY` (≤4 here) concurrent Run searches |
+| `AGENT_RUN_CONCURRENCY` | no | no | no (separate Tutor runtime) | yes: lanes hold a Run through both Mock decisions |
 
-Run **three independent repetitions** of every chosen point, each with a fresh
-stack/database and new output path. Keep the scenario/order fixed in paired
-before/after trials. Every point has one excluded warmup; this consumes the real
-QA counter. Do not clear counters in-place. The default-policy request cap
-prevents a long tight loop of fast 429s; it is a policy/rejection experiment,
-not a sustained capacity figure. Window boundaries and warmup consumption affect
-success counts. Never combine its denominator with the raised-limit experiment.
-If the raised limit is not approved, leave that matrix explicitly NOT_RUN.
+So more query slots can only change S1/S2 here, and more Run lanes only S4.
+
+## Lane configurations and matrix
+
+| Config | `AGENT_RETRIEVAL_CONCURRENCY` | `AGENT_RUN_CONCURRENCY` | Role |
+|---|---:|---:|---|
+| A | **4** | **2** | Product defaults |
+| B | 8 | 2 | Retrieval control. Upward, because the L2 question is whether 4 slots reject work that a 16-vCPU host could serve; 8 shows whether extra slots raise successful throughput/P95 or only turn fast 503s into slower successes. Single-slot behavior is already covered by historical evidence. |
+| C | 4 | 4 | Run control. Upward, because a 150 ms × 2 Mock Run holds a lane ≥300 ms and c≥4 queues behind 2 lanes; 4 shows whether lanes are the S4 bottleneck. 1 would reproduce the pre-Step-6 single worker. |
+
+Each invocation is one fresh stack and runs the concurrency ladder **1 → 4 → 8 →
+16** in that fixed order for each listed scenario, scenarios in the listed order.
+
+| Invocation | Config | Scenarios | Stop per group | QA policy | Points |
+|---|---|---|---|---|---:|
+| `a-qa` | A | S1, S2, S3 | 60 s admission + drain, 60 s op timeout | raised to 100000/owner/minute | 12 |
+| `a-run` | A | S4 | same | not on path | 4 |
+| `b-qa` | B | S1, S2 | same | raised to 100000/owner/minute | 8 |
+| `c-run` | C | S4 | same | not on path | 4 |
+
+**Measurement points: 28** (scenario × config × concurrency). Each point has
+**3 repetitions** on fresh stacks: **84 point-repetitions** in **12 invocations**
+(4 per repetition), plus one unmeasured shakedown invocation.
+
+- Pairing: `b-qa` vs `a-qa` compare S1/S2 at the same scenario/ladder position
+  (S3 runs after S2 in `a-qa`, so it cannot affect them). `c-run` vs `a-run`
+  compare S4 on otherwise identical fresh stacks. S3 is measured only at the
+  defaults, as the Tutor single-worker queue/execution baseline.
+- Trade-off: the earlier plan used one stack per (scenario, c). Running the
+  ladder in one stack cuts stack bootstraps 4× (see the estimate) at the cost of
+  order effects (the database grows with saved QA results, Sessions and decks).
+  The order is identical in every repetition and configuration, so paired
+  comparisons share it; do not compare a c=16 group with a c=16 group from a
+  different ladder position.
+- The raised QA limit is a harness setting on the disposable stack, not a product
+  change; the existing default (10/owner/minute) would make S2 measure only 429s.
+  The owner's approval of the L2 window must include it. Without that approval,
+  drop S2 (`a-qa` = S1,S3; `b-qa` = S1; 20 points) and record S2 as NOT_RUN.
+- Optional, not counted above: the earlier **default-policy** S2 row (config A,
+  `--requests 64 --qa-per-minute 10`, c=1/4/8/16, 3 invocations). It measures the
+  rate-limit envelope, not the lanes. Never combine its denominator with the
+  raised-limit rows.
+
+Every group is preceded within its invocation by one excluded warmup per scenario;
+this consumes the real QA counter. Do not clear counters in-place. Window
+boundaries and warmup consumption affect success counts.
 
 S1 attempts are signed HTTP retrieval requests, not whole Study Runs. S2 success
 requires a saved QA answer with current allowed Evidence. S3 success requires a
-supported **completed** turn with allowed inline citations, not HTTP acceptance.
-S3 includes queueing and completion polling. Schema v2 reports whole-operation
-latency and submit-to-observed-terminal `turn_latency_ms` separately; cancellation
-cleanup has its own time and remains in the drained wall-time denominator.
+supported **completed** turn with allowed inline citations. S4 success requires a
+**succeeded** flashcard Run whose events include `deck_created` with at least one
+card. S3/S4 include queueing and completion polling; schema v3 reports
+whole-operation latency, submit-to-terminal `turn_latency_ms`, and the
+client-observed split `queue_ms` / `execution_ms` (resolution: one 0.1 s poll plus
+one Java round trip; S4 queue includes the Run dispatcher's ≤1 s re-poll).
+Cancellation cleanup has its own time and remains in the drained wall-time
+denominator.
+
+## Machine-hour estimate
+
+Nothing here was measured on the rental machine. Planning inputs:
+
+| Input | Planning value | Basis |
+|---|---:|---|
+| One-time host preparation and first online bootstrap (packages, Maven/uv dependencies, image pulls, version record) | 45 min | Allowance; dependency downloads are not timed in this repository |
+| Shakedown invocation (config A, S1–S4, c=1, `--requests 3`), verified, before the matrix | 10 min | 8 min overhead + ~2 min groups |
+| Fixed overhead per invocation (offline package, infra + PostgreSQL up, Java + Agent start, synthetic course, attestation, logs, owned teardown, `verify.py`, export) | 8 min | The CI job "MySQL migrations and Mock AI E2E" runs the same `Smoke` lifecycle on a hosted runner in 244–313 s (median ≈290 s, last 12 successful CI runs, 2026-11). 8 min ≈ 1.6× that median for the extra compile/fingerprint/log steps |
+| Warmups per invocation | 1 min | One operation per scenario |
+| One measured group | 70 s typical, 120 s upper | 60 s admission + drain; drain is bounded by the 60 s operation timeout |
+| Final export, checksum manifest, instance/disk deletion | 15 min | Allowance |
+
+Per repetition: 4 invocations × (8 + 1) min = 36 min, plus 28 groups × 70 s =
+32.7 min (typical) or × 120 s = 56 min (upper) → **68.7 min typical, 92 min
+upper**.
+
+Three repetitions: 206 min typical, 276 min upper. Adding one-time preparation,
+shakedown and final export (45 + 10 + 15 = 70 min):
+
+- typical: 206 + 70 = **276 min ≈ 4.6 machine hours**
+- upper: 276 + 70 = **346 min ≈ 5.8 machine hours**
+
+Request an approved cap of **8 machine hours**: the 5.8 h upper bound plus 25%
+(1.45 h) for re-running failed invocations ≈ 7.2 h, rounded up. The optional
+default-policy S2 row adds 3 × (8 + 1 + 4 × ~0.5) ≈ 33 min and still fits
+(5.8 h + 0.55 h = 6.35 h; × 1.25 ≈ 7.9 h). If the S2 approval is absent, the
+20-point matrix needs 20 groups per repetition: upper 3 × (36 + 40) + 70 = 298 min
+≈ 5.0 h. For comparison, the earlier one-stack-per-point layout would need
+84 invocations × 9 min = 12.6 h of overhead alone.
+
+Stop the rental at the cap even if points remain; leave them NOT_RUN.
 
 ## Execute only on the approved rental machine
 
@@ -65,30 +149,49 @@ FFmpeg. Public dependency bootstrap is allowed; provider credentials are not.
 Resolve/bootstrap once, record actual versions/image IDs, then use `--offline`
 for repetitions. Do not upgrade dependencies between trials. If CI source-built
 MinIO is needed, use `--build-minio` consistently and record its different image
-fingerprint; this bootstrap alternative remains untested by P11-A.
+fingerprint; this bootstrap alternative remains untested.
 
-The following is one point. Repeat it for c=1,4,8,16 and rep=1,2,3 with unique
-names, using the table's scenario/stop/policy settings. The same entrypoint
-creates the isolated stack, prepares the course, measures, verifies source
-stability and removes its owned containers/volumes/networks.
+Shakedown (not a measurement point):
 
 ```bash
-# Example values for ONE S1 point, only after approval; not executed in P11-A.
-c=1
-rep=1
-python3 scripts/dev/run_check.py --name "p11-s1-c${c}-r${rep}" \
-  --output .data/p11-rental/checks --timeout 2400 -- \
-  bash eval/perf-p0/run.sh --offline --profile rental --scenarios S1 \
-  --concurrency "$c" --seconds 60 --timeout 60 --mock-delay-ms 150 \
-  --run-deadline 1800 --output ".data/p11-rental/s1-c${c}-r${rep}"
+python3 scripts/dev/run_check.py --name "l2-shakedown" \
+  --output .data/l2-rental/checks --timeout 2400 -- \
+  bash eval/perf-p0/run.sh --offline --profile rental --scenarios S1,S2,S3,S4 \
+  --concurrency 1 --requests 3 --timeout 60 --mock-delay-ms 150 \
+  --qa-per-minute 100000 --retrieval-concurrency 4 --run-concurrency 2 \
+  --run-deadline 1800 --output .data/l2-rental/shakedown
 ```
 
-For S3 change `--scenarios S3`; for default S2 change to `--scenarios S2
---requests 64 --qa-per-minute 10` **instead of** `--seconds 60`. For separately
-approved S2 capacity testing use `--scenarios S2 --seconds 60 --qa-per-minute
-100000`. Every point and repetition is a separate invocation. The outer timeout
-exceeds the internal deadline by 600 seconds to allow cleanup; bootstrap failures
-or timeouts are retained, not relabeled as performance observations.
+The matrix, for rep=1,2,3 in this order (each line is one fresh invocation):
+
+```bash
+# Not executed during preparation. Requires the approved window.
+run_point() {  # name scenarios retrieval run qa
+  python3 scripts/dev/run_check.py --name "l2-$1-r${rep}" \
+    --output .data/l2-rental/checks --timeout 3600 -- \
+    bash eval/perf-p0/run.sh --offline --profile rental --scenarios "$2" \
+    --concurrency 1,4,8,16 --seconds 60 --timeout 60 --mock-delay-ms 150 \
+    --retrieval-concurrency "$3" --run-concurrency "$4" --qa-per-minute "$5" \
+    --run-deadline 3000 --output ".data/l2-rental/$1-r${rep}" &&
+  agent-service/.venv/bin/python eval/perf-p0/verify.py \
+    ".data/l2-rental/$1-r${rep}" --sha "$(git rev-parse HEAD)" --check-inputs
+}
+for rep in 1 2 3; do
+  run_point a-qa  S1,S2,S3 4 2 100000 &&
+  run_point a-run S4       4 2 10 &&
+  run_point b-qa  S1,S2    8 2 100000 &&
+  run_point c-run S4       4 4 10 || break
+done
+```
+
+The sequence is bounded (12 invocations, no model calls) and stops at the first
+failed invocation or verification instead of continuing; inspect the failure
+before any re-run. `--qa-per-minute` is irrelevant for the S4-only invocations and keeps
+the product default. The internal deadline (3000 s) covers the 8 min overhead and
+at most 12 groups × 120 s; the outer timeout exceeds it by 600 s for cleanup.
+Bootstrap failures or timeouts are retained, not relabeled as performance
+observations. A failed invocation may be re-run once as a new output directory
+inside the cap; keep both.
 
 ## Observation, stops and cleanup
 
@@ -99,18 +202,23 @@ trials. Capture Docker stats only for project names in this run's `result.json`
 and Java/Agent processes in its recorded `children`. Record per-core utilization,
 CPU steal/throttling, RSS/available memory, swap/OOM, disk I/O, filesystem free
 space and PostgreSQL connections/query waits using read-only observations of
-the **owned** instance. Never inspect other worktree databases or user data.
-Include driver CPU/event-loop saturation: closed-loop rates may reflect the
-client as well as the service. The framework does not automatically prove a
-hardware bottleneck or attribute CPU time to embedding/SQL/lock hold time.
+the **owned** instance (config C adds ~6 PostgreSQL connections for the two extra
+lanes). Never inspect other worktree databases or user data. Include driver
+CPU/event-loop saturation: closed-loop rates may reflect the client as well as
+the service. The framework does not automatically prove a hardware bottleneck or
+attribute CPU time to embedding/SQL/slot hold time.
 
 Stop a point if it exceeds the internal deadline, cleanup cannot drain a Tutor
-turn, ownership/revision checks fail, evidence cannot be verified, memory/disk
+turn or Study Run, ownership/revision checks fail, evidence cannot be verified,
+the effective lanes differ from the requested configuration, memory/disk
 approaches the operator's approved safety threshold, OOM occurs, or unexpected
 external network/provider activity appears. A run with lost telemetry or a
 changed fingerprint is ineligible for comparison. Expected busy 503/QA 429 is a
-reported failure, not by itself evidence of hardware exhaustion. Do not retry,
-add sleeps/backoff, raise workers, alter locks or relax budgets to improve numbers.
+reported failure, not by itself evidence of hardware exhaustion. Any
+`evidence_index_changed_409` (client or server) is unexpected because nothing
+rebuilds the index during measurement; mark the point ineligible until explained.
+Do not retry, add sleeps/backoff, raise workers, alter slots/locks or relax
+budgets to improve numbers.
 
 For an early stop, verify `runner_pid` and `/proc/<pid>/stat` start ticks against
 the recorded `runner_start_ticks`, then SIGTERM that exact runner and allow it
@@ -128,31 +236,55 @@ Verify each completed result before proceeding:
 ```bash
 agent-service/.venv/bin/python eval/perf-p0/verify.py OUTPUT \
   --sha "$(git rev-parse HEAD)" --check-inputs
-# For a point intended to prove direct busy rejection, also add --require-busy.
+# For a-qa/b-qa, --require-busy may be added: it first requires an S1 level above
+# the configured slots (true for 8/16 vs 4, and 16 vs 8), then an observed
+# 503 Retrieval busy with Retry-After: 1. Absence of busy is a result, not a defect.
 ```
 
 Export `result.json`, `requests.jsonl`, reports, redacted logs and telemetry with
 a checksum manifest. Confirm no owned containers/volumes/networks or application
 children remain before releasing the rental. Preserve failures and raw attempts.
 
-## Interpretation and before/after comparisons
+## Interpretation and decision
 
-For each repetition report attempted/success/failed counts, error categories,
-429/503/Retry-After, successful operations/s, attempted operations/s, all/success/
-failure P50/P95 and timeouts. S3 additionally reports submit-to-terminal latency.
-Show each repetition and spread; do not select only the best. Warmups, admission
-window, operation timeout, polling, cleanup/drain time and clock resolution must
-be reported. Do not pool per-run percentiles; recompute pooled percentiles from
-eligible raw rows only when the conditions are identical.
+For each repetition report attempted/success/failed counts, the three failure
+classes (`retrieval_busy_503`, `evidence_index_changed_409`, `other_unexpected`),
+the server-side `agent_retrieval_outcomes` (needed for S2–S4, where Java collapses
+busy/changed into `RETRIEVAL_UNAVAILABLE`), 429s and Retry-After, successful and
+attempted operations/s, all/success/failure P50/P95 and timeouts. S3/S4
+additionally report submit-to-terminal latency, `queue_ms` / `execution_ms`
+P50/P95 and `running_unobserved`. Show each repetition and its spread; do not
+select only the best. Warmups, admission window, operation timeout, polling,
+cleanup/drain time and clock resolution must be reported. Do not pool per-run
+percentiles; recompute pooled percentiles from eligible raw rows only when the
+conditions are identical.
+
+Pre-declared decision rule (three repetitions, compare medians and the min–max
+range per point):
+
+- Retrieval (`b-qa` vs `a-qa`, S1 and S2 at c=8/16): keep 4 unless config B raises
+  S2 **successful** operations/s beyond the non-overlapping repetition range
+  **and** does not worsen S2 successful P95 beyond that range, with host CPU not
+  saturated. A lower S1 busy count alone is not a reason to change: busy is the
+  intended backpressure, and fewer fast rejections can raise all-attempt P95.
+- Run lanes (`c-run` vs `a-run`, S4 at c=4/8/16): keep 2 unless config C cuts S4
+  `queue_ms` P95 and raises successful Runs/s beyond the repetition range without
+  raising `execution_ms` P95 or failures beyond it. Mock execution holds a lane for
+  injected delay, not real model I/O; any change still needs the provider-side
+  rate-limit caveat in AGENT_CONCURRENCY.md.
+- At most two parameter changes come out of L2, each as a separate product change
+  with its own review. If neither rule fires, the deliverable is "defaults
+  adequate for this workload" with the data table.
 
 Freeze hardware/SKU, image and dependency fingerprints, corpus/text/chunk hashes,
-query, embedding, injected delay, owner/course topology, thread/worker counts,
-limits, initial empty databases, warmup, stop conditions and telemetry overhead.
-Record both source SHAs and the exact optimized diff. Future optimization is a
-separate task: rerun the same matrix, account for error-rate changes, compare
-successful P95/throughput, and report all failures. A lower all-attempt P95 caused
-by more fast rejections is not an improvement. Schema-v1 latency included cancel
-cleanup; never mix it with schema-v2 operation/turn latency.
+query, embedding, injected delay, owner/course topology, lane sizes, worker
+counts, limits, initial empty databases, warmup, stop conditions and telemetry
+overhead. Record both source SHAs and the exact diff for any later optimization.
+Future optimization is a separate task: rerun the same matrix, account for
+error-rate changes, compare successful P95/throughput, and report all failures.
+A lower all-attempt P95 caused by more fast rejections is not an improvement.
+Schema v1/v2 results measured the pre-Step-6 single lock (and v1 latency included
+cancel cleanup); never pair them with schema v3 lane results.
 
 Resume claims require approved independent-machine execution, clean source,
 complete repeatable evidence and an honest workload/mode/hardware description.
@@ -160,6 +292,6 @@ A verified before/after claim additionally needs both measured baselines under
 the same conditions. Mock/hash384 results may support only clearly qualified
 mechanism/admission claims, never real-provider latency/quality, semantic
 retrieval performance, teaching quality or general production capacity.
-Historical SameScale `DEV_SMOKE_NOT_RESUME` (including 61/64 busy responses),
-single tiny samples, policy-limited throughput and unexecuted plans are
-development diagnosis only. No performance number is prefilled by this plan.
+Historical `DEV_SMOKE_NOT_RESUME` (including 61/64 busy responses under the old
+single lock), single tiny samples, policy-limited throughput and unexecuted plans
+are development diagnosis only. No performance number is prefilled by this plan.

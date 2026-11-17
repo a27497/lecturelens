@@ -16,6 +16,33 @@ import httpx
 
 QUESTION = "Explain the asynchronous course video learning pipeline."
 TERMINAL = {"completed", "failed", "cancelled"}
+# Public Study Run states after which no worker lane executes the Run.
+STUDY_TERMINAL = {
+    "succeeded",
+    "failed",
+    "cancelled",
+    "budget_exceeded",
+    "awaiting_approval",
+}
+SCHEMA_VERSION = 3
+RETRIEVE_PATH = "/internal/v1/retrieve"
+# Eval-only counter route added by perf_app; never part of the product app.
+OUTCOMES_PATH = "/internal/perf-p0/retrieval-outcomes"
+# Server-side Retriever.search outcomes counted by perf_app.CountingRetriever.
+OUTCOME_KEYS = ("ok", "busy_503", "index_changed_409", "index_not_ready_409", "error")
+# Every failed logical attempt has exactly one class. Only direct S1 responses can be
+# attributed per attempt: Java maps any non-200 retrieval to RETRIEVAL_UNAVAILABLE, and
+# Tutor/Study surface it as a generic tool failure, so those land in other_unexpected
+# while agent_retrieval_outcomes carries the server-side busy/changed counts.
+FAILURE_CLASSES = (
+    "retrieval_busy_503",
+    "evidence_index_changed_409",
+    "other_unexpected",
+)
+CLASS_BY_ERROR = {
+    "RETRIEVAL_BUSY_503": "retrieval_busy_503",
+    "RETRIEVAL_INDEX_CHANGED_409": "evidence_index_changed_409",
+}
 
 
 def loopback(url):
@@ -29,10 +56,16 @@ def loopback(url):
     return url
 
 
-def signed_headers(secret, body):
+def failure_class(error):
+    return CLASS_BY_ERROR.get(error, "other_unexpected")
+
+
+def signed_headers(secret, body, path=RETRIEVE_PATH):
     timestamp = str(int(time.time()))
     message = (
-        "lecturelens-retrieval-v1\nPOST\n/internal/v1/retrieve\n"
+        "lecturelens-retrieval-v1\nPOST\n"
+        + path
+        + "\n"
         + timestamp
         + "\n"
         + hashlib.sha256(body).hexdigest()
@@ -96,7 +129,29 @@ def summary(rows, seconds, *, schema=1):
             )
             for p in (50, 95)
         }
+    if schema >= 3:
+        classes = Counter(failure_class(r["error"]) for r in bad)
+        result["failure_classes"] = {name: classes[name] for name in FAILURE_CLASSES}
+        # Successful Tutor turns / Study Runs only, like turn_latency_ms.
+        for field in ("queue_ms", "execution_ms"):
+            result[field] = {
+                f"p{p}": percentile([r[field] for r in good if field in r], p)
+                for p in (50, 95)
+            }
+        result["running_unobserved"] = sum(
+            r.get("running_observed") is False for r in good
+        )
     return result
+
+
+def outcome_delta(before, after):
+    """Per-group server outcomes; counters are process-lifetime and monotonic."""
+    if set(before) != set(OUTCOME_KEYS) or set(after) != set(OUTCOME_KEYS):
+        raise ValueError("Unexpected retrieval outcome counters")
+    delta = {k: after[k] - before[k] for k in OUTCOME_KEYS}
+    if any(type(after[k]) is not int or delta[k] < 0 for k in OUTCOME_KEYS):
+        raise ValueError("Retrieval outcome counters went backwards")
+    return delta
 
 
 def public_code(value):
@@ -134,6 +189,16 @@ class Paths:
         self.owner, self.course, self.revision = owner, course, revision
         self.evidence_ids = evidence_ids
         self.poll_seconds = poll_seconds
+
+    async def retrieval_outcomes(self, client):
+        body = b"{}"
+        response = await client.post(
+            self.agent + OUTCOMES_PATH,
+            content=body,
+            headers=signed_headers(self.secret, body, OUTCOMES_PATH),
+        )
+        response.raise_for_status()
+        return response.json()
 
     async def response(self, client, row, method, url, **kwargs):
         # Count a send even if it has no HTTP response (timeout/transport failure).
@@ -188,6 +253,8 @@ class Paths:
                 raise OperationError("QA_EVIDENCE_SCOPE_MISMATCH")
         elif scenario == "S3":
             await self.tutor(client, row)
+        elif scenario == "S4":
+            await self.study(client, row)
         else:
             raise ValueError("Unknown scenario")
 
@@ -208,7 +275,7 @@ class Paths:
             client,
             row,
             "POST",
-            self.agent + "/internal/v1/retrieve",
+            self.agent + RETRIEVE_PATH,
             content=body,
             headers=signed_headers(self.secret, body),
         )
@@ -222,6 +289,12 @@ class Paths:
             raise OperationError("RETRIEVAL_INVALID_ENVELOPE")
         if response.status_code == 503 and payload.get("detail") == "Retrieval busy":
             raise OperationError("RETRIEVAL_BUSY_503")
+        # "Evidence index not ready" is also a 409 but means no READY snapshot at all.
+        if (
+            response.status_code == 409
+            and payload.get("detail") == "Evidence index changed"
+        ):
+            raise OperationError("RETRIEVAL_INDEX_CHANGED_409")
         if response.status_code != 200:
             raise OperationError(f"RETRIEVAL_HTTP_{response.status_code}")
         if (
@@ -239,6 +312,7 @@ class Paths:
         terminal = False
         turn_key = row["request_id"]
         turn_started = None
+        running_at = None
         try:
             created = await self.java_api(
                 client, row, "POST", base, {"request_key": turn_key}
@@ -259,7 +333,9 @@ class Paths:
                 turn = next(
                     (t for t in data["turns"] if t["client_turn_id"] == turn_key), None
                 )
-                if turn and turn["status"] in TERMINAL:
+                status = turn["status"] if turn else None
+                running_at = observe(row, status, TERMINAL, turn_started, running_at)
+                if status in TERMINAL:
                     terminal = True
                     row["turn_status"] = turn["status"]
                     row["model_calls"] = turn["model_calls"]
@@ -290,34 +366,148 @@ class Paths:
                     (time.perf_counter() - turn_started) * 1000, 3
                 )
             if path and not terminal:
-                # Drain failed/timed-out own work before another group; never leave hidden backlog.
-                cleanup_started = time.perf_counter()
-                try:
-                    cleanup_row = {"http_requests": 0}
-                    async with asyncio.timeout(8):
-                        await self.java_api(
-                            client,
-                            cleanup_row,
-                            "POST",
-                            path + f"/turns/{turn_key}/cancel",
-                        )
-                        while True:
-                            data = await self.java_api(client, cleanup_row, "GET", path)
-                            turns = [
-                                t
-                                for t in data["turns"]
-                                if t["client_turn_id"] == turn_key
-                            ]
-                            if not turns or turns[0]["status"] in TERMINAL:
-                                break
-                            await asyncio.sleep(self.poll_seconds)
-                    row["cleanup_ok"] = True
-                except (Exception, asyncio.CancelledError):  # noqa: BLE001 -- failed drain must be recorded
-                    row["cleanup_ok"] = False
-                row["cleanup_http_requests"] = cleanup_row["http_requests"]
-                row["cleanup_ms"] = round(
-                    (time.perf_counter() - cleanup_started) * 1000, 3
+
+                async def cancel(cleanup_row):
+                    await self.java_api(
+                        client,
+                        cleanup_row,
+                        "POST",
+                        path + f"/turns/{turn_key}/cancel",
+                    )
+
+                async def finished(cleanup_row):
+                    data = await self.java_api(client, cleanup_row, "GET", path)
+                    turns = [
+                        t for t in data["turns"] if t["client_turn_id"] == turn_key
+                    ]
+                    return not turns or turns[0]["status"] in TERMINAL
+
+                await self.drain(row, cancel, finished)
+
+    async def study(self, client, row):
+        """Fresh Study Session -> GENERATE_CARDS Run -> poll to a published deck.
+
+        Flashcards is the Mock-supported Run kind: two model decisions and one
+        Java-authorized SEARCH that reaches the Python retrieval slots. Fresh Sessions
+        let Runs use separate AGENT_RUN_CONCURRENCY lanes instead of same-Session order.
+        """
+        command = f"/api/tasks/{self.course}/study/command"
+        key = row["request_id"]
+        session = run_id = None
+        submit_sent = submit_answered = terminal = False
+        submit_started = None
+        running_at = None
+
+        async def send(target, operation, **body):
+            return await self.java_api(
+                client, target, "POST", command, {"operation": operation, **body}
+            )
+
+        try:
+            session = (await send(row, "CREATE_SESSION", request_key=key))["session_id"]
+            row["session_id"] = session
+            submit_started = time.perf_counter()
+            submit_sent = True
+            try:
+                generated = await send(
+                    row, "GENERATE_CARDS", session_id=session, request_key=key
                 )
+            except OperationError:
+                # An error envelope is a rolled-back command: no Run exists to drain.
+                submit_answered = True
+                raise
+            submit_answered = True
+            run_id = generated["run"]["run_id"]
+            row["run_id"] = run_id
+            while True:
+                run = (await send(row, "READ", session_id=session, run_id=run_id))[
+                    "run"
+                ]
+                row["polls"] += 1
+                status = run["status"]
+                running_at = observe(
+                    row, status, STUDY_TERMINAL, submit_started, running_at
+                )
+                if status in STUDY_TERMINAL:
+                    terminal = True
+                    row["run_status"] = status
+                    row["model_calls"] = run["model_calls"]
+                    if status != "succeeded":
+                        raise OperationError(
+                            "STUDY_"
+                            + public_code(run.get("error_code") or status.upper())
+                        )
+                    events = (
+                        await send(
+                            row, "EVENTS", session_id=session, run_id=run_id, after=0
+                        )
+                    )["events"]
+                    # The product publishes a deck only after its own citation fence.
+                    if not any(
+                        e.get("event_type") == "deck_created"
+                        and (e.get("payload") or {}).get("card_count", 0) >= 1
+                        for e in events
+                    ):
+                        raise OperationError("STUDY_MISSING_DECK")
+                    return
+                await asyncio.sleep(self.poll_seconds)
+        finally:
+            if submit_started is not None:
+                row["turn_latency_ms"] = round(
+                    (time.perf_counter() - submit_started) * 1000, 3
+                )
+            if submit_sent and not terminal and run_id is not None:
+
+                async def cancel(cleanup_row):
+                    await send(cleanup_row, "CANCEL", session_id=session, run_id=run_id)
+
+                async def finished(cleanup_row):
+                    run = (
+                        await send(
+                            cleanup_row, "READ", session_id=session, run_id=run_id
+                        )
+                    )["run"]
+                    return run["status"] in STUDY_TERMINAL
+
+                await self.drain(row, cancel, finished)
+            elif submit_sent and not submit_answered:
+                # A lost GENERATE_CARDS response may still have queued a Run that this
+                # client cannot name; treat it as hidden backlog.
+                row["cleanup_ok"] = False
+
+    async def drain(self, row, cancel, finished):
+        # Drain failed/timed-out own work before another group; never leave hidden backlog.
+        cleanup_started = time.perf_counter()
+        cleanup_row = {"http_requests": 0}
+        try:
+            async with asyncio.timeout(8):
+                await cancel(cleanup_row)
+                while not await finished(cleanup_row):
+                    await asyncio.sleep(self.poll_seconds)
+            row["cleanup_ok"] = True
+        except (Exception, asyncio.CancelledError):  # noqa: BLE001 -- failed drain must be recorded
+            row["cleanup_ok"] = False
+        row["cleanup_http_requests"] = cleanup_row["http_requests"]
+        row["cleanup_ms"] = round((time.perf_counter() - cleanup_started) * 1000, 3)
+
+
+def observe(row, status, terminal, submitted, running_at):
+    """Client-observed queue/execution split for one polled Tutor turn or Study Run.
+
+    queue_ms ends at the first poll that sees `running`; execution_ms runs from there
+    to the poll that sees a terminal state. Both have one poll interval plus one Java
+    round trip of resolution. A Run that finishes between polls is recorded as
+    running_observed=false instead of inventing a boundary.
+    """
+    now = time.perf_counter()
+    if status == "running" and running_at is None:
+        running_at = now
+    if status in terminal:
+        row["running_observed"] = running_at is not None
+        if running_at is not None:
+            row["queue_ms"] = round((running_at - submitted) * 1000, 3)
+            row["execution_ms"] = round((now - running_at) * 1000, 3)
+    return running_at
 
 
 async def group(
@@ -377,7 +567,7 @@ async def group(
                     "ok": False,
                     "http_requests": 0,
                     "polls": 0,
-                    "schema_version": 2,
+                    "schema_version": SCHEMA_VERSION,
                 }
                 before = time.perf_counter()
                 try:
@@ -392,6 +582,8 @@ async def group(
                     row["error"] = "TIMEOUT"
                 except Exception as error:  # noqa: BLE001 -- retain one failed sample without payloads
                     row["error"] = type(error).__name__
+                if not row["ok"]:
+                    row["failure_class"] = failure_class(row["error"])
                 finished = time.perf_counter()
                 row["wall_latency_ms"] = round((finished - before) * 1000, 3)
                 row["latency_ms"] = round(
@@ -413,14 +605,17 @@ async def group(
         "scenario": scenario,
         "concurrency": concurrency,
         "warmup": warmup,
-        "schema_version": 2,
+        "schema_version": SCHEMA_VERSION,
     }
-    result.update(summary(rows, time.perf_counter() - wall_started, schema=2))
+    result.update(
+        summary(rows, time.perf_counter() - wall_started, schema=SCHEMA_VERSION)
+    )
     result["stop"] = {
         "requests": requests,
         "admission_seconds": seconds,
         "timeout_seconds": timeout,
     }
     result["admission_start_offset_ms"] = (started - wall_started) * 1000
+    # Historical field name; schema v3 also covers undrained Study Runs (S4).
     result["undrained_tutor"] = any(r.get("cleanup_ok") is False for r in rows)
     return result

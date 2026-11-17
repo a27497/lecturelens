@@ -9,6 +9,25 @@ import subprocess
 from collections import Counter
 from pathlib import Path, PurePosixPath
 
+from lecturelens_agent.retrieval import MAX_QUERY_CONCURRENCY
+from lecturelens_agent.study.runtime import MAX_RUN_CONCURRENCY
+
+# Independent of load.py on purpose: the verifier must not share the runner's mapping.
+CLASS_BY_ERROR = {
+    "RETRIEVAL_BUSY_503": "retrieval_busy_503",
+    "RETRIEVAL_INDEX_CHANGED_409": "evidence_index_changed_409",
+}
+FAILURE_CLASSES = (
+    "retrieval_busy_503",
+    "evidence_index_changed_409",
+    "other_unexpected",
+)
+OUTCOME_KEYS = {"ok", "busy_503", "index_changed_409", "index_not_ready_409", "error"}
+LANE_LIMITS = {
+    "agent_retrieval_concurrency": MAX_QUERY_CONCURRENCY,
+    "agent_run_concurrency": MAX_RUN_CONCURRENCY,
+}
+
 
 class VerificationError(AssertionError):
     pass
@@ -77,6 +96,16 @@ def reference_metrics(rows, seconds, schema):
             ),
             turn_latency_ms=quantiles(good, "turn_latency_ms"),
         )
+    if schema >= 3:
+        classes = Counter(
+            CLASS_BY_ERROR.get(r["error"], "other_unexpected") for r in bad
+        )
+        expected.update(
+            failure_classes={name: classes[name] for name in FAILURE_CLASSES},
+            queue_ms=quantiles(good, "queue_ms"),
+            execution_ms=quantiles(good, "execution_ms"),
+            running_unobserved=sum(r.get("running_observed") is False for r in good),
+        )
     return expected
 
 
@@ -120,8 +149,20 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
         "Unknown measurement label",
     )
     schema = result.get("schema_version", 1)
-    require(schema in (1, 2), "Unsupported schema")
+    require(schema in (1, 2, 3), "Unsupported schema")
     config = result["config"]
+    if schema >= 3:
+        for name, limit in LANE_LIMITS.items():
+            value = config.get(name)
+            require(
+                type(value) is int and 1 <= value <= limit,
+                f"Invalid configured {name}",
+            )
+        require(
+            result.get("effective_agent_lanes")
+            == {name: config[name] for name in LANE_LIMITS},
+            "Effective Agent lanes differ from configuration",
+        )
     require(
         (config["requests_per_group"] is None) != (config["admission_seconds"] is None),
         "Invalid stop configuration",
@@ -149,7 +190,8 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
     require(
         scenarios
         and len(set(scenarios)) == len(scenarios)
-        and set(scenarios) <= {"S1", "S2", "S3"},
+        and set(scenarios)
+        <= ({"S1", "S2", "S3", "S4"} if schema >= 3 else {"S1", "S2", "S3"}),
         "Invalid configured scenarios",
     )
     require(
@@ -199,8 +241,41 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
                 not row["ok"] and row.get("http_status") == 503,
                 "Busy error must be a failed HTTP 503",
             )
+        if row.get("error") == "RETRIEVAL_INDEX_CHANGED_409":
+            require(
+                not row["ok"]
+                and row["scenario"] == "S1"
+                and row.get("http_status") == 409,
+                "Index-changed error must be a failed direct HTTP 409",
+            )
+        if schema >= 3:
+            require(
+                row.get("failure_class")
+                == (
+                    None
+                    if row["ok"]
+                    else CLASS_BY_ERROR.get(row["error"], "other_unexpected")
+                ),
+                "Failure class mismatch",
+            )
+            if "queue_ms" in row or "execution_ms" in row:
+                require(
+                    row.get("running_observed") is True
+                    and finite(row.get("queue_ms"))
+                    and finite(row.get("execution_ms"))
+                    and row["queue_ms"] + row["execution_ms"]
+                    <= row["turn_latency_ms"] + 0.003,
+                    "Queue/execution split exceeds the observed turn",
+                )
+            if row["scenario"] == "S4" and row["ok"]:
+                require(
+                    row.get("run_status") == "succeeded"
+                    and finite(row.get("turn_latency_ms"))
+                    and row["turn_latency_ms"] <= row["latency_ms"] + 0.003,
+                    "Study acceptance is not a succeeded Run",
+                )
         if schema >= 2:
-            require(row.get("schema_version") == 2, "Mixed row schemas")
+            require(row.get("schema_version") == schema, "Mixed row schemas")
             require(
                 all(
                     finite(row.get(k))
@@ -285,7 +360,7 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
         require(not item["undrained_tutor"], "Hidden Tutor backlog")
         if schema >= 2:
             require(
-                item.get("schema_version") == 2
+                item.get("schema_version") == schema
                 and max(r["finish_offset_ms"] for r in selected)
                 <= seconds * 1000 + 0.002,
                 "Attempt outside group wall window",
@@ -302,7 +377,21 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
                     ),
                     "Attempt outside admission window",
                 )
+        if schema >= 3:
+            outcomes = item.get("agent_retrieval_outcomes")
+            require(
+                isinstance(outcomes, dict)
+                and set(outcomes) == OUTCOME_KEYS
+                and all(type(v) is int and v >= 0 for v in outcomes.values()),
+                "Invalid server retrieval outcomes",
+            )
     require(observed == len(rows), "Unaccounted raw requests")
+    if require_busy and schema >= 3:
+        # A busy 503 needs more simultaneous direct searches than query slots.
+        require(
+            "S1" in scenarios and max(levels) > config["agent_retrieval_concurrency"],
+            "Matrix cannot exceed the retrieval slots; busy 503 is impossible",
+        )
     if require_busy:
         require(
             any(
