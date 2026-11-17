@@ -134,9 +134,9 @@ shakedown and final export (45 + 10 + 15 = 70 min):
 
 Request an approved cap of **8 machine hours**: the 6.0 h upper bound plus 25%
 (1.5 h) for re-running failed invocations = 7.5 h, rounded up. The optional
-default-policy S2 row adds 3 × (8 + 1 + 4 × ~0.5) ≈ 33 min; run it only if at
-least 45 min remain under the cap after the core matrix (6.0 h + 0.55 h = 6.55 h
-upper without re-runs). If the S2 approval is absent, the 20-point matrix needs
+default-policy S2 row adds 3 × (8 + 1 + 4 × ~0.5) ≈ 33 min typical and
+3 × (9 + 4 × 130 s) ≈ 53 min upper; run it only if at least 55 min remain under
+the cap after the core matrix (6.0 h + 0.9 h = 6.9 h upper without re-runs). If the S2 approval is absent, the 20-point matrix needs
 20 groups per repetition: upper 3 × (36 + 43.3) + 70 = 308 min ≈ 5.1 h. For
 comparison, the earlier one-stack-per-point layout would need 84 invocations ×
 9 min = 12.6 h of overhead alone.
@@ -278,8 +278,9 @@ range per point):
   `queue_ms` P95 and raises successful Runs/s beyond the repetition range without
   raising `execution_ms` P95 or failures beyond it. `queue_ms` covers only Runs
   whose `running` state a poll observed; compare it only when `running_unobserved`
-  is under 5% of successful Runs in both configurations, otherwise decide on
-  successful Runs/s and `turn_latency_ms` alone. Mock execution holds a lane for
+  is under 5% of successful Runs in both configurations. Otherwise replace the
+  `queue_ms` condition with successful `turn_latency_ms` P95; the throughput,
+  `execution_ms` and failure guards still apply. Mock execution holds a lane for
   injected delay, not real model I/O; any change still needs the provider-side
   rate-limit caveat in AGENT_CONCURRENCY.md.
 - At most two parameter changes come out of L2, each as a separate product change
