@@ -287,7 +287,17 @@ class RocketMqAnalysisTaskMessageConsumerTest {
         }
 
         @Override
+        public Optional<String> getLiteTopic() {
+            return Optional.empty();
+        }
+
+        @Override
         public Optional<Long> getDeliveryTimestamp() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Integer> getPriority() {
             return Optional.empty();
         }
 

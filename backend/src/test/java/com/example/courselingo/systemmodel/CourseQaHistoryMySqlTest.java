@@ -24,7 +24,7 @@ class CourseQaHistoryMySqlTest {
             db.jdbc.update("UPDATE analysis_task SET content_revision=2 WHERE id=?", task);
             var config = new com.baomidou.mybatisplus.core.MybatisConfiguration();
             config.addMapper(CourseQaRecordMapper.class);
-            var factory = new com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean();
+            var factory = new com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean();
             factory.setDataSource(db.dataSource); factory.setConfiguration(config);
             var records = new org.mybatis.spring.SqlSessionTemplate(factory.getObject()).getMapper(CourseQaRecordMapper.class);
             var users = mock(CurrentUserService.class);
