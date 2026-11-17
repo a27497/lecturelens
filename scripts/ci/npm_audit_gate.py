@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail CI on high/critical npm advisories unless a dated allowlist entry covers them.
+"""Fail CI on low-or-higher npm advisories unless a dated allowlist entry covers them.
 
 Input is the output of `npm audit --json` (auditReportVersion 2). Only advisory
 objects inside `via` are judged. Package entries whose `via` lists only package
@@ -23,7 +23,9 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-BLOCKING_SEVERITIES = frozenset({"high", "critical"})
+# Every npm severity except info blocks, so the allowlist is the only loosening of
+# what plain `npm audit` enforced before this gate.
+BLOCKING_SEVERITIES = frozenset({"low", "moderate", "high", "critical"})
 # Short enough that an exemption is re-reviewed against upstream every month.
 MAX_EXEMPTION_DAYS = 30
 REQUIRED_FIELDS = ("id", "package", "reason", "added", "expires", "owner")
@@ -238,7 +240,7 @@ def main(argv: list[str] | None = None) -> int:
     for line in result.errors:
         print(f"FAIL    {line}")
     if result.below_threshold:
-        print(f"INFO    {result.below_threshold} advisories below high severity are not gated")
+        print(f"INFO    {result.below_threshold} info-severity advisories are not gated")
     status = "FAIL" if result.errors else "PASS"
     print(
         f"npm audit gate: {status} ({len(result.errors)} blocking, "

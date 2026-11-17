@@ -145,8 +145,20 @@ class GateCases(unittest.TestCase):
         self.assertEqual(result.exit_code, 1)
         self.assertIn("GHSA-5555-6666-7777 critical in minimist", result.errors[0])
 
-    def test_moderate_is_not_gated(self):
-        report = with_advisory(clean_report(), "minimist", "GHSA-5555-6666-7777", "moderate")
+    def test_unexempted_moderate_and_low_fail(self):
+        for severity in ("moderate", "low"):
+            with self.subTest(severity=severity):
+                report = with_advisory(
+                    PICOMATCH_REPORT, "minimist", "GHSA-5555-6666-7777", severity
+                )
+                result = gate.evaluate(report, REPO_ALLOWLIST, TODAY)
+                self.assertEqual(result.exit_code, 1)
+                self.assertEqual(len(result.errors), 1)
+                self.assertIn(f"GHSA-5555-6666-7777 {severity} in minimist", result.errors[0])
+                self.assertEqual(len(result.exempted), 1)
+
+    def test_info_is_not_gated(self):
+        report = with_advisory(clean_report(), "minimist", "GHSA-5555-6666-7777", "info")
         result = gate.evaluate(report, allowlist(), TODAY)
         self.assertEqual((result.exit_code, result.below_threshold), (0, 1))
 
