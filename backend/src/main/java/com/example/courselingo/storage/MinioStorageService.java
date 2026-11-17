@@ -42,7 +42,7 @@ public class MinioStorageService implements StorageService {
                 minioClient.putObject(PutObjectArgs.builder()
                     .bucket(properties.bucket())
                     .object(objectKey)
-                    .stream(inputStream, sizeBytes, -1)
+                    .stream(inputStream, sizeBytes, null)
                     .contentType(contentType)
                     .build());
             }
