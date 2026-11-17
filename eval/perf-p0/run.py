@@ -418,7 +418,7 @@ class Environment(existing.Smoke):
         command = ["bash", "mvnw", "-B", "-DskipTests"]
         if self.options.offline:
             command += ["-o"]
-        self.run(command + ["package"], "build", 600, ROOT / "backend")
+        self.run(command + ["clean", "package"], "build", 600, ROOT / "backend")
         shutil.copyfile(self.jar, self.out / "java-build.jar")
         self.jar = self.out / "java-build.jar"
         extracted = self.out / "java-app"

@@ -162,7 +162,9 @@ class BuildCache(unittest.TestCase):
 
             env.run = Mock(side_effect=command)
             env.build_java()
-            self.assertEqual(env.run.call_args_list[0].args[0][-2:], ["-o", "package"])
+            self.assertEqual(
+                env.run.call_args_list[0].args[0][-3:], ["-o", "clean", "package"]
+            )
             self.assertEqual(env.jar, env.out / "java-build.jar")
             self.assertEqual(env.jar.read_bytes(), jar.read_bytes())
             self.assertEqual(

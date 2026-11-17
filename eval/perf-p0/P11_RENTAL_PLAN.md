@@ -148,7 +148,8 @@ Stop the rental at the cap even if points remain; leave them NOT_RUN.
 The optional [fast runner](fast_matrix.sh) keeps the same 28 points × 3
 repetitions (with S2), 60-second admission windows, operation timeouts, lane
 sizes, scenario order, fresh databases and 12 independent stack invocations.
-Only Java build preparation is reused: the successful shakedown retains its
+Only Java build preparation is reused: the successful shakedown runs Maven
+`clean package` to exclude stale classes/deleted resources, then retains its
 JAR, extracted application/dependencies and compiled eval wrappers. Each later
 invocation verifies the seed evidence, clean source SHA/input hashes, checkout,
 Java/javac versions and artifact content hash before starting services. An
@@ -190,7 +191,9 @@ bash eval/perf-p0/fast_matrix.sh .data/l2-rental-fast "$EXPIRY_UTC" --include-s2
 
 Omit `--include-s2` without the raised-QA approval (20 points × 3 repetitions;
 S2 is NOT_RUN). Add `--offline-bootstrap` if dependencies/images are already
-cached; otherwise only the initial shakedown can bootstrap online. The optional
+cached (including the Maven clean plugin); otherwise only the initial shakedown
+can bootstrap online. A missing offline clean plugin fails the seed build.
+The optional
 `--build-minio` applies consistently to the seed and every measured invocation.
 Host package installation is still a prerequisite. A failed shakedown or
 verification stops the batch; no automatic retries, optional extra rows or
