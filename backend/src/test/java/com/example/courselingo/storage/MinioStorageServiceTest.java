@@ -17,6 +17,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
 import io.minio.errors.ErrorResponseException;
+import io.minio.errors.MinioException;
 import io.minio.messages.ErrorResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,7 +73,7 @@ class MinioStorageServiceTest {
         assertThat(makeBucketArgs.getValue().bucket()).isEqualTo("courselingo");
         assertThat(putObjectArgs.getValue().bucket()).isEqualTo("courselingo");
         assertThat(putObjectArgs.getValue().object()).isEqualTo("raw/1/up_test/source.mp4");
-        assertThat(putObjectArgs.getValue().contentType()).isEqualTo("video/mp4");
+        assertThat(putObjectArgs.getValue().contentType()).hasToString("video/mp4");
     }
 
     @Test
@@ -165,7 +166,7 @@ class MinioStorageServiceTest {
     @Test
     void minioSdkExceptionIsWrappedWithoutLeakingSecretKey() throws Exception {
         Path sourceFile = fileWithContent("source.mp4", "video");
-        when(minioClient.bucketExists(any(BucketExistsArgs.class))).thenThrow(new InvalidKeyException("bad very-secret-key"));
+        when(minioClient.bucketExists(any(BucketExistsArgs.class))).thenThrow(new MinioException("bad very-secret-key"));
 
         assertThatThrownBy(() -> storageService.putObject("raw/1/up_test/source.mp4", sourceFile, Files.size(sourceFile), "video/mp4"))
             .isInstanceOf(BusinessException.class)
