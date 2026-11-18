@@ -895,3 +895,138 @@ def test_cost_gate_projection_counts_unjudged_responses():
         entries_per_rep=260,
     )
     assert projected == 10_000_000_000 + 100 * 25_000_000 + 2 * (1_000_000_000 + 260 * 25_000_000)
+
+
+def test_account_refusal_stops_every_thread():
+    limit = pipeline.AdaptiveLimit(6, 4)
+    entered = threading.Event()
+    release = threading.Event()
+    outcome = []
+
+    def in_flight():
+        with limit:
+            entered.set()
+            release.wait(2)
+        outcome.append("finished")
+
+    first = threading.Thread(target=in_flight)
+    first.start()
+    entered.wait(2)
+    limit.stop("PROVIDER_REFUSED_402")
+    with pytest.raises(pipeline.ProviderErrorsPersist, match="402"):
+        with limit:
+            pass  # no new request after the stop
+    release.set()
+    first.join()
+    assert outcome == ["finished"] and limit.in_flight == 0  # the request already in flight completed
+    limit.stop("later reason")
+    assert limit.stopped == "PROVIDER_REFUSED_402"
+
+
+def test_judge_cli_stops_all_workers_on_402(tmp_path, monkeypatch):
+    from lecturelens_real_eval.l4 import cli
+
+    calls = []
+
+    class Response:
+        status_code = 402
+
+        def json(self):
+            return {"error": {"message": "Insufficient Balance"}}
+
+    def post(*args, **kwargs):
+        calls.append(1)
+        time.sleep(0.05)
+        return Response()
+
+    monkeypatch.setattr(cli.httpx, "post", post)
+    ledger = make_ledger(tmp_path, stop=10, cap=1)
+    limit = pipeline.AdaptiveLimit(6, 4)
+    counter = pipeline.InflightCounter(tmp_path / "inflight.json")
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    one = entry()
+    errors = []
+
+    def worker():
+        try:
+            cli.judge_one(one, ledger, "t", "k", raw, limit, counter)
+        except pipeline.ProviderErrorsPersist as error:
+            errors.append(str(error))
+
+    threads = [threading.Thread(target=worker) for _ in range(12)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert len(errors) == 12 and len(calls) <= 6  # only the first wave was in flight; nothing after the stop
+    assert ledger.summary()["outstanding_nano"] == 0
+
+
+def test_balance_precheck_converts_cny_and_applies_the_margin():
+    payload = {"is_available": True, "balance_infos": [{"currency": "CNY", "total_balance": "136.91"}]}
+    usd = pipeline.balance_usd(payload)
+    assert usd == pytest.approx(136.91 / 7.3)
+    assert pipeline.balance_sufficient(usd, 14.4)  # 18.75 >= 1.2 x 14.4
+    assert not pipeline.balance_sufficient(usd, 16.0)
+    assert pipeline.balance_usd({"is_available": False, "balance_infos": []}) is None
+    assert not pipeline.balance_sufficient(None, 0.1)
+    with pytest.raises(ValueError, match="currency"):
+        pipeline.balance_usd(
+            {"is_available": True, "balance_infos": [{"currency": "EUR", "total_balance": "1"}]}
+        )
+
+
+def test_remaining_spend_counts_unrun_units_and_unjudged_responses():
+    nano = pipeline.remaining_spend(
+        units_total=864,
+        units_done=564,
+        product_unit_nano=3_000_000,
+        ok_rate=0.9,
+        judged=150,
+        ok_records=500,
+        judge_mean_nano=20_000_000,
+    )
+    assert nano == 300 * 3_000_000 + (350 + 300 * 0.9) * 20_000_000
+
+
+def test_rerun_and_rejudge_happen_once_and_are_logged(tmp_path):
+    from lecturelens_real_eval.l4 import cli
+
+    rep = tmp_path / "runs/holdout/rep2/rag"
+    rep.mkdir(parents=True)
+    (rep / "h-x01-01.json").write_text(json.dumps({"status": "failed", "error_code": "HTTP_502"}))
+    (rep / "h-x01-03.json").write_text(json.dumps({"status": "ok"}))
+    args = [
+        "--root",
+        str(tmp_path),
+        "rerun",
+        "--split",
+        "holdout",
+        "--rep",
+        "2",
+        "--reason",
+        "PROVIDER_BALANCE",
+    ]
+    cli.main(args + ["--units", "rag:h-x01-01,study:h-x01-02"])
+    assert not (rep / "h-x01-01.json").exists()
+    assert (tmp_path / "runs/holdout/rep2/superseded/rag/h-x01-01.json").exists()
+    log = [json.loads(line) for line in (tmp_path / "runs/holdout/reruns.jsonl").read_text().splitlines()]
+    assert [(e["path"], e["superseded_error"]) for e in log] == [("rag", "HTTP_502"), ("study", "NO_RECORD")]
+    with pytest.raises(SystemExit, match="already rerun once"):
+        cli.main(args + ["--units", "rag:h-x01-01"])
+    with pytest.raises(SystemExit, match="only failed units"):
+        cli.main(args + ["--units", "rag:h-x01-03"])
+    base = tmp_path / "judge/holdout/rep1"
+    base.mkdir(parents=True)
+    (base / "decisions.json").write_text(
+        json.dumps({"r1": {"verdict": "UNDETERMINED"}, "r2": {"verdict": "CORRECT"}})
+    )
+    (base / "raw").mkdir()
+    (base / "raw/r1.1.json").write_text('{"error": "402"}')
+    judge_args = ["--root", str(tmp_path), "rejudge", "--split", "holdout", "--label", "rep1"]
+    cli.main(judge_args + ["--ids", "r1", "--reason", "PROVIDER_BALANCE"])
+    assert set(json.loads((base / "decisions.json").read_text())) == {"r2"}
+    assert (base / "raw/superseded/r1.1.json").exists() and not (base / "raw/r1.1.json").exists()
+    with pytest.raises(SystemExit, match="already rejudged once"):
+        cli.main(judge_args + ["--ids", "r1", "--reason", "PROVIDER_BALANCE"])

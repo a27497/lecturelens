@@ -18,7 +18,9 @@ from pathlib import Path
 
 from . import blind
 
-HOLDOUT_JUDGE_CONCURRENCY = 8
+# The DeepSeek account allows 7 concurrent requests in total (429 text on 2026-11-18); the serial
+# product runner needs one, so the holdout judge uses at most 6.
+HOLDOUT_JUDGE_CONCURRENCY = 6
 FALLBACK_JUDGE_CONCURRENCY = 4
 # Three in a row is the shortest run that separates a provider limit from one unlucky request.
 CONSECUTIVE_PROVIDER_ERRORS = 3
@@ -33,7 +35,7 @@ def provider_error(status):
 
 
 class ProviderErrorsPersist(RuntimeError):
-    """The fallback did not help: stop judging and report (PLAN stop_conditions)."""
+    """Judging must stop: the fallback did not help, or the account refused (PLAN stop_conditions)."""
 
 
 class AdaptiveLimit:
@@ -65,6 +67,13 @@ class AdaptiveLimit:
     def __exit__(self, *exc):
         with self.cond:
             self.in_flight -= 1
+            self.cond.notify_all()
+
+    def stop(self, reason):
+        """Global stop: no thread sends another request; requests already in flight finish."""
+        with self.cond:
+            if not self.stopped:
+                self.stopped = reason
             self.cond.notify_all()
 
     def record(self, status):
@@ -230,6 +239,47 @@ def agreement_by_course(entries, mapping, decisions, lecture_by_item, *, seed, f
         }
         out[course] = (review, key)
     return out
+
+
+def remaining_spend(
+    *, units_total, units_done, product_unit_nano, ok_rate, judged, ok_records, judge_mean_nano
+):
+    """Estimated spend still ahead in the campaign, for the balance precheck.
+
+    Remaining product units at the observed mean unit cost, plus every response not yet judged (already
+    run, or expected from the remaining units at the observed ok rate) at the observed mean judge cost.
+    """
+    left = max(0, units_total - units_done)
+    to_judge = max(0, ok_records - judged) + left * ok_rate
+    return left * product_unit_nano + to_judge * judge_mean_nano
+
+
+# A CNY balance is converted at 7.3 CNY per USD, above recent market rates, so the USD value is
+# understated and the precheck errs toward stopping. The 1.2 margin (owner decision) is enough
+# because an account refusal now stops every judge thread at once.
+CNY_PER_USD = 7.3
+BALANCE_MARGIN = 1.2
+
+
+def balance_usd(payload):
+    """USD value of a DeepSeek /user/balance response; None if the account is not available."""
+    if not payload.get("is_available"):
+        return None
+    total = 0.0
+    for info in payload.get("balance_infos") or []:
+        amount = float(info["total_balance"])
+        currency = info.get("currency")
+        if currency == "USD":
+            total += amount
+        elif currency == "CNY":
+            total += amount / CNY_PER_USD
+        else:
+            raise ValueError(f"unknown balance currency {currency}")
+    return total
+
+
+def balance_sufficient(balance, remaining_usd):
+    return balance is not None and balance >= BALANCE_MARGIN * remaining_usd
 
 
 def projected_spend(

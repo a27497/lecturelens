@@ -14,6 +14,11 @@ agreement --split S --label L [--sources L1,..] [--by-course]
                                          seeded 20% review packet(s) for independent reviewers
 gate      --split S --done N --sources L1,..
                                          repetition cost gate: projected spend vs PLAN cost_gate_usd
+balance   --split S                      provider balance precheck (>= 1.2 x estimated remaining spend)
+rerun     --split S --rep N --units p:item,.. --reason R
+                                         move failed records aside so `run` repeats those units once
+rejudge   --split S --label L --ids r1,.. --reason R
+                                         move decisions aside so `judge` repeats those entries once
 ledger                                   print spend totals
 """
 
@@ -40,6 +45,11 @@ SEED = 20261118
 PATHS = ("rag", "tutor", "study")
 RAG_MIN_INTERVAL = 7.0  # Java QA allows 10 requests per user per minute.
 JUDGE_URL = "https://api.deepseek.com/chat/completions"
+BALANCE_URL = "https://api.deepseek.com/user/balance"
+# Balance is read before each repetition and after every 50 judge decisions: often enough to stop
+# within about USD 1.5 of judge spend, rare enough to add no measurable load.
+BALANCE_EVERY = 50
+REFUSAL = (401, 402, 403)
 JUDGE_ATTEMPTS = 3
 JUDGE_TIMEOUT = 600
 
@@ -270,8 +280,10 @@ def judge_one(entry, ledger, phase, key, raw_dir, limit, counter):
                     json.dumps(payload, ensure_ascii=False)
                 )
         limit.record(status)
-        if status in (401, 402, 403):
-            raise RuntimeError(f"JUDGE_PROVIDER_REFUSED_{status}")
+        if status in REFUSAL:
+            # Account-level refusal: stop every thread now; requests already in flight just finish.
+            limit.stop(f"PROVIDER_REFUSED_{status}")
+            raise pipeline.ProviderErrorsPersist(f"PROVIDER_REFUSED_{status}")
         if payload is None:
             continue
         try:
@@ -313,6 +325,8 @@ def cmd_judge(args):
     )
     counter = pipeline.InflightCounter(args.root / "judge" / "inflight.json")
 
+    done_here = [0]
+
     def work(entry):
         decision = judge_one(entry, ledger, f"judge-{args.split}-{args.label}", key, raw_dir, limit, counter)
         with lock:
@@ -321,12 +335,29 @@ def cmd_judge(args):
             tmp.write_text(json.dumps(decisions, ensure_ascii=False))
             tmp.chmod(0o600)
             tmp.replace(decisions_path)
+            done_here[0] += 1
+            check = args.split == "holdout" and done_here[0] % BALANCE_EVERY == 0
         print(entry["response_id"], decision["verdict"], decision.get("attempts"), flush=True)
+        if check:
+            state = balance_state(args.root, args.split, key)
+            print("BALANCE", json.dumps(state), flush=True)
+            if not state["sufficient"]:
+                limit.stop("BALANCE_LOW")
 
+    stopped = None
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
-        list(pool.map(work, todo))
+        futures = [pool.submit(work, entry) for entry in todo]
+        for future in futures:
+            try:
+                future.result()
+            except pipeline.ProviderErrorsPersist as error:
+                stopped = stopped or str(error)
     print("judged", len(decisions), "of", len(packet["entries"]), "fallback", json.dumps(limit.degraded))
     print("ledger", json.dumps(ledger.summary()))
+    if stopped or limit.stopped:
+        print("STOP", stopped or limit.stopped, flush=True)
+        return 5
+    return 0
 
 
 def ok_records(root, split):
@@ -521,6 +552,123 @@ def cmd_gate(args):
     return 0 if verdict == "OPEN" else 4
 
 
+def remaining_estimate(root, split):
+    """Estimated USD still to spend in the campaign (pipeline.remaining_spend over ledger observations)."""
+    plan = json.loads((root / "PLAN.json").read_bytes())
+    units_total = plan["repetitions"][split] * len(load_frozen(root, split)) * len(PATHS)
+    runs = list(records(root, split, {1, 2, 3}))
+    ok = sum(r["status"] == "ok" for r in runs)
+    ledger = ledger_for(root)
+    units = list(ledger.state(ledger.events()).values())
+    product = [
+        u["cost_nano"]
+        for u in units
+        if u["arm"] in PATHS and u["status"] == "settled" and u["phase"].startswith(f"{split}-rep")
+    ]
+    judge_costs = [u["cost_nano"] for u in units if u["arm"] == "judge" and u["status"] == "settled"]
+    judge_root = root / "judge" / split
+    judged = sum(len(json.loads(d.read_text())) for d in judge_root.glob("*/decisions.json"))
+    nano = pipeline.remaining_spend(
+        units_total=units_total,
+        units_done=len(runs),
+        product_unit_nano=sum(product) / len(product) if product else 0,
+        ok_rate=ok / len(runs) if runs else 1.0,
+        judged=judged,
+        ok_records=ok,
+        judge_mean_nano=sum(judge_costs) / len(judge_costs) if judge_costs else 0,
+    )
+    return nano / 1e9
+
+
+def utcnow_iso():
+    return time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+
+
+def balance_state(root, split, key):
+    """Read-only, free provider balance call; the key is sent in a header and never logged."""
+    response = httpx.get(BALANCE_URL, headers={"Authorization": "Bearer " + key}, timeout=30)
+    response.raise_for_status()
+    balance = pipeline.balance_usd(response.json())
+    remaining = remaining_estimate(root, split)
+    return {
+        "at": utcnow_iso(),
+        "balance_usd": balance,
+        "remaining_usd": remaining,
+        "required_usd": pipeline.BALANCE_MARGIN * remaining,
+        "sufficient": pipeline.balance_sufficient(balance, remaining),
+    }
+
+
+def append_log(path, event):
+    with path.open("a") as out:
+        out.write(json.dumps({"at": utcnow_iso(), **event}, ensure_ascii=False) + "\n")
+    path.chmod(0o600)
+
+
+def cmd_balance(args):
+    state = balance_state(args.root, args.split, os.environ["L4_JUDGE_API_KEY"])
+    append_log(args.root / "runs" / f"{args.split}-balance.jsonl", state)
+    print(json.dumps(state))
+    return 0 if state["sufficient"] else 6
+
+
+def cmd_rerun(args):
+    """Move failed records aside (once per unit) so `run` repeats them; a missing record is logged only."""
+    base = args.root / "runs" / args.split / f"rep{args.rep}"
+    log = args.root / "runs" / args.split / "reruns.jsonl"
+    for unit in args.units.split(","):
+        path, item = unit.split(":")
+        target = base / path / f"{item}.json"
+        aside = base / "superseded" / path / f"{item}.json"
+        if aside.exists():
+            sys.exit(f"{unit}: already rerun once")
+        if target.exists():
+            record = json.loads(target.read_text())
+            if record["status"] == "ok":
+                sys.exit(f"{unit}: record is ok; only failed units are rerun")
+            aside.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            target.replace(aside)
+            error = record.get("error_code")
+        else:
+            private_write(aside, {"missing": True, "reason": args.reason})
+            error = "NO_RECORD"
+        append_log(
+            log,
+            {
+                "rep": args.rep,
+                "path": path,
+                "item_id": item,
+                "reason": args.reason,
+                "superseded_error": error,
+            },
+        )
+        print("rerun", unit, args.reason)
+
+
+def cmd_rejudge(args):
+    """Move decisions aside (once per entry) so `judge` repeats them."""
+    base = args.root / "judge" / args.split / args.label
+    decisions = json.loads((base / "decisions.json").read_text())
+    log = base / "rejudged.jsonl"
+    done = (
+        {json.loads(line)["response_id"] for line in log.read_text().splitlines()} if log.exists() else set()
+    )
+    for rid in args.ids.split(","):
+        if rid in done:
+            sys.exit(f"{rid}: already rejudged once")
+        append_log(log, {"response_id": rid, "reason": args.reason, "superseded": decisions.pop(rid)})
+        # Keep the raw provider replies of the superseded attempts; the repeat writes the same names.
+        aside = base / "raw" / "superseded"
+        for raw in sorted((base / "raw").glob(f"{rid}.*.json")):
+            aside.mkdir(mode=0o700, parents=True, exist_ok=True)
+            raw.replace(aside / raw.name)
+        print("rejudge", rid, args.reason)
+    tmp = (base / "decisions.json").with_suffix(".tmp")
+    tmp.write_text(json.dumps(decisions, ensure_ascii=False))
+    tmp.chmod(0o600)
+    tmp.replace(base / "decisions.json")
+
+
 def cmd_freeze(args):
     print(write_freeze(args.root, audit_paths=args.audit, note=args.note))
 
@@ -546,10 +694,20 @@ def main(argv=None):
     run.add_argument("--rep", type=int, required=True)
     run.add_argument("--paths", default=",".join(PATHS))
     run.add_argument("--items")
-    for name in ("packet", "judge", "score", "agreement", "verify", "gate"):
+    rerun = sub.add_parser("rerun")
+    rerun.add_argument("--split", choices=["dev", "holdout"], required=True)
+    rerun.add_argument("--rep", type=int, required=True)
+    rerun.add_argument("--units", required=True)
+    rerun.add_argument("--reason", required=True)
+    rejudge = sub.add_parser("rejudge")
+    rejudge.add_argument("--split", choices=["dev", "holdout"], required=True)
+    rejudge.add_argument("--label", required=True)
+    rejudge.add_argument("--ids", required=True)
+    rejudge.add_argument("--reason", required=True)
+    for name in ("packet", "judge", "score", "agreement", "verify", "gate", "balance"):
         p = sub.add_parser(name)
         p.add_argument("--split", choices=["dev", "holdout"], required=True)
-        p.add_argument("--label", required=name not in ("verify", "gate"))
+        p.add_argument("--label", required=name not in ("verify", "gate", "balance"))
         p.add_argument("--reps", type=lambda v: {int(r) for r in v.split(",")}, default={1, 2, 3})
         p.add_argument("--sources", help="comma-separated per-repetition packet labels")
         if name == "judge":
@@ -571,6 +729,9 @@ def main(argv=None):
         "agreement": cmd_agreement,
         "verify": cmd_verify,
         "gate": cmd_gate,
+        "balance": cmd_balance,
+        "rerun": cmd_rerun,
+        "rejudge": cmd_rejudge,
     }[args.command](args)
 
 

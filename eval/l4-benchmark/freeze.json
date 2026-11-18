@@ -1,10 +1,10 @@
 {
   "purpose": "Public record of the L4 benchmark freeze. Question text, gold nuggets, captions, model outputs and judge outputs stay private; only hashes and counts are published.",
-  "freeze_sha256": "a1769b2bc4cbd88ab0c47dbf4f5fb7f77983f6eded8e6e3daff332331e22cbb8",
-  "frozen_at": "2026-11-18T08:22:50.691465+00:00",
+  "freeze_sha256": "5b79e58e6226c612db9a7f78a4f75e269f0aaa80b95a90bef96391d6f627ea2f",
+  "frozen_at": "2026-11-18T09:39:38.055343+00:00",
   "plan": {
-    "version": "4 revision 3",
-    "sha256": "9a84fc38e68bf70930b99db090572b85163683e9df76dff7f84fef54042259a7"
+    "version": "4 revision 4",
+    "sha256": "d3dcdf26197119a03491a841cc772029831d00cbeb6ff093cb41b1837c59747e"
   },
   "assets_lock_sha256": "a02bb456b3c947364c8c5110b2b411081abc4bec3601bc2993b56f9a1f5f35e2",
   "gold_audits": [
@@ -48,6 +48,15 @@
       },
       "frozen_at": "2026-11-18T06:14:34.909807+00:00",
       "superseded_because": "PLAN v4 revision 3 froze the judge after two dev rounds and added owner-approved holdout execution speed-ups; question sets unchanged."
+    },
+    {
+      "freeze_sha256": "a1769b2bc4cbd88ab0c47dbf4f5fb7f77983f6eded8e6e3daff332331e22cbb8",
+      "plan": {
+        "version": "4 revision 3",
+        "sha256": "9a84fc38e68bf70930b99db090572b85163683e9df76dff7f84fef54042259a7"
+      },
+      "frozen_at": "2026-11-18T08:22:50.691465+00:00",
+      "superseded_because": "PLAN v4 revision 4 records the 2026-11-18 09:21-09:23 account-level event (concurrency limit, balance) and its rerun rule before any reveal; question sets and judge unchanged."
     }
   ]
 }
