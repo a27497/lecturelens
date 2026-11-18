@@ -3,6 +3,8 @@ package com.example.courselingo.upload.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.courselingo.upload.entity.UploadSession;
+import java.util.Collection;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -11,6 +13,13 @@ public interface UploadSessionMapper extends BaseMapper<UploadSession> {
     default UploadSession selectByIdAndUserId(String id, Long userId) {
         return selectOne(Wrappers.<UploadSession>lambdaQuery()
             .eq(UploadSession::getId, id)
+            .eq(UploadSession::getUserId, userId));
+    }
+
+    default List<UploadSession> selectByIdsAndUserId(Collection<String> ids, Long userId) {
+        return selectList(Wrappers.<UploadSession>lambdaQuery()
+            .select(UploadSession::getId, UploadSession::getUserId, UploadSession::getFilename)
+            .in(UploadSession::getId, ids)
             .eq(UploadSession::getUserId, userId));
     }
 

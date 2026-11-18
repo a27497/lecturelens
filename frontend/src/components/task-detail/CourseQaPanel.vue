@@ -155,7 +155,7 @@ function originalText(item: CourseQaEvidenceItem): string {
 
 <template>
   <section class="workspace-panel qa-panel" aria-labelledby="qa-title">
-    <header><h2 id="qa-title">课程问答 · Tutor</h2><p>只回答你的课程问题，不自动创建学习任务或练习。已保存问答可从历史恢复；未提交的问题草稿仅保留在本页。</p></header>
+    <header><h2 id="qa-title">课程问答</h2><p>只回答你的课程问题，不自动创建学习任务或练习。已保存问答可从历史恢复；未提交的问题草稿仅保留在本页。</p></header>
     <p v-if="indexMessage" class="index-status" role="status">{{ indexMessage }}</p>
     <div class="qa-form">
       <el-input v-model="question" type="textarea" :rows="3" maxlength="500" show-word-limit placeholder="输入与当前课程有关的问题" aria-label="课程问题" @keydown.ctrl.enter.prevent="submit" />

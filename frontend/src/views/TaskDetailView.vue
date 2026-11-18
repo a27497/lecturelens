@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
   downloadTaskEmbeddedSubtitle,
@@ -17,6 +17,7 @@ import { getEvidenceIndexStatus } from "../api/qa";
 import { createEvidenceSeekGuard } from "../components/task-detail/evidenceSeekGuard";
 import type { EvidenceSeekContext } from "../components/task-detail/evidenceSeekGuard";
 import { fetchPublicRuntimeConfiguration } from "../api/runtimeConfiguration";
+import { checkAuthSession } from "../api/authToken";
 import { cancelTask, fetchTaskDetail, retryTask, toReadableTaskError } from "../api/task";
 import CourseContentPanel from "../components/task-detail/CourseContentPanel.vue";
 import CourseFilesPanel from "../components/task-detail/CourseFilesPanel.vue";
@@ -35,6 +36,8 @@ import { readCourseLocation, validPosition } from "../components/task-detail/cou
 import type { ContentView, SeekRequest } from "../components/task-detail/courseLocation";
 import type { CourseWorkspace } from "../components/task-detail/workspace";
 import { courseLearnable } from "../components/task-detail/workspace";
+import { forgetLastCourseLocation, saveLastCourseLocation } from "../components/task-detail/lastCourseLocation";
+import { useAuthStore } from "../stores/auth";
 import { useTaskEventsStore } from "../stores/taskEvents";
 import { useTaskResultStore } from "../stores/taskResult";
 import type { TaskDetailResponse } from "../types/task";
@@ -47,6 +50,7 @@ const route = useRoute();
 const router = useRouter();
 const taskEventsStore = useTaskEventsStore();
 const taskResultStore = useTaskResultStore();
+const authStore = useAuthStore();
 
 const activeWorkspace = ref<CourseWorkspace>("agent");
 const classicLayout = ref(false);
@@ -75,9 +79,10 @@ const positionMs = ref(0);
 const seekRequest = ref<SeekRequest>();
 const locateSequence = ref(0);
 const reviewingEvidence = ref(false);
+const videoRequested = ref(false);
 // Match both the mobile material-column CSS and the citation v-show, without remounting media.
 const playerVisible = computed(() => classicLayout.value || !narrowScreen.value ||
-  (!evidenceNavigationError.value && activeWorkspace.value === "content" && !reviewingEvidence.value));
+  (!evidenceNavigationError.value && (reviewingEvidence.value ? videoRequested.value : activeWorkspace.value === "content")));
 const evidenceRef = ref<HTMLElement | null>(null);
 let seekSequence = 0;
 let returnFocus: HTMLElement | null = null;
@@ -138,6 +143,22 @@ onMounted(() => {
   narrowQuery.addEventListener("change", updateNarrowScreen);
   void loadPublicRuntimeConfiguration();
 });
+// Capture the latest playback position even if the throttled URL update is still pending.
+onBeforeRouteLeave(rememberLocation);
+onBeforeRouteUpdate((to, from) => {
+  if (to.params.taskId !== from.params.taskId) rememberLocation();
+});
+
+function rememberLocation() {
+  const userId = authStore.user?.userId;
+  if (userId === undefined || taskDetail.value?.taskId !== taskId.value) return;
+  try {
+    if (!checkAuthSession()) return;
+    saveLastCourseLocation(userId, taskId.value, {
+      view: activeWorkspace.value, text: readingView.value ?? null, at: String(positionMs.value),
+    });
+  } catch { /* Browser storage may be unavailable during navigation. */ }
+}
 
 watch(taskId, (nextTaskId) => {
   courseBlocked.value = false; learningTask.value = null; lastLearningWorkspace.value = "agent";
@@ -165,6 +186,7 @@ watch(() => route.query, () => {
   clearTimeout(locationTimer);
   applyLocation();
 });
+watch(() => [authStore.user?.userId, taskDetail.value, route.query] as const, rememberLocation);
 
 watch([evidenceNavigationError, narrowScreen], ([message, narrow]) => {
   if (!message || !narrow) return;
@@ -305,14 +327,15 @@ async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext) {
     if (request === evidenceRequest) {
       verifyingEvidence.value = false;
       // Wait until the verified reader is visible before measuring or moving it.
-      if (applied && reviewingEvidence.value) {
+      if (applied) {
         await nextTick();
         if (request === evidenceRequest) {
-          if (classicLayout.value || narrowScreen.value) {
+          if (!context && narrowScreen.value && !classicLayout.value) {
+            materialsRef.value?.scrollIntoView({ block: "start" });
+          } else if (reviewingEvidence.value && (classicLayout.value || narrowScreen.value)) {
             evidenceRef.value?.scrollIntoView({ block: "start" });
             if (!classicLayout.value) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[data-reference=true]")?.scrollIntoView({ block: "start" });
-          }
-          else if (materialsRef.value && evidenceRef.value) {
+          } else if (reviewingEvidence.value && materialsRef.value && evidenceRef.value) {
             materialsRef.value.scrollTop += evidenceRef.value.getBoundingClientRect().top - materialsRef.value.getBoundingClientRect().top - 8;
           }
         }
@@ -326,6 +349,8 @@ function applySeek(startTimeMillis: number, reference = false) {
   seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
   readingView.value = "timeline";
   locateSequence.value++;
+  // The explicit jump reveals the narrow-screen player inside the same review session.
+  videoRequested.value = !reference;
   if (reference || activeWorkspace.value !== "content") {
     if (!reviewingEvidence.value) {
       returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -351,6 +376,7 @@ function reconnect() {
 function blockCourse() {
   if (courseBlocked.value) return;
   courseBlocked.value = true;
+  forgetLastCourseLocation(authStore.user?.userId, taskId.value);
   cancelEvidenceNavigation();
   taskEventsStore.disconnect(); taskResultStore.clear();
   clearTaskDetail(); clearTaskPlayback(); clearTaskEmbeddedSubtitles();
@@ -526,6 +552,7 @@ async function confirmRetryTask() {
       <CourseWorkspaceHeader
         :compact="!classicLayout"
         :demo-mode="isDemoMode"
+        :course-name="taskDetail?.courseName"
         v-show="!courseBlocked && !(reviewingEvidence && narrowScreen && !classicLayout)"
         :status="task?.status"
         :learning-ready="learningReady"
@@ -569,7 +596,7 @@ async function confirmRetryTask() {
       <div v-else class="course-layout" :class="{ 'course-layout--continuous': !classicLayout, 'is-reading': !evidenceNavigationError && (activeWorkspace === 'content' || reviewingEvidence) }">
         <div ref="materialsRef" class="course-layout__media" aria-label="视频与课程材料">
           <CourseVideoAside
-            v-show="!(reviewingEvidence && narrowScreen && !classicLayout)"
+            v-show="playerVisible"
             :key="taskId"
             :compact="!classicLayout"
             :inactive="!playerVisible"
@@ -654,7 +681,8 @@ async function confirmRetryTask() {
       <details v-if="hasTaskId && !courseBlocked" v-show="!(reviewingEvidence && narrowScreen && !classicLayout)" class="workspace-recovery">
         <summary>保存、恢复与课程记录</summary>
         <p>服务端保存学习会话、执行、作答版本、反馈与核对意见。刷新后读取最近的已保存学习记录。</p>
-        <p>网址只恢复课程视图、布局与视频位置，恢复后保持暂停。未提交的问题、目标、作答和核对文字仅留在当前页面；刷新或离开后不会恢复。</p>
+        <p>同一浏览器可从「我的课程」恢复上次的视图和暂停位置。退出登录会清除这些位置。网址还可恢复课程布局。</p>
+        <p>未提交的问题、目标、作答和核对文字仅留在当前页面。</p>
         <CourseModelUsagePanel v-if="task" :key="taskId" :task-id="taskId" />
       </details>
     </div>
@@ -770,6 +798,8 @@ button:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3p
   .course-layout--continuous .course-layout__media { max-height: none; }
   .course-layout--continuous :deep(.scope-picker) { padding-bottom: 8px; }
   .is-mobile-evidence .course-layout__media { padding: 10px; }
+  .course-layout--continuous .course-layout__media { scroll-margin-top: calc(var(--header-height) + 76px); }
+  .is-mobile-evidence .course-layout__media { scroll-margin-top: var(--header-height); }
   .is-mobile-evidence .evidence-reading__return { border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; padding: 8px 0; }
   .is-mobile-evidence :deep(.timeline-row[data-reference=true]) { scroll-margin-top: calc(var(--header-height) + 128px); }
 }

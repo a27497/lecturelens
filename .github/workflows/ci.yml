@@ -201,3 +201,57 @@ jobs:
           if [[ -f .env.demo.local ]]; then
             docker compose --project-name lecturelens-demo-ci --env-file .env.demo.local down --volumes
           fi
+
+  mock-learning-path:
+    name: Mock learning path (desktop and 390px)
+    runs-on: ubuntu-latest
+    needs: [agent-service-test, mock-infrastructure-e2e]
+    timeout-minutes: 25
+    env:
+      LECTURELENS_DEMO_INSTANCE: l3-ci
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test demo stack scripts
+        run: python3 -m unittest discover -s scripts/demo/tests -p 'test_*.py' -v
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install uv and FFmpeg
+        run: |
+          python -m pip install uv==0.12.5
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+      - name: Install locked frontend dependencies and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npx --no-install playwright install --with-deps chromium
+      - name: Build MinIO from pinned official source
+        run: docker compose -f compose.yaml -f compose.ci-minio.yml --env-file .env.demo.example build --pull minio minio-init
+      - name: Start and seed the isolated Mock demo
+        run: bash scripts/demo/up.sh
+      - name: Walk the full learning path in both viewports
+        working-directory: frontend
+        run: npm run test:learning-path
+      - name: Upload diagnostic logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mock-learning-path-logs
+          path: .demo/stack-l3-ci/*.log
+          include-hidden-files: true
+          retention-days: 3
+      - name: Remove this job's demo instance
+        if: always()
+        run: bash scripts/demo/down.sh --purge

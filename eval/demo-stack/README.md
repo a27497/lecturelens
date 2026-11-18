@@ -29,6 +29,14 @@
 
 ## Mock 模式（默认）
 
+### 学习路径回归
+
+首轮在仓库根目录启动 `scripts/demo/up.sh`，在 `frontend/` 安装 Chromium 后运行 `npm run test:learning-path`。如果演示用 `--instance <name>` 启动，运行测试时设置 `LECTURELENS_DEMO_INSTANCE=<name>`。测试读取该实例合成课程的本地登录凭据，串行运行桌面和 390px 手机宽度。设置 `LECTURELENS_SCREENSHOT_DIR` 可保存每一步的合成课程截图。结束后使用相同实例名执行 `scripts/demo/down.sh --purge`。
+
+CI 在主测试和 Mock HTTP E2E 通过后，在独立演示栈中运行此路径与 `scripts/demo/tests`。路径覆盖原文和学习资料、Tutor 和课程问答引用、开放题作答反馈、选择题错题回看、闪卡自评，以及从「我的课程」恢复视图和暂停位置。这里使用确定性 Mock 服务。
+
+### 启动实测
+
 在一个新目录 `git clone` 后执行 `scripts/demo/up.sh`，再用录屏脚本冒烟，最后 `down.sh`。
 
 | 项目 | `69e000d` | `19152e3` | `b3d83e8`（没有内存上限） | `3d7fbad`（有内存上限） | `8ca7b76`（有上限和归属标签） |

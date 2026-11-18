@@ -70,6 +70,8 @@ export interface TaskSummaryResponse {
   finishedAt: string | null;
   /** Present on task detail: study, Q&A and the Agent are open. */
   learningReady?: boolean | null;
+  /** Owner-only display name (uploaded file name without extension); render as text only. */
+  courseName?: string | null;
 }
 
 export type TaskDetailResponse = TaskSummaryResponse;

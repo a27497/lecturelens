@@ -41,8 +41,16 @@ describe("course Tutor", () => {
     expect(submitTutorTurn).not.toHaveBeenCalled();
   });
   it("inline citation and source actions retain authoritative id and revision", async () => {
-    const w = open(); await flushPromises(); await click(w, "[e1]");
+    const w = open(); await flushPromises(); await click(w, "00:00:01 - 00:00:02");
     expect(w.emitted("seek")).toEqual([[1000, { evidenceId: "e1", revision: 7 }]]);
+  });
+  it("inline citation chip shows the cited time range instead of the raw evidence id", async () => {
+    const w = open(); await flushPromises();
+    const chip = w.find("button.citation");
+    expect(chip.text()).toBe("00:00:01 - 00:00:02");
+    expect(chip.attributes("aria-label")).toBe("定位出处 00:00:01 - 00:00:02");
+    expect(chip.attributes("title")).toBe("Evidence e1");
+    expect(w.find(".answer").text()).not.toContain("[e1]");
   });
   it("sends a follow-up with the same session and explicit Socratic toggle", async () => {
     const w = open(); await flushPromises();
