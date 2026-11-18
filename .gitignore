@@ -56,6 +56,8 @@ courselingo-pro-debug-bundle.zip
 .data/
 *.srt
 *.vtt
+# Self-written demo subtitles are source, not downloaded media.
+!fixtures/demo/*.vtt
 
 # Build artifacts
 build/
