@@ -66,9 +66,33 @@ REAL_DEFAULTS = {
     "LECTURELENS_LLM_BASE_URL": "https://api.deepseek.com",
     "LECTURELENS_LLM_MODEL": "deepseek-flash",
 }
+# Memory caps keep the whole demo near 3 GB so it fits next to a browser on an 8 GB laptop.
+# Each container value is a hard cgroup cap (memswap equal, so it cannot spill into swap);
+# sizes are the usage measured on the demo course plus headroom (eval/demo-stack/README.md).
+# The RocketMQ images otherwise size their JVM heap from host memory.
+CONTAINER_MEMORY = {
+    "mysql": "640m",
+    "redis": "64m",
+    "minio": "384m",
+    "minio-init": "64m",
+    "rocketmq-namesrv": "384m",
+    "rocketmq-store-init": "64m",
+    "rocketmq-broker": "768m",
+    "postgres": "256m",
+}
+NAMESRV_JAVA_OPTS = "-Xms128m -Xmx256m -Xmn64m"
+BROKER_JAVA_OPTS = "-Xms384m -Xmx384m -Xmn128m -XX:MaxDirectMemorySize=128m"
+JAVA_BACKEND_HEAP = ["-Xms256m", "-Xmx768m"]
+# Below this much available memory the stack is likely to push the host into swap or OOM.
+MIN_AVAILABLE_MB = 4096
 HTTP = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 # `ports: !override` in the generated Compose overrides needs Compose 2.24.4.
 MIN_COMPOSE = (2, 24, 4)
+
+
+def memory_limit(service):
+    limit = CONTAINER_MEMORY[service]
+    return f"    mem_limit: {limit}\n    memswap_limit: {limit}\n"
 
 
 def log(message):
@@ -207,10 +231,20 @@ class Stack:
             fail(
                 f"Docker Compose >= {'.'.join(map(str, MIN_COMPOSE))} is required (found {version or 'none'})"
             )
-        java = subprocess.run(["java", "-version"], capture_output=True, text=True).stderr
+        java = subprocess.run(["java", "-version"], capture_output=True, text=True, check=False).stderr
         match = re.search(r'version "(\d+)', java)
         if not match or int(match.group(1)) < 21:
             fail("Java 21 is required")
+        available = self.available_mb()
+        if (
+            available is not None
+            and available < MIN_AVAILABLE_MB
+            and os.environ.get("LECTURELENS_DEMO_IGNORE_MEMORY") != "1"
+        ):
+            fail(
+                f"only {available} MB memory available; the demo needs {MIN_AVAILABLE_MB} MB "
+                "(stop other stacks, or set LECTURELENS_DEMO_IGNORE_MEMORY=1)"
+            )
         if real and not os.environ.get("LECTURELENS_LLM_API_KEY"):
             fail("--real needs LECTURELENS_LLM_API_KEY in the environment (see README: real-model mode)")
         if real:
@@ -286,22 +320,23 @@ class Stack:
         }
         # Passwords reach Compose through the child environment (${VAR:?}), never through files.
         text = "services:\n"
+        for service in ("minio-init", "rocketmq-store-init"):
+            text += f"  {service}:\n" + memory_limit(service)
         for service, bindings in loopback.items():
-            text += f"  {service}:\n    ports: !override\n"
+            text += f"  {service}:\n" + memory_limit(service) + "    ports: !override\n"
             for key, target in bindings:
                 text += f'      - "127.0.0.1:{ports[key]}:{target}"\n'
-            # RocketMQ images size their heap from host memory; the demo needs far less.
             if service == "rocketmq-namesrv":
-                text += '    environment:\n      JAVA_OPT_EXT: "-Xms128m -Xmx256m -Xmn64m"\n'
+                text += f'    environment:\n      JAVA_OPT_EXT: "{NAMESRV_JAVA_OPTS}"\n'
             if service == "rocketmq-broker":
                 text += (
                     "    environment:\n"
                     '      JAVA_OPT_EXT: "-Dcom.rocketmq.proxy.configPath=/tmp/rmq-proxy.json '
-                    '-Xms512m -Xmx512m -Xmn256m -XX:MaxDirectMemorySize=256m"\n'
+                    f'{BROKER_JAVA_OPTS}"\n'
                 )
         (self.dir / "infra.override.yaml").write_text(text)
         (self.dir / "agent.override.yaml").write_text(
-            "services:\n  postgres:\n    environment:\n"
+            "services:\n  postgres:\n" + memory_limit("postgres") + "    environment:\n"
             '      POSTGRES_PASSWORD: "${AGENT_POSTGRES_PASSWORD:?required}"\n'
             "    ports: !override\n"
             f'      - "127.0.0.1:{ports["AGENT_POSTGRES_PORT"]}:5432"\n'
@@ -576,7 +611,7 @@ class Stack:
         ports = self.state["ports"]
         java = self.spawn(
             "java",
-            ["java", "-Xms256m", "-Xmx1024m", f"-Djava.io.tmpdir={self.dir / 'tmp'}", "-jar", str(JAR)],
+            ["java", *JAVA_BACKEND_HEAP, f"-Djava.io.tmpdir={self.dir / 'tmp'}", "-jar", str(JAR)],
             ROOT / "backend",
             self.java_env(ports, secret, real),
         )
@@ -762,6 +797,17 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
 """,
             flush=True,
         )
+
+    @staticmethod
+    def available_mb():
+        """MemAvailable on Linux; None elsewhere (macOS has no cheap equivalent, so no check)."""
+        try:
+            for line in Path("/proc/meminfo").read_text().splitlines():
+                if line.startswith("MemAvailable:"):
+                    return int(line.split()[1]) // 1024
+        except OSError:
+            return None
+        return None
 
     @staticmethod
     def start_time(pid):
