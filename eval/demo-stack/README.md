@@ -52,7 +52,9 @@
 2. 正常启动后，同名项目的 8 个容器和 5 个数据卷全部带本 clone 的标签。
 3. 在基础设施项目里手动加一个没有标签的数据卷，再执行 `down.sh --purge`：Agent 项目被删除；基础设施项目一个也没删（7 个容器都还在），脚本列出那个外来数据卷并以非零状态退出。删掉外来数据卷后再执行，两个项目都删干净。
 
-全过程前后，本机 `lecturelens-dev-*` 的容器 ID 和数据卷列表完全相同。无需 Docker 的单元测试在 [scripts/demo/tests/test_stack.py](../../scripts/demo/tests/test_stack.py)，覆盖项目名白名单、外来资源识别、`docker` 出错不当作空结果、删除时跳过外来项目但继续处理另一个、第一个项目超时不影响第二个、生成的 Compose 文件里每个服务和数据卷都带标签、进程身份不随时区变化。
+全过程前后，本机 `lecturelens-dev-*` 的容器 ID 和数据卷列表完全相同。
+
+之后的版本（`7218823`）改为按 Compose 会使用的确切容器名和卷名检查归属，并把同一实例名的锁放到所有 clone 共用的 `~/.cache/lecturelens-demo/`。在新 clone 上复测：手动建一个没有任何标签、名字与预期相同的 `lecturelens-demo-default_mysql_data` 卷，`up.sh` 在前提检查阶段拒绝并退出 1，没有创建任何容器；删掉这个卷后，Mock 启动到可提问 90.2 s，冒烟通过，`down.sh --purge` 用时 23.0 s，演示容器和卷都为 0，本地状态已删除。`lecturelens-dev-*` 的 8 个容器和 5 个卷前后逐字相同。单元测试增加了无标签同名卷、两个 clone 同时预检、purge 后卷仍在时保留状态，以及导入任务排队、运行、状态读不到或模型不同时都不新建上传。无需 Docker 的单元测试在 [scripts/demo/tests/test_stack.py](../../scripts/demo/tests/test_stack.py)，覆盖项目名白名单、外来资源识别、`docker` 出错不当作空结果、删除时跳过外来项目但继续处理另一个、第一个项目超时不影响第二个、生成的 Compose 文件里每个服务和数据卷都带标签、进程身份不随时区变化。
 
 冒烟步骤：用 [`record-demo.mjs`](../../scripts/demo/record-demo.mjs) 在 Chromium 里走完整流程（Mock 实例）：
 
