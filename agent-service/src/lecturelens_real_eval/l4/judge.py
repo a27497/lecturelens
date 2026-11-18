@@ -14,11 +14,13 @@ from .blind import canonical
 from .pricing import NANO, upper_nano
 
 MODEL = "deepseek-v4-pro"
-MAX_TOKENS = 8192
+# Thinking tokens count against max_tokens: at 8192, 21 of 100 dev round-1 attempts stopped with
+# finish_reason "length" (3 responses UNDETERMINED). Round 2 raises the bound; the reservation follows it.
+MAX_TOKENS = 24576
 REASONING_EFFORT = "high"
 # Six substantive claims cover a <=150-word answer; the bound keeps one judgment reviewable by hand.
 MAX_CLAIMS = 6
-PROMPT_VERSION = "l4-judge-v2"
+PROMPT_VERSION = "l4-judge-v2-r2"
 NUGGET_LABELS = {"support", "partial", "none"}
 CLAIM_SUPPORT = {"full", "partial", "none"}
 RELEVANCE = {"alone", "needed", "irrelevant"}
@@ -38,10 +40,15 @@ Grade three things.
 caption_anchor quotes only locate the nugget in the lecture; they are not a required wording. For every \
 nugget decide whether the answer conveys it: "support" (the fact is clearly stated; wording and \
 language may differ), "partial" (part of the fact, or stated too vaguely to rely on), or "none" \
-(absent). Judge meaning, not phrasing. Extra correct detail is fine.
+(absent). Judge meaning, not phrasing. Extra correct detail is fine. Grade the core fact of the \
+nugget: text in parentheses gives an equivalent form or a non-required detail, and an "e.g." list is \
+illustrative, so one correct example from the list is enough. Use "partial" only when part of the \
+core fact itself is missing, wrong or too vague; do not downgrade for a missing secondary qualifier.
 2. Material error: true if the answer states something that contradicts the gold or the lecture, \
 repeats a must_not_claim statement, or gives a wrong number, formula or definition that a learner \
-would rely on. Minor imprecision that does not mislead is not a material error.
+would rely on. Minor imprecision that does not mislead is not a material error. An omission is never \
+a material error (the nugget labels cover it), and neither is a statement that the cited lecture \
+excerpts themselves make, even if you would compute it differently.
 3. Citations. List the substantive factual claims of the answer (at most 6; merge small ones). For each \
 claim list the C-labels the answer attaches to it (empty if none). Using ONLY the text of those cited \
 excerpts (not your knowledge, not the gold), decide whether the cited excerpts together support the \
@@ -55,8 +62,9 @@ Also set abstention_leak to true only if the answer says the course lacks the in
 teaches substantive content that its citations do not support.
 
 verdict: "CORRECT" if gold.answerable is true, the answer does not declare insufficient evidence, every \
-vital nugget is "support", and material_error is false. Otherwise "INCORRECT". Use "UNDETERMINED" only \
-if the answer is unreadable.
+vital nugget is "support", and material_error is false. Otherwise "INCORRECT"; in particular the verdict \
+is always "INCORRECT" when gold.answerable is false (abstention is scored separately, not by you). Use \
+"UNDETERMINED" only if the answer is unreadable.
 
 Reply with one JSON object only:
 {"nuggets":[{"id":"N1","label":"support|partial|none","note":"..."}],

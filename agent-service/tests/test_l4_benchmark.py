@@ -683,10 +683,10 @@ def test_undetermined_keeps_the_vital_denominator():
 def test_judge_request_and_reservation_bound():
     body = judge.request_body(entry())
     assert body["model"] == "deepseek-v4-pro" and body["thinking"] == {"type": "enabled"}
-    assert body["max_tokens"] == judge.MAX_TOKENS
+    assert body["max_tokens"] == judge.MAX_TOKENS == 24576
     assert '"rag"' not in body["messages"][1]["content"]
     assert judge.reservation_nano(body) == pricing.upper_nano(
-        "deepseek-v4-pro", len(blind.canonical(body)), 8192
+        "deepseek-v4-pro", len(blind.canonical(body)), 24576
     )
 
 
