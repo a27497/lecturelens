@@ -192,13 +192,22 @@ def verify_sources(judge_root, labels, ok_records):
 
 
 def merged(judge_root, labels):
-    """(packet entries, mapping responses, decisions) over several verified per-repetition packets."""
+    """(packet entries, mapping responses, decisions) over several verified per-repetition packets.
+
+    Response ids are only unique within one packet (every packet uses the same seed), so merged ids are
+    namespaced as "<label>/<response_id>"; agreement_by_course replaces them before anything is shared.
+    """
     entries, mapping, decisions = [], {}, {}
     for label in labels:
         base = Path(judge_root) / label
-        entries += json.loads((base / "packet.json").read_text())["entries"]
-        mapping.update(json.loads((base / "judge-only-mapping.json").read_text())["responses"])
-        decisions.update(json.loads((base / "decisions.json").read_text()))
+        for entry in json.loads((base / "packet.json").read_text())["entries"]:
+            entries.append({**entry, "response_id": f"{label}/{entry['response_id']}"})
+        for rid, where in json.loads((base / "judge-only-mapping.json").read_text())["responses"].items():
+            mapping[f"{label}/{rid}"] = where
+        for rid, decision in json.loads((base / "decisions.json").read_text()).items():
+            decisions[f"{label}/{rid}"] = decision
+    if not (len(entries) == len(mapping) == len(decisions)):
+        raise ValueError("MERGE_COUNT_MISMATCH")
     return entries, mapping, decisions
 
 
@@ -224,18 +233,27 @@ def agreement_by_course(entries, mapping, decisions, lecture_by_item, *, seed, f
             pool = cells[(course, path)]
             chosen += rng.sample(pool, max(1, math.ceil(len(pool) * fraction)))
         chosen.sort()
+        # Fresh anonymous ids: the source ids can carry a packet label, and the label names a repetition.
+        anon = {}
+        for rid in chosen:
+            while True:
+                aid = "a" + "".join(rng.choice("0123456789abcdef") for _ in range(12))
+                if aid not in anon.values():
+                    break
+            anon[rid] = aid
         review = {
             "version": "l4-agreement-packet-v2",
             "course": course,
             "seed": seed,
             "fraction": fraction,
-            "entries": [by_id[rid] for rid in chosen],
+            "entries": [{**by_id[rid], "response_id": anon[rid]} for rid in chosen],
         }
         rng.shuffle(review["entries"])
         key = {
             "packet_sha256": blind.sha256(review),
-            "judge": {rid: decisions[rid] for rid in chosen},
-            "paths": {rid: mapping[rid] for rid in chosen},
+            "source_ids": {anon[rid]: rid for rid in chosen},
+            "judge": {anon[rid]: decisions[rid] for rid in chosen},
+            "paths": {anon[rid]: mapping[rid] for rid in chosen},
         }
         out[course] = (review, key)
     return out

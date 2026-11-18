@@ -878,7 +878,7 @@ def test_agreement_is_split_by_course_and_covers_twenty_percent():
     for course, (review, key) in out.items():
         text = json.dumps(review)
         assert '"rag"' not in text and "CORRECT" not in text and key["packet_sha256"] == blind.sha256(review)
-        assert {lectures[mapping["responses"][r]["item_id"]] for r in key["paths"]} == {
+        assert {lectures[where["item_id"]] for where in key["paths"].values()} == {
             next(v for v in lectures.values() if v.split("-")[1] == course)
         }
     again = pipeline.agreement_by_course(packet["entries"], mapping["responses"], decisions, lectures, seed=5)
@@ -1030,3 +1030,19 @@ def test_rerun_and_rejudge_happen_once_and_are_logged(tmp_path):
     assert (base / "raw/superseded/r1.1.json").exists() and not (base / "raw/r1.1.json").exists()
     with pytest.raises(SystemExit, match="already rejudged once"):
         cli.main(judge_args + ["--ids", "r1", "--reason", "PROVIDER_BALANCE"])
+
+
+def test_merged_packets_keep_colliding_response_ids_apart(tmp_path):
+    rep1 = [r for r in responses() if r["rep"] == 1]
+    rep2 = [r for r in responses() if r["rep"] == 2]
+    write_packet(tmp_path / "rep1", rep1, 1)
+    write_packet(tmp_path / "rep2", rep2, 1)  # same seed: the same response ids in both packets
+    entries, mapping, decisions = pipeline.merged(tmp_path, ["rep1", "rep2"])
+    assert len(entries) == len(mapping) == len(decisions) == 6
+    assert {w["rep"] for w in mapping.values()} == {1, 2}
+    lectures = {"h-x01-01": "mit-6.034-f10-lec11"}
+    out = pipeline.agreement_by_course(entries, mapping, decisions, lectures, seed=3, fraction=1.0)
+    review, key = out["6.034"]
+    ids = [e["response_id"] for e in review["entries"]]
+    assert len(ids) == 6 and all(i.startswith("a") and "/" not in i for i in ids)
+    assert sorted(key["source_ids"].values()) == sorted(mapping) and "rep" not in json.dumps(review)
