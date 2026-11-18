@@ -7,7 +7,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from lecturelens_real_eval.l4 import blind, judge, pricing, questions, scoring
+from lecturelens_real_eval.l4 import blind, citations, judge, pricing, questions, scoring
 from lecturelens_real_eval.l4.ledger import BudgetExceeded, Ledger, LedgerError
 from lecturelens_real_eval.l4.normalize import normalize
 from lecturelens_real_eval.l4.runner import L4TutorStore
@@ -281,7 +281,9 @@ def items(split):
             "category": "definition_or_fact",
             "answerable": True,
             "question": "问题？",
-            "key_points": [{"point": "p", "cues": [{"start": "00:01", "end": "00:02", "quote": "q"}]}],
+            "key_points": [
+                {"point": "p", "cues": [{"start": "00:01", "end": "00:31", "quote": "the quote"}]}
+            ],
         },
         {
             "item_id": f"{prefix}-x01-02",
@@ -303,7 +305,9 @@ def freeze_root(tmp_path):
     (tmp_path / "PLAN.json").write_text(json.dumps({"question_set": {"fixed_rules": RULES}}))
     (tmp_path / "sources/assets.lock.json").write_text("{}")
     (tmp_path / "audit.json").write_text("{}")
+    (tmp_path / "transcripts").mkdir()
     for split in ("dev", "holdout"):
+        (tmp_path / f"transcripts/{split}-lec.txt").write_text("[00:01-00:31] Here is the quote.\n")
         (tmp_path / f"questions/questions.{split}.json").write_text(
             json.dumps({"split": split, "items": items(split)})
         )
@@ -312,10 +316,14 @@ def freeze_root(tmp_path):
 
 def test_freeze_round_trip_and_tamper(tmp_path):
     root = freeze_root(tmp_path)
-    questions.write_freeze(root, audit_path=root / "audit.json")
+    (root / "audit-2.json").write_text('{"round": 2}')
+    questions.write_freeze(root, audit_paths=[root / "audit.json", root / "audit-2.json"])
+    record = json.loads((root / "FREEZE.json").read_text())
+    assert [a["file"] for a in record["gold_audits"]] == ["audit.json", "audit-2.json"]
+    assert record["gold_audits"][1]["sha256"] == questions.file_sha(root / "audit-2.json")
     assert [i["item_id"] for i in questions.load_frozen(root, "holdout")] == ["h-x01-01", "h-x01-02"]
     with pytest.raises(FileExistsError):
-        questions.write_freeze(root, audit_path=root / "audit.json")
+        questions.write_freeze(root, audit_paths=[root / "audit.json"])
     path = root / "questions/questions.holdout.json"
     data = json.loads(path.read_text())
     data["items"][0]["key_points"][0]["point"] = "edited after freeze"
@@ -333,10 +341,83 @@ def test_freeze_rejects_rule_violations(tmp_path):
     data["items"][1]["language"] = "zh"
     (root / "questions/questions.dev.json").write_text(json.dumps(data))
     with pytest.raises(ValueError, match="language rule"):
-        questions.write_freeze(root, audit_path=root / "audit.json")
+        questions.write_freeze(root, audit_paths=[root / "audit.json"])
     assert not (root / "FREEZE.json").exists()
     bad = {"split": "dev", "items": [items("dev")[0]]}
     assert any("category counts" in e for e in questions.check_set(bad, RULES))
+    with pytest.raises(ValueError, match="gold-audit"):
+        questions.write_freeze(root, audit_paths=[])
+
+
+def test_freeze_refuses_a_quote_outside_its_cue(tmp_path):
+    root = freeze_root(tmp_path)
+    data = {"split": "holdout", "items": items("holdout")}
+    data["items"][0]["key_points"][0]["cues"][0]["quote"] = "a quote the lecture never says"
+    (root / "questions/questions.holdout.json").write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="quote not in the cited windows"):
+        questions.write_freeze(root, audit_paths=[root / "audit.json"])
+    assert not (root / "FREEZE.json").exists()
+
+
+# ---------------------------------------------------------------- gold citations
+
+CAPTIONS = """[00:09-00:40] So this kind of tree is called an
+[00:40-01:14] identification tree. But a decision tree is a label for something else.
+[01:20-01:50] Some characteristics don't matter, and some -- matter only part of the time.
+"""
+
+
+def cue(start, end, quote):
+    return {"start": start, "end": end, "quote": quote}
+
+
+def test_citation_windows_parse_and_reject_malformed_lines():
+    windows = citations.parse_windows(CAPTIONS)
+    assert [w[:2] for w in windows] == [("00:09", "00:40"), ("00:40", "01:14"), ("01:20", "01:50")]
+    with pytest.raises(ValueError, match="line 2"):
+        citations.parse_windows("[00:01-00:02] ok\nnot a window\n")
+
+
+def test_citation_cue_rules():
+    windows = citations.parse_windows(CAPTIONS)
+    ok = citations.check_cue
+    # Case, punctuation and "--" are ignored; the words and their order are not.
+    assert (
+        ok(cue("01:20", "01:50", "some characteristics DON'T matter, and some matter only"), windows) is None
+    )
+    assert ok(cue("01:20", "01:50", "matter only some part"), windows) == "quote not in the cited windows"
+    # A quote across a window boundary must name both windows ...
+    spanning = "called an identification tree"
+    assert ok(cue("00:40", "01:14", spanning), windows) == "quote not in the cited windows"
+    assert ok(cue("00:09", "01:14", spanning), windows) is None
+    # ... and a cue may not be wider than its quote (one window off is an error, not a tolerance).
+    assert ok(cue("00:09", "01:14", "a decision tree is a label"), windows) == "cue wider than the quote"
+    assert ok(cue("00:40", "01:50", "a decision tree is a label"), windows) == "cue wider than the quote"
+    # Labels must be real window boundaries.
+    assert "not a window start" in ok(cue("00:10", "00:40", "this kind of tree"), windows)
+    assert "not a window end" in ok(cue("00:40", "01:20", "identification tree"), windows)
+    assert ok(cue("00:09", "00:40", " -- "), windows) == "empty quote"
+
+
+def test_citation_locate_and_item_errors():
+    windows = citations.parse_windows(CAPTIONS)
+    assert citations.locate("called an identification tree", windows) == [("00:09", "01:14")]
+    assert citations.locate("decision tree", windows) == [("00:40", "01:14")]
+    item = {
+        "item_id": "h-x01-01",
+        "lecture_id": "lec",
+        "key_points": [
+            {"point": "a", "cues": [cue("00:40", "01:14", "identification tree")]},
+            {"point": "b", "cues": [cue("00:40", "01:14", "called an identification tree")]},
+            {"point": "c", "cues": []},
+        ],
+    }
+    abstain = {"item_id": "h-x01-02", "lecture_id": "lec", "search_terms": ["x"]}
+    errors = citations.check_items([item, abstain], {"lec": windows})
+    assert errors == [
+        "h-x01-01 kp2 cue1 00:40-01:14: quote not in the cited windows",
+        "h-x01-01 kp3: key point without cue",
+    ]
 
 
 # ---------------------------------------------------------------- blind packets

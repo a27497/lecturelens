@@ -1,6 +1,6 @@
 """L4 benchmark campaign commands. Private state lives under --root (mode 0700), never in Git.
 
-freeze    --audit FILE                  write FREEZE.json after the gold audit
+freeze    --audit FILE [--audit FILE]   write FREEZE.json after the gold audits (citation check included)
 snapshot                                 save each lecture's authoritative Evidence
 run       --split S --rep N [--paths]    one repetition, serial, resumable, never replaces a record
 packet    --split S --label L            build the blind judge packet and the separate mapping
@@ -346,7 +346,7 @@ def cmd_agreement(args):
 
 
 def cmd_freeze(args):
-    print(write_freeze(args.root, audit_path=args.audit, note=args.note))
+    print(write_freeze(args.root, audit_paths=args.audit, note=args.note))
 
 
 def cmd_ledger(args):
@@ -363,7 +363,7 @@ def main(argv=None):
     sub.add_parser("snapshot")
     sub.add_parser("ledger")
     freeze = sub.add_parser("freeze")
-    freeze.add_argument("--audit", type=Path, required=True)
+    freeze.add_argument("--audit", type=Path, action="append", required=True)
     freeze.add_argument("--note", default="")
     run = sub.add_parser("run")
     run.add_argument("--split", choices=["dev", "holdout"], required=True)

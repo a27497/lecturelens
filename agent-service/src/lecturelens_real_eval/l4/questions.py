@@ -1,7 +1,9 @@
 """Question-set rules and the freeze record (PLAN.json "question_set").
 
-FREEZE.json binds the PLAN, the asset lock, the gold-audit result and both question files by
+FREEZE.json binds the PLAN, the asset lock, every gold-audit result and both question files by
 sha256. Every runner verifies it before sending anything, so an edited item cannot be scored.
+Freezing also re-runs the caption citation check (citations.py) against transcripts/*.txt, so a
+cue that drifted from its quote cannot be frozen.
 """
 
 import hashlib
@@ -9,6 +11,8 @@ import json
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+
+from . import citations
 
 ORDER = [
     "definition_or_fact",
@@ -50,8 +54,10 @@ def check_set(data, rules):
     return errors
 
 
-def write_freeze(root, *, audit_path, note=""):
+def write_freeze(root, *, audit_paths, note=""):
     root = Path(root)
+    if not audit_paths:
+        raise ValueError("at least one gold-audit file is required")
     plan = json.loads((root / "PLAN.json").read_bytes())
     rules = plan["question_set"]["fixed_rules"]
     record = {
@@ -59,13 +65,18 @@ def write_freeze(root, *, audit_path, note=""):
         "note": note,
         "plan_sha256": file_sha(root / "PLAN.json"),
         "assets_lock_sha256": file_sha(root / "sources/assets.lock.json"),
-        "gold_audit_sha256": file_sha(audit_path),
+        "gold_audits": [{"file": Path(p).name, "sha256": file_sha(p)} for p in audit_paths],
         "sets": {},
     }
     for split in ("dev", "holdout"):
         path = root / "questions" / f"questions.{split}.json"
         data = json.loads(path.read_text())
         errors = check_set(data, rules)
+        windows = {
+            lecture: citations.load_windows(root / "transcripts" / f"{lecture}.txt")
+            for lecture in sorted({i["lecture_id"] for i in data["items"]})
+        }
+        errors += citations.check_items(data["items"], windows)
         if errors:
             raise ValueError(f"{split}: {errors[:5]}")
         record["sets"][split] = {
