@@ -3,10 +3,17 @@
 freeze    --audit FILE [--audit FILE]   write FREEZE.json after the gold audits (citation check included)
 snapshot                                 save each lecture's authoritative Evidence
 run       --split S --rep N [--paths]    one repetition, serial, resumable, never replaces a record
-packet    --split S --label L            build the blind judge packet and the separate mapping
-judge     --split S --label L            judge every packet entry (<= 4 in flight, <= 2 retries)
-score     --split S --label L            reveal, compute metrics, write summary.json
-agreement --split S --label L            seeded 20% review packet for an independent reviewer
+packet    --split S --label L [--reps]   build the blind judge packet and the separate mapping
+judge     --split S --label L [--concurrency N]
+                                         judge every packet entry (dev 4, holdout <= 8 in flight with a
+                                         fallback to 4; <= 2 retries per entry)
+verify    --split S --sources L1,L2,..   check per-repetition packets against the run records
+score     --split S --label L [--sources L1,..]
+                                         reveal, compute metrics, write summary.json
+agreement --split S --label L [--sources L1,..] [--by-course]
+                                         seeded 20% review packet(s) for independent reviewers
+gate      --split S --done N --sources L1,..
+                                         repetition cost gate: projected spend vs PLAN cost_gate_usd
 ledger                                   print spend totals
 """
 
@@ -23,7 +30,7 @@ from pathlib import Path
 
 import httpx
 
-from . import blind, judge, scoring
+from . import blind, judge, pipeline, scoring
 from .ledger import BudgetExceeded, Ledger
 from .normalize import normalize
 from .questions import load_frozen, write_freeze
@@ -128,6 +135,9 @@ def cmd_run(args):
                 continue
             ev = json.loads((args.root / "evidence" / f"{item['lecture_id']}.json").read_text())
             task = ev["task_id"]
+            # The product and the judge share one provider account; the count lets the report give a
+            # latency subset with no judge request in flight at send time.
+            inflight = pipeline.judge_inflight(args.root / "judge" / "inflight.json")
             try:
                 if path == "rag":
                     time.sleep(max(0.0, RAG_MIN_INTERVAL - (time.monotonic() - last_rag)))
@@ -143,6 +153,7 @@ def cmd_run(args):
             except BudgetExceeded as error:
                 print("STOP budget", error, flush=True)
                 return 3
+            record["judge_inflight_at_send"] = inflight
             private_write(target, record)
             print(
                 phase,
@@ -221,37 +232,48 @@ def cmd_packet(args):
     print(len(packet["entries"]), mapping["packet_sha256"])
 
 
-def judge_one(entry, ledger, phase, key, raw_dir):
+def judge_one(entry, ledger, phase, key, raw_dir, limit, counter):
     body = judge.request_body(entry)
     reason = "NO_ATTEMPT"
     for attempt in range(1, JUDGE_ATTEMPTS + 1):
-        reservation = ledger.reserve(
-            phase=phase,
-            arm="judge",
-            unit=f"{entry['response_id']}#{attempt}",
-            model=judge.MODEL,
-            upper_nano=judge.reservation_nano(body),
-        )
-        sent = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-        try:
-            response = httpx.post(
-                JUDGE_URL, json=body, timeout=JUDGE_TIMEOUT, headers={"Authorization": "Bearer " + key}
+        status, payload = None, None
+        # The slot is taken before the reservation, so a stopped run never leaves a reservation open.
+        with limit:
+            reservation = ledger.reserve(
+                phase=phase,
+                arm="judge",
+                unit=f"{entry['response_id']}#{attempt}",
+                model=judge.MODEL,
+                upper_nano=judge.reservation_nano(body),
             )
-            payload = response.json()
-        except (httpx.HTTPError, ValueError) as error:
-            ledger.uncertain(reservation, type(error).__name__)
-            reason = "TRANSPORT"
+            sent = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+            try:
+                with counter:
+                    response = httpx.post(
+                        JUDGE_URL,
+                        json=body,
+                        timeout=JUDGE_TIMEOUT,
+                        headers={"Authorization": "Bearer " + key},
+                    )
+                status = response.status_code
+                payload = response.json()
+            except (httpx.HTTPError, ValueError) as error:
+                ledger.uncertain(reservation, type(error).__name__ if status is None else f"HTTP_{status}")
+                reason = "TRANSPORT" if status is None else f"HTTP_{status}"
+            else:
+                usage = payload.get("usage") if isinstance(payload, dict) else None
+                if usage:
+                    ledger.settle(reservation, [{"model": judge.MODEL, "at": sent, "usage": usage}])
+                else:
+                    ledger.uncertain(reservation, f"HTTP_{status}")
+                (raw_dir / f"{entry['response_id']}.{attempt}.json").write_text(
+                    json.dumps(payload, ensure_ascii=False)
+                )
+        limit.record(status)
+        if status in (401, 402, 403):
+            raise RuntimeError(f"JUDGE_PROVIDER_REFUSED_{status}")
+        if payload is None:
             continue
-        usage = payload.get("usage") if isinstance(payload, dict) else None
-        if usage:
-            ledger.settle(reservation, [{"model": judge.MODEL, "at": sent, "usage": usage}])
-        else:
-            ledger.uncertain(reservation, f"HTTP_{response.status_code}")
-        (raw_dir / f"{entry['response_id']}.{attempt}.json").write_text(
-            json.dumps(payload, ensure_ascii=False)
-        )
-        if response.status_code in (401, 402, 403):
-            raise RuntimeError(f"JUDGE_PROVIDER_REFUSED_{response.status_code}")
         try:
             choice = payload["choices"][0]
             if choice.get("finish_reason") != "stop":
@@ -273,9 +295,26 @@ def cmd_judge(args):
     key = os.environ["L4_JUDGE_API_KEY"]
     todo = [e for e in packet["entries"] if e["response_id"] not in decisions]
     lock = threading.Lock()
+    cap = (
+        pipeline.HOLDOUT_JUDGE_CONCURRENCY if args.split == "holdout" else pipeline.FALLBACK_JUDGE_CONCURRENCY
+    )
+    if not 1 <= args.concurrency <= cap:
+        sys.exit(f"--concurrency must be 1..{cap} for {args.split}")
+    execution = base / "execution.jsonl"
+
+    def degraded(event):
+        with execution.open("a") as out:
+            out.write(json.dumps({"event": "concurrency_fallback", **event}) + "\n")
+        execution.chmod(0o600)
+        print("FALLBACK", json.dumps(event), flush=True)
+
+    limit = pipeline.AdaptiveLimit(
+        args.concurrency, min(args.concurrency, pipeline.FALLBACK_JUDGE_CONCURRENCY), degraded
+    )
+    counter = pipeline.InflightCounter(args.root / "judge" / "inflight.json")
 
     def work(entry):
-        decision = judge_one(entry, ledger, f"judge-{args.split}-{args.label}", key, raw_dir)
+        decision = judge_one(entry, ledger, f"judge-{args.split}-{args.label}", key, raw_dir, limit, counter)
         with lock:
             decisions[entry["response_id"]] = decision
             tmp = decisions_path.with_suffix(".tmp")
@@ -284,19 +323,37 @@ def cmd_judge(args):
             tmp.replace(decisions_path)
         print(entry["response_id"], decision["verdict"], decision.get("attempts"), flush=True)
 
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         list(pool.map(work, todo))
+    print("judged", len(decisions), "of", len(packet["entries"]), "fallback", json.dumps(limit.degraded))
     print("ledger", json.dumps(ledger.summary()))
 
 
-def rows(root, split, label, reps):
-    base = root / "judge" / split / label
-    packet = json.loads((base / "packet.json").read_text())
-    mapping = json.loads((base / "judge-only-mapping.json").read_text())
-    decisions = json.loads((base / "decisions.json").read_text())
-    joined = {
-        (r["path"], r["rep"], r["item_id"]): r["decision"] for r in blind.reveal(packet, mapping, decisions)
+def ok_records(root, split):
+    """(path, rep, item) of every status-ok scored record (repetition 0, the smoke run, excluded)."""
+    return {
+        (r["path"], r["rep"], r["item_id"]) for r in records(root, split, {1, 2, 3}) if r["status"] == "ok"
     }
+
+
+def revealed(root, split, labels):
+    """{(path, rep, item): decision} from one packet, or from verified per-repetition packets."""
+    judge_root = root / "judge" / split
+    if len(labels) > 1:
+        pipeline.verify_sources(judge_root, labels, ok_records(root, split))
+    joined = {}
+    for label in labels:
+        base = judge_root / label
+        packet = json.loads((base / "packet.json").read_text())
+        mapping = json.loads((base / "judge-only-mapping.json").read_text())
+        decisions = json.loads((base / "decisions.json").read_text())
+        for r in blind.reveal(packet, mapping, decisions):
+            joined[(r["path"], r["rep"], r["item_id"])] = r["decision"]
+    return joined
+
+
+def rows(root, split, labels, reps):
+    joined = revealed(root, split, labels)
     items = {i["item_id"]: i for i in load_frozen(root, split)}
     spans = {}
     out = []
@@ -340,13 +397,39 @@ def rows(root, split, label, reps):
                 "abstention_leak": decision.get("abstention_leak"),
                 "cost_nano": record.get("cost_nano"),
                 "latency_ms": record.get("latency_ms"),
+                "judge_inflight_at_send": record.get("judge_inflight_at_send"),
             }
         )
     return out
 
 
+def sources(args):
+    return args.sources.split(",") if args.sources else [args.label]
+
+
+def source_reps(args):
+    if not args.sources:
+        return args.reps
+    judge_root = args.root / "judge" / args.split
+    return {
+        where["rep"]
+        for label in sources(args)
+        for where in json.loads((judge_root / label / "judge-only-mapping.json").read_text())[
+            "responses"
+        ].values()
+    }
+
+
+def cmd_verify(args):
+    report = pipeline.verify_sources(
+        args.root / "judge" / args.split, sources(args), ok_records(args.root, args.split)
+    )
+    print(json.dumps(report))
+
+
 def cmd_score(args):
-    data = rows(args.root, args.split, args.label, args.reps)
+    data = rows(args.root, args.split, sources(args), source_reps(args))
+    quiet = [r for r in data if r.get("judge_inflight_at_send") == 0]
     summary = {
         "split": args.split,
         "label": args.label,
@@ -355,6 +438,8 @@ def cmd_score(args):
         "repetition_range": {m: scoring.repetition_range(data, m) for m in scoring.METRICS},
         "mcnemar_rep1": scoring.mcnemar_pairs(data),
         "latency_cost": scoring.latency_cost(data),
+        "latency_cost_no_judge_in_flight": scoring.latency_cost(quiet) if quiet else None,
+        "sources": sources(args),
     }
     base = args.root / "judge" / args.split / args.label
     private_write(base / f"rows-{time.strftime('%Y%m%dT%H%M%S')}.json", data)
@@ -365,14 +450,75 @@ def cmd_score(args):
 
 def cmd_agreement(args):
     base = args.root / "judge" / args.split / args.label
-    packet = json.loads((base / "packet.json").read_text())
-    mapping = json.loads((base / "judge-only-mapping.json").read_text())
-    decisions = json.loads((base / "decisions.json").read_text())
-    review, key = blind.agreement_sample(packet, mapping, decisions, seed=SEED)
+    labels = sources(args)
+    if len(labels) > 1:
+        pipeline.verify_sources(args.root / "judge" / args.split, labels, ok_records(args.root, args.split))
+    entries, mapping, decisions = pipeline.merged(args.root / "judge" / args.split, labels)
     target = args.root / "runs" / args.split / "agreement"
+    if args.by_course:
+        lectures = {i["item_id"]: i["lecture_id"] for i in load_frozen(args.root, args.split)}
+        packets = pipeline.agreement_by_course(entries, mapping, decisions, lectures, seed=SEED)
+        for course, (review, key) in packets.items():
+            private_write(target / course / "review-packet.json", review)
+            private_write(base / "agreement" / course / "judge-only-key.json", key)
+            print(course, len(review["entries"]), key["packet_sha256"])
+        total = sum(len(r["entries"]) for r, _ in packets.values())
+        print("total", total, "of", len(mapping), f"{total / len(mapping):.1%}")
+        return
+    packet = {"entries": entries}
+    review, key = blind.agreement_sample(packet, {"responses": mapping}, decisions, seed=SEED)
     private_write(target / "review-packet.json", review)
     private_write(base / "agreement" / "judge-only-key.json", key)
     print(len(review["entries"]), key["packet_sha256"])
+
+
+def cmd_gate(args):
+    """Projected spend for the repetition cost gate (PLAN repetitions.cost_gate)."""
+    plan = json.loads((args.root / "PLAN.json").read_bytes())
+    limit = plan["repetitions"]["cost_gate_usd"]
+    ledger = ledger_for(args.root)
+    units = ledger.state(ledger.events())
+    judge_root = args.root / "judge" / args.split
+    labels = sources(args)
+    judged = sum(
+        len(json.loads((judge_root / lab / "decisions.json").read_text()))
+        for lab in labels
+        if (judge_root / lab / "decisions.json").exists()
+    )
+    run_ok = len(ok_records(args.root, args.split))
+    judge_costs = [
+        u["cost_nano"] for u in units.values() if u["arm"] == "judge" and u["cost_nano"] is not None
+    ]
+    judge_mean = sum(judge_costs) / len(judge_costs) if judge_costs else 0
+    product = sum(
+        u["cost_nano"] or u["upper_nano"]
+        for u in units.values()
+        if u["arm"] != "judge" and u["phase"].startswith(f"{args.split}-rep")
+    )
+    per_rep = product / args.done
+    projected = pipeline.projected_spend(
+        committed_nano=ledger.totals(units)["committed_nano"] + ledger.totals(units)["outstanding_nano"],
+        pending_judge=max(0, run_ok - judged),
+        judge_mean_nano=judge_mean,
+        remaining_reps=args.total - args.done,
+        product_rep_nano=per_rep,
+        entries_per_rep=run_ok / args.done,
+    )
+    verdict = "OPEN" if projected <= limit * 1e9 else "CLOSED"
+    print(
+        json.dumps(
+            {
+                "projected_usd": projected / 1e9,
+                "gate_usd": limit,
+                "gate": verdict,
+                "judged": judged,
+                "ok_records": run_ok,
+                "judge_mean_usd": judge_mean / 1e9,
+                "product_per_rep_usd": per_rep / 1e9,
+            }
+        )
+    )
+    return 0 if verdict == "OPEN" else 4
 
 
 def cmd_freeze(args):
@@ -400,11 +546,19 @@ def main(argv=None):
     run.add_argument("--rep", type=int, required=True)
     run.add_argument("--paths", default=",".join(PATHS))
     run.add_argument("--items")
-    for name in ("packet", "judge", "score", "agreement"):
+    for name in ("packet", "judge", "score", "agreement", "verify", "gate"):
         p = sub.add_parser(name)
         p.add_argument("--split", choices=["dev", "holdout"], required=True)
-        p.add_argument("--label", required=True)
+        p.add_argument("--label", required=name not in ("verify", "gate"))
         p.add_argument("--reps", type=lambda v: {int(r) for r in v.split(",")}, default={1, 2, 3})
+        p.add_argument("--sources", help="comma-separated per-repetition packet labels")
+        if name == "judge":
+            p.add_argument("--concurrency", type=int, default=pipeline.FALLBACK_JUDGE_CONCURRENCY)
+        if name == "agreement":
+            p.add_argument("--by-course", action="store_true")
+        if name == "gate":
+            p.add_argument("--done", type=int, required=True, help="finished repetitions")
+            p.add_argument("--total", type=int, default=3)
     args = parser.parse_args(argv)
     return {
         "snapshot": cmd_snapshot,
@@ -415,6 +569,8 @@ def main(argv=None):
         "judge": cmd_judge,
         "score": cmd_score,
         "agreement": cmd_agreement,
+        "verify": cmd_verify,
+        "gate": cmd_gate,
     }[args.command](args)
 
 

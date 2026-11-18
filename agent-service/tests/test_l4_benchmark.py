@@ -2,12 +2,14 @@
 
 import json
 import multiprocessing
+import threading
+import time
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
 
-from lecturelens_real_eval.l4 import blind, citations, judge, pricing, questions, scoring
+from lecturelens_real_eval.l4 import blind, citations, judge, pipeline, pricing, questions, scoring
 from lecturelens_real_eval.l4.ledger import BudgetExceeded, Ledger, LedgerError
 from lecturelens_real_eval.l4.normalize import normalize
 from lecturelens_real_eval.l4.runner import L4TutorStore, event_usage
@@ -761,3 +763,135 @@ def test_product_tutor_code_is_unchanged_by_the_harness():
     from lecturelens_real_eval.tutor.flash_ledger import build_digest
 
     assert build_digest() == "4fcf204f5aed4cb3046f340105083d008dc916829f155877ed834d344971ecaf"
+
+
+# ---------------------------------------------------------------- holdout execution (PLAN v4 revision 3)
+
+
+def test_judge_limit_falls_back_once_then_stops():
+    events = []
+    limit = pipeline.AdaptiveLimit(8, 4, events.append)
+    for status in (200, 429, 503):
+        limit.record(status)
+    assert limit.limit == 8 and limit.degraded is None
+    limit.record(None)  # third provider error in a row (transport)
+    assert limit.limit == 4 and events and events[0]["reason"] == "3 consecutive provider errors"
+    for _ in range(2):
+        limit.record(500)
+    with pytest.raises(pipeline.ProviderErrorsPersist):
+        limit.record(502)
+    with pytest.raises(pipeline.ProviderErrorsPersist):
+        with limit:
+            pass
+
+
+def test_judge_limit_error_rate_needs_a_denominator():
+    limit = pipeline.AdaptiveLimit(8, 4)
+    for k in range(19):
+        limit.record(429 if k in (3, 9) else 200)
+    assert limit.degraded is None  # 2/19 but below the 20-attempt minimum
+    limit.record(200)
+    assert limit.degraded["reason"] == "provider error rate 2/20" and limit.limit == 4
+    limit.record(400)  # a client error is not a provider error
+    assert limit.errors == 0
+
+
+def test_judge_limit_bounds_requests_in_flight():
+    limit = pipeline.AdaptiveLimit(2, 1)
+    peak, now, lock = [0], [0], threading.Lock()
+
+    def worker():
+        with limit:
+            with lock:
+                now[0] += 1
+                peak[0] = max(peak[0], now[0])
+            time.sleep(0.02)
+            with lock:
+                now[0] -= 1
+
+    threads = [threading.Thread(target=worker) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert peak[0] == 2
+
+
+def test_inflight_counter_is_shared_and_ignores_dead_processes(tmp_path):
+    path = tmp_path / "inflight.json"
+    assert pipeline.judge_inflight(path) == 0
+    counter = pipeline.InflightCounter(path)
+    with counter:
+        with counter:
+            assert pipeline.judge_inflight(path) == 2
+        assert pipeline.judge_inflight(path) == 1
+    assert pipeline.judge_inflight(path) == 0
+    path.write_text(json.dumps({"999999999": 3}))  # a crashed judge process
+    assert pipeline.judge_inflight(path) == 0
+
+
+def write_packet(base, response_list, seed):
+    packet, mapping = blind.build(response_list, items("holdout"), seed=seed)
+    base.mkdir(parents=True)
+    (base / "packet.json").write_text(json.dumps(packet))
+    (base / "judge-only-mapping.json").write_text(json.dumps(mapping))
+    decisions = {e["response_id"]: {"verdict": "INCORRECT"} for e in packet["entries"]}
+    (base / "decisions.json").write_text(json.dumps(decisions))
+    return packet, mapping
+
+
+def test_verify_sources_requires_complete_disjoint_packets(tmp_path):
+    rep1 = [r for r in responses() if r["rep"] == 1]
+    rep2 = [r for r in responses() if r["rep"] == 2]
+    write_packet(tmp_path / "rep1", rep1, 1)
+    write_packet(tmp_path / "rep2", rep2, 2)
+    ok = {(r["path"], r["rep"], r["item_id"]) for r in rep1 + rep2}
+    report = pipeline.verify_sources(tmp_path, ["rep1", "rep2"], ok)
+    assert report["rep1"] == {"reps": [1], "judged": 3, "undetermined": 0}
+    with pytest.raises(ValueError, match="VERIFY_UNJUDGED"):
+        pipeline.verify_sources(tmp_path, ["rep1"], ok)
+    with pytest.raises(ValueError, match="VERIFY_RECORDS_MISMATCH"):
+        pipeline.verify_sources(tmp_path, ["rep1", "rep2"], ok | {("study", 2, "h-x01-02")})
+    decisions = json.loads((tmp_path / "rep2/decisions.json").read_text())
+    decisions.pop(next(iter(decisions)))
+    (tmp_path / "rep2/decisions.json").write_text(json.dumps(decisions))
+    with pytest.raises(ValueError, match="REVEAL_DECISIONS_INCOMPLETE"):
+        pipeline.verify_sources(tmp_path, ["rep1", "rep2"], ok)
+
+
+def test_agreement_is_split_by_course_and_covers_twenty_percent():
+    lectures = {"ai": "mit-6.034-f10-lec11", "bio": "mit-7.016-f18-lec10", "stat": "mit-18.650-f16-lec03"}
+    many = [
+        dict(responses()[0], path=path, item_id=f"h-{course}-{k:02d}", rep=1)
+        for course in lectures
+        for k in range(10)
+        for path in ("rag", "tutor", "study")
+    ]
+    gold = [dict(items("holdout")[0], item_id=r["item_id"]) for r in many[::3]]
+    packet, mapping = blind.build(many, gold, seed=5)
+    decisions = {e["response_id"]: {"verdict": "CORRECT"} for e in packet["entries"]}
+    lectures = {r["item_id"]: lectures[r["item_id"].split("-")[1]] for r in many}
+    out = pipeline.agreement_by_course(packet["entries"], mapping["responses"], decisions, lectures, seed=5)
+    assert sorted(out) == ["18.650", "6.034", "7.016"]
+    sizes = [len(review["entries"]) for review, _ in out.values()]
+    assert sizes == [6, 6, 6] and sum(sizes) / len(many) >= 0.2  # ceil(20%) of 10 per path and course
+    for course, (review, key) in out.items():
+        text = json.dumps(review)
+        assert '"rag"' not in text and "CORRECT" not in text and key["packet_sha256"] == blind.sha256(review)
+        assert {lectures[mapping["responses"][r]["item_id"]] for r in key["paths"]} == {
+            next(v for v in lectures.values() if v.split("-")[1] == course)
+        }
+    again = pipeline.agreement_by_course(packet["entries"], mapping["responses"], decisions, lectures, seed=5)
+    assert again == out
+
+
+def test_cost_gate_projection_counts_unjudged_responses():
+    projected = pipeline.projected_spend(
+        committed_nano=10_000_000_000,
+        pending_judge=100,
+        judge_mean_nano=25_000_000,
+        remaining_reps=2,
+        product_rep_nano=1_000_000_000,
+        entries_per_rep=260,
+    )
+    assert projected == 10_000_000_000 + 100 * 25_000_000 + 2 * (1_000_000_000 + 260 * 25_000_000)
