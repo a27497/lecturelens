@@ -667,12 +667,12 @@ class Stack:
             if real
             else "MOCK: deterministic providers, no API key, no external model calls"
         )
+        # The password stays out of terminal scrollback and CI logs; it is only in the 0600 secrets file.
         print(
             f"""
 LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
   Open:     {url}
-  Email:    {DEMO_EMAIL}
-  Password: {secret["DEMO_PASSWORD"]}
+  Account:  {DEMO_EMAIL} (password: DEMO_PASSWORD in {self.secrets_file})
   Logs:     {self.dir}
   Stop:     scripts/demo/down.sh{"" if self.instance == "default" else " --instance " + self.instance}
 """,

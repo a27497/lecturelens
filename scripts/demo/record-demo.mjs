@@ -1,7 +1,8 @@
 // Records the README walkthrough against a running scripts/demo/up.sh stack.
 //
 //   node scripts/demo/record-demo.mjs --url <course URL printed by up.sh> \
-//     --email demo@example.com --password <printed password> --mode mock|real --output .demo/recording
+//     --email demo@example.com --password <DEMO_PASSWORD from .demo/stack-<instance>/secrets.json> \
+//     --mode mock|real --output .demo/recording
 //
 // Playwright comes from frontend/node_modules (npm ci) and needs `npx playwright install chromium`.
 // The banner injected at the top of every frame names the mode (Mock or Real) and the step,
