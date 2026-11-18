@@ -1,0 +1,38 @@
+{
+  "purpose": "Public record of the L4 benchmark freeze. Question text, gold nuggets, captions, model outputs and judge outputs stay private; only hashes and counts are published.",
+  "freeze_sha256": "09f9b8d7fd01f0d5f425a43b676be6770154920b5a496a8254f7bcb028746425",
+  "frozen_at": "2026-11-18T06:14:34.909807+00:00",
+  "plan": {
+    "version": "4 revision 2",
+    "sha256": "ca7648555c7b2558ae905ba381e09eb89d2e3bb47315c1525d9cbb2ac7e8d64b"
+  },
+  "assets_lock_sha256": "a02bb456b3c947364c8c5110b2b411081abc4bec3601bc2993b56f9a1f5f35e2",
+  "gold_audits": [
+    {
+      "file": "gold-audit/audit.json",
+      "sha256": "3f90245f76f73213175d7563641129bba7dc2ab04c269a3a888d98bf92b158f6"
+    },
+    {
+      "file": "gold-audit-2/audit.json",
+      "sha256": "eaf0e209fcc15cc623c476404989f8e5198008de9d967bb400a824ab77ac7948"
+    },
+    {
+      "file": "gold-audit-full/audit.json",
+      "sha256": "f2ed0c678f6aa04451be00d3bc191d21d148fa539382a323ba8045cb046141aa"
+    }
+  ],
+  "sets": {
+    "dev": {
+      "sha256": "5b8969ec75a410fb2fcc843636cf2443540ec91d7449004908310a7185489bdd",
+      "items": 30,
+      "answerable": 24
+    },
+    "holdout": {
+      "sha256": "25d061c1b9be2ab12f832969b31c1817c611568fabc12b958550898eb1264572",
+      "items": 96,
+      "answerable": 72
+    }
+  },
+  "nuggets": "96 answerable items: 202 vital, 41 okay",
+  "harness": "agent-service/src/lecturelens_real_eval/l4 (judge prompt l4-judge-v2)"
+}

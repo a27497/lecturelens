@@ -76,6 +76,11 @@ def check_set(data, rules):
     return errors
 
 
+def _relative(root, path):
+    path = Path(path).resolve()
+    return str(path.relative_to(root.resolve())) if path.is_relative_to(root.resolve()) else path.name
+
+
 def write_freeze(root, *, audit_paths, note=""):
     root = Path(root)
     if not audit_paths:
@@ -87,7 +92,7 @@ def write_freeze(root, *, audit_paths, note=""):
         "note": note,
         "plan_sha256": file_sha(root / "PLAN.json"),
         "assets_lock_sha256": file_sha(root / "sources/assets.lock.json"),
-        "gold_audits": [{"file": Path(p).name, "sha256": file_sha(p)} for p in audit_paths],
+        "gold_audits": [{"file": _relative(root, p), "sha256": file_sha(p)} for p in audit_paths],
         "sets": {},
     }
     for split in ("dev", "holdout"):
