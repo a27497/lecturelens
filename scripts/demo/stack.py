@@ -93,7 +93,9 @@ class Stack:
         # Outside self.dir so `--purge` cannot delete a lock another invocation holds.
         self.lock_file = ROOT / ".demo" / f"stack-{instance}.lock"
         self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
-        self.stop_command = "scripts/demo/down.sh" + ("" if instance == "default" else f" --instance {instance}")
+        self.stop_command = "scripts/demo/down.sh" + (
+            "" if instance == "default" else f" --instance {instance}"
+        )
 
     def lock(self):
         """Serialize up/down for one instance; concurrent runs would overwrite each other's credentials."""
@@ -144,7 +146,9 @@ class Stack:
             fail(f"{command[0]} {' '.join(command[1:3])} exited {completed.returncode}{where}")
 
     def capture(self, command, env=None):
-        return subprocess.run(command, cwd=ROOT, env=env, text=True, capture_output=True, check=False).stdout.strip()
+        return subprocess.run(
+            command, cwd=ROOT, env=env, text=True, capture_output=True, check=False
+        ).stdout.strip()
 
     @staticmethod
     def port_free(port):
@@ -167,7 +171,10 @@ class Stack:
         process = subprocess.Popen(
             command, cwd=cwd, env=env, stdout=logfile, stderr=subprocess.STDOUT, start_new_session=True
         )
-        self.state.setdefault("pids", {})[name] = {"pid": process.pid, "started": self.start_time(process.pid)}
+        self.state.setdefault("pids", {})[name] = {
+            "pid": process.pid,
+            "started": self.start_time(process.pid),
+        }
         self.save()
         return process
 
@@ -188,14 +195,18 @@ class Stack:
     # ---------- configuration ----------
     def prerequisites(self, real):
         missing = [
-            tool for tool in ("docker", "java", "uv", "node", "npm", "ffmpeg", "ffprobe") if not shutil.which(tool)
+            tool
+            for tool in ("docker", "java", "uv", "node", "npm", "ffmpeg", "ffprobe")
+            if not shutil.which(tool)
         ]
         if missing:
             fail("missing tools: " + ", ".join(missing) + " (see README: one-command demo)")
         version = self.capture(["docker", "compose", "version", "--short"])
         parsed = tuple(int(part) for part in re.findall(r"\d+", version)[:3])
         if len(parsed) < 3 or parsed < MIN_COMPOSE:
-            fail(f"Docker Compose >= {'.'.join(map(str, MIN_COMPOSE))} is required (found {version or 'none'})")
+            fail(
+                f"Docker Compose >= {'.'.join(map(str, MIN_COMPOSE))} is required (found {version or 'none'})"
+            )
         java = subprocess.run(["java", "-version"], capture_output=True, text=True).stderr
         match = re.search(r'version "(\d+)', java)
         if not match or int(match.group(1)) < 21:
@@ -206,14 +217,20 @@ class Stack:
             for key in ("LECTURELENS_LLM_BASE_URL", "LECTURELENS_JAVA_LLM_BASE_URL"):
                 url = urllib.parse.urlsplit(os.environ.get(key, REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]))
                 # The key travels in an Authorization header; plain HTTP only to this machine.
-                if url.scheme != "https" and not (url.scheme == "http" and url.hostname in ("127.0.0.1", "localhost")):
+                if url.scheme != "https" and not (
+                    url.scheme == "http" and url.hostname in ("127.0.0.1", "localhost")
+                ):
                     fail(f"{key} must use https (http is allowed only for 127.0.0.1/localhost)")
         for project in (self.infra_project, self.agent_project):
-            if self.capture(["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={project}"]):
+            if self.capture(
+                ["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={project}"]
+            ):
                 fail(f"{project} is already running; run {self.stop_command} first")
         for name, record in self.state.get("pids", {}).items():
             if self.owned(record):
-                fail(f"recorded process {name} (pid {record['pid']}) is still running; run {self.stop_command} first")
+                fail(
+                    f"recorded process {name} (pid {record['pid']}) is still running; run {self.stop_command} first"
+                )
 
     def choose_ports(self):
         ports, previous = {}, self.state.get("ports", {})
@@ -373,7 +390,9 @@ class Stack:
         )
         if real:
             model = os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"])
-            base = os.environ.get("LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]).rstrip("/")
+            base = os.environ.get(
+                "LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]
+            ).rstrip("/")
             env.update(
                 # 16-second Evidence windows let a citation land near the sentence it quotes. Mock
                 # mode keeps the 60-second default: its fixed learning-package text only passes the
@@ -421,7 +440,9 @@ class Stack:
                 AGENT_LLM_BASE_URL=os.environ.get(
                     "LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]
                 ),
-                AGENT_LLM_MODEL=os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]),
+                AGENT_LLM_MODEL=os.environ.get(
+                    "LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]
+                ),
                 AGENT_LLM_API_KEY=os.environ["LECTURELENS_LLM_API_KEY"],
                 TUTOR_ENABLED="false",
             )
@@ -434,7 +455,9 @@ class Stack:
     def build(self):
         if not JAR.exists():
             log("building the Java backend (first run downloads Maven dependencies)")
-            self.run(["bash", "mvnw", "-q", "-DskipTests", "package"], cwd=ROOT / "backend", name="build-java")
+            self.run(
+                ["bash", "mvnw", "-q", "-DskipTests", "package"], cwd=ROOT / "backend", name="build-java"
+            )
         log("syncing agent-service dependencies (uv.lock)")
         self.run(["uv", "sync", "--frozen"], cwd=ROOT / "agent-service", name="build-agent")
         if not (ROOT / "frontend/node_modules").exists():
@@ -480,7 +503,9 @@ class Stack:
         env = self.compose_env(secret)
         log("starting MySQL, Redis, MinIO and RocketMQ (Compose project %s)" % self.infra_project)
         self.run(
-            self.compose(self.infra_project, "up", "-d", "--wait", "--wait-timeout", "300", "mysql", "redis", "minio"),
+            self.compose(
+                self.infra_project, "up", "-d", "--wait", "--wait-timeout", "300", "mysql", "redis", "minio"
+            ),
             env=env,
             name="infra",
             timeout=1800,
@@ -619,7 +644,10 @@ class Stack:
         token = self.api("POST", "/api/auth/login", credentials)["accessToken"]
         if self.state.get("task_id"):
             try:
-                if self.api("GET", f"/api/tasks/{self.state['task_id']}", token=token)["status"] == "SUCCEEDED":
+                if (
+                    self.api("GET", f"/api/tasks/{self.state['task_id']}", token=token)["status"]
+                    == "SUCCEEDED"
+                ):
                     log("demo course already imported; checking its Evidence index")
                     self.wait_index(self.state["task_id"], token)
                     return
@@ -657,7 +685,10 @@ class Stack:
         )
         self.api("POST", f"/api/uploads/sessions/{upload}/complete", token=token)
         task = self.api(
-            "POST", "/api/tasks", {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"}, token
+            "POST",
+            "/api/tasks",
+            {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"},
+            token,
         )["taskId"]
         self.state["task_id"] = task
         self.save()
@@ -667,7 +698,9 @@ class Stack:
             if status["status"] == "SUCCEEDED":
                 break
             if status["status"] in ("FAILED", "CANCELED") or time.monotonic() > deadline:
-                fail(f"demo course status {status['status']} {status.get('errorCode')}; see {self.dir / 'java.log'}")
+                fail(
+                    f"demo course status {status['status']} {status.get('errorCode')}; see {self.dir / 'java.log'}"
+                )
             time.sleep(2)
         try:
             self.api("POST", f"/api/tasks/{task}/chapters/generate", token=token)
@@ -693,7 +726,9 @@ class Stack:
         self.dir.chmod(0o700)
         secret = self.load_secrets()
         ports = self.choose_ports()
-        model = os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]) if real else None
+        model = (
+            os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]) if real else None
+        )
         self.state.update(mode="real" if real else "mock", model=model, pids={})
         self.save()
         self.write_compose_files(ports, secret)
@@ -731,7 +766,9 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
     @staticmethod
     def start_time(pid):
         """Process start time as reported by ps (Linux and macOS); None if the process is gone."""
-        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, check=False)
+        out = subprocess.run(
+            ["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, check=False
+        )
         return out.stdout.strip() or None
 
     def owned(self, record):
@@ -800,7 +837,9 @@ def main():
     parser = argparse.ArgumentParser(description="LectureLens one-command demo stack")
     parser.add_argument("command", choices=["up", "down", "status"])
     parser.add_argument("--instance", default=os.environ.get("LECTURELENS_DEMO_INSTANCE", "default"))
-    parser.add_argument("--real", action="store_true", help="use LECTURELENS_LLM_API_KEY instead of Mock providers")
+    parser.add_argument(
+        "--real", action="store_true", help="use LECTURELENS_LLM_API_KEY instead of Mock providers"
+    )
     parser.add_argument("--purge", action="store_true", help="down: also delete volumes and generated state")
     args = parser.parse_args()
     stack = Stack(args.instance)
