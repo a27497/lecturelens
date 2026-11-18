@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Rebuilds fixtures/demo/binary-search-demo.mp4 from the self-written subtitle file.
 # The committed MP4 is the source of truth for the demo stack; this script documents
-# how it was produced and needs FFmpeg with libx264 and the DejaVu Sans font.
+# how it was produced and needs FFmpeg with libx264 and the drawtext filter, plus DejaVu fonts.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -13,9 +13,16 @@ mono="${DEMO_MONO_FONT:-/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf}"
 
 command -v ffmpeg >/dev/null 2>&1 || { printf 'FAIL ffmpeg missing\n' >&2; exit 1; }
 [[ -f "$font" && -f "$mono" ]] || { printf 'FAIL font missing: set DEMO_FONT / DEMO_MONO_FONT\n' >&2; exit 1; }
+ffmpeg -hide_banner -filters 2>/dev/null | grep -w drawtext >/dev/null || { printf 'FAIL ffmpeg lacks the drawtext filter\n' >&2; exit 1; }
 
 work="$(mktemp -d)"
-trap 'rm -rf "$work"' EXIT
+partial="$output.partial.mp4"
+trap 'rm -rf "$work" "$partial"' EXIT
+# Fixed names inside the work directory keep filtergraph metacharacters out of font paths.
+cp "$font" "$work/sans.ttf"
+cp "$mono" "$work/mono.ttf"
+font="$work/sans.ttf"
+mono="$work/mono.ttf"
 
 # Each slide: start end title line1 line2 line3 (seconds match the subtitle sections).
 slides=(
@@ -49,6 +56,8 @@ ffmpeg -hide_banner -loglevel error -y \
   -t 152 -map 0:v -map 1:a -map 2:s \
   -c:v libx264 -preset veryslow -tune stillimage -crf 30 -pix_fmt yuv420p \
   -c:a aac -b:a 16k -c:s mov_text -metadata:s:s:0 language=eng \
-  -movflags +faststart "$output"
+  -movflags +faststart "$partial"
+# Replace the committed fixture only after a complete encode.
+mv "$partial" "$output"
 
 printf 'PASS demo-course %s\n' "$output"

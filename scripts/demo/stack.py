@@ -15,10 +15,13 @@ that are busy are replaced by free ones and printed. Every listener binds 127.0.
 
 Generated local passwords live in ``.demo/stack-<instance>/secrets.json`` (mode 0600,
 ignored by Git). A real-mode API key is read from the environment at start-up, passed only
-to child processes and never written to disk or logs.
+to child processes and never written to disk or logs in plain text. The Agent itself stores
+an encrypted copy of the key in each real Study Run's frozen model configuration
+(PostgreSQL); ``down --purge`` deletes that volume.
 """
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -31,6 +34,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -63,6 +67,8 @@ REAL_DEFAULTS = {
     "LECTURELENS_LLM_MODEL": "deepseek-flash",
 }
 HTTP = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+# `ports: !override` in the generated Compose overrides needs Compose 2.24.4.
+MIN_COMPOSE = (2, 24, 4)
 
 
 def log(message):
@@ -84,6 +90,21 @@ class Stack:
         self.dir = ROOT / ".demo" / f"stack-{instance}"
         self.state_file = self.dir / "state.json"
         self.secrets_file = self.dir / "secrets.json"
+        # Outside self.dir so `--purge` cannot delete a lock another invocation holds.
+        self.lock_file = ROOT / ".demo" / f"stack-{instance}.lock"
+        self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
+        self.stop_command = "scripts/demo/down.sh" + ("" if instance == "default" else f" --instance {instance}")
+
+    def lock(self):
+        """Serialize up/down for one instance; concurrent runs would overwrite each other's credentials."""
+        self.lock_file.parent.mkdir(parents=True, exist_ok=True)
+        handle = self.lock_file.open("a")
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            fail(f"another up/down for instance {self.instance} is running")
+        self._lock_handle = handle
+        # Re-read under the lock: the state may have changed while we waited.
         self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
 
     # ---------- helpers ----------
@@ -146,7 +167,7 @@ class Stack:
         process = subprocess.Popen(
             command, cwd=cwd, env=env, stdout=logfile, stderr=subprocess.STDOUT, start_new_session=True
         )
-        self.state.setdefault("pids", {})[name] = process.pid
+        self.state.setdefault("pids", {})[name] = {"pid": process.pid, "started": self.start_time(process.pid)}
         self.save()
         return process
 
@@ -172,20 +193,27 @@ class Stack:
         if missing:
             fail("missing tools: " + ", ".join(missing) + " (see README: one-command demo)")
         version = self.capture(["docker", "compose", "version", "--short"])
-        if not version:
-            fail("docker compose v2 is required")
+        parsed = tuple(int(part) for part in re.findall(r"\d+", version)[:3])
+        if len(parsed) < 3 or parsed < MIN_COMPOSE:
+            fail(f"Docker Compose >= {'.'.join(map(str, MIN_COMPOSE))} is required (found {version or 'none'})")
         java = subprocess.run(["java", "-version"], capture_output=True, text=True).stderr
         match = re.search(r'version "(\d+)', java)
         if not match or int(match.group(1)) < 21:
             fail("Java 21 is required")
         if real and not os.environ.get("LECTURELENS_LLM_API_KEY"):
             fail("--real needs LECTURELENS_LLM_API_KEY in the environment (see README: real-model mode)")
+        if real:
+            for key in ("LECTURELENS_LLM_BASE_URL", "LECTURELENS_JAVA_LLM_BASE_URL"):
+                url = urllib.parse.urlsplit(os.environ.get(key, REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]))
+                # The key travels in an Authorization header; plain HTTP only to this machine.
+                if url.scheme != "https" and not (url.scheme == "http" and url.hostname in ("127.0.0.1", "localhost")):
+                    fail(f"{key} must use https (http is allowed only for 127.0.0.1/localhost)")
         for project in (self.infra_project, self.agent_project):
             if self.capture(["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={project}"]):
-                fail(f"{project} is already running; run scripts/demo/down.sh first")
-        for name, pid in self.state.get("pids", {}).items():
-            if self.alive(pid):
-                fail(f"recorded process {name} (pid {pid}) is still running; run scripts/demo/down.sh first")
+                fail(f"{project} is already running; run {self.stop_command} first")
+        for name, record in self.state.get("pids", {}).items():
+            if self.owned(record):
+                fail(f"recorded process {name} (pid {record['pid']}) is still running; run {self.stop_command} first")
 
     def choose_ports(self):
         ports, previous = {}, self.state.get("ports", {})
@@ -275,6 +303,7 @@ class Stack:
             "NPM_CONFIG_CACHE",
             "XDG_CACHE_HOME",
             "DOCKER_HOST",
+            "DOCKER_CONTEXT",
             "DOCKER_CONFIG",
             "TMPDIR",
         )
@@ -440,8 +469,12 @@ class Stack:
             marker.write_text("ok\n")
         models = self.dir / "agent-cache/models"
         if not models.exists():
-            models.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(cache, models, ignore=shutil.ignore_patterns("*.ok"))
+            # Publish by rename so an interrupted copy is never mistaken for a complete cache.
+            partial = models.with_name("models.partial")
+            shutil.rmtree(partial, ignore_errors=True)
+            partial.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(cache, partial, ignore=shutil.ignore_patterns("*.ok"))
+            partial.rename(models)
 
     def infrastructure(self, secret):
         env = self.compose_env(secret)
@@ -490,11 +523,14 @@ class Stack:
         # The proxy accepts gRPC a little after the topic exists; probe it like CI does.
         libs = self.dir / "mq-libs"
         if not libs.exists():
-            libs.mkdir()
+            partial = libs.with_name("mq-libs.partial")
+            shutil.rmtree(partial, ignore_errors=True)
+            partial.mkdir()
             with zipfile.ZipFile(JAR) as archive:
                 for entry in archive.infolist():
                     if entry.filename.startswith("BOOT-INF/lib/") and entry.filename.endswith(".jar"):
-                        (libs / Path(entry.filename).name).write_bytes(archive.read(entry))
+                        (partial / Path(entry.filename).name).write_bytes(archive.read(entry))
+            partial.rename(libs)
         endpoint = f"127.0.0.1:{self.state['ports']['ROCKETMQ_PROXY_HOST_PORT']}"
         self.run(
             [
@@ -584,7 +620,8 @@ class Stack:
         if self.state.get("task_id"):
             try:
                 if self.api("GET", f"/api/tasks/{self.state['task_id']}", token=token)["status"] == "SUCCEEDED":
-                    log("demo course already prepared")
+                    log("demo course already imported; checking its Evidence index")
+                    self.wait_index(self.state["task_id"], token)
                     return
             except RuntimeError:
                 pass
@@ -636,6 +673,9 @@ class Stack:
             self.api("POST", f"/api/tasks/{task}/chapters/generate", token=token)
         except RuntimeError as error:
             log(f"chapter generation skipped: {error}")
+        self.wait_index(task, token)
+
+    def wait_index(self, task, token):
         deadline = time.monotonic() + 300
         while self.api("GET", f"/api/tasks/{task}/evidence/index-status", token=token)["status"] != "READY":
             if time.monotonic() > deadline:
@@ -647,18 +687,27 @@ class Stack:
         started = time.monotonic()
         if not FIXTURE.exists():
             fail(f"missing {FIXTURE}")
+        self.lock()
         self.prerequisites(real)
         self.dir.mkdir(parents=True, exist_ok=True)
         self.dir.chmod(0o700)
         secret = self.load_secrets()
         ports = self.choose_ports()
-        self.state.update(mode="real" if real else "mock", pids={})
+        model = os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]) if real else None
+        self.state.update(mode="real" if real else "mock", model=model, pids={})
         self.save()
         self.write_compose_files(ports, secret)
         self.build()
-        self.infrastructure(secret)
-        self.services(secret, real)
-        self.seed(secret)
+        # From here on this invocation owns containers and processes; a failure tears them down
+        # (volumes and logs stay) so the next `up` is not blocked by a half-started stack.
+        try:
+            self.infrastructure(secret)
+            self.services(secret, real)
+            self.seed(secret)
+        except BaseException:
+            log("start-up failed; stopping what this attempt started (volumes and logs are kept)")
+            self.teardown(purge=False)
+            raise
         self.state["ready_seconds"] = round(time.monotonic() - started, 1)
         self.save()
         url = f"http://127.0.0.1:{ports['WEB_PORT']}/tasks/{self.state['task_id']}"
@@ -674,57 +723,77 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
   Open:     {url}
   Account:  {DEMO_EMAIL} (password: DEMO_PASSWORD in {self.secrets_file})
   Logs:     {self.dir}
-  Stop:     scripts/demo/down.sh{"" if self.instance == "default" else " --instance " + self.instance}
+  Stop:     {self.stop_command}
 """,
             flush=True,
         )
 
     @staticmethod
-    def alive(pid):
-        try:
-            os.kill(pid, 0)
-        except (ProcessLookupError, PermissionError):
-            return False
-        return True
+    def start_time(pid):
+        """Process start time as reported by ps (Linux and macOS); None if the process is gone."""
+        out = subprocess.run(["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, check=False)
+        return out.stdout.strip() or None
 
-    def down(self, purge):
-        for name, pid in reversed(list(self.state.get("pids", {}).items())):
-            if not self.alive(pid):
+    def owned(self, record):
+        # A PID alone can be reused by an unrelated process; require the recorded start time too.
+        if not isinstance(record, dict):
+            return False
+        started = self.start_time(record["pid"])
+        return started is not None and started == record.get("started")
+
+    def teardown(self, purge):
+        failures = []
+        for name, record in reversed(list(self.state.get("pids", {}).items())):
+            if not self.owned(record):
                 continue
+            pid = record["pid"]
             log(f"stopping {name} (pid {pid})")
             try:
                 os.killpg(pid, signal.SIGTERM)
+                for _ in range(30):
+                    if not self.owned(record):
+                        break
+                    time.sleep(0.5)
+                else:
+                    os.killpg(pid, signal.SIGKILL)
             except ProcessLookupError:
                 continue
-            for _ in range(30):
-                if not self.alive(pid):
-                    break
-                time.sleep(0.5)
-            else:
-                os.killpg(pid, signal.SIGKILL)
         self.state["pids"] = {}
         if self.dir.exists():
             self.save()
         if (self.dir / "compose.env").exists():
-            secret = self.load_secrets()
-            env = self.compose_env(secret)
+            env = self.compose_env(self.load_secrets())
             extra = ["-v"] if purge else []
+            # Try both projects even if the first fails, then report every failure.
             for project in (self.agent_project, self.infra_project):
                 log(f"removing containers of {project}{' and its volumes' if purge else ''}")
-                self.run(
-                    self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
-                    env=env,
-                    name="down",
-                    timeout=300,
-                )
+                with (self.dir / "down.log").open("a") as out:
+                    code = subprocess.run(
+                        self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
+                        cwd=ROOT,
+                        env=env,
+                        stdout=out,
+                        stderr=subprocess.STDOUT,
+                        timeout=300,
+                        check=False,
+                    ).returncode
+                if code != 0:
+                    failures.append(project)
+        return failures
+
+    def down(self, purge):
+        self.lock()
+        failures = self.teardown(purge)
+        if failures:
+            fail(f"could not remove {', '.join(failures)}; see {self.dir / 'down.log'} and retry")
         if purge and self.dir.exists():
             shutil.rmtree(self.dir)
         log("stopped")
 
     def status(self):
         print(json.dumps({k: v for k, v in self.state.items()}, indent=2, sort_keys=True))
-        for name, pid in self.state.get("pids", {}).items():
-            print(f"{name}: pid {pid} {'running' if self.alive(pid) else 'stopped'}")
+        for name, record in self.state.get("pids", {}).items():
+            print(f"{name}: pid {record['pid']} {'running' if self.owned(record) else 'stopped'}")
 
 
 def main():
@@ -739,7 +808,7 @@ def main():
         try:
             stack.up(args.real)
         except KeyboardInterrupt:
-            fail("interrupted; run scripts/demo/down.sh to clean up")
+            fail(f"interrupted; run {stack.stop_command} if anything is left running")
     elif args.command == "down":
         stack.down(args.purge)
     else:

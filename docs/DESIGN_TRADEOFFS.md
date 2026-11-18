@@ -58,7 +58,7 @@
 - 课程内容每次变化递增 revision。Study Session 绑定 owner / course / revision；revision 变化后旧 Session 失效。
 - Java 的 `GenerationFence` 在生成前记下来源版本，发布时重新加锁核对；过期 worker 的结果不能覆盖新数据。
 - 创建 Session / Run 用 `request_key` 幂等；工具结果以 `run_id + call_id` 唯一。崩溃恢复先回读已提交结果，不重复执行副作用。
-- 媒体任务的投递是"至少一次"，执行资格由数据库租约保证每个 task ID 只执行一次。
+- 媒体任务的投递是"至少一次"。执行资格由数据库租约按 task ID 和 execution epoch 授予：没有检查点的任务，每个 task ID 只执行一次；带检查点的任务在租约过期后以更高的 epoch 恢复，同一个 task ID 可能再执行一次。
 
 **放弃。** 不承诺分布式 exactly-once，也不承诺外部模型恰好调用一次：模型响应在 checkpoint 之前崩溃，恢复时可能重发请求，这次调用的预算已经扣过。
 

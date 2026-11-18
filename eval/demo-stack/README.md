@@ -23,7 +23,7 @@
 
 两次 `down.sh` 之后都没有残留的演示容器或进程，`lecturelens-dev` 的 6 个容器一直在运行。
 
-冒烟步骤：用 [`record-demo.mjs`](../../scripts/demo/record-demo.mjs) 在 Chromium 里走完整流程，模式参数为 `--mode mock`：
+冒烟步骤：用 [`record-demo.mjs`](../../scripts/demo/record-demo.mjs) 在 Chromium 里走完整流程（Mock 实例）：
 
 1. 登录，打开课程，切换原文、时间轴和学习资料。
 2. 课程问答提问，回答带引用；点击引用后，视频和原文跳到对应片段。
