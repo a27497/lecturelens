@@ -42,9 +42,9 @@ Product failures count as incorrect, and as wrong abstention decisions.
 **Paired differences.**
 - On strict correct, Tutor leads RAG by +0.30 [+0.19, +0.42] and Study by +0.29 [+0.17, +0.42], with Bonferroni-adjusted intervals.
 - Exact McNemar on repetition 1 gives p = 1.5×10⁻⁶ (Tutor vs RAG) and p = 3.2×10⁻⁴ (Tutor vs Study).
-- RAG and Study do not differ (−0.01 [−0.14, +0.12]).
+- The RAG vs Study comparison is inconclusive: −0.01, and the adjusted interval [−0.14, +0.12] includes zero.
 
-**Study failures.** Of the 83 failures, 63 are `MODEL_REVIEW_CONTRACT` and 11 are `RUN_BUDGET_EXCEEDED`. On the answerable items where Study produced an artifact, 92 of 126 are strictly correct (exploratory).
+**Study failures.** Of the 83 failures, 63 are `MODEL_REVIEW_CONTRACT` and 11 are `RUN_BUDGET_EXCEEDED`. On the answerable attempts that Study answered (no failure and no abstention), 92 of 126 are strictly correct (exploratory).
 
 ## Judge reliability
 
@@ -58,11 +58,11 @@ Three blind Codex reviewers re-graded a seeded 20.6% sample (161 responses, stra
 
 **Direction.** The judge was more lenient than the reviewers. It marked CORRECT 18 responses that the reviewers marked INCORRECT, and the reverse happened once. Most of those cases are a vital nugget the judge counted as supported and the reviewer as partial.
 - Agreement is lowest on Study: κ 0.54, against 0.79 for RAG and 0.83 for Tutor.
-- Read the absolute strict scores as upper estimates.
+- This direction is observed on the reviewed sample only, which excludes product failures. It is not a bound on the full holdout scores.
 - Citation metrics are less reliable than correctness.
 
-**Ranking check (exploratory).** The sample holds answered responses only, without product failures.
-- On this sample the judge rates Study's answered responses at 18/24 and Tutor's at 29/41. The reviewers give Tutor 24/41 and Study 11/24.
+**Ranking check (exploratory).** The sample covers every response with status `ok`, including declared abstentions, and excludes product failures. The counts below are CORRECT verdicts over the sampled answerable items of each path.
+- On this sample the judge rates Study at 18/24 and Tutor at 29/41. The reviewers give Tutor 24/41 and Study 11/24.
 - Tutor's lead in the primary metric comes from RAG's lower correctness and from Study's failure rate.
 - The lead survives a reviewer-calibrated adjustment: each path's strict score is scaled by its reviewer/judge CORRECT ratio on the sample. This gives RAG about 0.31, Tutor 0.59 and Study 0.26.
 
