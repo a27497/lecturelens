@@ -25,10 +25,30 @@ ORDER = [
     "out_of_domain",
 ]
 ANSWERABLE = set(ORDER[:5])
+# A vital nugget answers a part the question explicitly asks for (PLAN v4 "nuggets"). Three covers the
+# multi-part questions of the fixed categories; more would turn one item into several.
+MAX_VITAL = 3
+IMPORTANCE = {"vital", "okay"}
 
 
 def file_sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def nugget_errors(item):
+    nuggets = item.get("nuggets")
+    if not isinstance(nuggets, list) or not nuggets:
+        return [f"{item['item_id']}: answerable item without nuggets"]
+    errors = []
+    if [n.get("id") for n in nuggets] != [f"N{k}" for k in range(1, len(nuggets) + 1)]:
+        errors.append(f"{item['item_id']}: nugget ids must be N1..Nk")
+    if any(n.get("importance") not in IMPORTANCE for n in nuggets):
+        errors.append(f"{item['item_id']}: nugget importance must be vital or okay")
+    if not 1 <= sum(n.get("importance") == "vital" for n in nuggets) <= MAX_VITAL:
+        errors.append(f"{item['item_id']}: vital nugget count must be 1-{MAX_VITAL}")
+    if any(not isinstance(n.get("text"), str) or not n["text"].strip() for n in nuggets):
+        errors.append(f"{item['item_id']}: nugget without text")
+    return errors
 
 
 def check_set(data, rules):
@@ -41,8 +61,10 @@ def check_set(data, rules):
             errors.append(f"{item['item_id']}: answerable flag disagrees with category")
         if item["language"] != ("zh" if item["position"] % 2 else "en"):
             errors.append(f"{item['item_id']}: language rule")
-        if item["answerable"] and not 1 <= len(item["key_points"]) <= 4:
-            errors.append(f"{item['item_id']}: key point count")
+        if item["answerable"]:
+            errors += nugget_errors(item)
+        elif "nuggets" in item:
+            errors.append(f"{item['item_id']}: should-abstain item has nuggets")
     rule = rules["dev_lecture" if data["split"] == "dev" else "holdout_lecture"]
     expected = Counter({**rule["answerable"], **rule["should_abstain"]})
     for lecture, items in sorted(by_lecture.items()):

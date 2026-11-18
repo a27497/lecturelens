@@ -29,9 +29,14 @@ def gold_view(item):
     if item["answerable"]:
         return {
             "answerable": True,
-            "key_points": [
-                {"id": f"K{n}", "point": p["point"], "quotes": [c["quote"] for c in p["cues"]]}
-                for n, p in enumerate(item["key_points"], 1)
+            "nuggets": [
+                {
+                    "id": n["id"],
+                    "importance": n["importance"],
+                    "text": n["text"],
+                    "caption_anchor": [c["quote"] for c in n["cues"]],
+                }
+                for n in item["nuggets"]
             ],
             "must_not_claim": item.get("must_not_claim", []),
         }
@@ -65,7 +70,7 @@ def build(responses, items, *, seed):
             }
         )
     rng.shuffle(entries)
-    packet = {"version": "l4-judge-packet-v1", "entries": entries}
+    packet = {"version": "l4-judge-packet-v2", "entries": entries}
     return packet, {"packet_sha256": sha256(packet), "responses": mapping}
 
 

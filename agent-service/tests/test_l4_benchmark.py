@@ -138,10 +138,12 @@ def row(
     status="ok",
     abstained=False,
     verdict="CORRECT",
-    covered=2,
-    total=2,
-    supported=True,
+    lenient=1.0,
+    error=False,
     claims=(2, 2),
+    pairs=(2, 2),
+    distinct=(1, 1),
+    hit=True,
     cost=100,
     latency=1000,
 ):
@@ -154,36 +156,45 @@ def row(
         "status": status,
         "abstained": abstained,
         "verdict": verdict,
-        "key_points_covered": covered,
-        "key_points_total": total,
-        "supported_full": supported,
+        "vital_lenient": lenient,
+        "material_error": error,
         "claims_supported": claims[0],
         "claims_total": claims[1],
+        "citation_pairs_precise": pairs[0],
+        "citation_pairs_total": pairs[1],
+        "citations_relevant": distinct[0],
+        "citations_distinct": distinct[1],
+        "gold_evidence_hit": hit if answerable else None,
         "cost_nano": cost,
         "latency_ms": latency,
     }
 
 
+NOTHING = {"claims": (0, 0), "pairs": (0, 0), "distinct": (0, 0), "lenient": 0.0}
+
+
 def fixture_rows():
     return [
         row("rag", "a1", "L1", True),
-        row("rag", "a2", "L1", True, verdict="INCORRECT", covered=1, supported=False, claims=(1, 2)),
-        row("rag", "a3", "L2", True, abstained=True, verdict=None, supported=None, claims=(0, 0)),
-        row("rag", "u1", "L2", False, abstained=True, verdict=None, supported=None, claims=(0, 0)),
         row(
-            "tutor",
-            "a1",
+            "rag",
+            "a2",
             "L1",
             True,
-            status="failed",
-            verdict=None,
-            supported=None,
-            claims=(0, 0),
-            latency=5000,
+            verdict="INCORRECT",
+            lenient=0.75,
+            error=True,
+            claims=(1, 2),
+            pairs=(1, 6),
+            distinct=(1, 3),
+            hit=False,
         ),
+        row("rag", "a3", "L2", True, abstained=True, verdict=None, hit=None, **NOTHING),
+        row("rag", "u1", "L2", False, abstained=True, verdict=None, **NOTHING),
+        row("tutor", "a1", "L1", True, status="failed", verdict=None, hit=None, latency=5000, **NOTHING),
         row("tutor", "a2", "L1", True),
         row("tutor", "a3", "L2", True),
-        row("tutor", "u1", "L2", False, verdict="INCORRECT", total=0, covered=0),
+        row("tutor", "u1", "L2", False, verdict="INCORRECT", lenient=0.0),
     ]
 
 
@@ -195,9 +206,16 @@ def test_metric_arithmetic_keeps_failures_and_abstentions():
 
     assert estimate("strict_correct", "rag") == pytest.approx(1 / 3)
     assert estimate("strict_correct", "tutor") == pytest.approx(2 / 3)  # failure counts as incorrect
-    assert estimate("key_point_recall", "rag") == pytest.approx((1 + 0.5 + 0) / 3)
-    assert estimate("citation_full_support", "rag") == pytest.approx(1 / 2)  # answered responses only
-    assert estimate("claim_support", "rag") == pytest.approx(3 / 4)
+    # Lenient: the abstained answerable item stays in the denominator with 0 credit.
+    assert estimate("vital_lenient", "rag") == pytest.approx((1 + 0.75 + 0) / 3)
+    assert estimate("vital_lenient", "tutor") == pytest.approx((0 + 1 + 1) / 3)
+    assert estimate("material_error", "rag") == pytest.approx(1 / 2)  # answered answerable responses only
+    # Citation metrics are micro-averaged over answered responses.
+    assert estimate("citation_recall", "rag") == pytest.approx(3 / 4)
+    assert estimate("citation_precision", "rag") == pytest.approx(3 / 8)
+    assert estimate("citation_precision_distinct", "rag") == pytest.approx(2 / 4)
+    assert estimate("citation_recall", "tutor") == pytest.approx(6 / 6)  # u1 answered, so it counts
+    assert estimate("gold_evidence_hit", "rag") == pytest.approx(1 / 2)
     assert estimate("abstain_recall", "rag") == 1.0
     assert estimate("abstain_recall", "tutor") == 0.0
     assert estimate("false_refusal", "rag") == pytest.approx(1 / 3)
@@ -207,6 +225,28 @@ def test_metric_arithmetic_keeps_failures_and_abstentions():
     diff = report["strict_correct"]["differences"]["rag-tutor"]
     assert diff["estimate"] == pytest.approx(1 / 3 - 2 / 3)
     assert diff["level"] == pytest.approx(0.95)  # one pair in this fixture: no Bonferroni split
+
+
+def test_gold_evidence_hit_uses_vital_nugget_ranges():
+    item = {
+        "nuggets": [
+            {"importance": "vital", "cues": [{"start": "01:00", "end": "01:30"}]},
+            {"importance": "okay", "cues": [{"start": "05:00", "end": "05:30"}]},
+        ]
+    }
+    evidence = {
+        "near": {"startMs": 80_000, "endMs": 140_000},
+        "okay-only": {"startMs": 300_000, "endMs": 320_000},
+        "inside": {"startMs": 65_000, "endMs": 70_000},
+        "touching": {"startMs": 90_000, "endMs": 120_000},  # starts where the cue ends: no overlap
+        "far": {"startMs": 0, "endMs": 59_000},
+    }
+    assert scoring.gold_evidence_hit(item, ["near"], evidence)
+    assert scoring.gold_evidence_hit(item, ["far", "inside"], evidence)
+    assert not scoring.gold_evidence_hit(item, ["touching"], evidence)
+    assert not scoring.gold_evidence_hit(item, ["okay-only", "far"], evidence)
+    assert not scoring.gold_evidence_hit(item, ["missing"], evidence)
+    assert not scoring.gold_evidence_hit(item, [], evidence)
 
 
 def test_bootstrap_is_seeded_and_brackets_the_estimate():
@@ -281,8 +321,19 @@ def items(split):
             "category": "definition_or_fact",
             "answerable": True,
             "question": "问题？",
-            "key_points": [
-                {"point": "p", "cues": [{"start": "00:01", "end": "00:31", "quote": "the quote"}]}
+            "nuggets": [
+                {
+                    "id": "N1",
+                    "importance": "vital",
+                    "text": "p",
+                    "cues": [{"start": "00:01", "end": "00:31", "quote": "the quote"}],
+                },
+                {
+                    "id": "N2",
+                    "importance": "okay",
+                    "text": "detail",
+                    "cues": [{"start": "00:01", "end": "00:31", "quote": "Here is"}],
+                },
             ],
         },
         {
@@ -326,7 +377,7 @@ def test_freeze_round_trip_and_tamper(tmp_path):
         questions.write_freeze(root, audit_paths=[root / "audit.json"])
     path = root / "questions/questions.holdout.json"
     data = json.loads(path.read_text())
-    data["items"][0]["key_points"][0]["point"] = "edited after freeze"
+    data["items"][0]["nuggets"][0]["text"] = "edited after freeze"
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="FREEZE_QUESTIONS_CHANGED"):
         questions.load_frozen(root, "holdout")
@@ -349,10 +400,32 @@ def test_freeze_rejects_rule_violations(tmp_path):
         questions.write_freeze(root, audit_paths=[])
 
 
+def test_nugget_structure_rules():
+    good = items("holdout")[0]
+    assert questions.nugget_errors(good) == []
+
+    def errors(**change):
+        item = json.loads(json.dumps(good))
+        for index, fields in change.items():
+            item["nuggets"][int(index[1:])].update(fields)
+        return questions.nugget_errors(item)
+
+    assert any("vital nugget count" in e for e in errors(n0={"importance": "okay"}))
+    assert any("importance" in e for e in errors(n1={"importance": "nice"}))
+    assert any("N1..Nk" in e for e in errors(n1={"id": "N3"}))
+    assert any("without text" in e for e in errors(n1={"text": " "}))
+    four = json.loads(json.dumps(good))
+    four["nuggets"] = [dict(good["nuggets"][0], id=f"N{k}") for k in range(1, 5)]
+    assert any("vital nugget count must be 1-3" in e for e in questions.nugget_errors(four))
+    assert questions.nugget_errors({**good, "nuggets": []}) == ["h-x01-01: answerable item without nuggets"]
+    abstain = {"split": "holdout", "items": [dict(items("holdout")[1], nuggets=good["nuggets"])]}
+    assert any("should-abstain item has nuggets" in e for e in questions.check_set(abstain, RULES))
+
+
 def test_freeze_refuses_a_quote_outside_its_cue(tmp_path):
     root = freeze_root(tmp_path)
     data = {"split": "holdout", "items": items("holdout")}
-    data["items"][0]["key_points"][0]["cues"][0]["quote"] = "a quote the lecture never says"
+    data["items"][0]["nuggets"][1]["cues"][0]["quote"] = "a quote the lecture never says"
     (root / "questions/questions.holdout.json").write_text(json.dumps(data))
     with pytest.raises(ValueError, match="quote not in the cited windows"):
         questions.write_freeze(root, audit_paths=[root / "audit.json"])
@@ -406,17 +479,17 @@ def test_citation_locate_and_item_errors():
     item = {
         "item_id": "h-x01-01",
         "lecture_id": "lec",
-        "key_points": [
-            {"point": "a", "cues": [cue("00:40", "01:14", "identification tree")]},
-            {"point": "b", "cues": [cue("00:40", "01:14", "called an identification tree")]},
-            {"point": "c", "cues": []},
+        "nuggets": [
+            {"id": "N1", "cues": [cue("00:40", "01:14", "identification tree")]},
+            {"id": "N2", "cues": [cue("00:40", "01:14", "called an identification tree")]},
+            {"id": "N3", "cues": []},
         ],
     }
     abstain = {"item_id": "h-x01-02", "lecture_id": "lec", "search_terms": ["x"]}
     errors = citations.check_items([item, abstain], {"lec": windows})
     assert errors == [
-        "h-x01-01 kp2 cue1 00:40-01:14: quote not in the cited windows",
-        "h-x01-01 kp3: key point without cue",
+        "h-x01-01 N2 cue1 00:40-01:14: quote not in the cited windows",
+        "h-x01-01 N3: nugget without cue",
     ]
 
 
@@ -495,37 +568,116 @@ def entry(scope="inline", declared=False):
 
 def decision(**over):
     base = {
-        "key_points": [{"id": "K1", "status": "covered"}],
+        "nuggets": [{"id": "N1", "label": "support"}, {"id": "N2", "label": "none"}],
         "material_error": False,
-        "claims": [{"claim": "c", "cited": ["C1"], "support": "supported"}],
+        "claims": [
+            {
+                "claim": "c",
+                "cited": ["C1"],
+                "support": "full",
+                "citations": [{"cid": "C1", "relevance": "alone"}],
+            }
+        ],
         "abstention_leak": False,
         "verdict": "CORRECT",
     }
     return json.dumps({**base, **over})
 
 
+def claim(support, *rated, text="c"):
+    return {
+        "claim": text,
+        "cited": [cid for cid, _ in rated],
+        "support": support,
+        "citations": [{"cid": cid, "relevance": rel} for cid, rel in rated],
+    }
+
+
+def test_packet_shows_nuggets_with_importance_not_categories():
+    gold = entry()["gold"]
+    assert [(n["id"], n["importance"]) for n in gold["nuggets"]] == [("N1", "vital"), ("N2", "okay")]
+    assert gold["nuggets"][0]["caption_anchor"] == ["the quote"]
+
+
 def test_judge_validation_accepts_consistent_and_rejects_inconsistent():
     out = judge.validate(entry(), decision())
-    assert out["verdict"] == "CORRECT" and out["supported_full"] and out["key_points_covered"] == 1
+    # The okay nugget is unsupported, yet the item is strictly correct: only vital nuggets decide.
+    assert out["verdict"] == "CORRECT" and out["vital_supported"] == out["vital_total"] == 1
+    assert out["vital_lenient"] == 1.0 and out["all_lenient"] == 0.5
     with pytest.raises(ValueError, match="inconsistent"):
-        judge.validate(entry(), decision(key_points=[{"id": "K1", "status": "partial"}]))
+        judge.validate(
+            entry(), decision(nuggets=[{"id": "N1", "label": "partial"}, {"id": "N2", "label": "none"}])
+        )
+    with pytest.raises(ValueError, match="inconsistent"):
+        judge.validate(entry(), decision(material_error=True))
     with pytest.raises(ValueError, match="inconsistent"):
         judge.validate(entry(declared=True), decision())
-    with pytest.raises(ValueError, match="key point ids"):
-        judge.validate(entry(), decision(key_points=[]))
-    with pytest.raises(ValueError, match="invalid claim"):
-        judge.validate(entry(), decision(claims=[{"claim": "c", "cited": ["C9"], "support": "supported"}]))
+    with pytest.raises(ValueError, match="nugget ids"):
+        judge.validate(entry(), decision(nuggets=[{"id": "N1", "label": "support"}]))
+    with pytest.raises(ValueError, match="nugget label"):
+        judge.validate(
+            entry(), decision(nuggets=[{"id": "N1", "label": "yes"}, {"id": "N2", "label": "none"}])
+        )
+    with pytest.raises(ValueError, match="invalid claim citations"):
+        judge.validate(entry(), decision(claims=[claim("full", ("C9", "alone"))]))
+    with pytest.raises(ValueError, match="exactly the cited labels"):
+        judge.validate(entry(), decision(claims=[{**claim("full", ("C1", "alone")), "citations": []}]))
+    with pytest.raises(ValueError, match="supports the claim alone"):
+        judge.validate(entry(), decision(claims=[claim("partial", ("C1", "alone"))]))
+    with pytest.raises(ValueError, match="without a citation"):
+        judge.validate(entry(), decision(claims=[claim("full")]))
     with pytest.raises(ValueError, match="at most 6"):
-        judge.validate(entry(), decision(claims=[{"claim": "c", "cited": [], "support": "unclear"}] * 7))
-    uncited = judge.validate(entry(), decision(claims=[{"claim": "c", "cited": [], "support": "supported"}]))
-    assert not uncited["supported_full"]  # a claim without a citation is never supported
+        judge.validate(entry(), decision(claims=[claim("none")] * 7))
+
+
+def test_lenient_score_gives_partial_half_credit():
+    out = judge.validate(
+        entry(),
+        decision(
+            nuggets=[{"id": "N1", "label": "partial"}, {"id": "N2", "label": "support"}],
+            verdict="INCORRECT",
+        ),
+    )
+    assert out["vital_lenient"] == 0.5 and out["all_lenient"] == 0.75 and out["vital_supported"] == 0
+
+
+def test_alce_citation_recall_and_precision_counts():
+    claims = [
+        claim("full", ("C1", "alone"), ("C2", "irrelevant")),  # one precise, one over-citation
+        claim("full", ("C1", "needed"), ("C3", "needed")),  # both needed together: both precise
+        claim("partial", ("C2", "needed")),  # unsupported claim: its citation is imprecise
+        claim("none"),  # no citation at all
+    ]
+    counts = judge.citation_counts(claims)
+    assert counts == {
+        "claims_supported": 2,
+        "claims_total": 4,
+        "citation_pairs_precise": 3,
+        "citation_pairs_total": 5,
+        "citations_relevant": 2,  # C1 and C3; C2 never helps a fully supported claim
+        "citations_distinct": 3,
+    }
+    assert judge.citation_counts([]) == {
+        "claims_supported": 0,
+        "claims_total": 0,
+        "citation_pairs_precise": 0,
+        "citation_pairs_total": 0,
+        "citations_relevant": 0,
+        "citations_distinct": 0,
+    }
 
 
 def test_response_scope_citations_attach_to_every_claim():
     out = judge.validate(
-        entry("response"), decision(claims=[{"claim": "c", "cited": [], "support": "supported"}])
+        entry("response"), decision(claims=[{**claim("full", ("C1", "alone")), "cited": []}])
     )
-    assert out["claims"][0]["cited"] == ["C1"] and out["supported_full"]
+    assert out["claims"][0]["cited"] == ["C1"] and out["claims_supported"] == 1
+    assert out["citation_pairs_precise"] == out["citation_pairs_total"] == 1
+
+
+def test_undetermined_keeps_the_vital_denominator():
+    out = judge.undetermined(entry(), "INVALID")
+    assert out["vital_total"] == 1 and out["vital_lenient"] == 0.0 and out["claims_total"] == 0
 
 
 def test_judge_request_and_reservation_bound():

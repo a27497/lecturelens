@@ -1,9 +1,10 @@
-"""Pre-registered L4 metrics, bootstrap intervals and paired comparisons (PLAN.json "metrics"/"statistics").
+"""Pre-registered L4 metrics, bootstrap intervals and paired comparisons (PLAN.json "metrics"/"statistics", v4).
 
 A row is one (path, repetition, item) outcome after the judge reveal:
   path, rep, item_id, lecture_id, answerable, status ("ok" | "failed"), abstained,
-  verdict ("CORRECT" | "INCORRECT" | "UNDETERMINED" | None), key_points_covered, key_points_total,
-  supported_full (bool | None), claims_supported, claims_total, cost_nano, latency_ms.
+  verdict ("CORRECT" | "INCORRECT" | "UNDETERMINED" | None), vital_lenient, material_error,
+  claims_supported, claims_total, citation_pairs_precise, citation_pairs_total, citations_relevant,
+  citations_distinct, gold_evidence_hit (bool | None), cost_nano, latency_ms.
 Failures and abstentions stay in every denominator they belong to; nothing is dropped.
 """
 
@@ -51,36 +52,62 @@ def cohen_kappa(a, b):
     return 1.0 if expected == 1 else (observed - expected) / (1 - expected)
 
 
+def mmss_ms(label):
+    minutes, seconds = label.split(":")
+    return (int(minutes) * 60 + int(seconds)) * 1000
+
+
+def gold_evidence_hit(item, cited, evidence):
+    """True if any cited Evidence overlaps the time range of a vital nugget cue (secondary metric).
+
+    cited: Evidence ids the response cites; evidence: {id: {"startMs", "endMs"}} for the item's lecture.
+    """
+    ranges = [
+        (mmss_ms(cue["start"]), mmss_ms(cue["end"]))
+        for nugget in item["nuggets"]
+        if nugget["importance"] == "vital"
+        for cue in nugget["cues"]
+    ]
+    spans = [(evidence[e]["startMs"], evidence[e]["endMs"]) for e in cited if e in evidence]
+    return any(s < end and e > start for s, e in spans for start, end in ranges)
+
+
 # Each metric maps a row to (numerator, denominator) contributions.
-def _correct(row):
-    if not row["answerable"]:
-        return 0, 0
-    ok = row["status"] == "ok" and not row["abstained"] and row["verdict"] == "CORRECT"
-    return int(ok), 1
-
-
-def _key_point_recall(row):
-    if not row["answerable"]:
-        return 0, 0
-    if row["status"] != "ok" or row["abstained"] or not row["key_points_total"]:
-        return 0, 1
-    return row["key_points_covered"] / row["key_points_total"], 1
-
-
 def _answered(row):
     return row["status"] == "ok" and not row["abstained"]
 
 
-def _supported_full(row):
-    if not _answered(row):
+def _correct(row):
+    if not row["answerable"]:
         return 0, 0
-    return int(bool(row["supported_full"])), 1
+    return int(_answered(row) and row["verdict"] == "CORRECT"), 1
 
 
-def _claims_supported(row):
-    if not _answered(row) or not row["claims_total"]:
+def _vital_lenient(row):
+    if not row["answerable"]:
         return 0, 0
-    return row["claims_supported"], row["claims_total"]
+    return (row["vital_lenient"] if _answered(row) else 0.0), 1
+
+
+def _material_error(row):
+    if not row["answerable"] or not _answered(row):
+        return 0, 0
+    return int(bool(row["material_error"])), 1
+
+
+def _ratio_of(num_field, den_field):
+    def metric(row):
+        if not _answered(row) or not row[den_field]:
+            return 0, 0
+        return row[num_field], row[den_field]
+
+    return metric
+
+
+def _gold_hit(row):
+    if not row["answerable"] or not _answered(row) or row["gold_evidence_hit"] is None:
+        return 0, 0
+    return int(row["gold_evidence_hit"]), 1
 
 
 def _abstain_recall(row):
@@ -106,9 +133,12 @@ def _failure(row):
 
 METRICS = {
     "strict_correct": _correct,
-    "key_point_recall": _key_point_recall,
-    "citation_full_support": _supported_full,
-    "claim_support": _claims_supported,
+    "vital_lenient": _vital_lenient,
+    "material_error": _material_error,
+    "citation_recall": _ratio_of("claims_supported", "claims_total"),
+    "citation_precision": _ratio_of("citation_pairs_precise", "citation_pairs_total"),
+    "citation_precision_distinct": _ratio_of("citations_relevant", "citations_distinct"),
+    "gold_evidence_hit": _gold_hit,
     "abstain_recall": _abstain_recall,
     "false_refusal": _false_refusal,
     "abstain_accuracy": _abstain_accuracy,

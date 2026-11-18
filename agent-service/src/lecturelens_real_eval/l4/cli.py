@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import random
+import re
 import sys
 import threading
 import time
@@ -173,6 +174,13 @@ def study_text(artifact):
     return "\n\n".join(parts)
 
 
+def reported_citations(record):
+    """Evidence ids the product reports for one ok record (Tutor inline markers are added by normalize)."""
+    if record["path"] == "study":
+        return [c["evidence_id"] for c in (record["artifact"] or {}).get("citations") or []]
+    return list(record["cited"])
+
+
 def responses(root, split, label):
     out = []
     for record_path in sorted((root / "runs" / split).glob("rep*/*/*.json")):
@@ -180,12 +188,11 @@ def responses(root, split, label):
         if record["status"] != "ok":
             continue
         evidence, _ = evidence_map(root, record["lecture_id"])
+        cited = reported_citations(record)
         if record["path"] == "study":
-            artifact = record["artifact"] or {}
-            cited = [c["evidence_id"] for c in artifact.get("citations") or []]
-            norm = normalize(study_text(artifact), cited, evidence)
+            norm = normalize(study_text(record["artifact"] or {}), cited, evidence)
         else:
-            norm = normalize(record["text"], record["cited"], evidence, inline=record["path"] == "tutor")
+            norm = normalize(record["text"], cited, evidence, inline=record["path"] == "tutor")
         out.append(
             {
                 "path": record["path"],
@@ -284,11 +291,21 @@ def rows(root, split, label):
         (r["path"], r["rep"], r["item_id"]): r["decision"] for r in blind.reveal(packet, mapping, decisions)
     }
     items = {i["item_id"]: i for i in load_frozen(root, split)}
+    spans = {}
     out = []
     for record_path in sorted((root / "runs" / split).glob("rep*/*/*.json")):
         record = json.loads(record_path.read_text())
         item = items[record["item_id"]]
         decision = joined.get((record["path"], record["rep"], record["item_id"]), {})
+        hit = None
+        if record["status"] == "ok" and item["answerable"]:
+            if item["lecture_id"] not in spans:
+                _, snapshot = evidence_map(root, item["lecture_id"])
+                spans[item["lecture_id"]] = {e["evidenceId"]: e for e in snapshot["items"]}
+            ids = reported_citations(record)
+            if record["path"] == "tutor":
+                ids += re.findall(r"\[([^\[\]\s]+)\]", record.get("text") or "")
+            hit = scoring.gold_evidence_hit(item, ids, spans[item["lecture_id"]])
         out.append(
             {
                 "path": record["path"],
@@ -302,11 +319,18 @@ def rows(root, split, label):
                 "error_code": record.get("error_code"),
                 "abstained": bool(record.get("abstained")),
                 "verdict": decision.get("verdict"),
-                "key_points_covered": decision.get("key_points_covered", 0),
-                "key_points_total": decision.get("key_points_total", 0),
-                "supported_full": decision.get("supported_full"),
+                "vital_lenient": decision.get("vital_lenient", 0.0),
+                "vital_supported": decision.get("vital_supported", 0),
+                "vital_total": decision.get("vital_total", 0),
+                "all_lenient": decision.get("all_lenient", 0.0),
+                "material_error": decision.get("material_error"),
                 "claims_supported": decision.get("claims_supported", 0),
                 "claims_total": decision.get("claims_total", 0),
+                "citation_pairs_precise": decision.get("citation_pairs_precise", 0),
+                "citation_pairs_total": decision.get("citation_pairs_total", 0),
+                "citations_relevant": decision.get("citations_relevant", 0),
+                "citations_distinct": decision.get("citations_distinct", 0),
+                "gold_evidence_hit": hit,
                 "abstention_leak": decision.get("abstention_leak"),
                 "cost_nano": record.get("cost_nano"),
                 "latency_ms": record.get("latency_ms"),

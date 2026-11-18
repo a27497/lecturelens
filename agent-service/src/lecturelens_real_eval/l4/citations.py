@@ -1,10 +1,13 @@
-"""Gold citation check against the caption windows the auditors read.
+"""Gold citation check against the caption windows the auditors read (PLAN v4 "citation_rule").
 
 Captions are stored as ~30 s windows, one per line: "[mm:ss-mm:ss] text". A gold cue
 {start, end, quote} is valid only when start is a window's start label, end is a window's end
 label at or after it, the quote occurs in the text of exactly those windows, and the range is
 minimal: dropping the first or the last window would lose the quote. So a quote that runs across
 a window boundary must name both windows, and a cue cannot drift one window off its quote.
+
+This is the mechanical half of the rule. Whether the cue's windows cover the nugget's content is a
+reviewer judgment; the quote anchors the cue and need not support the nugget on its own.
 
 Matching ignores case, punctuation and whitespace runs (caption line breaks and "--" vary); the
 words and their order must match.
@@ -77,15 +80,16 @@ def locate(quote, windows, max_span=3):
 
 
 def check_items(items, windows_by_lecture):
-    """Errors for every answerable item's cues; should-abstain items carry no cues."""
+    """Errors for every answerable item's nugget cues; should-abstain items carry no cues."""
     errors = []
     for item in items:
         windows = windows_by_lecture[item["lecture_id"]]
-        for p, point in enumerate(item.get("key_points") or [], 1):
-            if not point["cues"]:
-                errors.append(f"{item['item_id']} kp{p}: key point without cue")
-            for c, cue in enumerate(point["cues"], 1):
+        for nugget in item.get("nuggets") or []:
+            tag = f"{item['item_id']} {nugget['id']}"
+            if not nugget["cues"]:
+                errors.append(f"{tag}: nugget without cue")
+            for c, cue in enumerate(nugget["cues"], 1):
                 reason = check_cue(cue, windows)
                 if reason:
-                    errors.append(f"{item['item_id']} kp{p} cue{c} {cue['start']}-{cue['end']}: {reason}")
+                    errors.append(f"{tag} cue{c} {cue['start']}-{cue['end']}: {reason}")
     return errors
