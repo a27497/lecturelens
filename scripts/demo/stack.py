@@ -9,9 +9,11 @@ Usage (from a clean clone):
 
 Ownership: only the Compose projects ``lecturelens-demo-<instance>`` and
 ``lecturelens-demoagent-<instance>`` and the processes recorded in
-``.demo/stack-<instance>/state.json`` are started or stopped. Existing projects with
-other names (for example a ``lecturelens-dev`` stack) are never touched. Requested ports
-that are busy are replaced by free ones and printed. Every listener binds 127.0.0.1.
+``.demo/stack-<instance>/state.json`` are started or stopped. Every container and volume
+created here carries this checkout's owner ID (``OWNER_LABEL``); if either project holds
+anything without it, ``up`` refuses to start and ``down`` removes nothing from that project.
+Projects with other names (for example a ``lecturelens-dev`` stack) are never touched.
+Requested ports that are busy are replaced by free ones and printed. Every listener binds 127.0.0.1.
 
 Generated local passwords live in ``.demo/stack-<instance>/secrets.json`` (mode 0600,
 ignored by Git). A real-mode API key is read from the environment at start-up, passed only
@@ -90,11 +92,25 @@ MIN_AVAILABLE_MB = 4096
 HTTP = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 # `ports: !override` in the generated Compose overrides needs Compose 2.24.4.
 MIN_COMPOSE = (2, 24, 4)
+# Before Engine 28, hosts on the same layer-2 network could reach ports published on 127.0.0.1.
+MIN_ENGINE = (28, 0, 0)
+# Every container and volume this checkout creates carries its owner ID. `up` and `down` refuse
+# to adopt or delete resources of the same Compose project without it, such as a Quick Start
+# stack (scripts/demo/start-infrastructure.sh uses the same project names) or another clone.
+OWNER_LABEL = "io.lecturelens.demo.owner"
+PROJECT_PREFIXES = ("lecturelens-demo-", "lecturelens-demoagent-")
+INFRA_VOLUMES = ("mysql_data", "redis_data", "minio_data", "rocketmq_store")
+AGENT_VOLUMES = ("agent-postgres",)
 
 
 def memory_limit(service):
     limit = CONTAINER_MEMORY[service]
     return f"    mem_limit: {limit}\n    memswap_limit: {limit}\n"
+
+
+def version_tuple(text):
+    parsed = tuple(int(part) for part in re.findall(r"\d+", text or "")[:3])
+    return parsed if len(parsed) == 3 else None
 
 
 def log(message):
@@ -119,9 +135,11 @@ class Stack:
         # Outside self.dir so `--purge` cannot delete a lock another invocation holds.
         self.lock_file = ROOT / ".demo" / f"stack-{instance}.lock"
         self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
-        self.stop_command = "scripts/demo/down.sh" + (
-            "" if instance == "default" else f" --instance {instance}"
-        )
+        # Always explicit: LECTURELENS_DEMO_INSTANCE in the caller's shell would otherwise redirect it.
+        self.stop_command = f"scripts/demo/down.sh --instance {instance}"
+        # Popen handles of this invocation, kept before their PID record exists so a rollback
+        # interrupted between spawn and registration can still stop them.
+        self.children = []
 
     def lock(self):
         """Serialize up/down for one instance; concurrent runs would overwrite each other's credentials."""
@@ -176,6 +194,43 @@ class Stack:
             command, cwd=ROOT, env=env, text=True, capture_output=True, check=False
         ).stdout.strip()
 
+    def docker_query(self, command):
+        """Run a read-only docker command; an error must not look like an empty result."""
+        try:
+            done = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=60, check=False)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise RuntimeError(f"{' '.join(command[:3])} failed: {error}") from error
+        if done.returncode != 0:
+            detail = (done.stderr or done.stdout).strip().splitlines()
+            raise RuntimeError(
+                f"{' '.join(command[:3])} exited {done.returncode}: {detail[-1] if detail else ''}"
+            )
+        return done.stdout.strip()
+
+    def check_project(self, project):
+        if not project.startswith(PROJECT_PREFIXES) or project not in (
+            self.infra_project,
+            self.agent_project,
+        ):
+            raise RuntimeError(f"refusing to manage Compose project {project}")
+
+    def foreign_resources(self, project):
+        """Containers and volumes in `project` that do not carry this checkout's owner ID."""
+        self.check_project(project)
+        owner = self.state.get("owner")
+        label = "{{.Label " + json.dumps(OWNER_LABEL) + "}}"
+        found = []
+        for kind, command in (
+            ("container", ["docker", "ps", "-a", "--format", "{{.Names}}\t" + label]),
+            ("volume", ["docker", "volume", "ls", "--format", "{{.Name}}\t" + label]),
+        ):
+            command[3:3] = ["--filter", f"label=com.docker.compose.project={project}"]
+            for line in self.docker_query(command).splitlines():
+                name, _, value = line.partition("\t")
+                if not owner or value != owner:
+                    found.append(f"{kind} {name}")
+        return found
+
     @staticmethod
     def port_free(port):
         with socket.socket() as sock:
@@ -197,6 +252,7 @@ class Stack:
         process = subprocess.Popen(
             command, cwd=cwd, env=env, stdout=logfile, stderr=subprocess.STDOUT, start_new_session=True
         )
+        self.children.append(process)
         self.state.setdefault("pids", {})[name] = {
             "pid": process.pid,
             "started": self.start_time(process.pid),
@@ -228,10 +284,19 @@ class Stack:
         if missing:
             fail("missing tools: " + ", ".join(missing) + " (see README: one-command demo)")
         version = self.capture(["docker", "compose", "version", "--short"])
-        parsed = tuple(int(part) for part in re.findall(r"\d+", version)[:3])
-        if len(parsed) < 3 or parsed < MIN_COMPOSE:
+        parsed = version_tuple(version)
+        if not parsed or parsed < MIN_COMPOSE:
             fail(
                 f"Docker Compose >= {'.'.join(map(str, MIN_COMPOSE))} is required (found {version or 'none'})"
+            )
+        try:
+            engine = self.docker_query(["docker", "version", "--format", "{{.Server.Version}}"])
+        except RuntimeError as error:
+            fail(f"cannot reach the Docker daemon: {error}")
+        if not version_tuple(engine) or version_tuple(engine) < MIN_ENGINE:
+            fail(
+                f"Docker Engine >= {'.'.join(map(str, MIN_ENGINE))} is required so that ports published "
+                f"on 127.0.0.1 stay local (found {engine or 'none'})"
             )
         java = subprocess.run(["java", "-version"], capture_output=True, text=True, check=False).stderr
         match = re.search(r'version "(\d+)', java)
@@ -252,15 +317,24 @@ class Stack:
         if real:
             for key in ("LECTURELENS_LLM_BASE_URL", "LECTURELENS_JAVA_LLM_BASE_URL"):
                 url = urllib.parse.urlsplit(os.environ.get(key, REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]))
-                # The key travels in an Authorization header; plain HTTP only to this machine.
-                if url.scheme != "https" and not (
-                    url.scheme == "http" and url.hostname in ("127.0.0.1", "localhost")
-                ):
-                    fail(f"{key} must use https (http is allowed only for 127.0.0.1/localhost)")
+                # The key travels in an Authorization header, so never in clear text, not even on loopback.
+                if url.scheme != "https" or not url.hostname:
+                    fail(f"{key} must be an https URL")
         for project in (self.infra_project, self.agent_project):
-            if self.capture(
-                ["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={project}"]
-            ):
+            try:
+                running = self.docker_query(
+                    ["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={project}"]
+                )
+                foreign = self.foreign_resources(project)
+            except RuntimeError as error:
+                fail(str(error))
+            if foreign:
+                fail(
+                    f"Compose project {project} has resources this checkout did not create "
+                    f"({', '.join(foreign[:4])}{', ...' if len(foreign) > 4 else ''}); stop them from the "
+                    "checkout that started them, or use another --instance"
+                )
+            if running:
                 fail(f"{project} is already running; run {self.stop_command} first")
         for name, record in self.state.get("pids", {}).items():
             if self.owned(record):
@@ -321,11 +395,12 @@ class Stack:
             ],
         }
         # Passwords reach Compose through the child environment (${VAR:?}), never through files.
+        owner = f"    labels:\n      {OWNER_LABEL}: {json.dumps(self.state['owner'])}\n"
         text = "services:\n"
         for service in ("minio-init", "rocketmq-store-init"):
-            text += f"  {service}:\n" + memory_limit(service)
+            text += f"  {service}:\n" + memory_limit(service) + owner
         for service, bindings in loopback.items():
-            text += f"  {service}:\n" + memory_limit(service) + "    ports: !override\n"
+            text += f"  {service}:\n" + memory_limit(service) + owner + "    ports: !override\n"
             for key, target in bindings:
                 text += f'      - "127.0.0.1:{ports[key]}:{target}"\n'
             if service == "rocketmq-namesrv":
@@ -336,12 +411,14 @@ class Stack:
                     '      JAVA_OPT_EXT: "-Dcom.rocketmq.proxy.configPath=/tmp/rmq-proxy.json '
                     f'{BROKER_JAVA_OPTS}"\n'
                 )
+        text += "volumes:\n" + "".join(f"  {volume}:\n" + owner for volume in INFRA_VOLUMES)
         (self.dir / "infra.override.yaml").write_text(text)
         (self.dir / "agent.override.yaml").write_text(
-            "services:\n  postgres:\n" + memory_limit("postgres") + "    environment:\n"
+            "services:\n  postgres:\n" + memory_limit("postgres") + owner + "    environment:\n"
             '      POSTGRES_PASSWORD: "${AGENT_POSTGRES_PASSWORD:?required}"\n'
             "    ports: !override\n"
             f'      - "127.0.0.1:{ports["AGENT_POSTGRES_PORT"]}:5432"\n'
+            "volumes:\n" + "".join(f"  {volume}:\n" + owner for volume in AGENT_VOLUMES)
         )
 
     def base_env(self):
@@ -444,7 +521,8 @@ class Stack:
                 SILICONFLOW_ASR_BASE_URL="http://127.0.0.1:9",
                 OPENAI_COMPATIBLE_ENABLED="true",
                 OPENAI_COMPATIBLE_API_KEY=os.environ["LECTURELENS_LLM_API_KEY"],
-                OPENAI_COMPATIBLE_BASE_URL=os.environ.get("LECTURELENS_JAVA_LLM_BASE_URL", base + "/v1"),
+                # Same base as the Agent; Java itself adds /v1 only when the URL has no path.
+                OPENAI_COMPATIBLE_BASE_URL=os.environ.get("LECTURELENS_JAVA_LLM_BASE_URL", base),
                 OPENAI_COMPATIBLE_MODEL=model,
                 OPENAI_COMPATIBLE_MAX_TOKENS="4096",
                 COURSELINGO_AI_MODEL_TRANSLATION=model,
@@ -679,17 +757,23 @@ class Stack:
         except RuntimeError:
             pass  # already registered on a previous start of this instance
         token = self.api("POST", "/api/auth/login", credentials)["accessToken"]
-        if self.state.get("task_id"):
+        # A course prepared in the other mode carries that mode's translation and learning
+        # material, so only a same-mode course is reused; the other one stays in the database.
+        if self.state.get("task_id") and self.state.get("task_mode") == self.state["mode"]:
             try:
-                if (
+                reusable = (
                     self.api("GET", f"/api/tasks/{self.state['task_id']}", token=token)["status"]
                     == "SUCCEEDED"
-                ):
-                    log("demo course already imported; checking its Evidence index")
-                    self.wait_index(self.state["task_id"], token)
-                    return
+                )
             except RuntimeError:
-                pass
+                reusable = False
+            if reusable:
+                # Outside the lookup's try: an index read error must fail, not start another import.
+                log("demo course already imported; checking its Evidence index")
+                self.wait_index(self.state["task_id"], token)
+                return
+        elif self.state.get("task_id"):
+            log(f"the saved demo course was prepared in {self.state.get('task_mode', 'an unknown')} mode")
         log("uploading the synthetic demo course and running the media pipeline")
         video = FIXTURE.read_bytes()
         upload = self.api(
@@ -727,7 +811,7 @@ class Stack:
             {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"},
             token,
         )["taskId"]
-        self.state["task_id"] = task
+        self.state.update(task_id=task, task_mode=self.state["mode"])
         self.save()
         deadline = time.monotonic() + 600
         while True:
@@ -766,6 +850,8 @@ class Stack:
         model = (
             os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]) if real else None
         )
+        # Labels every container and volume this checkout creates (see OWNER_LABEL).
+        self.state.setdefault("owner", secrets.token_hex(16))
         self.state.update(mode="real" if real else "mock", model=model, pids={})
         self.save()
         self.write_compose_files(ports, secret)
@@ -778,7 +864,8 @@ class Stack:
             self.seed(secret)
         except BaseException:
             log("start-up failed; stopping what this attempt started (volumes and logs are kept)")
-            self.teardown(purge=False)
+            for failure in self.teardown(purge=False):
+                log(f"cleanup failed: {failure}; run {self.stop_command}")
             raise
         self.state["ready_seconds"] = round(time.monotonic() - started, 1)
         self.save()
@@ -813,9 +900,22 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
 
     @staticmethod
     def start_time(pid):
-        """Process start time as reported by ps (Linux and macOS); None if the process is gone."""
+        """A start-time identity for `pid` that does not depend on the caller's time zone or locale.
+
+        Linux: boot ID plus the start tick from /proc/<pid>/stat. Elsewhere: `ps -o lstart=`
+        rendered in UTC with the C locale. None if the process is gone.
+        """
+        try:
+            stat = Path(f"/proc/{pid}/stat").read_text()
+            boot = Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+            # The command name may contain spaces or parentheses; fields resume after the last ')'.
+            return f"linux:{boot}:{stat.rsplit(')', 1)[1].split()[19]}"
+        except (OSError, IndexError):
+            if Path("/proc/self/stat").exists():
+                return None  # Linux, and the process is gone
+        env = dict(os.environ, TZ="UTC", LC_ALL="C")
         out = subprocess.run(
-            ["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, check=False
+            ["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, env=env, check=False
         )
         return out.stdout.strip() or None
 
@@ -826,51 +926,74 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
         started = self.start_time(record["pid"])
         return started is not None and started == record.get("started")
 
+    @staticmethod
+    def stop_group(pid, alive):
+        """SIGTERM the process group, wait up to 15 s, then SIGKILL it."""
+        try:
+            os.killpg(pid, signal.SIGTERM)
+            for _ in range(30):
+                if not alive():
+                    return
+                time.sleep(0.5)
+            os.killpg(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+
     def teardown(self, purge):
         failures = []
         for name, record in reversed(list(self.state.get("pids", {}).items())):
-            if not self.owned(record):
-                continue
-            pid = record["pid"]
-            log(f"stopping {name} (pid {pid})")
-            try:
-                os.killpg(pid, signal.SIGTERM)
-                for _ in range(30):
-                    if not self.owned(record):
-                        break
-                    time.sleep(0.5)
-                else:
-                    os.killpg(pid, signal.SIGKILL)
-            except ProcessLookupError:
-                continue
+            if self.owned(record):
+                log(f"stopping {name} (pid {record['pid']})")
+                self.stop_group(record["pid"], lambda record=record: self.owned(record))
+        # Children of this invocation whose PID record may not have been written yet. A Popen
+        # handle that has not been reaped cannot refer to a reused PID.
+        for process in self.children:
+            if process.poll() is None:
+                log(f"stopping pid {process.pid}")
+                self.stop_group(process.pid, lambda process=process: process.poll() is None)
         self.state["pids"] = {}
         if self.dir.exists():
             self.save()
         if (self.dir / "compose.env").exists():
             env = self.compose_env(self.load_secrets())
             extra = ["-v"] if purge else []
-            # Try both projects even if the first fails, then report every failure.
+            # Try both projects even if the first fails or hangs, then report every failure.
             for project in (self.agent_project, self.infra_project):
+                try:
+                    foreign = self.foreign_resources(project)
+                except RuntimeError as error:
+                    failures.append(f"{project} ({error})")
+                    continue
+                if foreign:
+                    failures.append(
+                        f"{project} (not created by this checkout: {', '.join(foreign[:4])}"
+                        f"{', ...' if len(foreign) > 4 else ''}; nothing removed)"
+                    )
+                    continue
                 log(f"removing containers of {project}{' and its volumes' if purge else ''}")
-                with (self.dir / "down.log").open("a") as out:
-                    code = subprocess.run(
-                        self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
-                        cwd=ROOT,
-                        env=env,
-                        stdout=out,
-                        stderr=subprocess.STDOUT,
-                        timeout=300,
-                        check=False,
-                    ).returncode
+                try:
+                    with (self.dir / "down.log").open("a") as out:
+                        code = subprocess.run(
+                            self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
+                            cwd=ROOT,
+                            env=env,
+                            stdout=out,
+                            stderr=subprocess.STDOUT,
+                            timeout=300,
+                            check=False,
+                        ).returncode
+                except (OSError, subprocess.TimeoutExpired) as error:
+                    failures.append(f"{project} ({error})")
+                    continue
                 if code != 0:
-                    failures.append(project)
+                    failures.append(f"{project} (compose down exited {code})")
         return failures
 
     def down(self, purge):
         self.lock()
         failures = self.teardown(purge)
         if failures:
-            fail(f"could not remove {', '.join(failures)}; see {self.dir / 'down.log'} and retry")
+            fail(f"could not remove {'; '.join(failures)}; see {self.dir / 'down.log'}")
         if purge and self.dir.exists():
             shutil.rmtree(self.dir)
         log("stopped")

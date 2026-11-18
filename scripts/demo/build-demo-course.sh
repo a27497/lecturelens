@@ -16,7 +16,8 @@ command -v ffmpeg >/dev/null 2>&1 || { printf 'FAIL ffmpeg missing\n' >&2; exit 
 ffmpeg -hide_banner -filters 2>/dev/null | grep -w drawtext >/dev/null || { printf 'FAIL ffmpeg lacks the drawtext filter\n' >&2; exit 1; }
 
 work="$(mktemp -d)"
-partial="$output.partial.mp4"
+# Per-run name: concurrent builds must not delete or overwrite each other's partial output.
+partial="$output.partial.$$.mp4"
 trap 'rm -rf "$work" "$partial"' EXIT
 # Fixed names inside the work directory keep filtergraph metacharacters out of font paths.
 cp "$font" "$work/sans.ttf"

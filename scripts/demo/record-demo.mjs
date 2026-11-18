@@ -139,7 +139,19 @@ try {
   await page.locator('textarea[placeholder^="例如"]:visible').first()
     .fill('解释二分查找为什么每一步都能排除一半范围，并给我两道练习。');
   await pause(800);
+  // A restored earlier run keeps its terminal label until the START response replaces it, so
+  // only labels rendered after this run's START response count.
+  const started = page.waitForResponse(response => {
+    const request = response.request();
+    return request.method() === 'POST' && /\/study\/(scoped-)?command$/.test(new URL(response.url()).pathname)
+      && request.postDataJSON()?.operation === 'START';
+  }, { timeout: QA_TIMEOUT_MS });
   await page.getByRole('button', { name: '解释并出题' }).click();
+  const startResponse = await started;
+  if (!startResponse.ok()) throw Error(`Study START returned HTTP ${startResponse.status()}`);
+  await startResponse.finished();
+  // Let the panel apply the response (promise continuation, then Vue's render) before reading labels.
+  await page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
   // Terminal run states as rendered by CourseAgentPanel.
   const terminal = /练习已生成|解释与练习已完成|课程证据不足|本次执行未完成|已取消|本次执行已达到时间或调用上限/;
   const runState = await page.getByText(terminal).first().waitFor({ timeout: RUN_TIMEOUT_MS })
@@ -179,8 +191,13 @@ try {
   const video = page.video();
   await context.close().catch(() => {});
   if (video) {
-    await video.saveAs(finalVideo).catch(error => problems.push(`video not saved: ${error.message}`));
-    await video.delete().catch(() => {});
+    // Delete Playwright's original only after the copy succeeded; otherwise point to it.
+    const saved = await video.saveAs(finalVideo).then(() => true, error => {
+      problems.push(`video not saved: ${error.message.split('\n')[0]}`);
+      return false;
+    });
+    if (saved) await video.delete().catch(() => {});
+    else await video.path().then(path => problems.push(`original video kept at ${path}`), () => {});
   } else {
     problems.push('no video recorded');
   }

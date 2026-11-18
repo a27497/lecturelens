@@ -95,7 +95,7 @@ flowchart LR
 
 ## 一键启动
 
-前提：Docker（Compose 2.24.4 或更高）、Java 21、Node.js 24、Python 3、[uv](https://docs.astral.sh/uv/)、FFmpeg。
+前提：类 Unix 环境（只在 Linux 上实测过；macOS 应该可用但没有测；Windows 请在 WSL2 里运行，原生 Windows 不支持），Docker Engine 28 或更高（更早的版本上，同一局域网的机器可以访问绑定在 127.0.0.1 的容器端口）、Compose 2.24.4 或更高，Java 21、Node.js 24、Python 3、[uv](https://docs.astral.sh/uv/)、FFmpeg。
 
 ```bash
 git clone https://github.com/a27497/lecturelens.git
@@ -108,7 +108,8 @@ scripts/demo/up.sh          # Mock 模式：不需要任何 key，没有外部�
 - **[实测](eval/demo-stack/README.md)**：在一台 8 核 / 16 GB 的 Linux 机器上，全新 clone 到可以提问用时 **86 秒**（Maven、npm、uv 缓存和 Docker 镜像已在本机）。第一次在新机器上运行要下载依赖和镜像，并从源码构建 MinIO 镜像，耗时会长得多。
 - **内存**：每个容器都有硬上限，JVM 堆已压低，整套服务实测峰值 **2.97 GB**（[明细](eval/demo-stack/README.md#内存上限)）。建议 8 GB 内存的机器；启动时可用内存低于 4 GB，`up.sh` 会拒绝启动（确认要继续时设 `LECTURELENS_DEMO_IGNORE_MEMORY=1`）。8 GB 是按实测峰值加浏览器估算的建议，没有在 8 GB 机器上实测。
 - **Mock 模式的含义**：Java 使用确定性演示 LLM，Agent 使用 `AGENT_LLM_MODE=mock`。界面上标注“本地演示 · 无外部 AI”和“Mock 流程测试”。Mock 只验证流程，回答内容是固定模板，也演示不了真正的拒答（Mock 总是引用检索到的第一条证据）。
-- **停止**：`scripts/demo/down.sh` 停止进程并删除容器，保留数据卷；加 `--purge` 同时删除数据卷和生成的本地密码。用 `--instance <name>` 启动的实例，停止时要带同样的参数，例如 `scripts/demo/down.sh --instance real`。启动中途失败时，脚本会自动停掉这次启动的进程和容器。脚本只管理 `lecturelens-demo-<instance>` 和 `lecturelens-demoagent-<instance>` 两个 Compose 项目，不碰其他容器。
+- **停止**：`scripts/demo/down.sh` 停止进程并删除容器，保留数据卷；加 `--purge` 同时删除数据卷和生成的本地密码。用 `--instance <name>` 启动的实例，停止时要带同样的参数，例如 `scripts/demo/down.sh --instance real`；`up.sh` 结束时打印的停止命令总带 `--instance`。启动中途失败时，脚本会自动停掉这次启动的进程和容器。
+- **只动自己创建的资源**：脚本只管理 `lecturelens-demo-<instance>` 和 `lecturelens-demoagent-<instance>` 两个 Compose 项目，并给其中每个容器和数据卷打上本次 clone 的归属标签。同名项目里只要有一个容器或数据卷不带这个标签（例如 Quick Start 起的栈或另一个 clone 留下的栈），`up.sh` 拒绝启动，`down.sh` 不删除该项目的任何东西，并列出这些资源。
 
 ### 真实模型模式
 
@@ -119,7 +120,7 @@ export LECTURELENS_LLM_MODEL=deepseek-flash                 # 可选，默认值
 scripts/demo/up.sh --real --instance real
 ```
 
-Java 的翻译、学习资料、章节和课程问答，以及 Agent 的决策和复核，都使用这个模型。Java 端默认请求 `$LECTURELENS_LLM_BASE_URL/v1`，可用 `LECTURELENS_JAVA_LLM_BASE_URL` 覆盖。key 只传给子进程，不以明文写入磁盘或日志。Agent 会把 key 加密后保存在每个真实 Study Run 的模型配置里（PostgreSQL 数据卷），`down.sh --purge` 会删除它。地址必须是 https（本机 127.0.0.1 / localhost 除外）。演示课程自带字幕，所以不会调用 ASR。真实模式下多轮 Tutor 面板关闭（它只有 Mock）。导入演示课程加上一遍录屏流程，[实测](eval/demo-stack/README.md)花费约 USD 0.007。
+Java 的翻译、学习资料、章节和课程问答，以及 Agent 的决策和复核，都使用这个模型。Java 端默认使用同一个地址（地址里没有路径时，Java 自己补 `/v1`；有路径时原样使用），可用 `LECTURELENS_JAVA_LLM_BASE_URL` 覆盖。key 只传给子进程，不以明文写入磁盘或日志。Agent 会把 key 加密后保存在每个真实 Study Run 的模型配置里（PostgreSQL 数据卷），`down.sh --purge` 会删除它。两个地址都必须是 https，本机地址也不例外，因为 key 在请求头里。演示课程自带字幕，所以不会调用 ASR。同一个实例在 Mock 和真实模式之间切换时，会重新导入一门课程，不复用另一种模式生成的学习资料。真实模式下多轮 Tutor 面板关闭（它只有 Mock）。导入演示课程加上一遍录屏流程，[实测](eval/demo-stack/README.md)花费约 USD 0.007。
 
 完整的手动部署（自己的 ASR、视觉模型、OCR、端口映射）见[部署指南](docs/DEPLOYMENT.md)。只起 Java 媒体链路的轻量演示见 [Quick Start](docs/QUICKSTART.md)。
 
