@@ -308,6 +308,9 @@ class Stack:
             # The 8K default sends the 2.5-minute transcript through map/reduce notes, which the
             # deterministic demo provider does not implement; one direct request fits both modes.
             LEARNING_PACKAGE_CONTEXT_LIMIT="65536",
+            # 16-second Evidence windows make a citation land on the sentence it quotes; the
+            # 60-second default is sized for full-length lectures.
+            COURSELINGO_ASR_EMBEDDED_SUBTITLE_SEGMENT_DURATION="16s",
         )
         if real:
             model = os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"])
