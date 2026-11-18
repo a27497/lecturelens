@@ -47,6 +47,7 @@
 | `study-metrics-requests-20261014/` | 请求/执行工具分母修正、原指标不变核对与保留 Run 的 DB/JSONL 对照 |
 | `retrieval-v2/` | 120 题/6 课程/18 讲次的冻结四路检索、课程保留集、配对置信区间与全部失败分桶 |
 | `approval-recovery-20261014/` | 可选发布审批、523 个逐点 SIGKILL 与 54 次审批边界重复、持久预算/产物/checkpoint 不变量及浏览器证据 |
+| `l4-benchmark/` | L4 AI Benchmark：RAG、Light Tutor、Study Agent 在同一合成题集（AI 出题、Codex 全量审核）上的留出集结果、裁判一致率与冻结哈希；题目与模型输出不公开 |
 
 历史失败是评测证据的一部分，不因后续候选通过而删除或改判。阅读项目时优先从当前完成报告进入，再按需要追溯历史目录。
 
