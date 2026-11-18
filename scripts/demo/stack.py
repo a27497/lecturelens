@@ -77,11 +77,13 @@ CONTAINER_MEMORY = {
     "minio-init": "64m",
     "rocketmq-namesrv": "384m",
     "rocketmq-store-init": "64m",
-    "rocketmq-broker": "768m",
+    "rocketmq-broker": "896m",
     "postgres": "256m",
 }
 NAMESRV_JAVA_OPTS = "-Xms128m -Xmx256m -Xmn64m"
-BROKER_JAVA_OPTS = "-Xms384m -Xmx384m -Xmn128m -XX:MaxDirectMemorySize=128m"
+# The broker also runs the gRPC proxy; with a 384m heap its off-heap use (pre-touched G1 heap,
+# Netty, threads) reached a 768m cap at start-up and was OOM-killed, so heap is 256m.
+BROKER_JAVA_OPTS = "-Xms256m -Xmx256m -Xmn96m -XX:MaxDirectMemorySize=128m"
 JAVA_BACKEND_HEAP = ["-Xms256m", "-Xmx768m"]
 # Below this much available memory the stack is likely to push the host into swap or OOM.
 MIN_AVAILABLE_MB = 4096
