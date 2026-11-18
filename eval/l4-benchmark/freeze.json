@@ -1,10 +1,10 @@
 {
   "purpose": "Public record of the L4 benchmark freeze. Question text, gold nuggets, captions, model outputs and judge outputs stay private; only hashes and counts are published.",
-  "freeze_sha256": "09f9b8d7fd01f0d5f425a43b676be6770154920b5a496a8254f7bcb028746425",
-  "frozen_at": "2026-11-18T06:14:34.909807+00:00",
+  "freeze_sha256": "a1769b2bc4cbd88ab0c47dbf4f5fb7f77983f6eded8e6e3daff332331e22cbb8",
+  "frozen_at": "2026-11-18T08:22:50.691465+00:00",
   "plan": {
-    "version": "4 revision 2",
-    "sha256": "ca7648555c7b2558ae905ba381e09eb89d2e3bb47315c1525d9cbb2ac7e8d64b"
+    "version": "4 revision 3",
+    "sha256": "9a84fc38e68bf70930b99db090572b85163683e9df76dff7f84fef54042259a7"
   },
   "assets_lock_sha256": "a02bb456b3c947364c8c5110b2b411081abc4bec3601bc2993b56f9a1f5f35e2",
   "gold_audits": [
@@ -34,5 +34,20 @@
     }
   },
   "nuggets": "96 answerable items: 202 vital, 41 okay",
-  "harness": "agent-service/src/lecturelens_real_eval/l4 (judge prompt l4-judge-v2)"
+  "judge": {
+    "prompt_version": "l4-judge-v2-r2",
+    "system_prompt_sha256": "20e4144e9b86b2a550ea34d92ccdb524223ff8704b427b4af2bf3b9aba2c619d"
+  },
+  "harness": "agent-service/src/lecturelens_real_eval/l4 (judge prompt l4-judge-v2-r2)",
+  "history": [
+    {
+      "freeze_sha256": "09f9b8d7fd01f0d5f425a43b676be6770154920b5a496a8254f7bcb028746425",
+      "plan": {
+        "version": "4 revision 2",
+        "sha256": "ca7648555c7b2558ae905ba381e09eb89d2e3bb47315c1525d9cbb2ac7e8d64b"
+      },
+      "frozen_at": "2026-11-18T06:14:34.909807+00:00",
+      "superseded_because": "PLAN v4 revision 3 froze the judge after two dev rounds and added owner-approved holdout execution speed-ups; question sets unchanged."
+    }
+  ]
 }
