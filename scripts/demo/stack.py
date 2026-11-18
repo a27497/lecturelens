@@ -166,7 +166,9 @@ class Stack:
 
     # ---------- configuration ----------
     def prerequisites(self, real):
-        missing = [tool for tool in ("docker", "java", "uv", "node", "npm", "ffmpeg", "ffprobe") if not shutil.which(tool)]
+        missing = [
+            tool for tool in ("docker", "java", "uv", "node", "npm", "ffmpeg", "ffprobe") if not shutil.which(tool)
+        ]
         if missing:
             fail("missing tools: " + ", ".join(missing) + " (see README: one-command demo)")
         version = self.capture(["docker", "compose", "version", "--short"])
@@ -202,10 +204,18 @@ class Stack:
     def load_secrets(self):
         if self.secrets_file.exists():
             return json.loads(self.secrets_file.read_text())
-        values = {key: secrets.token_hex(24) for key in (
-            "MYSQL_ROOT_PASSWORD", "MYSQL_PASSWORD", "REDIS_PASSWORD", "MINIO_ROOT_PASSWORD",
-            "JWT_ACCESS_SECRET", "AGENT_SERVICE_SECRET", "AGENT_POSTGRES_PASSWORD",
-        )}
+        values = {
+            key: secrets.token_hex(24)
+            for key in (
+                "MYSQL_ROOT_PASSWORD",
+                "MYSQL_PASSWORD",
+                "REDIS_PASSWORD",
+                "MINIO_ROOT_PASSWORD",
+                "JWT_ACCESS_SECRET",
+                "AGENT_SERVICE_SECRET",
+                "AGENT_POSTGRES_PASSWORD",
+            )
+        }
         values["MINIO_ROOT_USER"] = "demo-" + secrets.token_hex(6)
         values["DEMO_PASSWORD"] = "Demo-" + secrets.token_hex(6) + "a1"
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -253,15 +263,38 @@ class Stack:
         )
 
     def base_env(self):
-        keep = ("PATH", "HOME", "USER", "LANG", "LC_ALL", "JAVA_HOME", "UV_CACHE_DIR", "UV_PYTHON_INSTALL_DIR",
-                "NPM_CONFIG_CACHE", "XDG_CACHE_HOME", "DOCKER_HOST", "DOCKER_CONFIG", "TMPDIR")
+        keep = (
+            "PATH",
+            "HOME",
+            "USER",
+            "LANG",
+            "LC_ALL",
+            "JAVA_HOME",
+            "UV_CACHE_DIR",
+            "UV_PYTHON_INSTALL_DIR",
+            "NPM_CONFIG_CACHE",
+            "XDG_CACHE_HOME",
+            "DOCKER_HOST",
+            "DOCKER_CONFIG",
+            "TMPDIR",
+        )
         return {key: os.environ[key] for key in keep if key in os.environ}
 
     def compose_env(self, secret):
         env = self.base_env()
-        env.update({k: secret[k] for k in (
-            "MYSQL_ROOT_PASSWORD", "MYSQL_PASSWORD", "REDIS_PASSWORD", "MINIO_ROOT_USER",
-            "MINIO_ROOT_PASSWORD", "AGENT_POSTGRES_PASSWORD")})
+        env.update(
+            {
+                k: secret[k]
+                for k in (
+                    "MYSQL_ROOT_PASSWORD",
+                    "MYSQL_PASSWORD",
+                    "REDIS_PASSWORD",
+                    "MINIO_ROOT_USER",
+                    "MINIO_ROOT_PASSWORD",
+                    "AGENT_POSTGRES_PASSWORD",
+                )
+            }
+        )
         env["MYSQL_USERNAME"] = "courselingo"
         env["MYSQL_DATABASE"] = "courselingo"
         return env
@@ -356,7 +389,9 @@ class Stack:
         if real:
             env.update(
                 AGENT_LLM_MODE="real",
-                AGENT_LLM_BASE_URL=os.environ.get("LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]),
+                AGENT_LLM_BASE_URL=os.environ.get(
+                    "LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]
+                ),
                 AGENT_LLM_MODEL=os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]),
                 AGENT_LLM_API_KEY=os.environ["LECTURELENS_LLM_API_KEY"],
                 TUTOR_ENABLED="false",
@@ -390,8 +425,18 @@ class Stack:
             )
             env = self.base_env()
             env.update(HF_HUB_DISABLE_IMPLICIT_TOKEN="1", HF_HUB_DISABLE_TELEMETRY="1")
-            self.run([str(ROOT / "agent-service/.venv/bin/python"), "-c", script, EMBEDDING_REPO,
-                      EMBEDDING_REVISION, str(cache)], env=env, name="build-embedding")
+            self.run(
+                [
+                    str(ROOT / "agent-service/.venv/bin/python"),
+                    "-c",
+                    script,
+                    EMBEDDING_REPO,
+                    EMBEDDING_REVISION,
+                    str(cache),
+                ],
+                env=env,
+                name="build-embedding",
+            )
             marker.write_text("ok\n")
         models = self.dir / "agent-cache/models"
         if not models.exists():
@@ -401,20 +446,44 @@ class Stack:
     def infrastructure(self, secret):
         env = self.compose_env(secret)
         log("starting MySQL, Redis, MinIO and RocketMQ (Compose project %s)" % self.infra_project)
-        self.run(self.compose(self.infra_project, "up", "-d", "--wait", "--wait-timeout", "300",
-                              "mysql", "redis", "minio"), env=env, name="infra", timeout=1800)
-        self.run(self.compose(self.infra_project, "up", "-d", "minio-init", "rocketmq-store-init",
-                              "rocketmq-namesrv", "rocketmq-broker"), env=env, name="infra", timeout=600)
+        self.run(
+            self.compose(self.infra_project, "up", "-d", "--wait", "--wait-timeout", "300", "mysql", "redis", "minio"),
+            env=env,
+            name="infra",
+            timeout=1800,
+        )
+        self.run(
+            self.compose(
+                self.infra_project,
+                "up",
+                "-d",
+                "minio-init",
+                "rocketmq-store-init",
+                "rocketmq-namesrv",
+                "rocketmq-broker",
+            ),
+            env=env,
+            name="infra",
+            timeout=600,
+        )
         topic = (
             "for attempt in $(seq 1 40); do /home/rocketmq/rocketmq-5.3.4/bin/mqadmin updateTopic "
             "-n rocketmq-namesrv:9876 -b 127.0.0.1:10911 -t courselingo-analysis-task 2>/dev/null "
             '| grep -Fq "create topic to 127.0.0.1:10911 success." && exit 0; sleep 3; done; exit 1'
         )
-        self.run(self.compose(self.infra_project, "exec", "-T", "rocketmq-broker", "sh", "-lc", topic),
-                 env=env, name="infra", timeout=200)
+        self.run(
+            self.compose(self.infra_project, "exec", "-T", "rocketmq-broker", "sh", "-lc", topic),
+            env=env,
+            name="infra",
+            timeout=200,
+        )
         log("starting PostgreSQL/pgvector (Compose project %s)" % self.agent_project)
-        self.run(self.compose(self.agent_project, "up", "-d", "--wait", "--wait-timeout", "120"),
-                 env=env, name="infra", timeout=600)
+        self.run(
+            self.compose(self.agent_project, "up", "-d", "--wait", "--wait-timeout", "120"),
+            env=env,
+            name="infra",
+            timeout=600,
+        )
         self.mq_ready(secret)
 
     def mq_ready(self, secret):
@@ -427,26 +496,65 @@ class Stack:
                     if entry.filename.startswith("BOOT-INF/lib/") and entry.filename.endswith(".jar"):
                         (libs / Path(entry.filename).name).write_bytes(archive.read(entry))
         endpoint = f"127.0.0.1:{self.state['ports']['ROCKETMQ_PROXY_HOST_PORT']}"
-        self.run(["java", "--class-path", str(libs / "*"), str(ROOT / "scripts/ci/RocketMqReadiness.java"),
-                  endpoint, "courselingo-analysis-task", "false", "10000"], name="infra", timeout=180)
+        self.run(
+            [
+                "java",
+                "--class-path",
+                str(libs / "*"),
+                str(ROOT / "scripts/ci/RocketMqReadiness.java"),
+                endpoint,
+                "courselingo-analysis-task",
+                "false",
+                "10000",
+            ],
+            name="infra",
+            timeout=180,
+        )
 
     def services(self, secret, real):
         ports = self.state["ports"]
-        java = self.spawn("java", ["java", "-Xms256m", "-Xmx1024m", f"-Djava.io.tmpdir={self.dir / 'tmp'}",
-                                   "-jar", str(JAR)], ROOT / "backend", self.java_env(ports, secret, real))
+        java = self.spawn(
+            "java",
+            ["java", "-Xms256m", "-Xmx1024m", f"-Djava.io.tmpdir={self.dir / 'tmp'}", "-jar", str(JAR)],
+            ROOT / "backend",
+            self.java_env(ports, secret, real),
+        )
         (self.dir / "tmp").mkdir(exist_ok=True)
         log("waiting for Java health")
         self.wait_http("java", f"http://127.0.0.1:{ports['APP_PORT']}/actuator/health", 240, java)
         factory = "lecturelens_agent.app:create_app" if real else "lecturelens_real_eval.tutor.app:create_app"
-        agent = self.spawn("agent", [str(ROOT / "agent-service/.venv/bin/uvicorn"), factory, "--factory",
-                                     "--host", "127.0.0.1", "--port", str(ports["AGENT_HTTP_PORT"])],
-                           ROOT / "agent-service", self.agent_env(ports, secret, real))
+        agent = self.spawn(
+            "agent",
+            [
+                str(ROOT / "agent-service/.venv/bin/uvicorn"),
+                factory,
+                "--factory",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                str(ports["AGENT_HTTP_PORT"]),
+            ],
+            ROOT / "agent-service",
+            self.agent_env(ports, secret, real),
+        )
         log("waiting for Agent health")
         self.wait_http("agent", f"http://127.0.0.1:{ports['AGENT_HTTP_PORT']}/healthz", 180, agent)
         web_env = self.base_env()
         web_env["VITE_BACKEND_PROXY_TARGET"] = f"http://127.0.0.1:{ports['APP_PORT']}"
-        web = self.spawn("web", [str(ROOT / "frontend/node_modules/.bin/vite"), "preview", "--host", "127.0.0.1",
-                                 "--port", str(ports["WEB_PORT"]), "--strictPort"], ROOT / "frontend", web_env)
+        web = self.spawn(
+            "web",
+            [
+                str(ROOT / "frontend/node_modules/.bin/vite"),
+                "preview",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                str(ports["WEB_PORT"]),
+                "--strictPort",
+            ],
+            ROOT / "frontend",
+            web_env,
+        )
         self.wait_http("web", f"http://127.0.0.1:{ports['WEB_PORT']}/", 60, web)
 
     def api(self, method, path, body=None, token=None, content_type="application/json"):
@@ -482,17 +590,38 @@ class Stack:
                 pass
         log("uploading the synthetic demo course and running the media pipeline")
         video = FIXTURE.read_bytes()
-        upload = self.api("POST", "/api/uploads/sessions", {
-            "filename": "binary-search-demo.mp4", "sizeBytes": len(video), "chunkSizeBytes": len(video),
-            "totalChunks": 1, "fileMd5": hashlib.md5(video).hexdigest()}, token)["uploadId"]
+        upload = self.api(
+            "POST",
+            "/api/uploads/sessions",
+            {
+                "filename": "binary-search-demo.mp4",
+                "sizeBytes": len(video),
+                "chunkSizeBytes": len(video),
+                "totalChunks": 1,
+                "fileMd5": hashlib.md5(video).hexdigest(),
+            },
+            token,
+        )["uploadId"]
         boundary = "demo-" + secrets.token_hex(12)
-        body = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="chunk.bin"\r\n'
-                "Content-Type: application/octet-stream\r\n\r\n").encode() + video + f"\r\n--{boundary}--\r\n".encode()
-        self.api("POST", f"/api/uploads/sessions/{upload}/chunks/0", body, token,
-                 content_type=f"multipart/form-data; boundary={boundary}")
+        body = (
+            (
+                f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="chunk.bin"\r\n'
+                "Content-Type: application/octet-stream\r\n\r\n"
+            ).encode()
+            + video
+            + f"\r\n--{boundary}--\r\n".encode()
+        )
+        self.api(
+            "POST",
+            f"/api/uploads/sessions/{upload}/chunks/0",
+            body,
+            token,
+            content_type=f"multipart/form-data; boundary={boundary}",
+        )
         self.api("POST", f"/api/uploads/sessions/{upload}/complete", token=token)
-        task = self.api("POST", "/api/tasks", {"uploadId": upload, "sourceLanguage": "en",
-                                               "targetLanguage": "zh-CN"}, token)["taskId"]
+        task = self.api(
+            "POST", "/api/tasks", {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"}, token
+        )["taskId"]
         self.state["task_id"] = task
         self.save()
         deadline = time.monotonic() + 600
@@ -533,16 +662,22 @@ class Stack:
         self.state["ready_seconds"] = round(time.monotonic() - started, 1)
         self.save()
         url = f"http://127.0.0.1:{ports['WEB_PORT']}/tasks/{self.state['task_id']}"
-        mode = ("REAL: model calls are billed to your key" if real
-                else "MOCK: deterministic providers, no API key, no external model calls")
-        print(f"""
-LectureLens demo is ready in {self.state['ready_seconds']}s ({mode})
+        mode = (
+            "REAL: model calls are billed to your key"
+            if real
+            else "MOCK: deterministic providers, no API key, no external model calls"
+        )
+        print(
+            f"""
+LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
   Open:     {url}
   Email:    {DEMO_EMAIL}
-  Password: {secret['DEMO_PASSWORD']}
+  Password: {secret["DEMO_PASSWORD"]}
   Logs:     {self.dir}
-  Stop:     scripts/demo/down.sh{'' if self.instance == 'default' else ' --instance ' + self.instance}
-""", flush=True)
+  Stop:     scripts/demo/down.sh{"" if self.instance == "default" else " --instance " + self.instance}
+""",
+            flush=True,
+        )
 
     @staticmethod
     def alive(pid):
@@ -576,8 +711,12 @@ LectureLens demo is ready in {self.state['ready_seconds']}s ({mode})
             extra = ["-v"] if purge else []
             for project in (self.agent_project, self.infra_project):
                 log(f"removing containers of {project}{' and its volumes' if purge else ''}")
-                self.run(self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
-                         env=env, name="down", timeout=300)
+                self.run(
+                    self.compose(project, "down", "--remove-orphans", "--timeout", "10", *extra),
+                    env=env,
+                    name="down",
+                    timeout=300,
+                )
         if purge and self.dir.exists():
             shutil.rmtree(self.dir)
         log("stopped")
