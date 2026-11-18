@@ -1,0 +1,58 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.000
+Welcome to this short synthetic lecture on binary search, written for the LectureLens demo.
+
+00:00:08.000 --> 00:00:16.000
+Binary search finds a target value in an array that is already sorted in ascending order.
+
+00:00:16.000 --> 00:00:24.000
+We keep two indexes, low and high, that mark the part of the array where the target can still be.
+
+00:00:24.000 --> 00:00:32.000
+At each step we look at the middle index, computed as low plus half of the distance between low and high.
+
+00:00:32.000 --> 00:00:40.000
+If the middle element equals the target, the search stops and returns the middle index.
+
+00:00:40.000 --> 00:00:48.000
+If the middle element is smaller than the target, the target must be to the right, so low becomes middle plus one.
+
+00:00:48.000 --> 00:00:56.000
+If the middle element is larger than the target, the target must be to the left, so high becomes middle minus one.
+
+00:00:56.000 --> 00:01:04.000
+When low becomes greater than high, the remaining range is empty and the target is not in the array.
+
+00:01:04.000 --> 00:01:12.000
+Let us trace an example. The sorted array is 3, 8, 15, 21, 34, 42, 57, and we search for 34.
+
+00:01:12.000 --> 00:01:20.000
+Low is 0 and high is 6, so the middle index is 3 and the middle element is 21, which is smaller than 34.
+
+00:01:20.000 --> 00:01:28.000
+Low moves to 4. Now the middle index is 5 and the element 42 is larger than 34, so high moves to 4.
+
+00:01:28.000 --> 00:01:36.000
+Low and high are both 4, the middle element is 34, and we return index 4 after three comparisons.
+
+00:01:36.000 --> 00:01:44.000
+Every comparison removes about half of the remaining range, so the number of steps grows with the logarithm of n.
+
+00:01:44.000 --> 00:01:52.000
+For an array of one million elements, binary search needs at most about twenty comparisons.
+
+00:01:52.000 --> 00:02:00.000
+A linear scan, by contrast, may need to check every element, which is proportional to n.
+
+00:02:00.000 --> 00:02:08.000
+A common bug is computing low plus high divided by two, which can overflow with fixed-size integers.
+
+00:02:08.000 --> 00:02:16.000
+Another common bug is updating low to middle instead of middle plus one, which can loop forever.
+
+00:02:16.000 --> 00:02:24.000
+Remember the precondition: if the array is not sorted, binary search can return a wrong answer.
+
+00:02:24.000 --> 00:02:32.000
+That is the end of this demo lecture. Try asking LectureLens why the loop stops when low passes high.
