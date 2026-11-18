@@ -9,6 +9,7 @@ import sys
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 HERE = Path(__file__).resolve().parent
 GATE_PATH = HERE.parent / "npm_audit_gate.py"
@@ -21,9 +22,6 @@ SPEC.loader.exec_module(gate)
 # Real `npm audit --json` for frontend/package-lock.json on 2026-11-17.
 PICOMATCH_REPORT = json.loads(
     (HERE / "fixtures" / "npm-audit-picomatch-2026-11-17.json").read_text()
-)
-REPO_ALLOWLIST = json.loads(
-    (HERE.parents[2] / "frontend" / "audit-allowlist.json").read_text()
 )
 TODAY = dt.date(2026, 11, 17)
 PICOMATCH = "GHSA-fc5q-39xc-vjpf"
@@ -84,13 +82,16 @@ def allowlist(*entries):
     return {"advisories": list(entries)}
 
 
+SAMPLE_ALLOWLIST = allowlist(entry())
+
+
 class GateCases(unittest.TestCase):
     def test_no_vulnerabilities_passes(self):
         result = gate.evaluate(clean_report(), allowlist(), TODAY)
         self.assertEqual((result.exit_code, result.errors, result.warnings), (0, [], []))
 
     def test_only_exempted_advisory_passes_with_remaining_days(self):
-        result = gate.evaluate(PICOMATCH_REPORT, REPO_ALLOWLIST, TODAY)
+        result = gate.evaluate(PICOMATCH_REPORT, SAMPLE_ALLOWLIST, TODAY)
         self.assertEqual(result.exit_code, 0)
         self.assertEqual(result.errors, [])
         self.assertEqual(result.warnings, [])
@@ -99,7 +100,7 @@ class GateCases(unittest.TestCase):
         self.assertIn("30 days left", result.exempted[0])
 
     def test_last_valid_day_still_exempts(self):
-        result = gate.evaluate(PICOMATCH_REPORT, REPO_ALLOWLIST, dt.date(2026, 12, 17))
+        result = gate.evaluate(PICOMATCH_REPORT, SAMPLE_ALLOWLIST, dt.date(2026, 12, 17))
         self.assertEqual(result.exit_code, 0)
         self.assertIn("0 days left", result.exempted[0])
 
@@ -114,27 +115,27 @@ class GateCases(unittest.TestCase):
         report = with_advisory(
             PICOMATCH_REPORT, "left-pad", "GHSA-2222-3333-4444", "high", effects=("vite",)
         )
-        result = gate.evaluate(report, REPO_ALLOWLIST, TODAY)
+        result = gate.evaluate(report, SAMPLE_ALLOWLIST, TODAY)
         self.assertEqual(result.exit_code, 1)
         self.assertEqual(len(result.errors), 1)
         self.assertIn("GHSA-2222-3333-4444 high in left-pad", result.errors[0])
         self.assertEqual(len(result.exempted), 1)
 
     def test_expired_exemption_fails_while_advisory_present(self):
-        result = gate.evaluate(PICOMATCH_REPORT, REPO_ALLOWLIST, dt.date(2026, 12, 18))
+        result = gate.evaluate(PICOMATCH_REPORT, SAMPLE_ALLOWLIST, dt.date(2026, 12, 18))
         self.assertEqual(result.exit_code, 1)
         self.assertEqual(len(result.errors), 1)
         self.assertIn("expired on 2026-12-17", result.errors[0])
         self.assertEqual(result.exempted, [])
 
     def test_expired_exemption_fails_after_advisory_is_gone(self):
-        result = gate.evaluate(clean_report(), REPO_ALLOWLIST, dt.date(2026, 12, 18))
+        result = gate.evaluate(clean_report(), SAMPLE_ALLOWLIST, dt.date(2026, 12, 18))
         self.assertEqual(result.exit_code, 1)
         self.assertEqual(len(result.errors), 1)
         self.assertIn("expired", result.errors[0])
 
     def test_stale_exemption_warns_without_failing(self):
-        result = gate.evaluate(clean_report(), REPO_ALLOWLIST, TODAY)
+        result = gate.evaluate(clean_report(), SAMPLE_ALLOWLIST, TODAY)
         self.assertEqual(result.exit_code, 0)
         self.assertEqual(len(result.warnings), 1)
         self.assertIn("remove it from the allowlist", result.warnings[0])
@@ -151,7 +152,7 @@ class GateCases(unittest.TestCase):
                 report = with_advisory(
                     PICOMATCH_REPORT, "minimist", "GHSA-5555-6666-7777", severity
                 )
-                result = gate.evaluate(report, REPO_ALLOWLIST, TODAY)
+                result = gate.evaluate(report, SAMPLE_ALLOWLIST, TODAY)
                 self.assertEqual(result.exit_code, 1)
                 self.assertEqual(len(result.errors), 1)
                 self.assertIn(f"GHSA-5555-6666-7777 {severity} in minimist", result.errors[0])
@@ -194,6 +195,12 @@ class InputValidation(unittest.TestCase):
 
 
 class CommandLine(unittest.TestCase):
+    def setUp(self):
+        directory = TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.allowlist_path = Path(directory.name) / "allowlist.json"
+        self.allowlist_path.write_text(json.dumps(SAMPLE_ALLOWLIST))
+
     def run_main(self, *args):
         out, err = io.StringIO(), io.StringIO()
         with redirect_stdout(out), redirect_stderr(err):
@@ -205,7 +212,7 @@ class CommandLine(unittest.TestCase):
             "--audit-json",
             str(HERE / "fixtures" / "npm-audit-picomatch-2026-11-17.json"),
             "--allowlist",
-            str(HERE.parents[2] / "frontend" / "audit-allowlist.json"),
+            str(self.allowlist_path),
             "--today",
             "2026-11-20",
         )
@@ -219,7 +226,7 @@ class CommandLine(unittest.TestCase):
             "--audit-json",
             str(HERE / "fixtures" / "missing.json"),
             "--allowlist",
-            str(HERE.parents[2] / "frontend" / "audit-allowlist.json"),
+            str(self.allowlist_path),
         )
         self.assertEqual(code, 2)
         self.assertIn("cannot read", err)

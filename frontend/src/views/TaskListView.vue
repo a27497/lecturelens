@@ -748,6 +748,7 @@ function formatTime(value: string | null): string {
 
 .course-item__summary {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   min-width: 0;
 }
