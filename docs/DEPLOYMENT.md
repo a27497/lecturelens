@@ -1,6 +1,6 @@
 # LectureLens 本地部署指南
 
-本文说明如何在本机部署 LectureLens，并使用部署者自己的基础设施密码和 AI Provider 凭据。产品能力与验证数据见[项目主页](../README.md)。
+本文说明如何在本机部署 LectureLens，并使用部署者自己的基础设施密码和 AI Provider 凭据。产品能力与验证数据见[项目主页](../README.md)。只想在本机看一遍完整流程时，`scripts/demo/up.sh`（默认 Mock，`--real` 使用自己的 OpenAI-compatible key）会自动完成下面的大部分步骤，见[一键启动](../README.md#一键启动)。
 
 ## 部署说明
 

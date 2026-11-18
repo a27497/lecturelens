@@ -202,7 +202,7 @@ Course 工具默认使用 internal transport，可选官方 MCP SDK stdio Client
 
 ## 运行模式与验证入口
 
-Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Java、Python、Vue 分别启动。所需版本和命令见[根 README](../README.md)、[Python 服务 README](../agent-service/README.md)和[部署指南](DEPLOYMENT.md)，避免在架构文档重复维护依赖版本。
+Compose 承载 MySQL、Redis、MinIO、RocketMQ 及独立 Agent PostgreSQL；Java、Python、Vue 分别启动，[一键演示脚本](../scripts/demo/stack.py)把这些步骤串起来并导入一门合成课程。所需版本和命令见[根 README](../README.md)、[Python 服务 README](../agent-service/README.md)和[部署指南](DEPLOYMENT.md)，避免在架构文档重复维护依赖版本。
 
 无 Key Demo 保留正常上传、MQ、Runner、FFmpeg、持久化和制品边界，只显式替换 AI Provider。`.env.demo.example` 禁用真实 ASR/LLM/OCR/VLM，启动 guard 拒绝 Demo 与真实 ASR/LLM 混用；真实失败不会自动切换 Mock。Python `AGENT_LLM_MODE=mock` 同样是显式演示，真实/mock Run 不能交叉恢复。
 

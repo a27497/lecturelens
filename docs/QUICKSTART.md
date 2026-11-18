@@ -1,5 +1,7 @@
 # LectureLens Quick Start
 
+想一条命令起完整栈（Java、Agent、前端和一门已导入的演示课程），用 `scripts/demo/up.sh`，见[项目主页 · 一键启动](../README.md#一键启动)。本页是更早的轻量流程，只起 Java 媒体链路，需要手动启动前端并上传视频。
+
 本指南使用无密钥 Demo 配置运行真实的异步任务链路。Mock ASR 和确定性 Mock LLM 均在本机运行，不会访问外部 AI 服务。示例视频只用于验证上传和 Pipeline。
 
 ## Demo 端口与实例隔离
