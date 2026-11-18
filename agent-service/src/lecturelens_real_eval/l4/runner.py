@@ -167,15 +167,27 @@ def study_usage(dsn, run_id):
         ).fetchone()
     started = sum(e["event_type"] == "model_started" for e in events)
     calls = [
-        {
-            "model": "deepseek-flash",
-            "at": e["created_at"].isoformat(),
-            "usage": (e["payload"] or {}).get("usage"),
-        }
+        {"model": "deepseek-flash", "at": e["created_at"].isoformat(), "usage": event_usage(e["payload"])}
         for e in events
         if e["event_type"] in ("model_finished", "model_failed")
     ]
     return row, calls, started, events
+
+
+def event_usage(payload):
+    """Token usage of one Study model event.
+
+    The Study runtime writes prompt_tokens/completion_tokens at the top of the event payload (no cache
+    split, so pricing charges every prompt token at the miss rate). A failed call without both counts
+    has no usage and settles as UNCERTAIN.
+    """
+    payload = payload or {}
+    if isinstance(payload.get("usage"), dict):
+        return payload["usage"]
+    prompt, completion = payload.get("prompt_tokens"), payload.get("completion_tokens")
+    if isinstance(prompt, int) and isinstance(completion, int):
+        return {"prompt_tokens": prompt, "completion_tokens": completion}
+    return None
 
 
 def run_study(java, ledger, phase, item, rep, task, dsn):

@@ -181,10 +181,17 @@ def reported_citations(record):
     return list(record["cited"])
 
 
-def responses(root, split, label):
-    out = []
+def records(root, split, reps):
+    """Run records of the given repetitions. Repetition 0 is the smoke run and is scored only on request."""
     for record_path in sorted((root / "runs" / split).glob("rep*/*/*.json")):
         record = json.loads(record_path.read_text())
+        if record["rep"] in reps:
+            yield record
+
+
+def responses(root, split, label, reps):
+    out = []
+    for record in records(root, split, reps):
         if record["status"] != "ok":
             continue
         evidence, _ = evidence_map(root, record["lecture_id"])
@@ -207,7 +214,7 @@ def responses(root, split, label):
 
 def cmd_packet(args):
     items = load_frozen(args.root, args.split)
-    packet, mapping = blind.build(responses(args.root, args.split, args.label), items, seed=SEED)
+    packet, mapping = blind.build(responses(args.root, args.split, args.label, args.reps), items, seed=SEED)
     base = args.root / "judge" / args.split / args.label
     private_write(base / "packet.json", packet)
     private_write(base / "judge-only-mapping.json", mapping)
@@ -282,7 +289,7 @@ def cmd_judge(args):
     print("ledger", json.dumps(ledger.summary()))
 
 
-def rows(root, split, label):
+def rows(root, split, label, reps):
     base = root / "judge" / split / label
     packet = json.loads((base / "packet.json").read_text())
     mapping = json.loads((base / "judge-only-mapping.json").read_text())
@@ -293,8 +300,7 @@ def rows(root, split, label):
     items = {i["item_id"]: i for i in load_frozen(root, split)}
     spans = {}
     out = []
-    for record_path in sorted((root / "runs" / split).glob("rep*/*/*.json")):
-        record = json.loads(record_path.read_text())
+    for record in records(root, split, reps):
         item = items[record["item_id"]]
         decision = joined.get((record["path"], record["rep"], record["item_id"]), {})
         hit = None
@@ -340,7 +346,7 @@ def rows(root, split, label):
 
 
 def cmd_score(args):
-    data = rows(args.root, args.split, args.label)
+    data = rows(args.root, args.split, args.label, args.reps)
     summary = {
         "split": args.split,
         "label": args.label,
@@ -398,6 +404,7 @@ def main(argv=None):
         p = sub.add_parser(name)
         p.add_argument("--split", choices=["dev", "holdout"], required=True)
         p.add_argument("--label", required=True)
+        p.add_argument("--reps", type=lambda v: {int(r) for r in v.split(",")}, default={1, 2, 3})
     args = parser.parse_args(argv)
     return {
         "snapshot": cmd_snapshot,

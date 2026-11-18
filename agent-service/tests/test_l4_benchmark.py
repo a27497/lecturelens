@@ -10,7 +10,7 @@ import pytest
 from lecturelens_real_eval.l4 import blind, citations, judge, pricing, questions, scoring
 from lecturelens_real_eval.l4.ledger import BudgetExceeded, Ledger, LedgerError
 from lecturelens_real_eval.l4.normalize import normalize
-from lecturelens_real_eval.l4.runner import L4TutorStore
+from lecturelens_real_eval.l4.runner import L4TutorStore, event_usage
 
 # ---------------------------------------------------------------- pricing
 
@@ -688,6 +688,17 @@ def test_judge_request_and_reservation_bound():
     assert judge.reservation_nano(body) == pricing.upper_nano(
         "deepseek-v4-pro", len(blind.canonical(body)), 8192
     )
+
+
+def test_study_event_usage_reads_top_level_token_counts():
+    payload = {"purpose": "decision", "prompt_tokens": 1048, "completion_tokens": 121}
+    assert event_usage(payload) == {"prompt_tokens": 1048, "completion_tokens": 121}
+    assert event_usage({"usage": {"prompt_tokens": 1, "completion_tokens": 2}}) == {
+        "prompt_tokens": 1,
+        "completion_tokens": 2,
+    }
+    assert event_usage({"prompt_tokens": 10}) is None  # a failed call without both counts stays uncertain
+    assert event_usage(None) is None
 
 
 # ---------------------------------------------------------------- normalization
