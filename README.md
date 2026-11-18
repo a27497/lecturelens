@@ -105,7 +105,7 @@ scripts/demo/up.sh          # Mock 模式：不需要任何 key，没有外部�
 
 脚本会构建 Java / 前端、同步 Python 依赖、下载公开的嵌入模型（[固定版本](scripts/demo/stack.py)），启动 MySQL、Redis、MinIO、RocketMQ 和 PostgreSQL，再启动三个应用进程，最后导入演示课程并等待索引就绪。完成后终端打印课程地址和本地演示账号。所有端口只监听 `127.0.0.1`；默认端口被占用时自动换一个并打印出来。
 
-- **[实测](eval/demo-stack/README.md)**：在一台 8 核 / 16 GB 的 Linux 机器上，全新 clone 到可以提问用时 **96 秒**（Maven、npm、uv 缓存和 Docker 镜像已在本机），整套服务约占 **3.1 GB** 内存。第一次在新机器上运行要下载依赖和镜像，并从源码构建 MinIO 镜像，耗时会长得多。
+- **[实测](eval/demo-stack/README.md)**：在一台 8 核 / 16 GB 的 Linux 机器上，全新 clone 到可以提问用时 **95 秒**（Maven、npm、uv 缓存和 Docker 镜像已在本机），整套服务约占 **3 GB** 内存。第一次在新机器上运行要下载依赖和镜像，并从源码构建 MinIO 镜像，耗时会长得多。
 - **Mock 模式的含义**：Java 使用确定性演示 LLM，Agent 使用 `AGENT_LLM_MODE=mock`。界面上标注“本地演示 · 无外部 AI”和“Mock 流程测试”。Mock 只验证流程，回答内容是固定模板，也演示不了真正的拒答（Mock 总是引用检索到的第一条证据）。
 - **停止**：`scripts/demo/down.sh` 停止进程并删除容器，保留数据卷；加 `--purge` 同时删除数据卷和生成的本地密码。脚本只管理 `lecturelens-demo-<instance>` 和 `lecturelens-demoagent-<instance>` 两个 Compose 项目，不碰其他容器。
 

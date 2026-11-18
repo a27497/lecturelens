@@ -10,14 +10,18 @@
 
 ## Mock 模式（默认）
 
-在新目录 `git clone` 后执行 `scripts/demo/up.sh`，提交 `69e000d`：
+在一个新目录 `git clone` 后执行 `scripts/demo/up.sh`。共测了两次：第一次在提交 `69e000d`，从本地工作树 clone；最后一次在提交 `19152e3`，从 GitHub clone，与前一次相比只多了代码格式化和文档。
 
-| 项目 | 结果 |
-| --- | --- |
-| 到“可以提问”的总时间 | 96.1 s（`time`：real 1m36s）。包括构建 Java JAR、`npm ci` 与前端构建、`uv sync`、下载嵌入模型、启动基础设施、启动三个应用进程、导入演示课程并等待索引 READY |
-| 内存增量 | 约 3.1 GB（系统已用内存从 9,218 MB 升到峰值 12,330 MB，每 2 秒采样一次） |
-| 主要进程与容器 | Java 579 MB，Agent 751 MB，前端预览 123 MB；RocketMQ broker 826 MiB，MySQL 466 MiB，MinIO 227 MiB，NameServer 168 MiB，PostgreSQL 31 MiB，Redis 5 MiB |
-| 停止 | `scripts/demo/down.sh` 用时 23 s。之后没有残留的演示容器或进程；`lecturelens-dev` 的 6 个容器仍在运行 |
+| 项目 | `69e000d` | `19152e3` |
+| --- | --- | --- |
+| 到“可以提问”的总时间 | 96.1 s | 95.2 s |
+| 启动后的内存增量 | 3.1 GB（9,218 → 12,330 MB） | 2.9 GB（9,650 → 12,599 MB） |
+| 冒烟期间峰值（含 Playwright Chromium） | 未单独记录 | 3.7 GB（→ 13,395 MB） |
+| `down.sh` 用时 | 23.0 s | 23.3 s |
+
+总时间包括构建 Java JAR、`npm ci` 与前端构建、`uv sync`、下载嵌入模型、启动基础设施、启动三个应用进程、导入演示课程并等待索引 READY。内存是系统已用内存，每 2 秒采样一次。`69e000d` 那次的进程与容器占用：Java 579 MB，Agent 751 MB，前端预览 123 MB；RocketMQ broker 826 MiB，MySQL 466 MiB，MinIO 227 MiB，NameServer 168 MiB，PostgreSQL 31 MiB，Redis 5 MiB。
+
+两次 `down.sh` 之后都没有残留的演示容器或进程，`lecturelens-dev` 的 6 个容器一直在运行。
 
 冒烟步骤：用 [`record-demo.mjs`](../../scripts/demo/record-demo.mjs) 在 Chromium 里走完整流程，模式参数为 `--mode mock`：
 
