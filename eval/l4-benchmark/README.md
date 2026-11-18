@@ -23,7 +23,7 @@ Question text, gold, captions and model outputs stay private. This directory hol
 
 ## Holdout results
 
-96 items (72 answerable, 24 should-abstain) × 3 repetitions. The intervals are 95% bootstraps stratified by lecture.
+96 items (72 answerable, 24 should-abstain) × 3 repetitions. The intervals are 95% bootstraps stratified by lecture. The strict-correct denominator is 216 answerable attempts per path (72 × 3); failures and refusals on answerable items count as not correct.
 
 | Metric | RAG | Light Tutor | Study Agent |
 | --- | --- | --- | --- |
@@ -38,6 +38,8 @@ Question text, gold, captions and model outputs stay private. This directory hol
 | Cost per question (ledger, official prices) | USD 0.00037 | USD 0.00075 | USD 0.0074 |
 
 Product failures count as incorrect, and as wrong abstention decisions.
+
+Citation metrics have limited reliability: judge/reviewer agreement on citation full support is κ 0.44 (see [Judge reliability](#judge-reliability)), and the judge validator has an observed defect that lets a claim carry both `alone` and `needed`, or `needed` without full support ([harness review item 12](HARNESS_REVIEW.md#第-12-条为什么会改变数字)). The published citation numbers are kept as computed.
 
 **Paired differences.**
 - On strict correct, Tutor leads RAG by +0.30 [+0.19, +0.42] and Study by +0.29 [+0.17, +0.42], with Bonferroni-adjusted intervals.
@@ -64,7 +66,7 @@ Three blind Codex reviewers re-graded a seeded 20.6% sample (161 responses, stra
 **Ranking check (exploratory).** The sample covers every response with status `ok`, including declared abstentions, and excludes product failures. The counts below are CORRECT verdicts over the sampled answerable items of each path.
 - On this sample the judge rates Study at 18/24 and Tutor at 29/41. The reviewers give Tutor 24/41 and Study 11/24.
 - Tutor's lead in the primary metric comes from RAG's lower correctness and from Study's failure rate.
-- The lead survives a reviewer-calibrated adjustment: each path's strict score is scaled by its reviewer/judge CORRECT ratio on the sample. This gives RAG about 0.31, Tutor 0.59 and Study 0.26.
+- Exploratory adjustment: each path's strict score is scaled by its reviewer/judge CORRECT ratio on the sample. Because the sample excludes product failures, the ratio is not a property of the full holdout. This gives RAG about 0.31, Tutor 0.59 and Study 0.26. Tutor still leads; RAG and Study show no clear difference in the primary comparison.
 
 ## Method and history
 

@@ -10,8 +10,10 @@ Usage (from a clean clone):
 Ownership: only the Compose projects ``lecturelens-demo-<instance>`` and
 ``lecturelens-demoagent-<instance>`` and the processes recorded in
 ``.demo/stack-<instance>/state.json`` are started or stopped. Every container and volume
-created here carries this checkout's owner ID (``OWNER_LABEL``); if either project holds
-anything without it, ``up`` refuses to start and ``down`` removes nothing from that project.
+created here carries this checkout's owner ID (``OWNER_LABEL``). Before ``up`` and ``down`` the
+exact container and volume names Compose would use (and the project labels) are checked; if
+anything there lacks this checkout's owner ID, both refuse, change nothing and exit non-zero.
+Up/down of one instance name are serialized across clones by a lock in ``LOCK_DIR``.
 Projects with other names (for example a ``lecturelens-dev`` stack) are never touched.
 Requested ports that are busy are replaced by free ones and printed. Every listener binds 127.0.0.1.
 
@@ -99,8 +101,41 @@ MIN_ENGINE = (28, 0, 0)
 # stack (scripts/demo/start-infrastructure.sh uses the same project names) or another clone.
 OWNER_LABEL = "io.lecturelens.demo.owner"
 PROJECT_PREFIXES = ("lecturelens-demo-", "lecturelens-demoagent-")
+INFRA_SERVICES = (
+    "mysql",
+    "redis",
+    "minio",
+    "minio-init",
+    "rocketmq-namesrv",
+    "rocketmq-store-init",
+    "rocketmq-broker",
+)
+AGENT_SERVICES = ("postgres",)
 INFRA_VOLUMES = ("mysql_data", "redis_data", "minio_data", "rocketmq_store")
 AGENT_VOLUMES = ("agent-postgres",)
+# One lock per instance name for every clone of this user: the Compose project names are
+# shared by all clones on the Docker daemon, so a lock inside one clone cannot serialize them.
+LOCK_DIR = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "lecturelens-demo"
+
+
+def model_identity(real):
+    """What produced the course material: Java generates translation, notes and chapters."""
+    if not real:
+        return {"mode": "mock"}
+    base = os.environ.get("LECTURELENS_LLM_BASE_URL", REAL_DEFAULTS["LECTURELENS_LLM_BASE_URL"]).rstrip("/")
+    return {
+        "mode": "real",
+        "model": os.environ.get("LECTURELENS_LLM_MODEL", REAL_DEFAULTS["LECTURELENS_LLM_MODEL"]),
+        "java_base_url": os.environ.get("LECTURELENS_JAVA_LLM_BASE_URL", base),
+    }
+
+
+def describe_identity(identity):
+    if not identity:
+        return "an unrecorded model"
+    if identity.get("mode") == "mock":
+        return "the Mock providers"
+    return f"{identity.get('model')} at {identity.get('java_base_url')}"
 
 
 def memory_limit(service):
@@ -132,8 +167,8 @@ class Stack:
         self.dir = ROOT / ".demo" / f"stack-{instance}"
         self.state_file = self.dir / "state.json"
         self.secrets_file = self.dir / "secrets.json"
-        # Outside self.dir so `--purge` cannot delete a lock another invocation holds.
-        self.lock_file = ROOT / ".demo" / f"stack-{instance}.lock"
+        # Shared by all clones and outside self.dir, so `--purge` cannot delete a held lock.
+        self.lock_file = LOCK_DIR / f"{instance}.lock"
         self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
         # Always explicit: LECTURELENS_DEMO_INSTANCE in the caller's shell would otherwise redirect it.
         self.stop_command = f"scripts/demo/down.sh --instance {instance}"
@@ -148,7 +183,7 @@ class Stack:
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            fail(f"another up/down for instance {self.instance} is running")
+            fail(f"another up/down for instance {self.instance} is running (possibly from another clone)")
         self._lock_handle = handle
         # Re-read under the lock: the state may have changed while we waited.
         self.state = json.loads(self.state_file.read_text()) if self.state_file.exists() else {}
@@ -214,22 +249,71 @@ class Stack:
         ):
             raise RuntimeError(f"refusing to manage Compose project {project}")
 
-    def foreign_resources(self, project):
-        """Containers and volumes in `project` that do not carry this checkout's owner ID."""
+    def expected_names(self, project):
+        """Exact container and volume names Compose uses for `project` (it mounts and removes by name)."""
         self.check_project(project)
+        services, volumes = (
+            (INFRA_SERVICES, INFRA_VOLUMES)
+            if project == self.infra_project
+            else (AGENT_SERVICES, AGENT_VOLUMES)
+        )
+        return (
+            {f"{project}-{service}-1" for service in services},
+            {f"{project}_{volume}" for volume in volumes},
+        )
+
+    def docker_resources(self, kind):
+        """(name, owner label, Compose project label) of every container or volume on the daemon."""
+        labels = "\t".join(
+            "{{.Label " + json.dumps(key) + "}}" for key in (OWNER_LABEL, "com.docker.compose.project")
+        )
+        command = (
+            ["docker", "ps", "-a", "--format", "{{.Names}}\t" + labels]
+            if kind == "container"
+            else ["docker", "volume", "ls", "--format", "{{.Name}}\t" + labels]
+        )
+        rows = []
+        for line in self.docker_query(command).splitlines():
+            name, owner, project = (line.split("\t") + ["", ""])[:3]
+            rows.append((name, owner, project))
+        return rows
+
+    def foreign_resources(self, project):
+        """Containers and volumes of `project` that this checkout did not create.
+
+        A resource belongs to `project` if it carries the project's Compose label or has one of the
+        exact names Compose would use; an unlabelled volume with the expected name is still mounted
+        by `up` and deleted by `down -v`, so it counts. Without an owner ID everything is foreign.
+        """
         owner = self.state.get("owner")
-        label = "{{.Label " + json.dumps(OWNER_LABEL) + "}}"
+        containers, volumes = self.expected_names(project)
         found = []
-        for kind, command in (
-            ("container", ["docker", "ps", "-a", "--format", "{{.Names}}\t" + label]),
-            ("volume", ["docker", "volume", "ls", "--format", "{{.Name}}\t" + label]),
-        ):
-            command[3:3] = ["--filter", f"label=com.docker.compose.project={project}"]
-            for line in self.docker_query(command).splitlines():
-                name, _, value = line.partition("\t")
-                if not owner or value != owner:
+        for kind, expected in (("container", containers), ("volume", volumes)):
+            for name, label, compose_project in self.docker_resources(kind):
+                if (compose_project == project or name in expected) and (not owner or label != owner):
                     found.append(f"{kind} {name}")
         return found
+
+    def ownership_problems(self):
+        problems = []
+        for project in (self.agent_project, self.infra_project):
+            try:
+                foreign = self.foreign_resources(project)
+            except RuntimeError as error:
+                problems.append(f"{project}: ownership check failed ({error})")
+                continue
+            if foreign:
+                problems.append(
+                    f"{project} has resources this checkout did not create ({', '.join(foreign[:4])}"
+                    f"{', ...' if len(foreign) > 4 else ''})"
+                )
+        return problems
+
+    def remaining_volumes(self):
+        expected = set()
+        for project in (self.agent_project, self.infra_project):
+            expected |= self.expected_names(project)[1]
+        return sorted(name for name, _, _ in self.docker_resources("volume") if name in expected)
 
     @staticmethod
     def port_free(port):
@@ -320,6 +404,15 @@ class Stack:
                 # The key travels in an Authorization header, so never in clear text, not even on loopback.
                 if url.scheme != "https" or not url.hostname:
                     fail(f"{key} must be an https URL")
+        self.check_projects_free()
+        for name, record in self.state.get("pids", {}).items():
+            if self.owned(record):
+                fail(
+                    f"recorded process {name} (pid {record['pid']}) is still running; run {self.stop_command} first"
+                )
+
+    def check_projects_free(self):
+        """Refuse to start if either project holds anything this checkout did not create, or runs."""
         for project in (self.infra_project, self.agent_project):
             try:
                 running = self.docker_query(
@@ -336,11 +429,6 @@ class Stack:
                 )
             if running:
                 fail(f"{project} is already running; run {self.stop_command} first")
-        for name, record in self.state.get("pids", {}).items():
-            if self.owned(record):
-                fail(
-                    f"recorded process {name} (pid {record['pid']}) is still running; run {self.stop_command} first"
-                )
 
     def choose_ports(self):
         ports, previous = {}, self.state.get("ports", {})
@@ -757,23 +845,32 @@ class Stack:
         except RuntimeError:
             pass  # already registered on a previous start of this instance
         token = self.api("POST", "/api/auth/login", credentials)["accessToken"]
-        # A course prepared in the other mode carries that mode's translation and learning
-        # material, so only a same-mode course is reused; the other one stays in the database.
-        if self.state.get("task_id") and self.state.get("task_mode") == self.state["mode"]:
+        saved = self.state.get("task_id")
+        if saved:
+            # Never start a second (possibly paid) import while the saved one may still finish, and
+            # never reuse material prepared by another model. Only FAILED/CANCELED is replaced.
+            retry = (
+                f"No new upload was started. Run up again later; if it keeps failing, "
+                f"`scripts/demo/down.sh --purge --instance {self.instance}` deletes this instance's data."
+            )
             try:
-                reusable = (
-                    self.api("GET", f"/api/tasks/{self.state['task_id']}", token=token)["status"]
-                    == "SUCCEEDED"
-                )
-            except RuntimeError:
-                reusable = False
-            if reusable:
-                # Outside the lookup's try: an index read error must fail, not start another import.
+                status = self.api("GET", f"/api/tasks/{saved}", token=token)["status"]
+            except (RuntimeError, OSError, KeyError, TypeError, ValueError) as error:
+                fail(f"cannot read the status of the saved demo course {saved} ({error}). {retry}")
+            if status == "SUCCEEDED":
+                prepared, active = self.state.get("course_identity"), self.state.get("model_identity")
+                if prepared != active:
+                    fail(
+                        f"the saved demo course was prepared with {describe_identity(prepared)}, but this start "
+                        f"uses {describe_identity(active)}; its material is not reused and no new import is "
+                        f"started. Use another --instance, or the same mode and model as before."
+                    )
                 log("demo course already imported; checking its Evidence index")
-                self.wait_index(self.state["task_id"], token)
+                self.wait_index(saved, token)
                 return
-        elif self.state.get("task_id"):
-            log(f"the saved demo course was prepared in {self.state.get('task_mode', 'an unknown')} mode")
+            if status not in ("FAILED", "CANCELED"):
+                fail(f"the saved demo course {saved} is still {status}. {retry}")
+            log(f"the saved demo course ended {status}; importing it again")
         log("uploading the synthetic demo course and running the media pipeline")
         video = FIXTURE.read_bytes()
         upload = self.api(
@@ -811,7 +908,7 @@ class Stack:
             {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"},
             token,
         )["taskId"]
-        self.state.update(task_id=task, task_mode=self.state["mode"])
+        self.state.update(task_id=task, course_identity=self.state["model_identity"])
         self.save()
         deadline = time.monotonic() + 600
         while True:
@@ -852,7 +949,9 @@ class Stack:
         )
         # Labels every container and volume this checkout creates (see OWNER_LABEL).
         self.state.setdefault("owner", secrets.token_hex(16))
-        self.state.update(mode="real" if real else "mock", model=model, pids={})
+        self.state.update(
+            mode="real" if real else "mock", model=model, model_identity=model_identity(real), pids={}
+        )
         self.save()
         self.write_compose_files(ports, secret)
         self.build()
@@ -955,21 +1054,15 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
         if self.dir.exists():
             self.save()
         if (self.dir / "compose.env").exists():
+            # Any resource this checkout did not create stops the whole removal: nothing is removed
+            # from either project, and the caller reports it instead of resolving it.
+            problems = self.ownership_problems()
+            if problems:
+                return [f"{problem}; nothing removed" for problem in problems]
             env = self.compose_env(self.load_secrets())
             extra = ["-v"] if purge else []
             # Try both projects even if the first fails or hangs, then report every failure.
             for project in (self.agent_project, self.infra_project):
-                try:
-                    foreign = self.foreign_resources(project)
-                except RuntimeError as error:
-                    failures.append(f"{project} ({error})")
-                    continue
-                if foreign:
-                    failures.append(
-                        f"{project} (not created by this checkout: {', '.join(foreign[:4])}"
-                        f"{', ...' if len(foreign) > 4 else ''}; nothing removed)"
-                    )
-                    continue
                 log(f"removing containers of {project}{' and its volumes' if purge else ''}")
                 try:
                     with (self.dir / "down.log").open("a") as out:
@@ -987,13 +1080,31 @@ LectureLens demo is ready in {self.state["ready_seconds"]}s ({mode})
                     continue
                 if code != 0:
                     failures.append(f"{project} (compose down exited {code})")
+            if purge and not failures:
+                # Compose can warn about a volume in use and still exit 0; keep the owner ID until
+                # every expected volume is really gone so a later purge can finish the job.
+                try:
+                    remaining = self.remaining_volumes()
+                except RuntimeError as error:
+                    remaining = [f"(volume check failed: {error})"]
+                if remaining:
+                    failures.append(f"volumes still present: {', '.join(remaining)}")
         return failures
 
     def down(self, purge):
         self.lock()
+        if (self.dir / "compose.env").exists():
+            # Checked before any process is stopped, so a refusal changes nothing.
+            problems = self.ownership_problems()
+            if problems:
+                fail(
+                    "refusing to stop or remove anything: "
+                    + "; ".join(problems)
+                    + ". Remove them from the checkout that created them, or by hand."
+                )
         failures = self.teardown(purge)
         if failures:
-            fail(f"could not remove {'; '.join(failures)}; see {self.dir / 'down.log'}")
+            fail(f"could not remove {'; '.join(failures)}; see {self.dir / 'down.log'}; local state kept")
         if purge and self.dir.exists():
             shutil.rmtree(self.dir)
         log("stopped")

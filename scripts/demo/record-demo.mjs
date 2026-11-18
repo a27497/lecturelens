@@ -27,7 +27,14 @@ const email = 'demo@example.com';
 if (!state.task_id || !state.ports?.WEB_PORT) throw Error(`${stackDir} has no prepared course; run up.sh first`);
 const courseUrl = `http://127.0.0.1:${state.ports.WEB_PORT}/tasks/${state.task_id}`;
 const real = state.mode === 'real';
-const modeLabel = real ? `Real · ${state.model}` : 'Mock · 确定性演示提供方，无外部模型调用';
+// up.sh only reuses a course whose material came from the same model, so the label can name both.
+const materialModel = state.course_identity?.model;
+if (real && materialModel !== state.model) {
+  throw Error(`course material was prepared with ${materialModel ?? 'an unrecorded model'}, not ${state.model}`);
+}
+const modeLabel = real
+  ? `Real · ${state.model}（问答、练习与课程材料）`
+  : 'Mock · 确定性演示提供方，无外部模型调用';
 const output = resolve(args.output);
 await mkdir(output, { recursive: true });
 const finalVideo = join(output, 'walkthrough.webm');
@@ -207,4 +214,4 @@ if (problems.length) {
   console.error(`INCOMPLETE recording ${finalVideo}\n- ${problems.join('\n- ')}`);
   process.exit(1);
 }
-console.log(`PASS recording ${finalVideo} (${state.mode})`);
+console.log(`PASS recording ${finalVideo} (${state.mode}${real ? `, course material from ${materialModel}` : ''})`);
