@@ -23,6 +23,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
   const returnToLearning = page.getByRole('button', { name: '返回当前学习任务' });
   const citedRow = page.locator('.timeline-row[data-reference="true"]');
   const question = page.locator('.practice-question.is-current');
+  const entries = () => page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('lecturelens.lastCourseLocation.v1:')));
 
   async function capture(name, target) {
     const output = process.env.LECTURELENS_SCREENSHOT_DIR;
@@ -191,6 +192,19 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect(page).toHaveURL(`${base}/tasks`);
     await expect(courseCard.getByText('上次停在：闪卡复习 · 视频 00:01:15')).toBeVisible();
     await capture('19-tasks-return');
+
+    const [[key]] = await entries();
+    await page.evaluate(storageKey => {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      localStorage.setItem(storageKey, JSON.stringify({ ...saved, at: 74000 }));
+      window.dispatchEvent(new StorageEvent('storage', { key: storageKey }));
+    }, key);
+    await expect(courseCard.getByText('上次停在：闪卡复习 · 视频 00:01:14')).toBeVisible();
+    // Simulate a newer write whose storage event has not been handled yet.
+    await page.evaluate(storageKey => {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      localStorage.setItem(storageKey, JSON.stringify({ ...saved, at: 75000 }));
+    }, key);
     await courseCard.getByRole('button', { name: '继续学习', exact: true }).click();
     await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
     await expect.poll(position).toBe('75000');
@@ -199,11 +213,28 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect(reviewed).toHaveText(savedReviewCount);
     await capture('20-reenter', deck.getByRole('heading', { name: '闪卡复习' }));
 
-    const entries = () => page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('lecturelens.lastCourseLocation.v1:')));
-    const [[key, saved]] = await entries();
+    const [[, saved]] = await entries();
     expect(key).toMatch(/^lecturelens\.lastCourseLocation\.v1:\d+:/);
     expect(key.endsWith(`:${state.task_id}`)).toBe(true);
     expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000 });
+
+    await page.getByRole('link', { name: /返回我的课程/ }).click();
+    let releaseIdentity;
+    const identityReady = new Promise(resolve => { releaseIdentity = resolve; });
+    await page.route('**/api/me', async route => { await identityReady; await route.continue(); });
+    try {
+      await page.reload();
+      const enter = courseCard.getByRole('button', { name: '进入学习', exact: true });
+      await enter.click();
+      await expect(enter).toHaveClass(/is-loading/);
+      await expect(page).toHaveURL(`${base}/tasks`);
+    } finally {
+      releaseIdentity();
+    }
+    await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
+    await expect.poll(position).toBe('75000');
+    await page.unroute('**/api/me');
+
     if (isMobile) await page.getByRole('button', { name: '打开导航' }).click();
     await page.getByRole('button', { name: isMobile ? '退出登录' : '退出', exact: true }).click();
     await expect(page.getByPlaceholder('请输入密码')).toBeVisible();

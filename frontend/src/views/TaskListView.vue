@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -48,9 +48,11 @@ const router = useRouter();
 const authStore = useAuthStore();
 const loading = ref(false);
 const refreshing = ref(false);
+const openingTaskId = ref("");
 const retryingTaskId = ref("");
 const errorMessage = ref("");
 const tasks = ref<TaskSummaryResponse[]>([]);
+const savedLocations = shallowRef(new Map<string, LastCourseLocation>());
 const total = ref(0);
 const activeGroup = ref<TaskStatusGroup>("ALL");
 const batchMode = ref(false);
@@ -72,7 +74,7 @@ const filteredTasks = computed(() => {
 const courseCards = computed(() => filteredTasks.value.map(task => ({
   task,
   title: courseTitle(task),
-  location: task.status === "SUCCEEDED" ? readLastCourseLocation(authStore.user?.userId, task.taskId) : null,
+  location: savedLocations.value.get(task.taskId) ?? null,
 })));
 
 const hasRunningTasks = computed(() => tasks.value.some((task) => isRunningTaskStatus(task.status)));
@@ -118,14 +120,20 @@ const emptyText = computed(() => {
 
 onMounted(() => {
   componentActive = true;
+  window.addEventListener("storage", refreshSavedLocations);
+  window.addEventListener("focus", refreshSavedLocations);
   void loadTasks();
 });
 
 onBeforeUnmount(() => {
   componentActive = false;
+  window.removeEventListener("storage", refreshSavedLocations);
+  window.removeEventListener("focus", refreshSavedLocations);
   latestTaskRequestVersion += 1;
   stopAutoRefresh();
 });
+
+watch([tasks, () => authStore.user?.userId], refreshSavedLocations);
 
 watch(hasRunningTasks, (nextValue) => {
   if (nextValue) {
@@ -304,8 +312,29 @@ function lastLocationText(location: LastCourseLocation): string {
   return `上次停在：${workspaceLabel(location.view)} · 视频 ${formatMillisToClock(location.at)}`;
 }
 
-function openTask(task: TaskSummaryResponse, location: LastCourseLocation | null) {
-  void router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
+function refreshSavedLocations() {
+  const userId = authStore.user?.userId;
+  const locations = new Map<string, LastCourseLocation>();
+  for (const task of tasks.value) {
+    if (task.status !== "SUCCEEDED") continue;
+    const location = readLastCourseLocation(userId, task.taskId);
+    if (location) locations.set(task.taskId, location);
+  }
+  savedLocations.value = locations;
+}
+
+async function openTask(task: TaskSummaryResponse) {
+  if (openingTaskId.value) return;
+  openingTaskId.value = task.taskId;
+  try {
+    const user = task.status === "SUCCEEDED" ? await authStore.loadCurrentUser().catch(() => null) : null;
+    if (!componentActive) return;
+    // Other tabs can save a new location after this card has rendered.
+    const location = readLastCourseLocation(user?.userId, task.taskId);
+    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
+  } finally {
+    openingTaskId.value = "";
+  }
 }
 
 async function confirmRetryTask(task: TaskSummaryResponse) {
@@ -628,7 +657,7 @@ function formatTime(value: string | null): string {
           </div>
 
           <div class="course-item__actions">
-            <el-button type="primary" @click="openTask(task, location)">{{ primaryActionText(task, location) }}</el-button>
+            <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">{{ primaryActionText(task, location) }}</el-button>
             <el-button
               v-if="isRetryableTaskStatus(task.status)"
               :loading="retryingTaskId === task.taskId"
