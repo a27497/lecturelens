@@ -66,7 +66,7 @@ REAL_DEFAULTS = {
     "LECTURELENS_LLM_BASE_URL": "https://api.deepseek.com",
     "LECTURELENS_LLM_MODEL": "deepseek-flash",
 }
-# Memory caps keep the whole demo near 3 GB so it fits next to a browser on an 8 GB laptop.
+# Memory caps keep the whole demo near 3 GB, aimed at running next to a browser on an 8 GB laptop.
 # Each container value is a hard cgroup cap (memswap equal, so it cannot spill into swap);
 # sizes are the usage measured on the demo course plus headroom (eval/demo-stack/README.md).
 # The RocketMQ images otherwise size their JVM heap from host memory.

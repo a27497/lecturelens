@@ -4,24 +4,45 @@
 
 ## 环境
 
-- Linux x86_64，8 核，16 GB 内存，没有 swap；Docker Compose 2.40，Java 21，Node.js 24，uv 0.12，FFmpeg 6.1。
+- Linux x86_64，8 核，15.7 GB 内存；Docker Compose 2.40，Java 21，Node.js 24，uv 0.12，FFmpeg 6.1。最后一组测量时本机有 4 GB swap，之前的测量没有 swap。
 - 本机已有 Maven、npm、uv 的下载缓存，以及 MySQL、Redis、RocketMQ、pgvector 镜像和从源码构建好的 MinIO 镜像。Playwright 的 Chromium 也已安装。新机器第一次运行还要下载这些内容，用时会长很多。
-- 本机同时运行着另一套开发栈（Compose 项目 `lecturelens-dev`）。演示脚本没有读取、停止或修改它的容器和数据卷。
+- 早期测量时本机同时运行着另一套开发栈（Compose 项目 `lecturelens-dev`），演示脚本没有读取、停止或修改它。最后一组测量时这套开发栈已由机器所有者停掉。
+
+## 内存上限
+
+演示栈给每个容器设了硬上限（`mem_limit` 与 `memswap_limit` 相同，不会挤进 swap），并压低了 JVM 堆。数值只在 [`stack.py`](../../scripts/demo/stack.py) 的 `CONTAINER_MEMORY`、`BROKER_JAVA_OPTS`、`NAMESRV_JAVA_OPTS`、`JAVA_BACKEND_HEAP` 定义一次。可用内存低于 4,096 MB 时 `up.sh` 拒绝启动（`MIN_AVAILABLE_MB`）。
+
+| 组件 | 上限 | 实测峰值（`3d7fbad`） |
+| --- | --- | --- |
+| RocketMQ broker（含 gRPC proxy，堆 256m） | 896 MiB | 624 MiB |
+| MySQL | 640 MiB | 467 MiB |
+| MinIO | 384 MiB | 218 MiB |
+| RocketMQ NameServer（堆 ≤ 256m） | 384 MiB | 157 MiB |
+| PostgreSQL / pgvector | 256 MiB | 38 MiB |
+| Redis | 64 MiB | 5 MiB |
+| Java 后端进程（`-Xmx768m`） | 堆 768 MiB | RSS 689 MiB |
+| Agent 进程（Python，含 ONNX 嵌入模型） | 无 | RSS 763 MiB |
+| 前端预览进程 | 无 | RSS 134 MiB |
+| **整套（同一采样点的容器与进程之和）** | | **2,966 MiB** |
+
+第一次加上限时 broker 的堆是 384m、上限 768 MiB，启动阶段被内核 OOM 杀掉（匿名内存 617 MB，大部分在堆外）。`up.sh` 自动停掉了这次启动的容器和进程。改为堆 256m、上限 896 MiB 后通过。
 
 ## Mock 模式（默认）
 
-在一个新目录 `git clone` 后执行 `scripts/demo/up.sh`。共测了两次：第一次在提交 `69e000d`，从本地工作树 clone；最后一次在提交 `19152e3`，从 GitHub clone，与前一次相比只多了代码格式化和文档。
+在一个新目录 `git clone` 后执行 `scripts/demo/up.sh`，再用录屏脚本冒烟，最后 `down.sh`。
 
-| 项目 | `69e000d` | `19152e3` |
-| --- | --- | --- |
-| 到“可以提问”的总时间 | 96.1 s | 95.2 s |
-| 启动后的内存增量 | 3.1 GB（9,218 → 12,330 MB） | 2.9 GB（9,650 → 12,599 MB） |
-| 冒烟期间峰值（含 Playwright Chromium） | 未单独记录 | 3.7 GB（→ 13,395 MB） |
-| `down.sh` 用时 | 23.0 s | 23.3 s |
+| 项目 | `69e000d` | `19152e3` | `b3d83e8`（没有内存上限） | `3d7fbad`（有内存上限） |
+| --- | --- | --- | --- | --- |
+| clone 来源 | 本地工作树 | GitHub | GitHub | 本地工作树 |
+| 到“可以提问”的总时间 | 96.1 s | 95.2 s | 96.6 s | 86.2 s |
+| 启动后的系统内存增量 | 3.1 GB（9,218 → 12,330 MB） | 2.9 GB（9,650 → 12,599 MB） | 未单独记录 | 2.5 GB（2,558 → 5,089 MB） |
+| 冒烟期间峰值增量（含 Playwright Chromium） | 未单独记录 | 3.7 GB（→ 13,395 MB） | 3.4 GB（7,188 → 10,611 MB） | 3.1 GB（→ 5,642 MB） |
+| 冒烟 | 通过 | 通过 | 通过 | 通过 |
+| `down.sh` 用时 | 23.0 s | 23.3 s | 23.0 s | 22.6 s |
 
-总时间包括构建 Java JAR、`npm ci` 与前端构建、`uv sync`、下载嵌入模型、启动基础设施、启动三个应用进程、导入演示课程并等待索引 READY。内存是系统已用内存，每 2 秒采样一次。`69e000d` 那次的进程与容器占用：Java 579 MB，Agent 751 MB，前端预览 123 MB；RocketMQ broker 826 MiB，MySQL 466 MiB，MinIO 227 MiB，NameServer 168 MiB，PostgreSQL 31 MiB，Redis 5 MiB。
+总时间包括构建 Java JAR、`npm ci` 与前端构建、`uv sync`、下载嵌入模型、启动基础设施、启动三个应用进程、导入演示课程并等待索引 READY。系统内存是 `free -m` 的 used；`3d7fbad` 那次每约 4 秒采样一次，同时用 `docker stats` 和 `ps` 记录每个容器和进程。`69e000d` 那次的进程与容器占用（没有上限）：Java 579 MB，Agent 751 MB，前端预览 123 MB；RocketMQ broker 826 MiB，MySQL 466 MiB，MinIO 227 MiB，NameServer 168 MiB，PostgreSQL 31 MiB，Redis 5 MiB。
 
-两次 `down.sh` 之后都没有残留的演示容器或进程，`lecturelens-dev` 的 6 个容器一直在运行。
+每次 `down.sh` 之后都没有残留的演示容器或进程。
 
 冒烟步骤：用 [`record-demo.mjs`](../../scripts/demo/record-demo.mjs) 在 Chromium 里走完整流程（Mock 实例）：
 
@@ -39,6 +60,8 @@
 ## 真实模型模式与录屏
 
 执行 `scripts/demo/up.sh --real --instance real`，`deepseek-flash`，key 来自私有目录，只通过子进程环境传入。录屏前检查过：日志和状态目录里都找不到这个 key。
+
+真实模式的启动和录屏是在加内存上限之前做的（提交 `69e000d` 之后的录屏实例）；加上限后没有重跑真实模式。
 
 | 项目 | 结果 |
 | --- | --- |
