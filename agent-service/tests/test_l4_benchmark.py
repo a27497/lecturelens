@@ -436,9 +436,10 @@ def test_freeze_refuses_a_quote_outside_its_cue(tmp_path):
 
 # ---------------------------------------------------------------- gold citations
 
-CAPTIONS = """[00:09-00:40] So this kind of tree is called an
-[00:40-01:14] identification tree. But a decision tree is a label for something else.
-[01:20-01:50] Some characteristics don't matter, and some -- matter only part of the time.
+# Synthetic captions written for this test; they quote no real lecture.
+CAPTIONS = """[00:09-00:40] In this example the sorting chart is known as a
+[00:40-01:14] routing chart. But a flow chart is a name for another idea.
+[01:20-01:50] Several inputs don't count, and some -- count only some of the time.
 """
 
 
@@ -457,33 +458,31 @@ def test_citation_cue_rules():
     windows = citations.parse_windows(CAPTIONS)
     ok = citations.check_cue
     # Case, punctuation and "--" are ignored; the words and their order are not.
-    assert (
-        ok(cue("01:20", "01:50", "some characteristics DON'T matter, and some matter only"), windows) is None
-    )
-    assert ok(cue("01:20", "01:50", "matter only some part"), windows) == "quote not in the cited windows"
+    assert ok(cue("01:20", "01:50", "several inputs DON'T count, and some count only"), windows) is None
+    assert ok(cue("01:20", "01:50", "count only some part"), windows) == "quote not in the cited windows"
     # A quote across a window boundary must name both windows ...
-    spanning = "called an identification tree"
+    spanning = "known as a routing chart"
     assert ok(cue("00:40", "01:14", spanning), windows) == "quote not in the cited windows"
     assert ok(cue("00:09", "01:14", spanning), windows) is None
     # ... and a cue may not be wider than its quote (one window off is an error, not a tolerance).
-    assert ok(cue("00:09", "01:14", "a decision tree is a label"), windows) == "cue wider than the quote"
-    assert ok(cue("00:40", "01:50", "a decision tree is a label"), windows) == "cue wider than the quote"
+    assert ok(cue("00:09", "01:14", "a flow chart is a name"), windows) == "cue wider than the quote"
+    assert ok(cue("00:40", "01:50", "a flow chart is a name"), windows) == "cue wider than the quote"
     # Labels must be real window boundaries.
-    assert "not a window start" in ok(cue("00:10", "00:40", "this kind of tree"), windows)
-    assert "not a window end" in ok(cue("00:40", "01:20", "identification tree"), windows)
+    assert "not a window start" in ok(cue("00:10", "00:40", "this example the sorting"), windows)
+    assert "not a window end" in ok(cue("00:40", "01:20", "routing chart"), windows)
     assert ok(cue("00:09", "00:40", " -- "), windows) == "empty quote"
 
 
 def test_citation_locate_and_item_errors():
     windows = citations.parse_windows(CAPTIONS)
-    assert citations.locate("called an identification tree", windows) == [("00:09", "01:14")]
-    assert citations.locate("decision tree", windows) == [("00:40", "01:14")]
+    assert citations.locate("known as a routing chart", windows) == [("00:09", "01:14")]
+    assert citations.locate("flow chart", windows) == [("00:40", "01:14")]
     item = {
         "item_id": "h-x01-01",
         "lecture_id": "lec",
         "nuggets": [
-            {"id": "N1", "cues": [cue("00:40", "01:14", "identification tree")]},
-            {"id": "N2", "cues": [cue("00:40", "01:14", "called an identification tree")]},
+            {"id": "N1", "cues": [cue("00:40", "01:14", "routing chart")]},
+            {"id": "N2", "cues": [cue("00:40", "01:14", "known as a routing chart")]},
             {"id": "N3", "cues": []},
         ],
     }
