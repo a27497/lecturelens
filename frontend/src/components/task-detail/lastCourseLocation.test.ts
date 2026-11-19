@@ -22,6 +22,15 @@ describe("last course location", () => {
     expect(readLastCourseLocation(undefined, "task_a")).toBeNull();
   });
 
+  it("restores the last learning mode from materials and rejects unknown modes", () => {
+    saveLastCourseLocation(7, "task_a", { view: "content", learn: "tutor", at: "75000" });
+    const saved = readLastCourseLocation(7, "task_a");
+    expect(saved).toMatchObject({ view: "content", learn: "tutor", at: 75000 });
+    expect(lastCourseLocationQuery(saved!)).toEqual({ view: "content", learn: "tutor", at: "75000" });
+    saveLastCourseLocation(7, "task_a", { view: "content", learn: "PRIVATE", at: "75000" });
+    expect(readLastCourseLocation(7, "task_a")).not.toHaveProperty("learn");
+  });
+
   it.each([
     "not json",
     JSON.stringify({ view: "admin", at: 0 }),

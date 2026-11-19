@@ -16,7 +16,7 @@ const navItems = computed(() =>
   authStore.isAuthenticated
     ? [
         { label: "我的课程", to: "/tasks" },
-        { label: "上传课程", to: "/upload" },
+        ...(route.path === "/tasks" ? [] : [{ label: "上传课程", to: "/upload" }]),
         { label: "模型管理", to: "/settings/models" },
         ...(authStore.isAdmin ? [{ label: "系统模型", to: "/admin/settings/models" }] : []),
       ]

@@ -71,7 +71,9 @@ watch(() => props.playbackUrl, () => {
   videoErrorMessage.value = "";
 });
 watch(() => props.seekRequest, request => {
-  if (request) seekTo(request.milliseconds / 1000);
+  if (!request) return;
+  if (request.pause) pausePlayback();
+  seekTo(request.milliseconds / 1000);
 }, { immediate: true });
 // v-show/CSS keep the media instance alive. Hidden controls must never leave audio running.
 watch(() => props.inactive, inactive => { if (inactive) pausePlayback(); }, { flush: "sync" });

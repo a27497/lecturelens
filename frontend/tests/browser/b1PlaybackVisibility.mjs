@@ -21,9 +21,11 @@ try {
       external.push(route.request().url()); return route.abort();
     });
     page.on('pageerror', e => errors.push(String(e)));
-    const nav = name => page.getByRole('navigation', { name: '课程内容导航' }).getByRole('button', { name, exact: true });
+    const navigation = page.getByRole('navigation', { name: '课程内容导航' });
+    const nav = name => navigation.getByRole('button', { name, exact: true })
+      .or(navigation.getByRole('button', { name: `返回 ${name}`, exact: true }));
     const answer = page.locator('.practice-question.is-current .practice-answer textarea');
-    const source = () => page.locator('.practice-question.is-current .practice-feedback').getByRole('button', { name: '回看这段课程证据', exact: true }).first();
+    const source = () => page.locator('.practice-question.is-current .practice-feedback').getByRole('button', { name: /^回看(这段课程证据|课程证据)/ }).first();
     const video = page.locator('video');
     const play = async () => {
       await expect(video).toBeVisible();
@@ -51,7 +53,7 @@ try {
       const node = await video.elementHandle(), input = await answer.elementHandle();
       const generation = () => fixture.requests.filter(r => ['START', 'START_FEEDBACK', 'CREATE_SESSION'].includes(r.operation)).length;
       const before = generation();
-      await check('playing citation review pauses every hidden mobile player; desktop keeps playing', async () => {
+      await check('opening a citation pauses the player at both workspace widths', async () => {
         if (width === 390) await nav('课程材料').click();
         await play();
         if (width === 390) await nav('解释与练习').click();
@@ -59,7 +61,7 @@ try {
         await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(1);
         await capture('citation-before-assert');
         if (width === 390) { await expect(video).toBeHidden(); await expect.poll(() => video.evaluate(v => v.paused)).toBe(true); }
-        else { await expect(video).toBeVisible(); await expect.poll(() => video.evaluate(v => v.paused)).toBe(false); }
+        else { await expect(video).toBeVisible(); await expect.poll(() => video.evaluate(v => v.paused)).toBe(true); }
       });
       await check('return, material and breakpoint transitions retain nodes, draft and position without autoplay', async () => {
         if (width === 1440) await page.setViewportSize({ width: 390, height: 844 });
@@ -78,11 +80,13 @@ try {
         expect(await answer.evaluate((v, old) => v === old, input)).toBe(true);
         expect(generation()).toBe(before); await capture('returned');
       });
-      await check('both citation return buttons restore the same source trigger and scroll', async () => {
+      await check('the citation return restores the source trigger, answer draft and scroll', async () => {
         const positions = [];
-        for (const label of ['返回当前学习任务', '返回本题作答']) {
-          await source().click(); await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(1);
-          await page.getByRole('button', { name: label, exact: true }).click();
+        for (let visit = 0; visit < 2; visit++) {
+          await source().press('Enter'); await expect(page.locator('.timeline-row[data-reference=true]')).toHaveCount(1);
+          const back = page.getByRole('button', { name: '返回当前学习任务', exact: true });
+          await expect(back).toHaveCount(1);
+          await back.press('Enter');
           await expect(source()).toBeFocused();
           positions.push(await page.evaluate(() => scrollY));
           await expect(answer).toHaveValue('same page unsaved v2');

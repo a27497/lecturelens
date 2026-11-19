@@ -164,11 +164,14 @@ function emptyText(pending: string): string {
       <el-empty v-else-if="filteredRows.length === 0" description="没有找到包含该关键词的片段" />
       <div v-else v-memo="[filteredRows, currentSegment, referenceSegment, referenceJumpInHeader]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
         <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment, referenceJumpInHeader && row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :tabindex="row.segmentIndex === referenceSegment ? -1 : undefined" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
-          <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span></div>
-          <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : (result?.translations.length ? '此片段暂无对齐译文' : segmentTranslationEmptyText)) }}</p></div>
-          <el-button v-if="!referenceJumpInHeader || row.segmentIndex !== referenceSegment" size="small" plain
+          <div class="timeline-row__time">
+            <strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong>
+            <span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span>
+            <el-button v-if="!referenceJumpInHeader || row.segmentIndex !== referenceSegment" size="small" plain
             :aria-label="row.segmentIndex === referenceSegment ? undefined : `跳到视频 ${formatMillisRange(row.startMillis, row.endMillis)} · 片段 ${row.segmentIndex}`"
             :disabled="!isValidTimeRange(row.startMillis, row.endMillis)" @click="resumeFollow(); emit('seek', row.startMillis)">跳到视频</el-button>
+          </div>
+          <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : (result?.translations.length ? '此片段暂无对齐译文' : segmentTranslationEmptyText)) }}</p></div>
         </article>
       </div>
     </section>
@@ -200,7 +203,7 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-list { display: block; position: relative; max-height: 65vh; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; }
 .timeline-row.is-current { background: var(--color-brand-soft, #edf4f0); border-left: 3px solid var(--color-brand); padding-left: 10px; }
 .timeline-search { display: flex; align-items: center; gap: 12px; }.timeline-search span { flex: 0 0 auto; color: var(--color-ink-soft); font-size: 13px; }
-.timeline-row { display: grid; grid-template-columns: 110px minmax(0,1fr) auto; gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--color-border); }
+.timeline-row { display: grid; grid-template-columns: minmax(0, 140px) minmax(0,1fr); gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--color-border); }
 .timeline-row__time { display: grid; gap: 4px; color: var(--color-brand); font-size: 13px; }.timeline-row p { margin: 0 0 8px; line-height: 1.65; }.timeline-row__translation { color: var(--color-ink-soft); }
 @media (max-width: 680px) { .timeline-search { align-items: stretch; flex-direction: column; }.timeline-row { grid-template-columns: 1fr; } }
 
@@ -214,7 +217,7 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-row__time { font-variant-numeric: tabular-nums; }
 .timeline-list:focus-visible, .timeline-row:focus-visible, .reading-copy:focus-visible { outline: 2px solid var(--color-brand); outline-offset: -2px; }
 .content-panel--compact .timeline-row { grid-template-columns: minmax(88px, auto) minmax(0, 1fr); gap: 4px 14px; padding: 12px; border-radius: var(--radius-md); }
-.content-panel--compact .timeline-row > button { grid-column: 2; justify-self: start; }
+.timeline-row__time button { justify-self: start; }
 .content-panel--compact .timeline-row[data-reference=true] { border-color: var(--color-warning); background: var(--color-evidence-surface); }
 .content-panel--compact .timeline-row[data-reference=true] .timeline-row__time { color: var(--color-warning); }
 .content-panel--compact .reference-label { justify-self: start; color: var(--color-warning); background: var(--color-evidence-surface); font-weight: 700; }
@@ -225,7 +228,6 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 }
 @media (max-width: 520px) {
   .content-panel--compact .timeline-row { grid-template-columns: 1fr; }
-  .content-panel--compact .timeline-row > button { grid-column: 1; }
-  .content-panel--compact .timeline-row__time { display: flex; flex-wrap: wrap; }
+  .content-panel--compact .timeline-row__time { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
 }
 </style>

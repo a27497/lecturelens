@@ -138,7 +138,7 @@ test('keeps verified citation and playback notes across reload and returns focus
   await expect(page.getByRole('region', { name: '课程章节' })).toBeVisible();
   const video = page.getByLabel('课程视频', { exact: true });
   await expect.poll(() => video.evaluate(element => element.readyState)).toBeGreaterThan(0);
-  await nav.getByRole('button', { name: '个人笔记' }).click();
+  await nav.getByRole('button', { name: wide ? '个人笔记' : '返回 个人笔记', exact: true }).click();
   await expect(page.getByText(/播放位置$/, { exact: false })).toBeVisible();
   await textarea.fill('记住当前播放位置');
   await page.getByRole('button', { name: '保存笔记' }).click();
@@ -182,6 +182,8 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   await screenshot(page, 'library-recoverable-error');
   await page.getByRole('button', { name: '刷新', exact: true }).click();
   await expect(page.getByText('还没有课程视频', { exact: true })).toBeVisible();
+  await expect(page.getByRole('main').getByRole('link', { name: '上传视频', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('main').getByRole('button', { name: '批量管理' })).toHaveCount(0);
   await screenshot(page, 'library-empty');
 
   await page.goto(`${base}/tasks/${taskId}?view=notes`);
