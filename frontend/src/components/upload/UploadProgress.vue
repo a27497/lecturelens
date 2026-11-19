@@ -54,6 +54,7 @@ function formatEta(seconds: number | null): string {
     </div>
     <el-progress
       v-if="totalBytes > 0 && (uploadedBytes > 0 || phase === 'uploading')"
+      aria-label="视频上传进度"
       :percentage="progressPercent"
       :show-text="false"
       :status="phase === 'success' ? 'success' : phase === 'error' ? 'exception' : undefined"

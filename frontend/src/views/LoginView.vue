@@ -56,13 +56,22 @@ async function submitLogin() {
       email: form.email.trim(),
       password: form.password,
     }, redirect);
-    ElMessage.success("登录成功");
+    ElMessage.success({ message: "登录成功", customClass: "login-success-message" });
     await router.push(redirect);
   } catch (error) {
     errorMessage.value = toReadableAuthError(error);
   }
 }
 </script>
+
+<style>
+.el-message--success.login-success-message {
+  --el-message-bg-color: var(--color-success-surface);
+}
+.el-message--success.login-success-message :is(.el-message__content, .el-message__icon) {
+  color: var(--color-success);
+}
+</style>
 
 <template>
   <main class="auth-page">

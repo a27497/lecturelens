@@ -201,6 +201,11 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   await screenshot(page, 'upload-picked');
   await page.getByRole('button', { name: '开始上传', exact: true }).click();
   await expect(page.getByRole('status').filter({ hasText: '服务器已接收视频' })).toBeVisible({ timeout: 45_000 });
+  await expect(page.getByRole('progressbar', { name: '视频上传进度' })).toHaveAttribute('aria-valuenow', '100');
+  const previewHelp = page.locator('.preview-note > summary');
+  await expect(previewHelp.getByRole('button')).toHaveCount(0);
+  await previewHelp.press('Enter');
+  await expect(page.getByText(/播放刚上传的原始视频/)).toBeVisible();
   await expect.poll(() => page.locator('video').evaluate(element => element.readyState)).toBeGreaterThan(0);
   await expectFit(page);
   const processCourse = page.getByRole('button', { name: '开始处理', exact: true });

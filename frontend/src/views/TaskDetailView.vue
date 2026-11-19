@@ -47,6 +47,7 @@ import type { TaskDetailResponse } from "../types/task";
 import { isRetryableTaskStatus, shouldReloadTerminalTaskDetail } from "../utils/taskStatus";
 import { formatMillisToClock } from "../utils/time";
 import { normalizeSubtitleLanguage } from "../utils/subtitleLanguage";
+import { isValidTimeRange } from "../utils/timeIndex";
 
 type SubtitleStatus = "none" | "loading" | "loaded" | "not_found" | "unsupported" | "failed";
 
@@ -69,7 +70,7 @@ const readingTarget = ref<HTMLElement | null>(null);
 const mobileNavTarget = ref<HTMLElement | null>(null);
 // A verified citation stays anchored as playback advances; plain timeline seeks are not citations.
 const referenceMs = ref<number>();
-const activeCitation = ref<NoteAnchor>();
+const activeCitation = ref<Extract<NoteAnchor, { kind: "evidence" }>>();
 const noteCitation = ref<NoteAnchor>();
 const notesRef = ref<InstanceType<typeof CourseNotesPanel> | null>(null);
 const noteJumpError = ref("");
@@ -81,7 +82,7 @@ const learningTask = ref<LearningTaskPosition | null>(null);
 const courseBlocked = ref(false);
 const workspaceOpened = ref(false);
 const verifyingEvidence = ref(false);
-const readerVisible = computed(() => !verifyingEvidence.value && !evidenceNavigationError.value &&
+const readerVisible = computed(() => (!verifyingEvidence.value || activeCitation.value) && !evidenceNavigationError.value &&
   (classicLayout.value ? activeWorkspace.value === "content" || reviewingEvidence.value :
     !narrowScreen.value || activeWorkspace.value === "content" || reviewingEvidence.value));
 let evidenceRequest = 0;
@@ -148,6 +149,17 @@ const status = computed(() => task.value?.status ?? taskDetail.value?.status);
 const learningReady = computed(() => task.value?.learningReady ?? taskDetail.value?.learningReady ?? null);
 const learnable = computed(() => courseLearnable(status.value, learningReady.value));
 const result = computed(() => taskResultStore.result);
+const videoCitation = computed(() => {
+  const citation = activeCitation.value;
+  if (reviewingEvidence.value && playbackUrl.value && citation && referenceMs.value === citation.milliseconds
+    && hasTimedSource(citation.milliseconds)) return citation;
+  return undefined;
+});
+function hasTimedSource(milliseconds: number) {
+  const source = result.value;
+  return source?.taskId === taskId.value && source.subtitles.some(({ startMillis, endMillis }) =>
+    isValidTimeRange(startMillis, endMillis) && startMillis <= milliseconds && milliseconds < endMillis);
+}
 const hasTaskId = computed(() => taskId.value.trim().length > 0);
 const canCancelTask = computed(() => ["CREATED", "QUEUED", "RUNNING", "RETRYING"].includes(status.value || ""));
 const canRetryTask = computed(() => isRetryableTaskStatus(status.value));
@@ -356,36 +368,51 @@ async function loadPublicRuntimeConfiguration() {
   }
 }
 
-async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext, writeNote = false) {
+async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext, action: "source" | "note" | "video" = "source") {
   if (!validPosition(startTimeMillis)) return;
+  const jumpToVideo = action === "video";
   const request = ++evidenceRequest;
-  referenceMs.value = undefined;
-  activeCitation.value = undefined;
+  if (!jumpToVideo) {
+    referenceMs.value = undefined;
+    activeCitation.value = undefined;
+  }
   evidenceNavigationError.value = "";
   verifyingEvidence.value = Boolean(context);
   let applied = false;
   try {
     await evidenceSeekGuard.seek(taskId.value, context, () => {
+      if (jumpToVideo && !hasTimedSource(startTimeMillis)) {
+        evidenceNavigationError.value = "此处的课程原文不可定位。当前输入和作答仍保留。";
+        return;
+      }
+      if (jumpToVideo && !playbackUrl.value) return;
       if (context?.evidenceId && typeof context.revision === "number") {
         activeCitation.value = { kind: "evidence", milliseconds: startTimeMillis, evidenceId: context.evidenceId, revision: context.revision };
       }
-      if (!writeNote) applySeek(startTimeMillis, Boolean(context));
+      if (action !== "note") applySeek(startTimeMillis, Boolean(context), jumpToVideo);
       applied = true;
     });
   }
   finally {
     if (request === evidenceRequest) {
       verifyingEvidence.value = false;
-      if (!applied && evidenceNavigationError.value) reviewingEvidence.value = false;
+      if (!applied && evidenceNavigationError.value) {
+        reviewingEvidence.value = false;
+        referenceMs.value = undefined;
+        activeCitation.value = undefined;
+      }
       // Wait until the verified reader is visible before measuring or moving it.
       if (applied) {
-        if (writeNote) {
+        if (action === "note") {
           await openCitationNote();
           return;
         }
         await nextTick();
         if (request === evidenceRequest) {
-          if (!context && narrowScreen.value && !classicLayout.value) {
+          if (jumpToVideo) {
+            materialsRef.value?.scrollTo({ top: 0 });
+            if (narrowScreen.value || classicLayout.value) materialsRef.value?.scrollIntoView({ block: "start" });
+          } else if (!context && narrowScreen.value && !classicLayout.value) {
             materialsRef.value?.scrollIntoView({ block: "start" });
           } else if (reviewingEvidence.value && (classicLayout.value || narrowScreen.value)) {
             evidenceRef.value?.scrollIntoView({ block: "start" });
@@ -393,12 +420,17 @@ async function seekTo(startTimeMillis: number, context?: EvidenceSeekContext, wr
           } else if (reviewingEvidence.value && materialsRef.value && evidenceRef.value) {
             materialsRef.value.scrollTop += evidenceRef.value.getBoundingClientRect().top - materialsRef.value.getBoundingClientRect().top - 8;
           }
-          if (context) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[data-reference=true]")?.focus({ preventScroll: true });
+          if (context && !jumpToVideo) evidenceRef.value?.querySelector<HTMLElement>(".timeline-row[data-reference=true]")?.focus({ preventScroll: true });
         }
       }
     }
   }
 }
+function jumpFromCitation() {
+  const citation = videoCitation.value;
+  if (citation && !verifyingEvidence.value) void seekTo(citation.milliseconds, citation, "video");
+}
+
 async function openCitationNote() {
   if (!activeCitation.value || notesAccountId.value === undefined) return;
   changeWorkspace("notes");
@@ -427,14 +459,14 @@ async function jumpFromNote(anchor: NoteAnchor) {
   }
 }
 
-function applySeek(startTimeMillis: number, reference = false) {
+function applySeek(startTimeMillis: number, reference = false, revealVideo = false) {
   referenceMs.value = reference ? startTimeMillis : undefined;
   positionMs.value = startTimeMillis;
   seekRequest.value = { milliseconds: startTimeMillis, sequence: ++seekSequence };
   readingView.value = "timeline";
   locateSequence.value++;
   // The explicit jump reveals the narrow-screen player inside the same review session.
-  videoRequested.value = !reference;
+  videoRequested.value = revealVideo || !reference;
   if (reference || activeWorkspace.value !== "content") {
     if (!reviewingEvidence.value) {
       returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -767,10 +799,11 @@ async function confirmRetryTask() {
                 <span><small v-if="isDemoMode" class="review-mode">本地演示 · 无外部 AI</small> {{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}</span>
                 <div class="evidence-reading__actions">
                   <button type="button" @click="returnToLearning">返回当前学习任务</button>
+                  <button v-if="videoCitation" type="button" class="evidence-reading__jump" :aria-disabled="verifyingEvidence || undefined" @click="jumpFromCitation">跳到视频</button>
                   <button v-if="activeCitation && notesAccountId !== undefined" type="button" @click="openCitationNote">在 {{ formatMillisToClock(activeCitation.milliseconds) }} 写笔记</button>
                 </div>
               </div>
-              <CourseContentPanel :reference-ms="reviewingEvidence ? referenceMs : undefined" :compact="!classicLayout" ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
+              <CourseContentPanel :reference-ms="reviewingEvidence ? referenceMs : undefined" :reference-jump-in-header="!!videoCitation" :compact="!classicLayout" ref="readerRef" :key="taskId" :task-id="taskId" :status="task?.status" :result="result" :position-ms="positionMs" :view="readingView ?? (classicLayout ? undefined : 'timeline')" :visible="readerVisible" :locate-sequence="locateSequence" @update:view="changeReadingView" @seek="seekTo" />
             </div>
           </Teleport>
           <CourseScopePicker :key="taskId" :compact="!classicLayout" v-show="learningWorkspace === 'agent' || learningWorkspace === 'qa'" @access-failure="loadTaskDetail(taskId)" v-model="learningScope" :task-id="taskId" :refresh-key="scopeRefresh" :frozen-scope="learningWorkspace === 'agent' ? agentScope : qaScope" @seek="seekTo" />
@@ -804,10 +837,10 @@ async function confirmRetryTask() {
               @navigate="changeWorkspace"
               @retry="confirmRetryTask"
             />
-            <CourseTutorPanel v-else-if="learningWorkspace === 'tutor'" :task-id="taskId" :can-note="notesAccountId !== undefined" @note="(milliseconds, context) => seekTo(milliseconds, context, true)" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
+            <CourseTutorPanel v-else-if="learningWorkspace === 'tutor'" :task-id="taskId" :can-note="notesAccountId !== undefined" @note="(milliseconds, context) => seekTo(milliseconds, context, 'note')" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
             <CourseFlashcardsPanel v-else-if="learningWorkspace === 'flashcards'" :task-id="taskId" @seek="seekTo" @access-failure="loadTaskDetail(taskId)" />
             <CourseStudyPanel v-else-if="learningWorkspace === 'study'" :task-id="taskId" :status="task?.status" :result="result" @seek="seekTo" />
-            <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="task?.status" :learning-ready="learningReady" @seek="seekTo" @navigate="changeWorkspace" />
+            <CourseAgentPanel :compact="!classicLayout" @position="learningTask = $event" @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="agentScope = $event" v-else-if="learningWorkspace === 'agent'" :task-id="taskId" :status="status" :learning-ready="learningReady" @seek="seekTo" @navigate="changeWorkspace" />
             <CourseQaPanel @access-failure="loadTaskDetail(taskId)" :learning-scope="learningScope" @frozen-scope="qaScope = $event" v-else-if="learningWorkspace === 'qa'" :task-id="taskId" @seek="seekTo" />
             <CourseFilesPanel v-else-if="learningWorkspace === 'files'" :task-id="taskId" :status="task?.status" :artifacts="result?.artifacts ?? []" :artifacts-status="result?.artifactsStatus" />
             <CourseTechnicalPanel
@@ -902,5 +935,6 @@ async function confirmRetryTask() {
 @media (max-width: 520px) {
   .course-workspace-page__inner { padding-top: 12px; }
   .course-layout--continuous .course-layout__media, .course-layout--continuous .course-layout__content { padding: 12px; }
+  .is-mobile-evidence .evidence-reading:has(.evidence-reading__jump) :deep(.timeline-row) { scroll-margin-top: calc(var(--header-height) + 204px); }
 }
 </style>

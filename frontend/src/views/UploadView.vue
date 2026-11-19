@@ -366,9 +366,9 @@ async function createTask() {
       />
 
       <details class="preview-note">
-        <summary>关于原视频预览 <TermHelp term="原视频预览" /></summary>
+        <summary>关于原视频预览</summary>
         <p>
-          浏览器预览支持视频内嵌的文本软字幕轨道；图片字幕和未随视频上传的外挂字幕不会在这里显示。
+          播放刚上传的原始视频，确认文件是否正确。预览支持视频内嵌的文本软字幕轨道。图片字幕和未随视频上传的外挂字幕不会在这里显示。
         </p>
       </details>
 
@@ -515,6 +515,11 @@ async function createTask() {
   margin: 7px 0 0;
   color: var(--color-ink-muted);
   font-size: 13px;
+}
+
+.course-start :deep(.term-help) {
+  width: 32px;
+  height: 32px;
 }
 
 @media (max-width: 640px) {

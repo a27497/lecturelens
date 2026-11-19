@@ -449,9 +449,9 @@ async function reveal() {
         <p>填写目标并点击“解释并出题”才会开始新的学习执行。未保存输入只保留在本页。</p>
       <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
-      <label>练习形式 <select v-model="practiceFormat" aria-label="练习形式" :disabled="Boolean(active || submitting)"><option value="open">开放题 · 文本作答</option><option value="choice">课程证据选择题 + 开放题（Mock）</option></select></label>
+      <label class="practice-format">练习形式 <select v-model="practiceFormat" aria-label="练习形式" :disabled="Boolean(active || submitting)"><option value="open">开放题 · 文本作答</option><option value="choice">课程证据选择题 + 开放题（Mock）</option></select></label>
       <p v-if="practiceFormat === 'choice'">Mock 原文识别题：提交后程序判分；开放题仍只给反馈。当前选择题生成不支持发布前审批。</p>
-      <label><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active) || practiceFormat === 'choice'" />发布前由我审批</label>
+      <label class="practice-approval"><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active) || practiceFormat === 'choice'" />发布前由我审批</label>
 
       <div class="actions">
         <el-button type="primary" :disabled="!canStart" :loading="submitting" @click="start">解释并出题</el-button>
@@ -487,6 +487,11 @@ async function reveal() {
 .new-study-goal, .learning-history { margin-top: 18px; padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
 .new-study-goal > summary, .learning-history > summary { font-weight: 650; color: var(--color-brand); }
 .new-study-goal > p { line-height: 1.6; color: var(--color-ink-soft); }
+.practice-format, .practice-approval { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.practice-format { flex-wrap: wrap; }
+.practice-format select { min-height: 44px; max-width: 100%; }
+.practice-approval { width: fit-content; min-height: 44px; }
+.practice-approval input { width: 24px; height: 24px; margin: 0; }
 .artifact-explanation > summary { color: var(--color-brand); }
 
 .sample-goals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }.sample-goals p { width: 100%; }.sample-goals .el-button + .el-button { margin-left: 0; }.evidence-id { display: block; overflow-wrap: anywhere; font-size: 12px; }

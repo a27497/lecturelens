@@ -103,7 +103,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect.poll(() => position()).not.toBeNull();
     const citedMs = Number(position());
     if (isMobile) await expect(video).toBeHidden();
-    await citedRow.getByRole('button', { name: '跳到视频', exact: true }).click();
+    await page.locator('.evidence-reading__return').getByRole('button', { name: '跳到视频', exact: true }).click();
     if (isMobile) await expect(video).toBeInViewport();
     else await expect(video).toBeVisible();
     await expect(video).toHaveJSProperty('paused', true);

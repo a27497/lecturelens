@@ -21,7 +21,7 @@ vi.mock("../api/embeddedSubtitles", () => ({ probeTaskEmbeddedSubtitles: vi.fn()
 vi.mock("../api/runtimeConfiguration", () => ({ fetchPublicRuntimeConfiguration: vi.fn() }));
 const frozen = { version: 1, kind: "segments", policy: "strict", revision: 1, evidence_ids: ["e1"] };
 const Agent = defineComponent({
-  props: ["taskId"], emits: ["seek", "accessFailure", "frozenScope"],
+  props: ["taskId", "status", "learningReady"], emits: ["seek", "accessFailure", "frozenScope"],
   setup(_props, { emit }) { const text = ref(""); onMounted(() => emit("frozenScope", frozen)); return { text }; },
   template: `<div class="mock-agent"><input v-model="text" aria-label="目标草稿" /><button @click="$emit('seek', 2000, { evidenceId: 'e1', revision: 1 })">回看来源</button><button @click="$emit('accessFailure')">核对权限</button></div>`,
 });
@@ -51,6 +51,19 @@ async function open(path = "/tasks/one?view=agent&at=1000") {
   const wrapper = mount(TaskDetailView, { attachTo: document.body, global: { plugins: [createPinia(), router], stubs } });
   await flushPromises(); return { wrapper, router };
 }
+it("passes course detail readiness to Study until the first live task event", async () => {
+  vi.mocked(fetchTaskDetail).mockImplementation(async taskId => ({ taskId, status: "RUNNING", learningReady: false } as never));
+  let publish!: () => void;
+  vi.mocked(connectTaskEvents).mockImplementation(async options => {
+    publish = () => options.onMessage({ event: "progress", data: { taskId: options.taskId, status: "RUNNING", learningReady: true } } as never);
+  });
+  const { wrapper } = await open();
+  expect(wrapper.getComponent(Agent).props()).toMatchObject({ status: "RUNNING", learningReady: false });
+  publish();
+  await flushPromises();
+  expect(wrapper.getComponent(Agent).props()).toMatchObject({ status: "RUNNING", learningReady: true });
+  wrapper.unmount();
+});
 it("moves the same reader between layouts and preserves the same learning instance during source review", async () => {
   const { wrapper, router } = await open();
   const goal = wrapper.get<HTMLInputElement>('.mock-agent input'); const node = goal.element;
