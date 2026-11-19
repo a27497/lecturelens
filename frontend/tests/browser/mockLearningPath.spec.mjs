@@ -221,18 +221,37 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await page.getByRole('link', { name: /返回我的课程/ }).click();
     let releaseIdentity;
     const identityReady = new Promise(resolve => { releaseIdentity = resolve; });
-    await page.route('**/api/me', async route => { await identityReady; await route.continue(); });
+    let identityRequests = 0;
+    await page.route('**/api/me', async route => {
+      identityRequests += 1;
+      if (identityRequests === 2) {
+        await route.fulfill({ status: 503 });
+        return;
+      }
+      await identityReady;
+      await route.continue();
+    });
     try {
       await page.reload();
-      const enter = courseCard.getByRole('button', { name: '进入学习', exact: true });
-      await enter.click();
-      await expect(enter).toHaveClass(/is-loading/);
+      // Keep the header's request pending while the first attempt to open the course fails.
+      await expect.poll(() => identityRequests).toBe(1);
+      await courseCard.getByRole('button', { name: '进入学习', exact: true }).click();
+      const error = courseCard.getByRole('alert');
+      await expect(error).toContainText('暂时无法确认登录账号');
+      await expect(page).toHaveURL(`${base}/tasks`);
+      expect(await entries()).toEqual([[key, saved]]);
+      await capture('21-resume-retry', error);
+
+      await courseCard.getByRole('button', { name: '重试打开课程', exact: true }).click();
+      await expect.poll(() => identityRequests).toBe(3);
+      await expect(courseCard.getByRole('button', { name: '进入学习', exact: true })).toHaveClass(/is-loading/);
       await expect(page).toHaveURL(`${base}/tasks`);
     } finally {
       releaseIdentity();
     }
     await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
     await expect.poll(position).toBe('75000');
+    await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await page.unroute('**/api/me');
 
     if (isMobile) await page.getByRole('button', { name: '打开导航' }).click();

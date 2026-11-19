@@ -49,6 +49,7 @@ const authStore = useAuthStore();
 const loading = ref(false);
 const refreshing = ref(false);
 const openingTaskId = ref("");
+const failedOpeningTaskId = ref("");
 const retryingTaskId = ref("");
 const errorMessage = ref("");
 const tasks = ref<TaskSummaryResponse[]>([]);
@@ -326,9 +327,15 @@ function refreshSavedLocations() {
 async function openTask(task: TaskSummaryResponse) {
   if (openingTaskId.value) return;
   openingTaskId.value = task.taskId;
+  failedOpeningTaskId.value = "";
   try {
     const user = task.status === "SUCCEEDED" ? await authStore.loadCurrentUser().catch(() => null) : null;
     if (!componentActive) return;
+    if (task.status === "SUCCEEDED" && !user) {
+      // Entering with default coordinates could overwrite a saved location when identity arrives.
+      failedOpeningTaskId.value = task.taskId;
+      return;
+    }
     // Other tabs can save a new location after this card has rendered.
     const location = readLastCourseLocation(user?.userId, task.taskId);
     await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
@@ -631,6 +638,9 @@ function formatTime(value: string | null): string {
             <p v-if="task.status === 'FAILED'" class="course-item__failure">
               {{ readableFailure(task) }}
             </p>
+            <p v-if="failedOpeningTaskId === task.taskId" class="course-item__failure" role="alert">
+              暂时无法确认登录账号，请重试打开课程。
+            </p>
 
             <details class="course-item__technical">
               <summary>材料信息与编号</summary>
@@ -657,7 +667,9 @@ function formatTime(value: string | null): string {
           </div>
 
           <div class="course-item__actions">
-            <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">{{ primaryActionText(task, location) }}</el-button>
+            <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">
+              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : primaryActionText(task, location) }}
+            </el-button>
             <el-button
               v-if="isRetryableTaskStatus(task.status)"
               :loading="retryingTaskId === task.taskId"
