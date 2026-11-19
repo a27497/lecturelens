@@ -6,6 +6,7 @@ import { courseLearnable } from "./workspace";
 const props = defineProps<{
   compact?: boolean;
   demoMode?: boolean;
+  courseName?: string | null;
   status?: AnalysisTaskStatus;
   learningReady?: boolean | null;
   canCancel: boolean;
@@ -26,7 +27,7 @@ defineEmits<{
   <header class="workspace-header" :class="{ 'workspace-header--compact': compact, 'workspace-header--attention': canCancel || canRetry }">
     <div class="workspace-header__copy">
       <RouterLink class="workspace-header__back" to="/tasks">← 返回我的课程</RouterLink>
-      <h1>课程学习</h1>
+      <h1 class="workspace-header__title" :title="courseName || undefined">{{ courseName || "课程学习" }}</h1>
       <span v-if="compact && demoMode" class="workspace-mode">本地演示 · 无外部 AI</span>
       <p v-if="!compact">看课、回看来源，继续你的提问与练习。</p>
     </div>
@@ -71,7 +72,9 @@ defineEmits<{
   padding-bottom: 14px;
   border-bottom: 1px solid var(--color-border);
 }
-.workspace-header__copy { display: grid; gap: 7px; }
+.workspace-header__copy { display: grid; gap: 7px; min-width: 0; }
+/* Long uploaded file names stay on one line; the title attribute keeps the full name. */
+.workspace-header__title { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .workspace-header__back { width: fit-content; color: var(--color-brand); font-size: 14px; font-weight: 650; text-decoration: none; }
 .workspace-header h1 { margin: 0; color: var(--color-ink); font-size: clamp(24px, 2.5vw, 30px); letter-spacing: -0.03em; }
 .workspace-header p { margin: 0; color: var(--color-ink-soft); }

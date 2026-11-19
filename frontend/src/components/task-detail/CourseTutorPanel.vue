@@ -113,7 +113,10 @@ async function cancel() {
   } catch (reason) { if (version === epoch) fail(reason); }
 }
 function parts(text: string, citations: Citation[]) {
-  return text.split(/(\[[^\[\]\n]+\])/g).map(text => ({ text, citation: citations.find(c => `[${c.evidence_id}]` === text) }));
+  return text.split(/(\[[^\[\]\n]+\])/g).map(part => {
+    const citation = citations.find(c => `[${c.evidence_id}]` === part);
+    return { text: citation ? formatMillisRange(citation.start_ms, citation.end_ms) : part, citation };
+  });
 }
 function seek(c: Citation) {
   if (view.value) emit("seek", c.start_ms, { evidenceId: c.evidence_id, revision: view.value.session.revision });
@@ -143,8 +146,8 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
         <div v-if="turn.status === 'completed'" class="answer" :class="{ insufficient: turn.outcome === 'insufficient_evidence' }">
           <strong>{{ turn.outcome === 'socratic_prompt' ? 'Tutor · 引导思考' : 'Tutor' }}</strong>
           <p v-if="turn.outcome === 'insufficient_evidence'">我不知道：当前课程没有足够证据回答这个问题。可换一个课程已讲授的问题。</p>
-          <p v-else><template v-for="(part, i) in parts(turn.answer ?? '', turn.citations)" :key="i"><button v-if="part.citation" class="citation" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
-          <p v-if="turn.evaluation"><strong>对你的回复：</strong><template v-for="(part, i) in parts(turn.evaluation, turn.citations)" :key="i"><button v-if="part.citation" class="citation" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
+          <p v-else><template v-for="(part, i) in parts(turn.answer ?? '', turn.citations)" :key="i"><button v-if="part.citation" class="citation" :title="`Evidence ${part.citation.evidence_id}`" :aria-label="`定位出处 ${part.text}`" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
+          <p v-if="turn.evaluation"><strong>对你的回复：</strong><template v-for="(part, i) in parts(turn.evaluation, turn.citations)" :key="i"><button v-if="part.citation" class="citation" :title="`Evidence ${part.citation.evidence_id}`" :aria-label="`定位出处 ${part.text}`" @click="seek(part.citation)">{{ part.text }}</button><span v-else>{{ part.text }}</span></template></p>
           <details v-if="turn.citations.length"><summary>核对课程原文</summary><blockquote v-for="c in turn.citations" :key="c.evidence_id"><p>{{ c.text }}</p><button @click="seek(c)">定位出处 {{ formatMillisRange(c.start_ms, c.end_ms) }}</button></blockquote></details>
         </div>
         <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已取消。' : '本轮未完成，未发布回答。可开启下一轮或新对话。' }} <code v-if="turn.status === 'failed' && turn.error_code">{{ turn.error_code }}</code></p>

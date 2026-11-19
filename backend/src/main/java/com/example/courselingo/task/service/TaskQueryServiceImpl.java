@@ -12,8 +12,14 @@ import com.example.courselingo.task.dto.TaskSummaryResponse;
 import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.model.AnalysisTaskStatus;
+import com.example.courselingo.upload.entity.UploadSession;
+import com.example.courselingo.upload.mapper.UploadSessionMapper;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +39,16 @@ public class TaskQueryServiceImpl implements TaskQueryService {
 
     private final CurrentUserService currentUserService;
     private final AnalysisTaskMapper analysisTaskMapper;
+    private final UploadSessionMapper uploadSessionMapper;
 
-    public TaskQueryServiceImpl(CurrentUserService currentUserService, AnalysisTaskMapper analysisTaskMapper) {
+    public TaskQueryServiceImpl(
+        CurrentUserService currentUserService,
+        AnalysisTaskMapper analysisTaskMapper,
+        UploadSessionMapper uploadSessionMapper
+    ) {
         this.currentUserService = currentUserService;
         this.analysisTaskMapper = analysisTaskMapper;
+        this.uploadSessionMapper = uploadSessionMapper;
     }
 
     @Override
@@ -46,10 +58,10 @@ public class TaskQueryServiceImpl implements TaskQueryService {
         int pageSize = normalizePageSize(query);
         String status = normalizeStatus(query);
         long offset = (long) (page - 1) * pageSize;
-        List<TaskSummaryResponse> items = analysisTaskMapper
-            .selectPageByUserId(currentUser.userId(), status, offset, pageSize)
-            .stream()
-            .map(this::toSummaryResponse)
+        List<AnalysisTask> tasks = analysisTaskMapper.selectPageByUserId(currentUser.userId(), status, offset, pageSize);
+        Map<String, String> names = courseNames(tasks, currentUser.userId());
+        List<TaskSummaryResponse> items = tasks.stream()
+            .map(task -> toSummaryResponse(task, names.get(task.getUploadId())))
             .toList();
         long total = analysisTaskMapper.countByUserId(currentUser.userId(), status);
         return new TaskListResponse(items, page, pageSize, total);
@@ -65,7 +77,44 @@ public class TaskQueryServiceImpl implements TaskQueryService {
         if (task == null) {
             throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
         }
-        return toDetailResponse(task);
+        Map<String, String> names = courseNames(List.of(task), currentUser.userId());
+        return toDetailResponse(task, names.get(task.getUploadId()));
+    }
+
+    /**
+     * Display names come from the caller's own upload sessions only. The task row is already
+     * owner-filtered; the upload lookup repeats the owner condition and drops any row whose owner
+     * differs, so a mismatched upload ID can never surface another user's file name.
+     */
+    private Map<String, String> courseNames(List<AnalysisTask> tasks, Long userId) {
+        List<String> uploadIds = tasks.stream()
+            .map(AnalysisTask::getUploadId)
+            .filter(Objects::nonNull)
+            .distinct()
+            .toList();
+        if (uploadIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> names = new HashMap<>();
+        for (UploadSession upload : uploadSessionMapper.selectByIdsAndUserId(uploadIds, userId)) {
+            if (Objects.equals(upload.getUserId(), userId)) {
+                names.put(upload.getId(), displayName(upload.getFilename()));
+            }
+        }
+        return names;
+    }
+
+    /** Upload validation already rejects paths and control characters. */
+    public static String displayName(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        String name = filename.strip();
+        int dot = name.lastIndexOf('.');
+        if (dot >= 0) {
+            name = name.substring(0, dot).strip();
+        }
+        return name.isEmpty() ? null : name;
     }
 
     private static int normalizePage(TaskListQuery query) {
@@ -102,7 +151,7 @@ public class TaskQueryServiceImpl implements TaskQueryService {
         }
     }
 
-    private TaskSummaryResponse toSummaryResponse(AnalysisTask task) {
+    private TaskSummaryResponse toSummaryResponse(AnalysisTask task, String courseName) {
         return new TaskSummaryResponse(
             task.getId(),
             task.getUploadId(),
@@ -117,11 +166,12 @@ public class TaskQueryServiceImpl implements TaskQueryService {
             UtcTimestamps.toInstant(task.getCreatedAt()),
             UtcTimestamps.updatedAt(task.getCreatedAt(), task.getUpdatedAt()),
             UtcTimestamps.toInstant(task.getStartedAt()),
-            UtcTimestamps.toInstant(task.getFinishedAt())
+            UtcTimestamps.toInstant(task.getFinishedAt()),
+            courseName
         );
     }
 
-    private TaskDetailResponse toDetailResponse(AnalysisTask task) {
+    private TaskDetailResponse toDetailResponse(AnalysisTask task, String courseName) {
         return new TaskDetailResponse(
             task.getId(),
             task.getUploadId(),
@@ -137,7 +187,8 @@ public class TaskQueryServiceImpl implements TaskQueryService {
             UtcTimestamps.updatedAt(task.getCreatedAt(), task.getUpdatedAt()),
             UtcTimestamps.toInstant(task.getStartedAt()),
             UtcTimestamps.toInstant(task.getFinishedAt()),
-            LearningAvailability.learnable(task.getStatus(), task.getLearningReadyAt())
+            LearningAvailability.learnable(task.getStatus(), task.getLearningReadyAt()),
+            courseName
         );
     }
 

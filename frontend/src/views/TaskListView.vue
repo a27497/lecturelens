@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -14,8 +14,12 @@ import PageHeading from "../components/ui/PageHeading.vue";
 import SectionPanel from "../components/ui/SectionPanel.vue";
 import StatusBadge from "../components/ui/StatusBadge.vue";
 import type { TaskSummaryResponse } from "../types/task";
+import { lastCourseLocationQuery, readLastCourseLocation } from "../components/task-detail/lastCourseLocation";
+import type { LastCourseLocation } from "../components/task-detail/lastCourseLocation";
+import { workspaceLabel } from "../components/task-detail/workspace";
+import { useAuthStore } from "../stores/auth";
 import { toUserFriendlyError } from "../utils/errorMessage";
-import { formatApiTimestamp, parseApiTimestamp } from "../utils/time";
+import { formatApiTimestamp, formatMillisToClock, parseApiTimestamp } from "../utils/time";
 import {
   getTaskStatusGroup,
   isRetryableTaskStatus,
@@ -41,11 +45,15 @@ const AUTO_REFRESH_INTERVAL_MS = 5000;
 const MAX_TASK_PAGE_SIZE = 100;
 
 const router = useRouter();
+const authStore = useAuthStore();
 const loading = ref(false);
 const refreshing = ref(false);
+const openingTaskId = ref("");
+const failedOpeningTaskId = ref("");
 const retryingTaskId = ref("");
 const errorMessage = ref("");
 const tasks = ref<TaskSummaryResponse[]>([]);
+const savedLocations = shallowRef(new Map<string, LastCourseLocation>());
 const total = ref(0);
 const activeGroup = ref<TaskStatusGroup>("ALL");
 const batchMode = ref(false);
@@ -64,6 +72,11 @@ const filteredTasks = computed(() => {
   }
   return tasks.value.filter((task) => getTaskStatusGroup(task.status) === activeGroup.value);
 });
+const courseCards = computed(() => filteredTasks.value.map(task => ({
+  task,
+  title: courseTitle(task),
+  location: savedLocations.value.get(task.taskId) ?? null,
+})));
 
 const hasRunningTasks = computed(() => tasks.value.some((task) => isRunningTaskStatus(task.status)));
 const selectedCount = computed(() => selectedTaskIds.value.size);
@@ -108,14 +121,20 @@ const emptyText = computed(() => {
 
 onMounted(() => {
   componentActive = true;
+  window.addEventListener("storage", refreshSavedLocations);
+  window.addEventListener("focus", refreshSavedLocations);
   void loadTasks();
 });
 
 onBeforeUnmount(() => {
   componentActive = false;
+  window.removeEventListener("storage", refreshSavedLocations);
+  window.removeEventListener("focus", refreshSavedLocations);
   latestTaskRequestVersion += 1;
   stopAutoRefresh();
 });
+
+watch([tasks, () => authStore.user?.userId], refreshSavedLocations);
 
 watch(hasRunningTasks, (nextValue) => {
   if (nextValue) {
@@ -290,8 +309,39 @@ function stopAutoRefresh() {
   autoRefreshTimer = undefined;
 }
 
-function openTask(task: TaskSummaryResponse) {
-  void router.push(`/tasks/${encodeURIComponent(task.taskId)}`);
+function lastLocationText(location: LastCourseLocation): string {
+  return `上次停在：${workspaceLabel(location.view)} · 视频 ${formatMillisToClock(location.at)}`;
+}
+
+function refreshSavedLocations() {
+  const userId = authStore.user?.userId;
+  const locations = new Map<string, LastCourseLocation>();
+  for (const task of tasks.value) {
+    if (task.status !== "SUCCEEDED") continue;
+    const location = readLastCourseLocation(userId, task.taskId);
+    if (location) locations.set(task.taskId, location);
+  }
+  savedLocations.value = locations;
+}
+
+async function openTask(task: TaskSummaryResponse) {
+  if (openingTaskId.value) return;
+  openingTaskId.value = task.taskId;
+  failedOpeningTaskId.value = "";
+  try {
+    const user = task.status === "SUCCEEDED" ? await authStore.loadCurrentUser().catch(() => null) : null;
+    if (!componentActive) return;
+    if (task.status === "SUCCEEDED" && !user) {
+      // Entering with default coordinates could overwrite a saved location when identity arrives.
+      failedOpeningTaskId.value = task.taskId;
+      return;
+    }
+    // Other tabs can save a new location after this card has rendered.
+    const location = readLastCourseLocation(user?.userId, task.taskId);
+    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
+  } finally {
+    openingTaskId.value = "";
+  }
 }
 
 async function confirmRetryTask(task: TaskSummaryResponse) {
@@ -354,9 +404,9 @@ function fallbackCopyText(text: string) {
   document.body.removeChild(textarea);
 }
 
-function primaryActionText(task: TaskSummaryResponse): string {
+function primaryActionText(task: TaskSummaryResponse, location: LastCourseLocation | null): string {
   if (task.status === "SUCCEEDED") {
-    return "进入学习";
+    return location ? "继续学习" : "进入学习";
   }
   if (isRunningTaskStatus(task.status)) {
     return "查看进度";
@@ -434,6 +484,9 @@ function courseSecondaryStatus(task: TaskSummaryResponse): string {
 }
 
 function courseTitle(task: TaskSummaryResponse): string {
+  if (task.courseName?.trim()) {
+    return task.courseName.trim();
+  }
   if (!task.createdAt) {
     return "课程视频";
   }
@@ -542,7 +595,7 @@ function formatTime(value: string | null): string {
       </EmptyState>
 
       <div v-else class="task-list">
-        <article v-for="task in filteredTasks" :key="task.taskId" class="course-item" :class="{ 'is-batch-mode': batchMode }">
+        <article v-for="{ task, title, location } in courseCards" :key="task.taskId" class="course-item" :class="{ 'is-batch-mode': batchMode }">
           <div v-if="batchMode" class="course-item__selection" @click.stop>
             <el-tooltip
               :disabled="isTaskDeletable(task)"
@@ -553,7 +606,7 @@ function formatTime(value: string | null): string {
                 <el-checkbox
                   :model-value="selectedTaskIds.has(task.taskId)"
                   :disabled="deleting || !isTaskDeletable(task)"
-                  :aria-label="`选择${courseTitle(task)}，状态${courseStatusLabel(task)}`"
+                  :aria-label="`选择${title}，状态${courseStatusLabel(task)}`"
                   @change="toggleTaskSelection(task, Boolean($event))"
                 />
               </span>
@@ -563,8 +616,9 @@ function formatTime(value: string | null): string {
           <div class="course-item__summary">
             <div class="course-item__title-row">
               <div>
-                <h2>{{ courseTitle(task) }}</h2>
+                <h2 class="course-item__name" :title="title">{{ title }}</h2>
                 <p>{{ task.status === 'SUCCEEDED' ? '可观看、提问与练习' : courseSecondaryStatus(task) }}</p>
+                <p v-if="location" class="course-item__resume">{{ lastLocationText(location) }}</p>
               </div>
               <StatusBadge :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
             </div>
@@ -583,6 +637,9 @@ function formatTime(value: string | null): string {
 
             <p v-if="task.status === 'FAILED'" class="course-item__failure">
               {{ readableFailure(task) }}
+            </p>
+            <p v-if="failedOpeningTaskId === task.taskId" class="course-item__failure" role="alert">
+              暂时无法确认登录账号，请重试打开课程。
             </p>
 
             <details class="course-item__technical">
@@ -610,7 +667,9 @@ function formatTime(value: string | null): string {
           </div>
 
           <div class="course-item__actions">
-            <el-button type="primary" @click="openTask(task)">{{ primaryActionText(task) }}</el-button>
+            <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">
+              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : primaryActionText(task, location) }}
+            </el-button>
             <el-button
               v-if="isRetryableTaskStatus(task.status)"
               :loading="retryingTaskId === task.taskId"
@@ -730,6 +789,7 @@ function formatTime(value: string | null): string {
 
 .course-item__summary {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   min-width: 0;
 }
@@ -739,6 +799,18 @@ function formatTime(value: string | null): string {
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
+}
+
+.course-item__title-row > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Long uploaded file names stay on one line; the title attribute keeps the full name. */
+.course-item__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .course-item h2 {
@@ -752,6 +824,10 @@ function formatTime(value: string | null): string {
   margin: 6px 0 0;
   color: var(--color-ink-soft);
   font-size: 14px;
+}
+
+.course-item__title-row .course-item__resume {
+  color: var(--color-brand);
 }
 
 .course-progress {

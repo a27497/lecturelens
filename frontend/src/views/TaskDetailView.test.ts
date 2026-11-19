@@ -240,3 +240,32 @@ it("ordinary timeline seeks and course changes never retain a verified marker", 
   expect(wrapper.find('.evidence-reading__return').exists()).toBe(false);
   wrapper.unmount();
 });
+
+it("a narrow-screen timeline seek during source review shows the paused player instead of a hidden one", async () => {
+  vi.mocked(window.matchMedia).mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() } as unknown as MediaQueryList);
+  const { wrapper, router } = await open('/tasks/one?view=tutor');
+  const inactive = () => wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive");
+  await wrapper.findAll('.workspace-nav button').find(b => b.text() === '解释与练习')!.trigger('click'); await flushPromises();
+  const input = wrapper.get<HTMLInputElement>('.mock-agent input'); await input.setValue('narrow draft');
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  expect(inactive()).toBe(true);
+  expect(wrapper.find('.evidence-reading__return').exists()).toBe(true);
+  await wrapper.get('.mock-reader button').trigger('click'); await flushPromises();
+  expect(router.currentRoute.value.query).toMatchObject({ view: 'agent', at: '4000', text: 'timeline' });
+  expect(inactive()).toBe(false);
+  await wrapper.get('.evidence-reading__return button').trigger('click'); await flushPromises();
+  expect(inactive()).toBe(true);
+  expect(wrapper.find('.evidence-reading__return').exists()).toBe(false);
+  expect(wrapper.get('.mock-agent input').element).toBe(input.element); expect(input.element.value).toBe('narrow draft');
+  wrapper.unmount();
+});
+
+it("a wide-screen timeline seek during source review keeps the visible player and the return entry", async () => {
+  const { wrapper, router } = await open();
+  await wrapper.findAll('.mock-agent button')[0]!.trigger('click'); await flushPromises();
+  await wrapper.get('.mock-reader button').trigger('click'); await flushPromises();
+  expect(router.currentRoute.value.query.view).toBe('agent');
+  expect(wrapper.findComponent({ name: "CourseVideoAside" }).props("inactive")).toBe(false);
+  expect(wrapper.find('.evidence-reading__return').exists()).toBe(true);
+  wrapper.unmount();
+});

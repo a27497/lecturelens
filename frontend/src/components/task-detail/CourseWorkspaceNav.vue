@@ -1,26 +1,12 @@
 <script setup lang="ts">
 import type { CourseWorkspace } from "./workspace";
+import { WORKSPACE_ITEMS as items, workspaceLabel } from "./workspace";
 
 defineProps<{ active: CourseWorkspace; compact?: boolean; materials?: boolean }>();
 defineEmits<{ change: [workspace: CourseWorkspace] }>();
 
-const items: Array<{ value: CourseWorkspace; label: string }> = [
-  { value: "agent", label: "学习助手" },
-  { value: "tutor", label: "Tutor 对话" },
-  { value: "flashcards", label: "闪卡复习" },
-  { value: "overview", label: "概览" },
-  { value: "content", label: "课程内容" },
-  { value: "study", label: "学习资料" },
-  { value: "qa", label: "课程问答" },
-  { value: "files", label: "下载" },
-  { value: "technical", label: "处理详情" },
-];
 const primary = ["agent", "tutor", "qa", "flashcards"];
 const isPrimary = (value: string, materials?: boolean) => primary.includes(value) || (!materials && value === "study");
-function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
-  if (!compact) return fallback;
-  return value === "content" ? "课程材料" : value === "agent" ? "解释与练习" : value === "qa" ? "课程问答" : fallback;
-}
 </script>
 
 <template>
@@ -33,11 +19,11 @@ function label(value: CourseWorkspace, fallback: string, compact?: boolean) {
       :aria-current="active === item.value ? 'page' : undefined"
       @click="$emit('change', item.value)"
     >
-      {{ label(item.value, item.label, compact) }}
+      {{ workspaceLabel(item.value, Boolean(compact)) }}
     </button>
     <details v-if="compact" class="workspace-more" :open="!isPrimary(active, materials) && !(materials && active === 'content')">
       <summary>更多</summary>
-      <button v-for="item in items.filter(item => !isPrimary(item.value, materials) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ label(item.value, item.label, compact) }}</button>
+      <button v-for="item in items.filter(item => !isPrimary(item.value, materials) && !(materials && item.value === 'content'))" :key="item.value" type="button" :class="{ 'is-active': active === item.value }" :aria-current="active === item.value ? 'page' : undefined" @click="$emit('change', item.value)">{{ workspaceLabel(item.value, Boolean(compact)) }}</button>
     </details>
   </nav>
 </template>

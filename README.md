@@ -107,6 +107,8 @@ scripts/demo/up.sh          # Mock 模式：不需要任何 key，没有外部�
 
 脚本会构建 Java / 前端、同步 Python 依赖、下载公开的嵌入模型（[固定版本](scripts/demo/stack.py)），启动 MySQL、Redis、MinIO、RocketMQ 和 PostgreSQL，再启动三个应用进程，最后导入演示课程并等待索引就绪。完成后终端打印课程地址和本地演示账号；密码是 `.demo/stack-<instance>/secrets.json` 里的 `DEMO_PASSWORD`（文件仅本人可读）。所有端口只监听 `127.0.0.1`；默认端口被占用时自动换一个并打印出来。
 
+登录后从「我的课程」打开 `binary-search-demo`。先读时间轴、字幕或学习资料，再向「Tutor 对话」提问并点回答中的时间范围核对原文。手机上点引用行的「跳到视频」可看到暂停在对应位置的视频，再点「返回当前学习任务」回到对话。「课程问答」提供另一条课程检索问答入口。进入「解释与练习」生成题目，保存作答并获取证据反馈，再到「闪卡复习」自评。下次从「我的课程」点「继续学习」，同一浏览器恢复上次视图和视频位置。退出登录会清除浏览器保存的位置。
+
 - **[实测](eval/demo-stack/README.md)**：在一台 8 核 / 16 GB 的 Linux 机器上，全新 clone 到可以提问用时 **90 秒**（Maven、npm、uv 缓存和 Docker 镜像已在本机）。第一次在新机器上运行要下载依赖和镜像，并从源码构建 MinIO 镜像，耗时会长得多。
 - **内存**：每个容器都有硬上限，JVM 堆已压低，整套服务实测峰值 **2.9 GB**（[明细](eval/demo-stack/README.md#内存上限)）。建议 8 GB 内存的机器；启动时可用内存低于 4 GB，`up.sh` 会拒绝启动（确认要继续时设 `LECTURELENS_DEMO_IGNORE_MEMORY=1`）。8 GB 是按实测峰值加浏览器估算的建议，没有在 8 GB 机器上实测。
 - **Mock 模式的含义**：Java 使用确定性演示 LLM，Agent 使用 `AGENT_LLM_MODE=mock`。界面上标注“本地演示 · 无外部 AI”和“Mock 流程测试”。Mock 只验证流程，回答内容是固定模板，也演示不了真正的拒答（Mock 总是引用检索到的第一条证据）。
@@ -128,7 +130,7 @@ Java 的翻译、学习资料、章节和课程问答，以及 Agent 的决策�
 
 ## 验证与证据
 
-自动化检查：每次 push / PR 运行 [CI](.github/workflows/ci.yml)，包括 Python lint 和真实 PostgreSQL 测试、Java 测试、前端单测 / 构建 / 依赖审计，以及真实基础设施上的 Mock AI E2E。确定性 Provider 只验证执行机制，不代表模型质量。
+自动化检查见 [CI](.github/workflows/ci.yml)。主分支推送或 PR 触发 Python lint 与 PostgreSQL 测试、Java 测试、前端单测 / 构建 / 依赖审计和 Mock HTTP E2E。随后运行演示栈脚本单测和 Playwright 学习路径，覆盖桌面和 390px 手机宽度。确定性 Provider 只验证执行机制，不代表模型质量。
 
 历史验证结果（各自对应当时的提交，不是当前提交重新运行的成绩）：
 

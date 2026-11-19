@@ -3,6 +3,7 @@ package com.example.courselingo.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
@@ -22,6 +23,8 @@ import com.example.courselingo.task.entity.AnalysisTask;
 import com.example.courselingo.task.mapper.AnalysisTaskMapper;
 import com.example.courselingo.task.model.AnalysisTaskStatus;
 import com.example.courselingo.task.service.TaskQueryServiceImpl;
+import com.example.courselingo.upload.entity.UploadSession;
+import com.example.courselingo.upload.mapper.UploadSessionMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,11 +42,14 @@ class TaskQueryServiceTest {
     @Mock
     private AnalysisTaskMapper analysisTaskMapper;
 
+    @Mock
+    private UploadSessionMapper uploadSessionMapper;
+
     private TaskQueryServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new TaskQueryServiceImpl(currentUserService, analysisTaskMapper);
+        service = new TaskQueryServiceImpl(currentUserService, analysisTaskMapper, uploadSessionMapper);
         lenient().when(currentUserService.currentUser("Bearer access-token"))
             .thenReturn(new CurrentUserResponse(42L, "demo@example.com", "ACTIVE"));
     }
@@ -174,6 +180,73 @@ class TaskQueryServiceTest {
         assertThat(response.errorMessage()).doesNotContain("secret-token");
         assertThat(response.errorMessage()).doesNotContain("passwordHash");
         assertThat(response.errorMessage()).doesNotContain("C:/Users");
+    }
+
+    @Test
+    void listAndDetailShowOwnersUploadNameWithoutExtension() {
+        AnalysisTask first = task("task_a", 42L, AnalysisTaskStatus.SUCCEEDED);
+        first.setUploadId("up_a");
+        AnalysisTask second = task("task_b", 42L, AnalysisTaskStatus.SUCCEEDED);
+        second.setUploadId("up_b");
+        when(analysisTaskMapper.selectPageByUserId(42L, null, 0L, 20)).thenReturn(List.of(first, second));
+        when(analysisTaskMapper.countByUserId(42L, null)).thenReturn(2L);
+        when(uploadSessionMapper.selectByIdsAndUserId(List.of("up_a", "up_b"), 42L))
+            .thenReturn(List.of(upload("up_a", 42L, "binary-search.lecture.mp4"), upload("up_b", 42L, "<b>Week 2</b>.mkv")));
+        when(analysisTaskMapper.selectByIdAndUserId("task_a", 42L)).thenReturn(first);
+        when(uploadSessionMapper.selectByIdsAndUserId(List.of("up_a"), 42L))
+            .thenReturn(List.of(upload("up_a", 42L, "binary-search.lecture.mp4")));
+
+        TaskListResponse list = service.list(new TaskListQuery(null, null, null), "Bearer access-token");
+        TaskDetailResponse detail = service.detail("task_a", "Bearer access-token");
+
+        // The server returns plain text; markup in a file name is left for the client to escape.
+        assertThat(list.items()).extracting("courseName").containsExactly("binary-search.lecture", "<b>Week 2</b>");
+        assertThat(detail.courseName()).isEqualTo("binary-search.lecture");
+    }
+
+    @Test
+    void courseNameNeverComesFromAnotherUsersUpload() {
+        AnalysisTask owned = task("task_owned", 42L, AnalysisTaskStatus.SUCCEEDED);
+        owned.setUploadId("up_foreign");
+        when(analysisTaskMapper.selectPageByUserId(42L, null, 0L, 20)).thenReturn(List.of(owned));
+        when(analysisTaskMapper.countByUserId(42L, null)).thenReturn(1L);
+        // Even if the storage layer returned a row owned by someone else, it must not be used.
+        when(uploadSessionMapper.selectByIdsAndUserId(List.of("up_foreign"), 42L))
+            .thenReturn(List.of(upload("up_foreign", 7L, "other-users-secret-lecture.mp4")));
+
+        TaskListResponse list = service.list(new TaskListQuery(null, null, null), "Bearer access-token");
+
+        assertThat(list.items()).extracting("courseName").containsExactly((Object) null);
+        verify(uploadSessionMapper).selectByIdsAndUserId(List.of("up_foreign"), 42L);
+    }
+
+    @Test
+    void detailOfAnotherUsersTaskFailsBeforeReadingUploadNames() {
+        when(analysisTaskMapper.selectByIdAndUserId("task_of_user_7", 42L)).thenReturn(null);
+
+        assertThatThrownBy(() -> service.detail("task_of_user_7", "Bearer access-token"))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ErrorCode.TASK_NOT_FOUND);
+        verify(uploadSessionMapper, never()).selectByIdsAndUserId(anyCollection(), any());
+    }
+
+    @Test
+    void displayNameDropsOnlyTheLastExtensionAndRejectsBlankNames() {
+        assertThat(TaskQueryServiceImpl.displayName("lecture.final.mp4")).isEqualTo("lecture.final");
+        assertThat(TaskQueryServiceImpl.displayName("no-extension")).isEqualTo("no-extension");
+        assertThat(TaskQueryServiceImpl.displayName(".mp4")).isNull();
+        assertThat(TaskQueryServiceImpl.displayName("   ")).isNull();
+        assertThat(TaskQueryServiceImpl.displayName(" .mp4")).isNull();
+        assertThat(TaskQueryServiceImpl.displayName(null)).isNull();
+    }
+
+    private static UploadSession upload(String id, Long userId, String filename) {
+        UploadSession upload = new UploadSession();
+        upload.setId(id);
+        upload.setUserId(userId);
+        upload.setFilename(filename);
+        return upload;
     }
 
     private static AnalysisTask task(String taskId, Long userId, AnalysisTaskStatus status) {

@@ -8,6 +8,7 @@ import {
 } from "../api/authToken";
 import { currentUser, login, register, type AuthUser, type LoginRequest, type RegisterRequest } from "../api/auth";
 import { setAuthInvalidHandler } from "../api/http";
+import { clearLastCourseLocations } from "../components/task-detail/lastCourseLocation";
 
 interface AuthState {
   accessToken: string;
@@ -66,6 +67,8 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
+      // Saved course views are per browser; a logout removes them for every account.
+      clearLastCourseLocations();
       clearAuthTokens();
       endAuthDocument("/login");
       this.accessToken = "";

@@ -3,6 +3,24 @@ import { formatApiTimestamp } from "../../utils/time";
 
 export type CourseWorkspace = "tutor" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
 
+export const WORKSPACE_ITEMS: Array<{ value: CourseWorkspace; label: string }> = [
+  { value: "agent", label: "学习助手" },
+  { value: "tutor", label: "Tutor 对话" },
+  { value: "flashcards", label: "闪卡复习" },
+  { value: "overview", label: "概览" },
+  { value: "content", label: "课程内容" },
+  { value: "study", label: "学习资料" },
+  { value: "qa", label: "课程问答" },
+  { value: "files", label: "下载" },
+  { value: "technical", label: "处理详情" },
+];
+
+export function workspaceLabel(value: CourseWorkspace, compact = true): string {
+  if (compact && value === "content") return "课程材料";
+  if (compact && value === "agent") return "解释与练习";
+  return WORKSPACE_ITEMS.find(item => item.value === value)?.label ?? value;
+}
+
 /** Mirrors the backend rule: SUCCEEDED, or RUNNING once this run's subtitles opened learning. */
 export function courseLearnable(status?: string | null, learningReady?: boolean | null): boolean {
   return status === "SUCCEEDED" || (status === "RUNNING" && learningReady === true);

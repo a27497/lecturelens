@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "type-check": "vue-tsc -b",
     "test:unit": "vitest run",
-    "test:browser": "node tests/browser/coursePosition.mjs"
+    "test:browser": "node tests/browser/coursePosition.mjs",
+    "test:learning-path": "playwright test --config playwright.learning-path.config.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.2",

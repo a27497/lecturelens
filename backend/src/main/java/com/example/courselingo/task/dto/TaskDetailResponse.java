@@ -20,13 +20,23 @@ public record TaskDetailResponse(
     Instant startedAt,
     Instant finishedAt,
     /** True when study, Q&A and the Agent are available (SUCCEEDED, or subtitles ready while RUNNING). */
-    Boolean learningReady
+    Boolean learningReady,
+    /** Owner-only display name: the uploaded file name without its extension; null when unknown. */
+    String courseName
 ) {
+    public TaskDetailResponse(String taskId, String uploadId, String targetLanguage, String status, Integer progressPercent,
+                              String currentStage, String errorCode, String errorMessage, Integer retryCount,
+                              Integer maxRetryCount, Instant createdAt, Instant updatedAt, Instant startedAt,
+                              Instant finishedAt, Boolean learningReady) {
+        this(taskId, uploadId, targetLanguage, status, progressPercent, currentStage, errorCode, errorMessage,
+            retryCount, maxRetryCount, createdAt, updatedAt, startedAt, finishedAt, learningReady, null);
+    }
+
     public TaskDetailResponse(String taskId, String uploadId, String targetLanguage, String status, Integer progressPercent,
                               String currentStage, String errorCode, String errorMessage, Integer retryCount,
                               Integer maxRetryCount, Instant createdAt, Instant updatedAt, Instant startedAt,
                               Instant finishedAt) {
         this(taskId, uploadId, targetLanguage, status, progressPercent, currentStage, errorCode, errorMessage,
-            retryCount, maxRetryCount, createdAt, updatedAt, startedAt, finishedAt, null);
+            retryCount, maxRetryCount, createdAt, updatedAt, startedAt, finishedAt, null, null);
     }
 }
