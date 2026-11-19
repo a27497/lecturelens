@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { computed, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from "vue";
+import { computed, onActivated, onBeforeUnmount, onDeactivated, nextTick, ref, watch } from "vue";
 import { cancelTutorTurn, createTutorSession, getTutorSession, listTutorSessions, submitTutorTurn } from "../../api/tutor";
 import type { TutorProviderMode, TutorSession, TutorView } from "../../api/tutor";
 import type { Citation } from "../../api/study";
 import { mayHaveLostCourseAccess } from "../../api/courseAccess";
 import { randomUuid } from "../../utils/randomUuid";
-import { formatMillisRange } from "../../utils/time";
+import { formatMillisRange, formatMillisToClock } from "../../utils/time";
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
-const props = defineProps<{ taskId: string; canNote?: boolean }>();
-const emit = defineEmits<{ seek: [milliseconds: number, context: EvidenceSeekContext]; note: [milliseconds: number, context: EvidenceSeekContext]; accessFailure: [] }>();
+import CourseSourceCard from "./CourseSourceCard.vue";
+
+const props = defineProps<{ taskId: string; canNote?: boolean; lesson?: boolean; suggestionsVisible?: boolean;
+  courseTitle?: string; demoCourse?: { followups: string[]; topics: Array<{ question: string; title: string }> } }>();
+const emit = defineEmits<{ seek: [milliseconds: number, context: EvidenceSeekContext]; note: [milliseconds: number, context: EvidenceSeekContext];
+  replay: [milliseconds: number, context: EvidenceSeekContext]; practice: []; lessonNote: []; courseQa: []; accessFailure: [] }>();
 const view = ref<TutorView | null>(null);
 const sessions = ref<TutorSession[]>([]);
 const providerMode = ref<TutorProviderMode>();
@@ -18,6 +22,37 @@ const socratic = ref(false);
 const busy = ref(false);
 const loading = ref(true);
 const error = ref("");
+const editor = ref<HTMLTextAreaElement>();
+const selectedSource = ref<{ turn: string; citation: Citation }>();
+const topicBySession = ref<Record<string, string>>({});
+const latestQuestion = computed(() => view.value?.turns.find(turn => turn.status === "completed")?.learner_text);
+const followups = computed(() => props.demoCourse?.followups ?? (latestQuestion.value ? [
+  "能用课程里的另一个例子解释刚才的问题吗？",
+  "刚才讲到的方法在什么情况下不适用？",
+] : [
+  `《${props.courseTitle || "这门课"}》里的核心概念是什么？`,
+  "能带我走一遍这节课的例题吗？",
+]));
+function compose(text?: string) {
+  if (busy.value || pending.value || blocked.value) return;
+  if (text !== undefined) draft.value = text;
+  void nextTick(() => editor.value?.focus());
+}
+function startNew() {
+  newConversation();
+  compose();
+}
+defineExpose({ compose });
+function title(question: string | undefined) {
+  if (!question) return "未命名对话";
+  return props.demoCourse?.topics.find(topic => topic.question === question)?.title ?? question;
+}
+function chooseSource(turn: string, citation: Citation) {
+  if (selectedSource.value?.turn === turn && selectedSource.value.citation.evidence_id === citation.evidence_id) {
+    selectedSource.value = undefined;
+  } else selectedSource.value = { turn, citation };
+}
+
 const blocked = ref(false);
 const pending = ref<{ client_turn_id: string; text: string; socratic: boolean }>();
 const activeTurn = computed(() => view.value?.turns.find(t => t.status === "queued" || t.status === "running"));
@@ -35,14 +70,17 @@ function fail(reason: unknown) {
   if (definiteConflict && sessionConflict) pending.value = undefined;
   if (mayHaveLostCourseAccess(reason) || (definiteConflict && !sessionConflict)) {
     ++readSequence; clearTimeout(timer);
-    view.value = null; sessions.value = []; blocked.value = true; emit("accessFailure");
+    view.value = null; sessions.value = []; selectedSource.value = undefined; blocked.value = true; emit("accessFailure");
     error.value = "课程已更新或不可访问，请重新打开课程并开启新对话。";
-  } else error.value = sessionConflict ? "本轮状态发生冲突或预算已用完，请重新读取对话后再发送。" : "Tutor 暂不可用。可重新读取；发送结果未知时请重试同一条消息。";
+    } else if (response?.data?.message === "TUTOR_SESSION_BUDGET") error.value = "这段对话已达到上限，请开启新对话。";
+  else error.value = sessionConflict ? "对话已更新，请重新读取。" : pending.value ? "还无法确认这条消息是否发送成功。" : "对话暂时无法打开。";
 }
 function apply(result: TutorView) {
   ++readSequence;
+  if (view.value?.session.session_id !== result.session.session_id) selectedSource.value = undefined;
   view.value = result;
-  providerMode.value = result.provider_mode;
+  if (result.turns[0]) topicBySession.value[result.session.session_id] = result.turns[0].learner_text;
+  providerMode.value = result.provider_mode ?? providerMode.value;
   clearTimeout(timer);
   if (activeTurn.value && visible) timer = setTimeout(() => void refresh(), 700);
 }
@@ -79,7 +117,7 @@ async function openSession(sid: string) {
 }
 function newConversation() {
   if (loading.value || busy.value || activeTurn.value || pending.value) return;
-  epoch++; clearTimeout(timer); view.value = null; draft.value = ""; error.value = ""; createKey = randomUuid();
+  epoch++; clearTimeout(timer); view.value = null; selectedSource.value = undefined; draft.value = ""; error.value = ""; createKey = randomUuid();
 }
 async function send() {
   if (loading.value || busy.value || activeTurn.value || blocked.value || exhausted.value) return;
@@ -115,7 +153,7 @@ async function cancel() {
 function parts(text: string, citations: Citation[]) {
   return text.split(/(\[[^\[\]\n]+\])/g).map(part => {
     const citation = citations.find(c => `[${c.evidence_id}]` === part);
-    return { text: citation ? formatMillisRange(citation.start_ms, citation.end_ms) : part, citation };
+    return { text: citation ? props.lesson ? formatMillisToClock(citation.start_ms).replace(/^00:/, "") : formatMillisRange(citation.start_ms, citation.end_ms) : part, citation };
   });
 }
 function seek(c: Citation, action: "seek" | "note" = "seek") {
@@ -126,15 +164,88 @@ function seek(c: Citation, action: "seek" | "note" = "seek") {
 }
 watch(() => props.taskId, () => {
   view.value = null; sessions.value = []; providerMode.value = undefined; pending.value = undefined; draft.value = ""; busy.value = false;
-  blocked.value = false; createKey = randomUuid(); void restore();
+  topicBySession.value = {}; selectedSource.value = undefined; blocked.value = false; createKey = randomUuid(); void restore();
 }, { immediate: true });
-onActivated(() => { visible = true; void refresh(); });
+onActivated(() => { visible = true; if (activeTurn.value) void refresh(); });
 onDeactivated(() => { visible = false; clearTimeout(timer); });
 onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
 </script>
 
 <template>
-  <section class="tutor" aria-labelledby="tutor-title">
+  <section v-if="lesson" class="tutor tutor--lesson" aria-label="课程助手">
+    <header class="lesson-conversation">
+      <label v-if="sessions.length" class="lesson-conversation__choose">
+        <span class="sr-only">查看对话</span>
+        <select aria-label="查看对话" :value="view?.session.session_id ?? ''"
+          :disabled="loading || busy || !!activeTurn || !!pending" @change="openSession(($event.target as HTMLSelectElement).value)">
+          <option disabled value="">查看对话</option>
+          <option v-for="session in sessions" :key="session.session_id" :value="session.session_id">
+            {{ title(topicBySession[session.session_id]) }}
+          </option>
+        </select>
+      </label>
+      <button type="button" :disabled="loading || busy || !!activeTurn || !!pending || blocked" @click="startNew">新对话</button>
+    </header>
+    <p v-if="providerMode === 'deepseek-flash'" class="boundary">提问、对话和相关课程片段会发送给 DeepSeek。试学最多可生成 3 次。</p>
+    <div v-if="loading" class="conversation-skeleton" role="status"><span>正在打开对话…</span><div /><div /><div /></div>
+    <p v-if="error" role="alert">{{ error }}
+      <template v-if="!blocked && !pending">
+        <button type="button" @click="view ? refresh() : restore()">重新读取</button>
+        <button v-if="!view" type="button" @click="emit('courseQa')">打开课程问答</button>
+      </template>
+    </p>
+    <p v-if="!loading && !error && !view?.turns.length" class="tutor-empty">可以问一个概念，也可以请我带你走一遍例题。</p>
+    <ol v-if="view?.turns.length" class="messages" aria-live="polite">
+      <li v-for="turn in view.turns" :key="turn.turn_id">
+        <p class="learner">{{ turn.learner_text }}</p>
+        <div v-if="turn.status === 'completed'" class="answer" :class="{ insufficient: turn.outcome === 'insufficient_evidence' }">
+          <strong class="answer-byline"><span aria-hidden="true">✧</span>{{ turn.outcome === 'socratic_prompt' ? '引导思考' : '学习助手' }}</strong>
+          <p v-if="turn.outcome === 'insufficient_evidence'">这节课没有足够资料回答这个问题。</p>
+          <template v-else>
+            <p v-for="(block, index) in (turn.answer ?? '').split(/\n\n+/)" :key="index" class="answer-block">
+              <template v-for="(part, i) in parts(block, turn.citations)" :key="i">
+                <button v-if="part.citation" type="button" class="citation"
+                  :aria-label="`课程出处 ${part.text}`"
+                  :aria-expanded="selectedSource?.turn === turn.turn_id && selectedSource?.citation.evidence_id === part.citation.evidence_id"
+                  @click="chooseSource(turn.turn_id, part.citation)">{{ part.text }}</button>
+                <template v-else-if="part.text.includes('\n') && i === 0"><strong>{{ part.text.split('\n')[0] }}</strong>{{ part.text.slice(part.text.indexOf('\n')) }}</template>
+                <span v-else>{{ part.text }}</span>
+              </template>
+            </p>
+          </template>
+          <p v-if="turn.evaluation"><strong>对你的回复：</strong><template v-for="(part, i) in parts(turn.evaluation, turn.citations)" :key="i">
+            <button v-if="part.citation" class="citation" :aria-label="`课程出处 ${part.text}`" @click="chooseSource(turn.turn_id, part.citation)">{{ part.text }}</button>
+            <span v-else>{{ part.text }}</span>
+          </template></p>
+          <CourseSourceCard v-if="selectedSource?.turn === turn.turn_id" :task-id="taskId" :revision="view.session.revision"
+            :citation="selectedSource.citation" :can-note="Boolean(canNote)"
+            @replay="emit('replay', selectedSource.citation.start_ms, { evidenceId: selectedSource.citation.evidence_id, revision: view.session.revision })"
+            @note="seek(selectedSource.citation, 'note')" @access-failure="emit('accessFailure')" />
+        </div>
+        <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已停止生成。' : '这次没能完成回答。可以继续提问。' }}</p>
+        <p v-else role="status">正在查阅课程内容… <button type="button" @click="cancel">停止生成</button></p>
+      </li>
+    </ol>
+    <div v-if="view?.turns.some(turn => turn.status === 'completed')" class="lesson-actions">
+      <button type="button" class="practice-shortcut" @click="emit('practice')">✓　做一道练习</button>
+      <button v-if="canNote" type="button" @click="emit('lessonNote')">♧　记下这段</button>
+    </div>
+    <div v-if="suggestionsVisible && !loading && !blocked && !exhausted && !activeTurn" class="followups">
+      <h3>接着问</h3>
+      <button v-for="question in followups" :key="question" type="button" :disabled="busy || !!pending"
+        @click="compose(question)">{{ question }}</button>
+    </div>
+    <p v-if="exhausted" role="status">这段对话已达到上限。<button type="button" @click="startNew">开启新对话</button></p>
+    <form class="lesson-compose" @submit.prevent="send">
+      <div class="lesson-compose__row">
+        <textarea ref="editor" v-model="draft" aria-label="就本课提问" placeholder="就本课提问" maxlength="2000"
+          rows="1" :disabled="busy || !!pending || blocked" />
+        <button type="submit" aria-label="发送" :disabled="busy || !!activeTurn || loading || blocked || exhausted || (!pending && !draft.trim())">{{ pending ? '重试' : '↑' }}</button>
+      </div>
+      <label><input v-model="socratic" type="checkbox" :disabled="busy || !!pending" /> 用问题引导我</label>
+    </form>
+  </section>
+  <section v-else class="tutor" aria-labelledby="tutor-title">
     <header><h2 id="tutor-title">Tutor</h2>
       <button :disabled="loading || busy || !!activeTurn || !!pending || blocked" @click="newConversation">新对话</button></header>
     <p v-if="providerMode === 'deepseek-flash'" class="boundary">DeepSeek 试学：提问、对话上下文和检索到的课程片段将发送给 DeepSeek。此试学共可生成最多 3 次，教学质量待评审。</p>
@@ -192,4 +303,42 @@ textarea { min-width: 0; resize: vertical; line-height: 1.65; font-size: 16px; }
 blockquote { margin: 10px 0; padding: 10px 12px; border-inline-start: 2px solid var(--color-warning); }
 summary { width: fit-content; cursor: pointer; color: var(--color-brand-strong); }
 @media (max-width: 1024px) { button { min-height: 44px; } }
+
+.tutor--lesson { gap: 12px; padding: 0; border: 0; background: transparent; }
+.lesson-conversation { justify-content: end; min-height: 32px; }
+.lesson-conversation__choose { margin-inline-end: auto; min-width: 0; }
+.lesson-conversation select { max-width: min(250px, 57vw); color: var(--color-ink-soft); font-size: 13px; text-overflow: ellipsis; }
+.lesson-conversation button, .lesson-actions button { font-size: 13px; color: var(--color-brand); }
+.tutor--lesson .messages { gap: 16px; }
+.tutor--lesson .messages li { gap: 14px; }
+.tutor--lesson .learner { padding: 10px 14px; font-weight: 750; border-radius: 13px 13px 4px 13px; }
+.tutor--lesson .answer { gap: 11px; font-size: 15px; }
+.tutor--lesson .answer strong { font-weight: 750; }
+.answer-byline { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; color: var(--color-ink-soft); font-size: 13px; }
+.answer-byline span { color: var(--color-brand); background: var(--color-brand-soft); border-radius: 7px; padding: 1px 5px; font-size: 16px; }
+.tutor--lesson .citation { min-height: 25px; padding: 1px 5px; margin-inline: 2px; border: 0; border-radius: 4px; background: var(--color-brand-soft); color: var(--color-brand-strong); font-weight: 700; }
+.tutor--lesson .citation[aria-expanded="true"] { color: white; background: var(--color-brand); }
+.lesson-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 12px; margin-top: 4px; border-top: 1px solid var(--color-border); }
+.lesson-actions .practice-shortcut { color: white; background: var(--color-brand); border-color: var(--color-brand); font-weight: 750; }
+.followups { display: grid; gap: 5px; }
+.followups h3 { font-size: 13px; color: var(--color-ink-soft); margin: 0; }
+.followups button { text-align: start; color: var(--color-brand-strong); font-size: 13px; padding: 4px 8px; border-radius: 6px; }
+.lesson-compose { display: grid; gap: 5px; }
+.lesson-compose__row { display: flex; gap: 6px; align-items: end; border: 1px solid var(--color-border); border-radius: 12px; padding: 5px; background: var(--color-canvas); }
+.lesson-compose textarea { flex: 1; min-width: 0; background: transparent; border: 0; padding: 5px 8px; resize: vertical; }
+.lesson-compose button { color: white; background: var(--color-brand); padding: 4px 10px; min-width: 36px; min-height: 36px; font-weight: 750; }
+.lesson-compose label { color: var(--color-ink-soft); font-size: 12px; }
+.conversation-skeleton { display: grid; gap: 10px; color: var(--color-ink-soft); }
+.conversation-skeleton div { height: 20px; border-radius: 6px; background: var(--color-surface-subtle); }
+.conversation-skeleton div:first-of-type { width: 58%; margin-inline-start: auto; }
+.conversation-skeleton div:last-child { width: 85%; }
+@media (min-width: 1025px) {
+  .tutor--lesson .lesson-conversation { position: absolute; inset: 17px 22px auto 72px; align-items: start; pointer-events: none; }
+  .lesson-conversation__choose { margin-top: 24px; }
+  .lesson-conversation :is(select, button) { pointer-events: auto; }
+  .lesson-conversation select { border: 0; padding: 0; background: transparent; }
+}
+@media (max-width: 1024px) {
+  .tutor--lesson .learner, .tutor--lesson .answer { font-size: 15px; }
+}
 </style>

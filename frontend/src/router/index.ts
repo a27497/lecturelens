@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import RecruiterDemoView from "../views/RecruiterDemoView.vue";
 import Home from "../pages/Home.vue";
+import { enterRound3, round3Enabled } from "../api/round3Demo";
 import { useAuthStore } from "../stores/auth";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
@@ -55,6 +56,10 @@ export const router = createRouter({
 
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+  if (round3Enabled && to.meta.requiresAuth && !authStore.isAuthenticated && /^\/tasks(?:\/|$)/.test(to.path)) {
+    try { authStore.acceptSession(await enterRound3()); }
+    catch { /* The login form remains available if the local fixture is still starting. */ }
+  }
   const isAuthenticated = authStore.isAuthenticated;
 
   if (to.path === "/" && isAuthenticated) return { path: "/tasks" };

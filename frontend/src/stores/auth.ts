@@ -6,7 +6,7 @@ import {
   saveAuthTokens,
   USER_EMAIL_KEY,
 } from "../api/authToken";
-import { currentUser, login, register, type AuthUser, type LoginRequest, type RegisterRequest } from "../api/auth";
+import { currentUser, login, register, type AuthUser, type LoginRequest, type LoginResponse, type RegisterRequest } from "../api/auth";
 import { setAuthInvalidHandler } from "../api/http";
 import { clearLastCourseLocations } from "../components/task-detail/lastCourseLocation";
 
@@ -46,14 +46,18 @@ export const useAuthStore = defineStore("auth", {
       this.errorMessage = "";
       try {
         const session = await login(request);
-        saveAuthTokens(session.accessToken, session.refreshToken, session.user.email, nextPath);
-        this.accessToken = session.accessToken;
-        this.userEmail = session.user.email;
-        this.user = session.user;
+        this.acceptSession(session, nextPath);
         return session;
       } finally {
         this.loading = false;
       }
+    },
+
+    acceptSession(session: LoginResponse, nextPath?: string) {
+      saveAuthTokens(session.accessToken, session.refreshToken, session.user.email, nextPath);
+      this.accessToken = session.accessToken;
+      this.userEmail = session.user.email;
+      this.user = session.user;
     },
 
     async register(request: RegisterRequest) {

@@ -11,6 +11,7 @@ type VideoPlaybackExpose = { seekTo: (seconds: number) => void };
 
 const props = defineProps<{
   compact?: boolean;
+  lesson?: boolean;
   inactive?: boolean;
   seekRequest?: SeekRequest;
   task: TaskEventPayload | null;
@@ -45,6 +46,7 @@ defineExpose({ seekTo });
     <VideoPlaybackCard
       ref="playbackRef"
       :compact="compact"
+      :lesson="lesson"
       :inactive="inactive"
       :seek-request="seekRequest"
       @position="$emit('position', $event)"

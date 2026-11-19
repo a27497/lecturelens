@@ -76,7 +76,7 @@ async function expectFit(page) {
 test('keeps verified citation and playback notes across reload and returns focus from the source', async ({ page }) => {
   const { base, taskId, userId } = await openMock(page);
   const counts = monitor(page);
-  await page.goto(`${base}/tasks/${taskId}?view=tutor`);
+  await page.goto(`${base}/tasks/${taskId}?view=tutor&layout=continuous`);
   const nav = page.getByRole('navigation', { name: '课程内容导航' });
   const tutor = page.getByRole('region', { name: 'Tutor', exact: true });
   const composer = tutor.getByLabel('向课程 Tutor 提问');
@@ -186,7 +186,7 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   await expect(page.getByRole('main').getByRole('button', { name: '批量管理' })).toHaveCount(0);
   await screenshot(page, 'library-empty');
 
-  await page.goto(`${base}/tasks/${taskId}?view=notes`);
+  await page.goto(`${base}/tasks/${taskId}?view=notes&layout=continuous`);
   await expect(page.getByText('课程不可用或权限已变化')).toBeVisible();
   await expect(page.getByRole('textbox', { name: '记录你的理解' })).toHaveCount(0);
   expect(counts.httpErrors).toEqual({ '503 GET /api/tasks': 1, '404 GET /api/tasks/{course}': 1 });

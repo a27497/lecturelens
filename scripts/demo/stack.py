@@ -158,6 +158,8 @@ def fail(message):
 
 
 class Stack:
+    fixture = FIXTURE
+    fixture_filename = "binary-search-demo.mp4"
     def __init__(self, instance):
         if not re.fullmatch(r"[a-z0-9-]{1,32}", instance):
             fail("instance must match [a-z0-9-]{1,32}")
@@ -191,7 +193,9 @@ class Stack:
     # ---------- helpers ----------
     def save(self):
         self.dir.mkdir(parents=True, exist_ok=True)
-        self.state_file.write_text(json.dumps(self.state, indent=2, sort_keys=True) + "\n")
+        temporary = self.state_file.with_suffix(".tmp")
+        temporary.write_text(json.dumps(self.state, indent=2, sort_keys=True) + "\n")
+        temporary.replace(self.state_file)
 
     def compose(self, project, *args):
         if project == self.infra_project:
@@ -775,6 +779,15 @@ class Stack:
             timeout=180,
         )
 
+    def agent_factory(self, real):
+        return "lecturelens_agent.app:create_app" if real else "lecturelens_real_eval.tutor.app:create_app"
+
+    def web_env(self):
+        return self.base_env()
+
+    def web_args(self):
+        return []
+
     def services(self, secret, real):
         ports = self.state["ports"]
         java = self.spawn(
@@ -786,7 +799,7 @@ class Stack:
         (self.dir / "tmp").mkdir(exist_ok=True)
         log("waiting for Java health")
         self.wait_http("java", f"http://127.0.0.1:{ports['APP_PORT']}/actuator/health", 240, java)
-        factory = "lecturelens_agent.app:create_app" if real else "lecturelens_real_eval.tutor.app:create_app"
+        factory = self.agent_factory(real)
         agent = self.spawn(
             "agent",
             [
@@ -803,7 +816,7 @@ class Stack:
         )
         log("waiting for Agent health")
         self.wait_http("agent", f"http://127.0.0.1:{ports['AGENT_HTTP_PORT']}/healthz", 180, agent)
-        web_env = self.base_env()
+        web_env = self.web_env()
         web_env["VITE_BACKEND_PROXY_TARGET"] = f"http://127.0.0.1:{ports['APP_PORT']}"
         web = self.spawn(
             "web",
@@ -815,6 +828,7 @@ class Stack:
                 "--port",
                 str(ports["WEB_PORT"]),
                 "--strictPort",
+                *self.web_args(),
             ],
             ROOT / "frontend",
             web_env,
@@ -872,12 +886,12 @@ class Stack:
                 fail(f"the saved demo course {saved} is still {status}. {retry}")
             log(f"the saved demo course ended {status}; importing it again")
         log("uploading the synthetic demo course and running the media pipeline")
-        video = FIXTURE.read_bytes()
+        video = self.fixture.read_bytes()
         upload = self.api(
             "POST",
             "/api/uploads/sessions",
             {
-                "filename": "binary-search-demo.mp4",
+                "filename": self.fixture_filename,
                 "sizeBytes": len(video),
                 "chunkSizeBytes": len(video),
                 "totalChunks": 1,
@@ -936,8 +950,8 @@ class Stack:
     # ---------- commands ----------
     def up(self, real):
         started = time.monotonic()
-        if not FIXTURE.exists():
-            fail(f"missing {FIXTURE}")
+        if not self.fixture.exists():
+            fail(f"missing {self.fixture}")
         self.lock()
         self.prerequisites(real)
         self.dir.mkdir(parents=True, exist_ok=True)

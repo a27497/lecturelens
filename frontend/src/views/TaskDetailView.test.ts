@@ -47,7 +47,9 @@ beforeEach(() => {
 });
 async function open(path = "/tasks/one?view=agent&at=1000") {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/tasks", component: { template: "<div />" } }, { path: "/tasks/:taskId", component: { template: "<div />" } }] });
-  await router.push(path); await router.isReady();
+  const target = new URL(path, "http://localhost");
+  if (!target.searchParams.has("layout")) target.searchParams.set("layout", "continuous");
+  await router.push(target.pathname + target.search); await router.isReady();
   const wrapper = mount(TaskDetailView, { attachTo: document.body, global: { plugins: [createPinia(), router], stubs } });
   await flushPromises(); return { wrapper, router };
 }
@@ -109,7 +111,7 @@ it("ignores the old course's late denial and remounts drafts only for the new co
   let deny!: (reason: unknown) => void;
   vi.mocked(fetchTaskDetail).mockImplementationOnce(() => new Promise((_resolve, reject) => { deny=reject; }));
   await wrapper.findAll('.mock-agent button')[1]!.trigger('click'); await flushPromises();
-  await router.push('/tasks/two?view=agent'); await flushPromises(); deny({ response: { status: 404 } }); await flushPromises();
+  await router.push('/tasks/two?view=agent&layout=continuous'); await flushPromises(); deny({ response: { status: 404 } }); await flushPromises();
   expect(wrapper.find('.course-unavailable').exists()).toBe(false); expect(wrapper.get<HTMLInputElement>('.mock-agent input').element.value).toBe('');
   wrapper.unmount();
 });
@@ -202,7 +204,7 @@ it("a rapid layout round trip supersedes its queued URL change", async () => {
   const toggle = wrapper.get<HTMLButtonElement>('.layout-switch').element;
   toggle.click(); toggle.click(); await flushPromises();
   expect(wrapper.get('.layout-switch').text()).toBe('经典布局');
-  expect(router.currentRoute.value.query.layout).toBeUndefined();
+  expect(router.currentRoute.value.query.layout).toBe("continuous");
   wrapper.unmount();
 });
 

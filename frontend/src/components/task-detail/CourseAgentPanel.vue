@@ -19,13 +19,13 @@ import PracticeAnswerForm from "./PracticeAnswerForm.vue";
 import PracticeFeedbackPanel from "./PracticeFeedbackPanel.vue";
 import { toUserFriendlyError } from "../../utils/errorMessage";
 import { modelError } from "../../api/models";
-import { formatMillisRange } from "../../utils/time";
+import { formatMillisRange, formatMillisToClock } from "../../utils/time";
 import { randomUuid } from "../../utils/randomUuid";
 
 import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 
 import type { LearningScope } from "../../api/learningScope";
-const props = defineProps<{ taskId: string; status?: string; learningReady?: boolean | null; compact?: boolean; learningScope?: LearningScope | null }>();
+const props = defineProps<{ taskId: string; status?: string; learningReady?: boolean | null; compact?: boolean; lesson?: boolean; demoPractice?: boolean; examplePosition?: number; learningScope?: LearningScope | null }>();
 const emit = defineEmits<{ frozenScope: [scope: LearningScope | null | undefined]; seek: [startTimeMillis: number, context: EvidenceSeekContext]; navigate: [workspace: "overview" | "content"]; position: [position: LearningTaskPosition | null]; accessFailure: [] }>();
 const enabled = ref<boolean | null>(null);
 const readinessText = ref("课程资料正在准备，完成后即可开始学习。");
@@ -53,6 +53,8 @@ const approval = ref<StudyResponse["approval"]>(null);
 const feedbackEnabled = ref(false);
 const feedbackRuns = ref<StudyFeedbackRun[]>([]);
 const questionIndex = ref(0);
+const exampleSource = computed(() => artifact.value?.citations.find(citation => citation.start_ms === props.examplePosition));
+const exampleTime = computed(() => props.examplePosition === undefined ? "" : formatMillisToClock(props.examplePosition).replace(/^00:/, ""));
 const resultsOpen = ref(false);
 const progressRows = ref<PracticeResult[] | null>(null);
 const progressLoading = ref(false);
@@ -111,7 +113,7 @@ async function continuePractice() {
 function savedAttempt(value: StudyAttempt) {
   observeAttempts([value]);
   if (value.choice_result) choiceReviewVersion.value++;
-  void refreshProgress();
+  if (!props.lesson || !value.choice_result) void refreshProgress();
 }
 const resultsElement = ref<HTMLElement>();
 async function toggleResults() {
@@ -146,6 +148,18 @@ async function seekResult(milliseconds: number, context: EvidenceSeekContext, in
 }
 const newGoalOpen = ref(false);
 const historyElement = ref<HTMLDetailsElement>();
+const historyLoaded = ref(false);
+async function loadRunHistory() {
+  if (historyLoaded.value || !sessionId.value) return;
+  historyLoaded.value = true;
+  const current = version, task = props.taskId;
+  try {
+    const history = await studyCommand(task, { operation: "RUNS", session_id: sessionId.value });
+    if (current === version) recentRuns.value = history.runs ?? [];
+  } catch {
+    if (current === version) { historyLoaded.value = false; error.value = "最近的练习暂时无法打开。"; }
+  }
+}
 function showHistory() {
   if (!historyElement.value) return;
   historyElement.value.open = true;
@@ -179,7 +193,7 @@ async function chooseQuestion(index: number) {
   questionIndex.value = index;
   await nextTick();
   const question = questionElements.get(index);
-  question?.scrollIntoView({ block: "start" });
+  question?.scrollIntoView({ block: props.lesson ? "nearest" : "start" });
   question?.querySelector<HTMLElement>('textarea,input[type="radio"]')?.focus({ preventScroll: true });
 }
 
@@ -231,17 +245,19 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
   submitting.value = false; revealing.value = false;
   sessionId.value = ""; sourceRevision.value = undefined; run.value = null; artifact.value = null; events.value = []; answers.value = null; attempts.value = [];
   requestKey = ""; requestGoal = ""; sessionKey = randomUuid();
-  recentRuns.value = [];
+  recentRuns.value = []; historyLoaded.value = false;
   sessions.value = []; feedbackRuns.value = []; feedbackEnabled.value = false;
   if (selectedSession || fresh) goal.value = "";
   try {
     if (preparing.value) return;
-    const config = await studyStatus(task);
+    const [config, concurrentIndex] = props.lesson
+      ? await Promise.all([studyStatus(task), getEvidenceIndexStatus(task).catch(() => undefined)])
+      : [await studyStatus(task), undefined];
     if (current !== version) return;
     enabled.value = config.enabled;
     courseRevision.value = config.revision;
     if (!config.enabled) return;
-    const index = await getEvidenceIndexStatus(task);
+    const index = concurrentIndex ?? await getEvidenceIndexStatus(task);
     if (current !== version) return;
     ready.value = evidenceIndexServable(index);
     readinessText.value = index.status === "FAILED" ? "课程资料准备失败，请查看处理进度并重试。" : index.status === "DISABLED" ? "课程检索尚未启用，请联系维护者完成配置。" : "课程资料正在准备，完成后即可开始学习。";
@@ -263,7 +279,7 @@ async function load(fresh = false, selectedSession?: string, selectedRun?: strin
         sessionId.value = candidates[0] ?? "";
         sourceRevision.value = sessions.value.find(session => session.session_id === sessionId.value)?.revision;
       }
-      if (sessionId.value) {
+      if (sessionId.value && !props.lesson) {
         const history = await studyCommand(task, { operation: "RUNS", session_id: sessionId.value });
         if (current !== version) return;
         recentRuns.value = history.runs ?? [];
@@ -381,9 +397,9 @@ async function reveal() {
 </script>
 
 <template>
-  <section class="agent-panel workspace-panel" :class="{ 'agent-panel--compact': compact, 'has-practice': Boolean(artifact?.questions.length) }" aria-labelledby="agent-title">
-    <header><div class="agent-heading"><h2 id="agent-title">{{ compact && artifact?.questions.length ? artifact.title : '解释与练习' }}</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
-    <p v-if="loading" role="status">正在读取学习会话…</p>
+  <section class="agent-panel workspace-panel" :class="{ 'agent-panel--compact': compact, 'has-practice': Boolean(artifact?.questions.length), 'agent-panel--lesson': lesson }" aria-labelledby="agent-title">
+    <header v-if="!lesson || !artifact?.questions.length"><div class="agent-heading"><h2 id="agent-title">{{ compact && artifact?.questions.length ? artifact.title : '解释与练习' }}</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
+    <div v-if="loading" role="status">正在打开练习… <el-skeleton v-if="lesson" :rows="4" animated /></div>
     <div v-else-if="preparing" role="status"><p>课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。</p><el-button @click="$emit('navigate', 'overview')">查看处理进度</el-button></div>
     <div v-else-if="enabled === false" role="status">
       <p>学习助手尚未启用。你可以先阅读课程内容，或联系维护者启用。</p>
@@ -391,11 +407,11 @@ async function reveal() {
       <el-button @click="load()">重新检查</el-button>
     </div>
     <div v-else-if="enabled">
-      <ChoiceReviewPanel v-if="courseRevision !== undefined" :task-id="taskId" :revision="courseRevision" :refresh-key="choiceReviewVersion" @open="openReviewQuestion" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" @access-failure="$emit('accessFailure')" />
+      <ChoiceReviewPanel v-if="courseRevision !== undefined && !demoPractice" :task-id="taskId" :revision="courseRevision" :refresh-key="choiceReviewVersion" @open="openReviewQuestion" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" @access-failure="$emit('accessFailure')" />
       <div v-if="!ready" role="status"><p>{{ readinessText }}</p><el-button text @click="$emit('navigate', 'overview')">查看处理进度</el-button><el-button text @click="load()">刷新状态</el-button></div>
-      <p v-if="run?.model_mode === 'mock' && !artifact" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
-      <div v-if="run" class="run-progress" :class="{ 'run-progress--ready': artifact }" aria-live="polite">
-        <strong>{{ compact && artifact?.questions.length && run.status === 'succeeded' ? '练习已生成' : stateText }}</strong><small v-if="artifact && run.model_mode === 'mock'">Mock 流程测试</small>
+      <p v-if="!lesson && run?.model_mode === 'mock' && !artifact" class="mode-label">演示模式：固定测试模型，用于验证流程。</p>
+      <div v-if="run && (!lesson || !artifact?.questions.length || active)" class="run-progress" :class="{ 'run-progress--ready': artifact }" aria-live="polite">
+        <strong>{{ compact && artifact?.questions.length && run.status === 'succeeded' ? '练习已生成' : stateText }}</strong><small v-if="!lesson && artifact && run.model_mode === 'mock'">Mock 流程测试</small>
         <p v-if="!artifact" class="run-goal">{{ run.goal }}</p>
         <el-button v-if="active" :disabled="submitting" @click="cancel">取消本次执行</el-button>
         <details v-if="events.length"><summary>执行进度详情</summary><ol>
@@ -412,7 +428,7 @@ async function reveal() {
       <StudyApprovalPanel v-if="run?.status === 'awaiting_approval' && approval" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :approval="approval" @decided="async () => { await refresh(version, taskId); if (active) connect(version, taskId); }" />
       <article v-if="artifact" class="study-artifact">
         <h3 v-if="!compact || !artifact.questions.length">{{ artifact.title }}</h3><p v-if="artifact.human_edited">说明经课程所有者人工修改。</p>
-        <details class="artifact-explanation" :open="!artifact.questions.length"><summary>阅读课程解释</summary><p class="explanation">{{ artifact.explanation }}</p>
+        <details v-if="!demoPractice" class="artifact-explanation" :open="!artifact.questions.length"><summary>阅读课程解释</summary><p class="explanation">{{ artifact.explanation }}</p>
         <details v-if="artifact.citations.length"><summary>查看课程证据</summary>
           <div v-for="citation in artifact.citations" :key="citation.evidence_id" class="citation">
             <el-button text @click="$emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 回看片段起点</el-button>
@@ -420,37 +436,42 @@ async function reveal() {
           </div>
         </details></details>
         <template v-if="artifact.questions.length">
-          <section v-if="run" class="practice-continuation" aria-label="继续本次练习" :aria-busy="progressLoading">
+          <section v-if="run && !demoPractice" class="practice-continuation" aria-label="继续本次练习" :aria-busy="progressLoading">
             <div><strong>继续本次练习</strong><p v-if="progressLoading" role="status">正在核对已保存进度…</p><template v-else-if="progressRows"><p v-if="continuation">{{ continuation.reason }}</p><p v-else>{{ artifact.questions.some(q => q.kind === 'choice') ? '已保存作答已有判分或核对记录，可回看练习结果。' : '本次作答均已保存并有核对记录，可回看练习结果。' }}</p></template><p class="continuation-boundary">{{ artifact.questions.some(q => q.kind === 'choice') ? '继续入口依据已保存进度提示；选择题判分不代表掌握程度。' : '依据已保存记录提示，不代表答案正确。未保存文字仍保留在本页。' }}</p><p v-if="progressError" role="status">{{ progressError }}</p></div>
             <div class="continuation-actions"><el-button v-if="continuation" class="continue-practice" type="primary" :disabled="progressLoading" @click="continuePractice">{{ continuation.label }}</el-button><el-button v-else-if="progressRows && !progressLoading" @click="toggleResults">回看练习结果</el-button><button v-if="continuationPlan.revisionHintIndex !== null" class="practice-revision-hint" type="button" :disabled="progressLoading" @click="chooseQuestion(continuationPlan.revisionHintIndex)">另有 {{ continuationPlan.revisionHintCount }} 道题有订正建议</button><button class="refresh-practice-progress" type="button" :disabled="progressLoading" @click="refreshProgress">刷新学习进度</button></div>
           </section>
-          <div class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
+          <div v-if="!demoPractice || resultsOpen" class="practice-toolbar"><el-button @click="toggleResults">{{ resultsOpen ? '返回当前题' : '练习结果' }}</el-button><p class="practice-guidance" title="仅统计已保存的作答记录，不代表掌握程度">已保存 {{ attempts.length }}/{{ artifact.questions.length }} 题</p>
           <nav class="question-nav" aria-label="练习题目">
             <button v-for="(_question, index) in artifact.questions" :key="index" type="button" :aria-current="questionIndex === index ? 'step' : undefined" @click="chooseQuestion(index)">第 {{ index + 1 }} 题<span v-if="questionDrafts[index]"> · 有未保存修改</span><span v-else-if="attempts.find(a => a.question_index === index)"> · 已保存</span></button>
           </nav></div>
         </template>
         <div v-if="resultsOpen && run && artifact" ref="resultsElement" tabindex="-1"><PracticeResultsPanel :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact="artifact" @open="openResult" @observed-attempts="observeAttempts" @access-failure="$emit('accessFailure')" @seek="seekResult" /></div>
         <div v-for="(question, index) in artifact.questions" v-show="!resultsOpen && questionIndex === index" :key="index" :ref="el => { if (el) questionElements.set(index, el as HTMLElement); else questionElements.delete(index); }" class="practice-question" :class="{ 'is-current': questionIndex === index }">
-          <p class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
-          <component :is="question.kind === 'choice' ? PracticeChoiceForm : PracticeAnswerForm" v-bind="question.kind === 'choice' ? { question, sourceRevision } : {}" :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="savedAttempt" @seek="(milliseconds: number, context: EvidenceSeekContext) => $emit('seek', milliseconds, context)" />
+          <header v-if="lesson" class="practice-lesson-question">
+            <div><span>第 {{ index + 1 }} 题</span><span>{{ index + 1 }} / {{ artifact.questions.length }} 题</span></div>
+            <h3>{{ question.question }}</h3>
+          </header>
+          <p v-else class="question-text"><strong>{{ index + 1 }}.</strong> {{ question.question }}</p>
+          <component :is="question.kind === 'choice' ? PracticeChoiceForm : PracticeAnswerForm" v-bind="question.kind === 'choice' ? { question, sourceRevision, lesson, demoPractice } : {}" :ref="el => { if (el) answerForms.set(index, el as unknown as { showHistory: () => Promise<void> }); else answerForms.delete(index); }" v-if="run" :key="`${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :attempt="attempts.find(a => a.question_index === index)" @draft-change="questionDrafts[index] = $event" @access-failure="$emit('accessFailure')" @saved="savedAttempt" @seek="(milliseconds: number, context: EvidenceSeekContext) => $emit('seek', milliseconds, context)" />
           <PracticeFeedbackPanel :ref="el => { if (el) feedbackPanels.set(index, el as unknown as { showFeedback: (row: StudyFeedbackRun) => Promise<void> }); else feedbackPanels.delete(index); }" v-if="question.kind !== 'choice' && run && (feedbackEnabled || feedbackRuns.some(f => f.question_index === index))" :key="`feedback:${artifact.artifact_id}:${index}`" :task-id="taskId" :session-id="sessionId" :run-id="run.run_id" :artifact-id="artifact.artifact_id" :question-index="index" :source-revision="sourceRevision" :enabled="feedbackEnabled" :answer-dirty="questionDrafts[index]" @draft-change="feedbackDrafts[index] = $event" :approval-required="approvalRequired" :attempt="attempts.find(a => a.question_index === index)" :initial="feedbackRuns.find(f => f.question_index === index)" :history="feedbackRuns.filter(f => f.question_index === index)" @progress-change="refreshProgress" @revise="chooseQuestion(index)" @access-failure="$emit('accessFailure')" @seek="(milliseconds, context) => $emit('seek', milliseconds, context)" />
           <p v-else-if="question.kind !== 'choice' && !feedbackEnabled">证据反馈尚未启用，已保存作答和修改记录仍可查看。</p>
           <div v-if="question.kind !== 'choice' && answers?.[index]" class="answer"><p>参考答案：{{ answers[index]?.answer }}</p><p>自查要点：{{ answers[index]?.rubric }}</p></div>
         </div>
+        <button v-if="exampleSource && !resultsOpen" class="practice-example" type="button" @click="$emit('seek', exampleSource.start_ms, { evidenceId: exampleSource.evidence_id, revision: sourceRevision })">回看例题 {{ exampleTime }}</button>
         <div v-if="artifact.questions.length > 1" class="actions">
           <el-button :disabled="questionIndex === 0" @click="chooseQuestion(questionIndex - 1)">上一题</el-button>
           <el-button :disabled="questionIndex === artifact.questions.length - 1" @click="chooseQuestion(questionIndex + 1)">下一题</el-button>
           <el-button v-if="!resultsOpen && questionIndex === artifact.questions.length - 1" @click="toggleResults">查看练习结果</el-button>
         </div>
-        <el-button v-if="artifact.questions.length && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
+        <el-button v-if="artifact.questions.some(question => question.kind !== 'choice') && !answers" :loading="revealing" @click="reveal">查看参考答案与自查要点</el-button>
       </article>
-      <details class="new-study-goal" :open="!run || newGoalOpen" @toggle="newGoalOpen = ($event.target as HTMLDetailsElement).open">
+      <details v-if="!demoPractice" class="new-study-goal" :open="!run || newGoalOpen" @toggle="newGoalOpen = ($event.target as HTMLDetailsElement).open">
         <summary>{{ run ? '开始新的解释与练习' : '开始一次解释与练习' }}</summary>
         <p>填写目标并点击“解释并出题”才会开始新的学习执行。未保存输入只保留在本页。</p>
       <div v-if="recruiterDemoEnabled && taskId === recruiterDemo.taskId" class="sample-goals"><p>Sample Course · 无需上传。先选一个目标，再执行；完成后可作答、查看反馈和 Trace。</p><el-button v-for="sample in demoGoals" :key="sample.label" :disabled="Boolean(active || submitting)" @click="goal = sample.goal">{{ sample.label }}</el-button><RouterLink to="/demo">演示说明与课程来源</RouterLink></div>
       <el-input v-model="goal" type="textarea" :rows="3" maxlength="1000" placeholder="例如：解释算法为什么需要停止条件，并结合课程给我两道题。" aria-label="学习目标" />
-      <label class="practice-format">练习形式 <select v-model="practiceFormat" aria-label="练习形式" :disabled="Boolean(active || submitting)"><option value="open">开放题 · 文本作答</option><option value="choice">课程证据选择题 + 开放题（Mock）</option></select></label>
-      <p v-if="practiceFormat === 'choice'">Mock 原文识别题：提交后程序判分；开放题仍只给反馈。当前选择题生成不支持发布前审批。</p>
+      <label class="practice-format">练习形式 <select v-model="practiceFormat" aria-label="练习形式" :disabled="Boolean(active || submitting)"><option value="open">开放题 · 文本作答</option><option value="choice">原文辨认与开放题</option></select></label>
+      <p v-if="practiceFormat === 'choice'">选择题提交后显示结果；开放题提供反馈。</p>
       <label class="practice-approval"><input v-model="approvalRequired" type="checkbox" :disabled="Boolean(active) || practiceFormat === 'choice'" />发布前由我审批</label>
 
       <div class="actions">
@@ -458,7 +479,7 @@ async function reveal() {
         <el-button v-if="!active" :disabled="submitting" @click="openHistory(true)">新会话</el-button>
       </div>
       </details>
-      <details v-if="sessions.length || recentRuns.length" ref="historyElement" class="learning-history">
+      <details v-if="!demoPractice && (sessions.length || recentRuns.length)" ref="historyElement" class="learning-history" @toggle="lesson && ($event.target as HTMLDetailsElement).open && loadRunHistory()">
         <summary>最近学习记录</summary>
         <label v-if="sessions.length > 1">学习会话
           <select :value="sessionId" @change="changeSession">
@@ -468,7 +489,7 @@ async function reveal() {
         <p>显示最近 20 次执行，选择后可继续查看练习和已保存作答。</p>
         <ol><li v-for="previous in recentRuns" :key="previous.run_id"><el-button text @click="openHistory(false, sessionId, previous.run_id)">{{ previous.goal }}</el-button></li></ol>
       </details>
-      <details class="execution-details" :open="!compact"><summary>执行与模型详情</summary>
+      <details v-if="!demoPractice" class="execution-details" :open="!compact"><summary>执行与模型详情</summary>
       <RunTracePanel v-if="run" :task-id="taskId" :session-id="sessionId" :run="run" :artifact="artifact" />
       <details class="agent-settings"><summary>模型设置与执行说明</summary><p>Trace 和模型记录展示已保存的执行事实；打开不会创建学习任务。</p><RouterLink to="/settings/models">管理模型</RouterLink></details>
       </details>
@@ -530,4 +551,12 @@ header h2, header p { margin: 0; } header { display: grid; gap: 8px; } header p,
   .agent-panel--compact .study-artifact { margin-top: 6px; padding-top: 10px; }
   .agent-panel--compact .question-nav button { min-height: 38px; }
 }
+
+.agent-panel--lesson { background: transparent; }
+.agent-panel--lesson.has-practice .study-artifact { border: 0; margin-top: 0; padding-top: 0; }
+.agent-panel--lesson .practice-question.is-current { border: 0; padding: 0; background: transparent; }
+.practice-example { justify-self: center; padding: 8px 12px; border: 0; color: var(--color-brand-strong); background: transparent; font: inherit; font-weight: 650; cursor: pointer; }
+.practice-lesson-question { display: grid; gap: 13px; }
+.practice-lesson-question div { display: flex; justify-content: space-between; padding: 0 0 8px; border-bottom: 1px solid var(--color-border); color: var(--color-ink-soft); font-size: 13px; font-weight: 650; }
+.practice-lesson-question h3 { font-weight: 750; font-size: clamp(18px, 3vw, 23px); line-height: 1.45; }
 </style>

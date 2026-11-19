@@ -84,6 +84,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     const response = page.waitForResponse(item => new URL(item.url()).pathname === `/api/tasks/${state.task_id}/results` && item.ok());
     await courseCard.getByRole('button', { name: '进入学习', exact: true }).click();
     subtitles = (await (await response).json()).data.subtitles;
+    await page.goto(`${base}/tasks/${state.task_id}?layout=continuous`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('binary-search-demo');
     await capture('02-course');
   });

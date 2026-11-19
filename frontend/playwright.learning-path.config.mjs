@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/browser',
-  testMatch: ['mockLearningPath.spec.mjs', 'productExperience.spec.mjs', 'phase4Repair.spec.mjs'],
+  testMatch: ['mockLearningPath.spec.mjs', 'productExperience.spec.mjs', 'phase4Repair.spec.mjs', 'round3Lesson.spec.mjs'],
   outputDir: '../.demo/playwright-learning-path',
   reporter: 'list',
   workers: 1,

@@ -9,6 +9,7 @@ import {
   toReadableBatchDeleteError,
   toReadableTaskError,
 } from "../api/task";
+import { loadRound3Course, round3Course, round3Enabled } from "../api/round3Demo";
 import EmptyState from "../components/ui/EmptyState.vue";
 import PageHeading from "../components/ui/PageHeading.vue";
 import SectionPanel from "../components/ui/SectionPanel.vue";
@@ -79,6 +80,7 @@ const courseCards = computed(() => filteredTasks.value.map(task => ({
   task,
   title: courseTitle(task),
   location: savedLocations.value.get(task.taskId) ?? null,
+  demo: round3Course.value?.taskId === task.taskId ? round3Course.value : undefined,
 })));
 
 const emptyLibrary = computed(() => loaded.value && !errorMessage.value && total.value === 0);
@@ -125,6 +127,7 @@ onMounted(() => {
   window.addEventListener("storage", refreshSavedLocations);
   window.addEventListener("focus", refreshSavedLocations);
   void loadTasks();
+  if (round3Enabled) void loadRound3Course().catch(() => {});
 });
 
 onBeforeUnmount(() => {
@@ -324,6 +327,8 @@ function stopAutoRefresh() {
   autoRefreshTimer = undefined;
 }
 
+const lessonClock = (time: number) => formatMillisToClock(time).replace(/^00:/, "");
+
 function lastLocationText(location: LastCourseLocation): string {
   return `上次停在：${workspaceLabel(location.view)} · 视频 ${formatMillisToClock(location.at)}`;
 }
@@ -354,7 +359,10 @@ async function openTask(task: TaskSummaryResponse) {
     }
     // Other tabs can save a new location after this card has rendered.
     const location = readLastCourseLocation(user?.userId, task.taskId);
-    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
+    const course = round3Course.value;
+    const query = location ? lastCourseLocationQuery(location)
+      : course?.taskId === task.taskId ? { at: String(course.positionMs) } : undefined;
+    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, query });
   } finally {
     openingTaskId.value = "";
   }
@@ -517,7 +525,7 @@ function formatTime(value: string | null): string {
   <main class="task-list-page page-container">
     <PageHeading
       title="我的课程"
-      :description="total > 0 ? `共 ${total} 门课程` : undefined"
+      description="看课时遇到疑问，就从那一段问起。"
     >
       <template v-if="!emptyLibrary" #actions>
         <RouterLink class="upload-link" to="/upload"><span aria-hidden="true">＋</span> 上传视频</RouterLink>
@@ -561,14 +569,14 @@ function formatTime(value: string | null): string {
       />
 
       <div v-if="loading && tasks.length === 0" role="status">
-        <span>正在读取课程…</span>
+        <span>正在加载课程…</span>
         <el-skeleton :rows="4" animated aria-hidden="true" />
       </div>
       <EmptyState
         v-else-if="loaded && !errorMessage && filteredTasks.length === 0"
         :class="{ 'library-empty': emptyLibrary }"
         :title="emptyLibrary ? '还没有课程视频' : '当前列表没有符合条件的课程'"
-        :description="emptyLibrary ? '上传课程视频。字幕就绪后，就可以从这里看课和学习。' : '试试查看全部课程。'"
+        :description="emptyLibrary ? '上传第一段课程视频，开始学习。' : '试试查看全部课程。'"
       >
         <RouterLink v-if="emptyLibrary" class="upload-link" to="/upload"><span aria-hidden="true">＋</span> 上传视频</RouterLink>
         <el-button v-else @click="activeGroup = 'ALL'">查看全部课程</el-button>
@@ -576,10 +584,10 @@ function formatTime(value: string | null): string {
 
       <div v-else-if="filteredTasks.length" class="task-list">
         <article
-          v-for="{ task, title, location } in displayedCards"
+          v-for="{ task, title, location, demo } in displayedCards"
           :key="task.taskId"
           class="course-item"
-          :class="{ 'is-batch-mode': batchMode, 'is-featured': featuredCourse?.task.taskId === task.taskId, 'is-resumed': featuredCourse?.task.taskId === task.taskId && location }"
+          :class="{ 'is-batch-mode': batchMode, 'is-featured': featuredCourse?.task.taskId === task.taskId, 'is-resumed': featuredCourse?.task.taskId === task.taskId && location, 'is-demo-course': demo }"
         >
           <div v-if="batchMode" class="course-item__selection" @click.stop>
             <el-tooltip
@@ -598,17 +606,24 @@ function formatTime(value: string | null): string {
             </el-tooltip>
             <small v-if="!isTaskDeletable(task)">处理中课程请先取消处理</small>
           </div>
+          <img v-if="demo" class="course-cover" :src="demo.cover" alt="" width="320" height="180" />
           <div class="course-item__summary">
             <div class="course-item__title-row">
               <div>
-                <p v-if="featuredCourse?.task.taskId === task.taskId" class="course-item__last">{{ location ? '上次学习' : '可以开始学习' }}</p>
-                <h2 class="course-item__name" :title="title">{{ title }}</h2>
+                <p v-if="!demo && featuredCourse?.task.taskId === task.taskId" class="course-item__last">{{ location ? '上次学习' : '可以开始学习' }}</p>
+                <p v-if="demo" class="demo-course-series">{{ demo.series }}</p>
+                <h2 class="course-item__name" :title="demo?.title || title">{{ demo?.title || title }}</h2>
+                <p v-if="demo">{{ demo.description }}</p>
                 <p v-if="isRunningTaskStatus(task.status)">{{ courseStageText(task.currentStage ?? "", task.status) }}</p>
-                <p v-if="location" class="course-item__resume">{{ lastLocationText(location) }}</p>
+                <p v-if="location && !demo" class="course-item__resume">{{ lastLocationText(location) }}</p>
               </div>
-              <StatusBadge :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
+              <StatusBadge v-if="!demo" :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
             </div>
 
+            <div v-if="demo" class="demo-course-progress">
+              <span>已学 {{ Math.floor(Math.min(1, (location?.at ?? demo.positionMs) / demo.durationMs) * 100) }}%</span>
+              <progress :value="Math.min(1, (location?.at ?? demo.positionMs) / demo.durationMs)" aria-label="学习进度" />
+            </div>
             <div v-if="isRunningTaskStatus(task.status) && task.progressPercent != null" class="course-progress" aria-label="材料准备进度">
               <small>材料准备</small>
               <el-progress
@@ -627,7 +642,7 @@ function formatTime(value: string | null): string {
               暂时无法确认登录账号，请重试打开课程。
             </p>
 
-            <details class="course-item__technical">
+            <details v-if="!demo" class="course-item__technical">
               <summary>材料信息与编号</summary>
             <dl class="course-item__meta">
               <div>
@@ -653,7 +668,7 @@ function formatTime(value: string | null): string {
 
           <div class="course-item__actions">
             <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">
-              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : primaryActionText(task, location) }}
+              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : demo ? `继续学习 ${lessonClock(location?.at ?? demo.positionMs)}` : primaryActionText(task, location) }}
               <span v-if="featuredCourse?.task.taskId === task.taskId" class="course-item__arrow" aria-hidden="true">→</span>
             </el-button>
             <el-button
@@ -728,5 +743,15 @@ function formatTime(value: string | null): string {
   .course-item.is-featured { grid-template-columns: 1fr; gap: 10px; }
   .task-list-page :deep(.el-button), .task-list-toolbar__filters :deep(.el-radio-button__inner) { min-height: 44px; }
   .course-item__technical summary { display: list-item; padding-block: 12px; }
+}
+
+.course-item.is-demo-course { display: grid; grid-template-columns: minmax(240px, 38%) minmax(0, 1fr); align-items: center; gap: 20px; }
+.course-cover { width: 100%; height: auto; display: block; border-radius: 12px; grid-row: span 2; }
+.demo-course-series { color: var(--color-brand); font-size: 13px; font-weight: 650; }
+.demo-course-progress { display: flex; align-items: center; gap: 10px; color: var(--color-ink-soft); font-size: 13px; }
+.demo-course-progress progress { accent-color: var(--color-brand); height: 8px; width: 85px; }
+@media (max-width: 680px) {
+  .course-item.is-demo-course { grid-template-columns: 1fr; }
+  .course-cover { grid-row: auto; }
 }
 </style>

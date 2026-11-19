@@ -16,7 +16,7 @@ const rows = [
 
 let fixture;
 test.beforeAll(async () => {
-  fixture = await createB1Fixture({ dist: path('../../dist'), media: path('../../../fixtures/demo/binary-search-demo.mp4') });
+  fixture = await createB1Fixture({ dist: process.env.LECTURELENS_DIST_DIR || path('../../dist'), media: path('../../../fixtures/demo/binary-search-demo.mp4') });
 });
 test.afterAll(async () => { await fixture?.close(); });
 
@@ -29,7 +29,7 @@ async function signIn(page, target) {
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await expect(page).toHaveURL(url => url.pathname + url.search === target);
 }
-const openCourse = (page, view) => signIn(page, `${course}?view=${view}`);
+const openCourse = (page, view) => signIn(page, `${course}?view=${view}&layout=continuous`);
 const screenshot = (page, testInfo, name) => page.screenshot({
   path: testInfo.outputPath(`${name}.png`), animations: 'disabled',
   mask: [page.getByText(email, { exact: true })], maskColor: '#fffdf8',
@@ -273,6 +273,7 @@ test('upload receipt names progress and Study waits for the course readiness eve
 
     await page.getByRole('button', { name: '开始处理', exact: true }).click();
     await expect(page).toHaveURL(url => url.pathname === course);
+    await page.getByRole('navigation', { name: '课程学习导航' }).getByRole('button', { name: '练习', exact: true }).click();
     await expect(page.getByText(/课程内容尚未处理完成/)).toBeVisible();
     expect(studyReads).toBe(0);
     ready = true;

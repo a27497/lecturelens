@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { Close, Menu } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
+import { round3Course, round3Enabled } from "../../api/round3Demo";
 import { useAppStore } from "../../stores/app";
 import { useAuthStore } from "../../stores/auth";
 
@@ -10,6 +11,7 @@ const router = useRouter();
 const appStore = useAppStore();
 const authStore = useAuthStore();
 const mobileOpen = ref(false);
+const lessonHeader = computed(() => route.name === "task-detail" && !["classic", "continuous"].includes(String(route.query.layout)));
 const github = "https://github.com/a27497/lecturelens";
 
 const navItems = computed(() =>
@@ -44,13 +46,15 @@ function logout() {
 </script>
 
 <template>
-  <header class="app-header">
+  <header class="app-header" :class="{ 'app-header--lesson': lessonHeader }">
     <div class="app-header__inner">
+      <RouterLink v-if="lessonHeader" class="lesson-header-back" to="/tasks" aria-label="返回课程库">← <span>课程库</span></RouterLink>
       <RouterLink class="app-header__brand" :to="authStore.isAuthenticated ? '/tasks' : '/'" :aria-label="authStore.isAuthenticated ? 'LectureLens 我的课程' : 'LectureLens 首页'">
-        <img src="/favicon.svg" alt="" width="24" height="24" />{{ appStore.appName }}
+        <span class="lesson-logo" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 6c-3-2-6-2-9-1v13c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v13"/></svg></span>{{ appStore.appName }}
       </RouterLink>
 
-      <nav class="app-header__nav" aria-label="主导航">
+      <span v-if="lessonHeader && round3Course && round3Course.taskId === route.params.taskId" class="lesson-header-series">{{ round3Course.series }}</span>
+      <nav v-if="!lessonHeader" class="app-header__nav" aria-label="主导航">
         <template v-if="authStore.isAuthenticated">
           <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">{{ item.label }}</RouterLink>
         </template>
@@ -62,9 +66,10 @@ function logout() {
         </template>
       </nav>
 
-      <div class="app-header__account">
+      <span v-if="round3Enabled" class="demo-badge">合成演示</span>
+      <div v-if="!lessonHeader" class="app-header__account">
         <template v-if="authStore.isAuthenticated">
-          <span class="app-header__email" :title="authStore.displayEmail">
+          <span v-if="!round3Enabled" class="app-header__email" :title="authStore.displayEmail">
             {{ authStore.displayEmail }}
           </span>
           <button class="app-header__text-button" type="button" @click="logout">退出</button>
@@ -76,7 +81,7 @@ function logout() {
       </div>
 
       <button
-        class="app-header__menu-button"
+        v-if="!lessonHeader" class="app-header__menu-button"
         type="button"
         :aria-expanded="mobileOpen"
         aria-controls="mobile-navigation"
@@ -102,7 +107,7 @@ function logout() {
         <RouterLink class="app-header__mobile-demo" to="/demo">Try Demo ↗</RouterLink>
       </template>
       <template v-if="authStore.isAuthenticated">
-        <span class="app-header__mobile-email">{{ authStore.displayEmail }}</span>
+        <span v-if="!round3Enabled" class="app-header__mobile-email">{{ authStore.displayEmail }}</span>
         <button type="button" @click="logout">退出登录</button>
       </template>
       <template v-else>
@@ -276,5 +281,21 @@ function logout() {
     color: var(--color-ink-muted);
     overflow-wrap: anywhere;
   }
+}
+
+.app-header--lesson .app-header__inner { display: flex; gap: 26px; width: min(var(--content-width), calc(100% - 96px)); }
+.app-header--lesson .app-header__brand { order: -1; }
+.lesson-logo { display: inline-grid; width: 31px; height: 31px; place-items: center; background: var(--color-brand); color: white; border-radius: 9px; }
+.lesson-header-series { border-inline-start: 1px solid var(--color-border); padding-inline-start: 18px; font-size: 14px; color: var(--color-ink-soft); }
+.lesson-header-back { font-size: 14px; color: var(--color-ink-soft); text-decoration: none; }
+.demo-badge { color: var(--color-ink-soft); font-size: 12px; white-space: nowrap; }
+.demo-badge::before { content: '●'; margin-inline-end: 6px; color: #8b70b7; font-size: 9px; vertical-align: 1px; }
+.app-header--lesson .demo-badge { margin-inline-start: auto; }
+.app-header:not(.app-header--lesson) .app-header__inner:has(.demo-badge) { display: flex; justify-content: space-between; gap: 10px; }
+@media (max-width: 1024px) {
+  .app-header--lesson .app-header__inner { height: var(--lesson-mobile-header-height); width: min(720px, calc(100% - 28px)); gap: 12px; }
+  .app-header--lesson .app-header__brand { order: 0; font-size: 16px; }
+  .app-header--lesson .lesson-logo { width: 26px; height: 26px; border-radius: 7px; }
+  .lesson-header-back span, .lesson-header-series { display: none; }
 }
 </style>
