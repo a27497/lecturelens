@@ -29,7 +29,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     const output = process.env.LECTURELENS_SCREENSHOT_DIR;
     if (!output) return;
     if (target) await target.scrollIntoViewIfNeeded();
-    const prefix = isMobile ? 'm' : 'd';
+    const prefix = String(page.viewportSize().width);
     await page.screenshot({ path: resolve(output, `${prefix}-${name}.png`), fullPage: !target });
   }
 
@@ -216,7 +216,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     const [[, saved]] = await entries();
     expect(key).toMatch(/^lecturelens\.lastCourseLocation\.v1:\d+:/);
     expect(key.endsWith(`:${state.task_id}`)).toBe(true);
-    expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000 });
+    expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000, visitedAt: expect.any(Number) });
 
     await page.getByRole('link', { name: /返回我的课程/ }).click();
     let releaseIdentity;
@@ -254,8 +254,10 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await page.unroute('**/api/me');
 
-    if (isMobile) await page.getByRole('button', { name: '打开导航' }).click();
-    await page.getByRole('button', { name: isMobile ? '退出登录' : '退出', exact: true }).click();
+    const mobileMenu = page.getByRole('button', { name: '打开导航' });
+    const usesMobileHeader = await mobileMenu.isVisible();
+    if (usesMobileHeader) await mobileMenu.click();
+    await page.getByRole('button', { name: usesMobileHeader ? '退出登录' : '退出', exact: true }).click();
     await expect(page.getByPlaceholder('请输入密码')).toBeVisible();
     expect(await entries()).toEqual([]);
   });

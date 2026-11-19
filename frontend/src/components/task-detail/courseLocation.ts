@@ -1,9 +1,9 @@
 import type { LocationQuery } from "vue-router";
 import { WORKSPACE_ITEMS } from "./workspace";
 
-export type ContentView = "translated" | "source" | "timeline" | "visual";
+export type ContentView = "translated" | "source" | "timeline" | "visual" | "chapters";
 export type SeekRequest = { milliseconds: number; sequence: number };
-const textViews: ContentView[] = ["translated", "source", "timeline", "visual"];
+const textViews: ContentView[] = ["translated", "source", "timeline", "visual", "chapters"];
 // A bounded URL coordinate, independent of signed media URLs or learning data.
 export const MAX_POSITION_MS = 7 * 24 * 60 * 60 * 1000;
 export function validPosition(value: number): boolean {

@@ -12,7 +12,7 @@ const props = defineProps<{
   inactive?: boolean;
   seekRequest?: SeekRequest;
   title: string;
-  description: string;
+  description?: string;
   playbackUrl: string;
   loading: boolean;
   errorMessage: string;
@@ -175,7 +175,7 @@ defineExpose({
 
 <template>
   <section class="video-card" aria-label="视频播放">
-    <div class="video-card__header">
+    <div v-if="!compact || !playbackUrl" class="video-card__header">
       <div>
         <h2>{{ title }}</h2>
         <p v-if="!compact">{{ description }}</p>
@@ -203,7 +203,7 @@ defineExpose({
 
     <div v-if="playbackUrl" class="video-card__player-shell">
       <video
-      v-if="playbackUrl"
+      :aria-label="title"
       ref="videoRef"
       class="course-video-player"
       :src="playbackUrl"
@@ -228,13 +228,14 @@ defineExpose({
           default
         />
       </video>
-      <div v-if="activeSubtitleText" class="video-card__subtitle-overlay">
+      <div v-if="activeSubtitleText && !subtitleTrackUrl" class="video-card__subtitle-overlay">
         {{ activeSubtitleText }}
       </div>
     </div>
 
     <component :is="compact ? 'details' : 'div'" class="video-card__metadata">
       <summary v-if="compact">播放与字幕信息</summary>
+      <el-button v-if="compact && playbackUrl" :loading="loading" @click="$emit('refresh')">刷新播放链接</el-button>
     <p
       class="video-card__subtitle"
       :class="`video-card__subtitle--${resolvedSubtitleStatus}`"
@@ -284,15 +285,15 @@ defineExpose({
 .video-card__player-shell {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--color-ink);
+  border-radius: var(--radius-lg);
+  background: var(--color-video);
 }
 
 .course-video-player {
   display: block;
   width: 100%;
   max-height: 62vh;
-  background: var(--color-ink);
+  background: var(--color-video);
 }
 
 .video-card__subtitle-overlay {

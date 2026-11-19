@@ -10,6 +10,7 @@ export interface LastCourseLocation {
   view: CourseWorkspace;
   text?: ContentView;
   at: number;
+  visitedAt?: number;
 }
 
 function key(userId: number, taskId: string) {
@@ -24,7 +25,14 @@ export function saveLastCourseLocation(userId: number | null | undefined, taskId
   if (!usable(userId, taskId)) return;
   // readCourseLocation drops unknown views and out-of-range offsets, so only known names are kept.
   const location = readCourseLocation(query);
-  const value: LastCourseLocation = { view: location.workspace, ...(location.textView ? { text: location.textView } : {}), at: location.milliseconds };
+  const current = readLastCourseLocation(userId, taskId);
+  if (current?.visitedAt && current.view === location.workspace && current.text === location.textView && current.at === location.milliseconds) return;
+  const value: LastCourseLocation = {
+    view: location.workspace,
+    ...(location.textView ? { text: location.textView } : {}),
+    at: location.milliseconds,
+    visitedAt: Date.now(),
+  };
   try { window.localStorage.setItem(key(userId, taskId), JSON.stringify(value)); }
   catch { /* Storage unavailable: the list falls back to the default entry. */ }
 }
@@ -38,7 +46,7 @@ export function readLastCourseLocation(userId: number | null | undefined, taskId
     if (!parsed || typeof parsed !== "object" || typeof parsed.view !== "string" || typeof parsed.at !== "number") return null;
     const location = readCourseLocation({ view: parsed.view, text: typeof parsed.text === "string" ? parsed.text : null, at: String(parsed.at) });
     if (location.workspace !== parsed.view || location.milliseconds !== parsed.at) return null;
-    return { view: location.workspace, ...(location.textView ? { text: location.textView } : {}), at: location.milliseconds };
+    return { view: location.workspace, ...(location.textView ? { text: location.textView } : {}), at: location.milliseconds, ...(typeof parsed.visitedAt === "number" && Number.isSafeInteger(parsed.visitedAt) && parsed.visitedAt > 0 ? { visitedAt: parsed.visitedAt } : {}) };
   } catch {
     return null;
   }

@@ -1,11 +1,12 @@
 import type { TaskEventPayload } from "../../types/task";
 import { formatApiTimestamp } from "../../utils/time";
 
-export type CourseWorkspace = "tutor" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
+export type CourseWorkspace = "tutor" | "notes" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
 
 export const WORKSPACE_ITEMS: Array<{ value: CourseWorkspace; label: string }> = [
-  { value: "agent", label: "学习助手" },
   { value: "tutor", label: "Tutor 对话" },
+  { value: "notes", label: "个人笔记" },
+  { value: "agent", label: "学习助手" },
   { value: "flashcards", label: "闪卡复习" },
   { value: "overview", label: "概览" },
   { value: "content", label: "课程内容" },

@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
 
 <template>
   <section class="flashcards" aria-labelledby="flashcards-title">
-    <header><div><p class="eyebrow">课程证据 · 间隔复习</p><h2 id="flashcards-title">闪卡复习</h2></div>
+    <header><h2 id="flashcards-title">闪卡复习</h2>
       <button :disabled="!enabled || busy || generating || loading" @click="generate">生成一组证据闪卡</button></header>
     <p class="boundary">实验性 Mock 演示：固定内容只验证流程，不代表生成质量。评分是你的自评，FSRS 据此安排复习。</p>
     <p v-if="loading" role="status">正在恢复复习进度…</p>
@@ -150,4 +150,9 @@ onBeforeUnmount(() => {
 header { display: flex; align-items: center; justify-content: space-between; gap: 16px; } h2,h3,p { margin: 0; } .eyebrow { color: var(--color-brand); font-size: 12px; margin-bottom: 8px; } .boundary,small { color: var(--color-ink-soft); font-size: 12px; line-height: 1.6; }
 button { cursor: pointer; border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 14px; background: var(--color-surface); color: var(--color-ink); font: inherit; } button:disabled { cursor: default; opacity: .55; } button:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
 .summary { display: flex; gap: 8px 18px; flex-wrap: wrap; align-items: baseline; }.summary strong { font-size: 20px; }.summary small { width: 100%; }.card { display: grid; gap: 24px; padding: 30px; border: 1px solid var(--color-border); border-radius: 14px; min-height: 260px; background: var(--color-brand-soft, #edf4f0); }.card h3,.answer,blockquote { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.75; }.flip { justify-self: center; }.ratings { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }.ratings small { display: block; }.empty { padding: 30px 0; line-height: 2; }.empty span { display: block; } blockquote { margin: 14px 0; padding-left: 14px; border-left: 3px solid var(--color-brand); } details summary { cursor: pointer; }
+.summary { padding: 12px 16px; border-radius: var(--radius-md); background: var(--color-canvas); }
+.card { padding: 20px; min-height: 0; }
+.ratings { grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); }
+.flip { background: var(--color-brand); color: white; border-color: var(--color-brand); }
+@media (max-width: 520px) { header { align-items: flex-start; flex-wrap: wrap; } .ratings { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

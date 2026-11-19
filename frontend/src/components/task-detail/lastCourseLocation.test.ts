@@ -4,11 +4,12 @@ import { clearLastCourseLocations, forgetLastCourseLocation, lastCourseLocationQ
 afterEach(() => { vi.restoreAllMocks(); window.localStorage.clear(); });
 
 describe("last course location", () => {
-  it("stores only the view names and playback offset, scoped by user and course", () => {
+  it("stores view coordinates and visit time, scoped by user and course", () => {
+    vi.spyOn(Date, "now").mockReturnValue(1000);
     saveLastCourseLocation(7, "task_a", { view: "tutor", text: "timeline", at: "75000", layout: "classic", draft: "PRIVATE" });
     const stored = Object.entries(window.localStorage).filter(([name]) => name.startsWith("lecturelens.lastCourseLocation"));
-    expect(stored).toEqual([["lecturelens.lastCourseLocation.v1:7:task_a", JSON.stringify({ view: "tutor", text: "timeline", at: 75000 })]]);
-    expect(readLastCourseLocation(7, "task_a")).toEqual({ view: "tutor", text: "timeline", at: 75000 });
+    expect(stored).toEqual([["lecturelens.lastCourseLocation.v1:7:task_a", JSON.stringify({ view: "tutor", text: "timeline", at: 75000, visitedAt: 1000 })]]);
+    expect(readLastCourseLocation(7, "task_a")).toEqual({ view: "tutor", text: "timeline", at: 75000, visitedAt: 1000 });
     expect(readLastCourseLocation(8, "task_a")).toBeNull();
     expect(readLastCourseLocation(7, "task_b")).toBeNull();
     expect(lastCourseLocationQuery({ view: "tutor", text: "timeline", at: 75000 })).toEqual({ view: "tutor", text: "timeline", at: "75000" });

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
+import CourseChaptersPanel from "../CourseChaptersPanel.vue";
 import CourseVisualEvidencePanel from "./CourseVisualEvidencePanel.vue";
 import type { AnalysisTaskStatus } from "../../types/task";
 import type { ResultTranslationSegment, TaskResultResponse } from "../../types/result";
@@ -28,9 +29,17 @@ const baseViews: Array<{ value: ContentView; label: string }> = [
   { value: "timeline", label: "时间轴" },
 ];
 const hasVisualEvidence = computed(() => (props.result?.keyframes?.length ?? 0) > 0);
-const views = computed(() => hasVisualEvidence.value
-  ? [...baseViews, { value: "visual" as const, label: "画面证据" }]
-  : baseViews);
+const views = computed(() => {
+  const readingViews = props.compact || activeView.value === "chapters"
+    ? [
+        { value: "timeline" as const, label: "时间轴" },
+        { value: "chapters" as const, label: "章节" },
+        { value: "source" as const, label: "原文" },
+        { value: "translated" as const, label: "中文译文" },
+      ]
+    : baseViews;
+  return hasVisualEvidence.value ? [...readingViews, { value: "visual" as const, label: "画面证据" }] : readingViews;
+});
 const sourceText = computed(() => props.result?.sourceFullText?.trim() || (props.result?.subtitles ?? []).map((item) => item.sourceText).filter(Boolean).join("\n\n"));
 const translatedText = computed(() => props.result?.translatedFullText?.trim() || "");
 const translationByIndex = computed(() => {
@@ -133,18 +142,19 @@ function emptyText(pending: string): string {
       <button v-for="item in views" :key="item.value" type="button" :aria-pressed="activeView === item.value" :class="{ 'is-active': activeView === item.value }" @click="activeView = item.value">{{ item.label }}</button>
     </nav>
 
-    <article v-if="activeView === 'translated'" class="reading-view">
+    <CourseChaptersPanel v-if="activeView === 'chapters'" :task-id="taskId" @seek="emit('seek', $event)" />
+    <article v-else-if="activeView === 'translated'" class="reading-view">
       <div class="reading-view__header"><h3>中文译文</h3><el-button :disabled="!translatedText" size="small" @click="copy(translatedText, '中文译文')">复制译文</el-button></div>
-      <div v-if="translatedText" class="reading-copy">{{ translatedText }}</div>
+      <div v-if="translatedText" class="reading-copy" :tabindex="compact ? 0 : undefined" role="region" aria-label="中文译文">{{ translatedText }}</div>
       <el-empty v-else :description="translationEmptyText" />
     </article>
     <article v-else-if="activeView === 'source'" class="reading-view">
       <div class="reading-view__header"><h3>原文</h3><el-button size="small" @click="copy(sourceText, '原文')">复制原文</el-button></div>
-      <div v-if="sourceText" class="reading-copy">{{ sourceText }}</div>
+      <div v-if="sourceText" class="reading-copy" :tabindex="compact ? 0 : undefined" role="region" aria-label="课程原文">{{ sourceText }}</div>
       <el-empty v-else :description="emptyText('原文生成中')" />
     </article>
     <section v-else-if="activeView === 'timeline'" class="timeline-view" aria-label="课程时间轴">
-      <div class="timeline-search"><el-input v-model="keyword" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
+      <div class="timeline-search"><el-input v-model="keyword" aria-label="搜索时间轴" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
       <p v-if="compact && hasFullTextOnlyTranslation" class="timeline-language-note">时间轴显示原文；中文全文见“中文译文”。</p>
       <el-alert v-if="!compact && hasFullTextOnlyTranslation" :closable="false" title="当前为全文翻译模式，时间轴仅展示原文；中文全文请切换到“中文译文”。" type="info" show-icon />
       <div class="timeline-controls">
@@ -154,7 +164,7 @@ function emptyText(pending: string): string {
       <el-empty v-if="rows.length === 0" :description="emptyText(status === 'SUCCEEDED' ? '本课程没有可定位的字幕片段' : '时间轴生成中')" />
       <el-empty v-else-if="filteredRows.length === 0" description="没有找到包含该关键词的片段" />
       <div v-else v-memo="[filteredRows, currentSegment, referenceSegment]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
-        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
+        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :tabindex="row.segmentIndex === referenceSegment ? -1 : undefined" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
           <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span></div>
           <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : (result?.translations.length ? '此片段暂无对齐译文' : segmentTranslationEmptyText)) }}</p></div>
           <el-button size="small" plain :disabled="!canSeek(row.startMillis, row.endMillis)" @click="resumeFollow(); emit('seek', row.startMillis)">跳到视频</el-button>
@@ -197,4 +207,24 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-language-note { margin: 0; color: var(--color-ink-soft); font-size: 12px; line-height: 1.6; }
 .timeline-row[data-reference=true] { padding: 14px; margin-block: 6px; border: 1px solid var(--color-brand); border-left: 3px solid var(--color-brand); border-radius: var(--radius-md); background: var(--color-brand-soft); }
 .reference-label { padding: 2px 6px; border-radius: var(--radius-sm); background: var(--color-brand); color: white; font-size: 11px; }
+.subnav button { border-radius: var(--radius-md); }
+.timeline-row { overflow-wrap: anywhere; }
+.timeline-row p:last-child { margin-bottom: 0; }
+.timeline-row__time { font-variant-numeric: tabular-nums; }
+.timeline-list:focus-visible, .timeline-row:focus-visible, .reading-copy:focus-visible { outline: 2px solid var(--color-brand); outline-offset: -2px; }
+.content-panel--compact .timeline-row { grid-template-columns: minmax(88px, auto) minmax(0, 1fr); gap: 4px 14px; padding: 12px; border-radius: var(--radius-md); }
+.content-panel--compact .timeline-row > button { grid-column: 2; justify-self: start; }
+.content-panel--compact .timeline-row[data-reference=true] { border-color: var(--color-warning); background: var(--color-evidence-surface); }
+.content-panel--compact .timeline-row[data-reference=true] .timeline-row__time { color: var(--color-warning); }
+.content-panel--compact .reference-label { justify-self: start; color: var(--color-warning); background: var(--color-evidence-surface); font-weight: 700; }
+.content-panel--compact .timeline-row__translation { margin-top: 4px; font-size: 14px; }
+.content-panel--compact .timeline-row__time { overflow-wrap: normal; }
+@media (max-width: 1024px) {
+  .content-panel--compact .subnav button { min-height: 44px; padding-inline: 9px; }
+}
+@media (max-width: 520px) {
+  .content-panel--compact .timeline-row { grid-template-columns: 1fr; }
+  .content-panel--compact .timeline-row > button { grid-column: 1; }
+  .content-panel--compact .timeline-row__time { display: flex; flex-wrap: wrap; }
+}
 </style>

@@ -22,23 +22,25 @@ defineProps<{
 <style scoped>
 .page-heading {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
 }
 
 .page-heading h1 {
-  margin: 8px 0 0;
+  margin: 0;
   color: var(--color-ink);
-  font-size: clamp(30px, 4vw, 42px);
+  font-size: clamp(26px, 3vw, 38px);
   font-weight: 720;
   letter-spacing: -0.035em;
   line-height: 1.12;
 }
 
+.page-heading .eyebrow { margin-bottom: 6px; }
+
 .page-heading__description {
   max-width: 680px;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   color: var(--color-ink-soft);
   font-size: 15px;
   line-height: 1.7;

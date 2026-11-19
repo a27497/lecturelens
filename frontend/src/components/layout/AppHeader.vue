@@ -119,7 +119,7 @@ function logout() {
   z-index: 30;
   top: 0;
   border-bottom: 1px solid var(--color-border);
-  background: rgb(255 255 255 / 96%);
+  background: var(--color-surface);
   backdrop-filter: blur(12px);
 }
 

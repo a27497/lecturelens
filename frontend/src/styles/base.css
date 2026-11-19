@@ -2,7 +2,7 @@
   color: var(--color-ink);
   background: var(--color-canvas);
   font-family:
-    Inter, "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system,
+    "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -40,6 +40,8 @@ a {
 button:focus-visible,
 a:focus-visible,
 summary:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 3px;
@@ -50,7 +52,7 @@ input:focus-visible {
 }
 
 .page-container {
-  width: min(calc(100% - 48px), var(--content-width));
+  width: min(calc(100% - 64px), var(--content-width));
   margin: 0 auto;
 }
 
