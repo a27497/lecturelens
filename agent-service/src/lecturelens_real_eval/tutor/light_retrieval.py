@@ -53,6 +53,16 @@ _SEGMENT_BOUNDARY = re.compile(
     rf"(?:\s+(?:and|then)\s+|[,，]\s*)(?=(?:(?:at|in|from|the)\s+)*(?:{_SEGMENT.pattern}))",
     re.IGNORECASE,
 )
+_COURSE_RULE = re.compile(r"\b(?:lecture|theor(?:y|em)|principle|rule)\b|讲座|课上|定理|原理", re.IGNORECASE)
+_WORKED_EXAMPLE = re.compile(
+    r"\b(?:example|demonstration|case study|exercise)\b|例[子题]|案例|演示", re.IGNORECASE
+)
+_TRANSFER = re.compile(
+    r"^(?:how\s+(?:does|would|can)\s+(?:this|that|it)\b.*\b(?:in|to|for)\s+(?:the|another|a separate)\b"
+    r"|(?:这|它)(?:又)?如何(?:应用|用于|推广|联系))"
+    rf"[^,，;；?？]*(?:{_WORKED_EXAMPLE.pattern})",
+    re.IGNORECASE,
+)
 
 
 def _query(text):
@@ -73,6 +83,11 @@ def targeted_queries(question):
             focused.setdefault(anchor[0].casefold(), piece)
     if len(focused) >= 2:
         return [full, *list(focused.values())[: MAX_QUERIES - 1]]
+
+    # Transferring a rule to a separate example calls for both teaching contexts.
+    for rule, application in zip(parts, parts[1:], strict=False):
+        if _COURSE_RULE.search(rule) and not _WORKED_EXAMPLE.search(rule) and _TRANSFER.search(application):
+            return [full, rule.strip(" ,，:：.。?？"), application.strip(" ,，:：.。?？")]
 
     for segment in parts:
         if not _COMPARE.search(segment):

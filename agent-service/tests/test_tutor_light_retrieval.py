@@ -16,6 +16,9 @@ from lecturelens_real_eval.tutor.light_retrieval import MAX_CONTEXT, targeted_qu
         "Explain the difference between groups.",
         "How does the example at 03:10 start, and what happens next?",
         "At 03:10, what is the invariant? Why does the invariant at 03:10 hold?",
+        "Why does the lecture use a queue, and how does this help the caller?",
+        "According to the lecture, what is a queue, and how does it work in an example?",
+        "In the worked example, what is the stopping rule, and how would it apply in this example?",
         "什么是信号量？它如何记录可用资源？",
     ],
 )
@@ -65,6 +68,11 @@ def test_chinese_comparison_finds_both_subjects():
             "前半段如何取得锁？后半段如何解除死锁？",
             "前半段如何取得锁",
             "后半段如何解除死锁",
+        ),
+        (
+            "Why does the rule require a base case, and how does this apply in the directory traversal example?",
+            "Why does the rule require a base case",
+            "how does this apply in the directory traversal example",
         ),
     ],
 )
