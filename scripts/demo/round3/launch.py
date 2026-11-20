@@ -11,7 +11,7 @@ sys.path.insert(0, str(HERE.parent))
 from stack import HTTP, ROOT, Stack, log
 
 PACK = ROOT / "fixtures/demo/round3"
-COURSE = json.loads((PACK / "demo-courses.json").read_text())["courses"][0]
+COURSE = json.loads((PACK / "demo-courses.json").read_text(encoding="utf-8"))["courses"][0]
 INSTANCE = "ll-p07-round3"
 WEB_PORT = 5196
 
