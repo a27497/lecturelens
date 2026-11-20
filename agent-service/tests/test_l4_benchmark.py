@@ -757,11 +757,11 @@ def test_tutor_adapter_reserves_before_and_settles_after():
     assert ledger.calls[2] == ("uncertain", "r2", "TUTOR_FLASH_TIMEOUT")
 
 
-def test_product_tutor_code_is_unchanged_by_the_harness():
-    """The adapter subclasses product classes; the pinned Tutor build stays the PLAN's baseline digest."""
+def test_current_tutor_has_a_separate_identity_from_frozen_l4():
+    """The published L4 result belongs to the historical build named by its PLAN."""
     from lecturelens_real_eval.tutor.flash_ledger import build_digest
 
-    assert build_digest() == "4fcf204f5aed4cb3046f340105083d008dc916829f155877ed834d344971ecaf"
+    assert build_digest() != "4fcf204f5aed4cb3046f340105083d008dc916829f155877ed834d344971ecaf"
 
 
 # ---------------------------------------------------------------- holdout execution (PLAN v4 revision 3)

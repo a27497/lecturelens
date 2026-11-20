@@ -37,7 +37,7 @@ class Authority:
                 "source_type": "SUBTITLE",
             }
         ]
-        if action == "SEARCH":
+        if action in {"SEARCH", "TUTOR_SEARCH"}:
             self.searches.append(args["query"])
         if action == "CHECK" or self.empty or (self.missing and action == "READ"):
             rows = []

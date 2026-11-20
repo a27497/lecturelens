@@ -76,6 +76,22 @@ class StudyAuthorityTest {
             .thenReturn(List.of(translation,original));
         assertThat(ids(authority.execute(request("SEARCH",null,null)))).containsExactly("e2","e3","e1");
     }
+    @Test void tutorSearchRanksCanonicalEvidenceAndRechecksRevisionAfterDenseRetrieval() {
+        var original=item("e2",1000);
+        var translation=item("t2",1000,"SUBTITLE_TRANSLATION");
+        var all=List.of(item("e3",2000),translation,item("e1",0),original);
+        when(evidence.current("task",42L)).thenReturn(all);
+        when(dense.retrieve("task",42L,all,"source",null,null,8)).thenReturn(List.of(translation,original));
+        var request=new StudyEvidenceAuthority.Request(42L,"task",1,"TUTOR_SEARCH","source",
+            null,null,null,null,null,null,StudyEvidenceAuthority.TutorStrategy.HYBRID_8_NEIGHBORS);
+        assertThat(ids(authority.execute(request))).containsExactly("e2","e1","e3");
+
+        when(dense.retrieve("task",42L,all,"source",null,null,8)).thenAnswer(call->{
+            jdbc.update("UPDATE analysis_task SET content_revision=2");
+            return List.of(translation,original);
+        });
+        assertThatThrownBy(()->authority.execute(request)).isInstanceOf(BusinessException.class);
+    }
     @Test void windowUsesSameModalityInTimeOrderAndDoesNotWrapToTranslation() {
         when(evidence.current("task",42L)).thenReturn(List.of(item("e3",2000),item("e1",0),item("e2",1000),item("t1",0,"SUBTITLE_TRANSLATION")));
         assertThat(ids(authority.execute(request("WINDOW",null,"e3")))).containsExactly("e2","e3");

@@ -14,8 +14,8 @@ from psycopg.conninfo import make_conninfo
 from test_tutor import Authority, command, offline, run, submit  # noqa: F401
 
 from lecturelens_agent.study.store import StudyError
-from lecturelens_real_eval.tutor.contracts import ABSTENTION, ANSWER_MAX_CHARS, Command
-from lecturelens_real_eval.tutor.light import SYSTEM, LightTutorRuntime, source_only
+from lecturelens_real_eval.tutor.contracts import ANSWER_MAX_CHARS, Command
+from lecturelens_real_eval.tutor.light import LIGHT_ABSTENTION, SYSTEM, LightTutorRuntime, source_only
 from lecturelens_real_eval.tutor.store import TutorStore
 
 
@@ -210,7 +210,7 @@ def test_invalid_reply_stops_once_preserves_draft_and_never_repairs(lab, respons
 def test_evidence_absence_abstains_without_any_model_call(lab):
     lab[1].empty = True
     result = run(lab)
-    assert result["status"] == "completed" and result["answer"] == ABSTENTION
+    assert result["status"] == "completed" and result["answer"] == LIGHT_ABSTENTION
     assert not result["model_calls"] and not result["reserved_tokens"] and not result["citations"]
     assert not lab[2].provider.requests
 

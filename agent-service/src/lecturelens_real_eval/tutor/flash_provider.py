@@ -12,7 +12,7 @@ import httpx
 from lecturelens_agent.study.store import StudyError
 
 from .contracts import ABSTENTION
-from .light import GROUNDING, REPLY_LIMITS, TEACHING, Reply
+from .light import GROUNDING, REPLY_LIMITS, STEP_FIRST, TEACHING, Reply
 
 MODEL = "deepseek-flash"
 MODEL_VERSION = "DeepSeek-V4.1-Flash-1017"
@@ -45,6 +45,12 @@ Write code, Markdown and line breaks directly in the teaching text.
 )
 
 
+PRODUCT_TEXT_SYSTEM = STEP_FIRST + TEXT_SYSTEM.replace(
+    "If the course evidence is insufficient",
+    "If the retrieved excerpts are insufficient",
+)
+
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -55,7 +61,14 @@ def payload(messages, *, text_reply=False):
         {
             "model": MODEL,
             "messages": [
-                {**system, "content": TEXT_SYSTEM if text_reply else system["content"] + JSON_INSTRUCTION},
+                {
+                    **system,
+                    "content": (
+                        PRODUCT_TEXT_SYSTEM if system["content"] == PRODUCT_TEXT_SYSTEM else TEXT_SYSTEM
+                    )
+                    if text_reply
+                    else system["content"] + JSON_INSTRUCTION,
+                },
                 user,
             ],
             "response_format": {"type": "text" if text_reply else "json_object"},
@@ -186,6 +199,10 @@ class FlashProvider:
     @property
     def offline(self):
         return self._transport is not None
+
+    @property
+    def text_reply(self):
+        return self._text_reply
 
     def request_body(self, messages):
         return payload(messages, text_reply=self._text_reply)

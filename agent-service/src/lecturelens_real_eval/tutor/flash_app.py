@@ -16,14 +16,15 @@ from .light import LightTutorRuntime
 
 
 class FlashTutorRuntime(LightTutorRuntime):
+    legacy_retrieval = True
     output_reserve = OUTPUT_TOKENS
 
-    def __init__(self, store, authority, provider):
+    def __init__(self, store, authority, provider, *, search_authority=None):
         if not isinstance(provider, FlashProvider) or provider.offline != (
             store.grant.mode == "offline-fake"
         ):
             raise TypeError("TUTOR_FLASH_PROVIDER_REQUIRED")
-        super().__init__(store, authority, provider)
+        super().__init__(store, authority, provider, search_authority=search_authority)
 
     def command(self, command):
         self.store.authorize_command(command)
@@ -55,7 +56,10 @@ class FlashTutorRuntime(LightTutorRuntime):
         self.audit_completion(state, result)
         if error:
             return {"flash_error": error, "usage": result.usage or {}, "raw_content": result.raw_content}
-        return {**result.reply, "usage": result.usage}
+        reply = {**result.reply, "usage": result.usage}
+        if reply["outcome"] == "insufficient_evidence" and self.provider.text_reply:
+            reply["text"] = state.get("abstention", reply["text"])
+        return reply
 
     def audit_completion(self, state, result):
         pass
