@@ -9,7 +9,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from lecturelens_real_eval.l4 import blind, citations, judge, pipeline, pricing, questions, scoring
+from lecturelens_real_eval.l4 import (
+    blind,
+    citations,
+    flash_judge,
+    judge,
+    pipeline,
+    pricing,
+    questions,
+    scoring,
+)
 from lecturelens_real_eval.l4.ledger import BudgetExceeded, Ledger, LedgerError
 from lecturelens_real_eval.l4.normalize import normalize
 from lecturelens_real_eval.l4.runner import L4TutorStore, event_usage
@@ -640,6 +649,60 @@ def test_lenient_score_gives_partial_half_credit():
         ),
     )
     assert out["vital_lenient"] == 0.5 and out["all_lenient"] == 0.75 and out["vital_supported"] == 0
+
+
+@pytest.mark.parametrize(
+    ("label", "material_error", "declared", "unreadable", "verdict"),
+    [
+        ("support", False, False, False, "CORRECT"),
+        ("partial", False, False, False, "INCORRECT"),
+        ("none", False, False, False, "INCORRECT"),
+        ("support", True, False, False, "INCORRECT"),
+        ("support", False, True, False, "INCORRECT"),
+        ("support", False, False, True, "UNDETERMINED"),
+    ],
+)
+def test_flash_judge_derives_the_same_strict_verdict(label, material_error, declared, unreadable, verdict):
+    case = entry(declared=declared)
+    raw = json.loads(
+        decision(
+            nuggets=[{"id": "N1", "label": label}, {"id": "N2", "label": "none"}],
+            material_error=material_error,
+            verdict=verdict,
+        )
+    )
+    expected = judge.validate(case, json.dumps(raw))
+    del raw["verdict"]
+    raw["unreadable"] = unreadable
+    assert flash_judge.validate(case, json.dumps(raw)) == expected
+    with pytest.raises(ValueError, match="verdict must be derived"):
+        flash_judge.validate(case, json.dumps({**raw, "verdict": "CORRECT"}))
+
+
+def test_flash_judge_preserves_claims_errors_and_rubric():
+    case = entry()
+    grouped = [
+        claim("partial", ("C1", "irrelevant"), text="Supported first fact and unsupported second fact"),
+        *[claim("none", text=f"Uncited assertion {n}") for n in range(judge.MAX_CLAIMS - 1)],
+    ]
+    reason = "A substantive contradiction. " * 25
+    raw = json.loads(decision(claims=grouped, material_error=True, material_error_reason=reason))
+    del raw["verdict"]
+    raw["unreadable"] = False
+    result = flash_judge.validate(case, json.dumps(raw))
+    assert result["claims"] == grouped and result["verdict"] == "INCORRECT"
+    assert result["material_error_reason"] == reason
+    raw["claims"].append(claim("none", text="Another assertion"))
+    with pytest.raises(ValueError, match=f"at most {judge.MAX_CLAIMS}"):
+        flash_judge.validate(case, json.dumps(raw))
+
+    facts = flash_judge.request_body(case)
+    assert facts["thinking"] == {"type": "disabled"} and facts["model"] == "deepseek-flash"
+    assert facts["messages"][1] == judge.request_body(case)["messages"][1]
+    assert f"at most {judge.MAX_CLAIMS}" in facts["messages"][0]["content"]
+    non_answerable = {**case, "gold": {"answerable": False}}
+    raw.update(nuggets=[], claims=[], material_error=False)
+    assert flash_judge.validate(non_answerable, json.dumps(raw))["verdict"] == "INCORRECT"
 
 
 def test_alce_citation_recall_and_precision_counts():
