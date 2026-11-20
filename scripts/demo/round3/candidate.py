@@ -41,6 +41,19 @@ ANSWERS.update({
     for question, blocks in FOLLOWUPS.items()
 })
 OTHER_ALGORITHMS = re.compile(r"堆排序|快速排序|归并排序|冒泡排序|插入排序|图论|最短路径|拓扑排序|dijkstra", re.I)
+GUIDANCE_REQUEST = re.compile(r"没跟上|看不懂|没懂|不明白|不太懂|从哪|先看|怎么想|怎么理解|怎么做|理清|梳理|有点[晕懵]")
+LESSON_CONTEXT = re.compile(r"这[段节块课]|本课|课[上里]|搜索区间|候选区间|二分(?:查找|搜索)|折半查找|binary search", re.I)
+COURSE_GUIDANCE = [
+    (r"边界|指针|端点|搜索区间|候选区间|(?<![a-z0-9_])(?:low|high)(?![a-z0-9_])",
+     "先看中点与目标的比较结果，决定哪一边还能保留。每次更新后，再看区间里还有几个候选。你想先弄清怎么移动边界，还是怎么判断是否结束？",
+     ["s04", "s09"]),
+    (r"中点|中间(?:项|值|下标|位置)|(?<![a-z0-9_])mid(?![a-z0-9_])",
+     "先用左右边界算出中点下标，再取这个位置的值与目标比较。你想先看怎么算下标，还是比较后往哪一边找？",
+     ["s03", "s04"]),
+    (r"二分(?:查找|搜索)|折半查找|binary search|(?:这节课|本课)(?:我|的内容)?(?:有点|都)?(?:没跟上|看不懂|没懂|不明白)",
+     "先暂停在例题第一次比较。中点是 21，目标是 34。试着判断 21 的哪一侧还可能有 34，我们再从这一步往下走。",
+     ["s05"]),
+]
 
 
 def answer_blocks(question):
@@ -55,6 +68,11 @@ def answer_blocks(question):
     selected = set().union(*matches)
     blocks = [block for index, (_, topic) in enumerate(TOPICS) if index in selected
               for block in topic["answer"]]
+    if (not blocks and GUIDANCE_REQUEST.search(question) and LESSON_CONTEXT.search(question)
+            and not OTHER_ALGORITHMS.search(question)):
+        for pattern, text, citations in COURSE_GUIDANCE:
+            if re.search(pattern, question, re.I):
+                return [{"concept": "从课里的这一步看", "text": text, "citations": citations}]
     if blocks and any(not topics for topics in matches):
         blocks.append({"concept": "", "text": "其余部分在本课中没有找到足够的依据。", "citations": []})
     return blocks

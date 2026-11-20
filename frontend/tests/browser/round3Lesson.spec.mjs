@@ -41,6 +41,61 @@ function trace(page) {
     stop() { const rows = [...sample.values()]; sample = null; return rows; } };
 }
 
+test('recognizes Round 3 boundary paraphrases', async ({ page, isMobile }) => {
+  let externalRequests = 0;
+  await page.route(url => /^https?:$/.test(url.protocol) && url.origin !== origin, route => {
+    externalRequests++;
+    return route.abort();
+  });
+  await page.goto(origin + '/tasks');
+  await page.getByRole('button', { name: /继续学习 01:04/ }).click({ timeout: 60_000 });
+  if (isMobile) await choose(page, '助手');
+  const editor = page.getByRole('textbox', { name: '就本课提问' });
+  const newChat = page.getByRole('button', { name: '新对话', exact: true });
+  const lastTurn = page.locator('.tutor--lesson .messages > li').last();
+  const source = page.getByRole('region', { name: '课程出处', exact: true });
+  const submit = async question => {
+    await editor.fill(question);
+    await editor.press('Enter');
+    await expect(lastTurn.locator('.learner')).toHaveText(question);
+  };
+
+  for (const [name, question, answer, time, excerpt] of [
+    ['assignment', '为何在没命中时不能把 low 直接设为 mid？', '会反复比较 3', '02:12', /Setting low to mid would repeat/],
+    ['equal-boundaries', '两头刚好碰在同一个格子，需要检查它吗？', '两端指向同一个下标时，要比较这一项。', '01:52', /Equal boundaries mean one candidate is left/],
+  ]) {
+    await newChat.click();
+    await submit(question);
+    await expect(lastTurn).toContainText(answer);
+    const answerBlock = lastTurn.locator('.answer-block').filter({ hasText: answer });
+    if (isMobile) {
+      await lastTurn.evaluate(turn => window.scrollBy(0, turn.getBoundingClientRect().top - 309));
+      await capture(page, 'qa-' + name + '-mobile');
+    }
+    await answerBlock.getByRole('button', { name: '课程出处 ' + time, exact: true }).click();
+    await source.locator('summary').click();
+    await expect(source.locator('blockquote')).toContainText(excerpt);
+    await expect(source.getByRole('button', { name: '回看 ' + time, exact: true })).toBeEnabled();
+    await source.scrollIntoViewIfNeeded();
+    if (isMobile) await source.evaluate(card => window.scrollBy(0, card.getBoundingClientRect().top - 319));
+    await capture(page, 'qa-' + name + '-source-' + (isMobile ? 'mobile' : 'desktop'));
+  }
+
+  await submit('把high更新成mid 合适吗？两端落在同一个下标呢？');
+  await expect(lastTurn).toContainText('应更新为 high = mid − 1');
+  await expect(lastTurn).toContainText('两端指向同一个下标时，要比较这一项。');
+  await submit('low 等于 mid 行不行？');
+  await expect(lastTurn).toContainText('会反复比较 3');
+  await submit('二分查找的边界这块我有点不明白，该从哪儿看？');
+  await expect(lastTurn).toContainText('你想先弄清怎么移动边界，还是怎么判断是否结束？');
+  await expect(lastTurn.getByRole('button', { name: '课程出处 00:48' })).toBeVisible();
+  await expect(lastTurn.getByRole('button', { name: '课程出处 01:52' })).toBeVisible();
+  await submit('哈希表的装载因子怎么理解？');
+  await expect(lastTurn).toContainText('这节课没有足够资料回答这个问题。');
+  await expect(lastTurn.getByRole('button', { name: /课程出处/ })).toHaveCount(0);
+  expect(externalRequests).toBe(0);
+});
+
 test('opens at 01:04 and works through authorized learning actions', async ({ page, browser, isMobile }) => {
   const formFactor = isMobile ? 'mobile' : 'desktop';
   const cdp = await page.context().newCDPSession(page);
