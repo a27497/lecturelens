@@ -42,16 +42,27 @@ Context cells give mean / nearest-rank P95 UTF-8 bytes of the exact evidence arr
 | First-pass per-item receipts | `ef1f76e5e42c73e09113a258cdb57cb49e3d746f70bd959ef20fe90a87b15d99` |
 | First-pass aggregates | `6ad45c0d116404cb288021412f68ad3ade15902f0cda70c3e45beab83ae0f020` |
 
-The replay source was `c9b12d99c05650127334a829a31e66f9510fc23f`. Use the [signed retrieval fixture setup](../tutor-retrieval-dev/README.md#reproduction) with an isolated `lecturelens_agent_test` database, two unused loopback ports, a new shared signing key and the existing offline embedding cache. Capture the final JSON line from `tutor_retrieval_dev.py index` as the index receipt. Start the vector and Java fixture services as described there, then run the following from the repository root, with the fixture signing key exported.
+The first-pass source was `c9b12d99c05650127334a829a31e66f9510fc23f`. The review follow-up added a live index fence with synthetic verification. The original run recorded the index build receipt and matched all historical main-arm cases. Its per-response snapshot identities were unrecorded. A subsequent read-only audit confirmed the three expected snapshots, Evidence hashes and ordered chunk manifest in the task database. The first-pass files and rules fingerprint remain the run of record.
+
+For reproduction, use the [signed retrieval fixture setup](../tutor-retrieval-dev/README.md#reproduction) with an isolated `lecturelens_agent_test` database, two unused loopback ports, a new shared signing key and the existing offline embedding cache. Capture the final JSON line from `tutor_retrieval_dev.py index` as the index receipt. With the same vector environment and shared signing key exported, run the locked vector fixture from the repository root:
 
 ```bash
 umask 077
-agent-service/.venv/bin/python scripts/eval/tutor_selective_neighbors.py \
+agent-service/.venv/bin/python scripts/eval/tutor_selective_neighbors.py serve-vector \
   "$L4_DEV_ROOT" "$ORIGINAL_SUPPORT_JSON" "$INDEX_RECEIPT_JSON" \
-  "$JAVA_FIXTURE_PORT" "$NEW_PRIVATE_OUTPUT_DIR"
+  "$VECTOR_FIXTURE_PORT" "$NEW_VECTOR_RECEIPT_JSONL"
 ```
 
-The scorer checks the rule and input fingerprints, runs the three arms and writes `cases.jsonl` and `aggregates.json`. Its output directory must be new. It records each item's query-plan digest and final Evidence IDs in the private receipt.
+Start the Java fixture with that vector port and its own loopback port. With the signing key exported, run:
+
+```bash
+umask 077
+agent-service/.venv/bin/python scripts/eval/tutor_selective_neighbors.py score \
+  "$L4_DEV_ROOT" "$ORIGINAL_SUPPORT_JSON" "$INDEX_RECEIPT_JSON" \
+  "$JAVA_FIXTURE_PORT" "$NEW_VECTOR_RECEIPT_JSONL" "$NEW_PRIVATE_OUTPUT_DIR"
+```
+
+The vector fixture checks the embedding version and the expected course snapshot identity on each live dense response. The scorer checks the received page identities and count for each arm and writes `cases.jsonl` and `aggregates.json`. Its output directory must be new. It records each item's query-plan digest, vector snapshot identity and final Evidence IDs in the private receipt.
 
 ## Two-case Flash judge calibration
 
