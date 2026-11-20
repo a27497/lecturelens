@@ -34,7 +34,8 @@ FOLLOWUPS = {
     "如果一直没找到，什么时候停止？": [("s09", "当左边界超过右边界，搜索区间已经空了，就可以停止并报告未找到。")],
     "数组没有排序时，还能排除左半边吗？": [("s01", "不能。有序性让我们知道左边每个值都不超过中点；打乱后，目标可能在左右任何一侧。")],
 }
-TOPICS = [(re.compile(topic["match"], re.I), topic) for topic in COURSE["tutorQuestions"]]
+TOPICS = [(re.compile(topic["match"], re.I), topic)
+          for topic in COURSE["tutorQuestions"] + COURSE["tutorFollowups"]]
 ANSWERS.update({topic["question"]: topic["answer"] for _, topic in TOPICS})
 ANSWERS.update({
     question: [{"concept": "", "text": text, "citations": [segment]} for segment, text in blocks]
@@ -382,7 +383,7 @@ def create_app():
                        "anchor": {"kind": "playback", "milliseconds": SEGMENTS[note["anchor"]]["startMs"]}}
                       for note in COURSE["notes"]],
             "followups": list(FOLLOWUPS),
-            "questions": [topic["question"] for _, topic in TOPICS],
+            "questions": [topic["question"] for topic in COURSE["tutorQuestions"]],
             "topics": [{ "question": conversation["turns"][0]["question"], "title": conversation["title"] }
                        for conversation in COURSE["conversations"]],
         }, headers={"Cache-Control": "no-store"})
