@@ -85,7 +85,7 @@ def fused_ids(searches, limit):
 
 
 def retrieve_context(
-    authority, scope, question, history, *, simple="HYBRID_8", complex_="HYBRID_16", route=True
+    authority, scope, question, history, *, simple="HYBRID_8_NEIGHBORS", complex_="HYBRID_16", route=True
 ):
     queries = targeted_queries(question) if route else [_query(question)]
     strategy = complex_ if len(queries) > 1 else simple
