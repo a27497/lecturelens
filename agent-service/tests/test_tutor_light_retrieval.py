@@ -13,6 +13,10 @@ def test_queries_focus_compared_subjects_and_separate_interrogatives():
         "a queue",
         "a stack",
     ]
+    assert targeted_queries("How does a queue differ from a stack?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How is a queue different from a stack?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How do a queue and a stack differ?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How does a queue compare with a stack?")[1:] == ["a queue", "a stack"]
     assert targeted_queries("队列和堆栈有什么区别？")[1:] == ["队列", "堆栈"]
     assert targeted_queries("Why does the loop stop, and how does the caller observe its result?")[1:] == [
         "Why does the loop stop",

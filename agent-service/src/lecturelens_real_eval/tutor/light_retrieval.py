@@ -14,16 +14,19 @@ MAX_QUERIES = 3
 RRF_K = 60
 
 _COMPARE = re.compile(
-    r"\b(?:compar(?:e|es|ing|ison)|difference|differ|contrast|versus|vs\.?|unlike)\b"
+    r"\b(?:compar(?:e[ds]?|ing|ison)|difference|differ(?:s|ent)?|contrast|versus|vs\.?|unlike)\b"
     r"|区别|比较|对比|不同|异同",
     re.IGNORECASE,
 )
-_EN_PAIR = re.compile(r"\b(?:and|with|versus|vs\.?|from)\b", re.IGNORECASE)
+_EN_PAIR = re.compile(
+    r"\b(?:differ(?:s|ent)?\s+from|compare[ds]?\s+(?:with|to)|and|with|versus|vs\.?)\b",
+    re.IGNORECASE,
+)
 _ZH_PAIR = re.compile(r"与|和|及|跟|、")
 _EN_EDGE = re.compile(
     r"^(?:how (?:do|does|did|is|are)\s+|what (?:is|are)\s+(?:the\s+)?difference\s+between\s+"
     r"|(?:please\s+)?compare\s+|(?:the\s+)?difference\s+between\s+)"
-    r"|\s+(?:differ|compare)\b.*$",
+    r"|\s+(?:differs?|compares?)\b[?!. ]*$",
     re.IGNORECASE,
 )
 _ZH_EDGE = re.compile(r"^(?:请)?(?:比较|对比)|(?:在[^，,？?]{1,45})?有(?:何|什么)?(?:区别|不同|异同).*$")
