@@ -78,6 +78,18 @@ test('answers Round 3 comparison counts and replays the cited course segments', 
       await expect.poll(() => clock(page)).toBe(milliseconds);
     }
   }
+
+  await editor.fill('用这个例子找42需要几次比较，为什么一百万项最多比较20次？');
+  await editor.press('Enter');
+  await expect(lastTurn).toContainText('找 42 需要比较 2 次');
+  await expect(lastTurn).toContainText('一百万项最多 20 次');
+
+  for (const question of ['在 [42] 中找42要比较几次？', '顺序查找10个元素，最坏要比较多少次？']) {
+    await editor.fill(question);
+    await editor.press('Enter');
+    await expect(lastTurn.locator('.learner')).toHaveText(question);
+    await expect(lastTurn).toContainText('这节课没有足够资料回答这个问题。');
+  }
 });
 
 test('recognizes Round 3 boundary paraphrases', async ({ page, isMobile }) => {

@@ -34,9 +34,9 @@ FOLLOWUPS = {
     "如果一直没找到，什么时候停止？": [("s09", "当左边界超过右边界，搜索区间已经空了，就可以停止并报告未找到。")],
     "数组没有排序时，还能排除左半边吗？": [("s01", "不能。有序性让我们知道左边每个值都不超过中点；打乱后，目标可能在左右任何一侧。")],
 }
-TOPICS = [(re.compile(topic["match"], re.I), topic)
-          for topic in COURSE["tutorQuestions"] + COURSE["tutorFollowups"]]
-ANSWERS.update({topic["question"]: topic["answer"] for _, topic in TOPICS})
+COMPARISON_TOPICS = [(re.compile(topic["match"], re.I), topic) for topic in COURSE["tutorFollowups"]]
+TOPICS = [(re.compile(topic["match"], re.I), topic) for topic in COURSE["tutorQuestions"]]
+ANSWERS.update({topic["question"]: topic["answer"] for _, topic in COMPARISON_TOPICS + TOPICS})
 ANSWERS.update({
     question: [{"concept": "", "text": text, "citations": [segment]} for segment, text in blocks]
     for question, blocks in FOLLOWUPS.items()
@@ -57,17 +57,25 @@ COURSE_GUIDANCE = [
 ]
 
 
+def matching_topics(clause):
+    if OTHER_ALGORITHMS.search(clause):
+        return set()
+    # An explicit comparison from this example takes precedence over general complexity keywords.
+    comparison = {index for index, (pattern, _) in enumerate(COMPARISON_TOPICS)
+                  if pattern.fullmatch(clause.strip(" 。！!"))}
+    return comparison or {index for index, (pattern, _) in enumerate(TOPICS, len(COMPARISON_TOPICS))
+                          if pattern.search(clause)}
+
+
 def answer_blocks(question):
     question = re.sub(r"^关于\s+\d+:\d+\s+这段[：:]\s*", "", question.strip())
     if question in ANSWERS:
         return ANSWERS[question]
 
-    clauses = re.split(r"[？?；;\n]+|[，,]\s*(?:另外|以及|还有|那|再问)", question)
-    matches = [{index for index, (pattern, _) in enumerate(TOPICS)
-                if not OTHER_ALGORITHMS.search(clause) and pattern.search(clause)}
-               for clause in clauses if clause.strip()]
+    clauses = re.split(r"[？?；;\n]+|[，,]\s*(?:另外|以及|还有|那|再问|(?=为什么))", question)
+    matches = [matching_topics(clause) for clause in clauses if clause.strip()]
     selected = set().union(*matches)
-    blocks = [block for index, (_, topic) in enumerate(TOPICS) if index in selected
+    blocks = [block for index, (_, topic) in enumerate(COMPARISON_TOPICS + TOPICS) if index in selected
               for block in topic["answer"]]
     if (not blocks and GUIDANCE_REQUEST.search(question) and LESSON_CONTEXT.search(question)
             and not OTHER_ALGORITHMS.search(question)):
@@ -383,7 +391,7 @@ def create_app():
                        "anchor": {"kind": "playback", "milliseconds": SEGMENTS[note["anchor"]]["startMs"]}}
                       for note in COURSE["notes"]],
             "followups": list(FOLLOWUPS),
-            "questions": [topic["question"] for topic in COURSE["tutorQuestions"]],
+            "questions": [topic["question"] for _, topic in TOPICS],
             "topics": [{ "question": conversation["turns"][0]["question"], "title": conversation["title"] }
                        for conversation in COURSE["conversations"]],
         }, headers={"Cache-Control": "no-store"})
