@@ -16,6 +16,7 @@ from lecturelens_real_eval.tutor.light_retrieval import MAX_CONTEXT, targeted_qu
         "Explain the difference between groups.",
         "How does the example at 03:10 start, and what happens next?",
         "At 03:10, what is the invariant? Why does the invariant at 03:10 hold?",
+        "Does the lock state change from 00:03:10 to 03:10?",
         "Why does the lecture use a queue, and how does this help the caller?",
         "According to the lecture, what is a queue, and how does it work in an example?",
         "In the worked example, what is the stopping rule, and how would it apply in this example?",
@@ -32,6 +33,7 @@ def test_single_topic_and_ambiguous_requests_keep_one_query(question):
         "What is the difference between a queue and a stack?",
         "How does a queue differ from a stack?",
         "How is a queue different from a stack?",
+        "How is a queue similar to a stack?",
         "How do a queue and a stack differ?",
         "How does a queue compare with a stack?",
         "Which rules govern traversal? Compare a queue and a stack.",
@@ -63,6 +65,16 @@ def test_chinese_comparison_finds_both_subjects():
             "How does the opening example acquire the lock? How does the final example release it?",
             "How does the opening example acquire the lock",
             "How does the final example release it",
+        ),
+        (
+            "How does the lock state change from 03:10 to 12:40?",
+            "03:10 How does the lock state change",
+            "12:40 How does the lock state change",
+        ),
+        (
+            "What changes between the opening section and the final section?",
+            "opening section What changes",
+            "final section What changes",
         ),
         (
             "前半段如何取得锁？后半段如何解除死锁？",

@@ -22,7 +22,7 @@ _COMPARE = re.compile(
     re.IGNORECASE,
 )
 _EN_PAIR = re.compile(
-    r"\b(?:differ(?:s|ent)?\s+from|compare[ds]?\s+(?:with|to)|and|with|versus|vs\.?)\b",
+    r"\b(?:differ(?:s|ent)?\s+from|similar\s+to|compare[ds]?\s+(?:with|to)|and|with|versus|vs\.?)\b",
     re.IGNORECASE,
 )
 _ZH_PAIR = re.compile(r"与|和|及|跟|、")
@@ -53,6 +53,11 @@ _SEGMENT_BOUNDARY = re.compile(
     rf"(?:\s+(?:and|then)\s+|[,，]\s*)(?=(?:(?:at|in|from|the)\s+)*(?:{_SEGMENT.pattern}))",
     re.IGNORECASE,
 )
+_SEGMENT_RANGE = re.compile(
+    rf"\b(?:from|between)\s+(?:the\s+)?(?:{_SEGMENT.pattern})\s+"
+    rf"(?:to|and)\s+(?:the\s+)?(?:{_SEGMENT.pattern})",
+    re.IGNORECASE,
+)
 _COURSE_RULE = re.compile(r"\b(?:lecture|theor(?:y|em)|principle|rule)\b|讲座|课上|定理|原理", re.IGNORECASE)
 _WORKED_EXAMPLE = re.compile(
     r"\b(?:example|demonstration|case study|exercise)\b|例[子题]|案例|演示", re.IGNORECASE
@@ -70,19 +75,32 @@ def _query(text):
     return text.encode("utf-16-le")[: 2 * QUERY_CHARS].decode("utf-16-le", errors="ignore").strip()
 
 
+def _location_queries(parts):
+    focused = {}
+    for clause in parts:
+        # A range shares one topic, while separate requests can carry their own.
+        parts_at_locations = [clause] if _SEGMENT_RANGE.search(clause) else _SEGMENT_BOUNDARY.split(clause)
+        for part in parts_at_locations:
+            anchors = _SEGMENT.findall(part)
+            piece = part.strip(" ,，:：.。?？")
+            topic = _SEGMENT.sub("", _SEGMENT_RANGE.sub("", piece)).strip()
+            if not topic:
+                continue
+            for anchor in anchors:
+                key = anchor.casefold()
+                if ":" in anchor:
+                    key = sum(int(unit) * 60**i for i, unit in enumerate(reversed(anchor.split(":"))))
+                focused.setdefault(key, _query(f"{anchor} {topic}") if len(anchors) > 1 else piece)
+    return list(focused.values())
+
+
 def targeted_queries(question):
     """Keep the original query and probe identifiable comparands or distinct course excerpts."""
     full = _query(question)
     parts = _PARTS.split(full)
-    # Punctuation only supplies boundaries after the question points to distinct course locations.
-    focused = {}
-    for part in (piece for clause in parts for piece in _SEGMENT_BOUNDARY.split(clause)):
-        anchor = _SEGMENT.search(part)
-        piece = part.strip(" ,，:：.。?？")
-        if anchor and piece != anchor[0]:
-            focused.setdefault(anchor[0].casefold(), piece)
+    focused = _location_queries(parts)
     if len(focused) >= 2:
-        return [full, *list(focused.values())[: MAX_QUERIES - 1]]
+        return [full, *focused[: MAX_QUERIES - 1]]
 
     # Transferring a rule to a separate example calls for both teaching contexts.
     for rule, application in zip(parts, parts[1:], strict=False):
