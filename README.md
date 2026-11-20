@@ -51,6 +51,23 @@ LectureLens 是一个实验性的课程学习助手。导入视频后，系统�
 
 Round 3 本地演示使用自写合成课程《二分查找：每次划掉一半》。进入课程后，可在「助手」提问，点击时间标记查看原文，再点「回看」定位视频。「笔记」保存在当前浏览器和账号下。「练习」支持提交选择题、查看判分和对应的课程证据。启动与停止命令见 [Quick start](#quick-start)。
 
+### 一键启动
+
+通用演示栈会启动 Java、Agent 和前端，并导入一门自写课程。依赖见上面的 [Quick start](#quick-start)。默认使用 Mock 提供器，无需 API key。
+
+```bash
+scripts/demo/up.sh --instance sample
+```
+
+终端会打印课程地址、演示账号、密码文件位置和对应的停止命令。运行 `scripts/demo/down.sh --instance sample` 停止该实例并保留数据卷。需要清理该实例的数据卷和本地密码时可加 `--purge`。
+
+真实模型模式需要自己的 OpenAI-compatible API key。可通过 `LECTURELENS_LLM_BASE_URL` 和 `LECTURELENS_LLM_MODEL` 配置模型地址（HTTPS）与名称。用不同实例名启动，以隔离课程数据和模型配置。
+
+```bash
+export LECTURELENS_LLM_API_KEY=...
+scripts/demo/up.sh --real --instance real
+```
+
 ### 架构
 
 ```mermaid
