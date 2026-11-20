@@ -993,6 +993,7 @@ class Stack:
         self.report_ready(real)
 
     def report_ready(self, real):
+        ports = self.state["ports"]
         url = f"http://127.0.0.1:{ports['WEB_PORT']}/tasks/{self.state['task_id']}"
         mode = (
             "REAL: model calls are billed to your key"
