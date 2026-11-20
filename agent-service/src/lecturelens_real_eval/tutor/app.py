@@ -11,7 +11,7 @@ from starlette.concurrency import run_in_threadpool
 
 from lecturelens_agent.app import course_authority
 from lecturelens_agent.app import create_app as base_app
-from lecturelens_agent.study.authority import signature
+from lecturelens_agent.study.authority import EvidenceAuthority, signature
 from lecturelens_agent.study.store import StudyError
 
 from .contracts import Command
@@ -36,6 +36,7 @@ def create_app(*, tutor=None, trial_transport=None, **kwargs):
         configured = tutor is None and os.environ.get("TUTOR_ENABLED", "false").lower() == "true"
         # Reject before the base lifespan can initialize or start any provider worker.
         trial = None
+        java_url = os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080")
         if configured:
             require_mock(os.environ.get("AGENT_LLM_MODE", "real"))
             engine = os.environ.get("TUTOR_ENGINE", "p8")
@@ -52,6 +53,7 @@ def create_app(*, tutor=None, trial_transport=None, **kwargs):
                     os.environ["AGENT_DATABASE_URL"],
                     course_authority(os.environ["AGENT_JAVA_BASE_URL"], secret),
                     transport=trial_transport,
+                    search_authority=EvidenceAuthority(java_url, secret),
                 )
                 # Reject the wrong target before the base app can run any DDL there.
                 await run_in_threadpool(trial.initialize)
@@ -61,11 +63,17 @@ def create_app(*, tutor=None, trial_transport=None, **kwargs):
             app.state.tutor = trial if trial is not None else tutor
             if configured and trial is None:
                 runtime = LightTutorRuntime if engine == "light" else TutorRuntime
+                # Tutor-specific ranking uses the signed Java route. CHECK and
+                # READ continue through the configured course transport.
+                options = (
+                    {"search_authority": EvidenceAuthority(java_url, app.state.secret)}
+                    if engine == "light"
+                    else {}
+                )
                 app.state.tutor = runtime(
                     TutorStore(os.environ["AGENT_DATABASE_URL"], engine=engine),
-                    course_authority(
-                        os.environ.get("AGENT_JAVA_BASE_URL", "http://127.0.0.1:8080"), app.state.secret
-                    ),
+                    course_authority(java_url, app.state.secret),
+                    **options,
                 )
             if app.state.tutor:
                 if trial is None:

@@ -59,6 +59,14 @@ public class StudyEvidenceAuthority {
                     var hits=retrieval.retrieve(request.course_id(),request.owner_id(),all,request.query(),request.start_ms(),request.end_ms(),4);
                     selected=searchContext(all,hits,request.start_ms(),request.end_ms());
                 }
+                case "TUTOR_SEARCH" -> {
+                    if (scope != null || request.query() == null || request.query().isBlank()
+                            || request.query().length() > 500 || request.start_ms() != null || request.end_ms() != null
+                            || request.tutor_strategy() == null) {
+                        throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
+                    }
+                    selected = tutorSearch(request, all);
+                }
                 case "READ" -> {
                     var ids=request.evidence_ids();
                     if (ids==null || ids.size()>8 || ids.stream().anyMatch(Objects::isNull)) throw new BusinessException(ErrorCode.COMMON_BAD_REQUEST);
@@ -84,6 +92,27 @@ public class StudyEvidenceAuthority {
         if(scope!=null) result.put("learning_scope",scope);
         return result;
     }
+    private List<CourseEvidence> tutorSearch(Request request, List<CourseEvidence> all) {
+        int page = TutorEvidenceRanking.SEARCH_PAGE;
+        var dense = retrieval.retrieve(request.course_id(), request.owner_id(), all, request.query(), null, null, page);
+        if (request.tutor_strategy() == TutorStrategy.DENSE_8) return dense;
+        // The dense service's authenticated request stays capped at eight results.
+        // Excluding the first page yields the next page under the same course revision and rank order.
+        var firstIds = dense.stream().map(CourseEvidence::evidenceId).collect(java.util.stream.Collectors.toSet());
+        var rest = all.stream().filter(e -> !firstIds.contains(e.evidenceId())).toList();
+        var candidates = new ArrayList<>(dense);
+        if (dense.size() == page && !rest.isEmpty()) {
+            candidates.addAll(retrieval.retrieve(request.course_id(), request.owner_id(), rest,
+                request.query(), null, null, page));
+        }
+        int limit = request.tutor_strategy() == TutorStrategy.HYBRID_16 ? TutorEvidenceRanking.MAX_CONTEXT : page;
+        var ranked = TutorEvidenceRanking.hybrid(all, candidates, request.query(), limit);
+        return request.tutor_strategy() == TutorStrategy.HYBRID_8_NEIGHBORS
+            ? TutorEvidenceRanking.adjacent(all, ranked) : ranked;
+    }
+
+    public enum TutorStrategy { DENSE_8, HYBRID_8, HYBRID_16, HYBRID_8_NEIGHBORS }
+
     private static List<CourseEvidence> timeline(List<CourseEvidence> all,CourseEvidence anchor) {
         return all.stream().filter(e->e.sourceType().equals(anchor.sourceType()))
             .sorted(Comparator.comparingLong(CourseEvidence::startMs).thenComparingLong(CourseEvidence::endMs)).toList();
@@ -116,10 +145,15 @@ public class StudyEvidenceAuthority {
     }
     private static String bounded(String text) { return text.length()>1200 ? text.substring(0,1200) : text; }
     public record Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
-                          List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course) {
+                          List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course,
+                          TutorStrategy tutor_strategy) {
+        public Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
+                       List<String> evidence_ids,String evidence_id,LearningScope learning_scope,Boolean expand_to_course) {
+            this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,learning_scope,expand_to_course,null);
+        }
         public Request(Long owner_id,String course_id,long revision,String action,String query,Long start_ms,Long end_ms,
                        List<String> evidence_ids,String evidence_id) {
-            this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,null,null);
+            this(owner_id,course_id,revision,action,query,start_ms,end_ms,evidence_ids,evidence_id,null,null,null);
         }
     }
 }

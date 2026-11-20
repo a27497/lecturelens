@@ -13,7 +13,7 @@ from lecturelens_agent.study.store import StudyError
 from .flash_app import FlashTutorRuntime
 from .flash_ledger import FlashAuthorization, FlashLedgerStore
 from .flash_phase import mark_dispatch, verify_dispatch_markers
-from .flash_provider import TEXT_SYSTEM, FlashProvider, digest
+from .flash_provider import PRODUCT_TEXT_SYSTEM, FlashProvider, digest
 
 
 class TrialAuthorization(FlashAuthorization):
@@ -78,13 +78,15 @@ class TrialStore(FlashLedgerStore):
 
 
 class TrialTutorRuntime(FlashTutorRuntime):
+    legacy_retrieval = False
+
     def command(self, command):
         mode = "mock-http" if self.provider.offline else "deepseek-flash"
         return super().command(command) | {"provider_mode": mode}
 
     def prepare(self, session, turn, history):
         state = super().prepare(session, turn, history)
-        state["messages"][0]["content"] = TEXT_SYSTEM
+        state["messages"][0]["content"] = PRODUCT_TEXT_SYSTEM
         return state
 
     def audit_completion(self, state, result):
@@ -92,7 +94,7 @@ class TrialTutorRuntime(FlashTutorRuntime):
         state["provider_content"] = result.raw_content
 
 
-def create_trial(dsn, authority, *, transport=None):
+def create_trial(dsn, authority, *, transport=None, search_authority=None):
     try:
         path = Path(os.environ["TUTOR_TRIAL_RECEIPT_FILE"])
         parent = path.parent.stat()
@@ -125,4 +127,4 @@ def create_trial(dsn, authority, *, transport=None):
         observer=store.observe_dispatch,
         text_reply=True,
     )
-    return TrialTutorRuntime(store, authority, provider)
+    return TrialTutorRuntime(store, authority, provider, search_authority=search_authority)
