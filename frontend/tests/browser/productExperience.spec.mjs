@@ -172,7 +172,7 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   });
   try {
     await page.goto(`${base}/tasks`);
-    const loading = page.getByRole('status').filter({ hasText: '正在读取课程' });
+    const loading = page.getByRole('status').filter({ hasText: '正在加载课程' });
     await expect(loading).toBeVisible();
     await screenshot(page, 'library-loading');
   } finally {
@@ -183,7 +183,9 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   await page.getByRole('button', { name: '刷新', exact: true }).click();
   await expect(page.getByText('还没有课程视频', { exact: true })).toBeVisible();
   await expect(page.getByRole('main').getByRole('link', { name: '上传视频', exact: true })).toHaveCount(1);
-  await expect(page.getByRole('main').getByRole('button', { name: '批量管理' })).toHaveCount(0);
+  await page.getByRole('button', { name: '更多操作' }).click();
+  await expect(page.getByRole('menuitem', { name: '模型管理' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: '批量管理' })).toHaveCount(0);
   await screenshot(page, 'library-empty');
 
   await page.goto(`${base}/tasks/${taskId}?view=notes&layout=continuous`);
@@ -217,9 +219,9 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   await processCourse.click();
   await expect(page).toHaveURL(/\/tasks\/[^/?]+/);
   await screenshot(page, 'course-processing');
-  await expect(page.getByText('材料已就绪', { exact: true })).toBeVisible({ timeout: 90_000 });
-  await page.getByRole('link', { name: '返回我的课程' }).click();
-  await expect(page.getByRole('heading', { name: 'binary-search-demo' })).toBeVisible();
+  await page.getByRole('link', { name: '返回课程库', exact: true }).click();
+  const courseCard = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'binary-search-demo', exact: true }) });
+  await expect(courseCard.getByText('材料已就绪', { exact: true })).toBeVisible({ timeout: 90_000 });
   await expectFit(page);
   await screenshot(page, 'library-course');
   await record(page, 'upload-network-counts', counts);
@@ -246,7 +248,8 @@ test('keeps long course lists navigable across pages and batch mode', async ({ p
   await expect(page.getByRole('article')).toHaveCount(2);
   await expect(page.getByRole('heading', { name: '测试课程 2-2' })).toBeVisible();
 
-  await page.getByRole('button', { name: '批量管理' }).click();
+  await page.getByRole('button', { name: '更多操作' }).click();
+  await page.getByRole('menuitem', { name: '批量管理' }).click();
   await page.getByRole('button', { name: '全选当前列表' }).click();
   await expect(page.getByText('已选择 2 项')).toBeVisible();
   await page.getByRole('button', { name: '上一页' }).click();

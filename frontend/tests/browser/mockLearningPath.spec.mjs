@@ -241,7 +241,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
       localStorage.setItem(storageKey, JSON.stringify({ ...saved, at: 75000 }));
     }, key);
     await courseCard.getByRole('button', { name: '继续学习', exact: true }).click();
-    await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
+    await expect(deck).toBeVisible();
     await expect.poll(position).toBe('75000');
     await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await expect(video).toHaveJSProperty('paused', true);
@@ -253,7 +253,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     expect(key.endsWith(`:${state.task_id}`)).toBe(true);
     expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000, visitedAt: expect.any(Number) });
 
-    await page.getByRole('link', { name: /返回我的课程/ }).click();
+    await page.getByRole('link', { name: '返回课程库', exact: true }).click();
     let releaseIdentity;
     const identityReady = new Promise(resolve => { releaseIdentity = resolve; });
     let identityRequests = 0;
@@ -284,11 +284,13 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     } finally {
       releaseIdentity();
     }
-    await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
+    await expect(deck).toBeVisible();
     await expect.poll(position).toBe('75000');
     await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await page.unroute('**/api/me');
 
+    await page.getByRole('link', { name: '返回课程库', exact: true }).click();
+    await expect(page).toHaveURL(`${base}/tasks`);
     const mobileMenu = page.getByRole('button', { name: '打开导航' });
     const usesMobileHeader = await mobileMenu.isVisible();
     if (usesMobileHeader) await mobileMenu.click();
