@@ -398,7 +398,7 @@ async function reveal() {
 
 <template>
   <section class="agent-panel workspace-panel" :class="{ 'agent-panel--compact': compact, 'has-practice': Boolean(artifact?.questions.length), 'agent-panel--lesson': lesson }" aria-labelledby="agent-title">
-    <header v-if="!lesson || !artifact?.questions.length"><div class="agent-heading"><h2 id="agent-title">{{ compact && artifact?.questions.length ? artifact.title : '解释与练习' }}</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
+    <header v-if="!lesson || !artifact?.questions.length"><div class="agent-heading"><h2 id="agent-title">{{ compact && artifact?.questions.length ? artifact.title : '解释与练习' }}</h2><button v-if="sessions.length || recentRuns.length" type="button" @click="showHistory">学习记录</button></div><p v-if="!run && !loading">继续已保存的任务，或明确开始一次新练习。单次提问请使用课程问答。</p></header>
     <div v-if="loading" role="status">正在打开练习… <el-skeleton v-if="lesson" :rows="4" animated /></div>
     <div v-else-if="preparing" role="status"><p>课程内容尚未处理完成。请先查看处理进度，完成后即可开始学习。</p><el-button @click="$emit('navigate', 'overview')">查看处理进度</el-button></div>
     <div v-else-if="enabled === false" role="status">

@@ -55,7 +55,10 @@ it("restores a completed run, keeps answers private and preserves citation seek"
     return { run, artifact };
   });
   const wrapper = mount(CourseAgentPanel, { props: { taskId: "task" }, global: { stubs } });
+  expect(wrapper.get('[role="status"]').text()).toBe("正在打开练习…");
+  expect(wrapper.text()).not.toContain("继续已保存的任务");
   await flushPromises();
+  expect(wrapper.text()).not.toContain("正在打开练习…");
   expect(wrapper.text()).toContain("停止条件");
   expect(wrapper.text()).not.toContain("PRIVATE ANSWER");
   expect(vi.mocked(studyCommand).mock.calls.some(call => call[1].operation === "ANSWERS")).toBe(false);

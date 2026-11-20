@@ -41,6 +41,57 @@ function trace(page) {
     stop() { const rows = [...sample.values()]; sample = null; return rows; } };
 }
 
+test('answers Round 3 comparison counts and replays the cited course segments', async ({ page, isMobile }) => {
+  await page.goto(origin + '/tasks');
+  await page.getByRole('button', { name: /继续学习 01:04/ }).click({ timeout: 60_000 });
+  if (isMobile) await choose(page, '助手');
+  const editor = page.getByRole('textbox', { name: '就本课提问' });
+  const lastTurn = page.locator('.tutor--lesson .messages > li').last();
+  const source = page.getByRole('region', { name: '课程出处', exact: true });
+
+  for (const { question, answer, sources } of [
+    {
+      question: '用这个例子找 42 要比较几次',
+      answer: /比较 2 次.*先比较 21.*再比较 42/s,
+      sources: [['01:04', 64_000, /middle value is twenty-one/], ['01:14', 74_000, /next middle value is forty-two/]],
+    },
+    {
+      question: '比顺序查找快多少',
+      answer: /一百万个有序元素.*最多比较约 20 次.*要比较一百万次.*5 万倍/s,
+      sources: [['01:36', 96_000, /million sorted items take at most twenty comparisons/]],
+    },
+  ]) {
+    await page.getByRole('button', { name: '新对话', exact: true }).click();
+    await editor.fill(question);
+    await editor.press('Enter');
+    await expect(lastTurn.locator('.learner')).toHaveText(question);
+    await expect(lastTurn).toContainText(answer);
+    for (const [time, milliseconds, excerpt] of sources) {
+      await lastTurn.getByRole('button', { name: '课程出处 ' + time, exact: true }).click();
+      await source.locator('summary').click();
+      await expect(source.locator('blockquote')).toContainText(excerpt);
+      if (evidence && (isMobile ? time === '01:04' : time === '01:36')) {
+        await lastTurn.evaluate(turn => turn.scrollIntoView({ block: 'start' }));
+        await capture(page, isMobile ? 'tutor-390' : 'tutor-1440');
+      }
+      await source.getByRole('button', { name: '回看 ' + time, exact: true }).click();
+      await expect.poll(() => clock(page)).toBe(milliseconds);
+    }
+  }
+
+  await editor.fill('用这个例子找42需要几次比较，为什么一百万项最多比较20次？');
+  await editor.press('Enter');
+  await expect(lastTurn).toContainText('找 42 需要比较 2 次');
+  await expect(lastTurn).toContainText('一百万项最多 20 次');
+
+  for (const question of ['在 [42] 中找42要比较几次？', '顺序查找10个元素，最坏要比较多少次？']) {
+    await editor.fill(question);
+    await editor.press('Enter');
+    await expect(lastTurn.locator('.learner')).toHaveText(question);
+    await expect(lastTurn).toContainText('这节课没有足够资料回答这个问题。');
+  }
+});
+
 test('recognizes Round 3 boundary paraphrases', async ({ page, isMobile }) => {
   let externalRequests = 0;
   await page.route(url => /^https?:$/.test(url.protocol) && url.origin !== origin, route => {

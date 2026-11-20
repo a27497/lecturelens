@@ -32,15 +32,43 @@ async function openMock(page, { newAccount = false } = {}) {
   return { base, taskId: state.task_id, userId: user.userId };
 }
 
-function monitor(page) {
-  const counts = { pageErrors: 0, consoleErrors: 0, failedLocalRequests: 0, externalRequests: 0, httpErrors: {} };
+const publicPathParts = new Set([
+  'api', 'artifacts', 'assets', 'auth', 'chapters', 'command', 'download', 'embedded-subtitles',
+  'events', 'evidence', 'generate', 'image', 'index-status', 'keyframes', 'login', 'me', 'media',
+  'model-usage', 'parts', 'playback-token', 'qa', 'register', 'results', 'sessions', 'settings',
+  'status', 'study', 'tasks', 'turns', 'tutor', 'upload', 'uploads',
+]);
+
+function diagnosticUrl(rawUrl) {
+  const url = new URL(rawUrl);
+  const origin = /^https?:\/\/127\.0\.0\.1(?::\d+)?$/.test(url.origin) ? url.origin : '{origin}';
+  if (url.protocol === 'blob:') return 'blob:' + origin + '/{object}';
+  if (!/^https?:$/.test(url.protocol)) return '{redacted-url}';
+  const path = url.pathname.split('/').map(part => part && (publicPathParts.has(part) ? part : '{redacted}')).join('/');
+  return origin + path;
+}
+
+function monitor(page, retiredUploadSubtitle = () => undefined) {
+  const counts = { pageErrors: 0, consoleErrors: 0, failedLocalRequests: [], externalRequests: 0, httpErrors: {} };
   page.on('pageerror', () => counts.pageErrors++);
   page.on('console', message => { if (message.type() === 'error') counts.consoleErrors++; });
   page.on('request', request => {
     if (/^https?:/.test(request.url()) && new URL(request.url()).hostname !== '127.0.0.1') counts.externalRequests++;
   });
   page.on('requestfailed', request => {
-    if (request.failure()?.errorText !== 'net::ERR_ABORTED') counts.failedLocalRequests++;
+    const reason = request.failure()?.errorText;
+    if (reason === 'net::ERR_ABORTED') return;
+    // Chromium can finish requesting the upload preview's text track after navigation revokes its URL.
+    if (reason === 'net::ERR_FILE_NOT_FOUND' && request.method() === 'GET'
+        && request.resourceType() === 'texttrack' && request.url().startsWith('blob:')
+        && request.url() === retiredUploadSubtitle()
+        && /^\/tasks(?:\/[^/]+)?$/.test(new URL(page.url()).pathname)) return;
+    counts.failedLocalRequests.push({
+      method: request.method(),
+      url: diagnosticUrl(request.url()),
+      resourceType: request.resourceType(),
+      reason: /^net::ERR_[A-Z0-9_]+$/.test(reason) ? reason : 'Unknown network error',
+    });
   });
   page.on('response', response => {
     if (response.status() < 400) return;
@@ -65,7 +93,7 @@ async function record(page, name, counts) {
   const path = evidencePath(page, name, 'json');
   if (path) await writeFile(path, JSON.stringify(counts, null, 2) + '\n');
   expect(counts.pageErrors).toBe(0);
-  expect(counts.failedLocalRequests).toBe(0);
+  expect(counts.failedLocalRequests).toEqual([]);
   expect(counts.externalRequests).toBe(0);
 }
 
@@ -159,7 +187,8 @@ test('keeps verified citation and playback notes across reload and returns focus
 
 test('uses an empty account, recovers a library read failure, and shows upload receipts', async ({ page }) => {
   const { base, taskId } = await openMock(page, { newAccount: true });
-  const counts = monitor(page);
+  let uploadSubtitle;
+  const counts = monitor(page, () => uploadSubtitle);
   const taskList = url => url.pathname === '/api/tasks' && url.searchParams.has('page');
   let fail = true;
   let release;
@@ -216,6 +245,7 @@ test('uses an empty account, recovers a library read failure, and shows upload r
   if (page.viewportSize().width >= 1024) await expect(processCourse).toBeInViewport();
   await screenshot(page, 'upload-received');
 
+  uploadSubtitle = await page.locator('.upload-confirmation video track[kind="subtitles"]').getAttribute('src');
   await processCourse.click();
   await expect(page).toHaveURL(/\/tasks\/[^/?]+/);
   await screenshot(page, 'course-processing');
