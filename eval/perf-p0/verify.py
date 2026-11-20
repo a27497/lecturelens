@@ -151,6 +151,30 @@ def verify(directory, sha, require_busy=False, check_inputs=False):
     schema = result.get("schema_version", 1)
     require(schema in (1, 2, 3), "Unsupported schema")
     config = result["config"]
+    if "java_build_mode" in config:
+        build = result.get("java_build", {})
+        require(
+            config["java_build_mode"] in {"fresh", "reused"}
+            and build.get("mode") == config["java_build_mode"]
+            and build.get("unchanged_at_end") is True,
+            "Java build identity not proven",
+        )
+        artifacts = build.get("artifacts", {})
+        require(
+            isinstance(artifacts.get("sha256"), str)
+            and re.fullmatch(r"[0-9a-f]{64}", artifacts["sha256"])
+            and type(artifacts.get("file_count")) is int
+            and artifacts["file_count"] >= 3,
+            "Invalid Java build fingerprint",
+        )
+        if build["mode"] == "reused":
+            require(
+                isinstance(build.get("seed_result_sha256"), str)
+                and re.fullmatch(r"[0-9a-f]{64}", build["seed_result_sha256"])
+                and bool(build.get("from_directory"))
+                and config.get("offline_dependency_bootstrap") is True,
+                "Invalid reused Java build provenance",
+            )
     if schema >= 3:
         for name, limit in LANE_LIMITS.items():
             value = config.get(name)
