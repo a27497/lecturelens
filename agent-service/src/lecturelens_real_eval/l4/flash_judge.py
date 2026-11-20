@@ -58,7 +58,10 @@ def request_body(entry):
         "max_tokens": MAX_TOKENS,
         "stream": False,
         "response_format": {"type": "json_object"},
-        "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": judge.user_message(entry)}],
+        "messages": [
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": judge.user_message(entry)},
+        ],
     }
 
 
