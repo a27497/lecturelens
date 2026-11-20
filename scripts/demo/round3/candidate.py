@@ -1,8 +1,12 @@
 """Local fixture providers. Java remains the owner and Evidence authority."""
+import asyncio
+import hmac
 import json
+import logging
 import os
 import re
-from pathlib import Path
+import secrets
+import time
 
 import httpx
 from fastapi import HTTPException, Request
@@ -20,7 +24,7 @@ from lecturelens_real_eval.tutor.contracts import ABSTENTION
 from lecturelens_real_eval.tutor.runtime import TutorRuntime
 from lecturelens_real_eval.tutor.store import TutorStore
 
-from launch import COURSE, PACK
+from launch import COURSE, INSTANCE, PACK, Round3Stack
 
 SEGMENTS = {segment["id"]: segment for segment in COURSE["segments"]}
 ANSWERS = {turn["question"]: turn["answer"]
@@ -30,15 +34,130 @@ FOLLOWUPS = {
     "如果一直没找到，什么时候停止？": [("s09", "当左边界超过右边界，搜索区间已经空了，就可以停止并报告未找到。")],
     "数组没有排序时，还能排除左半边吗？": [("s01", "不能。有序性让我们知道左边每个值都不超过中点；打乱后，目标可能在左右任何一侧。")],
 }
+TOPICS = [(re.compile(topic["match"], re.I), topic) for topic in COURSE["tutorQuestions"]]
+ANSWERS.update({topic["question"]: topic["answer"] for _, topic in TOPICS})
+ANSWERS.update({
+    question: [{"concept": "", "text": text, "citations": [segment]} for segment, text in blocks]
+    for question, blocks in FOLLOWUPS.items()
+})
+OTHER_ALGORITHMS = re.compile(r"堆排序|快速排序|归并排序|冒泡排序|插入排序|图论|最短路径|拓扑排序|dijkstra", re.I)
 
 
-def state():
-    return json.loads(Path(os.environ["ROUND3_DEMO_STATE"]).read_text())
+def answer_blocks(question):
+    question = re.sub(r"^关于\s+\d+:\d+\s+这段[：:]\s*", "", question.strip())
+    if question in ANSWERS:
+        return ANSWERS[question]
+
+    clauses = re.split(r"[？?；;\n]+|[，,]\s*(?:另外|以及|还有|那|再问)", question)
+    matches = [{index for index, (pattern, _) in enumerate(TOPICS)
+                if not OTHER_ALGORITHMS.search(clause) and pattern.search(clause)}
+               for clause in clauses if clause.strip()]
+    selected = set().union(*matches)
+    blocks = [block for index, (_, topic) in enumerate(TOPICS) if index in selected
+              for block in topic["answer"]]
+    if blocks and any(not topics for topics in matches):
+        blocks.append({"concept": "", "text": "其余部分在本课中没有找到足够的依据。", "citations": []})
+    return blocks
 
 
-def demo_scope(scope):
-    bound = state()
-    return scope["course_id"] == bound.get("task_id") and str(scope["owner_id"]) == bound.get("round3_owner")
+class Visitors:
+    def __init__(self):
+        self.stack = Round3Stack(INSTANCE)
+        self.directory = self.stack.dir / "visitors"
+        self.directory.mkdir(mode=0o700, exist_ok=True)
+        self.pending = None
+        self.claim = asyncio.Lock()
+
+    def binding(self, owner):
+        if not str(owner).isdecimal():
+            return {}
+        try:
+            return json.loads((self.directory / f"{owner}.json").read_text())
+        except FileNotFoundError:
+            return {}
+
+    def provision(self):
+        credentials = {"email": f"round3-{secrets.token_hex(12)}@example.com", "password": "a1" + secrets.token_urlsafe(32)}
+        self.stack.api("POST", "/api/auth/register", credentials)
+        account = self.stack.api("POST", "/api/auth/login", credentials)
+        token = account["accessToken"]
+        binding_file = self.directory / f"{account['user']['userId']}.json"
+
+        def save_binding(binding):
+            temporary = binding_file.with_suffix(".tmp")
+            temporary.write_text(json.dumps(binding))
+            temporary.replace(binding_file)
+
+        try:
+            task = self.stack.import_course(token, lambda task: save_binding({"task_id": task}))
+        except SystemExit as error:
+            raise RuntimeError("Round 3 course preparation failed") from error
+        tutor = f"/api/tasks/{task}/tutor/sessions"
+        conversation_paths = []
+        for conversation in reversed(COURSE["conversations"]):
+            session = self.stack.api("POST", tutor, {"request_key": "round3-" + conversation["id"]}, token)["session"]
+            session_path = f"{tutor}/{session['session_id']}"
+            conversation_paths.append(session_path)
+            for index, turn in enumerate(conversation["turns"]):
+                self.stack.api("POST", f"{session_path}/turns", {
+                    "client_turn_id": f"round3-{conversation['id']}-{index}",
+                    "text": turn["question"], "socratic": False,
+                }, token)
+
+        path = f"/api/tasks/{task}/study/command"
+        session = self.stack.api("POST", path, {"operation": "CREATE_SESSION", "request_key": "round3-practice"}, token)
+        scope = {"session_id": session["session_id"]}
+        response = self.stack.api("POST", path, {
+            **scope, "operation": "START", "request_key": "round3-practice",
+            "goal": "复习二分查找", "practice_format": "choice",
+        }, token)
+        run = response["run"]["run_id"]
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            response = self.stack.api("POST", path, {**scope, "operation": "READ", "run_id": run}, token)
+            status = response["run"]["status"]
+            turns = [turn for session_path in conversation_paths
+                     for turn in self.stack.api("GET", session_path, token=token)["turns"]]
+            if status == "succeeded" and all(turn["outcome"] == "answered" for turn in turns):
+                save_binding({"task_id": task, "practice": {**scope, "run_id": run,
+                              "artifact_id": response["artifact"]["artifact_id"]}})
+                return credentials
+            if status not in {"queued", "running", "succeeded"} or any(
+                turn["status"] in {"failed", "cancelled"} or turn["outcome"] == "insufficient_evidence" for turn in turns
+            ):
+                raise RuntimeError("Round 3 learning fixture failed")
+            time.sleep(.5)
+        raise RuntimeError("Round 3 learning fixture timed out")
+
+    async def provision_or_log(self):
+        try:
+            return await asyncio.to_thread(self.provision)
+        except Exception as error:
+            logging.getLogger(__name__).error("Round 3 visitor preparation failed (%s)", type(error).__name__)
+            return None
+
+    async def ready(self):
+        if self.pending is None:
+            self.pending = asyncio.create_task(self.provision_or_log())
+        credentials = await asyncio.shield(self.pending)
+        if credentials is None:
+            self.pending = None
+            raise HTTPException(503)
+        return credentials
+
+    async def enter(self):
+        # Consume each prepared account once. Keep one ready for the next browser.
+        async with self.claim:
+            credentials = await self.ready()
+            try:
+                account = await asyncio.to_thread(self.stack.api, "POST", "/api/auth/login", credentials)
+            except RuntimeError:
+                raise HTTPException(503) from None
+            self.pending = asyncio.create_task(self.provision_or_log())
+            return account
+
+    def owns_fixture(self, scope):
+        return scope["course_id"] == self.binding(scope["owner_id"]).get("task_id")
 
 
 def segment_evidence(authority, scope, segment_id):
@@ -54,13 +173,15 @@ def segment_evidence(authority, scope, segment_id):
 
 
 class FixtureTutorAuthority:
-    def __init__(self, authority):
+    def __init__(self, authority, visitors):
         self.authority = authority
+        self.visitors = visitors
 
     def read(self, scope, action="CHECK", **arguments):
         query = arguments.get("query", "")
-        ids = query.removeprefix("round3:").split(",")
-        if action == "SEARCH" and query.startswith("round3:") and demo_scope(scope) and all(id in SEGMENTS for id in ids):
+        suffix = query.removeprefix("round3:")
+        ids = suffix.split(",") if suffix else []
+        if action == "SEARCH" and query.startswith("round3:") and self.visitors.owns_fixture(scope) and all(id in SEGMENTS for id in ids):
             found = [segment_evidence(self.authority, scope, id) for id in dict.fromkeys(ids)]
             return self.authority.read(scope, "READ", evidence_ids=[row["evidence_id"] for row in found if row])
         return self.authority.read(scope, action, **arguments)
@@ -71,14 +192,18 @@ class FixtureTutor:
 
     def decide(self, messages, schemas, timeout):
         data = json.loads(messages[-1]["content"])
-        question = data["learner_text"].strip()
-        question = re.sub(r"^关于\s+\d+:\d+\s+这段[：:]\s*", "", question)
-        blocks = ANSWERS.get(question)
-        if blocks is None and question in FOLLOWUPS:
-            blocks = [{"concept": "", "text": text, "citations": [id]} for id, text in FOLLOWUPS[question]]
-        if not data["observations"]:
-            ids = list(dict.fromkeys(id for block in blocks or [] for id in block["citations"]))
-            return {"name": "search_tutor_evidence", "arguments": {"query": "round3:" + ",".join(ids) if ids else question}}
+        blocks = answer_blocks(data["learner_text"])
+        if not blocks and data["history"] and re.fullmatch(
+            r"(?:那[，, ]*)?(?:为什么呢|能不能再解释一下|可以再讲一遍吗|刚才那点能再详细讲讲吗)[？?。 ]*",
+            data["learner_text"].strip(),
+        ):
+            blocks = answer_blocks(data["history"][-1]["learner_text"])
+        ids = list(dict.fromkeys(id for block in blocks for id in block["citations"]))
+        # The Tutor runtime exposes eight evidence rows per search.
+        batches = [ids[index:index + 8] for index in range(0, len(ids), 8)] or [[]]
+        searched = len(data["observations"])
+        if searched < len(batches):
+            return {"name": "search_tutor_evidence", "arguments": {"query": "round3:" + ",".join(batches[searched])}}
         by_segment = {id: row["evidence_id"] for id, segment in SEGMENTS.items() for row in data["evidence"]
                       if row["source_type"] == "SUBTITLE" and row["start_ms"] == segment["startMs"]
                       and row["end_ms"] == segment["endMs"] and normalized(row["text"]) == normalized(segment["source"])}
@@ -105,8 +230,12 @@ class PracticeState(TypedDict):
 
 
 class FixtureStudy(StudyRuntime):
+    def __init__(self, store, authority, visitors):
+        super().__init__(store, authority, MockProvider(), concurrency=1)
+        self.visitors = visitors
+
     def graph(self, run, token, saver, provider=None):
-        if not demo_scope(run) or run["request_key"] != "round3-practice" or run["practice_format"] != "choice":
+        if not self.visitors.owns_fixture(run) or run["request_key"] != "round3-practice" or run["practice_format"] != "choice":
             return super().graph(run, token, saver, provider)
 
         def publish(_):
@@ -176,9 +305,11 @@ def create_app():
     java = os.environ["AGENT_JAVA_BASE_URL"]
     dsn = os.environ["AGENT_DATABASE_URL"]
     secret = os.environ["AGENT_SERVICE_SECRET"]
+    visitors = Visitors()
+    authority = course_authority(java, secret)
     app = tutor_app(
-        tutor=TutorRuntime(TutorStore(dsn), FixtureTutorAuthority(course_authority(java, secret)), FixtureTutor()),
-        study_runtime=FixtureStudy(StudyStore(dsn), course_authority(java, secret), MockProvider(), concurrency=1),
+        tutor=TutorRuntime(TutorStore(dsn), FixtureTutorAuthority(authority, visitors), FixtureTutor()),
+        study_runtime=FixtureStudy(StudyStore(dsn), authority, visitors),
     )
 
     @app.post("/v1/chat/completions")
@@ -190,42 +321,50 @@ def create_app():
                 "message": {"role": "assistant", "content": json.dumps(answer, ensure_ascii=False)}}],
                 "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}}
 
+    @app.post("/api/round3/ready")
+    async def ready(request: Request):
+        if not hmac.compare_digest(request.headers.get("x-round3-secret", "").encode(), secret.encode()):
+            raise HTTPException(403)
+        async with visitors.claim:
+            await visitors.ready()
+        return {"ready": True}
+
     @app.post("/api/round3/entry")
     async def entry(request: Request):
         if (request.headers.get("origin") != os.environ["ROUND3_DEMO_ORIGIN"]
                 or request.headers.get("sec-fetch-site") != "same-origin"):
             raise HTTPException(403)
-        bound = state()
-        if not bound.get("round3_practice"):
-            raise HTTPException(503)
+        return JSONResponse(await visitors.enter(), headers={"Cache-Control": "no-store"})
+
+    async def authorized_binding(request):
+        authorization = request.headers.get("authorization", "")
+        if not authorization:
+            raise HTTPException(404)
         async with httpx.AsyncClient(trust_env=False, timeout=10) as client:
-            response = await client.post(java + "/api/auth/login", json={
-                "email": os.environ["ROUND3_DEMO_EMAIL"], "password": os.environ["ROUND3_DEMO_PASSWORD"],
-            })
-        session = response.json()
-        if response.status_code != 200 or str(session.get("code")) != "0":
-            raise HTTPException(503)
-        return JSONResponse(session["data"], headers={"Cache-Control": "no-store"})
+            response = await client.get(java + "/api/me", headers={"Authorization": authorization})
+            if response.status_code != 200 or str(response.json().get("code")) != "0":
+                raise HTTPException(404)
+            bound = visitors.binding(response.json()["data"]["userId"])
+            if not bound.get("practice"):
+                raise HTTPException(404)
+            response = await client.get(java + f"/api/tasks/{bound['task_id']}", headers={"Authorization": authorization})
+        if response.status_code != 200 or str(response.json().get("code")) != "0":
+            raise HTTPException(404)
+        return bound
 
     @app.get("/api/round3/course")
     async def metadata(request: Request):
-        bound = state()
-        authorization = request.headers.get("authorization", "")
-        task_id = bound.get("task_id")
-        if not authorization or not task_id or not bound.get("round3_practice"):
-            raise HTTPException(404)
-        async with httpx.AsyncClient(trust_env=False, timeout=10) as client:
-            response = await client.get(java + f"/api/tasks/{task_id}", headers={"Authorization": authorization})
-        if response.status_code != 200 or str(response.json().get("code")) != "0":
-            raise HTTPException(404)
+        bound = await authorized_binding(request)
         return JSONResponse({
-            "taskId": task_id, "title": COURSE["title"], "series": COURSE["series"],
+            "taskId": bound["task_id"], "title": COURSE["title"], "series": COURSE["series"],
             "description": COURSE["description"], "durationMs": COURSE["durationMs"],
-            "positionMs": COURSE["progress"]["positionMs"], "cover": "/api/round3/cover",
+            "positionMs": COURSE["progress"]["positionMs"], "learningPercent": COURSE["progress"]["percent"],
+            "cover": "/api/round3/cover",
             "notes": [{"id": note["id"], "text": note["title"] + "\n" + note["body"],
                        "anchor": {"kind": "playback", "milliseconds": SEGMENTS[note["anchor"]]["startMs"]}}
                       for note in COURSE["notes"]],
             "followups": list(FOLLOWUPS),
+            "questions": [topic["question"] for _, topic in TOPICS],
             "topics": [{ "question": conversation["turns"][0]["question"], "title": conversation["title"] }
                        for conversation in COURSE["conversations"]],
         }, headers={"Cache-Control": "no-store"})
@@ -236,10 +375,10 @@ def create_app():
 
     @app.get("/api/round3/practice/{artifact_id}/{index}")
     async def explanation(artifact_id: str, index: int, request: Request):
-        bound = state()
-        practice = bound.get("round3_practice", {})
-        authorization = request.headers.get("authorization", "")
-        if not authorization or practice.get("artifact_id") != artifact_id or not 0 <= index < len(COURSE["exercises"]):
+        bound = await authorized_binding(request)
+        practice = bound["practice"]
+        authorization = request.headers["authorization"]
+        if practice["artifact_id"] != artifact_id or not 0 <= index < len(COURSE["exercises"]):
             raise HTTPException(404)
         async with httpx.AsyncClient(trust_env=False, timeout=10) as client:
             response = await client.post(java + f"/api/tasks/{bound['task_id']}/study/command",

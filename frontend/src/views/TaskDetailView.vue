@@ -68,7 +68,7 @@ const legacyLayout = ref(false);
 const followLayout = computed(() => !classicLayout.value && !legacyLayout.value);
 const tutorRef = ref<{ compose: (text?: string) => void }>();
 const demo = computed(() => round3Course.value?.taskId === taskId.value && notesAccountId.value !== undefined ? round3Course.value : undefined);
-const lessonProgress = computed(() => demo.value ? Math.floor(Math.min(1, positionMs.value / demo.value.durationMs) * 100) : undefined);
+const lessonProgress = computed(() => demo.value?.learningPercent);
 const lessonName = computed(() => demo.value?.title ?? taskDetail.value?.courseName ?? "课程学习");
 
 const narrowQuery = window.matchMedia("(max-width: 1024px)");
@@ -929,7 +929,6 @@ async function confirmRetryTask() {
               <CourseWorkspaceNav :active="!classicLayout && !narrowScreen ? learningWorkspace : activeWorkspace" :compact="!classicLayout" :materials="!classicLayout && narrowScreen" :resume-workspace="lastLearningWorkspace" @change="switchWorkspace" @resume="switchWorkspace(lastLearningWorkspace)" />
             </div>
           </Teleport>
-          <p v-if="verifyingEvidence" class="evidence-status" role="status">正在核对课程证据…</p>
           <div v-if="evidenceNavigationError" ref="evidenceErrorRef" class="evidence-navigation-error"><el-alert :closable="false" :title="evidenceNavigationError" type="warning" show-icon /></div>
           <el-alert v-if="!followLayout && taskResultStore.errorMessage" :closable="false" :title="taskResultStore.errorMessage" type="error" show-icon />
           <el-skeleton v-if="!followLayout && taskResultStore.loading && !result" :rows="6" animated />
@@ -939,7 +938,7 @@ async function confirmRetryTask() {
               <Teleport :to="reviewTarget || 'body'" :disabled="classicLayout || narrowScreen || !reviewTarget">
                 <div v-if="reviewingEvidence" v-show="readerVisible" class="evidence-reading__return">
                   <span class="evidence-reading__label"><small v-if="isDemoMode && narrowScreen" class="review-mode">本地演示 · 无外部 AI</small>
-                    {{ learningTask && lastLearningWorkspace === 'agent' ? `正在核对第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}
+                    {{ learningTask && lastLearningWorkspace === 'agent' ? `复习第 ${learningTask.questionIndex + 1} 题：${learningTask.question}` : '回看课程原文，当前提问与草稿保留。' }}
                   </span>
                   <div class="evidence-reading__actions">
                     <button type="button" @click="returnToLearning">返回当前学习任务</button>
@@ -1061,7 +1060,6 @@ async function confirmRetryTask() {
 
 .materials-reading-target:empty, .materials-review-target:empty, .mobile-workspace-nav-target { display: none; }
 .evidence-reading, .evidence-navigation-error, .course-layout__media { scroll-margin-top: calc(var(--header-height) + 62px); }
-.evidence-status { margin: 0; color: var(--color-ink-soft); }
 .evidence-reading__return { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-evidence-surface); color: var(--color-ink); font-size: 14px; }
 .evidence-reading > .evidence-reading__return { margin-bottom: 10px; }
 .evidence-reading__label { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }

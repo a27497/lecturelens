@@ -19,7 +19,7 @@ const navItems = computed(() =>
     ? [
         { label: "我的课程", to: "/tasks" },
         ...(route.path === "/tasks" ? [] : [{ label: "上传课程", to: "/upload" }]),
-        { label: "模型管理", to: "/settings/models" },
+        ...(route.path === "/tasks" ? [] : [{ label: "模型管理", to: "/settings/models" }]),
         ...(authStore.isAdmin ? [{ label: "系统模型", to: "/admin/settings/models" }] : []),
       ]
     : [],

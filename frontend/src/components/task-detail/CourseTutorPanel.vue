@@ -11,7 +11,7 @@ import type { EvidenceSeekContext } from "./evidenceSeekGuard";
 import CourseSourceCard from "./CourseSourceCard.vue";
 
 const props = defineProps<{ taskId: string; canNote?: boolean; lesson?: boolean; suggestionsVisible?: boolean;
-  courseTitle?: string; demoCourse?: { followups: string[]; topics: Array<{ question: string; title: string }> } }>();
+  courseTitle?: string; demoCourse?: { followups: string[]; questions: string[]; topics: Array<{ question: string; title: string }> } }>();
 const emit = defineEmits<{ seek: [milliseconds: number, context: EvidenceSeekContext]; note: [milliseconds: number, context: EvidenceSeekContext];
   replay: [milliseconds: number, context: EvidenceSeekContext]; practice: []; lessonNote: []; courseQa: []; accessFailure: [] }>();
 const view = ref<TutorView | null>(null);
@@ -25,6 +25,7 @@ const error = ref("");
 const editor = ref<HTMLTextAreaElement>();
 const selectedSource = ref<{ turn: string; citation: Citation }>();
 const topicBySession = ref<Record<string, string>>({});
+const namedSessions = computed(() => sessions.value.filter(session => topicBySession.value[session.session_id]));
 const latestQuestion = computed(() => view.value?.turns.find(turn => turn.status === "completed")?.learner_text);
 const followups = computed(() => props.demoCourse?.followups ?? (latestQuestion.value ? [
   "能用课程里的另一个例子解释刚才的问题吗？",
@@ -43,8 +44,7 @@ function startNew() {
   compose();
 }
 defineExpose({ compose });
-function title(question: string | undefined) {
-  if (!question) return "未命名对话";
+function title(question: string) {
   return props.demoCourse?.topics.find(topic => topic.question === question)?.title ?? question;
 }
 function chooseSource(turn: string, citation: Citation) {
@@ -62,6 +62,7 @@ let readSequence = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let createKey = randomUuid();
 let visible = true;
+const composing = ref(false);
 
 function fail(reason: unknown) {
   const response = (reason as { response?: { status?: number; data?: { message?: string } } })?.response;
@@ -101,10 +102,16 @@ async function restore() {
     if (version !== epoch) return;
     providerMode.value = result.provider_mode;
     sessions.value = result.sessions.filter(s => s.status === "active" && s.revision === result.revision);
-    if (sessions.value[0]) {
-      const data = await getTutorSession(props.taskId, sessions.value[0].session_id);
-      if (version === epoch) apply(data);
+    if (!sessions.value.length) return;
+    const candidates = props.lesson ? sessions.value : sessions.value.slice(0, 1);
+    const saved = await Promise.all(candidates.map(session => getTutorSession(props.taskId, session.session_id)));
+    if (version !== epoch) return;
+    for (const data of saved) {
+      const question = data.turns[0]?.learner_text;
+      if (question) topicBySession.value[data.session.session_id] = question;
     }
+    const first = props.lesson ? saved.find(data => data.turns.length) : saved[0];
+    if (first) apply(first);
   } catch (reason) { if (version === epoch) fail(reason); }
   finally { if (version === epoch) loading.value = false; }
 }
@@ -141,6 +148,11 @@ async function send() {
   } catch (reason) { if (version === epoch) fail(reason); }
   finally { if (version === epoch) busy.value = false; }
 }
+function sendOnEnter(event: KeyboardEvent) {
+  if (event.shiftKey || composing.value || event.isComposing || event.keyCode === 229) return;
+  event.preventDefault();
+  if (!event.repeat) void send();
+}
 async function cancel() {
   if (!view.value || !activeTurn.value) return;
   const version = epoch;
@@ -174,12 +186,12 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
 <template>
   <section v-if="lesson" class="tutor tutor--lesson" aria-label="课程助手">
     <header class="lesson-conversation">
-      <label v-if="sessions.length" class="lesson-conversation__choose">
+      <label v-if="namedSessions.length" class="lesson-conversation__choose">
         <span class="sr-only">查看对话</span>
         <select aria-label="查看对话" :value="view?.session.session_id ?? ''"
           :disabled="loading || busy || !!activeTurn || !!pending" @change="openSession(($event.target as HTMLSelectElement).value)">
-          <option disabled value="">查看对话</option>
-          <option v-for="session in sessions" :key="session.session_id" :value="session.session_id">
+          <option hidden disabled value="">查看对话</option>
+          <option v-for="session in namedSessions" :key="session.session_id" :value="session.session_id">
             {{ title(topicBySession[session.session_id]) }}
           </option>
         </select>
@@ -218,9 +230,9 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
             <span v-else>{{ part.text }}</span>
           </template></p>
           <CourseSourceCard v-if="selectedSource?.turn === turn.turn_id" :task-id="taskId" :revision="view.session.revision"
-            :citation="selectedSource.citation" :can-note="Boolean(canNote)"
+            :citation="selectedSource.citation"
             @replay="emit('replay', selectedSource.citation.start_ms, { evidenceId: selectedSource.citation.evidence_id, revision: view.session.revision })"
-            @note="seek(selectedSource.citation, 'note')" @access-failure="emit('accessFailure')" />
+            @access-failure="emit('accessFailure')" />
         </div>
         <p v-else-if="turn.status === 'failed' || turn.status === 'cancelled'" role="status">{{ turn.status === 'cancelled' ? '已停止生成。' : '这次没能完成回答。可以继续提问。' }}</p>
         <p v-else role="status">正在查阅课程内容… <button type="button" @click="cancel">停止生成</button></p>
@@ -230,16 +242,26 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
       <button type="button" class="practice-shortcut" @click="emit('practice')">✓　做一道练习</button>
       <button v-if="canNote" type="button" @click="emit('lessonNote')">♧　记下这段</button>
     </div>
-    <div v-if="suggestionsVisible && !loading && !blocked && !exhausted && !activeTurn" class="followups">
-      <h3>接着问</h3>
-      <button v-for="question in followups" :key="question" type="button" :disabled="busy || !!pending"
-        @click="compose(question)">{{ question }}</button>
+    <div v-if="(suggestionsVisible || demoCourse?.questions.length) && !loading && !blocked && !exhausted && !activeTurn" class="followups">
+      <template v-if="suggestionsVisible">
+        <h3>接着问</h3>
+        <button v-for="question in followups" :key="question" type="button" :disabled="busy || !!pending"
+          @click="compose(question)">{{ question }}</button>
+      </template>
+      <details v-if="demoCourse?.questions.length">
+        <summary>更多常见问题</summary>
+        <div class="followups__questions">
+          <button v-for="question in demoCourse.questions" :key="question" type="button" :disabled="busy || !!pending"
+            @click="compose(question)">{{ question }}</button>
+        </div>
+      </details>
     </div>
     <p v-if="exhausted" role="status">这段对话已达到上限。<button type="button" @click="startNew">开启新对话</button></p>
     <form class="lesson-compose" @submit.prevent="send">
       <div class="lesson-compose__row">
         <textarea ref="editor" v-model="draft" aria-label="就本课提问" placeholder="就本课提问" maxlength="2000"
-          rows="1" :disabled="busy || !!pending || blocked" />
+          rows="1" :disabled="busy || !!pending || blocked" @keydown.enter="sendOnEnter"
+          @compositionstart="composing = true" @compositionend="composing = false" @blur="composing = false" />
         <button type="submit" aria-label="发送" :disabled="busy || !!activeTurn || loading || blocked || exhausted || (!pending && !draft.trim())">{{ pending ? '重试' : '↑' }}</button>
       </div>
       <label><input v-model="socratic" type="checkbox" :disabled="busy || !!pending" /> 用问题引导我</label>
@@ -273,7 +295,9 @@ onBeforeUnmount(() => { epoch++; clearTimeout(timer); });
     <form class="tutor-compose" @submit.prevent="send">
       <label><input v-model="socratic" type="checkbox" :disabled="busy || !!pending" /> Socratic · 用问题引导我</label>
       <label for="tutor-message">向课程 Tutor 提问</label>
-      <textarea id="tutor-message" v-model="draft" maxlength="2000" rows="3" :disabled="busy || !!pending || blocked" placeholder="可以继续追问：为什么？能举个例子吗？" />
+      <textarea id="tutor-message" v-model="draft" maxlength="2000" rows="3" :disabled="busy || !!pending || blocked"
+        placeholder="可以继续追问：为什么？能举个例子吗？" @keydown.enter="sendOnEnter"
+        @compositionstart="composing = true" @compositionend="composing = false" @blur="composing = false" />
       <button type="submit" :disabled="busy || !!activeTurn || loading || blocked || exhausted || (!pending && !draft.trim())">{{ pending ? '重试同一条消息' : '发送' }}</button>
     </form>
   </section>
@@ -323,9 +347,11 @@ summary { width: fit-content; cursor: pointer; color: var(--color-brand-strong);
 .followups { display: grid; gap: 5px; }
 .followups h3 { font-size: 13px; color: var(--color-ink-soft); margin: 0; }
 .followups button { text-align: start; color: var(--color-brand-strong); font-size: 13px; padding: 4px 8px; border-radius: 6px; }
+.followups summary { padding: 4px 0; font-size: 13px; }
+.followups__questions { display: grid; gap: 5px; padding-top: 4px; }
 .lesson-compose { display: grid; gap: 5px; }
 .lesson-compose__row { display: flex; gap: 6px; align-items: end; border: 1px solid var(--color-border); border-radius: 12px; padding: 5px; background: var(--color-canvas); }
-.lesson-compose textarea { flex: 1; min-width: 0; background: transparent; border: 0; padding: 5px 8px; resize: vertical; }
+.lesson-compose textarea { flex: 1; min-width: 0; min-height: calc(1.65em + 10px); max-height: 12rem; field-sizing: content; overflow: auto; box-sizing: border-box; background: transparent; border: 0; padding: 5px 8px; resize: vertical; }
 .lesson-compose button { color: white; background: var(--color-brand); padding: 4px 10px; min-width: 36px; min-height: 36px; font-weight: 750; }
 .lesson-compose label { color: var(--color-ink-soft); font-size: 12px; }
 .conversation-skeleton { display: grid; gap: 10px; color: var(--color-ink-soft); }

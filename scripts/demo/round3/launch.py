@@ -3,16 +3,16 @@
 import argparse
 import json
 import sys
-import time
+import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from stack import DEMO_EMAIL, ROOT, Stack
+from stack import HTTP, ROOT, Stack, log
 
 PACK = ROOT / "fixtures/demo/round3"
 COURSE = json.loads((PACK / "demo-courses.json").read_text())["courses"][0]
-INSTANCE = "ll-p06-round3"
+INSTANCE = "ll-p07-round3"
 WEB_PORT = 5196
 
 
@@ -43,10 +43,7 @@ class Round3Stack(Stack):
         env = super().agent_env(ports, secret, real)
         env.update(
             PYTHONPATH=str(HERE),
-            ROUND3_DEMO_STATE=str(self.state_file),
             ROUND3_DEMO_ORIGIN=f"http://127.0.0.1:{ports['WEB_PORT']}",
-            ROUND3_DEMO_PASSWORD=secret["DEMO_PASSWORD"],
-            ROUND3_DEMO_EMAIL=DEMO_EMAIL,
         )
         return env
 
@@ -69,45 +66,19 @@ class Round3Stack(Stack):
         )
 
     def seed(self, secret):
-        super().seed(secret)
-        task = self.state["task_id"]
-        account = self.api(
-            "POST", "/api/auth/login", {"email": DEMO_EMAIL, "password": secret["DEMO_PASSWORD"]},
+        port = self.state["ports"]["AGENT_HTTP_PORT"]
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/round3/ready", method="POST",
+            headers={"X-Round3-Secret": secret["AGENT_SERVICE_SECRET"]},
         )
-        self.state["round3_owner"] = str(account["user"]["userId"])
-        self.save()
-        token = account["accessToken"]
-        tutor = f"/api/tasks/{task}/tutor/sessions"
-        for conversation in reversed(COURSE["conversations"]):
-            session = self.api("POST", tutor, {"request_key": "round3-" + conversation["id"]}, token)["session"]
-            path = f"{tutor}/{session['session_id']}/turns"
-            for index, turn in enumerate(conversation["turns"]):
-                self.api("POST", path, {
-                    "client_turn_id": f"round3-{conversation['id']}-{index}",
-                    "text": turn["question"], "socratic": False,
-                }, token)
+        log("preparing the first isolated Round 3 visitor")
+        with HTTP.open(request, timeout=900) as response:
+            if response.status != 200:
+                raise RuntimeError("Round 3 visitor preparation failed")
 
-        path = f"/api/tasks/{task}/study/command"
-        session = self.api("POST", path, {"operation": "CREATE_SESSION", "request_key": "round3-practice"}, token)
-        scope = {"session_id": session["session_id"]}
-        response = self.api("POST", path, {
-            **scope, "operation": "START", "request_key": "round3-practice",
-            "goal": "复习二分查找", "practice_format": "choice",
-        }, token)
-        run = response["run"]["run_id"]
-        deadline = time.monotonic() + 60
-        while time.monotonic() < deadline:
-            response = self.api("POST", path, {**scope, "operation": "READ", "run_id": run}, token)
-            status = response["run"]["status"]
-            if status == "succeeded":
-                self.state["round3_practice"] = {"session_id": scope["session_id"], "run_id": run,
-                                                  "artifact_id": response["artifact"]["artifact_id"]}
-                self.save()
-                return
-            if status not in {"queued", "running"}:
-                raise RuntimeError("Round 3 practice fixture failed")
-            time.sleep(.5)
-        raise RuntimeError("Round 3 practice fixture timed out")
+    def report_ready(self, real):
+        log(f"Round 3 demo ready in {self.state['ready_seconds']}s")
+        print(f"http://127.0.0.1:{self.state['ports']['WEB_PORT']}/tasks", flush=True)
 
 
 def main():

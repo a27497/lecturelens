@@ -886,6 +886,13 @@ class Stack:
                 fail(f"the saved demo course {saved} is still {status}. {retry}")
             log(f"the saved demo course ended {status}; importing it again")
         log("uploading the synthetic demo course and running the media pipeline")
+        def record_course(task):
+            self.state.update(task_id=task, course_identity=self.state["model_identity"])
+            self.save()
+
+        self.import_course(token, record_course)
+
+    def import_course(self, token, record_course):
         video = self.fixture.read_bytes()
         upload = self.api(
             "POST",
@@ -922,8 +929,7 @@ class Stack:
             {"uploadId": upload, "sourceLanguage": "en", "targetLanguage": "zh-CN"},
             token,
         )["taskId"]
-        self.state.update(task_id=task, course_identity=self.state["model_identity"])
-        self.save()
+        record_course(task)
         deadline = time.monotonic() + 600
         while True:
             status = self.api("GET", f"/api/tasks/{task}", token=token)
@@ -939,6 +945,7 @@ class Stack:
         except RuntimeError as error:
             log(f"chapter generation skipped: {error}")
         self.wait_index(task, token)
+        return task
 
     def wait_index(self, task, token):
         deadline = time.monotonic() + 300
@@ -982,6 +989,10 @@ class Stack:
             raise
         self.state["ready_seconds"] = round(time.monotonic() - started, 1)
         self.save()
+
+        self.report_ready(real)
+
+    def report_ready(self, real):
         url = f"http://127.0.0.1:{ports['WEB_PORT']}/tasks/{self.state['task_id']}"
         mode = (
             "REAL: model calls are billed to your key"

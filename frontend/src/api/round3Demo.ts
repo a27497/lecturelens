@@ -12,9 +12,11 @@ interface DemoCourse {
   description: string;
   durationMs: number;
   positionMs: number;
+  learningPercent: number;
   cover: string;
   notes: CourseNote[];
   followups: string[];
+  questions: string[];
   topics: Array<{ question: string; title: string }>;
 }
 

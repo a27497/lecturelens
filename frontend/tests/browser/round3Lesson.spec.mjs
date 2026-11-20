@@ -41,7 +41,7 @@ function trace(page) {
     stop() { const rows = [...sample.values()]; sample = null; return rows; } };
 }
 
-test('opens at 01:04 and works through authorized learning actions', async ({ page, isMobile }) => {
+test('opens at 01:04 and works through authorized learning actions', async ({ page, browser, isMobile }) => {
   const formFactor = isMobile ? 'mobile' : 'desktop';
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Network.enable');
@@ -60,12 +60,34 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
   });
   const flight = trace(page);
   const measurements = [];
+  const progress = page.getByText('已学 42%', { exact: true });
   for (const pass of ['cold', 'repeat']) {
     await page.goto(origin + '/tasks');
     const open = page.getByRole('button', { name: /继续学习 01:04/ });
     await expect(open).toBeVisible();
-    await expect(page.getByText('已学 42%')).toBeVisible();
-    if (pass === 'cold' && !isMobile) await capture(page, 'library-desktop');
+    await expect(progress).toBeVisible();
+    if (pass === 'cold') {
+      await capture(page, 'library-' + formFactor);
+      await expect(page.getByRole('radio')).toHaveCount(2);
+      const menu = page.getByRole('button', { name: '更多操作' });
+      await menu.focus();
+      await page.keyboard.press('Enter');
+      const models = page.getByRole('menuitem', { name: '模型管理' });
+      await expect(models).toBeVisible();
+      await expect(page.getByRole('link', { name: '模型管理' })).toHaveCount(0);
+      await capture(page, 'library-menu-' + formFactor);
+      await page.getByRole('menuitem', { name: '批量管理' }).click();
+      await expect(page.getByText('已选择 0 项')).toBeVisible();
+      await expect(page.getByRole('button', { name: '删除所选' })).toBeDisabled();
+      await page.getByRole('button', { name: '全选当前列表' }).click();
+      await expect(page.getByText('已选择 1 项')).toBeVisible();
+      await page.getByRole('button', { name: '退出批量管理' }).click();
+      await menu.click();
+      await models.click();
+      await expect(page.getByRole('heading', { name: '模型管理', exact: true })).toBeVisible();
+      await page.goto(origin + '/tasks');
+      await expect(open).toBeVisible();
+    }
 
     flight.start();
     const start = Date.now();
@@ -81,6 +103,7 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
     expect(subtitleMs).toBeLessThan(3000);
     expect(playerMs).toBeLessThan(3000);
     await expect(page.getByRole('button', { name: '视频字幕', exact: true })).toBeEnabled();
+    await expect(progress).toBeVisible();
     const network = flight.stop();
     expect(network.filter(item => item.path.endsWith('/study/command'))).toHaveLength(0);
     expect(network.filter(item => item.path.endsWith('/results'))).toHaveLength(1);
@@ -105,6 +128,22 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
     if (isMobile) await page.getByRole('button', { name: /查看全部章节/ }).click();
     await page.getByRole('button', { name: /为什么必须有序/ }).click();
     await expect.poll(() => clock(page)).toBe(0);
+    await expect(progress).toBeVisible();
+    await page.getByRole('button', { name: /走一遍：找到 34/ }).click();
+    await expect.poll(() => clock(page)).toBe(64000);
+    const scrubber = page.locator('.lesson-scrubber');
+    await scrubber.scrollIntoViewIfNeeded();
+    const box = await scrubber.boundingBox();
+    if (isMobile) await scrubber.tap({ position: { x: box.width * .98, y: box.height / 2 } });
+    else {
+      const y = box.y + box.height / 2;
+      await page.mouse.move(box.x + box.width * (64 / 152), y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * .98, y, { steps: 6 });
+      await page.mouse.up();
+    }
+    await expect.poll(() => clock(page)).toBeGreaterThan(145000);
+    await expect(progress).toBeVisible();
     await page.getByRole('button', { name: /走一遍：找到 34/ }).click();
     await expect.poll(() => clock(page)).toBe(64000);
   });
@@ -123,12 +162,15 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
     expect(await clock(page)).toBe(64000);
     await replay.click();
     await expect.poll(() => clock(page)).toBe(0);
+    await expect(progress).toBeVisible();
     await page.getByRole('button', { name: '课程出处 01:04', exact: true }).first().click();
     await expect(source.getByRole('button', { name: '回看 01:04', exact: true })).toBeEnabled();
     await source.getByRole('button', { name: '回看 01:04', exact: true }).click();
     await expect.poll(() => clock(page)).toBe(64000);
     await source.locator('summary').click();
     await expect(source.locator('blockquote')).toBeVisible();
+    await expect(source.getByRole('button', { name: '记下这段' })).toHaveCount(0);
+    await expect(page.getByText(/正在核对/)).toHaveCount(0);
     if (isMobile) {
       await source.evaluate(card => window.scrollBy(0, card.getBoundingClientRect().top - 319));
       const playerTop = await page.locator('video').evaluate(video => video.getBoundingClientRect().top);
@@ -154,19 +196,82 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
     });
   }
 
+  const visitorQuestion = 'mid 为啥用整除来选左中点？';
+  await test.step('answers differently worded and compound questions with verified sources', async () => {
+    const select = page.getByRole('combobox', { name: '查看对话' });
+    await expect(select.locator('option:not([hidden])')).toHaveText(['为什么可以排除 21？', '边界重合时怎么停？']);
+    await page.getByText('更多常见问题', { exact: true }).click();
+    await expect(page.locator('.followups__questions button')).toHaveCount(10);
+    await page.getByRole('button', { name: '为什么 mid 要向下取整？' }).click();
+    const editor = page.getByRole('textbox', { name: '就本课提问' });
+    await expect(editor).toHaveValue('为什么 mid 要向下取整？');
+    await page.getByRole('button', { name: '新对话' }).click();
+    await expect(select.locator('option:not([hidden])')).toHaveCount(2);
+    await editor.fill(visitorQuestion);
+    const before = postActions.length;
+    await cdp.send('Input.imeSetComposition', { text: '中', selectionStart: 1, selectionEnd: 1 });
+    await editor.press('Enter');
+    expect(postActions).toHaveLength(before);
+    await cdp.send('Input.insertText', { text: '中文' });
+    await editor.fill(visitorQuestion);
+    await editor.press('Enter');
+    const messages = page.locator('.tutor--lesson .messages > li');
+    await expect(messages.last()).toContainText('偶数个候选时取左边的中点');
+    await expect(messages.last()).toContainText('low = 4、high = 5');
+    const citation = messages.last().getByRole('button', { name: '课程出处 00:34' });
+    await citation.click();
+    const source = page.getByRole('region', { name: '课程出处', exact: true });
+    await source.locator('summary').click();
+    await expect(source.locator('blockquote')).toContainText('rounding the distance down');
+    await source.scrollIntoViewIfNeeded();
+    if (isMobile) await source.evaluate(card => window.scrollBy(0, card.getBoundingClientRect().top - 319));
+    await capture(page, 'new-answer-source-' + formFactor);
+
+    const question1 = '左右边界越过去还要查吗？';
+    const question2 = '数据乱序还能划掉半边吗？';
+    await editor.fill(question1);
+    await editor.press('End');
+    const beforeNewline = postActions.length;
+    const singleLineHeight = await editor.evaluate(node => node.clientHeight);
+    await editor.press('Shift+Enter');
+    await page.keyboard.insertText(question2);
+    await expect(editor).toHaveValue(question1 + '\n' + question2);
+    expect(postActions).toHaveLength(beforeNewline);
+    expect(await editor.evaluate(node => node.clientHeight)).toBeGreaterThan(singleLineHeight);
+    expect(await editor.evaluate(node => node.scrollHeight)).toBeLessThanOrEqual(await editor.evaluate(node => node.clientHeight + 1));
+    await editor.press('Enter');
+    await expect(messages.last()).toContainText('边界交叉时没有下标可查');
+    await expect(messages.last()).toContainText('有序性给出了排除一侧的理由');
+    for (const [question, answer] of [
+      ['算 mid 时直接把两个下标相加会怎样？', '先算距离，避免整数相加溢出'],
+      ['一堆相同的数里，找到的会是最左边？', '普通查找返回本轮命中的下标'],
+      ['能换个数组给我演练一下吗？', '在 [1, 5, 9, 14, 20, 27] 中找 20'],
+      ['只剩一个数还要比吗？堆排序怎么实现？', '其余部分在本课中没有找到足够的依据'],
+      ['能讲讲图论里的最短路径吗？', '这节课没有足够资料回答这个问题。'],
+    ]) {
+      await editor.fill(question);
+      await editor.press('Enter');
+      await expect(messages.last()).toContainText(answer);
+    }
+  });
+
+  const note = '闭区间边界更新后，中点已经排除。';
   await test.step('save a local note and submit a real practice attempt', async () => {
     await choose(page, '笔记');
     await expect(page.getByText(/中点也要划掉/)).toBeVisible();
-    const text = '闭区间边界更新后，中点已经排除。';
-    await page.getByRole('textbox', { name: '记录你的理解' }).fill(text);
+    await page.getByRole('textbox', { name: '记录你的理解' }).fill(note);
     await page.getByRole('button', { name: '保存笔记', exact: true }).click();
-    await expect(page.getByText(text, { exact: true })).toBeVisible();
+    await expect(page.getByText(note, { exact: true })).toBeVisible();
     await choose(page, '练习');
     await page.getByRole('button', { name: '下一题', exact: true }).click();
     await expect(page.getByRole('heading', { name: /在 \[2, 7, 11, 18, 29\]/ })).toBeVisible();
     const choices = page.getByRole('radio');
-    const selectedBefore = await choices.nth(0).isChecked();
-    await choices.nth(selectedBefore ? 1 : 0).check();
+    await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
+    await expect(page.getByRole('article', { name: '选择题判分结果' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '提交答案', exact: true })).toBeDisabled();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await capture(page, 'practice-clean-' + formFactor);
+    await choices.nth(0).check();
     await expect(page.getByRole('button', { name: '提交答案', exact: true })).toBeEnabled();
     if (isMobile) {
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -177,12 +282,66 @@ test('opens at 01:04 and works through authorized learning actions', async ({ pa
       expect(postActions).toContain('SAVE_ATTEMPT');
       await page.evaluate(() => window.scrollTo(0, 0));
       await capture(page, 'practice-feedback-mobile');
-      const prior = await choices.nth(selectedBefore ? 1 : 0).isChecked();
+      const prior = await choices.nth(0).isChecked();
       await page.reload();
       await page.getByRole('button', { name: '下一题', exact: true }).click();
-      expect(await choices.nth(selectedBefore ? 1 : 0).isChecked()).toBe(prior);
+      expect(await choices.nth(0).isChecked()).toBe(prior);
       await expect(feedback).toBeVisible();
+      await choose(page, '助手');
+      const history = page.getByRole('combobox', { name: '查看对话' });
+      await expect(history.locator('option:not([hidden])')).toContainText([visitorQuestion]);
+      await history.selectOption({ label: '为什么可以排除 21？' });
+      await expect(page.getByText('比较过的中点也要移出区间')).toBeVisible();
+      await history.selectOption({ label: visitorQuestion });
+      await expect(page.getByText('偶数个候选时取左边的中点')).toBeVisible();
+      await choose(page, '笔记');
+      await expect(page.getByText(note, { exact: true })).toBeVisible();
     }
+  });
+
+  if (isMobile) await test.step('isolates a fresh browser B from visitor A', async () => {
+    const courseA = new URL(page.url()).pathname.split('/')[2];
+    const contextB = await browser.newContext({ viewport: page.viewportSize(), locale: 'zh-CN', isMobile: true, hasTouch: true });
+    try {
+      const fresh = await contextB.newPage();
+      await fresh.goto(origin + '/tasks', { timeout: 90_000 });
+      await fresh.getByRole('button', { name: /继续学习 01:04/ }).click({ timeout: 90_000 });
+      expect(new URL(fresh.url()).pathname.split('/')[2]).not.toBe(courseA);
+      const crossAccess = await fresh.evaluate(async course => {
+        const token = localStorage.getItem('lecturelens.round3.accessToken');
+        const result = await fetch('/api/tasks/' + course + '/evidence/index-status', {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        return result.status === 200 && String((await result.json()).code) === '0';
+      }, courseA);
+      expect(crossAccess).toBe(false);
+      await choose(fresh, '助手');
+      const dropdown = fresh.getByRole('combobox', { name: '查看对话' });
+      await expect(dropdown.locator('option:not([hidden])')).toHaveText(['为什么可以排除 21？', '边界重合时怎么停？']);
+      await expect(fresh.getByText(visitorQuestion, { exact: true })).toHaveCount(0);
+      await expect(dropdown).not.toContainText(visitorQuestion);
+      await expect(fresh.getByText('比较过的中点也要移出区间')).toBeVisible();
+      await choose(fresh, '笔记');
+      await expect(fresh.getByText(/中点也要划掉/)).toBeVisible();
+      await expect(fresh.getByText(note, { exact: true })).toHaveCount(0);
+      await choose(fresh, '练习');
+      await fresh.getByRole('button', { name: '下一题', exact: true }).click();
+      await expect(fresh.getByRole('radio', { checked: true })).toHaveCount(0);
+      await expect(fresh.getByRole('article', { name: '选择题判分结果' })).toHaveCount(0);
+      await expect(fresh.getByRole('button', { name: '提交答案', exact: true })).toBeDisabled();
+      await fresh.evaluate(() => window.scrollTo(0, 0));
+      await capture(fresh, 'visitor-b-practice-clean-mobile');
+    } finally {
+      await contextB.close();
+    }
+  });
+
+  await test.step('shows the same learning progress on the course card after seeking', async () => {
+    await page.locator('.lesson-scrubber').press('Home');
+    await expect.poll(() => clock(page)).toBe(0);
+    await page.getByRole('link', { name: '返回课程库' }).click();
+    await expect(progress).toBeVisible();
+    await expect(page.getByRole('button', { name: /继续学习 00:00/ })).toBeVisible();
   });
 
   expect(pageErrors).toEqual([]);

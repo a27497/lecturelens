@@ -43,6 +43,9 @@ it("refreshes the server role before allowing direct administrator URLs, includi
 it("hides the administrator entrance from ordinary users while preserving the personal entrance", async () => {
   page = mount(AppHeader, { global: { plugins: [pinia, router], stubs: { "el-icon": true } } });
   await flushPromises();
+  expect(page.find('a[href="/settings/models"]').exists()).toBe(false);
+  await router.push("/upload");
+  await flushPromises();
   expect(page.find('a[href="/settings/models"]').exists()).toBe(true);
   expect(page.find('a[href="/admin/settings/models"]').exists()).toBe(false);
   auth.user!.role = "ADMIN"; await flushPromises();

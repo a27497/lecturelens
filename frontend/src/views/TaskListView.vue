@@ -121,6 +121,8 @@ const filterCounts = computed<Record<TaskStatusGroup, number>>(() => {
   }
   return counts;
 });
+const visibleFilters = computed(() => TASK_FILTERS.filter(filter =>
+  filter.value === "ALL" || filterCounts.value[filter.value] > 0));
 
 onMounted(() => {
   componentActive = true;
@@ -174,6 +176,9 @@ async function loadTasks(options: { silent?: boolean } = {}) {
       return;
     }
     tasks.value = result.items;
+    if (activeGroup.value !== "ALL" && filterCounts.value[activeGroup.value] === 0) {
+      activeGroup.value = "ALL";
+    }
     loaded.value = true;
     reconcileSelection();
   } catch (error) {
@@ -213,6 +218,11 @@ function reconcileSelection() {
 
 function enterBatchMode() {
   batchMode.value = true;
+}
+
+function selectLibraryAction(command: "models" | "batch") {
+  if (command === "models") void router.push("/settings/models");
+  else enterBatchMode();
 }
 
 function exitBatchMode() {
@@ -533,16 +543,24 @@ function formatTime(value: string | null): string {
     </PageHeading>
 
     <SectionPanel class="course-library">
-      <div v-if="!emptyLibrary && (loaded || errorMessage)" class="task-list-toolbar">
+      <div v-if="loaded || errorMessage" class="task-list-toolbar">
         <el-radio-group v-model="activeGroup" :disabled="deleting" class="task-list-toolbar__filters" aria-label="按课程状态筛选">
-          <el-radio-button v-for="filter in TASK_FILTERS" :key="filter.value" :value="filter.value">
+          <el-radio-button v-for="filter in visibleFilters" :key="filter.value" :value="filter.value">
             {{ filter.label }} {{ filterCounts[filter.value] }}
           </el-radio-button>
         </el-radio-group>
         <div class="task-list-toolbar__actions">
           <el-button text :loading="loading || refreshing" :disabled="deleting" @click="loadTasks()">刷新</el-button>
           <el-button v-if="batchMode" :disabled="deleting" @click="exitBatchMode">退出批量管理</el-button>
-          <el-button v-else @click="enterBatchMode">批量管理</el-button>
+          <el-dropdown trigger="click" :disabled="deleting" @command="selectLibraryAction">
+            <el-button :disabled="deleting">更多操作 <span aria-hidden="true">⌄</span></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="models">模型管理</el-dropdown-item>
+                <el-dropdown-item v-if="!batchMode && !emptyLibrary" command="batch">批量管理</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
 
@@ -621,8 +639,8 @@ function formatTime(value: string | null): string {
             </div>
 
             <div v-if="demo" class="demo-course-progress">
-              <span>已学 {{ Math.floor(Math.min(1, (location?.at ?? demo.positionMs) / demo.durationMs) * 100) }}%</span>
-              <progress :value="Math.min(1, (location?.at ?? demo.positionMs) / demo.durationMs)" aria-label="学习进度" />
+              <span>已学 {{ demo.learningPercent }}%</span>
+              <progress :value="demo.learningPercent" max="100" aria-label="学习进度" />
             </div>
             <div v-if="isRunningTaskStatus(task.status) && task.progressPercent != null" class="course-progress" aria-label="材料准备进度">
               <small>材料准备</small>

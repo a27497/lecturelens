@@ -6,8 +6,8 @@ import { fetchScopeEvidence, type ScopeEvidence } from "../../api/learningScope"
 import type { Citation } from "../../api/study";
 import { formatMillisToClock } from "../../utils/time";
 
-const props = defineProps<{ taskId: string; citation: Citation; revision: number; canNote: boolean }>();
-const emit = defineEmits<{ replay: []; note: []; accessFailure: [] }>();
+const props = defineProps<{ taskId: string; citation: Citation; revision: number }>();
+const emit = defineEmits<{ replay: []; accessFailure: [] }>();
 const original = ref<ScopeEvidence>();
 const translated = ref<ScopeEvidence>();
 const loading = ref(true);
@@ -58,10 +58,9 @@ watch(() => [props.taskId, props.revision, props.citation.evidence_id] as const,
 </script>
 
 <template>
-  <section class="course-source" aria-label="课程出处">
+  <section v-if="!loading" class="course-source" aria-label="课程出处">
     <header><h4>课程出处</h4><time>{{ clock(citation.start_ms) }}–{{ clock(citation.end_ms) }}</time></header>
-    <p v-if="loading" role="status">正在核对出处…</p>
-    <p v-else-if="failed" role="status">这段出处暂时无法核对。课程可能已更新，请重新打开课程。</p>
+    <p v-if="failed" role="status">出处暂不可用，请重新打开课程。</p>
     <template v-else-if="original">
       <p class="course-source__excerpt">{{ translated?.normalizedText || original.normalizedText }}</p>
       <details>
@@ -70,7 +69,6 @@ watch(() => [props.taskId, props.revision, props.citation.evidence_id] as const,
       </details>
       <div class="course-source__actions">
         <button v-if="canReplay" type="button" @click="emit('replay')">回看 {{ clock(original.startMs) }}</button>
-        <button v-if="canReplay && canNote" type="button" @click="emit('note')">记下这段</button>
       </div>
     </template>
   </section>
