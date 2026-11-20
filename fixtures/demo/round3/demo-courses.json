@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "provenance": "LL-P05 原创合成课程。讲稿、译文、题目、答案与素材均为本轮演示创作，无真实课程或账号记录。",
+  "courses": [
+    {
+      "id": "binary-search-round3",
+      "revision": "round3-synthetic-v1",
+      "title": "二分查找：每次划掉一半",
+      "series": "算法入门",
+      "description": "用一次找数演练，弄懂有序数组、搜索区间和边界更新。",
+      "sourceLanguage": "en",
+      "translationLanguage": "zh-CN",
+      "durationMs": 152000,
+      "cover": "assets/binary-cover.png",
+      "media": "assets/binary-search.mp4",
+      "sourceVtt": "assets/binary-search.en.vtt",
+      "translationVtt": "assets/binary-search.zh-CN.vtt",
+      "progress": {"positionMs": 64000, "percent": 42, "action": "继续学习 01:04"},
+      "chapters": [
+        {"id": "ordered", "title": "为什么必须有序", "startMs": 0, "endMs": 16000, "poster": "assets/ordered.png"},
+        {"id": "interval", "title": "定义搜索区间", "startMs": 16000, "endMs": 64000, "poster": "assets/interval.png"},
+        {"id": "walkthrough", "title": "走一遍：找到 34", "startMs": 64000, "endMs": 96000, "poster": "assets/walkthrough.png"},
+        {"id": "cost", "title": "比较次数与停止条件", "startMs": 96000, "endMs": 152000, "poster": "assets/cost.png"}
+      ],
+      "segments": [
+        {"id": "s01", "chapterId": "ordered", "startMs": 0, "endMs": 16000, "source": "Binary search needs sorted data. When the middle value is too small, everything to its left is too small as well. In an unsorted list, that shortcut does not work.", "translation": "二分查找需要有序数据。中间值偏小，左边所有值也一定偏小。数组无序时，就不能这样排除。"},
+        {"id": "s02", "chapterId": "interval", "startMs": 16000, "endMs": 34000, "source": "Keep the remaining indices in a closed interval, from low to high. Both ends are still candidates. For seven items, start with low at zero and high at six.", "translation": "用闭区间 [low, high] 表示剩余下标，两端都还是候选。数组有七项时，从 low = 0、high = 6 开始。"},
+        {"id": "s03", "chapterId": "interval", "startMs": 34000, "endMs": 48000, "source": "Choose the middle index by adding half the distance to low and rounding the distance down. This also avoids adding two potentially large indices together.", "translation": "把区间长度差的一半向下取整，再加到 low 上，就得到中间下标。这样也避免直接相加两个可能很大的下标。"},
+        {"id": "s04", "chapterId": "interval", "startMs": 48000, "endMs": 64000, "source": "After a comparison, return the middle index if it matches. If the value is too small, move low to mid plus one. If it is too large, move high to mid minus one.", "translation": "中间值等于目标时直接返回 mid。偏小就令 low = mid + 1，偏大就令 high = mid - 1。"},
+        {"id": "s05", "chapterId": "walkthrough", "startMs": 64000, "endMs": 74000, "source": "The middle value is twenty-one, which is smaller than thirty-four. Everything on the left, including twenty-one, can be ruled out.", "translation": "中间值 21 比目标 34 小。21 及其左边的数都可以排除。"},
+        {"id": "s06", "chapterId": "walkthrough", "startMs": 74000, "endMs": 84000, "source": "The next middle value is forty-two. It is too large, so rule it out and discard everything to its right.", "translation": "下一次比较遇到 42。它比目标大，所以排除 42 和它右边的所有数。"},
+        {"id": "s07", "chapterId": "walkthrough", "startMs": 84000, "endMs": 96000, "source": "Only index four remains. Its value is thirty-four, so we return four. That took three comparisons.", "translation": "现在只剩下标 4，值正好是 34，返回 4。整个过程比较了三次。"},
+        {"id": "s08", "chapterId": "cost", "startMs": 96000, "endMs": 112000, "source": "Each miss cuts the remaining range roughly in half. That is logarithmic growth. Even a million sorted items take at most twenty comparisons in this loop.", "translation": "每次未命中，候选区间大约减半，因此比较次数按对数增长。用这段循环查找一百万个有序元素，最多比较二十次。"},
+        {"id": "s09", "chapterId": "cost", "startMs": 112000, "endMs": 132000, "source": "Equal boundaries mean one candidate is left, so compare it. Stop with not found only when low is greater than high. Then the closed interval is empty.", "translation": "左右边界相等时，还剩一个候选，要检查它。只有 low 大于 high 时区间才为空，此时返回未找到。"},
+        {"id": "s10", "chapterId": "cost", "startMs": 132000, "endMs": 152000, "source": "Do not leave mid inside the interval after a miss. With two candidates, the rounded middle can equal low. Setting low to mid would repeat the same comparison forever.", "translation": "没有命中时要移除 mid。只剩两个候选时，向下取整的 mid 可能正好等于 low。若写成 low = mid，就会不断重复同一次比较。"}
+      ],
+      "searchExample": {"values": [3, 8, 15, 21, 34, 42, 57], "target": 34, "steps": [{"segmentId":"s05","low":0,"high":6,"mid":3},{"segmentId":"s06","low":4,"high":6,"mid":5},{"segmentId":"s07","low":4,"high":4,"mid":4}]},
+      "conversations": [
+        {"id":"discard-mid", "title":"为什么可以排除 21？", "turns":[
+          {"question":"为什么连中间的 21 也能排除？", "answer":[
+            {"concept":"有序性保证左边也可以排除", "text":"把下标想成从左到右排好的座位。21 左边每个数都不大于 21，目标 34 更大，去左边找已经没有意义。", "citations":["s01","s05"]},
+            {"concept":"比较过的中点也要移出区间", "text":"21 已经比较过，确认它也不等于 34。下一轮从下标 4 开始，候选只剩 34、42、57。", "citations":["s04","s05"]}
+          ]}
+        ]},
+        {"id":"last-candidate", "title":"边界重合时怎么停？", "turns":[
+          {"question":"low 和 high 相等时，可以直接说没找到吗？", "answer":[
+            {"concept":"闭区间的最后一个位置", "text":"先查那个位置。闭区间的两个端点都算候选，重合时还剩一个。例题里下标 4 就是这样被找到的。", "citations":["s02","s07","s09"]},
+            {"concept":"区间为空才停止", "text":"如果最后一个数也不匹配，移动边界后就会出现 low > high。这时已经没有下标可检查，才能返回未找到。", "citations":["s04","s09"]}
+          ]}
+        ]}
+      ],
+      "tutorQuestions": [
+        {"question":"为什么 mid 要向下取整？","match":"向下取整|往下取整|取整|整除|舍小数|舍掉小数|偏左|左边那个中点|左中点|右中点|两个中点|中间有两个|向上取整|四舍五入|奇数.*偶数|偶数.*中[间点]|中[间点].*小数|floor|round.down",
+          "answer":[
+            {"concept":"偶数个候选时取左边的中点","text":"下标必须是整数。比如 low = 4、high = 5，4 + ⌊(5 − 4) / 2⌋ 得到 4。课上的写法会稳定选左边那个中点。选右中点也能查找，前提是每次未命中都移除已比较的 mid，确保区间缩小。","citations":["s03","s04","s10"]}
+          ]},
+        {"question":"为什么 low > high 就停止？","match":"low\\s*[>＞]\\s*high|low\\s*大于\\s*high|左(?:边界|指针).*(?:超过|越过|穿过|大于|靠后|跑到右)|边界.*(?:越过去|交叉|反过来|错开|相等|相同|重合)|(?:两头|两端|左右(?:边界|指针)).*(?:同一(?:个)?(?:格|下标|位置)|碰头|相遇|交错)|区间.*(?:空了|为空)|什么时候.*(?:停|退出|结束)|停止条件|闭区间|最后一[个项格]|只剩.*(?:一[个项格]|1)|左右相等|low\\s*(?:==|＝|=|等于|和|跟)\\s*high|同时.*(?:指向|落在)|while.*<=|low\\s*<\\s*high|单元素|last.element|inclusive|stop.condition",
+          "answer":[
+            {"concept":"边界交叉时没有下标可查","text":"候选下标要同时满足 i ≥ low 和 i ≤ high。比如 low = 3、high = 2，两个条件无法同时满足，可以报告未找到。","citations":["s02","s09"]},
+            {"concept":"边界重合时，还有最后一个候选","text":"两端指向同一个下标时，要比较这一项。在 [4, 9, 13] 里找 13，先排除 9 和左边，得到 low = high = 2。闭区间循环要用 low ≤ high，才能检查这个下标并找到 13。","citations":["s04","s09"]}
+          ]},
+        {"question":"没有排序时，为什么不能只查半边？","match":"有序|无序|没[有]?排[过序]|乱序|打乱|升序|降序|排序|sorted|unsorted|sort(?:ed|ing)?",
+          "answer":[
+            {"concept":"有序性给出了排除一侧的理由","text":"升序时，中点小于目标，左边也都小于目标。试试在乱序的 [9, 3, 5] 里找 9：中点是 3，但目标恰好在左边。若数据按降序排列，需要把课上选边的比较方向对调。","citations":["s01","s04"]}
+          ]},
+        {"question":"为什么中点公式要先用 high 减 low？","match":"溢出|先(?:做)?减法|先减|先算差|相加.*(?:除|会|行|中点)|直接.*(?:相加|求平均)|两个下标.*相加|high\\s*[−-]\\s*low|(?:low\\s*\\+\\s*high)|overflow",
+          "answer":[
+            {"concept":"先算距离，避免整数相加溢出","text":"比如 low = 1,500,000,000、high = 1,900,000,000。两者相加超过有符号 32 位整数上限。课上先取距离的一半 200,000,000，再加到 low 上，得到 1,700,000,000，仍在两端之间。","citations":["s03"]}
+          ]},
+        {"question":"边界少移一格，什么时候会卡住？","match":"偏[一1]|差一[格位]|少移|多移|死循环|卡住|原地|不动|漏掉|错过|(?<![a-z0-9_])(?:low|high)\\s*(?:[=＝]|(?:直接)?\\s*(?:设(?:置)?[为成]|更新[为成到]|改[为成到]|等于|赋值[为成]|赋给))\\s*mid(?![a-z0-9_])|mid\\s*[-−－+＋]\\s*1|更新.*边界|off.by.one",
+          "answer":[
+            {"concept":"更新后的区间必须更小","text":"没命中时，mid 已经比较过，下一轮要把它排除。用 [3, 8] 找 8 时，第一次 mid = 0。若写 low = mid，区间仍是 [0, 1]，会反复比较 3。用 low = mid + 1 就能检查 8。中点偏大时，high = mid 也会保留已比较的中点，应更新为 high = mid − 1。","citations":["s04","s10"]}
+          ]},
+        {"question":"为什么是 O(log n)，一百万项也只比较约 20 次？","match":"复杂度|对数|效率|一百万|100万|1000000|log(?:arithm|\\s*\\(?\\s*[2n])|几次|多少次|最多.*次|减半|时间.*(?:长|少)|搜索.*快",
+          "answer":[
+            {"concept":"比较次数随候选数按对数增长","text":"最坏情况下，每次没命中就只剩约一半。8 个候选能走到 4、2、1，再检查最后一项，最多 4 次比较。候选规模翻倍，最多多比较一次；这就是 O(log n)。按同样计数，一百万项最多 20 次。","citations":["s08","s09"]}
+          ]},
+        {"question":"目标不在数组里，怎么知道真的没找到？","match":"未命中|没找到|找不到|不在(?:数组|列表|里面|里)|不存在|没有(?:这个|目标)[数值标]?|空数组|[-−]1|not.found|missing",
+          "answer":[
+            {"concept":"用候选区间判断未命中","text":"在 [2, 6, 10] 里找 7，先比较 6，改 low = 2；再比较 10，改 high = 1。现在 [2, 1] 为空，报告未找到。返回 −1 是一种接口约定；课程这里讲的是判断未命中的条件。","citations":["s04","s09"]}
+          ]},
+        {"question":"遇到重复值时会返回第一个吗？","match":"重复|都等于|相同的[数值元素]|一样的[数值元素]|第一个.*(?:目标|下标|位置|匹配)|最左(?:的|一个|边)|最右(?:的|一个|边)|首次出现|末次出现|lower.bound|upper.bound|duplicates?",
+          "answer":[
+            {"concept":"普通查找返回本轮命中的下标","text":"在 [2, 4, 4, 4, 9] 中找 4，第一轮就会命中下标 2，而最左的 4 在下标 1。课上的循环一旦相等就返回。寻找首个或末个匹配需要另一套边界规则，本课没有展开。","citations":["s02","s04"]}
+          ]},
+        {"question":"目标比所有数都小，会经历哪些比较？","match":"比(?:所有|全部|最小|开头|第一|数组|中点|中间|mid).*小|中点.*(?:偏大|偏小)|中间值.*(?:偏大|偏小)|目标.*(?:比中点大|比中间大)|小[於于]最小|低[於于]最小|最小.*还小|往左|去左边|(?:左|右)边界.*怎么移|移动哪个边界",
+          "answer":[
+            {"concept":"先看中点与目标的大小","text":"在 [4, 8, 12] 里找 1，先比较 8，把 high 移到下标 0；再比较 4，把 high 移到 −1。此时 low = 0，大于 high，说明目标不存在。中点偏大时，排除中点和右边，改 high = mid − 1；中点偏小时，改 low = mid + 1，往右继续找。","citations":["s04","s06","s09"]}
+          ]},
+        {"question":"能换个数组带我手算一遍吗？","match":"新[的个]?(?:数组|例题|例子)|换[个一].*(?:例|数|题)|举[个一].*(?:例|题)|来[个一].*(?:例|题)|手算|走一遍|演练|实[战践]|练一下|walkthrough|example",
+          "answer":[
+            {"concept":"练习：在 [1, 5, 9, 14, 20, 27] 中找 20","text":"① [0, 5] 的 mid = 2，9 偏小，令 low = 3。② [3, 5] 的 mid = 4，命中 20，返回下标 4。你可以再找一次 14：第二轮的 20 偏大，令 high = 3，接下来应检查最后的下标 3。","citations":["s03","s04","s09"]}
+          ]}
+      ],
+      "exercises": [
+        {"id":"sorted-why", "skill":"理解有序性", "kind":"choice", "prompt":"把例题数组打乱后，发现中点仍是 21。还能丢掉左半边吗？", "options":[{"id":"a","text":"可以，因为 21 小于 34"},{"id":"b","text":"不可以，左边仍可能藏着 34"},{"id":"c","text":"可以，七个数的中点总在下标 3"}], "correctOptionId":"b", "explanation":"中点的位置只告诉你比较了哪个数。有序性才能保证左边的值不超过 21；数组打乱后，34 可能位于任意一侧。", "citations":["s01","s05"]},
+        {"id":"update-low", "skill":"应用边界更新", "kind":"choice", "prompt":"在 [2, 7, 11, 18, 29] 中找 29。第一次比较 11 后，下一轮从哪个下标开始？", "options":[{"id":"a","text":"下标 2（值为 11）"},{"id":"b","text":"下标 3（值为 18）"},{"id":"c","text":"下标 4（值为 29）"}], "correctOptionId":"b", "explanation":"11 位于下标 2，且小于 29。所有下标不大于 2 的项都可以排除。把 low 移到 3 后，18 和 29 都还是候选。", "citations":["s04","s05"]},
+        {"id":"last-check", "skill":"应用停止条件", "kind":"choice", "prompt":"在 [4, 9, 13] 中找 13。排除 9 和它左边的元素后，下一步该做什么？", "options":[{"id":"a","text":"停止，返回未找到"},{"id":"b","text":"继续检查下标 2"},{"id":"c","text":"把 high 改成 1"}], "correctOptionId":"b", "explanation":"现在 low 和 high 都是 2，闭区间内还有 13。检查后命中，返回下标 2。", "citations":["s07","s09"]}
+      ],
+      "notes": [
+        {"id":"skip-mid", "title":"中点也要划掉", "body":"写代码时容易顺手写成 low = mid。记住 21 已经比过了，新区间要从它后面一格开始。", "anchor":"s05"},
+        {"id":"one-left", "title":"只剩一项时也要比", "body":"复习时拿 [4, 9, 13] 找 13 试一遍。low == high 还有一项，low > high 才真的空了。", "anchor":"s09"}
+      ]
+    }
+  ]
+}

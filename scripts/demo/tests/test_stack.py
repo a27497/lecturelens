@@ -284,6 +284,12 @@ class SeedTest(Base):
 
 
 class MiscTest(Base):
+    def test_report_ready_uses_the_saved_web_port_and_course(self):
+        self.stack.state.update(ports={"WEB_PORT": 5217}, task_id=42, ready_seconds=1.0)
+        with mock.patch("builtins.print") as printed:
+            self.stack.report_ready(real=False)
+        self.assertIn("http://127.0.0.1:5217/tasks/42", printed.call_args.args[0])
+
     def test_stop_command_always_names_the_instance(self):
         self.assertEqual(stack.Stack("default").stop_command, "scripts/demo/down.sh --instance default")
 

@@ -63,7 +63,7 @@ const uploadStatusText = computed(() => {
     case "paused":
       return "上传已暂停";
     case "success":
-      return "上传完成";
+      return "服务器已接收视频";
     case "error":
       return "上传失败";
     default:
@@ -248,6 +248,7 @@ async function createTask() {
     const task = await createAnalysisTask({ uploadId, targetLanguage: language, sourceLanguage: sourceLanguage.value });
     ElMessage.success("处理任务已创建，正在打开详情。");
     await router.push(`/tasks/${encodeURIComponent(task.taskId)}`);
+    window.scrollTo({ top: 0 });
   } catch (error) {
     createTaskError.value = toReadableTaskError(error);
     if (isAuthExpiredMessage(createTaskError.value)) {
@@ -265,13 +266,16 @@ async function createTask() {
 <template>
   <main class="upload-page page-container">
     <PageHeading
-      eyebrow="上传课程"
       title="上传课程视频"
-      description="支持 MP4、MOV、MKV 和 WebM。上传完成后，可以生成字幕、翻译和学习笔记。"
-    />
+      description="上传后确认原视频，再开始准备课程材料。"
+    >
+      <template #actions><RouterLink class="text-link" to="/tasks">返回我的课程</RouterLink></template>
+    </PageHeading>
 
-    <SectionPanel class="upload-workspace">
-      <UploadFilePicker :disabled="uploadStore.isBusy" @select="selectFile" />
+    <div class="upload-grid" :class="{ 'has-preview': canCreateTask }">
+
+    <SectionPanel class="upload-workspace" title="课程文件">
+      <UploadFilePicker v-if="!canCreateTask" :disabled="uploadStore.isBusy" @select="selectFile" />
 
       <template v-if="selectedFile">
         <div class="selected-file" aria-label="已选择文件">
@@ -293,7 +297,9 @@ async function createTask() {
           type="error"
         />
 
+        <p v-if="uploadStore.phase === 'ready'" class="upload-receipt" role="status">文件类型已通过检查，可以开始上传。</p>
         <UploadProgress
+          v-else-if="uploadStore.selected?.isSupportedExtension"
           :phase="uploadStore.phase"
           :progress-percent="uploadStore.progressPercent"
           :status-text="uploadStatusText"
@@ -313,6 +319,7 @@ async function createTask() {
 
         <section v-if="!canCreateTask" class="upload-actions" aria-label="上传操作">
           <el-button
+            v-if="!hasSession"
             :disabled="isUploadDisabled"
             :loading="uploadStore.isBusy && !hasSession"
             type="primary"
@@ -321,16 +328,18 @@ async function createTask() {
           >
             开始上传
           </el-button>
-          <el-button v-if="canPauseUpload" @click="uploadStore.pauseUpload()">暂停</el-button>
           <el-button
+            v-else
             :disabled="isResumeDisabled"
             :loading="uploadStore.isBusy && hasSession"
             @click="uploadStore.resumeUpload()"
           >
             继续上传
           </el-button>
+          <el-button v-if="canPauseUpload" @click="uploadStore.pauseUpload()">暂停</el-button>
           <el-button :disabled="uploadStore.isBusy" text @click="resetUpload">重新选择</el-button>
         </section>
+        <el-button v-else class="replace-upload" text @click="resetUpload">重新选择文件</el-button>
       </template>
     </SectionPanel>
 
@@ -338,12 +347,12 @@ async function createTask() {
       v-if="canCreateTask"
       class="upload-confirmation"
       title="确认原视频"
-      description="请确认下方视频就是你准备整理的课程。确认无误后即可开始。"
+      description="开始处理后，可在课程页查看材料进度。"
     >
       <VideoPlaybackCard
         :key="completedUploadId"
+        compact
         title="原视频预览"
-        description="这里播放刚刚上传的原始视频。"
         :playback-url="playbackUrl"
         :loading="playbackLoading"
         :error-message="playbackError"
@@ -357,9 +366,9 @@ async function createTask() {
       />
 
       <details class="preview-note">
-        <summary>关于原视频预览 <TermHelp term="原视频预览" /></summary>
+        <summary>关于原视频预览</summary>
         <p>
-          浏览器预览支持视频内嵌的文本软字幕轨道；图片字幕和未随视频上传的外挂字幕不会在这里显示。
+          播放刚上传的原始视频，确认文件是否正确。预览支持视频内嵌的文本软字幕轨道。图片字幕和未随视频上传的外挂字幕不会在这里显示。
         </p>
       </details>
 
@@ -373,7 +382,7 @@ async function createTask() {
 
       <div class="course-start">
         <div>
-          <strong>视频确认无误</strong>
+          <strong>处理语言</strong>
           <p>
             将以{{ TARGET_LANGUAGE_LABEL }}处理 · {{ formatFileSize(completedSizeBytes) }}
             <TermHelp term="课程处理" />
@@ -389,20 +398,34 @@ async function createTask() {
         </el-button>
       </div>
     </SectionPanel>
+    <aside v-else class="upload-next" aria-labelledby="upload-next-title">
+      <h2 id="upload-next-title">上传后</h2>
+      <ol>
+        <li>预览原视频并选择原视频语言。</li>
+        <li>开始处理，在课程页查看准备进度。</li>
+      </ol>
+    </aside>
+    </div>
   </main>
 </template>
 
 <style scoped>
 .upload-page {
   display: grid;
-  gap: 28px;
-  padding-block: 46px 72px;
+  gap: 24px;
+  padding-block: 32px 64px;
 }
 
-.upload-workspace {
-  display: grid;
-  gap: 22px;
-}
+.upload-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, 1fr); align-items: start; gap: 20px; }
+.upload-grid.has-preview { grid-template-columns: minmax(250px, .7fr) minmax(0, 1.3fr); }
+.upload-workspace, .upload-confirmation { min-width: 0; box-shadow: none; }
+.upload-workspace { display: grid; gap: 16px; }
+.upload-next { padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.upload-next h2 { margin: 0; font-size: 18px; }
+.upload-next ol { margin-block: 8px 0; padding-inline-start: 20px; color: var(--color-ink-soft); line-height: 1.65; }
+.upload-receipt { margin: 0; color: var(--color-success); font-size: 14px; }
+.replace-upload { justify-self: start; }
+@media (max-width: 850px) { .upload-grid, .upload-grid.has-preview { grid-template-columns: 1fr; } }
 
 .selected-file {
   display: flex;
@@ -450,7 +473,12 @@ async function createTask() {
 
 .upload-confirmation {
   display: grid;
-  gap: 20px;
+  gap: 16px;
+}
+
+.upload-confirmation :deep(.course-video-player) {
+  max-height: min(36vh, 340px);
+  object-fit: contain;
 }
 
 .preview-note {
@@ -489,9 +517,15 @@ async function createTask() {
   font-size: 13px;
 }
 
+.course-start :deep(.term-help) {
+  width: 32px;
+  height: 32px;
+}
+
 @media (max-width: 640px) {
   .upload-page {
-    padding-block: 34px 52px;
+    padding-block: 24px 52px;
+    gap: 16px;
   }
 
   .selected-file,

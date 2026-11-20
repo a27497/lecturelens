@@ -21,7 +21,7 @@ vi.mock("../api/embeddedSubtitles", () => ({ probeTaskEmbeddedSubtitles: vi.fn()
 vi.mock("../api/runtimeConfiguration", () => ({ fetchPublicRuntimeConfiguration: vi.fn() }));
 const frozen = { version: 1, kind: "segments", policy: "strict", revision: 1, evidence_ids: ["e1"] };
 const Agent = defineComponent({
-  props: ["taskId"], emits: ["seek", "accessFailure", "frozenScope"],
+  props: ["taskId", "status", "learningReady"], emits: ["seek", "accessFailure", "frozenScope"],
   setup(_props, { emit }) { const text = ref(""); onMounted(() => emit("frozenScope", frozen)); return { text }; },
   template: `<div class="mock-agent"><input v-model="text" aria-label="目标草稿" /><button @click="$emit('seek', 2000, { evidenceId: 'e1', revision: 1 })">回看来源</button><button @click="$emit('accessFailure')">核对权限</button></div>`,
 });
@@ -47,10 +47,25 @@ beforeEach(() => {
 });
 async function open(path = "/tasks/one?view=agent&at=1000") {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/tasks", component: { template: "<div />" } }, { path: "/tasks/:taskId", component: { template: "<div />" } }] });
-  await router.push(path); await router.isReady();
+  const target = new URL(path, "http://localhost");
+  if (!target.searchParams.has("layout")) target.searchParams.set("layout", "continuous");
+  await router.push(target.pathname + target.search); await router.isReady();
   const wrapper = mount(TaskDetailView, { attachTo: document.body, global: { plugins: [createPinia(), router], stubs } });
   await flushPromises(); return { wrapper, router };
 }
+it("passes course detail readiness to Study until the first live task event", async () => {
+  vi.mocked(fetchTaskDetail).mockImplementation(async taskId => ({ taskId, status: "RUNNING", learningReady: false } as never));
+  let publish!: () => void;
+  vi.mocked(connectTaskEvents).mockImplementation(async options => {
+    publish = () => options.onMessage({ event: "progress", data: { taskId: options.taskId, status: "RUNNING", learningReady: true } } as never);
+  });
+  const { wrapper } = await open();
+  expect(wrapper.getComponent(Agent).props()).toMatchObject({ status: "RUNNING", learningReady: false });
+  publish();
+  await flushPromises();
+  expect(wrapper.getComponent(Agent).props()).toMatchObject({ status: "RUNNING", learningReady: true });
+  wrapper.unmount();
+});
 it("moves the same reader between layouts and preserves the same learning instance during source review", async () => {
   const { wrapper, router } = await open();
   const goal = wrapper.get<HTMLInputElement>('.mock-agent input'); const node = goal.element;
@@ -96,7 +111,7 @@ it("ignores the old course's late denial and remounts drafts only for the new co
   let deny!: (reason: unknown) => void;
   vi.mocked(fetchTaskDetail).mockImplementationOnce(() => new Promise((_resolve, reject) => { deny=reject; }));
   await wrapper.findAll('.mock-agent button')[1]!.trigger('click'); await flushPromises();
-  await router.push('/tasks/two?view=agent'); await flushPromises(); deny({ response: { status: 404 } }); await flushPromises();
+  await router.push('/tasks/two?view=agent&layout=continuous'); await flushPromises(); deny({ response: { status: 404 } }); await flushPromises();
   expect(wrapper.find('.course-unavailable').exists()).toBe(false); expect(wrapper.get<HTMLInputElement>('.mock-agent input').element.value).toBe('');
   wrapper.unmount();
 });
@@ -189,7 +204,7 @@ it("a rapid layout round trip supersedes its queued URL change", async () => {
   const toggle = wrapper.get<HTMLButtonElement>('.layout-switch').element;
   toggle.click(); toggle.click(); await flushPromises();
   expect(wrapper.get('.layout-switch').text()).toBe('经典布局');
-  expect(router.currentRoute.value.query.layout).toBeUndefined();
+  expect(router.currentRoute.value.query.layout).toBe("continuous");
   wrapper.unmount();
 });
 

@@ -32,6 +32,21 @@ describe("course Tutor", () => {
     expect(w.text()).toContain("BFS explores levels");
     expect(createTutorSession).not.toHaveBeenCalled(); expect(submitTutorTurn).not.toHaveBeenCalled();
   });
+  it("keeps the restore active when a learner starts typing before history arrives", async () => {
+    let resolveHistory!: (value: TutorView) => void;
+    vi.mocked(getTutorSession).mockImplementationOnce(() => new Promise(resolve => { resolveHistory = resolve; }));
+    const w = open();
+    await flushPromises();
+    expect(w.get("header button").attributes("disabled")).toBeDefined();
+    await w.get("textarea").setValue("Draft while restoring");
+    await w.get("form").trigger("submit");
+    expect(submitTutorTurn).not.toHaveBeenCalled();
+    resolveHistory(initial);
+    await flushPromises();
+    expect(w.get("header button").attributes("disabled")).toBeUndefined();
+    expect(w.get("textarea").element.value).toBe("Draft while restoring");
+    expect(w.text()).toContain("BFS explores levels");
+  });
   it("discloses DeepSeek inputs before the first trial question", async () => {
     vi.mocked(listTutorSessions).mockResolvedValue({ sessions: [], revision: 7, provider_mode: "deepseek-flash" });
     const w = open(); await flushPromises();

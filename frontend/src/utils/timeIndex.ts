@@ -1,7 +1,11 @@
+export function isValidTimeRange(start: number, end: number) {
+  return Number.isFinite(start) && Number.isFinite(end) && start >= 0 && end > start;
+}
+
 /** Half-open intervals; overlaps prefer the latest start, then original input order. */
 export function createTimeIndex<T>(items: readonly T[], start: (item: T) => number, end: (item: T) => number) {
   const ranges = items.map((item, order) => ({ item, order, start: start(item), end: end(item) }))
-    .filter(r => Number.isFinite(r.start) && Number.isFinite(r.end) && r.start >= 0 && r.end > r.start)
+    .filter(r => isValidTimeRange(r.start, r.end))
     .sort((a, b) => a.start - b.start || b.order - a.order);
   const times = [...new Set(ranges.flatMap(r => [r.start, r.end]))].sort((a, b) => a - b);
   const heap: number[] = [];

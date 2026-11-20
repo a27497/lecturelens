@@ -185,8 +185,16 @@ it("keeps the verified reference distinct from a later playback position", async
     { segmentIndex: 1, startMillis: 0, endMillis: 1000, language: "en", sourceText: "cited passage" },
     { segmentIndex: 2, startMillis: 1000, endMillis: 2000, language: "en", sourceText: "later playback" },
   ];
-  const wrapper = shallowMount(CourseContentPanel, { props: { taskId: "course", result: data, view: "timeline", positionMs: 100, referenceMs: 100 } });
+  const wrapper = shallowMount(CourseContentPanel, {
+    props: { taskId: "course", result: data, view: "timeline", positionMs: 100, referenceMs: 100 },
+    global: { stubs: { "el-button": { template: "<button><slot /></button>" } } },
+  });
   expect(wrapper.get('[data-reference=true]').text()).toContain('cited passage');
+  expect(wrapper.get('[data-reference=true] button').text()).toBe('跳到视频');
+  await wrapper.setProps({ referenceJumpInHeader: true });
+  expect(wrapper.find('[data-reference=true] button').exists()).toBe(false);
+  await wrapper.get('[data-segment="2"] button').trigger("click");
+  expect(wrapper.emitted("seek")).toEqual([[1000]]);
   await wrapper.setProps({ positionMs: 1200 });
   expect(wrapper.get('[aria-current=true]').text()).toContain('later playback');
   expect(wrapper.get('[data-reference=true]').text()).toContain('cited passage');

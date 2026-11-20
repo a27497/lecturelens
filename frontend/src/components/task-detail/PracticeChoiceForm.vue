@@ -4,12 +4,29 @@ import { studyCommand } from '../../api/study';
 import type { PracticeQuestion, StudyAttempt, StudyCommand } from '../../api/study';
 import { mayHaveLostCourseAccess } from '../../api/courseAccess';
 import { randomUuid } from '../../utils/randomUuid';
-import { formatMillisRange } from '../../utils/time';
+import { formatMillisRange, formatMillisToClock } from '../../utils/time';
+import { readDemoPracticeExplanation } from '../../api/round3Demo';
 import type { EvidenceSeekContext } from './evidenceSeekGuard';
-const props = defineProps<{ taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number; question: PracticeQuestion; attempt?: StudyAttempt; sourceRevision?: number }>();
+const props = defineProps<{ taskId: string; sessionId: string; runId: string; artifactId: string; questionIndex: number; question: PracticeQuestion; attempt?: StudyAttempt; sourceRevision?: number; lesson?: boolean; demoPractice?: boolean }>();
 const emit = defineEmits<{ saved: [attempt: StudyAttempt]; draftChange: [dirty: boolean]; accessFailure: []; seek: [milliseconds: number, context: EvidenceSeekContext] }>();
 const selected = ref('');
 const latest = ref<StudyAttempt>();
+const explanation = ref("");
+const explanationLoading = ref(false);
+const explanationError = ref("");
+let explanationRequest: AbortController | undefined;
+async function explain() {
+  if (!props.demoPractice || !latest.value?.choice_result || explanationLoading.value) return;
+  explanationRequest?.abort();
+  const request = new AbortController();
+  explanationRequest = request;
+  explanationLoading.value = true;
+  explanationError.value = "";
+  try { explanation.value = await readDemoPracticeExplanation(props.artifactId, props.questionIndex, request.signal); }
+  catch { if (!request.signal.aborted) explanationError.value = "解析暂时无法打开，请重试。"; }
+  finally { if (!request.signal.aborted) explanationLoading.value = false; }
+}
+const clock = (value: number) => formatMillisToClock(value).replace(/^00:/, "");
 const saving = ref(false), loadingHistory = ref(false);
 const message = ref('');
 const history = ref<StudyAttempt[] | null>(null);
@@ -22,6 +39,7 @@ const scope = () => ({ session_id: props.sessionId, run_id: props.runId, artifac
 const optionText = (id: string) => props.question.options?.find(o => o.id === id)?.text ?? id;
 watch(dirty, value => emit('draftChange', value), { immediate: true });
 watch(() => [props.taskId, props.sessionId, props.runId, props.artifactId, props.questionIndex], () => {
+  explanationRequest?.abort(); explanation.value = ''; explanationError.value = ''; explanationLoading.value = false;
   generation++; pending = null; latest.value = props.attempt; selected.value = props.attempt?.selected_option_id ?? '';
   history.value = null; nextBefore.value = null; message.value = ''; saving.value = false; loadingHistory.value = false;
 }, { immediate: true });
@@ -32,10 +50,11 @@ watch(() => props.attempt, value => {
   latest.value = value; pending = null; history.value = null;
   message.value = hasDraft ? '服务器已有新版作答；你的未提交选择仍保留，请核对后再提交。' : '';
 });
-onBeforeUnmount(() => { generation++; });
+onBeforeUnmount(() => { generation++; explanationRequest?.abort(); });
 function accept(attempt: StudyAttempt) {
   latest.value = attempt; pending = null; history.value = null; emit('saved', attempt);
-  message.value = '选择与判分结果已保存，刷新后可以回看。';
+  message.value = props.lesson ? '答案已保存。' : '选择与判分结果已保存，刷新后可以回看。';
+  if (props.demoPractice && !explanation.value) void explain();
 }
 async function submit() {
   if (!canSubmit.value) return;
@@ -77,14 +96,49 @@ async function showHistory(more = false) {
 defineExpose({ showHistory });
 </script>
 <template>
-  <div class="practice-choice">
+  <div v-if="lesson" class="practice-choice choice-lesson">
+    <fieldset :disabled="saving"><legend class="sr-only">第 {{ questionIndex + 1 }} 题选项 · 单选</legend>
+      <label v-for="(option, index) in question.options" :key="option.id" class="choice-option" :class="{ selected: selected === option.id }">
+        <strong aria-hidden="true">{{ String.fromCharCode(65 + index) }}</strong><span>{{ option.text }}</span>
+        <input v-model="selected" type="radio" :name="`${artifactId}:${questionIndex}`" :value="option.id" />
+      </label>
+    </fieldset>
+    <button class="choice-submit" type="button" :disabled="!canSubmit" @click="submit">
+      {{ saving ? '正在保存…' : '提交答案' }} <span aria-hidden="true">→</span>
+    </button>
+    <article v-if="latest?.choice_result" class="choice-result" :class="{ correct: latest.choice_result.is_correct }"
+      aria-label="选择题判分结果" aria-live="polite">
+      <h4>{{ latest.choice_result.is_correct ? '答对了' : '再想一想' }}</h4>
+      <p v-if="dirty">当前选项尚未提交。以下是上次答案的解析。</p>
+      <p>正确选项：{{ optionText(latest.choice_result.correct_option_id) }}</p>
+      <p v-if="explanation">{{ explanation }}</p>
+      <p v-if="explanationError" role="status">{{ explanationError }}</p>
+      <button v-if="demoPractice && !explanation" type="button" :disabled="explanationLoading" @click="explain">
+        {{ explanationLoading ? '正在加载解析…' : '查看解析' }}
+      </button>
+      <details v-if="latest.choice_result.citations.length"><summary>核对课程出处</summary>
+        <div v-for="citation in latest.choice_result.citations" :key="citation.evidence_id">
+          <blockquote>{{ citation.text }}</blockquote>
+          <button type="button" @click="emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">回看 {{ clock(citation.start_ms) }}</button>
+        </div>
+      </details>
+      <button v-if="!demoPractice" type="button" :disabled="loadingHistory" @click="showHistory()">作答记录</button>
+    </article>
+    <p v-if="message" role="status">{{ message }}</p>
+    <div v-if="history" class="answer-history">
+      <h4>作答记录</h4>
+      <article v-for="entry in history" :key="entry.attempt_id"><p>第 {{ entry.version }} 次 · {{ entry.answer_text }}</p></article>
+      <button v-if="nextBefore" type="button" :disabled="loadingHistory" @click="showHistory(true)">更早的作答</button>
+    </div>
+  </div>
+  <div v-else class="practice-choice">
     <fieldset :disabled="saving"><legend>第 {{ questionIndex + 1 }} 题选项 · 单选</legend>
       <label v-for="option in question.options" :key="option.id" class="choice-option"><input v-model="selected" type="radio" :name="`${artifactId}:${questionIndex}`" :value="option.id" /> <strong>{{ option.id }}.</strong> {{ option.text }}</label>
     </fieldset>
     <div class="answer-actions"><el-button type="primary" :disabled="!canSubmit" :loading="saving" @click="submit">提交并判分</el-button><span role="status">{{ dirty ? '有未提交的选择' : latest ? `已保存第 ${latest.version} 版` : '尚未选择，未判分' }}</span><el-button v-if="latest" :loading="loadingHistory" @click="showHistory()">修改记录</el-button></div>
     <article v-if="latest?.choice_result" class="choice-result" aria-label="选择题判分结果" aria-live="polite">
       <h4>第 {{ latest.version }} 版 · {{ latest.choice_result.is_correct ? '正确' : '错误' }}</h4>
-      <p>程序对照本题答案键判分，不代表掌握程度。</p><p>本版选择：{{ latest.selected_option_id }}. {{ optionText(latest.selected_option_id!) }}</p>
+      <p>结果按本题答案判定。</p><p>本版选择：{{ latest.selected_option_id }}. {{ optionText(latest.selected_option_id!) }}</p>
       <p v-if="dirty">以下结果仅对应已保存第 {{ latest.version }} 版；当前选择尚未提交。</p>
       <p class="correct-option">正确选项：{{ latest.choice_result.correct_option_id }}. {{ optionText(latest.choice_result.correct_option_id) }}</p>
       <div v-for="citation in latest.choice_result.citations" :key="citation.evidence_id" class="choice-source"><blockquote>{{ citation.text }}</blockquote><el-button @click="emit('seek', citation.start_ms, { evidenceId: citation.evidence_id, revision: sourceRevision })">{{ formatMillisRange(citation.start_ms, citation.end_ms) }} · 回看判分依据</el-button></div>
@@ -95,4 +149,19 @@ defineExpose({ showHistory });
 </template>
 <style scoped>
 .practice-choice { display: grid; gap: 12px; } fieldset { display: grid; gap: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 12px; min-width: 0; } legend { font-size: 13px; } .choice-option { display: flex; gap: 8px; padding: 10px; border-radius: var(--radius-sm); background: var(--color-canvas); line-height: 1.7; overflow-wrap: anywhere; } .choice-option strong { flex-shrink: 0; white-space: nowrap; } .choice-option input { flex-shrink: 0; margin-top: 6px; } .answer-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; } .choice-result,.answer-history { padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); } p,blockquote { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; } blockquote { border-left: 3px solid var(--color-border); padding-left: 12px; margin: 10px 0; }
+
+.choice-lesson fieldset { padding: 0; margin: 0; border: 0; gap: 8px; }
+.choice-lesson .choice-option { align-items: center; gap: 11px; padding: 10px 12px; min-height: 46px; border: 1px solid var(--color-border); border-radius: 9px; background: var(--color-canvas); cursor: pointer; }
+.choice-lesson .choice-option.selected { background: var(--color-brand-soft); border-color: var(--color-brand); }
+.choice-lesson .choice-option strong { width: 24px; height: 24px; display: inline-grid; place-items: center; border-radius: 6px; font-size: 13px; color: var(--color-brand); }
+.choice-lesson .selected strong { color: white; background: var(--color-brand); }
+.choice-lesson .choice-option input { margin: 0 0 0 auto; accent-color: var(--color-brand); }
+.choice-lesson button { border: 0; border-radius: 7px; background: transparent; color: var(--color-brand); padding: 7px 9px; font: inherit; font-weight: 650; cursor: pointer; }
+.choice-lesson .choice-submit { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--color-brand); color: white; min-height: 46px; }
+.choice-lesson .choice-submit:disabled { background: var(--color-surface-subtle); color: var(--color-ink-soft); cursor: default; }
+.choice-lesson .choice-result { background: var(--color-evidence-surface); }
+.choice-lesson .choice-result.correct { background: var(--color-success-surface); border-color: var(--color-success); }
+.choice-lesson .choice-result h4 { margin: 0; }
+.choice-lesson .choice-result p { margin: 5px 0; }
+.choice-lesson summary { cursor: pointer; color: var(--color-brand); }
 </style>

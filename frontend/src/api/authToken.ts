@@ -1,12 +1,14 @@
-export const ACCESS_TOKEN_KEYS = [
+const round3 = import.meta.env.VITE_ROUND3_DEMO === "true";
+
+export const ACCESS_TOKEN_KEYS = round3 ? ["lecturelens.round3.accessToken"] : [
   "courselingo.accessToken",
   "courselingo:accessToken",
   "accessToken",
   "auth.accessToken",
 ];
 
-export const REFRESH_TOKEN_KEY = "courselingo.refreshToken";
-export const USER_EMAIL_KEY = "courselingo.userEmail";
+export const REFRESH_TOKEN_KEY = round3 ? "lecturelens.round3.refreshToken" : "courselingo.refreshToken";
+export const USER_EMAIL_KEY = round3 ? "lecturelens.round3.userEmail" : "courselingo.userEmail";
 
 let sessionToken: string | undefined;
 let sessionEmail = "";

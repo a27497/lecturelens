@@ -20,9 +20,9 @@ withDefaults(
   align-items: center;
   min-height: 26px;
   padding: 0 9px;
-  border: 1px solid #d8ded9;
-  border-radius: 999px;
-  background: #f4f6f4;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
   color: var(--color-ink-soft);
   font-size: 12px;
   font-weight: 680;
@@ -30,26 +30,22 @@ withDefaults(
 }
 
 .status-badge--progress {
-  border-color: #b9d2c8;
   background: var(--color-brand-soft);
   color: var(--color-brand-strong);
 }
 
 .status-badge--success {
-  border-color: #a8cab9;
-  background: #edf6f0;
+  background: var(--color-success-surface);
   color: var(--color-success);
 }
 
 .status-badge--warning {
-  border-color: #ddc6a9;
-  background: #fbf5ec;
+  background: var(--color-evidence-surface);
   color: var(--color-warning);
 }
 
 .status-badge--danger {
-  border-color: #e0b9b6;
-  background: #fbefee;
+  background: var(--color-danger-surface);
   color: var(--color-danger);
 }
 </style>

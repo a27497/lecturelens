@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AnalysisTaskStatus } from "../../types/task";
 import { getTaskStatusLabel, getTaskStatusTagType } from "../../utils/taskStatus";
+import StatusBadge from "../ui/StatusBadge.vue";
 import { courseLearnable } from "./workspace";
 
 const props = defineProps<{
@@ -27,12 +28,19 @@ defineEmits<{
   <header class="workspace-header" :class="{ 'workspace-header--compact': compact, 'workspace-header--attention': canCancel || canRetry }">
     <div class="workspace-header__copy">
       <RouterLink class="workspace-header__back" to="/tasks">← 返回我的课程</RouterLink>
-      <h1 class="workspace-header__title" :title="courseName || undefined">{{ courseName || "课程学习" }}</h1>
+      <div class="workspace-header__title-row">
+        <h1 class="workspace-header__title" :title="courseName || undefined">{{ courseName || "课程学习" }}</h1>
+        <StatusBadge
+          v-if="compact && status"
+          :tone="status === 'SUCCEEDED' ? 'success' : status === 'FAILED' ? 'danger' : canCancel ? 'progress' : 'neutral'"
+          :label="status === 'SUCCEEDED' ? '材料已就绪' : courseLearnable(status, learningReady) ? '字幕可学习 · 资料准备中' : getTaskStatusLabel(status)"
+        />
+      </div>
       <span v-if="compact && demoMode" class="workspace-mode">本地演示 · 无外部 AI</span>
       <p v-if="!compact">看课、回看来源，继续你的提问与练习。</p>
     </div>
     <div class="workspace-header__actions" :class="{ 'is-ready': courseLearnable(props.status, props.learningReady) }" aria-label="课程操作">
-      <el-tag :type="getTaskStatusTagType(props.status)" effect="plain">
+      <el-tag v-if="!compact" :type="getTaskStatusTagType(props.status)" effect="plain">
         {{ props.status === "SUCCEEDED" ? "材料已就绪" : courseLearnable(props.status, props.learningReady) ? "可以开始学习 · 资料后台生成中" : props.status ? getTaskStatusLabel(props.status) : "等待处理" }}
       </el-tag>
       <component :is="compact ? 'details' : 'div'" class="course-controls" :open="compact && (canCancel || canRetry)">
@@ -62,54 +70,23 @@ defineEmits<{
 </template>
 
 <style scoped>
-.workspace-header.workspace-header--compact { align-items: center; padding-bottom: 12px; }
-.workspace-header--compact h1 { font-size: 24px; }
-.workspace-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--color-border);
-}
-.workspace-header__copy { display: grid; gap: 7px; min-width: 0; }
-/* Long uploaded file names stay on one line; the title attribute keeps the full name. */
-.workspace-header__title { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.workspace-header__back { width: fit-content; color: var(--color-brand); font-size: 14px; font-weight: 650; text-decoration: none; }
-.workspace-header h1 { margin: 0; color: var(--color-ink); font-size: clamp(24px, 2.5vw, 30px); letter-spacing: -0.03em; }
-.workspace-header p { margin: 0; color: var(--color-ink-soft); }
-.workspace-header__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
-@media (max-width: 760px) {
-  .workspace-header { align-items: stretch; flex-direction: column; gap: 10px; }
-  .workspace-header p { display: none; }
-  .workspace-header h1 { font-size: 23px; }
-  .workspace-header--compact { flex-direction: row; gap: 8px; }
-  .workspace-header--compact h1 { font-size: 22px; }
-  .workspace-header--compact .workspace-header__actions { gap: 6px; }
-  .workspace-header__actions { justify-content: flex-start; }
-}
-
-
-.workspace-header.workspace-header--compact { padding-bottom: 12px; gap: 12px; }
-.workspace-header--compact .workspace-header__copy { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
-.workspace-header--compact .workspace-header__back { font-size: 13px; }
-.workspace-header--compact h1 { font-size: 20px; font-weight: 650; }
-.workspace-mode { color: var(--color-ink-soft); font-size: 12px; }
-.workspace-header__actions > .el-tag { flex-shrink: 0; }
-.course-controls { position: relative; }
-.course-controls summary { cursor: pointer; padding: 8px; font-size: 13px; color: var(--color-ink-soft); }
-.course-controls[open] { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
-.course-controls[open] > summary { flex-basis: 100%; }
-.course-controls .el-button + .el-button { margin-left: 0; }
-@media (max-width: 760px) {
-  .workspace-header.workspace-header--compact { align-items: flex-start; }
-  .workspace-header--compact .workspace-header__copy { gap: 4px 10px; }
-  .workspace-header--compact h1 { font-size: 18px; }
-  .workspace-header--compact .workspace-mode { flex-basis: 100%; }
-  .workspace-header--compact .workspace-header__actions.is-ready > .el-tag { display: none; }
-  .course-controls summary { white-space: nowrap; }
-  .workspace-header.workspace-header--attention { flex-direction: column; align-items: stretch; }
-  .workspace-header--attention .workspace-header__actions { justify-content: flex-start; }
-  .workspace-header--attention .course-controls[open] { flex: 1 0 100%; width: 100%; box-sizing: border-box; }
+.workspace-header { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
+.workspace-header--compact { align-items: center; border-block-end: 0; padding-bottom: 0; }
+.workspace-header__copy { display: grid; gap: 6px; min-width: 0; }
+.workspace-header__title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+.workspace-header__back { width: fit-content; color: var(--color-brand-strong); font-size: 14px; font-weight: 650; text-decoration: none; }
+.workspace-header h1 { margin: 0; color: var(--color-ink); font-size: clamp(25px, 3vw, 38px); line-height: 1.18; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.workspace-header p, .workspace-mode { margin: 0; color: var(--color-ink-soft); }
+.workspace-mode { font-size: 13px; }
+.workspace-header__actions, .course-controls[open] { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.course-controls summary { width: fit-content; cursor: pointer; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-ink); font-size: 14px; }
+.course-controls[open] { padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.course-controls .el-button + .el-button { margin-inline-start: 0; }
+@media (max-width: 640px) {
+  .workspace-header { align-items: flex-start; gap: 8px 12px; }
+  .workspace-header__copy { flex: 1 1 min(210px, 100%); }
+  .workspace-header--attention .workspace-header__actions { flex-basis: 100%; }
+  .course-controls summary, .course-controls :deep(button) { min-height: 44px; }
+  .course-controls summary { padding-block: 12px; }
 }
 </style>

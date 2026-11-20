@@ -9,6 +9,7 @@ import {
   toReadableBatchDeleteError,
   toReadableTaskError,
 } from "../api/task";
+import { loadRound3Course, round3Course, round3Enabled } from "../api/round3Demo";
 import EmptyState from "../components/ui/EmptyState.vue";
 import PageHeading from "../components/ui/PageHeading.vue";
 import SectionPanel from "../components/ui/SectionPanel.vue";
@@ -16,7 +17,7 @@ import StatusBadge from "../components/ui/StatusBadge.vue";
 import type { TaskSummaryResponse } from "../types/task";
 import { lastCourseLocationQuery, readLastCourseLocation } from "../components/task-detail/lastCourseLocation";
 import type { LastCourseLocation } from "../components/task-detail/lastCourseLocation";
-import { workspaceLabel } from "../components/task-detail/workspace";
+import { courseLearnable, courseStageText, workspaceLabel } from "../components/task-detail/workspace";
 import { useAuthStore } from "../stores/auth";
 import { toUserFriendlyError } from "../utils/errorMessage";
 import { formatApiTimestamp, formatMillisToClock, parseApiTimestamp } from "../utils/time";
@@ -52,9 +53,12 @@ const openingTaskId = ref("");
 const failedOpeningTaskId = ref("");
 const retryingTaskId = ref("");
 const errorMessage = ref("");
+const loaded = ref(false);
 const tasks = ref<TaskSummaryResponse[]>([]);
 const savedLocations = shallowRef(new Map<string, LastCourseLocation>());
 const total = ref(0);
+const page = ref(1);
+const pageCount = computed(() => Math.max(1, Math.ceil(total.value / MAX_TASK_PAGE_SIZE)));
 const activeGroup = ref<TaskStatusGroup>("ALL");
 const batchMode = ref(false);
 const deleting = ref(false);
@@ -76,7 +80,22 @@ const courseCards = computed(() => filteredTasks.value.map(task => ({
   task,
   title: courseTitle(task),
   location: savedLocations.value.get(task.taskId) ?? null,
+  demo: round3Course.value?.taskId === task.taskId ? round3Course.value : undefined,
 })));
+
+const emptyLibrary = computed(() => loaded.value && !errorMessage.value && total.value === 0);
+const featuredCourse = computed(() => {
+  if (page.value !== 1 || batchMode.value || activeGroup.value !== "ALL") return undefined;
+  const resumed = courseCards.value.reduce<(typeof courseCards.value)[number] | undefined>((latest, card) => {
+    if (!card.location) return latest;
+    return !latest || (card.location.visitedAt ?? 0) > (latest.location?.visitedAt ?? 0) ? card : latest;
+  }, undefined);
+  return resumed ?? courseCards.value.find(({ task }) => courseLearnable(task.status, task.learningReady));
+});
+const displayedCards = computed(() => {
+  const featured = featuredCourse.value;
+  return featured ? [featured, ...courseCards.value.filter(card => card !== featured)] : courseCards.value;
+});
 
 const hasRunningTasks = computed(() => tasks.value.some((task) => isRunningTaskStatus(task.status)));
 const selectedCount = computed(() => selectedTaskIds.value.size);
@@ -102,28 +121,15 @@ const filterCounts = computed<Record<TaskStatusGroup, number>>(() => {
   }
   return counts;
 });
-
-const emptyText = computed(() => {
-  switch (activeGroup.value) {
-    case "FAILED":
-      return "还没有处理失败的课程。";
-    case "SUCCEEDED":
-      return "还没有处理完成的课程。";
-    case "RUNNING":
-      return "还没有正在处理的课程。";
-    case "CANCELED":
-      return "还没有已取消的课程。";
-    case "ALL":
-    default:
-      return "还没有上传课程视频。";
-  }
-});
+const visibleFilters = computed(() => TASK_FILTERS.filter(filter =>
+  filter.value === "ALL" || filterCounts.value[filter.value] > 0));
 
 onMounted(() => {
   componentActive = true;
   window.addEventListener("storage", refreshSavedLocations);
   window.addEventListener("focus", refreshSavedLocations);
   void loadTasks();
+  if (round3Enabled) void loadRound3Course().catch(() => {});
 });
 
 onBeforeUnmount(() => {
@@ -159,12 +165,21 @@ async function loadTasks(options: { silent?: boolean } = {}) {
   }
   errorMessage.value = "";
   try {
-    const result = await fetchTasks(1, MAX_TASK_PAGE_SIZE, "ALL");
+    const result = await fetchTasks(page.value, MAX_TASK_PAGE_SIZE, "ALL");
     if (!componentActive || requestVersion !== latestTaskRequestVersion) {
       return;
     }
-    tasks.value = result.items;
     total.value = result.total;
+    if (page.value > pageCount.value) {
+      page.value = pageCount.value;
+      await loadTasks(options);
+      return;
+    }
+    tasks.value = result.items;
+    if (activeGroup.value !== "ALL" && filterCounts.value[activeGroup.value] === 0) {
+      activeGroup.value = "ALL";
+    }
+    loaded.value = true;
     reconcileSelection();
   } catch (error) {
     if (componentActive && requestVersion === latestTaskRequestVersion) {
@@ -177,6 +192,14 @@ async function loadTasks(options: { silent?: boolean } = {}) {
       loading.value = false;
     }
   }
+}
+
+function changePage(next: number) {
+  if (next < 1 || next > pageCount.value || deleting.value || loading.value) return;
+  page.value = next;
+  selectedTaskIds.value = new Set();
+  tasks.value = [];
+  void loadTasks();
 }
 
 function isTaskDeletable(task: TaskSummaryResponse): boolean {
@@ -195,6 +218,11 @@ function reconcileSelection() {
 
 function enterBatchMode() {
   batchMode.value = true;
+}
+
+function selectLibraryAction(command: "models" | "batch") {
+  if (command === "models") void router.push("/settings/models");
+  else enterBatchMode();
 }
 
 function exitBatchMode() {
@@ -309,6 +337,8 @@ function stopAutoRefresh() {
   autoRefreshTimer = undefined;
 }
 
+const lessonClock = (time: number) => formatMillisToClock(time).replace(/^00:/, "");
+
 function lastLocationText(location: LastCourseLocation): string {
   return `上次停在：${workspaceLabel(location.view)} · 视频 ${formatMillisToClock(location.at)}`;
 }
@@ -317,7 +347,7 @@ function refreshSavedLocations() {
   const userId = authStore.user?.userId;
   const locations = new Map<string, LastCourseLocation>();
   for (const task of tasks.value) {
-    if (task.status !== "SUCCEEDED") continue;
+    if (!courseLearnable(task.status, task.learningReady)) continue;
     const location = readLastCourseLocation(userId, task.taskId);
     if (location) locations.set(task.taskId, location);
   }
@@ -329,16 +359,20 @@ async function openTask(task: TaskSummaryResponse) {
   openingTaskId.value = task.taskId;
   failedOpeningTaskId.value = "";
   try {
-    const user = task.status === "SUCCEEDED" ? await authStore.loadCurrentUser().catch(() => null) : null;
+    const learnable = courseLearnable(task.status, task.learningReady);
+    const user = learnable ? await authStore.loadCurrentUser().catch(() => null) : null;
     if (!componentActive) return;
-    if (task.status === "SUCCEEDED" && !user) {
+    if (learnable && !user) {
       // Entering with default coordinates could overwrite a saved location when identity arrives.
       failedOpeningTaskId.value = task.taskId;
       return;
     }
     // Other tabs can save a new location after this card has rendered.
     const location = readLastCourseLocation(user?.userId, task.taskId);
-    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, ...(location ? { query: lastCourseLocationQuery(location) } : {}) });
+    const course = round3Course.value;
+    const query = location ? lastCourseLocationQuery(location)
+      : course?.taskId === task.taskId ? { at: String(course.positionMs) } : undefined;
+    await router.push({ path: `/tasks/${encodeURIComponent(task.taskId)}`, query });
   } finally {
     openingTaskId.value = "";
   }
@@ -405,7 +439,7 @@ function fallbackCopyText(text: string) {
 }
 
 function primaryActionText(task: TaskSummaryResponse, location: LastCourseLocation | null): string {
-  if (task.status === "SUCCEEDED") {
+  if (courseLearnable(task.status, task.learningReady)) {
     return location ? "继续学习" : "进入学习";
   }
   if (isRunningTaskStatus(task.status)) {
@@ -419,6 +453,7 @@ function courseStatusLabel(task: TaskSummaryResponse): string {
   if (status === "SUCCEEDED") {
     return "材料已就绪";
   }
+  if (courseLearnable(task.status, task.learningReady)) return "字幕可学习";
   if (status === "FAILED") {
     return "处理失败";
   }
@@ -443,44 +478,6 @@ function courseStatusTone(task: TaskSummaryResponse): "neutral" | "progress" | "
     return "warning";
   }
   return isRunningTaskStatus(status) ? "progress" : "neutral";
-}
-
-function readableStage(stage: string | null): string {
-  switch (stage) {
-    case "VALIDATE_TASK":
-    case "RESOLVE_UPLOADED_SOURCE":
-      return "正在读取视频";
-    case "EXTRACT_AUDIO":
-      return "正在提取音频";
-    case "TRANSCRIBE":
-    case "TRANSCRIBING":
-    case "ASR":
-    case "PERSIST_SUBTITLES":
-      return "正在生成字幕";
-    case "TRANSLATE":
-    case "TRANSLATE_SUBTITLES":
-    case "TRANSLATING":
-      return "正在生成翻译";
-    case "GENERATE_LEARNING_PACKAGE":
-      return "正在生成学习资料";
-    case "GENERATE_ARTIFACTS":
-      return "正在生成下载文件";
-    case "WRITE_AI_CALL_RECORD":
-      return "正在保存处理结果";
-    case "DONE":
-      return "已完成";
-    case "FAILED":
-      return "处理失败";
-    default:
-      return stage ? "处理中" : "等待处理";
-  }
-}
-
-function courseSecondaryStatus(task: TaskSummaryResponse): string {
-  if (isRunningTaskStatus(task.status)) {
-    return readableStage(task.currentStage);
-  }
-  return courseStatusLabel(task);
 }
 
 function courseTitle(task: TaskSummaryResponse): string {
@@ -538,30 +535,36 @@ function formatTime(value: string | null): string {
   <main class="task-list-page page-container">
     <PageHeading
       title="我的课程"
-      description="选择已就绪的课程，继续阅读、提问与练习。"
+      description="看课时遇到疑问，就从那一段问起。"
     >
-      <template #actions>
-        <RouterLink to="/upload">
-          <el-button type="primary" size="large">上传视频</el-button>
-        </RouterLink>
+      <template v-if="!emptyLibrary" #actions>
+        <RouterLink class="upload-link" to="/upload"><span aria-hidden="true">＋</span> 上传视频</RouterLink>
       </template>
     </PageHeading>
 
     <SectionPanel class="course-library">
-      <div class="task-list-toolbar">
-        <el-radio-group v-model="activeGroup" :disabled="deleting" class="task-list-toolbar__filters">
-          <el-radio-button v-for="filter in TASK_FILTERS" :key="filter.value" :value="filter.value">
+      <div v-if="loaded || errorMessage" class="task-list-toolbar">
+        <el-radio-group v-model="activeGroup" :disabled="deleting" class="task-list-toolbar__filters" aria-label="按课程状态筛选">
+          <el-radio-button v-for="filter in visibleFilters" :key="filter.value" :value="filter.value">
             {{ filter.label }} {{ filterCounts[filter.value] }}
           </el-radio-button>
         </el-radio-group>
         <div class="task-list-toolbar__actions">
           <el-button text :loading="loading || refreshing" :disabled="deleting" @click="loadTasks()">刷新</el-button>
           <el-button v-if="batchMode" :disabled="deleting" @click="exitBatchMode">退出批量管理</el-button>
-          <el-button v-else @click="enterBatchMode">批量管理</el-button>
+          <el-dropdown trigger="click" :disabled="deleting" @command="selectLibraryAction">
+            <el-button :disabled="deleting">更多操作 <span aria-hidden="true">⌄</span></el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="models">模型管理</el-dropdown-item>
+                <el-dropdown-item v-if="!batchMode && !emptyLibrary" command="batch">批量管理</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
 
-      <div v-if="batchMode" class="batch-management" aria-label="课程批量管理工具栏">
+      <div v-if="batchMode && !emptyLibrary" class="batch-management" aria-label="课程批量管理工具栏">
         <strong>已选择 {{ selectedCount }} 项</strong>
         <div class="batch-management__actions">
           <el-button :disabled="deleting || selectableFilteredTasks.length === 0" @click="selectAllCurrent">
@@ -573,7 +576,7 @@ function formatTime(value: string | null): string {
         </div>
       </div>
 
-      <p v-if="hasRunningTasks" class="auto-refresh-note">课程正在处理中，列表会自动更新。</p>
+      <p v-if="hasRunningTasks" class="auto-refresh-note">课程准备中 · 自动更新</p>
 
       <el-alert
         v-if="errorMessage"
@@ -583,19 +586,27 @@ function formatTime(value: string | null): string {
         type="error"
       />
 
-      <el-skeleton v-if="loading && tasks.length === 0" :rows="5" animated />
+      <div v-if="loading && tasks.length === 0" role="status">
+        <span>正在加载课程…</span>
+        <el-skeleton :rows="4" animated aria-hidden="true" />
+      </div>
       <EmptyState
-        v-else-if="filteredTasks.length === 0"
-        title="还没有课程视频"
-        :description="emptyText"
+        v-else-if="loaded && !errorMessage && filteredTasks.length === 0"
+        :class="{ 'library-empty': emptyLibrary }"
+        :title="emptyLibrary ? '还没有课程视频' : '当前列表没有符合条件的课程'"
+        :description="emptyLibrary ? '上传第一段课程视频，开始学习。' : '试试查看全部课程。'"
       >
-        <RouterLink to="/upload">
-          <el-button type="primary">上传第一门课程</el-button>
-        </RouterLink>
+        <RouterLink v-if="emptyLibrary" class="upload-link" to="/upload"><span aria-hidden="true">＋</span> 上传视频</RouterLink>
+        <el-button v-else @click="activeGroup = 'ALL'">查看全部课程</el-button>
       </EmptyState>
 
-      <div v-else class="task-list">
-        <article v-for="{ task, title, location } in courseCards" :key="task.taskId" class="course-item" :class="{ 'is-batch-mode': batchMode }">
+      <div v-else-if="filteredTasks.length" class="task-list">
+        <article
+          v-for="{ task, title, location, demo } in displayedCards"
+          :key="task.taskId"
+          class="course-item"
+          :class="{ 'is-batch-mode': batchMode, 'is-featured': featuredCourse?.task.taskId === task.taskId, 'is-resumed': featuredCourse?.task.taskId === task.taskId && location, 'is-demo-course': demo }"
+        >
           <div v-if="batchMode" class="course-item__selection" @click.stop>
             <el-tooltip
               :disabled="isTaskDeletable(task)"
@@ -613,25 +624,32 @@ function formatTime(value: string | null): string {
             </el-tooltip>
             <small v-if="!isTaskDeletable(task)">处理中课程请先取消处理</small>
           </div>
+          <img v-if="demo" class="course-cover" :src="demo.cover" alt="" width="320" height="180" />
           <div class="course-item__summary">
             <div class="course-item__title-row">
               <div>
-                <h2 class="course-item__name" :title="title">{{ title }}</h2>
-                <p>{{ task.status === 'SUCCEEDED' ? '可观看、提问与练习' : courseSecondaryStatus(task) }}</p>
-                <p v-if="location" class="course-item__resume">{{ lastLocationText(location) }}</p>
+                <p v-if="!demo && featuredCourse?.task.taskId === task.taskId" class="course-item__last">{{ location ? '上次学习' : '可以开始学习' }}</p>
+                <p v-if="demo" class="demo-course-series">{{ demo.series }}</p>
+                <h2 class="course-item__name" :title="demo?.title || title">{{ demo?.title || title }}</h2>
+                <p v-if="demo">{{ demo.description }}</p>
+                <p v-if="isRunningTaskStatus(task.status)">{{ courseStageText(task.currentStage ?? "", task.status) }}</p>
+                <p v-if="location && !demo" class="course-item__resume">{{ lastLocationText(location) }}</p>
               </div>
-              <StatusBadge :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
+              <StatusBadge v-if="!demo" :label="courseStatusLabel(task)" :tone="courseStatusTone(task)" />
             </div>
 
-            <div v-if="isRunningTaskStatus(task.status)" class="course-progress" aria-label="材料准备进度">
+            <div v-if="demo" class="demo-course-progress">
+              <span>已学 {{ demo.learningPercent }}%</span>
+              <progress :value="demo.learningPercent" max="100" aria-label="学习进度" />
+            </div>
+            <div v-if="isRunningTaskStatus(task.status) && task.progressPercent != null" class="course-progress" aria-label="材料准备进度">
               <small>材料准备</small>
               <el-progress
-                :percentage="task.progressPercent ?? 0"
+                :percentage="task.progressPercent"
                 :show-text="false"
                 :stroke-width="7"
-                :status="task.status === 'FAILED' ? 'exception' : task.status === 'SUCCEEDED' ? 'success' : undefined"
               />
-              <span>{{ task.progressPercent ?? 0 }}%</span>
+              <span>{{ task.progressPercent }}%</span>
             </div>
 
 
@@ -642,7 +660,7 @@ function formatTime(value: string | null): string {
               暂时无法确认登录账号，请重试打开课程。
             </p>
 
-            <details class="course-item__technical">
+            <details v-if="!demo" class="course-item__technical">
               <summary>材料信息与编号</summary>
             <dl class="course-item__meta">
               <div>
@@ -668,7 +686,8 @@ function formatTime(value: string | null): string {
 
           <div class="course-item__actions">
             <el-button type="primary" :loading="openingTaskId === task.taskId" @click="openTask(task)">
-              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : primaryActionText(task, location) }}
+              {{ failedOpeningTaskId === task.taskId ? "重试打开课程" : demo ? `继续学习 ${lessonClock(location?.at ?? demo.positionMs)}` : primaryActionText(task, location) }}
+              <span v-if="featuredCourse?.task.taskId === task.taskId" class="course-item__arrow" aria-hidden="true">→</span>
             </el-button>
             <el-button
               v-if="isRetryableTaskStatus(task.status)"
@@ -682,316 +701,75 @@ function formatTime(value: string | null): string {
         </article>
       </div>
 
-      <p v-if="total > 0" class="task-list-page__total">
-        当前显示 {{ filteredTasks.length }} 门课程，共 {{ total }} 门
-      </p>
+      <nav v-if="pageCount > 1" class="task-list-pagination" aria-label="课程列表分页">
+        <p>第 {{ page }} / {{ pageCount }} 页 · 筛选当前页的课程</p>
+        <el-button :disabled="page === 1 || loading || deleting" @click="changePage(page - 1)">上一页</el-button>
+        <el-button :disabled="page === pageCount || loading || deleting" @click="changePage(page + 1)">下一页</el-button>
+      </nav>
     </SectionPanel>
   </main>
 </template>
 
 <style scoped>
-.task-list-page {
-  display: grid;
-  gap: 28px;
-  padding-block: 46px 72px;
-}
+.task-list-page { display: grid; gap: 20px; padding-block: 36px 64px; }
+.task-list-page .course-library { display: grid; gap: 16px; border: 0; padding: 0; background: transparent; box-shadow: none; }
+.upload-link { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding-inline: 16px; border-radius: var(--radius-md); background: var(--color-brand); color: white; text-decoration: none; font-weight: 650; }
+.upload-link:hover { background: var(--color-brand-strong); }
+.library-empty { border-radius: var(--radius-lg); border-style: solid; background: var(--color-surface); }
+.task-list-toolbar, .batch-management, .task-list-pagination { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.task-list-toolbar { padding-block: 8px; border-block: 1px solid var(--color-border); }
+.task-list-toolbar__filters { display: flex; flex-wrap: wrap; gap: 4px; }
+.task-list-toolbar__filters :deep(.el-radio-button__inner) { border: 1px solid transparent; border-radius: var(--radius-md); padding: 10px 12px; background: transparent; }
+.task-list-toolbar__filters :deep(.is-active .el-radio-button__inner) { border-color: var(--color-border); color: var(--color-brand-strong); background: var(--color-brand-soft); box-shadow: none; }
+.task-list-toolbar__filters :deep(input:focus-visible + span) { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+.task-list-toolbar__actions, .batch-management__actions, .course-item__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.task-list-page :deep(.el-button + .el-button) { margin-inline-start: 0; }
+.batch-management { padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.auto-refresh-note, .task-list-pagination p, .course-item__selection small { margin: 0; color: var(--color-ink-soft); font-size: 13px; }
+.task-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); gap: 16px; }
+.course-item { display: flex; flex-direction: column; min-width: 0; gap: 16px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.course-item.is-featured { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; grid-column: 1 / -1; gap: 20px 36px; min-height: 178px; padding: clamp(18px, 3vw, 32px); border-color: var(--color-border-strong); border-inline-start: 5px solid var(--color-brand); background: var(--color-brand-soft); }
+.is-featured .course-item__name { font-size: clamp(22px, 3.2vw, 32px); letter-spacing: -.025em; }
+.is-featured .course-item__title-row { justify-content: flex-start; }
+.is-featured .course-item__title-row > div { flex: 0 1 auto; }
+.is-featured .course-item__actions { margin-top: 0; }
+.is-featured .course-item__actions .el-button { min-height: 44px; }
+.course-item__arrow { margin-inline-start: 8px; }
+.course-item__summary { display: grid; gap: 12px; min-width: 0; }
+.course-item__title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; }
+.course-item__title-row > div { flex: 1 1 150px; min-width: 0; }
+.course-item__name { margin: 0; color: var(--color-ink); font-size: 19px; line-height: 1.35; overflow-wrap: anywhere; }
+.course-item__title-row p { margin: 6px 0 0; color: var(--color-ink-soft); font-size: 14px; }
+.course-item__title-row .course-item__last { margin: 0 0 6px; color: var(--color-brand-strong); font-size: 13px; font-weight: 650; }
+.course-item__resume, .course-progress span { font-variant-numeric: tabular-nums; }
+.course-item__selection { display: flex; gap: 8px; align-items: center; }
+.course-progress { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; color: var(--color-ink-soft); font-size: 13px; }
+.course-item__failure { margin: 0; padding: 8px 12px; border-radius: var(--radius-md); background: var(--color-danger-surface); color: var(--color-danger); font-size: 14px; line-height: 1.6; }
+.course-item__technical { color: var(--color-ink-soft); font-size: 13px; }
+.course-item__technical summary { cursor: pointer; width: fit-content; }
+.course-item__technical dl { display: grid; gap: 4px; }
+.course-item__technical div { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.course-item__technical dd { margin: 0; }
+.course-item__technical button { border: 0; padding: 4px; background: transparent; color: var(--color-brand-strong); cursor: pointer; }
+.course-item__actions { margin-top: auto; }
+.task-list-pagination { justify-content: flex-start; }
 
-.course-library {
-  display: grid;
-  gap: 20px;
-}
-
-.task-list-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.task-list-toolbar__filters {
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.task-list-toolbar__actions,
-.batch-management__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
-.task-list-toolbar__actions :deep(.el-button),
-.batch-management__actions :deep(.el-button) {
-  margin-left: 0;
-}
-
-.batch-management {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-canvas);
-}
-
-.batch-management strong {
-  color: var(--color-ink);
-  font-size: 14px;
-}
-
-.auto-refresh-note,
-.task-list-page__total {
-  margin: 0;
-  color: var(--color-ink-muted);
-  font-size: 13px;
-}
-
-.task-list {
-  border-top: 1px solid var(--color-border);
-}
-
-.course-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 32px;
-  padding: 26px 2px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.course-item.is-batch-mode {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-}
-
-.course-item__selection {
-  display: grid;
-  align-content: start;
-  gap: 6px;
-  max-width: 170px;
-  padding-top: 2px;
-}
-
-.course-item__checkbox-target {
-  display: inline-flex;
-  align-items: center;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.course-item__selection small {
-  color: var(--color-ink-muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.course-item__summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-  min-width: 0;
-}
-
-.course-item__title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.course-item__title-row > div {
-  min-width: 0;
-  max-width: 100%;
-}
-
-/* Long uploaded file names stay on one line; the title attribute keeps the full name. */
-.course-item__name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.course-item h2 {
-  margin: 0;
-  color: var(--color-ink);
-  font-size: 18px;
-  letter-spacing: -0.015em;
-}
-
-.course-item__title-row p {
-  margin: 6px 0 0;
-  color: var(--color-ink-soft);
-  font-size: 14px;
-}
-
-.course-item__title-row .course-item__resume {
-  color: var(--color-brand);
-}
-
-.course-progress {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 42px;
-  align-items: center;
-  gap: 14px;
-  max-width: 720px;
-}
-
-.course-progress span {
-  color: var(--color-brand-strong);
-  font-size: 13px;
-  font-weight: 700;
-  text-align: right;
-}
-
-.course-item__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px 34px;
-  margin: 0;
-}
-
-.course-item__meta div {
-  display: grid;
-  gap: 4px;
-}
-
-.course-item__meta dt,
-.course-item__meta dd {
-  margin: 0;
-  font-size: 12px;
-}
-
-.course-item__meta dt {
-  color: var(--color-ink-muted);
-}
-
-.course-item__meta dd {
-  color: var(--color-ink-soft);
-  font-weight: 620;
-}
-
-.course-item__failure {
-  margin: 0;
-  padding: 10px 12px;
-  border-left: 2px solid var(--color-danger);
-  background: #fbf2f1;
-  color: var(--color-danger);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.course-item__technical {
-  color: var(--color-ink-muted);
-  font-size: 12px;
-}
-
-.course-item__technical summary {
-  cursor: pointer;
-}
-
-.course-item__technical div {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.course-item__technical code {
-  color: var(--color-ink-soft);
-}
-
-.course-item__technical button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-brand-strong);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.course-item__actions {
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-}
-
-.course-item__actions :deep(.el-button) {
-  min-width: 138px;
-  margin-left: 0;
-}
-
-@media (max-width: 760px) {
-  .task-list-page {
-    padding-block: 34px 52px;
-  }
-
-  .task-list-toolbar,
-  .course-item {
-    align-items: stretch;
-    grid-template-columns: 1fr;
-  }
-
-  .task-list-toolbar {
-    flex-direction: column;
-  }
-
-  .task-list-toolbar__actions,
-  .batch-management,
-  .batch-management__actions {
-    width: 100%;
-  }
-
-  .batch-management {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .batch-management__actions :deep(.el-button) {
-    flex: 1 1 140px;
-  }
-
-  .task-list-toolbar__filters {
-    width: 100%;
-  }
-
-  .course-item {
-    gap: 20px;
-  }
-
-  .course-item.is-batch-mode {
-    grid-template-columns: 1fr;
-  }
-
-  .course-item__selection {
-    max-width: none;
-  }
-
-  .course-item__title-row {
-    align-items: flex-start;
-    flex-direction: column-reverse;
-  }
-
-  .course-item__actions,
-  .course-item__actions :deep(.el-button) {
-    width: 100%;
-  }
-}
-
-
-.task-list-page .course-library { border: 0; padding: 0; background: transparent; box-shadow: none; }
-.course-progress { grid-template-columns: auto minmax(0, 1fr) 42px; }
-.course-progress small { color: var(--color-ink-soft); font-size: 12px; }
-.course-item { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 22px; margin-top: 14px; gap: 20px; }
-.task-list { border-top: 0; }
-.course-item__summary { gap: 12px; }
-.course-item__meta { gap: 10px 24px; }
-@media (max-width: 760px) {
-  .task-list-page { padding-top: 26px; gap: 20px; }
+@media (max-width: 640px) {
+  .task-list-page { padding-top: 24px; gap: 16px; }
+  .task-list { grid-template-columns: 1fr; }
   .course-item { padding: 16px; }
+  .course-item.is-featured { grid-template-columns: 1fr; gap: 10px; }
+  .task-list-page :deep(.el-button), .task-list-toolbar__filters :deep(.el-radio-button__inner) { min-height: 44px; }
+  .course-item__technical summary { display: list-item; padding-block: 12px; }
+}
+
+.course-item.is-demo-course { display: grid; grid-template-columns: minmax(240px, 38%) minmax(0, 1fr); align-items: center; gap: 20px; }
+.course-cover { width: 100%; height: auto; display: block; border-radius: 12px; grid-row: span 2; }
+.demo-course-series { color: var(--color-brand); font-size: 13px; font-weight: 650; }
+.demo-course-progress { display: flex; align-items: center; gap: 10px; color: var(--color-ink-soft); font-size: 13px; }
+.demo-course-progress progress { accent-color: var(--color-brand); height: 8px; width: 85px; }
+@media (max-width: 680px) {
+  .course-item.is-demo-course { grid-template-columns: 1fr; }
+  .course-cover { grid-row: auto; }
 }
 </style>

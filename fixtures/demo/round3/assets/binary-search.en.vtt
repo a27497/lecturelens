@@ -1,0 +1,41 @@
+WEBVTT
+
+s01
+00:00:00.000 --> 00:00:16.000
+Binary search needs sorted data. When the middle value is too small, everything to its left is too small as well. In an unsorted list, that shortcut does not work.
+
+s02
+00:00:16.000 --> 00:00:34.000
+Keep the remaining indices in a closed interval, from low to high. Both ends are still candidates. For seven items, start with low at zero and high at six.
+
+s03
+00:00:34.000 --> 00:00:48.000
+Choose the middle index by adding half the distance to low and rounding the distance down. This also avoids adding two potentially large indices together.
+
+s04
+00:00:48.000 --> 00:01:04.000
+After a comparison, return the middle index if it matches. If the value is too small, move low to mid plus one. If it is too large, move high to mid minus one.
+
+s05
+00:01:04.000 --> 00:01:14.000
+The middle value is twenty-one, which is smaller than thirty-four. Everything on the left, including twenty-one, can be ruled out.
+
+s06
+00:01:14.000 --> 00:01:24.000
+The next middle value is forty-two. It is too large, so rule it out and discard everything to its right.
+
+s07
+00:01:24.000 --> 00:01:36.000
+Only index four remains. Its value is thirty-four, so we return four. That took three comparisons.
+
+s08
+00:01:36.000 --> 00:01:52.000
+Each miss cuts the remaining range roughly in half. That is logarithmic growth. Even a million sorted items take at most twenty comparisons in this loop.
+
+s09
+00:01:52.000 --> 00:02:12.000
+Equal boundaries mean one candidate is left, so compare it. Stop with not found only when low is greater than high. Then the closed interval is empty.
+
+s10
+00:02:12.000 --> 00:02:32.000
+Do not leave mid inside the interval after a miss. With two candidates, the rounded middle can equal low. Setting low to mid would repeat the same comparison forever.

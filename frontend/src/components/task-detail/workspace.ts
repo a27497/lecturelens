@@ -1,11 +1,16 @@
 import type { TaskEventPayload } from "../../types/task";
 import { formatApiTimestamp } from "../../utils/time";
 
-export type CourseWorkspace = "tutor" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
+export type CourseWorkspace = "tutor" | "notes" | "flashcards" | "overview" | "content" | "study" | "qa" | "agent" | "files" | "technical";
+
+export const LEARNING_MODES = ["tutor", "notes", "agent", "flashcards"] as const;
+export type LearningWorkspace = (typeof LEARNING_MODES)[number] | "qa";
+export const DEFAULT_LEARNING_WORKSPACE = "agent";
 
 export const WORKSPACE_ITEMS: Array<{ value: CourseWorkspace; label: string }> = [
-  { value: "agent", label: "学习助手" },
   { value: "tutor", label: "Tutor 对话" },
+  { value: "notes", label: "个人笔记" },
+  { value: "agent", label: "学习助手" },
   { value: "flashcards", label: "闪卡复习" },
   { value: "overview", label: "概览" },
   { value: "content", label: "课程内容" },
@@ -14,6 +19,10 @@ export const WORKSPACE_ITEMS: Array<{ value: CourseWorkspace; label: string }> =
   { value: "files", label: "下载" },
   { value: "technical", label: "处理详情" },
 ];
+
+export function isLearningWorkspace(value: unknown): value is LearningWorkspace {
+  return value === "qa" || LEARNING_MODES.some(mode => mode === value);
+}
 
 export function workspaceLabel(value: CourseWorkspace, compact = true): string {
   if (compact && value === "content") return "课程材料";

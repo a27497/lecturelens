@@ -49,17 +49,19 @@ function formatEta(seconds: number | null): string {
 <template>
   <section class="upload-progress" aria-label="上传进度">
     <div class="upload-progress__header">
-      <strong>{{ statusText }}</strong>
-      <span>{{ progressPercent }}%</span>
+      <strong role="status">{{ statusText }}</strong>
+      <span v-if="totalBytes > 0 && (uploadedBytes > 0 || phase === 'uploading')">{{ progressPercent }}%</span>
     </div>
     <el-progress
+      v-if="totalBytes > 0 && (uploadedBytes > 0 || phase === 'uploading')"
+      aria-label="视频上传进度"
       :percentage="progressPercent"
       :show-text="false"
       :status="phase === 'success' ? 'success' : phase === 'error' ? 'exception' : undefined"
       :stroke-width="8"
     />
 
-    <dl class="upload-progress__metrics" aria-label="上传实时指标">
+    <dl v-if="phase === 'uploading' || (uploadedBytes > 0 && phase !== 'success')" class="upload-progress__metrics" aria-label="上传实时指标">
       <div>
         <dt>已上传</dt>
         <dd>{{ formatFileSize(uploadedBytes) }} / {{ formatFileSize(totalBytes) }}</dd>

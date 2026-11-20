@@ -2,10 +2,12 @@
 import { computed, ref, watch } from "vue";
 import { fetchCourseChapters, generateCourseChapters, toReadableCourseChapterError } from "../api/chapters";
 import type { CourseChapterResponse, CourseChapterUsage } from "../types/chapter";
-import { formatMillisRange } from "../utils/time";
+import { formatMillisRange, formatMillisToClock } from "../utils/time";
 
 const props = defineProps<{
   taskId: string;
+  compact?: boolean;
+  position?: number;
 }>();
 
 const emit = defineEmits<{
@@ -89,11 +91,26 @@ function hasUsageNumber(value: number | null): boolean {
 </script>
 
 <template>
-  <section class="course-chapters-panel" aria-label="课程章节">
+  <section v-if="compact" class="chapter-rail" aria-label="课程章节">
+    <h2>章节</h2>
+    <el-skeleton v-if="loading && !hasChapters" :rows="3" animated aria-label="正在加载章节" />
+    <p v-if="errorMessage" role="alert">{{ errorMessage }} <button type="button" @click="loadChapters">重试</button></p>
+    <p v-if="!loading && !hasChapters && !errorMessage">还没有章节。</p>
+    <button v-for="chapter in chapters" :key="chapterKey(chapter)" type="button"
+      :aria-current="(position ?? 0) >= chapter.startTimeMillis && (position ?? 0) < chapter.endTimeMillis ? 'true' : undefined"
+      @click="seekToChapter(chapter)">
+      <time>{{ formatMillisToClock(chapter.startTimeMillis).replace(/^00:/, "") }}</time>
+      {{ chapter.title }}
+    </button>
+    <button v-if="!loading && !hasChapters" type="button" :disabled="generating" @click="generateChapters">
+      {{ generating ? '正在生成章节…' : '生成章节' }}
+    </button>
+  </section>
+  <section v-else class="course-chapters-panel" aria-label="课程章节">
     <div class="course-chapters-panel__header">
       <div>
         <h3>课程章节</h3>
-        <p class="result-help">章节只在点击生成后更新。时间入口为视频定位，不代表已验证的 Evidence 引用。</p>
+        <p class="result-help">选择章节，回到对应的视频片段。</p>
       </div>
       <div class="course-chapters-panel__actions">
         <el-button :loading="loading" :disabled="generating" @click="loadChapters">刷新</el-button>
@@ -148,6 +165,12 @@ function hasUsageNumber(value: number | null): boolean {
 </template>
 
 <style scoped>
+.chapter-rail { display: grid; gap: 4px; min-width: 0; }
+.chapter-rail h2 { font-size: 18px; margin: 0 0 6px; }
+.chapter-rail button { appearance: none; border: 0; border-radius: 7px; background: transparent; color: var(--color-ink); cursor: pointer; font: inherit; font-size: 13px; font-weight: 650; padding: 8px; text-align: start; }
+.chapter-rail button[aria-current] { background: var(--color-brand-soft); color: var(--color-brand); }
+.chapter-rail time { display: inline-block; min-width: 38px; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+
 .course-chapters-panel {
   display: grid;
   gap: 14px;

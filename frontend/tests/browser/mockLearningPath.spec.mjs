@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const openingQuestion = '为什么 low 大于 high 时循环就停止？';
@@ -17,19 +17,22 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
   const base = `http://127.0.0.1:${state.ports.WEB_PORT}`;
   const position = () => new URL(page.url()).searchParams.get('at');
   const nav = page.getByRole('navigation', { name: '课程内容导航' });
-  const tab = name => nav.getByRole('button', { name, exact: true });
+  const tab = name => nav.getByRole('button', { name, exact: true })
+    .or(nav.getByRole('button', { name: `返回 ${name}`, exact: true }));
   const courseCard = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'binary-search-demo', exact: true }) });
   const video = page.locator('video');
   const returnToLearning = page.getByRole('button', { name: '返回当前学习任务' });
   const citedRow = page.locator('.timeline-row[data-reference="true"]');
   const question = page.locator('.practice-question.is-current');
   const entries = () => page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('lecturelens.lastCourseLocation.v1:')));
+  const verifiedPlayback = {};
+  let subtitles;
 
   async function capture(name, target) {
     const output = process.env.LECTURELENS_SCREENSHOT_DIR;
     if (!output) return;
     if (target) await target.scrollIntoViewIfNeeded();
-    const prefix = isMobile ? 'm' : 'd';
+    const prefix = String(page.viewportSize().width);
     await page.screenshot({ path: resolve(output, `${prefix}-${name}.png`), fullPage: !target });
   }
 
@@ -40,10 +43,21 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
   }
 
   async function seekFromCitation(button, name) {
-    await button.click();
+    await button.press('Enter');
     await expect(citedRow).toBeVisible();
+    await expect(citedRow).toBeFocused();
     await expect(returnToLearning).toBeVisible();
     await capture(name, citedRow);
+  }
+
+  async function checkPlayback(source, row) {
+    const segment = Number(await row.getAttribute('data-segment'));
+    const expectedMs = subtitles.find(item => item.segmentIndex === segment).startMillis;
+    await expect(video).toBeInViewport();
+    await expect(video).toHaveJSProperty('paused', true);
+    await expect(video).toHaveAttribute('data-test-identity', 'workspace-player');
+    await expect.poll(() => video.evaluate(el => Math.round(el.currentTime * 1000))).toBe(expectedMs);
+    verifiedPlayback[source] = { segment, expectedMs, actualMs: await video.evaluate(el => Math.round(el.currentTime * 1000)), paused: true };
   }
 
   async function startPractice(format) {
@@ -67,7 +81,10 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect(page).toHaveURL(`${base}/tasks`);
     await expect(courseCard.getByRole('heading')).toHaveAttribute('title', 'binary-search-demo');
     await capture('01-tasks');
+    const response = page.waitForResponse(item => new URL(item.url()).pathname === `/api/tasks/${state.task_id}/results` && item.ok());
     await courseCard.getByRole('button', { name: '进入学习', exact: true }).click();
+    subtitles = (await (await response).json()).data.subtitles;
+    await page.goto(`${base}/tasks/${state.task_id}?layout=continuous`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('binary-search-demo');
     await capture('02-course');
   });
@@ -76,6 +93,11 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     if (isMobile) await openTab('课程材料');
     await expect(video).toBeVisible();
     await expect(page.locator('.timeline-row').first()).toBeVisible();
+    await video.evaluate(el => { el.dataset.testIdentity = 'workspace-player'; });
+    const row = page.locator('.timeline-row').nth(1);
+    await row.getByRole('button', { name: /^跳到视频/ }).press('Enter');
+    await expect(row).toHaveAttribute('aria-current', 'true');
+    await checkPlayback('subtitle', row);
     await capture('03-transcript', page.locator('.timeline-row').first());
     await page.getByRole('navigation', { name: '课程内容视图' }).getByRole('button', { name: '原文', exact: true }).click();
     await expect(page.locator('.reading-copy')).toContainText(/binary search/i);
@@ -99,18 +121,23 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect(chip).toBeVisible();
     await capture('06-tutor-answer', chip);
     await draft.fill('还没发送的追问');
+    if (isMobile) {
+      await openTab('课程材料');
+      expect(new URL(page.url()).searchParams.get('learn')).toBe('tutor');
+      await nav.getByRole('button', { name: '返回 Tutor 对话' }).press('Enter');
+      await expect(draft).toBeFocused();
+      await expect(draft).toHaveValue('还没发送的追问');
+    }
     await seekFromCitation(chip, '07-tutor-seek');
     await expect.poll(() => position()).not.toBeNull();
     const citedMs = Number(position());
     if (isMobile) await expect(video).toBeHidden();
-    await citedRow.getByRole('button', { name: '跳到视频', exact: true }).click();
-    if (isMobile) await expect(video).toBeInViewport();
-    else await expect(video).toBeVisible();
-    await expect(video).toHaveJSProperty('paused', true);
+    await page.locator('.evidence-reading__return').getByRole('button', { name: '跳到视频', exact: true }).press('Enter');
+    await checkPlayback('tutor', citedRow);
     await expect.poll(() => video.evaluate(el => Math.round(el.currentTime * 1000))).toBe(citedMs);
     await capture('07b-jump', video);
-    await returnToLearning.click();
-    await expect(chip).toBeVisible();
+    await returnToLearning.press('Enter');
+    await expect(chip).toBeFocused();
     await expect(draft).toHaveValue('还没发送的追问');
     await capture('07c-return', draft);
   });
@@ -145,9 +172,17 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     await expect(feedback).toBeVisible();
     await expect(question.getByText('演示反馈，不代表模型判断。')).toBeVisible();
     await capture('13-feedback', feedback);
-    await seekFromCitation(question.getByRole('button', { name: /^回看(这段课程证据|课程证据)/ }).first(), '13b-feedback-source');
-    await returnToLearning.click();
+    const feedbackSource = question.getByRole('button', { name: /^回看(这段课程证据|课程证据)/ }).first();
+    await seekFromCitation(feedbackSource, '13b-feedback-source');
+    await page.locator('.evidence-reading__return').getByRole('button', { name: '跳到视频', exact: true }).press('Enter');
+    await checkPlayback('submittedFeedback', citedRow);
+    await capture('13c-feedback-video', video);
+    await returnToLearning.press('Enter');
+    await expect(feedbackSource).toBeFocused();
     await expect(feedback).toBeVisible();
+    await expect(response).toHaveValue(answer);
+    const output = process.env.LECTURELENS_SCREENSHOT_DIR;
+    if (output) await writeFile(resolve(output, `${page.viewportSize().width}-verified-playback.json`), JSON.stringify(verifiedPlayback, null, 2));
   });
 
   await test.step('submit a wrong choice and open its saved review', async () => {
@@ -206,7 +241,7 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
       localStorage.setItem(storageKey, JSON.stringify({ ...saved, at: 75000 }));
     }, key);
     await courseCard.getByRole('button', { name: '继续学习', exact: true }).click();
-    await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
+    await expect(deck).toBeVisible();
     await expect.poll(position).toBe('75000');
     await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await expect(video).toHaveJSProperty('paused', true);
@@ -216,9 +251,9 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     const [[, saved]] = await entries();
     expect(key).toMatch(/^lecturelens\.lastCourseLocation\.v1:\d+:/);
     expect(key.endsWith(`:${state.task_id}`)).toBe(true);
-    expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000 });
+    expect(JSON.parse(saved)).toEqual({ view: 'flashcards', text: 'timeline', at: 75000, visitedAt: expect.any(Number) });
 
-    await page.getByRole('link', { name: /返回我的课程/ }).click();
+    await page.getByRole('link', { name: '返回课程库', exact: true }).click();
     let releaseIdentity;
     const identityReady = new Promise(resolve => { releaseIdentity = resolve; });
     let identityRequests = 0;
@@ -249,13 +284,17 @@ test('opens a course, checks sources, practices, reviews and resumes', async ({ 
     } finally {
       releaseIdentity();
     }
-    await expect(tab('闪卡复习')).toHaveAttribute('aria-current', 'page');
+    await expect(deck).toBeVisible();
     await expect.poll(position).toBe('75000');
     await expect.poll(() => video.evaluate(el => el.currentTime)).toBe(75);
     await page.unroute('**/api/me');
 
-    if (isMobile) await page.getByRole('button', { name: '打开导航' }).click();
-    await page.getByRole('button', { name: isMobile ? '退出登录' : '退出', exact: true }).click();
+    await page.getByRole('link', { name: '返回课程库', exact: true }).click();
+    await expect(page).toHaveURL(`${base}/tasks`);
+    const mobileMenu = page.getByRole('button', { name: '打开导航' });
+    const usesMobileHeader = await mobileMenu.isVisible();
+    if (usesMobileHeader) await mobileMenu.click();
+    await page.getByRole('button', { name: usesMobileHeader ? '退出登录' : '退出', exact: true }).click();
     await expect(page.getByPlaceholder('请输入密码')).toBeVisible();
     expect(await entries()).toEqual([]);
   });

@@ -129,6 +129,11 @@ const nav = label => ({ click: async () => {
   if (!(await button.isVisible())) await menu.locator('.workspace-more > summary').click();
   await button.click();
 } });
+async function refreshPlayback() {
+  const refresh = page.getByRole('button', { name: '刷新播放链接' });
+  if (!(await refresh.isVisible())) await page.locator('.video-card__metadata > summary').click();
+  await refresh.click();
+}
 const checks = [];
 async function check(name, run) { if (args.only && !name.includes(args.only)) return; await run(); checks.push(name); console.log(`PASS ${name}`); }
 async function expectReviewCancelled() {
@@ -336,7 +341,7 @@ try {
       const answer = page.getByRole('textbox', { name: '第 1 题作答' });
       await expect(answer).toHaveValue('Saved answer'); await answer.fill('Unsaved answer revision');
       sourceRevision = 2;
-      await page.getByRole('button', { name: '回看这段课程证据', exact: true }).click();
+      await page.getByRole('button', { name: /^回看这段课程证据/ }).click();
       await expect(page.getByText(/课程资料已更新，旧证据暂不能定位/)).toBeVisible();
       await expect(answer).toHaveValue('Unsaved answer revision');
       await openArtifactEvidence(); await page.locator('.citation button').click();
@@ -459,7 +464,7 @@ try {
       await expect(goal).toHaveValue('Unsubmitted learning goal');
       await expect(answer).toHaveValue('Unsaved answer revision');
       await page.getByRole('button', { name: '返回当前学习任务' }).click();
-      await page.getByRole('button', { name: '回看这段课程证据', exact: true }).click();
+      await page.getByRole('button', { name: /^回看这段课程证据/ }).click();
       await expect(current).toHaveAttribute('data-segment', '7');
       await expect(goal).toHaveValue('Unsubmitted learning goal');
       await expect(answer).toHaveValue('Unsaved answer revision');
@@ -483,11 +488,11 @@ try {
     });
     await check('token refresh preserves coordinate for paused and playing video', async () => {
       await seek(6);
-      await page.getByRole('button', { name: '刷新播放链接' }).click();
+      await refreshPlayback();
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(6);
       await expect(video).toHaveJSProperty('paused', true);
       await video.evaluate(v => v.play());
-      await page.getByRole('button', { name: '刷新播放链接' }).click();
+      await refreshPlayback();
       await expect(video).toHaveJSProperty('paused', false);
       await video.evaluate(v => v.pause());
     });
@@ -527,15 +532,15 @@ try {
       await page.goto(`${origin}/tasks/long?view=content&text=timeline&at=1000`);
       await expect.poll(() => video.evaluate(v => v.duration), { timeout: 15000 }).toBe(3900);
       const list = page.locator('.timeline-list');
-      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await nav('学习助手').click();
       await expect(page.locator('.evidence-reading')).toBeHidden();
       const before = await list.evaluate(el => el.scrollTop);
       await seek(3000); await new Promise(r => setTimeout(r, 200));
       expect(await list.evaluate(el => el.scrollTop)).toBe(before);
-      await page.getByRole('button', { name: '看视频与原文', exact: true }).click();
+      await nav('课程内容').click();
       await expect(current).toHaveAttribute('data-segment', '8571');
       await expect.poll(() => list.evaluate(el => el.scrollTop)).toBeGreaterThan(before);
-      await page.getByRole('button', { name: '继续第 1 题', exact: true }).click();
+      await nav('学习助手').click();
       await expect(page.locator('.evidence-reading')).toBeHidden();
       await page.setViewportSize({ width: 1440, height: 1000 });
       await expect(page.locator('.evidence-reading')).toBeVisible();
@@ -552,7 +557,7 @@ try {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `${output}/mobile-error.png`, fullPage: true });
       corrupt = false;
-      await page.getByRole('button', { name: '刷新播放链接' }).click();
+      await refreshPlayback();
       await expect.poll(() => video.evaluate(v => v.currentTime)).toBe(2);
       await expect(video).toHaveJSProperty('paused', true);
     });

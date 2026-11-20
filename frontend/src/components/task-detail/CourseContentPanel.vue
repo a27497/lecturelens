@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
+import CourseChaptersPanel from "../CourseChaptersPanel.vue";
 import CourseVisualEvidencePanel from "./CourseVisualEvidencePanel.vue";
 import type { AnalysisTaskStatus } from "../../types/task";
 import type { ResultTranslationSegment, TaskResultResponse } from "../../types/result";
 import { copyTextToClipboard } from "../../utils/clipboard";
 import { formatMillisRange } from "../../utils/time";
 
-import { createTimeIndex } from "../../utils/timeIndex";
+import { createTimeIndex, isValidTimeRange } from "../../utils/timeIndex";
 import type { ContentView } from "./courseLocation";
-const props = defineProps<{ referenceMs?: number; compact?: boolean; taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
+const props = defineProps<{ referenceMs?: number; referenceJumpInHeader?: boolean; compact?: boolean; taskId: string; status?: AnalysisTaskStatus; result: TaskResultResponse | null; positionMs?: number; view?: ContentView; visible?: boolean; locateSequence?: number }>();
 const emit = defineEmits<{ seek: [startTimeMillis: number]; "update:view": [view: ContentView] }>();
 
 const localView = ref<ContentView>("translated");
@@ -28,9 +29,17 @@ const baseViews: Array<{ value: ContentView; label: string }> = [
   { value: "timeline", label: "时间轴" },
 ];
 const hasVisualEvidence = computed(() => (props.result?.keyframes?.length ?? 0) > 0);
-const views = computed(() => hasVisualEvidence.value
-  ? [...baseViews, { value: "visual" as const, label: "画面证据" }]
-  : baseViews);
+const views = computed(() => {
+  const readingViews = props.compact || activeView.value === "chapters"
+    ? [
+        { value: "timeline" as const, label: "时间轴" },
+        { value: "chapters" as const, label: "章节" },
+        { value: "source" as const, label: "原文" },
+        { value: "translated" as const, label: "中文译文" },
+      ]
+    : baseViews;
+  return hasVisualEvidence.value ? [...readingViews, { value: "visual" as const, label: "画面证据" }] : readingViews;
+});
 const sourceText = computed(() => props.result?.sourceFullText?.trim() || (props.result?.subtitles ?? []).map((item) => item.sourceText).filter(Boolean).join("\n\n"));
 const translatedText = computed(() => props.result?.translatedFullText?.trim() || "");
 const translationByIndex = computed(() => {
@@ -48,7 +57,6 @@ const timeIndex = computed(() => createTimeIndex(rows.value, row => row.startMil
 const currentRow = computed(() => timeIndex.value(props.positionMs ?? 0));
 const referenceSegment = computed(() => props.referenceMs === undefined ? undefined : timeIndex.value(props.referenceMs)?.segmentIndex);
 const currentSegment = computed(() => currentRow.value?.segmentIndex);
-function canSeek(start: number, end: number) { return Number.isFinite(start) && start >= 0 && Number.isFinite(end) && end > start; }
 function pauseFollow() { following.value = false; scrollGeneration++; }
 function pauseForKey(event: KeyboardEvent) {
   if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) pauseFollow();
@@ -133,18 +141,19 @@ function emptyText(pending: string): string {
       <button v-for="item in views" :key="item.value" type="button" :aria-pressed="activeView === item.value" :class="{ 'is-active': activeView === item.value }" @click="activeView = item.value">{{ item.label }}</button>
     </nav>
 
-    <article v-if="activeView === 'translated'" class="reading-view">
+    <CourseChaptersPanel v-if="activeView === 'chapters'" :task-id="taskId" @seek="emit('seek', $event)" />
+    <article v-else-if="activeView === 'translated'" class="reading-view">
       <div class="reading-view__header"><h3>中文译文</h3><el-button :disabled="!translatedText" size="small" @click="copy(translatedText, '中文译文')">复制译文</el-button></div>
-      <div v-if="translatedText" class="reading-copy">{{ translatedText }}</div>
+      <div v-if="translatedText" class="reading-copy" :tabindex="compact ? 0 : undefined" role="region" aria-label="中文译文">{{ translatedText }}</div>
       <el-empty v-else :description="translationEmptyText" />
     </article>
     <article v-else-if="activeView === 'source'" class="reading-view">
       <div class="reading-view__header"><h3>原文</h3><el-button size="small" @click="copy(sourceText, '原文')">复制原文</el-button></div>
-      <div v-if="sourceText" class="reading-copy">{{ sourceText }}</div>
+      <div v-if="sourceText" class="reading-copy" :tabindex="compact ? 0 : undefined" role="region" aria-label="课程原文">{{ sourceText }}</div>
       <el-empty v-else :description="emptyText('原文生成中')" />
     </article>
     <section v-else-if="activeView === 'timeline'" class="timeline-view" aria-label="课程时间轴">
-      <div class="timeline-search"><el-input v-model="keyword" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
+      <div class="timeline-search"><el-input v-model="keyword" aria-label="搜索时间轴" clearable placeholder="搜索原文或译文关键词" /><span v-if="keyword.trim()">{{ filteredRows.length }} / {{ rows.length }} 个片段</span></div>
       <p v-if="compact && hasFullTextOnlyTranslation" class="timeline-language-note">时间轴显示原文；中文全文见“中文译文”。</p>
       <el-alert v-if="!compact && hasFullTextOnlyTranslation" :closable="false" title="当前为全文翻译模式，时间轴仅展示原文；中文全文请切换到“中文译文”。" type="info" show-icon />
       <div class="timeline-controls">
@@ -153,11 +162,16 @@ function emptyText(pending: string): string {
       </div>
       <el-empty v-if="rows.length === 0" :description="emptyText(status === 'SUCCEEDED' ? '本课程没有可定位的字幕片段' : '时间轴生成中')" />
       <el-empty v-else-if="filteredRows.length === 0" description="没有找到包含该关键词的片段" />
-      <div v-else v-memo="[filteredRows, currentSegment, referenceSegment]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
-        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
-          <div class="timeline-row__time"><strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong><span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span></div>
+      <div v-else v-memo="[filteredRows, currentSegment, referenceSegment, referenceJumpInHeader]" ref="timelineRef" class="timeline-list" tabindex="0" aria-label="原文片段，可滚动浏览" @wheel.passive="pauseFollow" @touchstart.passive="pauseFollow" @pointerdown="pauseFollow" @keydown="pauseForKey">
+        <article v-for="row in filteredRows" v-memo="[row, row.segmentIndex === currentSegment, row.segmentIndex === referenceSegment, referenceJumpInHeader && row.segmentIndex === referenceSegment]" :key="row.segmentIndex" :ref="el => { if (el) rowElements.set(row.segmentIndex, el as HTMLElement); else rowElements.delete(row.segmentIndex); }" class="timeline-row" :tabindex="row.segmentIndex === referenceSegment ? -1 : undefined" :class="{ 'is-current': row.segmentIndex === currentSegment }" :aria-current="row.segmentIndex === currentSegment ? 'true' : undefined" :data-segment="row.segmentIndex" :data-reference="row.segmentIndex === referenceSegment || undefined">
+          <div class="timeline-row__time">
+            <strong>{{ formatMillisRange(row.startMillis, row.endMillis) }}</strong>
+            <span v-if="row.segmentIndex === referenceSegment" class="reference-label">当前引用</span><span v-else>#{{ row.segmentIndex }}</span>
+            <el-button v-if="!referenceJumpInHeader || row.segmentIndex !== referenceSegment" size="small" plain
+            :aria-label="row.segmentIndex === referenceSegment ? undefined : `跳到视频 ${formatMillisRange(row.startMillis, row.endMillis)} · 片段 ${row.segmentIndex}`"
+            :disabled="!isValidTimeRange(row.startMillis, row.endMillis)" @click="resumeFollow(); emit('seek', row.startMillis)">跳到视频</el-button>
+          </div>
           <div><p>{{ row.sourceText }}</p><p class="timeline-row__translation">{{ row.translation?.translatedText || (hasFullTextOnlyTranslation ? '当前只有中文全文，没有逐段译文。' : (result?.translations.length ? '此片段暂无对齐译文' : segmentTranslationEmptyText)) }}</p></div>
-          <el-button size="small" plain :disabled="!canSeek(row.startMillis, row.endMillis)" @click="resumeFollow(); emit('seek', row.startMillis)">跳到视频</el-button>
         </article>
       </div>
     </section>
@@ -189,7 +203,7 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-list { display: block; position: relative; max-height: 65vh; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; }
 .timeline-row.is-current { background: var(--color-brand-soft, #edf4f0); border-left: 3px solid var(--color-brand); padding-left: 10px; }
 .timeline-search { display: flex; align-items: center; gap: 12px; }.timeline-search span { flex: 0 0 auto; color: var(--color-ink-soft); font-size: 13px; }
-.timeline-row { display: grid; grid-template-columns: 110px minmax(0,1fr) auto; gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--color-border); }
+.timeline-row { display: grid; grid-template-columns: minmax(0, 140px) minmax(0,1fr); gap: 16px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--color-border); }
 .timeline-row__time { display: grid; gap: 4px; color: var(--color-brand); font-size: 13px; }.timeline-row p { margin: 0 0 8px; line-height: 1.65; }.timeline-row__translation { color: var(--color-ink-soft); }
 @media (max-width: 680px) { .timeline-search { align-items: stretch; flex-direction: column; }.timeline-row { grid-template-columns: 1fr; } }
 
@@ -197,4 +211,23 @@ header { display: grid; gap: 6px; } header h2, header p, h3 { margin: 0; } heade
 .timeline-language-note { margin: 0; color: var(--color-ink-soft); font-size: 12px; line-height: 1.6; }
 .timeline-row[data-reference=true] { padding: 14px; margin-block: 6px; border: 1px solid var(--color-brand); border-left: 3px solid var(--color-brand); border-radius: var(--radius-md); background: var(--color-brand-soft); }
 .reference-label { padding: 2px 6px; border-radius: var(--radius-sm); background: var(--color-brand); color: white; font-size: 11px; }
+.subnav button { border-radius: var(--radius-md); }
+.timeline-row { overflow-wrap: anywhere; }
+.timeline-row p:last-child { margin-bottom: 0; }
+.timeline-row__time { font-variant-numeric: tabular-nums; }
+.timeline-list:focus-visible, .timeline-row:focus-visible, .reading-copy:focus-visible { outline: 2px solid var(--color-brand); outline-offset: -2px; }
+.content-panel--compact .timeline-row { grid-template-columns: minmax(88px, auto) minmax(0, 1fr); gap: 4px 14px; padding: 12px; border-radius: var(--radius-md); }
+.timeline-row__time button { justify-self: start; }
+.content-panel--compact .timeline-row[data-reference=true] { border-color: var(--color-warning); background: var(--color-evidence-surface); }
+.content-panel--compact .timeline-row[data-reference=true] .timeline-row__time { color: var(--color-warning); }
+.content-panel--compact .reference-label { justify-self: start; color: var(--color-warning); background: var(--color-evidence-surface); font-weight: 700; }
+.content-panel--compact .timeline-row__translation { margin-top: 4px; font-size: 14px; }
+.content-panel--compact .timeline-row__time { overflow-wrap: normal; }
+@media (max-width: 1024px) {
+  .content-panel--compact .subnav button { min-height: 44px; padding-inline: 9px; }
+}
+@media (max-width: 520px) {
+  .content-panel--compact .timeline-row { grid-template-columns: 1fr; }
+  .content-panel--compact .timeline-row__time { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+}
 </style>
