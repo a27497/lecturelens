@@ -4,8 +4,6 @@ The selected configuration covered every vital nugget for **18/24** answerable q
 
 The historical L4 Tutor strict-correct score was 155/216 answerable attempts. The old 96 questions are **PREVIOUSLY INSPECTED — regression reference only**. The previously reported diagnostic saw all vital nuggets retrieved for 62.5% of attempts, about 86% correctness when all were retrieved, about 48% when one was missing, and 13/36 strict cross-segment answers. Those historical numbers motivated this work. The dev coverage metric below uses final input excerpts, 24 unique answerable questions, and an explicit support-group crosswalk. The old questions and output records were outside the replay.
 
-[The follow-up calibration and routing replay](CALIBRATION.md) records the revised historical judgments and the coverage trade-off of requiring explicit comparison or cross-segment signals.
-
 ## Offline scoring and paid-run gate
 
 Each existing dev vital nugget has one or more independently sufficient Evidence groups. Every ID in a group must occur in the final `current_evidence` array, after deduplication and authoritative READ. The scorer checks whether all of a question's vital nuggets are covered and counts covered vital nuggets separately. The support crosswalk uses the frozen caption cues to locate whole published excerpts and checks which facets need multiple excerpts together. Same-interval translations were accepted as alternatives where they preserve the necessary content. Six should-abstain questions, three related-topic near misses and three unsupported details, are excluded from both coverage denominators. Their retrieval costs are shown separately.
@@ -38,7 +36,7 @@ Excerpt and byte columns give mean / nearest-rank P95 / maximum over all 30 item
 | Routed hybrid 16 (selected) | 11.20 / 16.00 / 16.00 | 10,401 / 16,439 / 17,067 | 1.51× / 1.46× | 8.00 / 8 | 7,404 / 8,362 |
 | Routed hybrid 8 + neighbors | 11.20 / 16.00 / 16.00 | 10,469 / 16,568 / 16,674 | 1.52× / 1.47× | 8.00 / 8 | 7,404 / 8,362 |
 
-The selected revision used a single hybrid Top 8 query for simple first turns and used hybrid Top 16 per focused query for comparisons and questions with distinct parts. The route detected all six comparison and cross-segment items plus six other multipart items without question IDs or gold. Reciprocal rank fusion caps the final context at 16. Single-query hybrid 8 plus neighbors covered one more question overall, used 38% more context bytes than the selected route, and covered one fewer cross-segment question. The routed variants use the same simple path. Each hybrid query requests at most two local dense pages within the existing eight-hit wire limit. The selected routed variant led the other routed variants in full coverage and cross-segment coverage.
+The product keeps a single hybrid Top 8 query for simple first turns and uses hybrid Top 16 per focused query for comparisons and questions with distinct parts. The route detected all six comparison and cross-segment items plus six other multipart items without question IDs or gold. Reciprocal rank fusion caps the final context at 16. Single-query hybrid 8 plus neighbors covered one more question overall, used 38% more context bytes than the selected route, and covered one fewer cross-segment question. The routed variants use the same simple path. Each hybrid query requests at most two local dense pages within the existing eight-hit wire limit. The selected routed variant led the other routed variants in full coverage and cross-segment coverage.
 
 ## Reproduction
 

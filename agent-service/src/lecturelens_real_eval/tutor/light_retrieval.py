@@ -14,59 +14,29 @@ MAX_QUERIES = 3
 RRF_K = 60
 
 _COMPARE = re.compile(
-    r"^(?:please\s+)?(?:compare|contrast)\b"
-    r"|\b(?:differences? between|similarities between|versus|vs\.?)\b"
-    r"|^(?:(?:explain|describe)\s+)?how\b.*\b(?:differ(?:s|ed|ent)?|compar(?:e[ds]?|able)|similar)\b"
-    r"|^(?:请)?(?:比较|对比)|(?:有何|有什么|有|的|哪些)(?:区别|不同|异同|相同点)"
-    r"|(?:如何|怎么)(?:比较|对比)",
+    r"\b(?:compar(?:e[ds]?|ing|ison)|difference|differ(?:s|ent)?|contrast|versus|vs\.?|unlike)\b"
+    r"|区别|比较|对比|不同|异同",
     re.IGNORECASE,
 )
 _EN_PAIR = re.compile(
-    r"\b(?:differ(?:s|ent)?\s+from|similar\s+to|compare[ds]?\s+(?:with|to)|and|with|versus|vs\.?)\b",
+    r"\b(?:differ(?:s|ent)?\s+from|compare[ds]?\s+(?:with|to)|and|with|versus|vs\.?)\b",
     re.IGNORECASE,
 )
 _ZH_PAIR = re.compile(r"与|和|及|跟|、")
 _EN_EDGE = re.compile(
-    r"^(?:(?:(?:explain|describe)\s+)?how\s+(?:(?:do|does|did|is|are)\s+)?"
-    r"|what (?:is|are)\s+(?:the\s+)?(?:differences?|similarities)\s+between\s+"
-    r"|(?:please\s+)?(?:compare|contrast)\s+|(?:the\s+)?(?:differences?|similarities)\s+between\s+)"
-    r"|\s+(?:differs?|compares?|similar)\b[?!. ]*$",
+    r"^(?:how (?:do|does|did|is|are)\s+|what (?:is|are)\s+(?:the\s+)?difference\s+between\s+"
+    r"|(?:please\s+)?compare\s+|(?:the\s+)?difference\s+between\s+)"
+    r"|\s+(?:differs?|compares?)\b[?!. ]*$",
     re.IGNORECASE,
 )
-_ZH_EDGE = re.compile(
-    r"^(?:请|如何|怎么)?(?:比较|对比)|(?:在[^，,？?]{1,45})?(?:有(?:何|什么)?|的)(?:区别|不同|异同|相同点).*$"
-)
+_ZH_EDGE = re.compile(r"^(?:请)?(?:比较|对比)|(?:在[^，,？?]{1,45})?有(?:何|什么)?(?:区别|不同|异同).*$")
 _PARTS = re.compile(
-    r",?\s+and\s+(?=(?:why|how|what|does|do|did|which|where|when)\b)"
+    r"(?:[,;]\s*(?:and\s+)?|\s+and\s+)(?=(?:why|how|what|does|do|did|which|where|when)\b)"
     r"|[?？;；]\s*(?=\S)|[，,；;](?=(?:那么|以及|又|并且|这|它|为什么|如何|是否))",
     re.IGNORECASE,
 )
-_SEGMENT = re.compile(
-    r"(?<!\d)(?:\d{1,2}:)?\d{1,2}:\d{2}(?!\d)"
-    r"|\b(?:opening|closing|first|second|earlier|later|final)\s+(?:section|segment|part|example)\b"
-    r"|\b(?:early|earlier|later|at the (?:start|end))\s+(?:in|of)\s+(?:the\s+)?(?:lecture|video)\b"
-    r"|(?:开头|结尾|前半|后半|第一|第二|前面|后面|稍早|稍后)\s*(?:段|部分|个例子)"
-    r"|(?:课程|视频|讲座)(?:开头|结尾|前半段|后半段)",
-    re.IGNORECASE,
-)
-_SEGMENT_BOUNDARY = re.compile(
-    rf"(?:\s+(?:and|then)\s+|[,，]\s*)(?=(?:(?:at|in|from|the)\s+)*(?:{_SEGMENT.pattern}))",
-    re.IGNORECASE,
-)
-_SEGMENT_RANGE = re.compile(
-    rf"\b(?:from|between)\s+(?:the\s+)?(?:{_SEGMENT.pattern})\s+"
-    rf"(?:to|and)\s+(?:the\s+)?(?:{_SEGMENT.pattern})",
-    re.IGNORECASE,
-)
-_COURSE_RULE = re.compile(r"\b(?:lecture|theor(?:y|em)|principle|rule)\b|讲座|课上|定理|原理", re.IGNORECASE)
-_WORKED_EXAMPLE = re.compile(
-    r"\b(?:example|demonstration|case study|exercise)\b|例[子题]|案例|演示", re.IGNORECASE
-)
-_TRANSFER = re.compile(
-    r"^(?:how\s+(?:does|would|can)\s+(?:this|that|it)\b.*\b(?:in|to|for)\s+(?:the|another|a separate)\b"
-    r"|(?:这|它)(?:又)?如何(?:应用|用于|推广|联系))"
-    rf"[^,，;；?？]*(?:{_WORKED_EXAMPLE.pattern})",
-    re.IGNORECASE,
+_QUESTION = re.compile(
+    r"\b(?:why|how|what|does|do|did|which|where|when)\b|为什么|如何|是否|什么", re.IGNORECASE
 )
 
 
@@ -75,50 +45,29 @@ def _query(text):
     return text.encode("utf-16-le")[: 2 * QUERY_CHARS].decode("utf-16-le", errors="ignore").strip()
 
 
-def _location_queries(parts):
-    focused = {}
-    for clause in parts:
-        # A range shares one topic, while separate requests can carry their own.
-        parts_at_locations = [clause] if _SEGMENT_RANGE.search(clause) else _SEGMENT_BOUNDARY.split(clause)
-        for part in parts_at_locations:
-            anchors = _SEGMENT.findall(part)
-            piece = part.strip(" ,，:：.。?？")
-            topic = _SEGMENT.sub("", _SEGMENT_RANGE.sub("", piece)).strip()
-            if not topic:
-                continue
-            for anchor in anchors:
-                key = anchor.casefold()
-                if ":" in anchor:
-                    key = sum(int(unit) * 60**i for i, unit in enumerate(reversed(anchor.split(":"))))
-                focused.setdefault(key, _query(f"{anchor} {topic}") if len(anchors) > 1 else piece)
-    return list(focused.values())
-
-
 def targeted_queries(question):
-    """Keep the original query and probe identifiable comparands or distinct course excerpts."""
+    """Retain the whole question and, when detectable, focus on its distinct requests."""
     full = _query(question)
-    parts = _PARTS.split(full)
-    focused = _location_queries(parts)
-    if len(focused) >= 2:
-        return [full, *focused[: MAX_QUERIES - 1]]
+    # Split independent interrogatives before looking for two comparands.
+    pieces = [
+        part.strip(" ,，:：.。?？")
+        for part in _PARTS.split(full)
+        if (_QUESTION.search(part) or _COMPARE.search(part)) and len(part) > 8
+    ]
+    if len(pieces) >= 2:
+        return list(dict.fromkeys([full, *pieces[: MAX_QUERIES - 1]]))
 
-    # Transferring a rule to a separate example calls for both teaching contexts.
-    for rule, application in zip(parts, parts[1:], strict=False):
-        if _COURSE_RULE.search(rule) and not _WORKED_EXAMPLE.search(rule) and _TRANSFER.search(application):
-            return [full, rule.strip(" ,，:：.。?？"), application.strip(" ,，:：.。?？")]
-
-    for segment in parts:
-        if not _COMPARE.search(segment):
-            continue
+    if _COMPARE.search(full):
+        segment = re.split(r"[?？;；]", full)[0]
         if _ZH_PAIR.search(segment):
-            subjects = _ZH_PAIR.split(_ZH_EDGE.sub("", segment), maxsplit=1)
-            prefix, separator, left = subjects[0].rpartition("，")
-            if separator and len(subjects) == 2:
-                subjects = [left, f"{prefix}，{subjects[1]}"]
+            parts = _ZH_PAIR.split(_ZH_EDGE.sub("", segment), maxsplit=1)
+            prefix, separator, left = parts[0].rpartition("，")
+            if separator and len(parts) == 2:
+                parts = [left, f"{prefix}，{parts[1]}"]
         else:
-            subjects = _EN_PAIR.split(_EN_EDGE.sub("", segment), maxsplit=1)
-        if len(subjects) == 2:
-            cleaned = [part.strip(" ,，:：.。?？") for part in subjects]
+            parts = _EN_PAIR.split(_EN_EDGE.sub("", segment), maxsplit=1)
+        if len(parts) == 2:
+            cleaned = [part.strip(" ,，:：.。?？") for part in parts]
             if all(len(part) > 1 for part in cleaned):
                 return list(dict.fromkeys([full, *cleaned]))
 

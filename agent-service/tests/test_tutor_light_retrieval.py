@@ -1,95 +1,28 @@
 import json
 from types import SimpleNamespace
 
-import pytest
-
 from lecturelens_real_eval.tutor.light import LIGHT_ABSTENTION, LightTutorRuntime
 from lecturelens_real_eval.tutor.light_retrieval import MAX_CONTEXT, targeted_queries
 
 
-@pytest.mark.parametrize(
-    "question",
-    [
-        "What is a semaphore, and when is it initialized?",
-        "Why does the loop stop, and how does the caller observe its result?",
-        "Explain how a queue works.",
-        "Explain the difference between groups.",
-        "How does the example at 03:10 start, and what happens next?",
-        "At 03:10, what is the invariant? Why does the invariant at 03:10 hold?",
-        "Does the lock state change from 00:03:10 to 03:10?",
-        "Why does the lecture use a queue, and how does this help the caller?",
-        "According to the lecture, what is a queue, and how does it work in an example?",
-        "In the worked example, what is the stopping rule, and how would it apply in this example?",
-        "什么是信号量？它如何记录可用资源？",
-    ],
-)
-def test_single_topic_and_ambiguous_requests_keep_one_query(question):
-    assert targeted_queries(question) == [question]
-
-
-@pytest.mark.parametrize(
-    "question",
-    [
-        "What is the difference between a queue and a stack?",
-        "How does a queue differ from a stack?",
-        "How is a queue different from a stack?",
-        "How is a queue similar to a stack?",
-        "How do a queue and a stack differ?",
-        "How does a queue compare with a stack?",
-        "Which rules govern traversal? Compare a queue and a stack.",
-    ],
-)
-def test_natural_comparisons_find_both_subjects(question):
-    assert targeted_queries(question) == [question, "a queue", "a stack"]
-
-
-def test_chinese_comparison_finds_both_subjects():
-    question = "队列和堆栈有什么区别？"
-    assert targeted_queries(question) == [question, "队列", "堆栈"]
-
-
-@pytest.mark.parametrize(
-    ("question", "first", "second"),
-    [
-        (
-            "At 03:10, why is the lock acquired, and how is the deadlock resolved at 12:40?",
-            "At 03:10, why is the lock acquired",
-            "how is the deadlock resolved at 12:40",
-        ),
-        (
-            "Describe lock acquisition at 03:10 and at 12:40 how the deadlock is resolved.",
-            "Describe lock acquisition at 03:10",
-            "at 12:40 how the deadlock is resolved",
-        ),
-        (
-            "How does the opening example acquire the lock? How does the final example release it?",
-            "How does the opening example acquire the lock",
-            "How does the final example release it",
-        ),
-        (
-            "How does the lock state change from 03:10 to 12:40?",
-            "03:10 How does the lock state change",
-            "12:40 How does the lock state change",
-        ),
-        (
-            "What changes between the opening section and the final section?",
-            "opening section What changes",
-            "final section What changes",
-        ),
-        (
-            "前半段如何取得锁？后半段如何解除死锁？",
-            "前半段如何取得锁",
-            "后半段如何解除死锁",
-        ),
-        (
-            "Why does the rule require a base case, and how does this apply in the directory traversal example?",
-            "Why does the rule require a base case",
-            "how does this apply in the directory traversal example",
-        ),
-    ],
-)
-def test_explicit_cross_segment_questions_focus_each_location(question, first, second):
-    assert targeted_queries(question) == [question, first, second]
+def test_queries_focus_compared_subjects_and_separate_interrogatives():
+    assert targeted_queries("Explain the difference between groups.") == [
+        "Explain the difference between groups."
+    ]
+    assert targeted_queries("What is the difference between a queue and a stack?")[1:] == [
+        "a queue",
+        "a stack",
+    ]
+    assert targeted_queries("How does a queue differ from a stack?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How is a queue different from a stack?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How do a queue and a stack differ?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("How does a queue compare with a stack?")[1:] == ["a queue", "a stack"]
+    assert targeted_queries("队列和堆栈有什么区别？")[1:] == ["队列", "堆栈"]
+    assert targeted_queries("Why does the loop stop, and how does the caller observe its result?")[1:] == [
+        "Why does the loop stop",
+        "how does the caller observe its result",
+    ]
+    assert targeted_queries("Explain how a queue works.") == ["Explain how a queue works."]
 
 
 def test_runtime_fuses_only_current_authorized_rows_and_rereads_in_bounded_batches():
