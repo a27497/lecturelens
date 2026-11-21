@@ -1,6 +1,6 @@
 # LL-P16 paired Tutor holdout
 
-Selective neighbor expansion increased complete vital coverage from **6/48 to 12/48**. Micro coverage increased from **17/93 to 30/93**. The average prepared context increased by **1,835 bytes**. Strict correctness was **30/48 for A and 33/48 for B**, a difference of **+6.25 percentage points** with a paired 95% interval of **−2.08 to +14.58 points**. Both arms correctly refused **11/12** required-refusal items. These estimates describe six lectures drawn from two course releases.
+B increased strict correctness from **30/48 to 33/48**, a difference of **+6.25 percentage points**. The paired 95% interval **[−2.08, +14.58]** includes zero, so the increase lacks statistical significance at the 95% level. Complete vital coverage improved from **6/48 to 12/48**, or **+12.50 points** with a paired 95% interval **[+4.17, +20.83]** that excludes zero. On cross-segment items, complete coverage remained **0/9** in both arms and strict correctness fell from **4/9 to 3/9**. Both arms correctly refused **11/12** required-refusal items. These estimates describe six lectures drawn from two course releases.
 
 A uses the #86 hybrid retrieval policy. B uses the combined #87/#88 main base and adds neighbors on unsplit queries. Both arms used the same approved questions, Evidence, non-thinking DeepSeek Flash model, Tutor prompt and Flash v1 judge. The experiment included one scheduled turn per arm for each of 60 items. The immutable specification and hashes are in the freeze. The full unrounded results include all eight reporting populations, every frozen paired interval, raw denominators and defined bootstrap draw counts. [Freeze PR #89](https://github.com/a27497/lecturelens/pull/89) · [Exact frozen file](https://github.com/a27497/lecturelens/blob/eff47169f4f6d861458ca8b318e8fd5c11bc1ec6/eval/ll-p16-holdout/freeze.json) · [Aggregate JSON](results.json)
 
@@ -25,6 +25,12 @@ Strict correctness requires a valid judgment, an actual answer, all vital nugget
 | Cross-segment | Strict | 4/9 (44.44%) | 3/9 (33.33%) | -11.11 [-33.33, +0.00] | 0/9 → 0/9 | +0.00 [+0.00, +0.00] | 1/23 → 2/23 | +4.35 [+0.00, +14.29] |
 | Near miss | Refusal | 6/6 (100.00%) | 6/6 (100.00%) | +0.00 [+0.00, +0.00] | — | — | — | — |
 | Omitted detail | Refusal | 5/6 (83.33%) | 5/6 (83.33%) | +0.00 [-50.00, +50.00] | — | — | — | — |
+
+### Paired discordances and support coverage
+
+Seven answerable pairs differed on strict correctness. Three had byte-identical ordered Evidence and identical Tutor request hashes. A was correct in two of those pairs and B in one. Generation or judging variability is compatible with those records. The other four pairs had different Evidence membership, and B was correct in all four. This observed paired pattern leaves the causal contribution of retrieval undetermined.
+
+Complete coverage is strict against the preregistered gold support. Each vital nugget needs every fragment in at least one approved alternative. For an item, the minimum fragment count is the smallest distinct union obtained by choosing one approved alternative per vital nugget. That minimum was **2–7 fragments for 40/48** answerable items, **1 fragment for 4/48**, and **8, 9, 10 or 12 fragments for 4/48** (one each). Across the **93 vital nuggets**, 83 had a smallest alternative of 2–7 fragments and 10 had a smallest alternative of one. The nine cross-segment items required a minimum of **4–8** distinct fragments each. Both arms capped prepared context at **16 distinct fragments** and reached that cap in the recorded round. The cap limits how many fragments fit, while coverage depends on which fragments retrieval selects. Models can answer well-known course concepts from prior knowledge. Exact frozen support coverage alone cannot establish grounding or identify the source of any particular answer.
 
 ## Prepared Evidence size
 
@@ -54,7 +60,7 @@ Paired 95% intervals use 10,000 bootstrap draws with the pair held together and 
 | B, answerable (48) | 40 | 4 | 4 | 42 | 2 | 4 |
 | B, required refusal (12) | 0 | 11 | 1 | 11 | 0 | 1 |
 
-All eight product failures were Tutor protocol failures and remain among the 120 scheduled outcomes. Two affected A's strict denominator and four affected B's. One affected each required-refusal denominator. Among 112 initial judgments, 17 were invalid and retried once. Sixteen initially failed the citation-support schema and one had malformed JSON. Thirteen retries produced valid judgments. All four terminal invalids failed the citation-support schema, leaving two incorrect strict slots in each arm. They were charged and remain in the automatic counts. No refusal slot was repeat-invalid.
+Tutor protocol/output-format failures totaled **3 for A and 5 for B**. All eight remain among the 120 scheduled outcomes. Two affected A's strict denominator and four affected B's. One affected each required-refusal denominator. Among 112 initial judgments, 17 were invalid and retried once. Sixteen initially failed the citation-support schema and one had malformed JSON. Thirteen retries produced valid judgments. All four terminal invalids failed the citation-support schema, leaving two incorrect strict slots in each arm. They were charged and remain in the automatic counts. No refusal slot was repeat-invalid.
 
 Material error uses the 35 assessed answers in A and the 38 in B. Two delivered answerable answers per arm were unassessed because of repeat-invalid judgments. Counting those answers as clean or erroneous in turn bounds the rates at **0.00%–5.41% for A** and **2.50%–7.50% for B**. The strict denominators continue to include all 48 scheduled answerable slots per arm.
 
@@ -62,14 +68,20 @@ Material error uses the 35 assessed answers in A and the 38 in B. Two delivered 
 
 The signed audit covered all 30 anonymous responses from the frozen 15 pairs, including three failed deliveries. No binary endpoints were undetermined. All 14 course-by-type strata were represented. Thirteen strata supplied one pair and one supplied two. The aggregate file records the inclusion probability for each stratum under neutral course labels.
 
-| Endpoint | Arm | Agreement | Cohen’s κ | False accept | False reject | Net false acceptance | Automatic | Weighted adjustment, pp | Adjusted point estimate |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Strict | A | 10/11 (90.91%) | 0.814 | 0 | 1 | -1/11 (-9.09%) | 62.50% | +10.42 | 72.92% |
-| Strict | B | 10/11 (90.91%) | 0.820 | 0 | 1 | -1/11 (-9.09%) | 68.75% | +10.42 | 79.17% |
-| Refusal | A | 4/4 (100.00%) | Undefined | 0 | 0 | +0/4 (+0.00%) | 91.67% | +0.00 | 91.67% |
-| Refusal | B | 4/4 (100.00%) | Undefined | 0 | 0 | +0/4 (+0.00%) | 91.67% | +0.00 | 91.67% |
+| Endpoint | Arm | Agreement | Cohen’s κ | False accept | False reject | Net false acceptance |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Strict | A | 10/11 (90.91%) | 0.814 | 0 | 1 | -1/11 (-9.09%) |
+| Strict | B | 10/11 (90.91%) | 0.820 | 0 | 1 | -1/11 (-9.09%) |
+| Refusal | A | 4/4 (100.00%) | Undefined | 0 | 0 | +0/4 (+0.00%) |
+| Refusal | B | 4/4 (100.00%) | Undefined | 0 | 0 | +0/4 (+0.00%) |
 
-The sampled strict disagreements were false rejections, one per arm. Agreement was 10/11 per arm on strict and 4/4 on refusal. The sampled refusal labels were constant within each arm, so κ is undefined. The design-weighted correction adds the signed reviewer-minus-automatic delta weighted by stratum population divided by sample size, then divides by the applicable endpoint population. The adjusted paired B−A point differences are **+6.25 points for strict** and **0.00 points for refusal**. The automatic totals remain visible. With one or two audited pairs per stratum and four refusal pairs overall, these agreement and adjustment estimates have limited precision and describe the sampled releases.
+The audit found one strict disagreement per arm, both false rejections, and no refusal disagreements. The sampled refusal labels were constant within each arm, so κ is undefined.
+
+As a secondary exploratory check, the design-weighted correction adds the reviewer-minus-automatic delta weighted by stratum population divided by sample size, then divides by the applicable endpoint population. The strict adjustment was **+10.42 points** per arm, giving **72.92% for A** and **79.17% for B** and a paired difference of **+6.25 points**. The refusal estimate was **91.67%** per arm, with a **0.00-point** adjustment and paired difference. These point estimates have limited precision with one or two audited pairs per stratum and four refusal pairs overall.
+
+## Future use
+
+All **60 items are SEEN** for future work. They are for diagnostics and regression checks only. Exclude them from future tuning, candidate selection, and official scores.
 
 ## Usage ledger and provenance
 
