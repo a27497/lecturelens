@@ -33,7 +33,7 @@ LectureLens is a course-grounded Study Agent project, currently experimental. Th
 
 ## CI triggers
 
-- CI skips changes limited to root-level Markdown, `docs/`, `agent-service/README.md` or `LICENSE`. `eval/`, backend resources and `scripts/` always run CI because tests read them.
+- CI skips changes limited to root-level Markdown, `docs/`, `agent-service/README.md` or `LICENSE`. Every `eval/` PR runs change detection, and edits to eval fixtures run the tests that read them. Backend resources, scripts and mixed changes run full CI. See [CI routing](docs/CI.md).
 - A small code change may carry `[skip ci]` in the commit message: one module, roughly 30 lines or fewer, no dependency, `.github/`, database migration, security or `agent-service/src/lecturelens_agent/study/` change. Run the targeted local tests first and report the command and pass count.
 - Every other change and every phase's final candidate commit run the full CI. For a code change, the last push before a merge must not use `[skip ci]`. Use `workflow_dispatch` for a manual full run.
 - The frontend audit step fails on any npm advisory of low, moderate, high or critical severity via `scripts/ci/npm_audit_gate.py`. Add an entry to `frontend/audit-allowlist.json` only for an advisory with no fixed release; each entry names the package, reason, owner, added date and an expiry no more than 30 days later (the script enforces the window). Renew only after re-checking upstream, and delete the entry when the gate warns it is no longer reported.

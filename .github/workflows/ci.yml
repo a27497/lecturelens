@@ -1,8 +1,6 @@
 name: CI
 
-# Docs-only changes skip CI. eval/, backend resources and scripts/ stay in
-# scope because tests read them. Small code changes may use [skip ci] after
-# targeted local tests; see AGENTS.md. Run manually via workflow_dispatch.
+# Docs-only changes skip CI. See docs/CI.md for eval routing and full checks.
 on:
   push:
     branches: [main]
@@ -18,6 +16,10 @@ on:
       - 'agent-service/README.md'
       - 'LICENSE'
   workflow_dispatch:
+    inputs:
+      eval_diff_commit:
+        description: 'Optional: replay the eval-only diff of this commit against its first parent'
+        type: string
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
@@ -27,13 +29,50 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+    outputs:
+      route: ${{ steps.scope.outputs.route }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Classify changes
+        id: scope
+        env:
+          EVAL_DIFF_COMMIT: ${{ inputs.eval_diff_commit }}
+        run: |
+          python3 -m unittest discover -s scripts/ci/tests -p 'test_eval_only.py'
+          route=full
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
+            # GitHub checks out the PR merge commit, whose first parent is the base.
+            route=$(python3 scripts/ci/eval_only.py HEAD^1 HEAD)
+          elif [[ "$GITHUB_EVENT_NAME" == workflow_dispatch && -n "$EVAL_DIFF_COMMIT" ]]; then
+            if [[ ! "$EVAL_DIFF_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+              echo 'Provide the full commit SHA to replay' >&2
+              exit 1
+            fi
+            git fetch --no-tags --depth=2 origin "$EVAL_DIFF_COMMIT"
+            route=$(python3 scripts/ci/eval_only.py FETCH_HEAD^1 FETCH_HEAD)
+            if [[ "$route" == full ]]; then
+              echo 'The replay diff must contain only eval reports or JSON' >&2
+              exit 1
+            fi
+          fi
+          echo "CI route: $route"
+          echo "route=$route" >> "$GITHUB_OUTPUT"
+
   agent-service-test:
     name: Agent Service Test
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.route == 'full'
     timeout-minutes: 10
-    env:
+    env: &agent-test-env
       AGENT_TEST_DATABASE_URL: postgresql://lecturelens:ci-test-only@127.0.0.1:25741/lecturelens_agent_test
-    services:
+    services: &pgvector-services
       postgres:
         image: pgvector/pgvector:0.8.6-pg17@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f
         env:
@@ -47,15 +86,18 @@ jobs:
           --health-interval 3s --health-timeout 3s --health-retries 20
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - &setup-agent-python
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - name: Install locked dependencies
+      - &install-agent-dependencies
+        name: Install locked dependencies
         working-directory: agent-service
         run: |
           python -m pip install uv==0.12.5
           uv sync --locked
-      - name: Initialize isolated test databases
+      - &initialize-agent-databases
+        name: Initialize isolated test databases
         working-directory: agent-service
         run: |
           uv run python - <<'PY'
@@ -75,9 +117,35 @@ jobs:
           uv run ruff format --check src tests
           uv run pytest -q
 
+  eval-fixtures:
+    name: Eval Fixtures
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.route == 'eval-fixtures'
+    timeout-minutes: 5
+    env: *agent-test-env
+    services: *pgvector-services
+    steps:
+      - uses: actions/checkout@v7
+      - *setup-agent-python
+      - *install-agent-dependencies
+      - *initialize-agent-databases
+      - name: Test repository evaluation fixtures
+        working-directory: agent-service
+        run: |
+          uv run pytest -q \
+            tests/test_benchmark.py tests/test_benchmark_v2.py \
+            tests/test_feedback_eval.py tests/test_p7_real_eval.py tests/test_p8_tutor_eval.py \
+            tests/test_reviewer_probe.py tests/test_source_support.py tests/test_tutor_citations.py \
+            tests/test_models.py::test_managed_pilot_uses_isolated_routes_and_never_changes_source_config \
+            tests/test_study_metrics_report.py::test_saved_p0_batches_load_without_rewriting_frozen_records \
+            tests/test_tutor.py::test_exact_failed_live_answer_accepts_math_brackets_and_rereads_authority
+
   backend-test:
     name: Backend Test
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.route == 'full'
     services:
       mysql:
         image: mysql:8.4
@@ -118,13 +186,25 @@ jobs:
         working-directory: backend
         run: chmod +x ./mvnw
 
-      - name: Run backend tests
+      - name: Test and package backend
         working-directory: backend
-        run: ./mvnw test
+        run: ./mvnw -B package
+
+      - name: Upload tested backend JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: mock-backend-jar
+          path: backend/target/courselingo-backend-0.0.1-SNAPSHOT.jar
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
+          overwrite: true
 
   frontend-build:
     name: Frontend Build
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.route == 'full'
 
     steps:
       - name: Checkout
@@ -158,10 +238,45 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+  minio-images:
+    name: Pinned MinIO Images
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.route == 'full'
+    timeout-minutes: 15
+    env:
+      COMPOSE_FILE: compose.yaml:compose.ci-minio.yml
+    steps:
+      - uses: actions/checkout@v7
+      - name: Cache pinned MinIO images
+        id: minio
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/minio-images.tar.gz
+          key: minio-images-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('compose.yaml', 'compose.ci-minio.yml', '.env.demo.example', 'infra/minio/**') }}
+      - name: Build original MinIO releases from pinned official source
+        if: steps.minio.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          compose=(docker compose --env-file .env.demo.example)
+          "${compose[@]}" build --pull minio minio-init
+          image_names=$("${compose[@]}" config --images minio minio-init)
+          mapfile -t images <<< "$image_names"
+          docker image save "${images[@]}" | gzip -1 > "$RUNNER_TEMP/minio-images.tar.gz"
+      - name: Share MinIO images with both E2E jobs
+        uses: actions/upload-artifact@v7
+        with:
+          name: mock-minio-images
+          path: ${{ runner.temp }}/minio-images.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
+          overwrite: true
+
   mock-infrastructure-e2e:
     name: MySQL migrations and Mock AI E2E
     runs-on: ubuntu-latest
-    needs: [backend-test, frontend-build]
+    needs: [backend-test, minio-images]
     timeout-minutes: 20
     env:
       COMPOSE_FILE: compose.yaml:compose.ci-minio.yml
@@ -171,20 +286,23 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: maven
-          cache-dependency-path: backend/pom.xml
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install --yes ffmpeg
-      - name: Build original MinIO releases from pinned official source
-        run: |
-          cp .env.demo.example .env.demo.local
-          docker compose --env-file .env.demo.local build --pull --no-cache minio minio-init
+      - name: Download tested backend JAR
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: mock-backend-jar
+          path: backend/target
+      - name: Download pinned MinIO images
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: mock-minio-images
+          path: ${{ runner.temp }}
       - name: Start isolated infrastructure
         run: |
+          docker image load --input "$RUNNER_TEMP/minio-images.tar.gz"
+          cp .env.demo.example .env.demo.local
           LECTURELENS_DEMO_INSTANCE=ci bash scripts/demo/start-infrastructure.sh
-      - name: Package tested backend
-        working-directory: backend
-        run: bash ./mvnw -B -DskipTests package
       - name: Run HTTP E2E with empty MySQL and no external AI
         run: python3 scripts/ci/mock-e2e.py --project lecturelens-demo-ci
       - name: Upload diagnostic log
@@ -197,7 +315,7 @@ jobs:
       - name: Remove this job's infrastructure
         if: always()
         run: |
-          # Setup can fail before the build step creates the job's environment file.
+          # Setup can fail before the job creates its environment file.
           if [[ -f .env.demo.local ]]; then
             docker compose --project-name lecturelens-demo-ci --env-file .env.demo.local down --volumes
           fi
@@ -205,7 +323,7 @@ jobs:
   mock-learning-path:
     name: Mock learning path (desktop and 390px)
     runs-on: ubuntu-latest
-    needs: [agent-service-test, mock-infrastructure-e2e]
+    needs: [backend-test, minio-images]
     timeout-minutes: 25
     env:
       LECTURELENS_DEMO_INSTANCE: l3-ci
@@ -217,8 +335,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: maven
-          cache-dependency-path: backend/pom.xml
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
@@ -227,20 +343,42 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - name: Install uv and FFmpeg
-        run: |
-          python -m pip install uv==0.12.5
-          sudo apt-get update
-          sudo apt-get install --yes ffmpeg
-      - name: Install locked frontend dependencies and Chromium
+      - name: Install uv
+        run: python -m pip install uv==0.12.5
+      - name: Install locked frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Read the locked Playwright version and runner distribution
+        id: playwright
         working-directory: frontend
         run: |
-          npm ci
+          echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright-core'].version")" >> "$GITHUB_OUTPUT"
+          source /etc/os-release
+          echo "distribution=$ID-$VERSION_ID" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright Chromium
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.distribution }}-${{ steps.playwright.outputs.version }}
+      - name: Install Chromium, system dependencies and FFmpeg
+        working-directory: frontend
+        run: |
           npx --no-install playwright install --with-deps chromium
-      - name: Build MinIO from pinned official source
-        run: docker compose -f compose.yaml -f compose.ci-minio.yml --env-file .env.demo.example build --pull minio minio-init
+          sudo apt-get install --yes ffmpeg
+      - name: Download tested backend JAR
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: mock-backend-jar
+          path: backend/target
+      - name: Download pinned MinIO images
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: mock-minio-images
+          path: ${{ runner.temp }}
       - name: Start and seed the isolated Mock demo
-        run: bash scripts/demo/up.sh
+        run: |
+          docker image load --input "$RUNNER_TEMP/minio-images.tar.gz"
+          bash scripts/demo/up.sh
       - name: Walk the full learning path in both viewports
         working-directory: frontend
         run: npm run test:learning-path
