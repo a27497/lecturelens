@@ -45,9 +45,32 @@ Write code, Markdown and line breaks directly in the teaching text.
 )
 
 
-PRODUCT_TEXT_SYSTEM = STEP_FIRST + TEXT_SYSTEM.replace(
+# Preserve the wire bytes used by earlier product checkpoints and authorizations.
+PRODUCT_TEXT_SYSTEM_V1 = STEP_FIRST + TEXT_SYSTEM.replace(
     "If the course evidence is insufficient",
     "If the retrieved excerpts are insufficient",
+)
+
+TEXT_CONTRACT_VERSION = "tutor-text-v2"
+FULL_REFUSAL = "insufficient_evidence"
+ANSWERED = "answered"
+SOCRATIC_PROMPT = "socratic_prompt"
+REFUSAL_WITH_BODY = "TUTOR_REFUSAL_WITH_BODY"
+
+PRODUCT_TEXT_SYSTEM = (
+    f"""Tutor response contract {TEXT_CONTRACT_VERSION}. Choose exactly one response form.
+If the retrieved excerpts cannot support the requested teaching or guidance, output only {FULL_REFUSAL}.
+Full refusal takes precedence over all teaching instructions below, including steps, explanations, gap notices,
+and Socratic questions. The refusal has no body, citations, or other text. It may end in one LF or CRLF.
+If the excerpts support teaching and socratic is false, write {ANSWERED} on the first line.
+If the excerpts support guidance and socratic is true, write {SOCRATIC_PROMPT} on the first line.
+For either teaching form, put the teaching text on the following lines. In Socratic mode include ? or ？.
+Write code, Markdown and line breaks directly in the teaching text. Apply the guidance below to teaching forms only.
+"""
+    + STEP_FIRST
+    + TEACHING
+    + GROUNDING
+    + REPLY_LIMITS
 )
 
 
@@ -57,20 +80,15 @@ def digest(data):
 
 def payload(messages, *, text_reply=False):
     system, user = messages
+    prompt = system["content"]
+    if not text_reply:
+        prompt = prompt + JSON_INSTRUCTION
+    elif prompt not in (PRODUCT_TEXT_SYSTEM_V1, PRODUCT_TEXT_SYSTEM):
+        prompt = TEXT_SYSTEM
     return json.dumps(
         {
             "model": MODEL,
-            "messages": [
-                {
-                    **system,
-                    "content": (
-                        PRODUCT_TEXT_SYSTEM if system["content"] == PRODUCT_TEXT_SYSTEM else TEXT_SYSTEM
-                    )
-                    if text_reply
-                    else system["content"] + JSON_INSTRUCTION,
-                },
-                user,
-            ],
+            "messages": [{**system, "content": prompt}, user],
             "response_format": {"type": "text" if text_reply else "json_object"},
             "thinking": {"type": "disabled"},
             "temperature": 0.2,
@@ -107,6 +125,7 @@ class Completion:
     reply: dict | None = None
     error: str | None = None
     raw_content: str | None = None
+    protocol_failure_subtype: str | None = None
 
 
 def safe_id(value):
@@ -120,14 +139,21 @@ def unique_object(pairs):
     return result
 
 
+class RefusalWithBody(ValueError):
+    pass
+
+
 def parse_text(content):
+    """Parse the tutor-text-v2 forms with the original permitted line endings."""
     if not isinstance(content, str):
         raise ValueError("Expected text")
-    if content in {"insufficient_evidence", "insufficient_evidence\n", "insufficient_evidence\r\n"}:
-        return Reply(outcome="insufficient_evidence", text=ABSTENTION)
+    if content in {FULL_REFUSAL, FULL_REFUSAL + "\n", FULL_REFUSAL + "\r\n"}:
+        return Reply(outcome=FULL_REFUSAL, text=ABSTENTION)
     outcome, _, text = content.partition("\n")
     outcome = outcome.removesuffix("\r")
-    if outcome not in {"answered", "socratic_prompt"} or not text.strip() or ABSTENTION in text:
+    if outcome == FULL_REFUSAL and text.strip():
+        raise RefusalWithBody
+    if outcome not in {ANSWERED, SOCRATIC_PROMPT} or not text.strip() or ABSTENTION in text:
         raise ValueError("Invalid teaching frame")
     return Reply(outcome=outcome, text=text)
 
@@ -169,6 +195,7 @@ def parse(body, *, text_reply=False):
         return Completion(*result, error="TUTOR_FLASH_BLANK")
     if usage["completion_tokens"] == 0:
         return Completion(None, response_hash, fingerprint, provider_id, error="TUTOR_FLASH_USAGE_UNKNOWN")
+    error = "TUTOR_PROTOCOL_FAILURE" if text_reply else "TUTOR_FLASH_INVALID_JSON"
     try:
         if text_reply and message.get("refusal"):
             raise ValueError("Provider refusal")
@@ -181,8 +208,9 @@ def parse(body, *, text_reply=False):
             reply[key].encode("utf-8")
             if "\x00" in reply[key]:
                 raise ValueError("Invalid JSONB text")
+    except RefusalWithBody:
+        return Completion(*result, error=error, protocol_failure_subtype=REFUSAL_WITH_BODY, **raw)
     except (ValueError, TypeError, RecursionError):
-        error = "TUTOR_PROTOCOL_FAILURE" if text_reply else "TUTOR_FLASH_INVALID_JSON"
         return Completion(*result, error=error, **raw)
     return Completion(*result, reply=reply, raw_content=content if text_reply else None)
 

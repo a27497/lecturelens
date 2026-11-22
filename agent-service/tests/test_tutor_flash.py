@@ -12,6 +12,7 @@ from test_tutor_light import lab as light_lab  # noqa: F401
 
 from lecturelens_agent.study.store import StudyError
 from lecturelens_real_eval.tutor import flash_app
+from lecturelens_real_eval.tutor.contracts import ABSTENTION
 from lecturelens_real_eval.tutor.flash_ledger import TARGET_SCHEMA, FlashStore, Grant, build_digest
 from lecturelens_real_eval.tutor.flash_provider import (
     CONTEXT_BOUND,
@@ -19,9 +20,13 @@ from lecturelens_real_eval.tutor.flash_provider import (
     MODEL_VERSION,
     OUTPUT_TOKENS,
     PRICE_ID,
+    PRODUCT_TEXT_SYSTEM_V1,
+    REFUSAL_WITH_BODY,
     RESERVE_NANO_USD,
     FlashProvider,
     digest,
+    parse,
+    payload,
 )
 from lecturelens_real_eval.tutor.store import TutorStore
 
@@ -46,6 +51,72 @@ def envelope(**change):
         "choices": [{"finish_reason": "stop", "message": {"content": json.dumps(ANSWER)}}],
         **change,
     }
+
+
+@pytest.mark.parametrize("ending", ["", "\n", "\r\n"])
+def test_text_accepts_exact_refusal_with_permitted_endings(ending):
+    response = envelope(
+        choices=[{"finish_reason": "stop", "message": {"content": "insufficient_evidence" + ending}}]
+    )
+    result = parse(json.dumps(response).encode(), text_reply=True)
+    assert result.error is None and result.protocol_failure_subtype is None
+    assert result.reply == {"outcome": "insufficient_evidence", "text": ABSTENTION, "focus": ""}
+
+
+MIXED_REFUSAL = "insufficient_evidence\nAn explanation follows. [e1]"
+
+
+@pytest.mark.parametrize(
+    ("content", "subtype"),
+    [
+        (MIXED_REFUSAL, REFUSAL_WITH_BODY),
+        ("insufficient_evidence\r\n \r\nA hint follows.", REFUSAL_WITH_BODY),
+        ("insufficient_evidence\n\n", None),
+        ("insufficient_evidence\r\n \t\r\n", None),
+        ("insufficient_evidence\r", None),
+        ("insufficient_evidence: This part is covered by [e1].", None),
+        ("partial_answer\nOne step is supported [e1]. The remaining steps lack evidence.", None),
+    ],
+)
+def test_text_classifies_refusal_bodies_without_accepting_other_invalid_forms(content, subtype):
+    response = envelope(choices=[{"finish_reason": "stop", "message": {"content": content}}])
+    result = parse(json.dumps(response).encode(), text_reply=True)
+    assert result.error == "TUTOR_PROTOCOL_FAILURE" and result.protocol_failure_subtype == subtype
+    assert result.reply is None and result.usage == USAGE
+    assert result.raw_content == content
+
+
+@pytest.mark.parametrize(
+    ("finish", "extra_message", "extra_envelope", "error"),
+    [
+        ("length", {}, {}, "TUTOR_FLASH_TRUNCATED"),
+        ("content_filter", {}, {}, "TUTOR_FLASH_INTERRUPTED"),
+        (None, {}, {}, "TUTOR_FLASH_INTERRUPTED"),
+        ("stop", {"refusal": "refused"}, {}, "TUTOR_PROTOCOL_FAILURE"),
+        ("length", {}, {"usage": None}, "TUTOR_FLASH_USAGE_UNKNOWN"),
+        ("length", {}, {"model": "different-model"}, "TUTOR_FLASH_IDENTITY_CHANGED"),
+    ],
+)
+def test_mixed_refusal_keeps_envelope_error_precedence(finish, extra_message, extra_envelope, error):
+    response = envelope(
+        choices=[{"finish_reason": finish, "message": {"content": MIXED_REFUSAL, **extra_message}}],
+        **extra_envelope,
+    )
+    result = parse(json.dumps(response).encode(), text_reply=True)
+    assert result.error == error and result.protocol_failure_subtype is None
+    assert result.reply is None
+
+
+@pytest.mark.parametrize(
+    ("system", "expected_digest"),
+    [
+        (PRODUCT_TEXT_SYSTEM_V1, "daf94c1c8dbb9dc34ce1736bd4c075da0c0af093f7d0464bc04cf6da0ca25c8e"),
+        ("legacy", "18694f2cfd9986f3f40bd5de727c33817b66155f4f543c531a64d3aff80fae3d"),
+    ],
+)
+def test_existing_text_request_bytes_are_reproducible(system, expected_digest):
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": "synthetic"}]
+    assert digest(payload(messages, text_reply=True)) == expected_digest
 
 
 class Fake:
