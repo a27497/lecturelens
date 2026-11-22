@@ -16,6 +16,10 @@ class CiRouteTest(unittest.TestCase):
         with patch.object(subprocess, "check_output", return_value=paths):
             self.assertEqual(ci_route("base", "head"), "eval-fixtures")
 
+    def test_managed_pilot_source_edit_runs_fixture_tests(self):
+        with patch.object(subprocess, "check_output", return_value=b"eval/study-v2/sources.json\0"):
+            self.assertEqual(ci_route("base", "head"), "eval-fixtures")
+
     def test_code_binary_and_empty_diffs_use_full_ci(self):
         for diff in (
             b"",

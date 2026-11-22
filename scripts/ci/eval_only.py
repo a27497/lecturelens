@@ -14,6 +14,7 @@ FIXTURE_PREFIXES = (
     b"eval/retrieval-v2/",
     b"eval/reviewer-probe/",
     b"eval/source-support/",
+    b"eval/study-v2/",
     b"eval/tool-resilience-20261014/",
     b"eval/tool-resilience-latency-20261014/",
 )

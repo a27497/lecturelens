@@ -19,6 +19,7 @@ The existing docs-only exclusions still apply to PRs and pushes to `main`.
 | `retrieval-phase-a/`, `retrieval-v2/` | Retrieval benchmarks and Tutor citation grammar |
 | `reviewer-probe/` | Reviewer probes |
 | `source-support/` | Source-support fixtures |
+| `study-v2/` | Managed Study pilot with isolated routes and mocked provider calls |
 | `tool-resilience-20261014/`, `tool-resilience-latency-20261014/` | Saved Study metrics batches |
 
 When a test starts reading another eval directory, update the classifier and
