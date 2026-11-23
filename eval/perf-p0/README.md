@@ -288,17 +288,34 @@ output directory first.
 
 ## Targeted verification
 
+For the full independent-host matrix with verified Java build reuse, see
+[the faster execution procedure](P11_RENTAL_PLAN.md#faster-execution-on-the-larger-rental-host).
+`run.sh --offline --reuse-build-from SEED_OUTPUT` reuses only a successful clean
+fresh-build run from the same checkout/SHA/toolchain. It rejects changed build
+artifacts and still creates a new stack and database. Schema v3 records the
+build mode, seed result hash and artifact identity; older v1/v2/v3 evidence
+without build reuse remains verifiable. This path has offline regression
+coverage; live-stack behavior and speedup are NOT_RUN.
+
 ```bash
 agent-service/.venv/bin/ruff check eval/perf-p0
 agent-service/.venv/bin/ruff format --check eval/perf-p0
 bash -n eval/perf-p0/run.sh
+bash -n eval/perf-p0/fast_matrix.sh
 python3 scripts/dev/run_check.py --name perf-harness-unit \
   --output .data/perf-p0/checks --timeout 120 -- \
   agent-service/.venv/bin/python eval/perf-p0/deterministic_tests.py
+# Inert Bash/CLI control-flow checks; stubs in a temporary checkout, no services.
+python3 scripts/dev/run_check.py --name perf-matrix-cli \
+  --output .data/perf-p0/checks --timeout 30 -- \
+  agent-service/.venv/bin/python eval/perf-p0/matrix_cli_checks.py
 ```
 
-Deterministic suite at this revision: **52 tests** (29 P11-A plus 23 Step 6 lane
-tests in `test_lanes.py`). Self-tests use simulated HTTP only to verify harness accounting/protocol rules;
+Deterministic suite at this revision: **62 tests** (29 P11-A, 23 Step 6 lane
+tests and 10 Java-build reuse tests), plus **4** separate stubbed CLI checks for
+the full/fallback matrix, fail-fast behavior and an expired rental window.
+Self-tests use simulated HTTP and temporary
+artifact files to verify harness accounting/protocol rules;
 they do not replace the fresh Java→Python→MySQL/PostgreSQL smoke above. Java addon
 compilation and actual wrapper use are checked by each service smoke. No product
 or shared Study code changed, so Agent full pytest, frontend build and product

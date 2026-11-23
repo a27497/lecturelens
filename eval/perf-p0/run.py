@@ -12,6 +12,7 @@ import platform
 import re
 import resource
 import secrets
+import shutil
 import signal
 import subprocess
 import sys
@@ -22,6 +23,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
+from build_cache import fingerprint as build_fingerprint
+from build_cache import validate_reuse
 from lecturelens_agent.retrieval import DEFAULT_QUERY_CONCURRENCY, MAX_QUERY_CONCURRENCY
 from lecturelens_agent.study.runtime import DEFAULT_RUN_CONCURRENCY, MAX_RUN_CONCURRENCY
 from load import SCHEMA_VERSION, Paths, outcome_delta
@@ -207,6 +210,7 @@ def config(options):
         "study_mock_task": "GENERATE_CARDS: two delayed Mock decisions, one Java-authorized SEARCH",
         "feedback_enabled": False,
         "offline_dependency_bootstrap": options.offline,
+        "java_build_mode": "reused" if options.reuse_build_from else "fresh",
         "minio_source_build": options.build_minio,
         "run_deadline_seconds": options.run_deadline,
         "latency_contract": "v3 = v2 (operation excludes cancellation cleanup; turn timer starts before turn/Run submit; wall includes cleanup/drain) + client-observed queue_ms/execution_ms split at the first poll seeing running",
@@ -338,44 +342,34 @@ class Environment(existing.Smoke):
         ).hexdigest()
 
     def dependencies(self):
-        # Always package this checkout; never reuse a jar built at an unrecorded SHA.
-        command = ["bash", "mvnw", "-B", "-DskipTests"]
-        if self.options.offline:
-            command += ["-o"]
-        self.run(command + ["package"], "build", 600, ROOT / "backend")
+        self.result["java_version"] = self.capture(["java", "--version"])
+        self.result["javac_version"] = self.capture(["javac", "--version"])
+        if self.options.reuse_build_from:
+            from verify import verify
+
+            build_dir = self.options.reuse_build_from.resolve()
+            verify(build_dir, self.result["head"], check_inputs=True)
+            previous = json.loads((build_dir / "result.json").read_text())
+            identity = validate_reuse(
+                previous,
+                self.result,
+                build_dir,
+                self.result["java_version"],
+                self.result["javac_version"],
+            )
+            self.result["java_build"] = {
+                "mode": "reused",
+                "from_directory": str(build_dir),
+                "seed_result_sha256": digest(build_dir / "result.json"),
+                "artifacts": identity,
+            }
+            self.jar = build_dir / "java-build.jar"
+            self.java_classpath(build_dir)
+        else:
+            self.build_java()
         self.result["jar_sha256"] = digest(self.jar)
-        extracted = self.out / "java-app"
-        with zipfile.ZipFile(self.jar) as archive:
-            for name in archive.namelist():
-                if name.startswith(("BOOT-INF/classes/", "BOOT-INF/lib/")):
-                    archive.extract(name, extracted)
-            manifest = archive.read("META-INF/MANIFEST.MF").decode()
-        self.main_class = next(
-            line.split(": ", 1)[1].strip()
-            for line in manifest.splitlines()
-            if line.startswith("Start-Class:")
-        )
-        self.env["PERF_APP_MAIN_CLASS"] = self.main_class
-        classes = extracted / "BOOT-INF/classes"
-        libs = extracted / "BOOT-INF/lib/*"
-        addon = self.out / "java-addon"
-        addon.mkdir()
-        self.classpath = os.pathsep.join((str(addon), str(classes), str(libs)))
-        self.run(
-            [
-                "javac",
-                "-cp",
-                self.classpath,
-                "-d",
-                str(addon),
-                *[str(p) for p in sorted((HERE / "java").glob("*.java"))],
-            ],
-            "compile-delay-wrapper",
-            60,
-        )
-        for binary in ("java", "docker", "uv"):
-            command = [binary, "--version"]
-            self.result[binary + "_version"] = self.capture(command)
+        for binary in ("docker", "uv"):
+            self.result[binary + "_version"] = self.capture([binary, "--version"])
         self.result["compose_version"] = self.capture(
             ["docker", "compose", "version", "--short"]
         )
@@ -401,6 +395,56 @@ class Environment(existing.Smoke):
                 "minio-build",
                 1200,
             )
+
+    def java_classpath(self, directory):
+        with zipfile.ZipFile(self.jar) as archive:
+            manifest = archive.read("META-INF/MANIFEST.MF").decode()
+        self.env["PERF_APP_MAIN_CLASS"] = next(
+            line.split(": ", 1)[1].strip()
+            for line in manifest.splitlines()
+            if line.startswith("Start-Class:")
+        )
+        self.classpath = os.pathsep.join(
+            str(directory / name)
+            for name in (
+                "java-addon",
+                "java-app/BOOT-INF/classes",
+                "java-app/BOOT-INF/lib/*",
+            )
+        )
+
+    def build_java(self):
+        # Cache only artifacts built here; a target/ jar alone has no source identity.
+        command = ["bash", "mvnw", "-B", "-DskipTests"]
+        if self.options.offline:
+            command += ["-o"]
+        self.run(command + ["clean", "package"], "build", 600, ROOT / "backend")
+        shutil.copyfile(self.jar, self.out / "java-build.jar")
+        self.jar = self.out / "java-build.jar"
+        extracted = self.out / "java-app"
+        with zipfile.ZipFile(self.jar) as archive:
+            for name in archive.namelist():
+                if name.startswith(("BOOT-INF/classes/", "BOOT-INF/lib/")):
+                    archive.extract(name, extracted)
+        addon = self.out / "java-addon"
+        addon.mkdir()
+        self.java_classpath(self.out)
+        self.run(
+            [
+                "javac",
+                "-cp",
+                self.classpath,
+                "-d",
+                str(addon),
+                *[str(p) for p in sorted((HERE / "java").glob("*.java"))],
+            ],
+            "compile-delay-wrapper",
+            60,
+        )
+        self.result["java_build"] = {
+            "mode": "fresh",
+            "artifacts": build_fingerprint(self.out),
+        }
 
     def java(self):
         self.free_port(self.result["ports"]["APP_PORT"])
@@ -598,6 +642,10 @@ class Environment(existing.Smoke):
                         )
 
     def attest(self):
+        build_dir = self.options.reuse_build_from or self.out
+        if build_fingerprint(build_dir) != self.result["java_build"]["artifacts"]:
+            raise RuntimeError("Java build artifacts changed during the run")
+        self.result["java_build"]["unchanged_at_end"] = True
         assert (self.out / "guard-active.log").exists(), "Agent network guard missing"
         assert not (self.out / "denied-network.log").exists(), (
             "Non-loopback Agent connection attempted"
@@ -816,6 +864,11 @@ def arguments(argv=None):
         help="Use cached Maven/Python/container dependencies",
     )
     parser.add_argument(
+        "--reuse-build-from",
+        type=Path,
+        help="Reuse verified Java artifacts from a successful fresh-build run in this checkout",
+    )
+    parser.add_argument(
         "--build-minio",
         action="store_true",
         help="Use existing CI source-pinned MinIO builds instead of release images",
@@ -826,6 +879,8 @@ def arguments(argv=None):
         help="Diagnostic only; never clean-source acceptance",
     )
     args = parser.parse_args(argv)
+    if args.reuse_build_from and (not args.offline or args.allow_dirty):
+        parser.error("--reuse-build-from requires --offline and clean committed source")
     args.scenarios = args.scenarios.split(",")
     try:
         args.concurrency = [int(c) for c in args.concurrency.split(",")]
