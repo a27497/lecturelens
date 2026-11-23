@@ -89,6 +89,12 @@ PY
 - 操作者从私有 PG 读取 `tutor_turn.checkpoint` 内的 `messages`、`provider_content`、`evidence`，并对照公开回合中的答复和 `citations`。按 `turn_id` 关联 `tutor_flash_call` 可取得请求与响应摘要、usage、费用、错误和发布状态。使用收据绑定版本的 `payload(messages, text_reply=True)` 可复算请求摘要。私有检查点随课程删除清理。人工评审分别记录教学完整性、引导质量、拒答和引用是否支持相邻陈述。
 - 本地预留约束使用公开峰值价格，供应商账单与模型路由仍需单独核对。离线 Mock 只验证执行、协议和权限。真实教学结果当前为 `NOT_RUN`。
 
+### Text reply contract
+
+In `tutor-text-v2`, full refusal takes precedence over teaching and Socratic guidance. The parser accepts the exact `insufficient_evidence` token with no ending or one LF or CRLF. Nonblank content after the refusal status line fails the turn with `TUTOR_PROTOCOL_FAILURE`. The private call ledger records `TUTOR_REFUSAL_WITH_BODY` and settles the recorded usage once. Failed turns publish no answer or refusal.
+
+A proposed separate `partial_answer` form would identify each part of the request it cannot address and require current evidence for every material claim it does make. The active text grammar accepts `answered`, `socratic_prompt`, and `insufficient_evidence`.
+
 
 ## 离线验收
 

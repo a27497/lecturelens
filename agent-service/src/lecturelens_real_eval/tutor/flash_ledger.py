@@ -220,8 +220,10 @@ class FlashLedgerStore(TutorStore):
         with self.connect() as conn:
             trial = self.lock_trial(conn)
             error = result.error
+            # The turn and trial stop code keep the public error while the call retains parser detail.
+            diagnostic_error = result.protocol_failure_subtype or error
             if trial["fingerprint"] and result.fingerprint and trial["fingerprint"] != result.fingerprint:
-                error = "TUTOR_FLASH_IDENTITY_CHANGED"
+                diagnostic_error = error = "TUTOR_FLASH_IDENTITY_CHANGED"
             charge = sum(result.usage[key] * price for key, price in RATES.items()) if result.usage else None
             row = conn.execute(
                 """UPDATE tutor_flash_call SET response_sha256=%s,provider_id=%s,fingerprint=%s,usage=%s,
@@ -233,7 +235,7 @@ class FlashLedgerStore(TutorStore):
                     result.fingerprint,
                     Jsonb(result.usage) if result.usage is not None else None,
                     charge,
-                    error,
+                    diagnostic_error,
                     turn_id,
                     request_sha256,
                 ),

@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 from test_tutor import command, offline, run, submit  # noqa: F401
-from test_tutor_flash import CHARGE, envelope
+from test_tutor_flash import CHARGE, MIXED_REFUSAL, USAGE, envelope
 from test_tutor_light import lab as light_lab  # noqa: F401
 
 from lecturelens_agent.study.contracts import StudyScope
@@ -18,7 +18,10 @@ from lecturelens_real_eval.tutor.flash_provider import (
     MODEL,
     MODEL_VERSION,
     PRICE_ID,
+    PRODUCT_TEXT_SYSTEM,
+    REFUSAL_WITH_BODY,
     RESERVE_NANO_USD,
+    TEXT_CONTRACT_VERSION,
     digest,
 )
 from lecturelens_real_eval.tutor.trial import TrialAuthorization, create_trial
@@ -91,6 +94,11 @@ def test_normal_sessions_share_three_slots_and_keep_private_evidence(trial):
     assert len(requests) == 3
     request = json.loads(requests[0])
     assert request["response_format"] == {"type": "text"} and "tools" not in request
+    assert request["messages"][0]["content"] == PRODUCT_TEXT_SYSTEM
+    assert PRODUCT_TEXT_SYSTEM.startswith(f"Tutor response contract {TEXT_CONTRACT_VERSION}.")
+    assert PRODUCT_TEXT_SYSTEM.index("Full refusal takes precedence") < PRODUCT_TEXT_SYSTEM.index(
+        "For direct answers"
+    )
     with lab[0].connect() as conn:
         checkpoint = conn.execute(
             "SELECT checkpoint FROM tutor_turn WHERE turn_id=%s", (result["turn_id"],)
@@ -102,6 +110,61 @@ def test_normal_sessions_share_three_slots_and_keep_private_evidence(trial):
     for row, request_body in zip(calls, requests, strict=True):
         assert row["reserved_nano_usd"] == RESERVE_NANO_USD and row["charged_nano_usd"] == CHARGE
         assert (lab[0].dispatch_dir / f"trial-{row['slot']}").read_text() == digest(request_body)
+
+
+@pytest.mark.parametrize(
+    ("content", "previous_fingerprint", "error", "diagnostic_error"),
+    [
+        (MIXED_REFUSAL, None, "TUTOR_PROTOCOL_FAILURE", REFUSAL_WITH_BODY),
+        (
+            "answered\nEach edge adds one hop [unrelated]",
+            None,
+            "TUTOR_CITATION_MISMATCH",
+            "TUTOR_CITATION_MISMATCH",
+        ),
+        (MIXED_REFUSAL, "previous_fp", "TUTOR_FLASH_IDENTITY_CHANGED", "TUTOR_FLASH_IDENTITY_CHANGED"),
+    ],
+)
+def test_invalid_text_settles_once_without_publication(
+    trial, monkeypatch, content, previous_fingerprint, error, diagnostic_error
+):
+    lab, _, _, requests = trial
+
+    def respond(request):
+        requests.append(request.content)
+        return httpx.Response(
+            200, json=envelope(choices=[{"finish_reason": "stop", "message": {"content": content}}])
+        )
+
+    runtime = create_trial(lab[0].dsn, lab[1], transport=httpx.MockTransport(respond))
+    runtime.initialize()
+    if previous_fingerprint:
+        with runtime.store.connect() as conn:
+            conn.execute(
+                "UPDATE tutor_flash_trial SET fingerprint=%s WHERE singleton", (previous_fingerprint,)
+            )
+    settles = []
+    settle = runtime.store.settle
+
+    def record_settlement(turn_id, request_sha256, result):
+        settles.append(turn_id)
+        return settle(turn_id, request_sha256, result)
+
+    monkeypatch.setattr(runtime.store, "settle", record_settlement)
+    active = session((runtime.store, lab[1], runtime, lab[3]))
+    result = run(active)
+    assert result["status"] == result["outcome"] == "failed"
+    assert result["answer"] is None and result["citations"] == []
+    assert result["error_code"] == error and result["usage"] == [USAGE]
+    assert result["model_calls"] == 1
+    assert submit(active)["replayed"] and not runtime.store.candidates()
+    assert settles == [result["turn_id"]] and len(requests) == 1
+    with runtime.store.connect() as conn:
+        [call] = conn.execute("SELECT * FROM tutor_flash_call").fetchall()
+        stop_code = conn.execute("SELECT stop_code FROM tutor_flash_trial").fetchone()["stop_code"]
+    assert call["error_code"] == diagnostic_error and stop_code == error
+    assert call["charged_nano_usd"] == CHARGE and call["usage"] == USAGE
+    assert call["observed_at"] is not None and call["published_at"] is None
 
 
 def test_trial_cannot_resume_restored_ledger(trial):
