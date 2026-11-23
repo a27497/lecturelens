@@ -237,3 +237,7 @@ def test_normal_factory_requires_separate_receipt_and_matches_mock_mode(trial, m
     path.chmod(0o600)
     with TestClient(app.create_app(retriever=object(), secret="s" * 32, trial_transport=transport)) as client:
         assert client.app.state.tutor.provider.offline
+        assert client.app.state.tutor.query_language is None
+    monkeypatch.setenv("TUTOR_QUERY_LANGUAGE", "english")
+    with TestClient(app.create_app(retriever=object(), secret="s" * 32, trial_transport=transport)) as client:
+        assert client.app.state.tutor.query_language.mode == "english"

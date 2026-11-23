@@ -94,11 +94,12 @@ class MockLightTutor:
 class LightTutorRuntime(TutorRuntime):
     legacy_retrieval = False
 
-    def __init__(self, store, authority, provider=None, *, search_authority=None):
+    def __init__(self, store, authority, provider=None, *, search_authority=None, query_language=None):
         if store.engine != "light":
             raise ValueError("LIGHT_TUTOR_STORE_REQUIRED")
         super().__init__(store, authority, provider or MockLightTutor())
         self.search_authority = search_authority or authority
+        self.query_language = query_language
 
     output_reserve = 1200
     # Byte proxy for context size; CJK costs three bytes per character. Flash dollar
@@ -143,7 +144,11 @@ class LightTutorRuntime(TutorRuntime):
             system, abstention = LEGACY_SYSTEM, ABSTENTION
         else:
             selected, searches = retrieve_context(
-                self.search_authority, session, turn["learner_text"], history
+                self.search_authority,
+                session,
+                turn["learner_text"],
+                history,
+                query_language=self.query_language,
             )
             system, abstention = SYSTEM, LIGHT_ABSTENTION
         evidence = self.read_evidence(session, selected)
