@@ -14,6 +14,7 @@ from .flash_app import FlashTutorRuntime
 from .flash_ledger import FlashAuthorization, FlashLedgerStore
 from .flash_phase import mark_dispatch, verify_dispatch_markers
 from .flash_provider import PRODUCT_TEXT_SYSTEM, FlashProvider, digest
+from .query_language import configured_query_language
 
 
 class TrialAuthorization(FlashAuthorization):
@@ -80,6 +81,10 @@ class TrialStore(FlashLedgerStore):
 class TrialTutorRuntime(FlashTutorRuntime):
     legacy_retrieval = False
 
+    def __init__(self, store, authority, provider, *, search_authority=None, query_language=None):
+        super().__init__(store, authority, provider, search_authority=search_authority)
+        self.query_language = query_language
+
     def command(self, command):
         mode = "mock-http" if self.provider.offline else "deepseek-flash"
         return super().command(command) | {"provider_mode": mode}
@@ -127,4 +132,10 @@ def create_trial(dsn, authority, *, transport=None, search_authority=None):
         observer=store.observe_dispatch,
         text_reply=True,
     )
-    return TrialTutorRuntime(store, authority, provider, search_authority=search_authority)
+    return TrialTutorRuntime(
+        store,
+        authority,
+        provider,
+        search_authority=search_authority,
+        query_language=configured_query_language(),
+    )

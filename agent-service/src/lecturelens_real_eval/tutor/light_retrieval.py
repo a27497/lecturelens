@@ -85,7 +85,15 @@ def fused_ids(searches, limit):
 
 
 def retrieve_context(
-    authority, scope, question, history, *, simple="HYBRID_8_NEIGHBORS", complex_="HYBRID_16", route=True
+    authority,
+    scope,
+    question,
+    history,
+    *,
+    simple="HYBRID_8_NEIGHBORS",
+    complex_="HYBRID_16",
+    route=True,
+    query_language=None,
 ):
     queries = targeted_queries(question) if route else [_query(question)]
     strategy = complex_ if len(queries) > 1 else simple
@@ -94,6 +102,12 @@ def retrieve_context(
     if history and len(queries) < MAX_QUERIES:
         hint = history[0]["learner_text"][:250] + "\n" + history[-1]["learner_text"][:249]
         queries = list(dict.fromkeys([*queries, _query(hint)]))
+
+    if query_language is not None:
+        rewritten = query_language.rewrite(question, queries)
+        # If two distinct intents translate identically, preserve their original searches.
+        if len(set(rewritten)) == len(queries):
+            queries = rewritten
 
     searches = []
     limit = SEARCH_PAGE if strategy in {"DENSE_8", "HYBRID_8", "MAIN"} else MAX_CONTEXT

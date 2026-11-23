@@ -16,6 +16,7 @@ from lecturelens_agent.study.store import StudyError
 
 from .contracts import Command
 from .light import LightTutorRuntime
+from .query_language import configured_query_language
 from .runtime import TutorRuntime
 from .store import TutorStore
 
@@ -66,7 +67,10 @@ def create_app(*, tutor=None, trial_transport=None, **kwargs):
                 # Tutor-specific ranking uses the signed Java route. CHECK and
                 # READ continue through the configured course transport.
                 options = (
-                    {"search_authority": EvidenceAuthority(java_url, app.state.secret)}
+                    {
+                        "search_authority": EvidenceAuthority(java_url, app.state.secret),
+                        "query_language": configured_query_language(),
+                    }
                     if engine == "light"
                     else {}
                 )
